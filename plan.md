@@ -695,6 +695,57 @@ a min-degree->=2 remainder, or the empty graph, before invoking the
 bridge/cycle step) -- the genuine planar-content and induction-scaffolding
 frontier that remains.
 
+**Item (b) is now DONE: `EulerCoreInduction.euler_core_reduction`
+(2026-07-02).** Built the genuine degree->=2-core induction on top of
+[EF-4]'s now-complete leaf-peeling base case, strong induction on `length
+E` (`lt_wf_ind`, per the `JCTEscapeDescent.v` idiom). Three sub-pieces:
+
+- **Tier 0** (`MinDegreeCore.v`): reused the previously-dead `Dart.v`
+  `vdeg` definition; `min_degree_2`; the case-split lemma
+  `exists_leaf_or_min_degree2` (a vertex has degree exactly 1, or every
+  vertex has degree >=2); `next_neq_self_of_other` closing a "no fixed
+  point on a non-singleton fan" gap using `fan_ok`'s total order directly
+  (`no_spurs` cannot be assumed globally mid-induction, since peeling one
+  leaf can create new spurs elsewhere).
+- **Tier 1a/1b**: the leaf-peeling step needed two companions [EF-4] itself
+  doesn't cover. (a) **Isolated K2** (`PermCycleIsolate.v` -- fully
+  axiom-free, 0 axioms; `NumFacesIsolate.v`; `EulerFormula.
+  euler_characteristic_isolated_edge_transfer`): both endpoints of an edge
+  degree-1 (`EulerWitness.w1_euler`'s own witness shape) is excluded by
+  [EF-4]'s `Hper_ge3` and needs its own generic surgery, `f' = f`
+  unchanged since nothing else maps into the self-contained 2-cycle. (b)
+  **Orientation mirror** (`NumFacesShrinkTip.v`; `EulerFormula.
+  euler_characteristic_leaf_edge_transfer_tip`): [EF-4] requires the leaf
+  at `dbase d` specifically (`In d E` is literal); a leaf discovered at
+  `dtip d` needs the same generic engine with generic-d/generic-td roles
+  reversed.
+- **Tier 2** (`EulerCoreInduction.v`): `euler_core_step` dispatches each
+  induction step across all four leaf/orientation x isolate/regular
+  combinations to the right transfer theorem, threading a new standing
+  invariant `no_twin_dup` (needed for `NoDup (darts_of E)`, hence `NoDup`
+  on each fan) alongside `NoDup E` and `fan_ok`, all three trivially
+  preserved by `E_minus`. `euler_core_reduction` is the headline:
+  ```coq
+  Theorem euler_core_reduction : forall E,
+    NoDup E -> no_twin_dup E -> (forall v : Point, fan_ok (outgoing v (darts_of E))) ->
+    exists E', NoDup E' /\ no_twin_dup E' /\
+      (forall v : Point, fan_ok (outgoing v (darts_of E'))) /\
+      min_degree_2 E' /\
+      (euler_characteristic E <-> euler_characteristic E').
+  ```
+  Existential only -- deliberately does NOT claim canonicity/confluence of
+  the peeling order, which is separate, harder work and unneeded for this
+  statement. Standard corpus 2-axiom footprint, 0 Admitted, 0 new axioms.
+
+**Status.** The Euler ladder's arithmetic bookkeeping is now closed all the
+way to a genuine unconditional reduction principle: any edge set with the
+stated invariants provably reduces (preserving `euler_characteristic`) to
+either the empty graph or a min-degree->=2 core. What remains to reach the
+FULL unconditional Euler formula is exclusively item (a) above -- the
+`same_face <-> cut-edge` combinatorial-Jordan equivalence on the
+min-degree->=2 core -- confirmed by PR #319's investigation to be genuine,
+open planar-topology content, not a bookkeeping gap.
+
 ---
 
 ## Observatory — JCT parity seam: general simple-polygon case (2026-07-01)
