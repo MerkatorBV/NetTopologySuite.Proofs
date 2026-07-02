@@ -68,7 +68,12 @@ Definition no_horizontal_darts (D : list Dart) : Prop :=
 
 (* No endpoint of one dart lies in the OPEN interior of a distinct,
    non-twin dart -- the twin-aware no-T-junction condition, mirroring
-   `FaceTwinAware.pairwise_no_proper_cross_twin_aware`. *)
+   `FaceTwinAware.pairwise_no_proper_cross_twin_aware`.  Like that
+   predicate (and like `no_horizontal_darts` above), it is a NODING /
+   general-position input carried from the arrangement pipeline, not
+   derivable from the combinatorial hypotheses; the final Euler assembly
+   supplies it from the same snap-rounding guarantees that discharge the
+   pairwise no-crossing predicate. *)
 Definition no_foreign_vertex_twin_aware (D : list Dart) : Prop :=
   forall e f : Dart,
     In e D -> In f D -> e <> f -> e <> twin f ->
@@ -118,6 +123,52 @@ Definition face_transport_premise (E : list Edge) : Prop :=
 (* -------------------------------------------------------------------------- *)
 (* §3  The one-sided core: same face + transport => not reachable.             *)
 (* -------------------------------------------------------------------------- *)
+
+(* Shared tail of the two orientation branches: once a generic height and
+   the per-eps one-edge flip are in hand, `straddle_side_core` yields the
+   OPPOSITE-parity pair, the transport premise yields EQUAL parity for the
+   same two points, and the two clash intuitionistically. *)
+Lemma straddle_transport_clash :
+  forall (E : list Edge) (a0 b0 : Point) (c : list Dart) (my : R),
+    face_transport_premise E ->
+    In (a0, b0) E ->
+    ~ In (twin (a0, b0)) E ->
+    dbase (a0, b0) <> dtip (a0, b0) ->
+    same_face (darts_of E) (a0, b0) (twin (a0, b0)) ->
+    dpath (darts_of (E_minus E (a0, b0))) (dtip (a0, b0)) (dbase (a0, b0)) c ->
+    NoDup (dtip (a0, b0) :: map dtip c) ->
+    (2 <= length c)%nat ->
+    ring_taut (ring_of_chain ((a0, b0) :: c)) ->
+    no_horizontal_edges (ring_of_chain ((a0, b0) :: c)) ->
+    ring_edges (ring_of_chain ((a0, b0) :: c)) = [] ++ (a0, b0) :: c ->
+    ~ In (a0, b0) ([] ++ c) ->
+    (forall v, In v (ring_of_chain ((a0, b0) :: c)) -> my <> py v) ->
+    (exists t0, 0 < t0 < 1 /\
+       edge_x_at (a0, b0) my
+         = (1 - t0) * px (fst (a0, b0)) + t0 * px (snd (a0, b0)) /\
+       my = (1 - t0) * py (fst (a0, b0)) + t0 * py (snd (a0, b0))) ->
+    (forall eps, 0 < eps ->
+       edge_crosses_ray_ho (mkPoint (edge_x_at (a0, b0) my - eps) my)
+                           (a0, b0) /\
+       ~ edge_crosses_ray_ho (mkPoint (edge_x_at (a0, b0) my + eps) my)
+                             (a0, b0)) ->
+    False.
+Proof.
+  intros E a0 b0 c my Hprem HdE Hntwin Hproper Hsf Hp Hnd Hlen
+         Htaut Hnoh_r Hsplit Hdnotc Hgen Hint Hflip.
+  set (r := ring_of_chain ((a0, b0) :: c)) in *.
+  destruct (straddle_side_core r [] c (a0, b0) my Htaut Hnoh_r Hsplit
+              Hdnotc Hgen Hint Hflip)
+    as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 Hiff]]]]]]]]]].
+  rewrite Hp1 in Hav1, Hc1. rewrite Hp2 in Hav2, Hc2.
+  rewrite Hp1, Hp2 in Hiff.
+  pose proof (Hprem (a0, b0) c my ef HdE Hntwin Hproper Hsf Hp Hnd Hlen
+                Hgen Hint Hef Hav1 Hav2 Hc1 Hc2) as Hpar.
+  fold r in Hpar.
+  assert (HnB : ~ point_in_ring (mkPoint (edge_x_at (a0, b0) my + ef) my) r)
+    by (intro HB; exact (proj1 Hiff (proj2 Hpar HB) HB)).
+  exact (HnB (proj1 Hpar (proj2 Hiff HnB))).
+Qed.
 
 Lemma same_face_not_reachable_core :
   forall (E : list Edge) (d : Dart),
@@ -192,20 +243,14 @@ Proof.
     { intros eps Heps.
       exact (cross_ho_straddle_zero_asc a0 b0 my (edge_x_at (a0, b0) my) eps
                Hasc ltac:(lra) (edge_x_at_zero_asc a0 b0 my Hasc) Heps). }
-    destruct (straddle_side_core r [] c (a0, b0) my Htaut Hnoh_r Hsplit
-                Hdnotc Hgen Hint Hflip)
-      as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 Hiff]]]]]]]]]].
-    rewrite Hp1 in Hav1, Hc1. rewrite Hp2 in Hav2, Hc2.
-    rewrite Hp1, Hp2 in Hiff.
-    pose proof (Hprem (a0, b0) c my ef HdE Hntwin Hproper Hsf Hp Hnd Hlen
-                  Hgen Hint Hef Hav1 Hav2 Hc1 Hc2) as Hpar.
-    fold r in Hpar.
-    (* opposite parity (Hiff) vs equal parity (Hpar): contradiction *)
-    assert (HnB : ~ point_in_ring
-                      (mkPoint (edge_x_at (a0, b0) my + ef) my) r)
-      by (intro HB; exact (proj1 Hiff (proj2 Hpar HB) HB)).
-    exact (HnB (proj1 Hpar (proj2 Hiff HnB))).
-  - (* descending dart: mirror *)
+    exact (straddle_transport_clash E a0 b0 c my Hprem HdE Hntwin Hproper
+             Hsf Hp Hnd Hlen Htaut Hnoh_r Hsplit Hdnotc Hgen Hint Hflip).
+  - (* descending dart: mirror.  Note the parameter t := (my - py a0) /
+       (py b0 - py a0) is a quotient of two NEGATIVES here (my < py a0 is
+       false -- my lies in (py b0, py a0) -- and the denominator is
+       negative), so t is again strictly in (0,1) and `edge_x_at`'s affine
+       formula is orientation-agnostic; only the straddle-crossing lemma
+       needs the descending variant. *)
     destruct (avoid_finite_in_interval (map py r) (py b0) (py a0) Hdesc)
       as [my [Hmy Hav]].
     assert (Hgen : forall v, In v r -> my <> py v)
@@ -229,18 +274,8 @@ Proof.
     { intros eps Heps.
       exact (cross_ho_straddle_zero_desc a0 b0 my (edge_x_at (a0, b0) my) eps
                Hdesc ltac:(lra) (edge_x_at_zero_desc a0 b0 my Hdesc) Heps). }
-    destruct (straddle_side_core r [] c (a0, b0) my Htaut Hnoh_r Hsplit
-                Hdnotc Hgen Hint Hflip)
-      as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 Hiff]]]]]]]]]].
-    rewrite Hp1 in Hav1, Hc1. rewrite Hp2 in Hav2, Hc2.
-    rewrite Hp1, Hp2 in Hiff.
-    pose proof (Hprem (a0, b0) c my ef HdE Hntwin Hproper Hsf Hp Hnd Hlen
-                  Hgen Hint Hef Hav1 Hav2 Hc1 Hc2) as Hpar.
-    fold r in Hpar.
-    assert (HnB : ~ point_in_ring
-                      (mkPoint (edge_x_at (a0, b0) my + ef) my) r)
-      by (intro HB; exact (proj1 Hiff (proj2 Hpar HB) HB)).
-    exact (HnB (proj1 Hpar (proj2 Hiff HnB))).
+    exact (straddle_transport_clash E a0 b0 c my Hprem HdE Hntwin Hproper
+             Hsf Hp Hnd Hlen Htaut Hnoh_r Hsplit Hdnotc Hgen Hint Hflip).
 Qed.
 
 (* -------------------------------------------------------------------------- *)
