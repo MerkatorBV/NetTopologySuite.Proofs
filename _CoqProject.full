@@ -999,6 +999,12 @@ theories/NumFacesIsolate.v
 # sit at dtip d instead of dbase d. Same generic engine (PermCycleShrink),
 # reversed generic-d/generic-td assignment. No Admitteds.
 theories/NumFacesShrinkTip.v
+# [EF-4 induction] Euler ladder: the degree->=2-core induction principle --
+# ties the leaf-peeling transfers (EulerFormula.euler_characteristic_leaf_
+# edge_transfer/_tip, euler_characteristic_isolated_edge_transfer) into a
+# genuine induction, repeatedly peeling until min-degree->=2 or empty.
+# No Admitteds.
+theories/EulerCoreInduction.v
 # H_bridge Euler route (Rung 3b-iv), Phase C NL-1: E_minus arrangement
 # scaffolding -- removing an edge only removes darts (incl), fan_ok is
 # downward-closed, so arrangement_ok survives edge removal; plus the exact
