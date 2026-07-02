@@ -839,6 +839,41 @@ closed/min-points conditions. The planned ladder:
   cycle ring -- per-edge transport along a dart (`parity_eq_of_clear_segment`
   is the tool) plus the fan-rotation corner step at each vertex, where
   the angular order (`next`) must be tied to `dart_side` sectors.
+
+  **C-3 design (toolkit survey, 2026-07-02).**  The corpus's
+  escape-descent JCT files contain most of the ALONG-EDGE transport
+  machinery already, built for routing around a polygon:
+  - `JCTCorridor.corridor e delta y := (edge_x_at e y - delta, y)` -- a
+    west-offset corridor along a non-horizontal edge, with
+    `corridor_connected` (the corridor over a height window is a straight
+    complement path, given per-height freedom) and
+    `corridor_free_of_edges` (per-edge avoidance assembles to skeleton
+    freedom), plus explicit clearances `corridor_avoid_carrier` /
+    `_west` / `_east` / `_below` / `_above` and the `level_gap` /
+    `guard_of_fresh_level` height-window pickers;
+  - `JCTWalkKit.horizontal_connected` / `vertical_connected` (axis-
+    aligned complement segments), `corridor_avoid_clipped_west`/`_east`;
+  - `JCTWalkStep.walk_step` / `walk_step_guarded` -- a full "advance
+    along the boundary" step combining these;
+  - `SegmentParityTransport.parity_eq_of_clear_segment` -- any clear
+    straight segment transports parity (via
+    `JCTSeparation.parity_constant_on_components`).
+
+  What does NOT yet exist, and is the irreducible new content of C-3:
+  the FAN-ROTATION CORNER STEP.  At a shared vertex `v = dtip x =
+  dbase (fstep D x)`, the face walk turns from dart `x` to
+  `next (outgoing v D) (twin x)`; a side-sample near the end of `x` must
+  connect, within the ring complement, to a side-sample near the start
+  of `fstep D x`.  The obstruction to cross is exactly the cycle ring's
+  two darts at `v` (when `v` is a core vertex): the fan at `v` splits
+  into two angular arcs between the ring's in/out darts, and the corner
+  path may sweep only within one arc.  This needs a bridge between
+  `DartAngularOrder`'s `dart_ltb`/`next` (azimuth order) and
+  `StraddleSides.dart_side` sectors -- the first genuinely NEW geometric
+  theorem family of the attack, and the natural next rung.  A sensible
+  first sub-rung: the TWO-DART corner (v has exactly two incident darts,
+  i.e. the walk continues around a degree-2 vertex of the cycle itself)
+  before the general fan.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
