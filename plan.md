@@ -975,6 +975,28 @@ closed/min-points conditions. The planned ladder:
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
   closing the loop with `EulerCoreInduction.euler_core_reduction`.
 
+  **D core slice (DONE, `HBridgeCoreSlice.v`).**  The Euler-free
+  reduction is banked: `H_bridge_premise_of_transport` derives the FULL
+  `H_bridge_premise` shape (both orientation conjuncts, the mirror via
+  `same_face_sym` at `twin d`) from ONE named premise,
+  `face_transport_premise` -- equal parity of the CONCRETE straddle pair
+  `(edge_x_at d my -/+ ef, my)` on the non-cut cycle ring whenever `d`
+  and `twin d` share a face.  The one-sided core
+  (`same_face_not_reachable_core`) runs the whole contrapositive: rungs
+  A/B build the cycle ring from the reachability witness; two new
+  E-level twin-aware guards (`no_horizontal_darts`,
+  `no_foreign_vertex_twin_aware` -- the T-junction exclusion mirroring
+  `pairwise_no_proper_cross_twin_aware`) transfer to the ring through
+  the twin-free cycle window; `ring_taut` follows; the generic-height
+  picker + `straddle_side_core` produce the pair with OPPOSITE parity;
+  the premise says EQUAL; intuitionistic clash.  The transport premise
+  is carried in the corpus's named-premise discipline (exactly how
+  `H_bridge_premise` itself is carried) -- so the ENTIRE remaining
+  distance from `euler_core_reduction` to the unconditional Euler
+  formula is now pinned onto discharging `face_transport_premise`
+  (the C-3 corner connectors + along-edge corridors + orbit induction
+  are its building blocks).  Standard 2-axiom footprint, 0 Admitted.
+
 ---
 
 ## Observatory — JCT parity seam: general simple-polygon case (2026-07-01)
