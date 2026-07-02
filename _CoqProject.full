@@ -503,6 +503,13 @@ theories/RingClearance.v
 # on the RIGHT of each dart -- the convention every corner-connector rung
 # cites.  No Admitteds.
 theories/NextOrientationWitness.v
+# H-bridge attack rung C-3b step 2: the sector-path kernel -- strict
+# cross-product sector certificates are linear in the query point, so a
+# shared certificate survives whole chords: single chord (convex gap) or the
+# three-hop polyline w1 -> perpL u1 -> -u1 -> w2 (reflex gap) stays strictly
+# inside the corner sector, and certified points avoid both wall rays.  No
+# angles, no normalisation, no sqrt.  No Admitteds.
+theories/SectorPath.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
