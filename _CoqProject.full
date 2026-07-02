@@ -491,6 +491,12 @@ theories/StraddlePair.v
 # ring edge with opposite parity; offset chosen to avoid the finitely many
 # crossing abscissas (no clearance analysis needed).  No Admitteds.
 theories/StraddleSides.v
+# H-bridge attack rung C-3a: the clearance ball -- an off-ring point of a
+# horizontal-free ring has a whole ball inside the complement (height/
+# abscissa-gap dichotomy per edge, finite min; no sqrt/distance analysis).
+# The analytic seed every corner connector of the face-walk transport needs.
+# No Admitteds.
+theories/RingClearance.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
