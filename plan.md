@@ -802,6 +802,26 @@ closed/min-points conditions. The planned ladder:
   `fstep` invariant, while `d` and `twin d` sit on OPPOSITE sides of the
   ring through `d`. This is the local-Jordan step; it is where the genuine
   planar content enters.
+
+  **C-1 (DONE, `StraddlePair.v`): the separation seed.**
+  `straddle_pair_opposite_parity`: for ANY edge `e0` of a ring that is
+  `ring_simple`, T-junction-free
+  (`ring_no_vertex_on_foreign_edge_interior`), and horizontal-edge-free,
+  with a duplicate-free split witness (`ring_edges r = pre ++ e0 :: suf`,
+  `~ In e0 (pre ++ suf)`), there exist `p1`, `p2` -- just left/right of
+  `e0`'s crossing abscissa `edge_x_at` at a generic ray height -- with
+  `ray_avoids_vertices` and `point_in_ring p1 r <-> ~ point_in_ring p2 r`.
+  New generic pieces: `avoid_finite_in_interval` (a generic height
+  avoiding finitely many vertex heights, interval-halving induction),
+  `interior_point_off_other_edges` (via `ring_taut`),
+  `ho_cross_agree_ball` (finite-min stability ball where every listed
+  edge's crossing status is shared).  All hypotheses are delivered by
+  rung B's cycle ring except the two generic-position guards
+  (no-T-junction, no-horizontal), which the JCT strand carries
+  everywhere.  Standard 2-axiom footprint, 0 Admitted.
+  Remaining in C: localise the pair to a chosen dart (samples near the
+  dart's midpoint on its two sides), and the `fstep`-invariance of sample
+  parity (the genuine local-Jordan content).
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
