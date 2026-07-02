@@ -1017,15 +1017,19 @@ closed/min-points conditions. The planned ladder:
     twin_aware` + `no_foreign_vertex_twin_aware`, mirroring how the
     escape-descent walk derived them from tautness via `JCTWallClear`).
   - **C-3d (general fan corner).**  The two-dart corner connector
-    (`CornerConnector.v`) generalises to fans with non-ring darts.  THE
-    pinned next lemma (the azimuth<->sector bridge flagged since the C-3
-    design): at vertex `v`, NO fan dart's direction lies strictly inside
-    the CCW gap from `ddir (twin x)` to `ddir (fstep D x)` --
-    `next_min_successor`/`next_wrap_least` translated through `dir_lt`'s
-    `first_half`+`vcross` definition into `SectorPath.in_open_sector`
-    certificates (finite case analysis over the three directions'
-    half-plane configurations).  With it, the corner polyline's sector
-    avoids every E-edge germ at `v`, not just the two walls.
+    (`CornerConnector.v`) generalises to fans with non-ring darts.
+    **Step 1 (DONE, `FanGapSector.v`): the fan-gap sector bridge.**
+    `fan_next_gap_empty_sector`: no fan dart's direction lies strictly
+    inside the CCW gap from a dart to its `next` -- via `dir_between`
+    (cyclic betweenness in `dir_lt`), `next_gap_empty` (pure order from
+    `next_min_successor`/`next_wrap_least`), and
+    `in_open_sector_dir_between` (the 8-way half-plane bridge in the
+    `dir_lt_trans` style: same-half configs constructive, six mixed
+    sub-cases by the free half-split ordering, five impossible sign
+    patterns refuted by `vcross_chain_cert` + strict dichotomies +
+    `nra`).  Standard 2-axiom footprint, 0 Admitted.  Step 2 (next):
+    thread it through `CornerConnector.v`'s incident-exclusion so the
+    corner polyline avoids every E-edge germ at the vertex.
   - **C-3e (straddle tie-in).**  The chain's endpoints are corner
     samples; the premise's points are the straddle pair at height `my`.
     Connect same-side corner samples of `d` to `(edge_x_at d my -/+ ef,
