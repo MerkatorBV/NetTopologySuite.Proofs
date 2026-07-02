@@ -510,6 +510,12 @@ theories/NextOrientationWitness.v
 # inside the corner sector, and certified points avoid both wall rays.  No
 # angles, no normalisation, no sqrt.  No Admitteds.
 theories/SectorPath.v
+# H-bridge attack rung C-3b step 3: concrete right-of-dart corner samples
+# (rho*u + delta*perp offsets) with their sector certificates (near-wall
+# unconditional, far-wall under explicit smallness), scaled reflex hops (the
+# polyline fits any clearance ball), and sup-norm bounds for ball sizing --
+# the pure-algebra half of the two-dart corner connector.  No Admitteds.
+theories/CornerSamples.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
