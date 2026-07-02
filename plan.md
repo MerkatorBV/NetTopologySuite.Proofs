@@ -901,9 +901,26 @@ closed/min-points conditions. The planned ladder:
   `ddir (twin x)` to `ddir (fstep D x)`.  Downstream rungs cite the
   witness file rather than re-deriving the convention.  Standard 2-axiom
   footprint, 0 Admitted.
-  C-3b step 2 (next): the two-dart corner connector -- samples
-  right-of-`x` and right-of-`fstep x` near the shared vertex joined by a
-  short polyline inside the sector, sized by `ring_complement_ball`.
+  **C-3b step 2 (DONE, `SectorPath.v`): the sector-path kernel.**  The
+  corner polyline needs NO trig, NO normalisation, NO sqrt: the strict
+  sector certificates are LINEAR cross-product inequalities in the query
+  point (`in_open_sector`: convex gap `0 < vcross u1 u2` = both wall
+  crosses positive; reflex gap = at least one positive), so a certificate
+  shared by both chord endpoints holds on the whole chord
+  (`vcross_affine_r`/`_l`).  Certified points avoid both wall RAYS
+  outright (`in_open_sector_off_ray1`/`_2`), i.e. the two incident edge
+  carriers.  `sector_path_convex`: one chord suffices in a convex gap.
+  `sector_path_reflex`: the three-hop polyline
+  `w1 -> perpL u1 -> -u1 -> w2` stays certified in a reflex gap -- hop 1
+  uniformly wall-1-certified, hop 3 uniformly wall-2-certified, hop 2
+  wall-1 for `t < 1` and wall-2 at `t = 1`.  Standard 2-axiom footprint,
+  0 Admitted.
+  C-3b step 3 (next): the two-dart corner connector -- instantiate
+  `w1`/`w2` with the concrete right-of-dart samples (their certificates
+  are algebra on `dart_side`), add the vertex-local clearance for
+  NON-incident ring edges (`off_edges_ball_list` on the fan-filtered
+  list; the vertex is off those edges by tautness), and package as
+  `connected_in_complement` for a degree-2 cycle vertex.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
