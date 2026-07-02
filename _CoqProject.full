@@ -497,6 +497,12 @@ theories/StraddleSides.v
 # The analytic seed every corner connector of the face-walk transport needs.
 # No Admitteds.
 theories/RingClearance.v
+# H-bridge attack rung C-3b step 1: the orientation of `next`, machine-checked
+# on the concrete compass fan (E < N < W < S, next E = N, next S = E by wrap):
+# next is the CCW azimuth successor from east, so fstep keeps the traced face
+# on the RIGHT of each dart -- the convention every corner-connector rung
+# cites.  No Admitteds.
+theories/NextOrientationWitness.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
