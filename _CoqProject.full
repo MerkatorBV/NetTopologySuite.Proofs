@@ -474,6 +474,11 @@ theories/ReachableDec.v
 # (the shape the ring_simple/JCT strand can consume, unlike a
 # same_face-twin face walk).  No Admitteds.
 theories/DartPath.v
+# H-bridge attack rung B: the non-cut-edge cycle ring is a valid SIMPLE ring
+# (closed, min-points, core-NoDup, ring_simple) -- vertex-simplicity makes
+# the twin-aware noding proviso vacuous, evaporating the recorded face-walk
+# obstruction for the cycle object.  No Admitteds.
+theories/CycleRing.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

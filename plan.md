@@ -776,10 +776,23 @@ closed/min-points conditions. The planned ladder:
   `twin d`, excluded from `E_minus E d`). Together with `d` this is a
   vertex-simple cycle of length >= 3 through `d`. Standard 2-axiom
   footprint, 0 Admitted.
-- **Rung B (next)**: the cycle's ring (via `seg_of`/`ring_of_chain` on
-  `d :: c`) is `ring_closed`, `ring_has_minimum_points`,
-  `ring_core_nodup`, and -- under `well_noded_darts`-grade noding --
-  `ring_simple`, feeding `GeneralTautBridge.parity_seam_offring_of_simple`.
+- **Rung B (DONE, `CycleRing.v`)**: the cycle ring `ring_of_chain (d :: c)`
+  (`Dart = Edge = Point*Point`, so the dart list IS its own segment chain)
+  is `ring_closed` + `ring_has_minimum_points` + edge-faithful
+  (`RingExtract.face_walk_core` on the closed chain), `ring_core_nodup`
+  (rotating the path trace `map dbase c ++ [v] = u :: map dtip c`), and
+  `ring_simple` via `FaceTwinAware.ring_simple_of_subset_twin_aware`: the
+  positional skeleton `dpath_nth_pair` (the i-th dart is the i-th
+  consecutive trace pair) turns `NoDup` of the trace into
+  `dpath_no_twin_pair` / `dpath_chord_ne` / `cycle_window_twin_free`
+  (fully AXIOM-FREE) -- the cycle window contains NO twin pair, so the
+  twin-aware noding proviso is vacuous. Headline
+  `non_cut_edge_cycle_ring`: under `pairwise_no_proper_cross_twin_aware
+  (darts_of E)`, a non-cut proper edge with unique stored orientation lies
+  on a cycle whose ring is closed, min-points, core-NoDup, and SIMPLE,
+  with `ring_edges` exactly `d :: c` -- ready for
+  `GeneralTautBridge.parity_seam_offring_of_simple`. Standard 2-axiom
+  footprint, 0 Admitted.
 - **Rung C (the research core)**: the face-orbit/parity bridge -- no
   theorem currently ties `fstep` orbits to winding parity (the two strands
   share only the `ring_simple` vocabulary). The needed content: a face
