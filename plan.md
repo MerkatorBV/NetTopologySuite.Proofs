@@ -887,19 +887,23 @@ closed/min-points conditions. The planned ladder:
   `off_edge_ball`, assembled by finite minimum (`off_edges_ball_list`).
   Standard 2-axiom footprint, 0 Admitted.
 
-  **Orientation convention (pinned by survey, to be machine-checked as a
-  witness in C-3b).**  `DartAngularOrder.dir_lt` is azimuth order CCW
-  FROM EAST: `first_half` (upper half-plane, east ray included, west
+  **Orientation convention (MACHINE-CHECKED, `NextOrientationWitness.v`,
+  C-3b step 1).**  `DartAngularOrder.dir_lt` is azimuth order CCW FROM
+  EAST: `first_half` (upper half-plane, east ray included, west
   excluded) before the lower half, `vcross`-sign within a half.  So
-  `next` is the CCW rotational successor, and a hand-computed 4-dart fan
-  (E < N < W < S, `next S = E` by wrap, `next E = N`) shows
-  `fstep = next o twin` turns a north-arriving walk east: the traced
-  face lies on the RIGHT of each dart, and the local face sector at a
-  corner is the CCW gap from `ddir (twin x)` to `ddir (fstep D x)`.
-  C-3b should machine-check this witness and then build the two-dart
-  corner connector: samples right-of-`x` and right-of-`fstep x` near `v`
-  joined by a short polyline inside the sector, sized by
-  `ring_complement_ball`.
+  `next` is the CCW rotational successor -- now checked on the concrete
+  compass fan at the origin: `order_E_N`/`order_N_W`/`order_W_S`
+  (E < N < W < S) and the two `next` computations `next_compass_E`
+  (`next fan E = N`, CCW step) and `next_compass_S` (`next fan S = E`,
+  wrap from the maximum to the minimum).  Hence `fstep = next o twin`
+  turns a north-arriving walk east: the traced face lies on the RIGHT of
+  each dart, and the local face sector at a corner is the CCW gap from
+  `ddir (twin x)` to `ddir (fstep D x)`.  Downstream rungs cite the
+  witness file rather than re-deriving the convention.  Standard 2-axiom
+  footprint, 0 Admitted.
+  C-3b step 2 (next): the two-dart corner connector -- samples
+  right-of-`x` and right-of-`fstep x` near the shared vertex joined by a
+  short polyline inside the sector, sized by `ring_complement_ball`.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
