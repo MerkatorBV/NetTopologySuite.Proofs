@@ -955,7 +955,14 @@ closed/min-points conditions. The planned ladder:
   inequalities (`delta * |cross(perp, wall)| < rho * cross(u1,u2)`), no
   sigma, no midpoints.  With reflex + convex both done (parallel is
   excluded by `fan_ok`), the TWO-DART CORNER CONNECTOR IS COMPLETE.
-  Standard 2-axiom footprint, 0 Admitted.
+  Review follow-up (same file): `corner_params_exist` does the parameter
+  arithmetic ONCE (rho = delta = sigma := eps/(4M)), and the `_auto`
+  wrappers (`two_dart_corner_connected_reflex_auto`/`_convex_auto`)
+  discharge the clearance hypothesis via `vertex_pruned_clearance`,
+  leaving the cycle-ring caller ONLY the vertex-off-non-incident-edges
+  obligation; the convex wrapper shrinks delta below
+  `rho*gap/(C1+C2+1)` for the far-wall smallness -- near-parallel gaps
+  only shrink parameters.  Standard 2-axiom footprint, 0 Admitted.
   Next in C-3: the general fan (non-cycle darts inside the gap -- the
   fan splits the corner gap into sub-gaps, and the face-walk turn
   `next` picks the FIRST sub-gap; the connector must additionally avoid

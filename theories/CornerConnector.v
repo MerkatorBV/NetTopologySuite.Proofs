@@ -336,9 +336,151 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* §8  Self-contained wrappers: parameters exist for every clearance radius.   *)
+(*                                                                             *)
+(* The headline theorems take caller-side parameter bounds; here the trivial      *)
+(* arithmetic is done ONCE.  `corner_params_exist` picks rho = delta = sigma  *)
+(* := eps / (4 * M) with M one more than the largest coordinate magnitude, and *)
+(* the `_auto` wrappers additionally discharge the clearance hypothesis via    *)
+(* `vertex_pruned_clearance` (under the JCT strand's standing generic-position *)
+(* guard `no_horizontal_edges`; see RingClearance.v).  In the convex wrapper   *)
+(* `delta` is further shrunk below `rho * gap / (C1 + C2 + 1)` for the         *)
+(* far-wall smallness -- near-parallel gaps only SHRINK the parameters, they   *)
+(* never invalidate the statement.                                             *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma corner_params_exist :
+  forall (u1 u2 : Vec) (eps : R),
+    0 < eps ->
+    exists rho delta sigma : R,
+      0 < rho /\ 0 < delta /\ 0 < sigma /\
+      rho * Rabs (vx u1) + delta * Rabs (vy u1) < eps /\
+      rho * Rabs (vy u1) + delta * Rabs (vx u1) < eps /\
+      rho * Rabs (vx u2) + delta * Rabs (vy u2) < eps /\
+      rho * Rabs (vy u2) + delta * Rabs (vx u2) < eps /\
+      sigma * Rabs (vx u1) < eps /\
+      sigma * Rabs (vy u1) < eps.
+Proof.
+  intros u1 u2 eps Heps.
+  set (M := Rmax (Rmax (Rabs (vx u1)) (Rabs (vy u1)))
+                 (Rmax (Rabs (vx u2)) (Rabs (vy u2))) + 1).
+  assert (HM : Rmax (Rmax (Rabs (vx u1)) (Rabs (vy u1)))
+                    (Rmax (Rabs (vx u2)) (Rabs (vy u2))) = M - 1)
+    by (unfold M; ring).
+  assert (Hb1x : Rabs (vx u1) <= M - 1).
+  { rewrite <- HM.
+    eapply Rle_trans; [ apply Rmax_l | apply Rmax_l ]. }
+  assert (Hb1y : Rabs (vy u1) <= M - 1).
+  { rewrite <- HM.
+    eapply Rle_trans; [ apply Rmax_r | apply Rmax_l ]. }
+  assert (Hb2x : Rabs (vx u2) <= M - 1).
+  { rewrite <- HM.
+    eapply Rle_trans; [ apply Rmax_l | apply Rmax_r ]. }
+  assert (Hb2y : Rabs (vy u2) <= M - 1).
+  { rewrite <- HM.
+    eapply Rle_trans; [ apply Rmax_r | apply Rmax_r ]. }
+  assert (HM1 : 1 <= M).
+  { pose proof (Rabs_pos (vx u1)).
+    pose proof (Rle_trans _ _ _ (Rabs_pos (vx u1)) Hb1x). lra. }
+  set (cpar := eps / (4 * M)).
+  assert (Hceq : cpar * (4 * M) = eps) by (unfold cpar; field; lra).
+  assert (Hcpos : 0 < cpar) by nra.
+  exists cpar, cpar, cpar.
+  split; [ exact Hcpos | split; [ exact Hcpos | split; [ exact Hcpos | ] ] ].
+  assert (Hp1x : cpar * Rabs (vx u1) <= cpar * (M - 1))
+    by (apply Rmult_le_compat_l; lra).
+  assert (Hp1y : cpar * Rabs (vy u1) <= cpar * (M - 1))
+    by (apply Rmult_le_compat_l; lra).
+  assert (Hp2x : cpar * Rabs (vx u2) <= cpar * (M - 1))
+    by (apply Rmult_le_compat_l; lra).
+  assert (Hp2y : cpar * Rabs (vy u2) <= cpar * (M - 1))
+    by (apply Rmult_le_compat_l; lra).
+  repeat split; nra.
+Qed.
+
+(* Reflex auto-wrapper: the clearance hypothesis is the CYCLE-RING caller's
+   only remaining obligation (vertex off all non-incident ring edges). *)
+Theorem two_dart_corner_connected_reflex_auto :
+  forall (r : Ring) (v a b : Point),
+    no_horizontal_edges r ->
+    In (a, v) (ring_edges r) ->
+    In (v, b) (ring_edges r) ->
+    (forall f, In f (ring_edges r) -> f <> (a, v) -> f <> (v, b) ->
+       ~ on_edge f v) ->
+    vcross (point_diff a v) (point_diff b v) < 0 ->
+    exists rho delta : R, 0 < rho /\ 0 < delta /\
+      connected_in_complement_cont r
+        (point_at v (corner_sample_in (point_diff a v) rho delta))
+        (point_at v (corner_sample_out (point_diff b v) rho delta)).
+Proof.
+  intros r v a b Hnoh Hin Hout Hoffv Hc.
+  destruct (vertex_pruned_clearance r v (a, v) (v, b) Hnoh Hoffv)
+    as [eps [Heps Hball]].
+  destruct (corner_params_exist (point_diff a v) (point_diff b v) eps Heps)
+    as [rho [delta [sigma [Hr [Hd [Hs [B1 [B2 [B3 [B4 [B5 B6]]]]]]]]]]].
+  exists rho, delta. split; [ exact Hr | split; [ exact Hd | ] ].
+  exact (two_dart_corner_connected_reflex r v a b eps rho delta sigma
+           Hin Hout Hball Hc Hr Hd Hs B1 B2 B3 B4 B5 B6).
+Qed.
+
+(* Convex auto-wrapper: delta is additionally shrunk for the far-wall
+   smallness; a nearly-parallel gap only makes delta smaller. *)
+Theorem two_dart_corner_connected_convex_auto :
+  forall (r : Ring) (v a b : Point),
+    no_horizontal_edges r ->
+    In (a, v) (ring_edges r) ->
+    In (v, b) (ring_edges r) ->
+    (forall f, In f (ring_edges r) -> f <> (a, v) -> f <> (v, b) ->
+       ~ on_edge f v) ->
+    0 < vcross (point_diff a v) (point_diff b v) ->
+    exists rho delta : R, 0 < rho /\ 0 < delta /\
+      connected_in_complement_cont r
+        (point_at v (corner_sample_in (point_diff a v) rho delta))
+        (point_at v (corner_sample_out (point_diff b v) rho delta)).
+Proof.
+  intros r v a b Hnoh Hin Hout Hoffv Hc.
+  destruct (vertex_pruned_clearance r v (a, v) (v, b) Hnoh Hoffv)
+    as [eps [Heps Hball]].
+  destruct (corner_params_exist (point_diff a v) (point_diff b v) eps Heps)
+    as [rho [delta0 [sigma [Hr [Hd0 [Hs [B1 [B2 [B3 [B4 [B5 B6]]]]]]]]]]].
+  set (u1 := point_diff a v) in *.
+  set (u2 := point_diff b v) in *.
+  set (C1 := Rabs (vcross (vperpL u1) u2)).
+  set (C2 := Rabs (vcross u1 (vperpL u2))).
+  assert (HC1 : 0 <= C1) by apply Rabs_pos.
+  assert (HC2 : 0 <= C2) by apply Rabs_pos.
+  set (delta := Rmin delta0 (rho * vcross u1 u2 / (C1 + C2 + 1))).
+  assert (Hdle : delta <= delta0) by apply Rmin_l.
+  assert (Hdsm : delta <= rho * vcross u1 u2 / (C1 + C2 + 1)) by apply Rmin_r.
+  assert (Hdiv : 0 < rho * vcross u1 u2 / (C1 + C2 + 1))
+    by (apply Rdiv_lt_0_compat; nra).
+  assert (Hd : 0 < delta) by (unfold delta; apply Rmin_glb_lt; lra).
+  assert (Hdiveq : rho * vcross u1 u2 / (C1 + C2 + 1) * (C1 + C2 + 1)
+                   = rho * vcross u1 u2)
+    by (field; lra).
+  exists rho, delta. split; [ exact Hr | split; [ exact Hd | ] ].
+  apply (two_dart_corner_connected_convex r v a b eps rho delta
+           Hin Hout Hball Hc Hr Hd).
+  - (* delta * C1 < rho * gap *)
+    fold u1 u2 C1.
+    assert (Hstep : delta * (C1 + C2 + 1) <= rho * vcross u1 u2) by nra.
+    nra.
+  - fold u1 u2 C2.
+    assert (Hstep : delta * (C1 + C2 + 1) <= rho * vcross u1 u2) by nra.
+    nra.
+  - (* the four eps-bounds are monotone in delta *)
+    fold u1. pose proof (Rabs_pos (vy u1)). nra.
+  - fold u1. pose proof (Rabs_pos (vx u1)). nra.
+  - fold u2. pose proof (Rabs_pos (vy u2)). nra.
+  - fold u2. pose proof (Rabs_pos (vx u2)). nra.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Axiom audit.  Assembly wiring; allowlist axioms only.                       *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions vertex_pruned_clearance.
 Print Assumptions two_dart_corner_connected_reflex.
 Print Assumptions two_dart_corner_connected_convex.
+Print Assumptions two_dart_corner_connected_reflex_auto.
+Print Assumptions two_dart_corner_connected_convex_auto.
