@@ -530,6 +530,12 @@ theories/CornerConnector.v
 # and the two parities clash intuitionistically.  Both orientation
 # conjuncts (mirror via same_face_sym at twin d).  No Admitteds.
 theories/HBridgeCoreSlice.v
+# H-bridge attack C-3d step 1: the fan-gap sector bridge -- no fan dart's
+# direction lies strictly inside the CCW gap from a dart to its next
+# (dir_between cyclic order + the 8-way half-plane bridge from
+# SectorPath.in_open_sector, refuting five impossible sign patterns via
+# vcross_chain_cert).  No Admitteds.
+theories/FanGapSector.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
