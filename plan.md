@@ -874,6 +874,32 @@ closed/min-points conditions. The planned ladder:
   first sub-rung: the TWO-DART corner (v has exactly two incident darts,
   i.e. the walk continues around a degree-2 vertex of the cycle itself)
   before the general fan.
+
+  **C-3a (DONE, `RingClearance.v`): the clearance ball.**  Every corner
+  connector is genuinely two-dimensional (unlike C-1/C-2's fixed-height
+  corridors), so ONE analytic seed is unavoidable: an off-ring point of a
+  horizontal-free ring has a whole sup-metric ball inside
+  `ring_complement` (`ring_complement_ball`).  No sqrt/distance analysis:
+  per edge, a point off a non-horizontal closed segment either has its
+  height STRICTLY outside the closed y-span, or an ABSCISSA GAP to the
+  carrier line at its own height (affine graph x = al*y + be; the gap
+  shrinks by at most (1+|al|)*eps under an eps-perturbation) --
+  `off_edge_ball`, assembled by finite minimum (`off_edges_ball_list`).
+  Standard 2-axiom footprint, 0 Admitted.
+
+  **Orientation convention (pinned by survey, to be machine-checked as a
+  witness in C-3b).**  `DartAngularOrder.dir_lt` is azimuth order CCW
+  FROM EAST: `first_half` (upper half-plane, east ray included, west
+  excluded) before the lower half, `vcross`-sign within a half.  So
+  `next` is the CCW rotational successor, and a hand-computed 4-dart fan
+  (E < N < W < S, `next S = E` by wrap, `next E = N`) shows
+  `fstep = next o twin` turns a north-arriving walk east: the traced
+  face lies on the RIGHT of each dart, and the local face sector at a
+  corner is the CCW gap from `ddir (twin x)` to `ddir (fstep D x)`.
+  C-3b should machine-check this witness and then build the two-dart
+  corner connector: samples right-of-`x` and right-of-`fstep x` near `v`
+  joined by a short polyline inside the sector, sized by
+  `ring_complement_ball`.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
