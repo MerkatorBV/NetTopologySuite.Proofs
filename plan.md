@@ -997,6 +997,48 @@ closed/min-points conditions. The planned ladder:
   (the C-3 corner connectors + along-edge corridors + orbit induction
   are its building blocks).  Standard 2-axiom footprint, 0 Admitted.
 
+  **Discharge campaign for `face_transport_premise` (kickoff,
+  2026-07-02).**  The face walk `d = x_0 -> x_1 -> ... -> x_k = twin d`
+  (`x_{i+1} = fstep (darts_of E) x_i`; `k` exists from `same_face`, cf.
+  `EdgeFaceBridge.same_face_twin_first_step_index`) must carry a chain of
+  right-side samples through `ring_complement r` connecting the WEST
+  straddle point of `d` to the EAST one (right-of-`twin d` = left-of-`d`).
+  Decomposition, in build order:
+
+  - **C-3c (along-edge connector).**  Two right-side samples near the two
+    ends of one dart `x` connect in the complement.  For non-horizontal
+    `x` this is `JCTCorridor.corridor_connected` on the east or west
+    corridor of `x` over its y-span (side per C-2's `dart_side_straddle`
+    orientation computation); the per-ring-edge freedom obligations are
+    `corridor_avoid_west`/`_east`/`_below`/`_above` +
+    `JCTWalkKit.corridor_avoid_clipped_*` for endpoint-sharing edges.
+    The genuinely new content: the positional dichotomy for each ring
+    edge relative to `x`'s carrier (from `pairwise_no_proper_cross_
+    twin_aware` + `no_foreign_vertex_twin_aware`, mirroring how the
+    escape-descent walk derived them from tautness via `JCTWallClear`).
+  - **C-3d (general fan corner).**  The two-dart corner connector
+    (`CornerConnector.v`) generalises to fans with non-ring darts.  THE
+    pinned next lemma (the azimuth<->sector bridge flagged since the C-3
+    design): at vertex `v`, NO fan dart's direction lies strictly inside
+    the CCW gap from `ddir (twin x)` to `ddir (fstep D x)` --
+    `next_min_successor`/`next_wrap_least` translated through `dir_lt`'s
+    `first_half`+`vcross` definition into `SectorPath.in_open_sector`
+    certificates (finite case analysis over the three directions'
+    half-plane configurations).  With it, the corner polyline's sector
+    avoids every E-edge germ at `v`, not just the two walls.
+  - **C-3e (straddle tie-in).**  The chain's endpoints are corner
+    samples; the premise's points are the straddle pair at height `my`.
+    Connect same-side corner samples of `d` to `(edge_x_at d my -/+ ef,
+    my)` via the corridor along `d` itself (a ring edge, so the C-3c
+    obligations instantiate at `pre = []`/`suf = c`).
+  - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
+    walk by induction on the `same_face` index `k`, then close the
+    parity equality with `SegmentParityTransport.parity_eq_of_clear_
+    segment`-style transport (`parity_constant_on_components`).  One
+    subtlety to resolve here: intermediate walk darts may COINCIDE with
+    ring darts (the face walk can run along the cycle); those steps use
+    the ring-dart corridor case of C-3c directly.
+
 ---
 
 ## Observatory — JCT parity seam: general simple-polygon case (2026-07-01)
