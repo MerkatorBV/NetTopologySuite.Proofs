@@ -468,6 +468,17 @@ theories/EdgeConnectivity.v
 # undirected vertex reachability over a finite edge list -- the piece MapCounts.v
 # flagged as missing for num_components.  No Admitteds.
 theories/ReachableDec.v
+# H-bridge attack rung A: dart paths -- reachability as an explicit dart list,
+# vertex-simple path extraction (loops cut at repeated vertices), and the
+# headline that a non-cut edge lies on a vertex-simple cycle of length >= 3
+# (the shape the ring_simple/JCT strand can consume, unlike a
+# same_face-twin face walk).  No Admitteds.
+theories/DartPath.v
+# H-bridge attack rung B: the non-cut-edge cycle ring is a valid SIMPLE ring
+# (closed, min-points, core-NoDup, ring_simple) -- vertex-simplicity makes
+# the twin-aware noding proviso vacuous, evaporating the recorded face-walk
+# obstruction for the cycle object.  No Admitteds.
+theories/CycleRing.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

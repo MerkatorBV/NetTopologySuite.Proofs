@@ -748,6 +748,67 @@ open planar-topology content, not a bookkeeping gap.
 
 ---
 
+## Attack: same_face <-> cut-edge via the simple-cycle pivot (2026-07-02)
+
+**The pivot.** PR #319's negative result was PER-FACE: the face walk
+witnessing `same_face (darts_of E) d (twin d)` contains both `d` and
+`twin d`, so its ring is provably not `ring_simple` (a segment properly
+crosses its own reversal), and the whole winding-number/JCT strand refuses
+it. The CONTRAPOSITIVE object does not have this defect: if `d` is NOT a
+cut edge, then a surviving path from `dtip d` to `dbase d` in
+`E_minus E d`, closed up by `d` itself, is a CYCLE -- and once made
+vertex-simple it contains no twin pair at all (distinct visited vertices
+mean no undirected edge repeats in either orientation). Its ring is
+exactly the shape the JCT strand consumes: `ring_simple` (via the
+twin-aware noding predicate, whose `d1 <> twin d2` proviso is now
+vacuously satisfied), `ring_core_nodup` (by construction), plus the usual
+closed/min-points conditions. The planned ladder:
+
+- **Rung A (DONE, `DartPath.v`)**: dart paths as explicit lists.
+  `dpath D u v c` (chained darts), `reachable_dpath` (`reachable E u v <->
+  exists c, dpath (darts_of E) u v c` -- notably fully AXIOM-FREE),
+  `dpath_simple` (vertex-simple extraction: loops cut at repeated
+  vertices, strong induction on path length), and the headline
+  `non_cut_edge_simple_cycle`: if `In d E`, `~ In (twin d) E`,
+  `dbase d <> dtip d`, and `reachable (E_minus E d) (dtip d) (dbase d)`,
+  then a vertex-simple dart path `c` in `darts_of (E_minus E d)` joins
+  `dtip d` to `dbase d` with `2 <= length c` (a one-dart path would BE
+  `twin d`, excluded from `E_minus E d`). Together with `d` this is a
+  vertex-simple cycle of length >= 3 through `d`. Standard 2-axiom
+  footprint, 0 Admitted.
+- **Rung B (DONE, `CycleRing.v`)**: the cycle ring `ring_of_chain (d :: c)`
+  (`Dart = Edge = Point*Point`, so the dart list IS its own segment chain)
+  is `ring_closed` + `ring_has_minimum_points` + edge-faithful
+  (`RingExtract.face_walk_core` on the closed chain), `ring_core_nodup`
+  (rotating the path trace `map dbase c ++ [v] = u :: map dtip c`), and
+  `ring_simple` via `FaceTwinAware.ring_simple_of_subset_twin_aware`: the
+  positional skeleton `dpath_nth_pair` (the i-th dart is the i-th
+  consecutive trace pair) turns `NoDup` of the trace into
+  `dpath_no_twin_pair` / `dpath_chord_ne` / `cycle_window_twin_free`
+  (fully AXIOM-FREE) -- the cycle window contains NO twin pair, so the
+  twin-aware noding proviso is vacuous. Headline
+  `non_cut_edge_cycle_ring`: under `pairwise_no_proper_cross_twin_aware
+  (darts_of E)`, a non-cut proper edge with unique stored orientation lies
+  on a cycle whose ring is closed, min-points, core-NoDup, and SIMPLE,
+  with `ring_edges` exactly `d :: c` -- ready for
+  `GeneralTautBridge.parity_seam_offring_of_simple`. Standard 2-axiom
+  footprint, 0 Admitted.
+- **Rung C (the research core)**: the face-orbit/parity bridge -- no
+  theorem currently ties `fstep` orbits to winding parity (the two strands
+  share only the `ring_simple` vocabulary). The needed content: a face
+  walk of `E` never crosses the extracted cycle's ring (edges of `E` do
+  not properly cross ring edges by noding; fan rotations at ring vertices
+  stay on one side), so parity of a face-adjacent sample point is an
+  `fstep` invariant, while `d` and `twin d` sit on OPPOSITE sides of the
+  ring through `d`. This is the local-Jordan step; it is where the genuine
+  planar content enters.
+- **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
+  + Rung C's parity invariant yield a contradiction, discharging
+  `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
+  closing the loop with `EulerCoreInduction.euler_core_reduction`.
+
+---
+
 ## Observatory — JCT parity seam: general simple-polygon case (2026-07-01)
 
 **Goal.** Extend the discharged families (rectangle `RectangleJCT.v`, right
