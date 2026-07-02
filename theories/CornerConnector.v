@@ -273,8 +273,72 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* §7  The convex-gap mirror: a single certified chord.                        *)
+(* -------------------------------------------------------------------------- *)
+
+(* In a convex gap the samples connect by ONE straight hop; the far-wall
+   certificates hold under `CornerSamples`' explicit smallness inequalities
+   (delta small against rho, relative to the gap's cross and the perp
+   crosses).  No sigma, no midpoints. *)
+Theorem two_dart_corner_connected_convex :
+  forall (r : Ring) (v a b : Point) (eps rho delta : R),
+    In (a, v) (ring_edges r) ->
+    In (v, b) (ring_edges r) ->
+    (forall q : Point,
+       Rabs (px q - px v) < eps -> Rabs (py q - py v) < eps ->
+       forall f, In f (ring_edges r) -> f <> (a, v) -> f <> (v, b) ->
+         ~ on_edge f q) ->
+    0 < vcross (point_diff a v) (point_diff b v) ->
+    0 < rho -> 0 < delta ->
+    delta * Rabs (vcross (vperpL (point_diff a v)) (point_diff b v))
+      < rho * vcross (point_diff a v) (point_diff b v) ->
+    delta * Rabs (vcross (point_diff a v) (vperpL (point_diff b v)))
+      < rho * vcross (point_diff a v) (point_diff b v) ->
+    rho * Rabs (vx (point_diff a v)) + delta * Rabs (vy (point_diff a v)) < eps ->
+    rho * Rabs (vy (point_diff a v)) + delta * Rabs (vx (point_diff a v)) < eps ->
+    rho * Rabs (vx (point_diff b v)) + delta * Rabs (vy (point_diff b v)) < eps ->
+    rho * Rabs (vy (point_diff b v)) + delta * Rabs (vx (point_diff b v)) < eps ->
+    connected_in_complement_cont r
+      (point_at v (corner_sample_in (point_diff a v) rho delta))
+      (point_at v (corner_sample_out (point_diff b v) rho delta)).
+Proof.
+  intros r v a b eps rho delta Hin Hout Hball Hc Hr Hd
+         Hsmall_in Hsmall_out Hb_in_x Hb_in_y Hb_out_x Hb_out_y.
+  set (u1 := point_diff a v) in *.
+  set (u2 := point_diff b v) in *.
+  assert (Hu1 : u1 <> vzero)
+    by (intro Hz; rewrite Hz, vcross_zero_l in Hc; lra).
+  assert (Hu2 : u2 <> vzero)
+    by (intro Hz; rewrite Hz, vcross_zero_r in Hc; lra).
+  assert (H11 : 0 < vcross u1 (corner_sample_in u1 rho delta))
+    by (apply corner_sample_in_cert; assumption).
+  assert (H12 : 0 < vcross (corner_sample_in u1 rho delta) u2)
+    by (apply corner_sample_in_cert_far; try assumption; lra).
+  assert (H21 : 0 < vcross u1 (corner_sample_out u2 rho delta))
+    by (apply corner_sample_out_cert_far; try assumption; lra).
+  assert (H22 : 0 < vcross (corner_sample_out u2 rho delta) u2)
+    by (apply corner_sample_out_cert; assumption).
+  pose proof (corner_sample_in_bound u1 rho delta ltac:(lra) ltac:(lra))
+    as [HinBx HinBy].
+  pose proof (corner_sample_out_bound u2 rho delta ltac:(lra) ltac:(lra))
+    as [HoutBx HoutBy].
+  apply hop_connected. intros t Ht.
+  apply (corner_offset_in_complement r v a b eps); [ exact Hball | | | ].
+  - exact (sector_path_convex u1 u2 _ _ Hc H11 H12 H21 H22 t Ht).
+  - eapply Rle_lt_trans; [ apply vaffine_bound_x; exact Ht | ].
+    apply Rmax_lub_lt;
+      [ eapply Rle_lt_trans; [ exact HinBx | exact Hb_in_x ]
+      | eapply Rle_lt_trans; [ exact HoutBx | exact Hb_out_x ] ].
+  - eapply Rle_lt_trans; [ apply vaffine_bound_y; exact Ht | ].
+    apply Rmax_lub_lt;
+      [ eapply Rle_lt_trans; [ exact HinBy | exact Hb_in_y ]
+      | eapply Rle_lt_trans; [ exact HoutBy | exact Hb_out_y ] ].
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Axiom audit.  Assembly wiring; allowlist axioms only.                       *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions vertex_pruned_clearance.
 Print Assumptions two_dart_corner_connected_reflex.
+Print Assumptions two_dart_corner_connected_convex.

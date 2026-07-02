@@ -949,11 +949,20 @@ closed/min-points conditions. The planned ladder:
   `connected_in_complement_cont_trans`.  Parameter sizing is
   caller-side: six explicit linear bounds place all four polyline
   anchors in the ball.  Standard 2-axiom footprint, 0 Admitted.
-  C-3b step 5 (next): the CONVEX-gap mirror (single chord; far-wall
-  certificates under `CornerSamples`' explicit smallness inequalities);
-  then the general fan (non-cycle darts inside the gap) and the
-  degree-2-cycle-vertex instantiation discharging the pruned-clearance
-  hypothesis from rung B's positional lemmas.
+  **C-3b step 5 (DONE, same file): the CONVEX-gap mirror.**
+  `two_dart_corner_connected_convex`: one straight hop; the far-wall
+  certificates hold under `CornerSamples`' explicit smallness
+  inequalities (`delta * |cross(perp, wall)| < rho * cross(u1,u2)`), no
+  sigma, no midpoints.  With reflex + convex both done (parallel is
+  excluded by `fan_ok`), the TWO-DART CORNER CONNECTOR IS COMPLETE.
+  Standard 2-axiom footprint, 0 Admitted.
+  Next in C-3: the general fan (non-cycle darts inside the gap -- the
+  fan splits the corner gap into sub-gaps, and the face-walk turn
+  `next` picks the FIRST sub-gap; the connector must additionally avoid
+  the non-ring E-edges at the vertex, which are off the ring by noding),
+  and the degree-2-cycle-vertex instantiation discharging the
+  pruned-clearance hypothesis from rung B's positional lemmas; then the
+  along-edge transport (corridor reuse) and the orbit induction.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
