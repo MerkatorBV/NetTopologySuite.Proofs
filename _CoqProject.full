@@ -479,6 +479,13 @@ theories/DartPath.v
 # the twin-aware noding proviso vacuous, evaporating the recorded face-walk
 # obstruction for the cycle object.  No Admitteds.
 theories/CycleRing.v
+# H-bridge attack rung C-1: the straddle pair -- the two sides of any edge of
+# a simple, T-junction-free, horizontal-edge-free ring carry OPPOSITE
+# point-in-ring parity (generic ray height avoiding vertex heights;
+# ring_taut puts the edge's interior point off all other edges;
+# ho_cross_stable_generic + the one-edge flip assemble the pair).
+# No Admitteds.
+theories/StraddlePair.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
