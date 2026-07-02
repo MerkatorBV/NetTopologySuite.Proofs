@@ -930,13 +930,30 @@ closed/min-points conditions. The planned ladder:
   polyline point's distance from the vertex an explicit linear
   expression in `rho`, `delta`, `sigma`.  Standard 2-axiom footprint,
   0 Admitted.
-  C-3b step 4 (next): the ring-side assembly of the two-dart corner
-  connector -- convert the vector certificates to `Point` coordinates at
-  the vertex, split the ring edges into the two incident ones (excluded
-  by the wall-ray lemmas) and the rest (vertex is off them by
-  tautness/no-T-junction; clearance via `off_edges_ball_list`), size
-  `rho`/`delta`/`sigma` into the ball, and package as
-  `connected_in_complement` for a degree-2 cycle vertex.
+  **C-3b step 4 (DONE, `CornerConnector.v`): the two-dart corner
+  connector, REFLEX case.**  `two_dart_corner_connected_reflex`: at a
+  vertex `v` with incident ring edges `(a, v)` (arriving) and `(v, b)`
+  (departing) whose gap is reflex (`vcross u1 u2 < 0`, `u1 := a - v`,
+  `u2 := b - v`), the right-of-arriving sample `point_at v
+  (corner_sample_in u1 rho delta)` connects to the right-of-departing
+  sample inside `ring_complement r`, along the three scaled hops.
+  Pieces: `sector_point_off_incident_in`/`_out` (an on-edge witness for
+  an incident edge IS a wall-ray point -- coordinate/vector conversion,
+  excluded by the kernel's ray lemmas); `vertex_pruned_clearance`
+  (`off_edges_ball_list` on the ring edges minus the two incident ones,
+  given the vertex is off all others -- the hypothesis the cycle-ring
+  caller discharges from tautness/no-T-junction);
+  `corner_offset_in_complement` (certificate + ball bounds =>
+  complement); `hop_connected` (straight complement hop =>
+  `connected_in_complement_cont`); chained with
+  `connected_in_complement_cont_trans`.  Parameter sizing is
+  caller-side: six explicit linear bounds place all four polyline
+  anchors in the ball.  Standard 2-axiom footprint, 0 Admitted.
+  C-3b step 5 (next): the CONVEX-gap mirror (single chord; far-wall
+  certificates under `CornerSamples`' explicit smallness inequalities);
+  then the general fan (non-cycle darts inside the gap) and the
+  degree-2-cycle-vertex instantiation discharging the pruned-clearance
+  hypothesis from rung B's positional lemmas.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,

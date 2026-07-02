@@ -516,6 +516,12 @@ theories/SectorPath.v
 # polyline fits any clearance ball), and sup-norm bounds for ball sizing --
 # the pure-algebra half of the two-dart corner connector.  No Admitteds.
 theories/CornerSamples.v
+# H-bridge attack rung C-3b step 4: the two-dart corner connector, REFLEX
+# case -- certified offsets are off both incident edges (wall-ray
+# conversion), a pruned clearance ball covers the rest, straight hops are
+# continuous connectors, and the headline chains the three scaled hops with
+# caller-side parameter bounds.  No Admitteds.
+theories/CornerConnector.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
