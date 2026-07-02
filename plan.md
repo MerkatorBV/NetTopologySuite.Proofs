@@ -819,9 +819,26 @@ closed/min-points conditions. The planned ladder:
   rung B's cycle ring except the two generic-position guards
   (no-T-junction, no-horizontal), which the JCT strand carries
   everywhere.  Standard 2-axiom footprint, 0 Admitted.
-  Remaining in C: localise the pair to a chosen dart (samples near the
-  dart's midpoint on its two sides), and the `fstep`-invariance of sample
-  parity (the genuine local-Jordan content).
+  **C-2 (DONE, `StraddleSides.v`): the pair, geometrically labelled.**
+  `straddle_pair_sides` strengthens C-1 with (a) SIDES -- `dart_side` :=
+  `Azimuth.turn_sign` of the directed edge vs the sample (positive = CCW
+  = left, the corpus's own fan-order primitive), and from the
+  crossing-form zero the west sample's side is EXACTLY
+  `(py b - py a) * ef` (`dart_side_straddle`, pure algebra): ascending
+  edges put west on the left, descending on the right, so the headline
+  returns a strictly-left `pL` and strictly-right `pR`; and (b)
+  `ring_complement` for both samples WITHOUT any clearance analysis: on a
+  non-horizontal edge a point's height determines its abscissa
+  (`on_edge_at_height_x`), so the offset `ef` need only avoid the
+  finitely many abscissa gaps -- `avoid_finite_in_interval` again.
+  `opposite_parity_sym` (via the half-open parity decider) lets the
+  labelling swap the pair on descending edges.  Standard 2-axiom
+  footprint, 0 Admitted.
+  Remaining in C: the `fstep`-invariance of sample parity (the genuine
+  local-Jordan content): a face walk's side-sample never crosses the
+  cycle ring -- per-edge transport along a dart (`parity_eq_of_clear_segment`
+  is the tool) plus the fan-rotation corner step at each vertex, where
+  the angular order (`next`) must be tied to `dart_side` sectors.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
   `EdgeFaceBridge.H_bridge_premise` Euler-free on the min-degree->=2 core,
