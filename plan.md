@@ -915,11 +915,27 @@ closed/min-points conditions. The planned ladder:
   uniformly wall-1-certified, hop 3 uniformly wall-2-certified, hop 2
   wall-1 for `t < 1` and wall-2 at `t = 1`.  Standard 2-axiom footprint,
   0 Admitted.
-  C-3b step 3 (next): the two-dart corner connector -- instantiate
-  `w1`/`w2` with the concrete right-of-dart samples (their certificates
-  are algebra on `dart_side`), add the vertex-local clearance for
-  NON-incident ring edges (`off_edges_ball_list` on the fan-filtered
-  list; the vertex is off those edges by tautness), and package as
+  **C-3b step 3 (DONE, `CornerSamples.v`): the concrete samples.**  The
+  pure-algebra half of the corner connector: right-of-arriving-dart
+  sample `corner_sample_in u1 rho delta := rho*u1 + delta*perpL(u1)` and
+  right-of-departing `corner_sample_out u2 rho delta := rho*u2 -
+  delta*perpL(u2)`, whose NEAR-WALL certificates are unconditional
+  (`vcross u1 sample_in = delta*|u1|^2 > 0`, exactly what
+  `sector_path_reflex` consumes) and whose FAR-WALL certificates (needed
+  only in a convex gap) hold under the explicit smallness
+  `delta * |cross(perp, wall)| < rho * cross(u1,u2)`.  The reflex hops
+  are re-proved with SCALED midpoints (`sigma*perpL(u1)`,
+  `sigma*(-u1)`) so the whole polyline fits inside any clearance ball,
+  and `vaffine_bound_x`/`_y` + the sample/hop sup-norm bounds make every
+  polyline point's distance from the vertex an explicit linear
+  expression in `rho`, `delta`, `sigma`.  Standard 2-axiom footprint,
+  0 Admitted.
+  C-3b step 4 (next): the ring-side assembly of the two-dart corner
+  connector -- convert the vector certificates to `Point` coordinates at
+  the vertex, split the ring edges into the two incident ones (excluded
+  by the wall-ray lemmas) and the rest (vertex is off them by
+  tautness/no-T-junction; clearance via `off_edges_ball_list`), size
+  `rho`/`delta`/`sigma` into the ball, and package as
   `connected_in_complement` for a degree-2 cycle vertex.
 - **Rung D**: assembly -- `same_face d (twin d)` + the cycle from Rung A/B
   + Rung C's parity invariant yield a contradiction, discharging
