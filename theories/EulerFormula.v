@@ -170,7 +170,7 @@ From Stdlib Require Import List Arith Lia Bool.
 From NTS.Proofs Require Import Distance Overlay OverlayGraph EdgeConnectivity
                                EulerArrangement MapCounts ReachableDec EulerBridge
                                ClassCount Dart DartNextSpec DartFace
-                               ArrangementEMinus NumFacesShrink.
+                               ArrangementEMinus NumFacesShrink NumFacesIsolate.
 
 Import ListNotations.
 
@@ -724,6 +724,16 @@ Proof.
   intros E d HV HE HF HC. unfold euler_characteristic. lia.
 Qed.
 
+Lemma euler_transfer_isolate : forall E d,
+  num_vertices (E_minus E d) + 2 = num_vertices E ->
+  num_edges (E_minus E d) + 1 = num_edges E ->
+  num_faces (E_minus E d) + 1 = num_faces E ->
+  num_components (E_minus E d) + 1 = num_components E ->
+  (euler_characteristic E <-> euler_characteristic (E_minus E d)).
+Proof.
+  intros E d HV HE HF HC. unfold euler_characteristic. lia.
+Qed.
+
 Theorem euler_characteristic_leaf_edge_transfer : forall E d,
   NoDup E ->
   (forall v : Point, fan_ok (outgoing v (darts_of E))) ->
@@ -761,6 +771,235 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* [EF-4 induction] Isolated-K2 edge deltas, UNCONDITIONAL (Euler-free).       *)
+(*                                                                            *)
+(* The degenerate sub-case `euler_characteristic_leaf_edge_transfer` excludes *)
+(* outright (`In (snd d) (verts (E_minus E d))` fails when BOTH endpoints are *)
+(* degree-1): deleting a lone two-vertex, one-edge component drops the vertex *)
+(* count by exactly TWO and the component count by exactly ONE (the whole     *)
+(* component vanishes -- `EulerWitness.w1_euler`'s own witness, generalised   *)
+(* to sitting inside a larger graph).                                        *)
+(* -------------------------------------------------------------------------- *)
+
+(* Every OTHER vertex of E besides the isolated pair already survives in
+   `E_minus E d`. Mirrors `verts_E_eq_cons_of_leaf`, but for BOTH endpoints
+   vanishing at once. *)
+Lemma verts_E_eq_pair_of_isolate : forall E d p,
+  In d E -> In p (verts E) -> p <> fst d -> p <> snd d -> In p (verts (E_minus E d)).
+Proof.
+  intros E d p HdE Hp Hne1 Hne2.
+  apply in_verts in Hp. destruct Hp as [e [He Hend]].
+  destruct (edge_eq_dec e d) as [-> | Hedne].
+  - destruct Hend as [Hf | Hs].
+    + exfalso. exact (Hne1 (eq_sym Hf)).
+    + exfalso. exact (Hne2 (eq_sym Hs)).
+  - apply in_verts. exists e. split; [ apply in_E_minus; split; assumption | exact Hend ].
+Qed.
+
+(* Delta V = -2: both endpoints of the isolated edge vanish; every other
+   vertex survives. *)
+Lemma num_vertices_E_minus_isolate : forall E d,
+  In d E -> fst d <> snd d ->
+  ~ In (fst d) (verts (E_minus E d)) -> ~ In (snd d) (verts (E_minus E d)) ->
+  num_vertices (E_minus E d) + 2 = num_vertices E.
+Proof.
+  intros E d HdE Hproper Ha Hb.
+  unfold num_vertices.
+  set (V := nodup point_eq_dec (verts (E_minus E d))).
+  assert (HaE : In (fst d) (verts E))
+    by (apply in_verts; exists d; split; [ exact HdE | left; reflexivity ]).
+  assert (HbE : In (snd d) (verts E))
+    by (apply in_verts; exists d; split; [ exact HdE | right; reflexivity ]).
+  assert (Hcons_nodup : NoDup (fst d :: snd d :: V)).
+  { constructor.
+    - intros [Heq | Hc];
+        [ exact (Hproper (eq_sym Heq)) | apply nodup_In in Hc; exact (Ha Hc) ].
+    - constructor; [ intro Hc; apply nodup_In in Hc; exact (Hb Hc) | apply NoDup_nodup ]. }
+  assert (Hincl1 : incl (nodup point_eq_dec (verts E)) (fst d :: snd d :: V)).
+  { intros p Hp. apply nodup_In in Hp.
+    destruct (point_eq_dec p (fst d)) as [-> | Hne1]; [ left; reflexivity | ].
+    destruct (point_eq_dec p (snd d)) as [-> | Hne2]; [ right; left; reflexivity | ].
+    right; right. unfold V. apply nodup_In.
+    exact (verts_E_eq_pair_of_isolate E d p HdE Hp Hne1 Hne2). }
+  assert (Hincl2 : incl (fst d :: snd d :: V) (nodup point_eq_dec (verts E))).
+  { intros p [<- | [<- | Hp]].
+    - apply nodup_In. exact HaE.
+    - apply nodup_In. exact HbE.
+    - apply nodup_In. unfold V in Hp. apply nodup_In in Hp.
+      apply (verts_E_minus_incl E d). exact Hp. }
+  assert (Hlen : length (nodup point_eq_dec (verts E)) = length (fst d :: snd d :: V)).
+  { apply Nat.le_antisymm.
+    - apply NoDup_incl_length; [ apply NoDup_nodup | exact Hincl1 ].
+    - apply NoDup_incl_length; [ exact Hcons_nodup | exact Hincl2 ]. }
+  rewrite Hlen. cbn [length]. unfold V. lia.
+Qed.
+
+(* If a vertex has vanished from `E_minus E d`, nothing but itself can reach
+   it there. Generalises `reachable_Ed_x_a_false` to an arbitrary vanished
+   point (needed here for BOTH endpoints). *)
+Lemma reachable_Ed_ne_vanished_false : forall E d a x,
+  ~ In a (verts (E_minus E d)) -> x <> a -> ~ reachable (E_minus E d) x a.
+Proof.
+  intros E d a x Ha Hne Hr.
+  apply Ha. apply (reachable_ne_in_verts (E_minus E d) a x
+                     (reach_sym _ _ _ Hr) (fun h => Hne (eq_sym h))).
+Qed.
+
+(* Away from the vanished isolated pair, E and (E minus d)-reachability
+   agree exactly -- crossing `d` to reach either vanished endpoint is
+   impossible on the (E minus d) side (neither has any edges left there). *)
+Lemma reachable_agree_away_from_isolate : forall E d u v,
+  In d E -> ~ In (fst d) (verts (E_minus E d)) -> ~ In (snd d) (verts (E_minus E d)) ->
+  u <> fst d -> u <> snd d ->
+  (reachable E u v <-> reachable (E_minus E d) u v).
+Proof.
+  intros E d u v HdE Ha Hb Hu1 Hu2.
+  rewrite (reachable_add_edge_iff E d u v HdE).
+  split.
+  - intros [H1 | [[H2a _] | [H3a _]]].
+    + exact H1.
+    + exfalso. exact (reachable_Ed_ne_vanished_false E d (fst d) u Ha Hu1 H2a).
+    + exfalso. exact (reachable_Ed_ne_vanished_false E d (snd d) u Hb Hu2 H3a).
+  - intro H. left. exact H.
+Qed.
+
+(* Delta C = -1: the isolated pair WAS its own whole component (its only
+   edge connects the two of them, nothing else); removing it removes that
+   component entirely, untouching every other class. *)
+Lemma num_components_E_minus_isolate : forall E d,
+  In d E -> fst d <> snd d ->
+  ~ In (fst d) (verts (E_minus E d)) -> ~ In (snd d) (verts (E_minus E d)) ->
+  num_components (E_minus E d) + 1 = num_components E.
+Proof.
+  intros E d HdE Hproper Ha Hb.
+  set (Ed := E_minus E d).
+  set (V := nodup point_eq_dec (verts Ed)).
+  set (Vfull := fst d :: snd d :: V).
+  assert (HaE : In (fst d) (verts E))
+    by (apply in_verts; exists d; split; [ exact HdE | left; reflexivity ]).
+  assert (HbE : In (snd d) (verts E))
+    by (apply in_verts; exists d; split; [ exact HdE | right; reflexivity ]).
+  assert (Hincl1 : forall p, In p (nodup point_eq_dec (verts E)) -> In p Vfull).
+  { intros p Hp. apply nodup_In in Hp.
+    destruct (point_eq_dec p (fst d)) as [-> | Hne1]; [ left; reflexivity | ].
+    destruct (point_eq_dec p (snd d)) as [-> | Hne2]; [ right; left; reflexivity | ].
+    right; right. unfold V. apply nodup_In.
+    exact (verts_E_eq_pair_of_isolate E d p HdE Hp Hne1 Hne2). }
+  assert (Hincl2 : forall p, In p Vfull -> In p (nodup point_eq_dec (verts E))).
+  { intros p [<- | [<- | Hp]].
+    - apply nodup_In; exact HaE.
+    - apply nodup_In; exact HbE.
+    - apply nodup_In. unfold V in Hp. apply nodup_In in Hp. apply (verts_E_minus_incl E d); exact Hp. }
+  assert (HnumE : num_components E = count_classes (reachable_b E) Vfull).
+  { unfold num_components, comp_reps, count_classes.
+    apply Nat.le_antisymm.
+    - apply comp_reps_length_mono. exact Hincl1.
+    - apply comp_reps_length_mono. exact Hincl2. }
+  assert (HnumEd : num_components Ed = count_classes (reachable_b Ed) V) by reflexivity.
+  set (inO := fun x => reachable_b E x (fst d)).
+  assert (Hab : reachable E (fst d) (snd d)) by (apply reach_one, adj_edge, HdE).
+  assert (Hba : reachable E (snd d) (fst d)) by (apply reach_sym; exact Hab).
+  assert (HccE : forall x y, In x Vfull -> In y Vfull -> reachable_b E x y = true -> inO x = inO y).
+  { intros x y _ _ Hxy. unfold inO.
+    destruct (reachable_b E x (fst d)) eqn:Hxa; destruct (reachable_b E y (fst d)) eqn:Hya;
+      try reflexivity; exfalso.
+    - apply reachable_b_true_iff in Hxy, Hxa.
+      assert (reachable_b E y (fst d) = true)
+        by (apply reachable_b_true_iff, (reach_trans E y x (fst d));
+              [ apply reach_sym; exact Hxy | exact Hxa ]).
+      congruence.
+    - apply reachable_b_true_iff in Hxy, Hya.
+      assert (reachable_b E x (fst d) = true)
+        by (apply reachable_b_true_iff, (reach_trans E x y (fst d)); [ exact Hxy | exact Hya ]).
+      congruence. }
+  rewrite (count_classes_filter_split (reachable_b E) (reachable_b_refl E) inO Vfull HccE
+             (fun x y z _ _ _ => reachable_b_trans E x y z)) in HnumE.
+  assert (HblockE1 : count_classes (reachable_b E) (filter inO Vfull) = 1%nat).
+  { apply (count_classes_eq_1 (reachable_b E) (reachable_b_refl E)).
+    - intro Hnil.
+      assert (Hain : In (fst d) (filter inO Vfull))
+        by (apply filter_In; split; [ left; reflexivity | unfold inO; apply reachable_b_refl ]).
+      rewrite Hnil in Hain. destruct Hain.
+    - intros x y Hx Hy. apply filter_In in Hx. apply filter_In in Hy.
+      unfold inO in Hx, Hy. destruct Hx as [_ Hxa]. destruct Hy as [_ Hya].
+      apply reachable_b_true_iff in Hxa, Hya. apply reachable_b_true_iff.
+      apply (reach_trans E x (fst d) y); [ exact Hxa | apply reach_sym; exact Hya ]. }
+  assert (Hiff : forall z, In z (filter (fun x => negb (inO x)) Vfull) <-> In z V).
+  { intro z. split.
+    - intro Hz. apply filter_In in Hz. destruct Hz as [HzVfull Hzn].
+      unfold inO in Hzn. apply Bool.negb_true_iff in Hzn.
+      destruct HzVfull as [<- | [<- | HzV]].
+      + exfalso. rewrite reachable_b_refl in Hzn. discriminate.
+      + exfalso.
+        assert (Hbad : reachable_b E (snd d) (fst d) = true) by (apply reachable_b_true_iff; exact Hba).
+        rewrite Hbad in Hzn. discriminate.
+      + exact HzV.
+    - intro Hz. apply filter_In. split; [ right; right; exact Hz | ].
+      unfold inO. apply Bool.negb_true_iff.
+      destruct (reachable_b E z (fst d)) eqn:Hzeq; [ exfalso | reflexivity ].
+      apply reachable_b_true_iff in Hzeq.
+      assert (HzVd : In z (verts Ed)) by (unfold V in Hz; apply nodup_In in Hz; exact Hz).
+      assert (Hzne1 : z <> fst d) by (intro Heqz; subst z; exact (Ha HzVd)).
+      assert (Hzne2 : z <> snd d) by (intro Heqz; subst z; exact (Hb HzVd)).
+      apply (reachable_Ed_ne_vanished_false E d (fst d) z Ha Hzne1).
+      exact (proj1 (reachable_agree_away_from_isolate E d z (fst d) HdE Ha Hb Hzne1 Hzne2) Hzeq). }
+  assert (HmemF : forall z, In z (filter (fun x => negb (inO x)) Vfull) -> In z Vfull)
+    by (intros z Hz; apply filter_In in Hz; tauto).
+  assert (HmemV : forall z, In z V -> In z Vfull) by (intros z Hz; right; right; exact Hz).
+  assert (Hswitch : count_classes (reachable_b E) (filter (fun x => negb (inO x)) Vfull)
+                  = count_classes (reachable_b E) V).
+  { apply Nat.le_antisymm.
+    - apply (comp_reps_length_mono E (filter (fun x => negb (inO x)) Vfull) V).
+      intros z Hz. exact (proj1 (Hiff z) Hz).
+    - apply (comp_reps_length_mono E V (filter (fun x => negb (inO x)) Vfull)).
+      intros z Hz. exact (proj2 (Hiff z) Hz). }
+  assert (Hagree : forall x y, In x V -> In y V -> reachable_b E x y = reachable_b Ed x y).
+  { intros x y Hx Hy.
+    assert (HxVd : In x (verts Ed)) by (unfold V in Hx; apply nodup_In in Hx; exact Hx).
+    assert (HyVd : In y (verts Ed)) by (unfold V in Hy; apply nodup_In in Hy; exact Hy).
+    assert (Hxne1 : x <> fst d) by (intro Heqx; subst x; exact (Ha HxVd)).
+    assert (Hxne2 : x <> snd d) by (intro Heqx; subst x; exact (Hb HxVd)).
+    destruct (reachable_b E x y) eqn:Hxy1; destruct (reachable_b Ed x y) eqn:Hxy2;
+      try reflexivity; exfalso.
+    - apply reachable_b_true_iff in Hxy1.
+      apply (proj1 (reachable_agree_away_from_isolate E d x y HdE Ha Hb Hxne1 Hxne2)) in Hxy1.
+      apply reachable_b_true_iff in Hxy1. fold Ed in Hxy1. congruence.
+    - apply reachable_b_true_iff in Hxy2. fold Ed in Hxy2.
+      apply (proj2 (reachable_agree_away_from_isolate E d x y HdE Ha Hb Hxne1 Hxne2)) in Hxy2.
+      apply reachable_b_true_iff in Hxy2. congruence. }
+  assert (Hstep3 : count_classes (reachable_b E) V = count_classes (reachable_b Ed) V)
+    by (unfold count_classes; f_equal; apply class_reps_ext_on; exact Hagree).
+  rewrite HblockE1, Hswitch, Hstep3 in HnumE.
+  rewrite HnumEd. lia.
+Qed.
+
+(* Headline for the isolated-K2 case, mirroring
+   `euler_characteristic_leaf_edge_transfer`'s assembly exactly. *)
+Theorem euler_characteristic_isolated_edge_transfer : forall E d,
+  NoDup E ->
+  (forall v : Point, fan_ok (outgoing v (darts_of E))) ->
+  In d E -> ~ In (twin d) E ->
+  dbase d <> dtip d ->
+  outgoing (dbase d) (darts_of E) = [d] ->
+  outgoing (dtip d) (darts_of E) = [twin d] ->
+  ~ In (fst d) (verts (E_minus E d)) -> ~ In (snd d) (verts (E_minus E d)) ->
+  (euler_characteristic E <-> euler_characteristic (E_minus E d)).
+Proof.
+  intros E d Hnodup Hfan HdE Hntwin Hproper Hleaf_a Hleaf_b Ha Hb.
+  apply euler_transfer_isolate.
+  - exact (num_vertices_E_minus_isolate E d HdE Hproper Ha Hb).
+  - apply num_edges_E_minus, count_occ_1_of_NoDup; assumption.
+  - assert (Hne : darts_of E <> []).
+    { intro Hcontra.
+      assert (Hin : In d (darts_of E)) by (apply in_darts_of_orig; exact HdE).
+      rewrite Hcontra in Hin. destruct Hin. }
+    pose proof (num_faces_pos E Hfan Hne) as Hpos.
+    pose proof (num_faces_E_minus_isolate E d Hfan HdE Hntwin Hproper Hleaf_a Hleaf_b) as Hiso.
+    lia.
+  - exact (num_components_E_minus_isolate E d HdE Hproper Ha Hb).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Assumption audit: base case + transfer skeleton + [EF-1] + [EF-3] +         *)
 (* [EF-4] headline, no Admitted/Axiom.                                        *)
 (* -------------------------------------------------------------------------- *)
@@ -774,3 +1013,6 @@ Print Assumptions bridge_components_split.
 Print Assumptions num_vertices_E_minus_shrink.
 Print Assumptions num_components_E_minus_shrink.
 Print Assumptions euler_characteristic_leaf_edge_transfer.
+Print Assumptions num_vertices_E_minus_isolate.
+Print Assumptions num_components_E_minus_isolate.
+Print Assumptions euler_characteristic_isolated_edge_transfer.
