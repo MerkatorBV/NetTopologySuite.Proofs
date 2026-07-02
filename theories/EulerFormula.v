@@ -170,7 +170,8 @@ From Stdlib Require Import List Arith Lia Bool.
 From NTS.Proofs Require Import Distance Overlay OverlayGraph EdgeConnectivity
                                EulerArrangement MapCounts ReachableDec EulerBridge
                                ClassCount Dart DartNextSpec DartFace
-                               ArrangementEMinus NumFacesShrink NumFacesIsolate.
+                               ArrangementEMinus NumFacesShrink NumFacesShrinkTip
+                               NumFacesIsolate.
 
 Import ListNotations.
 
@@ -770,6 +771,177 @@ Proof.
   - exact (num_components_E_minus_shrink E d HdE Ha Hb).
 Qed.
 
+(* If a vertex has vanished from `E_minus E d`, nothing but itself can reach
+   it there. Generalises `reachable_Ed_x_a_false` to an arbitrary vanished
+   point (needed for both the tip-is-leaf mirror below and the isolated-K2
+   case, where BOTH endpoints vanish). *)
+Lemma reachable_Ed_ne_vanished_false : forall E d a x,
+  ~ In a (verts (E_minus E d)) -> x <> a -> ~ reachable (E_minus E d) x a.
+Proof.
+  intros E d a x Ha Hne Hr.
+  apply Ha. apply (reachable_ne_in_verts (E_minus E d) a x
+                     (reach_sym _ _ _ Hr) (fun h => Hne (eq_sym h))).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* [EF-4 induction] Tip-is-leaf mirror, UNCONDITIONAL (Euler-free).            *)
+(*                                                                            *)
+(* `euler_characteristic_leaf_edge_transfer` requires the leaf to sit at      *)
+(* `fst d` -- the E-STORED orientation's base.  `E_minus E d` only ever       *)
+(* removes the literal value `d`, so when the discovered leaf instead sits at *)
+(* `snd d`, none of the base-is-leaf lemmas above apply by simply swapping    *)
+(* arguments.  This mirrors every one of them (base<->tip, fst<->snd), using  *)
+(* `NumFacesShrinkTip.num_faces_E_minus_shrink_tip` for the face delta.       *)
+(* -------------------------------------------------------------------------- *)
+
+(* Every OTHER vertex of E besides the leaf `snd d` already survives, given
+   the far endpoint `fst d` does. Mirrors `verts_E_eq_cons_of_leaf`. *)
+Lemma verts_E_eq_cons_of_leaf_tip : forall E d p,
+  In d E -> In (fst d) (verts (E_minus E d)) ->
+  In p (verts E) -> p <> snd d -> In p (verts (E_minus E d)).
+Proof.
+  intros E d p HdE Ha Hp Hne.
+  apply in_verts in Hp. destruct Hp as [e [He Hend]].
+  destruct (edge_eq_dec e d) as [-> | Hedne].
+  - destruct Hend as [Hf | Hs].
+    + rewrite <- Hf. exact Ha.
+    + exfalso. exact (Hne (eq_sym Hs)).
+  - apply in_verts. exists e. split; [ apply in_E_minus; split; assumption | exact Hend ].
+Qed.
+
+(* Delta V = -1: the leaf vertex `snd d` disappears; every other vertex,
+   including the far endpoint `fst d`, survives. *)
+Lemma num_vertices_E_minus_shrink_tip : forall E d,
+  In d E -> In (fst d) (verts (E_minus E d)) -> ~ In (snd d) (verts (E_minus E d)) ->
+  num_vertices (E_minus E d) + 1 = num_vertices E.
+Proof.
+  intros E d HdE Ha Hb.
+  unfold num_vertices.
+  set (V := nodup point_eq_dec (verts (E_minus E d))).
+  assert (HbE : In (snd d) (verts E))
+    by (apply in_verts; exists d; split; [ exact HdE | right; reflexivity ]).
+  assert (Hcons_nodup : NoDup (snd d :: V))
+    by (constructor; [ intro Hc; apply nodup_In in Hc; exact (Hb Hc) | apply NoDup_nodup ]).
+  assert (Hincl1 : incl (nodup point_eq_dec (verts E)) (snd d :: V)).
+  { intros p Hp. apply nodup_In in Hp.
+    destruct (point_eq_dec p (snd d)) as [-> | Hne]; [ left; reflexivity | ].
+    right. unfold V. apply nodup_In. exact (verts_E_eq_cons_of_leaf_tip E d p HdE Ha Hp Hne). }
+  assert (Hincl2 : incl (snd d :: V) (nodup point_eq_dec (verts E))).
+  { intros p [<- | Hp].
+    - apply nodup_In. exact HbE.
+    - apply nodup_In. unfold V in Hp. apply nodup_In in Hp.
+      apply (verts_E_minus_incl E d). exact Hp. }
+  assert (Hlen : length (nodup point_eq_dec (verts E)) = length (snd d :: V)).
+  { apply Nat.le_antisymm.
+    - apply NoDup_incl_length; [ apply NoDup_nodup | exact Hincl1 ].
+    - apply NoDup_incl_length; [ exact Hcons_nodup | exact Hincl2 ]. }
+  rewrite Hlen. cbn [length]. unfold V. lia.
+Qed.
+
+(* Away from the vanished leaf `snd d`, E and (E minus d)-reachability agree
+   exactly. Mirrors `reachable_agree_away_from_leaf`, reusing
+   `reachable_Ed_ne_vanished_false`. *)
+Lemma reachable_agree_away_from_leaf_tip : forall E d u v,
+  In d E -> ~ In (snd d) (verts (E_minus E d)) ->
+  u <> snd d -> v <> snd d ->
+  (reachable E u v <-> reachable (E_minus E d) u v).
+Proof.
+  intros E d u v HdE Hb Hu Hv.
+  rewrite (reachable_add_edge_iff E d u v HdE).
+  split.
+  - intros [H1 | [[_ H2b] | [H3a _]]].
+    + exact H1.
+    + exfalso. exact (reachable_Ed_ne_vanished_false E d (snd d) v Hb Hv (reach_sym _ _ _ H2b)).
+    + exfalso. exact (reachable_Ed_ne_vanished_false E d (snd d) u Hb Hu H3a).
+  - intro H. left. exact H.
+Qed.
+
+(* Delta C = 0: peeling a leaf edge whose leaf sits at `snd d` changes no
+   component. Mirrors `num_components_E_minus_shrink`. *)
+Lemma num_components_E_minus_shrink_tip : forall E d,
+  In d E -> In (fst d) (verts (E_minus E d)) -> ~ In (snd d) (verts (E_minus E d)) ->
+  num_components (E_minus E d) = num_components E.
+Proof.
+  intros E d HdE Ha Hb.
+  set (Ed := E_minus E d).
+  set (V := nodup point_eq_dec (verts Ed)).
+  assert (HaV : In (fst d) V) by (unfold V; apply nodup_In; exact Ha).
+  assert (Hincl1 : forall p, In p (nodup point_eq_dec (verts E)) -> In p (snd d :: V)).
+  { intros p Hp. apply nodup_In in Hp.
+    destruct (point_eq_dec p (snd d)) as [-> | Hne].
+    - left; reflexivity.
+    - right. unfold V. apply nodup_In. exact (verts_E_eq_cons_of_leaf_tip E d p HdE Ha Hp Hne). }
+  assert (Hincl2 : forall p, In p (snd d :: V) -> In p (nodup point_eq_dec (verts E))).
+  { intros p [<- | Hp].
+    - apply nodup_In. apply in_verts; exists d; split; [ exact HdE | right; reflexivity ].
+    - apply nodup_In. unfold V in Hp. apply nodup_In in Hp. apply (verts_E_minus_incl E d); exact Hp. }
+  assert (Heq1 : length (comp_reps E (nodup point_eq_dec (verts E))) = length (comp_reps E (snd d :: V))).
+  { apply Nat.le_antisymm.
+    - apply comp_reps_length_mono. exact Hincl1.
+    - apply comp_reps_length_mono. exact Hincl2. }
+  assert (Hexists : existsb (fun z => reachable_b E z (snd d)) (comp_reps E V) = true).
+  { apply existsb_exists.
+    destruct (comp_reps_cover E V (fst d) HaV) as [r [Hr Hrb]].
+    exists r. split; [ exact Hr | ].
+    assert (Hab : reachable_b E (fst d) (snd d) = true)
+      by (apply reachable_b_true_iff, reach_one, adj_edge, HdE).
+    exact (reachable_b_trans E r (fst d) (snd d) Hrb Hab). }
+  assert (Hcons : comp_reps E (snd d :: V) = comp_reps E V).
+  { unfold comp_reps. cbn [class_reps]. fold (comp_reps E V). rewrite Hexists. reflexivity. }
+  assert (Hagree : forall x y, In x V -> In y V -> reachable_b E x y = reachable_b Ed x y).
+  { intros x y Hx Hy.
+    assert (Hxne : x <> snd d) by (intro Heq; subst x; unfold V in Hx; apply nodup_In in Hx; exact (Hb Hx)).
+    assert (Hyne : y <> snd d) by (intro Heq; subst y; unfold V in Hy; apply nodup_In in Hy; exact (Hb Hy)).
+    destruct (reachable_b E x y) eqn:Hxy1; destruct (reachable_b Ed x y) eqn:Hxy2;
+      try reflexivity; exfalso.
+    - apply reachable_b_true_iff in Hxy1.
+      apply (proj1 (reachable_agree_away_from_leaf_tip E d x y HdE Hb Hxne Hyne)) in Hxy1.
+      apply reachable_b_true_iff in Hxy1. fold Ed in Hxy1. congruence.
+    - apply reachable_b_true_iff in Hxy2. fold Ed in Hxy2.
+      apply (proj2 (reachable_agree_away_from_leaf_tip E d x y HdE Hb Hxne Hyne)) in Hxy2.
+      apply reachable_b_true_iff in Hxy2. congruence. }
+  assert (Hstep3 : comp_reps E V = comp_reps Ed V)
+    by (unfold comp_reps; apply class_reps_ext_on; exact Hagree).
+  unfold num_components. fold V. rewrite Heq1, Hcons, Hstep3. reflexivity.
+Qed.
+
+(* Headline for the tip-is-leaf case, mirroring
+   `euler_characteristic_leaf_edge_transfer`'s assembly exactly. *)
+Theorem euler_characteristic_leaf_edge_transfer_tip : forall E d,
+  NoDup E ->
+  (forall v : Point, fan_ok (outgoing v (darts_of E))) ->
+  In d E -> ~ In (twin d) E ->
+  dbase d <> dtip d ->
+  outgoing (dtip d) (darts_of E) = [twin d] ->
+  fstep (darts_of E) (twin d) <> d ->
+  In (fst d) (verts (E_minus E d)) ->
+  (euler_characteristic E <-> euler_characteristic (E_minus E d)).
+Proof.
+  intros E d Hnodup Hfan HdE Hntwin Hproper Hleaf Hnotrecip Ha.
+  assert (Hb : ~ In (snd d) (verts (E_minus E d))).
+  { intro Hcontra. apply in_verts in Hcontra. destruct Hcontra as [e [He Hend]].
+    destruct (proj1 (in_E_minus E d e) He) as [HeE Hene].
+    destruct Hend as [Hf | Hs].
+    - (* `e` itself is based at the leaf vertex `snd d`. *)
+      assert (HeD : In e (darts_of E)) by (apply in_darts_of_orig; exact HeE).
+      assert (HeOut : In e (outgoing (dtip d) (darts_of E)))
+        by (apply in_outgoing; split; [ exact HeD | unfold dtip; exact Hf ]).
+      rewrite Hleaf in HeOut. destruct HeOut as [Heq | []].
+      apply Hntwin. rewrite Heq. exact HeE.
+    - (* `twin e` is based at the leaf vertex `snd d`. *)
+      assert (HteD : In (twin e) (darts_of E)) by (apply in_darts_of_twin; exact HeE).
+      assert (HteOut : In (twin e) (outgoing (dtip d) (darts_of E))).
+      { apply in_outgoing. split; [ exact HteD | ].
+        unfold dtip, twin. cbn. exact Hs. }
+      rewrite Hleaf in HteOut. destruct HteOut as [Heq | []].
+      apply twin_inj in Heq. exact (Hene (eq_sym Heq)). }
+  apply euler_transfer_shrink.
+  - exact (num_vertices_E_minus_shrink_tip E d HdE Ha Hb).
+  - apply num_edges_E_minus, count_occ_1_of_NoDup; assumption.
+  - exact (num_faces_E_minus_shrink_tip E d Hfan HdE Hntwin Hproper Hleaf Hnotrecip).
+  - exact (num_components_E_minus_shrink_tip E d HdE Ha Hb).
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* [EF-4 induction] Isolated-K2 edge deltas, UNCONDITIONAL (Euler-free).       *)
 (*                                                                            *)
@@ -832,17 +1004,6 @@ Proof.
     - apply NoDup_incl_length; [ apply NoDup_nodup | exact Hincl1 ].
     - apply NoDup_incl_length; [ exact Hcons_nodup | exact Hincl2 ]. }
   rewrite Hlen. cbn [length]. unfold V. lia.
-Qed.
-
-(* If a vertex has vanished from `E_minus E d`, nothing but itself can reach
-   it there. Generalises `reachable_Ed_x_a_false` to an arbitrary vanished
-   point (needed here for BOTH endpoints). *)
-Lemma reachable_Ed_ne_vanished_false : forall E d a x,
-  ~ In a (verts (E_minus E d)) -> x <> a -> ~ reachable (E_minus E d) x a.
-Proof.
-  intros E d a x Ha Hne Hr.
-  apply Ha. apply (reachable_ne_in_verts (E_minus E d) a x
-                     (reach_sym _ _ _ Hr) (fun h => Hne (eq_sym h))).
 Qed.
 
 (* Away from the vanished isolated pair, E and (E minus d)-reachability
@@ -1013,6 +1174,9 @@ Print Assumptions bridge_components_split.
 Print Assumptions num_vertices_E_minus_shrink.
 Print Assumptions num_components_E_minus_shrink.
 Print Assumptions euler_characteristic_leaf_edge_transfer.
+Print Assumptions num_vertices_E_minus_shrink_tip.
+Print Assumptions num_components_E_minus_shrink_tip.
+Print Assumptions euler_characteristic_leaf_edge_transfer_tip.
 Print Assumptions num_vertices_E_minus_isolate.
 Print Assumptions num_components_E_minus_isolate.
 Print Assumptions euler_characteristic_isolated_edge_transfer.
