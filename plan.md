@@ -1029,9 +1029,20 @@ closed/min-points conditions. The planned ladder:
     along any such dart is ring-free for all small positive offsets --
     the exact foreign-dart counterpart of `wall_corridor_clear` (which
     covers ring darts on the taut cycle ring).  Standard 2-axiom
-    footprint, 0 Admitted.  Next steps: the ring-dart/twin instantiation
-    on the cycle ring + the window/endpoint plumbing tying corridor ends
-    to the corner samples (C-3e shapes).
+    footprint, 0 Admitted.
+    **Step 2 (DONE, `WalkCorridor.v`): the walk-dart corridor
+    dichotomy.**  `edge_x_at_twin`/`corridor_twin` (the reversed dart
+    has the SAME carrier line, so its corridor is pointwise equal);
+    headline `walk_dart_corridor_clear`: EVERY non-horizontal E-dart
+    carries a ring-free westward corridor over any span-interior window,
+    by the three-way split behind `in_dec`/`edge_eq_dec` -- ring dart
+    (the taut wall theorem), twin of a ring dart (same-carrier transfer,
+    mirrored span disjunct), foreign dart (the step-1 guards route).
+    Downstream transport steps never case on ring membership themselves.
+    Standard 2-axiom footprint, 0 Admitted.  Next steps: the
+    window/endpoint plumbing tying corridor ends to the corner samples,
+    and the east-side story for ascending walk darts (mirror corridor or
+    twin-side samples) -- C-3e shapes.
   - **C-3d (general fan corner).**  The two-dart corner connector
     (`CornerConnector.v`) generalises to fans with non-ring darts.
     **Step 1 (DONE, `FanGapSector.v`): the fan-gap sector bridge.**
