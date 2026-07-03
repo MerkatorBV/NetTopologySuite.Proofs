@@ -47,6 +47,10 @@ From NTS.Proofs Require Import Distance Overlay Vec Azimuth Dart RingExtract
                                JCTCorridor JCTTautClearance
                                GeneralTautBridge JCTHugStep StraddlePair
                                EdgeConnectivity RingClearance.
+(* EdgeConnectivity (edge_eq_dec) and RingClearance (on_edge + the
+   clearance-ball kit) import cleanly: both sit strictly below this file
+   in the dependency order (RingClearance imports only Distance/Overlay/
+   PointInRingTangents/JCTHugStep) -- checked cycle-free. *)
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -184,8 +188,14 @@ Proof.
     - exact (Hgen a Hfa).
     - exact (Hgen b Hfb). }
   destruct (ho_cross_agree_ball m (pre ++ suf) Hstab) as [eps [Heps Hball]].
-  (* a pruned clearance ball around m: OFF every ring edge except e0
-     (m is interior to e0; tautness keeps the others away) *)
+  (* A pruned clearance ball around m, OFF every ring edge except e0.
+     WHY eps2 > 0 IS AVAILABLE: m is an interior point of e0 (the
+     `Hint` t-witness, 0 < t < 1), so `interior_point_off_other_edges`
+     -- powered by `ring_taut` -- keeps m strictly off every OTHER
+     ring edge; `off_edge_ball` (per edge, needs `no_horizontal_edges`)
+     and `off_edges_ball_list` (the finite fold) then produce a
+     POSITIVE sup-radius.  No new geometric input: tautness of the
+     cycle ring is exactly what rung D's core slice already derives. *)
   set (keep := fun f : Edge => if edge_eq_dec f e0 then false else true).
   assert (Hkeep : forall f, In f (filter keep (ring_edges r)) <->
                     (In f (ring_edges r) /\ f <> e0)).
@@ -264,9 +274,13 @@ Proof.
   - apply (point_in_ring_flip_one_edge p1 p2 r pre suf e0 Hsplit Hav1 Hav2).
     + intros e He. exact (Hball p1 p2 Hb1x Hb1y Hb2x Hb2y e He).
     + split; [ intros _; exact Hnc2 | intros _; exact Hc1 ].
-  - (* the strip clearance: every point at height my within ef of the
-       crossing abscissa is inside the pruned ball, hence off every
-       OTHER ring edge *)
+  - (* THE STRIP SITS INSIDE THE PRUNED BALL.  The ball is 2-D with
+       sup-radius eps2 around m = (X, my); the strip is its
+       intersection with the line y = my, restricted to half-width
+       ef.  Horizontally |px q - X| <= ef < Rmin eps eps2 <= eps2
+       (strict, so the CLOSED strip fits in the OPEN ball); vertically
+       py q = my = py m exactly, so the offset is 0 < eps2.  Both
+       bounds below are those two facts verbatim. *)
     intros q f HfIn Hne Hqy Hqx.
     assert (HBX : Rabs (px q - px m) < eps2).
     { unfold m. cbn [px].

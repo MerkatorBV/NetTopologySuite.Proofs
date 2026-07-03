@@ -117,10 +117,19 @@ Definition face_transport_premise (E : list Edge) : Prop :=
                     (mkPoint (edge_x_at d my - ef) my) ->
     ring_complement (ring_of_chain (d :: c))
                     (mkPoint (edge_x_at d my + ef) my) ->
-    (* the near-d strip clearance `straddle_side_core` provides: at
+    (* The near-d STRIP CLEARANCE `straddle_side_core` provides: at
        height `my`, within `ef` of the crossing abscissa, no ring edge
-       but `d` itself is met -- this is what lets the walk transport
-       shrink/ride the offset without re-crossing the ring (C-3f) *)
+       but `d` itself is met.  Two deliberate design points:
+       (1) the UNIVERSAL (forall q) form, not just the two sample
+           points: the C-3f discharge rides/shrinks the offset along
+           the whole strip (parity transport between `(X -/+ ef, my)`
+           and `(X -/+ ef', my)`), so it needs every strip point, and
+           the producer has the full ball anyway;
+       (2) MONOTONE IN ef: the `Rabs .. <= ef` guard means the
+           hypothesis for `ef` implies it verbatim for every
+           0 < ef' <= ef -- the discharge gets a whole interval
+           (0, ef] of usable offsets and can always drop below its own
+           corridor_safe_for_ef-style thresholds (PR #341). *)
     (forall (q : Point) (f : Edge),
        In f (ring_edges (ring_of_chain (d :: c))) -> f <> d ->
        py q = my ->
