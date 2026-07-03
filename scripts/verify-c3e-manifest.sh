@@ -35,10 +35,14 @@ if ! cmp -s "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log"; then
   exit 1
 fi
 
-# Named artifact: one clean sequence body (run1 == run2 verified above).
-cp "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e.log"
-echo "# VP0: objective sequence executed twice; cmp git-c3e-run1.log git-c3e-run2.log OK" \
-  >>"$SCRATCH/git-c3e.log"
+# Named artifact: both runs verbatim (cmp gate above proves identity).
+{
+  echo "=== RUN 1 ==="
+  cat "$SCRATCH/git-c3e-run1.log"
+  echo "=== RUN 2 ==="
+  cat "$SCRATCH/git-c3e-run2.log"
+  echo "# VP0: objective sequence executed twice; cmp git-c3e-run1.log git-c3e-run2.log OK"
+} >"$SCRATCH/git-c3e.log"
 
 {
   echo "VP0_GIT_CAPTURE_OK"
