@@ -1142,8 +1142,12 @@ Proof.
 Qed.
 
 (* C-3e-4 headline: names the exact `face_transport_premise` pair and wires
-   west (descending) / east (ascending) corridor rides.  Ring-dart east at
-   `my` is deferred to C-3f orbit (carrier blocks same-height chord). *)
+   west (descending) / east (ascending) corridor rides.
+   The first conj gives UNCONDITIONAL exact targets
+   `(edge_x_at d my - ef, my)` / `(edge_x_at d my + ef, my)` via
+   `face_transport_straddle_pair_eq`.  Connection facts are case-split
+   (ring membership × vy sign); ring-dart east at `my` on descending darts
+   is deferred to C-3f orbit (carrier blocks same-height chord). *)
 Theorem corridor_safe_for_ef :
   forall (D : list Dart) (r : Ring) (d : Dart) (rho ef my h_base h_tip ylo yhi delta0 : R),
     ring_taut r ->

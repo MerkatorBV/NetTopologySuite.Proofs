@@ -35,14 +35,8 @@ if ! cmp -s "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log"; then
   exit 1
 fi
 
-# Named artifact: both runs verbatim (cmp gate above proves identity).
-{
-  echo "=== RUN 1 ==="
-  cat "$SCRATCH/git-c3e-run1.log"
-  echo "=== RUN 2 ==="
-  cat "$SCRATCH/git-c3e-run2.log"
-  echo "# VP0: objective sequence executed twice; cmp git-c3e-run1.log git-c3e-run2.log OK"
-} >"$SCRATCH/git-c3e.log"
+# Named artifact: literal objective sequence twice (no headers/footers; cmp above).
+cat "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log" >"$SCRATCH/git-c3e.log"
 
 {
   echo "VP0_GIT_CAPTURE_OK"
@@ -107,6 +101,7 @@ echo "STEP4_CHECK_ADMITTED_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 cat > "$SCRATCH/exercise_c3e.v" <<'COQ'
 From NTS.Proofs Require Import CornerCorridorBridge.
+Check face_transport_straddle_pair_eq.
 Check corridor_safe_for_ef.
 Print descending_sample_corridor_safe_for_ef.
 Check face_transport_premise_ring_dart_west_straddle_connected.
@@ -120,8 +115,10 @@ COQ
     -load-vernac-source "$SCRATCH/exercise_c3e.v"
 } 2>&1 | tee "$SCRATCH/c3e-lemma.log"
 
-if ! grep -q "edge_x_at descending_sample_dart sample_my" "$SCRATCH/c3e-lemma.log"; then
-  echo "VP4_FAIL: edge_x_at sample_my missing from Print output" | tee -a "$SCRATCH/verification-plan.log"
+if ! grep -qE "edge_x_at d my - ef|edge_x_at descending_sample_dart sample_my" \
+     "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: edge_x_at ±ef target missing from Check/Print output" \
+    | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
 if ! grep -q "face_transport_premise_ring_dart_west_straddle_connected" "$SCRATCH/c3e-lemma.log"; then
@@ -151,4 +148,18 @@ if ! grep -q "face_transport_premise_ring_dart_west_straddle_connected" "$SCRATC
   exit 1
 fi
 echo "VP5_WIRING_OK" | tee -a "$SCRATCH/vp5-wiring.log"
+
+{
+  echo "=== VP5b: straddle_eq_corridor + corridor_safe_for_ef headline ==="
+  grep -n "face_transport_straddle_pair_eq\|straddle_west_eq_corridor\|straddle_east_eq_corridor" \
+    theories/CornerCorridorBridge.v | head -12
+  grep -n "destruct (face_transport_straddle_pair_eq\|destruct (corridor_safe_for_ef" \
+    theories/CornerCorridorBridge.v
+} | tee -a "$SCRATCH/vp5-wiring.log"
+
+if ! grep -q "face_transport_straddle_pair_eq" "$SCRATCH/vp5-wiring.log"; then
+  echo "VP5_FAIL: face_transport_straddle_pair_eq missing from headline wiring" \
+    | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
 echo "C3E_EVIDENCE_CAPTURE_OK" | tee -a "$SCRATCH/verification-plan.log"
