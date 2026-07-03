@@ -51,11 +51,16 @@ rm -f "$SCRATCH"/build-*.log "$SCRATCH"/check-admitted.log \
     theories/C-3e-ef-corridor-assumption.v
   echo "DOC_STUB_LINES=$(wc -l < theories/C-3e-ef-corridor-assumption.v)"
   echo ""
+} | tee "$SCRATCH/verification-plan.log"
+
+{
   echo "=== VP5: cross-file straddle wiring ==="
   grep -n "edge_x_at d my - ef\|edge_x_at d my + ef" theories/HBridgeCoreSlice.v
-  grep -n "face_transport_west_straddle_headline_connected\|face_transport_straddle_pair_eq" \
+  grep -n "face_transport_premise_west_target_corridor\|face_transport_premise_straddle_pair_eq\|face_transport_premise_west_in_complement" \
+    theories/HBridgeCoreSlice.v
+  grep -n "face_transport_west_straddle_headline_connected\|face_transport_straddle_pair_eq\|Theorem corridor_safe_for_ef" \
     theories/CornerCorridorBridge.v
-} | tee "$SCRATCH/verification-plan.log"
+} | tee "$SCRATCH/vp5-wiring.log"
 
 if ! grep -q "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md; then
   echo "VP2_FAIL: C-3e-4 section missing in plan.md" | tee -a "$SCRATCH/verification-plan.log"
@@ -73,7 +78,12 @@ if ! grep -q "Lemma descending_sample_corridor_safe_for_ef" theories/CornerCorri
   echo "VP2_FAIL: concrete sample application missing" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
+if ! grep -q "Lemma face_transport_premise_west_in_complement" theories/HBridgeCoreSlice.v; then
+  echo "VP5_FAIL: HBridgeCoreSlice cross-file wiring missing" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
 echo "VP2_C3E4_OK" | tee -a "$SCRATCH/verification-plan.log"
+echo "VP5_WIRING_OK" | tee -a "$SCRATCH/vp5-wiring.log"
 
 {
   echo "=== VP3: standard project build ==="
