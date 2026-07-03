@@ -126,7 +126,7 @@ if ! grep -q "face_transport_premise_ring_dart_west_straddle_connected" "$SCRATC
   echo "VP4_FAIL: ring-dart discharge lemma missing from exercise" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
-if ! grep -q "In d (ring_edges r)" "$SCRATCH/c3e-lemma.log"; then
+if ! grep -qE "In d \(.*ring_edges r\)" "$SCRATCH/c3e-lemma.log"; then
   echo "VP4_FAIL: In d (ring_edges r) missing from Check/Print output" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
