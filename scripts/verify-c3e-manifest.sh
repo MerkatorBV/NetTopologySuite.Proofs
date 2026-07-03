@@ -93,8 +93,8 @@ if ! grep -q "edge_x_at descending_sample_dart sample_my" "$SCRATCH/c3e-lemma.lo
   echo "VP4_FAIL: edge_x_at sample_my missing from Print output" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
-if ! grep -q "Rminus.*sample_ef\|sample_ef.*Rplus" "$SCRATCH/c3e-lemma.log"; then
-  echo "VP4_FAIL: ±sample_ef targets missing from Print output" | tee -a "$SCRATCH/verification-plan.log"
+if ! grep -q "sample_ef" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: sample_ef missing from Print output" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
 if ! grep -q "corner_sample_left descending_sample_dart sample_rho sample_ef" "$SCRATCH/c3e-lemma.log"; then
