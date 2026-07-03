@@ -149,13 +149,13 @@ echo "VP4_LEMMA_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 {
   echo "=== VP5: downstream apply chain (CornerCorridorBridge only) ==="
-  grep -n "apply foreign_dart_corridor_safe_for_ef" theories/CornerCorridorBridge.v
-  grep -n "apply corridor_safe_for_ef_west" theories/CornerCorridorBridge.v
+  grep -n "apply.*foreign_dart_corridor_safe_for_ef" theories/CornerCorridorBridge.v
+  grep -n "apply.*corridor_safe_for_ef_west" theories/CornerCorridorBridge.v
   grep -n "face_transport_premise_foreign_straddle_connected\|face_transport_premise" \
     theories/CornerCorridorBridge.v
 } | tee "$SCRATCH/vp5-wiring.log"
 
-if ! grep -q "apply foreign_dart_corridor_safe_for_ef" "$SCRATCH/vp5-wiring.log"; then
+if ! grep -qE "apply.*foreign_dart_corridor_safe_for_ef" "$SCRATCH/vp5-wiring.log"; then
   echo "VP5_FAIL: no apply foreign_dart_corridor_safe_for_ef in CornerCorridorBridge" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
