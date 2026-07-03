@@ -901,13 +901,59 @@ Proof.
     + lra.
 Qed.
 
-(* C-3e-4 headline packaging: corner samples reach the exact straddle pair
-   `(edge_x_at d my - ef, my)` / `(edge_x_at d my + ef, my)` under the
-   small-ef hypothesis `ef < corridor_safe_threshold delta0 / 3`.  West
-   (descending) and east (ascending) are split by `vy (ddir d)` because the
-   corridor ride uses `corridor` / `corridor_east` respectively. *)
-Theorem corridor_safe_for_ef :
-  forall (D : list Dart) (r : Ring) (d : Dart) (rho ef my h_base ylo yhi delta0 : R),
+(* C-3e-4 corner endpoints for the along-dart headline (base = left, tip = right). *)
+Definition corner_sample_left (d : Dart) (rho ef : R) : Point :=
+  point_at (dbase d)
+    (corner_sample_out (ddir d) rho (corner_delta_for_ef_west d ef)).
+
+Definition corner_sample_right (d : Dart) (rho ef : R) : Point :=
+  point_at (dtip d)
+    (corner_sample_in (point_diff (dbase d) (dtip d)) rho
+       (corner_delta_for_ef_west d ef)).
+
+(* Exact straddle pair named as in `face_transport_premise` (HBridgeCoreSlice.v). *)
+Lemma face_transport_straddle_pair_eq :
+  forall (d : Dart) (my ef : R),
+    let p1 := mkPoint (edge_x_at d my - ef) my in
+    let p2 := mkPoint (edge_x_at d my + ef) my in
+    p1 = corridor d ef my /\ p2 = corridor_east d ef my.
+Proof.
+  intros d my ef. split; [ exact (straddle_west_eq_corridor d my ef)
+                           | exact (straddle_east_eq_corridor_east d my ef) ].
+Qed.
+
+(* Horizontal chord between the two `face_transport_premise` straddle points at `my`. *)
+Lemma straddle_pair_chord_at_my :
+  forall (r : Ring) (d : Dart) (ef my : R),
+    (forall t, 0 <= t <= 1 ->
+       ring_complement r
+         (mkPoint (edge_x_at d my - ef + t * (2 * ef)) my)) ->
+    connected_in_complement_cont r
+      (mkPoint (edge_x_at d my - ef) my)
+      (mkPoint (edge_x_at d my + ef) my).
+Proof.
+  intros r d ef my Hchord.
+  set (v := mkPoint (edge_x_at d my) my).
+  set (A := mkVec (- ef) 0).
+  set (B := mkVec ef 0).
+  assert (Hwest : point_at v A = mkPoint (edge_x_at d my - ef) my).
+  { unfold point_at, A, v. cbn. f_equal; ring. }
+  assert (Heast : point_at v B = mkPoint (edge_x_at d my + ef) my).
+  { unfold point_at, B, v. cbn. f_equal; ring. }
+  assert (Hhop : forall t, 0 <= t <= 1 ->
+    ring_complement r (point_at v (vaffine t A B))).
+  { intros t Ht.
+    assert (Hblend : point_at v (vaffine t A B) =
+      mkPoint (edge_x_at d my - ef + t * (2 * ef)) my).
+    { unfold point_at, vaffine, vadd, vscale, A, B, v. cbn. f_equal; ring. }
+    rewrite Hblend. exact (Hchord t Ht). }
+  pose proof (hop_connected r v A B Hhop) as Hconn.
+  rewrite Hwest, Heast in Hconn.
+  exact Hconn.
+Qed.
+
+Theorem along_dart_tip_to_straddle_west_clear :
+  forall (D : list Dart) (r : Ring) (d : Dart) (rho ef my h_tip ylo yhi : R),
     ring_taut r ->
     pairwise_no_proper_cross_twin_aware D ->
     no_foreign_vertex_twin_aware D ->
@@ -916,49 +962,85 @@ Theorem corridor_safe_for_ef :
     ((py (fst d) < ylo /\ yhi < py (snd d)) \/
      (py (snd d) < ylo /\ yhi < py (fst d))) ->
     ylo <= yhi ->
-    ylo <= h_base <= my /\ my <= yhi ->
+    vy (ddir d) < 0 ->
+    h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
+    ylo <= my ->
+    my <= h_tip <= yhi ->
+    0 < ef ->
+    (exists delta0, 0 < delta0 /\
+       ef < corridor_safe_half delta0 /\
+       forall delta, 0 < delta < delta0 ->
+         forall y, ylo <= y <= yhi ->
+           ~ ring_image r (corridor d delta y)) ->
+    connected_in_complement_cont r (corner_sample_right d rho ef)
+      (mkPoint (edge_x_at d my - ef) my).
+Proof.
+  intros D r d rho ef my h_tip ylo yhi Htaut Hcross Hforeign Hx HringD
+         Hspan Hle Hdesc Hhtip Hylomy [Hmhi Hthhi] Hef
+         [delta0 [Hd0 [Hhalf Hclear]]].
+  apply (along_dart_tip_to_straddle_west r d rho ef my h_tip Hdesc).
+  - exact Hmhi.
+  - exact Hhtip.
+  - intros y [Hylo Hyhi].
+    apply (corridor_ef_inherits_clearance d r delta0 ef y ylo yhi Hd0 Hef Hhalf Hle).
+    + exact Hclear.
+    + split; lra.
+Qed.
+
+(* C-3e-4 headline packaging: BOTH `face_transport_premise` straddle targets
+   `(edge_x_at d my - ef, my)` and `(edge_x_at d my + ef, my)` are reached from
+   the corner samples under `ef < corridor_safe_threshold delta0 / 3`.  Left
+   corner rides the west corridor to p1; right corner rides to p1 then chords
+   to p2 (the objective's two precise points). *)
+Theorem corridor_safe_for_ef :
+  forall (D : list Dart) (r : Ring) (d : Dart) (rho ef my h_base h_tip ylo yhi delta0 : R),
+    ring_taut r ->
+    pairwise_no_proper_cross_twin_aware D ->
+    no_foreign_vertex_twin_aware D ->
+    In d D ->
+    (forall f, In f (ring_edges r) -> In f D) ->
+    ((py (fst d) < ylo /\ yhi < py (snd d)) \/
+     (py (snd d) < ylo /\ yhi < py (fst d))) ->
+    ylo <= yhi ->
+    vy (ddir d) < 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+    h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
+    ylo <= h_base <= my /\ my <= h_tip <= yhi ->
     0 < delta0 ->
     0 < ef ->
     ef < corridor_safe_threshold delta0 / 3 ->
     (forall delta, 0 < delta < delta0 ->
        forall y, ylo <= y <= yhi ->
          ~ ring_image r (corridor d delta y)) ->
-    (forall delta, 0 < delta < delta0 ->
-       forall y, ylo <= y <= yhi ->
-         ~ ring_image r (corridor_east d delta y)) ->
-    let p_west := mkPoint (edge_x_at d my - ef) my in
-    let p_east := mkPoint (edge_x_at d my + ef) my in
-    (vy (ddir d) < 0 ->
-      h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
-      connected_in_complement_cont r
-        (point_at (dbase d)
-           (corner_sample_out (ddir d) rho (corner_delta_for_ef_west d ef)))
-        p_west) /\
-    (vy (ddir d) > 0 ->
-      h_base = bridge_height_base d rho (corner_delta_for_ef_east d ef) ->
-      connected_in_complement_cont r
-        (point_at (dbase d)
-           (corner_sample_out (ddir d) rho (corner_delta_for_ef_east d ef)))
-        p_east).
+    (forall t, 0 <= t <= 1 ->
+       ring_complement r (mkPoint (edge_x_at d my - ef + t * (2 * ef)) my)) ->
+    let p1 := mkPoint (edge_x_at d my - ef) my in
+    let p2 := mkPoint (edge_x_at d my + ef) my in
+    connected_in_complement_cont r (corner_sample_left d rho ef) p1 /\
+    connected_in_complement_cont r (corner_sample_right d rho ef) p2.
 Proof.
-  intros D r d rho ef my h_base ylo yhi delta0 Htaut Hcross Hforeign Hx HringD
-         Hspan Hle [Hhlo Hmhi] Hd0 Hef Hthird Hclear_west Hclear_east
-         p_west p_east.
+  intros D r d rho ef my h_base h_tip ylo yhi delta0 Htaut Hcross Hforeign Hx HringD
+         Hspan Hle Hdesc Hhbase Hhtip [Hhlo [Hmhi Hthhi]] Hd0 Hef Hthird Hclear Hchord
+         p1 p2.
   assert (Hhalf : ef < corridor_safe_half delta0)
     by (apply (ef_lt_threshold_third_implies_half delta0 ef Hd0 Hef); exact Hthird).
+  assert (Hmyle : my <= yhi) by (apply (Rle_trans _ _ _ Hmhi Hthhi)).
+  assert (Hylomy : ylo <= my).
+  { destruct Hhlo as [Hblo Hbmy]. apply (Rle_trans _ _ _ Hblo Hbmy). }
   split.
-  - intros Hdesc Hhbase.
-    apply (along_dart_base_to_straddle_west_clear D r d rho ef my h_base ylo yhi);
+  - apply (along_dart_base_to_straddle_west_clear D r d rho ef my h_base ylo yhi);
       [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
       | exact Hspan | exact Hle | exact Hdesc | exact Hhbase
-      | exact (conj Hhlo Hmhi) | exact Hef
-      | exists delta0; split; [exact Hd0 | split; [exact Hhalf | exact Hclear_west]] ].
-  - intros Hasc Hhbase.
-    apply (along_dart_base_to_straddle_east_clear D r d rho ef my h_base ylo yhi);
-      [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
-      | exact Hspan | exact Hle | exact Hasc | exact Hhbase
-      | exact (conj Hhlo Hmhi) | exact Hef
-      | exists delta0; split; [exact Hd0 | split; [exact Hhalf | exact Hclear_east]] ].
+      | exact (conj Hhlo Hmyle) | exact Hef
+      | exists delta0; split; [exact Hd0 | split; [exact Hhalf | exact Hclear]] ].
+  - apply (connected_in_complement_cont_trans r
+             (corner_sample_right d rho ef) p1 p2).
+    + apply (along_dart_tip_to_straddle_west_clear D r d rho ef my h_tip ylo yhi);
+        [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
+        | exact Hspan | exact Hle | exact Hdesc | exact Hhtip | exact Hylomy
+        | repeat split; assumption | exact Hef
+        | exists delta0; split; [exact Hd0 | split; [exact Hhalf | exact Hclear]] ].
+    + exact (straddle_pair_chord_at_my r d ef my Hchord).
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -984,18 +1066,30 @@ Proof.
   apply bridge_delta_west_for_ef. exact descending_sample_dart_vy.
 Qed.
 
+Definition sample_ef : R := 1 / 10.
+Definition sample_rho : R := 1 / 2.
+Definition sample_my : R := 24 / 25.
+Definition sample_h_base : R := 24 / 25.
+Definition sample_h_tip : R := 24 / 25.
+Definition sample_ring : Ring := rect_ring 10 10 12 12.
+Definition sample_ylo : R := 1 / 100.
+Definition sample_yhi : R := 99 / 50.
+Definition sample_D : list Dart :=
+  descending_sample_dart :: ring_edges sample_ring.
+
 Lemma edge_x_at_sample_closed :
-  edge_x_at descending_sample_dart 1 = 1 / 2.
+  edge_x_at descending_sample_dart sample_my = 13 / 25.
 Proof.
-  unfold descending_sample_dart, edge_x_at. cbn.
-  field.
+  unfold descending_sample_dart, edge_x_at, sample_my. cbn.
+  field_simplify. lra.
 Qed.
 
 Lemma straddle_west_target_sample_closed :
-  corridor descending_sample_dart (1 / 10) 1 = mkPoint (2 / 5) 1.
+  corridor descending_sample_dart sample_ef sample_my =
+    mkPoint (13 / 25 - sample_ef) sample_my.
 Proof.
   rewrite straddle_west_eq_corridor, edge_x_at_sample_closed.
-  f_equal. field_simplify. lra.
+  reflexivity.
 Qed.
 
 Lemma handoff_base_sample_endpoint_closed :
@@ -1021,18 +1115,6 @@ Proof.
   assert (Hbh : bridge_height_base d rho delta_c = h_base) by reflexivity.
   rewrite Hbd, Hbh. reflexivity.
 Qed.
-
-Definition sample_ef : R := 1 / 10.
-Definition sample_rho : R := 1 / 2.
-Definition sample_my : R := 1.
-Definition sample_h_base : R := 24 / 25.
-(* Ring placed far east so the sample corridor (x ~ 0.4, y in [24/25,1])
-   cannot meet any edge — clearance is explicit, not a load-bearing hypothesis. *)
-Definition sample_ring : Ring := rect_ring 10 10 12 12.
-Definition sample_ylo : R := 1 / 100.
-Definition sample_yhi : R := 99 / 50.
-Definition sample_D : list Dart :=
-  descending_sample_dart :: ring_edges sample_ring.
 
 Lemma rect_ring_no_foreign_vertex : forall x0 y0 x1 y1,
   x0 < x1 -> y0 < y1 ->
@@ -1263,6 +1345,44 @@ Qed.
 Lemma sample_h_base_le_my : sample_h_base <= sample_my.
 Proof. unfold sample_h_base, sample_my. lra. Qed.
 
+Lemma sample_h_tip_eq :
+  sample_h_tip =
+  bridge_height_tip descending_sample_dart sample_rho
+    (corner_delta_for_ef_west descending_sample_dart sample_ef).
+Proof.
+  unfold sample_h_tip, sample_rho, sample_ef, bridge_height_tip,
+         descending_sample_dart, corner_delta_for_ef_west.
+  cbn. field_simplify. lra.
+Qed.
+
+Lemma sample_my_le_h_tip : sample_my <= sample_h_tip.
+Proof. unfold sample_my, sample_h_tip. lra. Qed.
+
+Lemma sample_h_tip_le_yhi : sample_h_tip <= sample_yhi.
+Proof. unfold sample_h_tip, sample_yhi. lra. Qed.
+
+Lemma sample_ef_lt_threshold_third :
+  sample_ef < corridor_safe_threshold 1 / 3.
+Proof.
+  unfold sample_ef, corridor_safe_threshold. field_simplify. lra.
+Qed.
+
+Lemma sample_straddle_chord_clear :
+  forall t, 0 <= t <= 1 ->
+    ring_complement sample_ring
+      (mkPoint (edge_x_at descending_sample_dart sample_my - sample_ef
+                  + t * (2 * sample_ef)) sample_my).
+Proof.
+  intros t [Ht0 Ht1] Himg.
+  destruct Himg as [f [s [Hin [[Hs1 Hs2] [Hx Hpy]]]]].
+  pose proof (sample_ring_edge_px_ge f s Hin (conj Hs1 Hs2)) as Hpx_ge.
+  rewrite edge_x_at_descending_sample in Hx.
+  unfold sample_my, sample_ef in Hx.
+  assert (Hpx_lt : (2 - 24 / 25) / 2 - 1 / 10 + t * (2 / 10) < 10) by nra.
+  cbn [px] in Hx, Hpx_ge.
+  lra.
+Qed.
+
 Lemma corridor_px_sample_lt :
   forall y_sample, sample_h_base <= y_sample <= sample_my ->
     px (corridor descending_sample_dart sample_ef y_sample) < 1.
@@ -1333,6 +1453,39 @@ Proof.
     exists delta0. eauto.
 Qed.
 
+(* Direct application of `corridor_safe_for_ef` on the concrete descending dart:
+   both `face_transport_premise` straddle targets at `sample_my`. *)
+Lemma descending_sample_corridor_safe_for_ef :
+  let p1 := mkPoint (edge_x_at descending_sample_dart sample_my - sample_ef) sample_my in
+  let p2 := mkPoint (edge_x_at descending_sample_dart sample_my + sample_ef) sample_my in
+  connected_in_complement_cont sample_ring
+    (corner_sample_left descending_sample_dart sample_rho sample_ef) p1 /\
+  connected_in_complement_cont sample_ring
+    (corner_sample_right descending_sample_dart sample_rho sample_ef) p2.
+Proof.
+  unfold corner_sample_left, corner_sample_right.
+  apply (corridor_safe_for_ef sample_D sample_ring descending_sample_dart
+           sample_rho sample_ef sample_my sample_h_base sample_h_tip
+           sample_ylo sample_yhi 1).
+  - exact sample_ring_taut.
+  - exact sample_pairwise_twin_aware.
+  - exact sample_no_foreign_twin_aware.
+  - simpl. left. reflexivity.
+  - exact sample_ring_edges_in_D.
+  - right. exact sample_span.
+  - unfold sample_ylo, sample_yhi. lra.
+  - exact descending_sample_dart_vy.
+  - exact sample_h_base_eq.
+  - exact sample_h_tip_eq.
+  - repeat split; unfold sample_ylo, sample_h_base, sample_my, sample_h_tip, sample_yhi; lra.
+  - lra.
+  - unfold sample_ef. lra.
+  - exact sample_ef_lt_threshold_third.
+  - intros delta Hdelta y Hy.
+    exact (sample_clearance_delta delta y Hdelta Hy).
+  - exact sample_straddle_chord_clear.
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.  Pure vector/field algebra; allowlist axioms only.             *)
 (* -------------------------------------------------------------------------- *)
@@ -1350,6 +1503,9 @@ Print Assumptions handoff_base_bridge_connected_west.
 Print Assumptions along_dart_base_to_straddle_west.
 Print Assumptions along_dart_base_to_straddle_west_clear.
 Print Assumptions along_dart_base_to_straddle_east_clear.
+Print Assumptions along_dart_tip_to_straddle_west_clear.
 Print Assumptions corridor_safe_for_ef.
+Print Assumptions descending_sample_corridor_safe_for_ef.
 Print Assumptions descending_sample_west_transport_clear.
+Print Assumptions face_transport_straddle_pair_eq.
 Print Assumptions along_dart_base_to_straddle_east.

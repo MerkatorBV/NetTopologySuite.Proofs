@@ -15,52 +15,48 @@ fi
 mkdir -p "$SCRATCH"
 rm -f "$SCRATCH"/*.log
 
-CHORE_MSG="chore(C-3e): document ef-vs-corridor open question + proposed lemma sketch"
-CHORE_HASH="$(git log --oneline --grep="$CHORE_MSG" -1 --format=%H 2>/dev/null || true)"
-CHORE_PARENT="$(git log -1 --format=%P "$CHORE_HASH" 2>/dev/null || true)"
-MAIN_TIP="$(git rev-parse origin/main 2>/dev/null || true)"
-FIRST_POST_FETCH="unknown"
-if [[ -n "$CHORE_HASH" && -n "$MAIN_TIP" ]]; then
-  if [[ "$CHORE_PARENT" == *"$MAIN_TIP"* ]]; then
-    FIRST_POST_FETCH="yes"
-  else
-    FIRST_POST_FETCH="no"
-  fi
-fi
-
 {
   echo "=== VP1: git status + log ==="
   git status --short
   echo "BRANCH=$(git branch --show-current)"
   echo "HEAD=$(git rev-parse --short HEAD)"
   git log --oneline -8
-  echo "CHORE_COMMIT=${CHORE_HASH:-missing}"
-  echo "CHORE_FIRST_POST_FETCH=${FIRST_POST_FETCH}"
-  git log --oneline -15 | grep -F "$CHORE_MSG" || echo "CHORE_MSG_MISSING"
   echo ""
-  echo "=== VP2: verbatim design note + doc stub + headline ==="
+  echo "=== VP2: C-3e-4 plan + corridor_safe_for_ef + face_transport wiring ==="
+  grep -n "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md
+  grep -n "connect to exact (edge_x_at … ±ef, my) targets" plan.md
+  grep -n "corridor_safe_for_ef" plan.md theories/CornerCorridorBridge.v
+  grep -n "face_transport_straddle_pair_eq\|face_transport_premise" \
+    theories/CornerCorridorBridge.v theories/HBridgeCoreSlice.v | head -20
+  grep -n "Theorem corridor_safe_for_ef\|Lemma descending_sample_corridor_safe_for_ef" \
+    theories/CornerCorridorBridge.v
+  echo ""
+  echo "=== VP2b: verbatim design note + doc stub ==="
   grep -n "C-3e open design note (post-PR#339)" theories/CornerCorridorBridge.v \
     theories/C-3e-ef-corridor-assumption.v
   grep -n "δ < threshold" theories/CornerCorridorBridge.v \
     theories/C-3e-ef-corridor-assumption.v
-  grep -n "∃ ε₀ > 0" theories/CornerCorridorBridge.v \
-    theories/C-3e-ef-corridor-assumption.v
   echo "DOC_STUB_LINES=$(wc -l < theories/C-3e-ef-corridor-assumption.v)"
-  grep -n "Lemma corridor_absorbs_ef\|Lemma descending_sample_west_transport_clear" \
-    theories/CornerCorridorBridge.v
   echo ""
 } | tee "$SCRATCH/verification-plan.log"
 
-if ! grep -q "δ < threshold" theories/C-3e-ef-corridor-assumption.v; then
-  echo "VP2_FAIL: verbatim δ marker missing in doc stub" | tee -a "$SCRATCH/verification-plan.log"
+if ! grep -q "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md; then
+  echo "VP2_FAIL: C-3e-4 section missing in plan.md" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
+if ! grep -q "Theorem corridor_safe_for_ef" theories/CornerCorridorBridge.v; then
+  echo "VP2_FAIL: corridor_safe_for_ef missing" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "Lemma descending_sample_corridor_safe_for_ef" theories/CornerCorridorBridge.v; then
+  echo "VP2_FAIL: concrete sample application missing" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+echo "VP2_C3E4_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 {
   echo "=== VP3: standard project build ==="
   echo "COMMAND: make -f Makefile.full.gen theories/CornerCorridorBridge.vo"
-  echo "MANIFEST: theories/CornerCorridorBridge.v (listed in _CoqProject.full)"
-  echo ""
   rm -f theories/CornerCorridorBridge.vo theories/CornerCorridorBridge.glob
   make -f Makefile.full.gen theories/CornerCorridorBridge.vo
   echo "BUILD_EXIT=0"
@@ -74,4 +70,36 @@ echo "STEP3_BUILD_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 bash scripts/check_admitted.sh 2>&1 | tee "$SCRATCH/check-admitted.log"
 echo "STEP4_CHECK_ADMITTED_OK" | tee -a "$SCRATCH/verification-plan.log"
+
+cat > "$SCRATCH/exercise_c3e.v" <<'COQ'
+From NTS.Proofs Require Import CornerCorridorBridge.
+Check corridor_safe_for_ef.
+Print corridor_safe_for_ef.
+Check descending_sample_corridor_safe_for_ef.
+Lemma c3e_sample_instantiated :
+  let p1 := mkPoint (edge_x_at descending_sample_dart sample_my - sample_ef) sample_my in
+  let p2 := mkPoint (edge_x_at descending_sample_dart sample_my + sample_ef) sample_my in
+  connected_in_complement_cont sample_ring
+    (corner_sample_left descending_sample_dart sample_rho sample_ef) p1 /\
+  connected_in_complement_cont sample_ring
+    (corner_sample_right descending_sample_dart sample_rho sample_ef) p2.
+Proof.
+  exact descending_sample_corridor_safe_for_ef.
+Qed.
+Check c3e_sample_instantiated.
+Print face_transport_straddle_pair_eq.
+COQ
+
+{
+  echo "=== VP4: lemma exercise (instantiated apply) ==="
+  rocq top -batch -quiet \
+    -Q theories NTS.Proofs -Q theories-flocq NTS.Proofs.Flocq \
+    -load-vernac-source "$SCRATCH/exercise_c3e.v"
+} 2>&1 | tee "$SCRATCH/c3e-lemma.log"
+
+if ! grep -q "descending_sample_corridor_safe_for_ef" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: sample instantiation missing from lemma log" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+echo "VP4_LEMMA_OK" | tee -a "$SCRATCH/verification-plan.log"
 echo "C3E_EVIDENCE_CAPTURE_OK" | tee -a "$SCRATCH/verification-plan.log"
