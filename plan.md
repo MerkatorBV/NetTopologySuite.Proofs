@@ -1039,10 +1039,22 @@ closed/min-points conditions. The planned ladder:
     (the taut wall theorem), twin of a ring dart (same-carrier transfer,
     mirrored span disjunct), foreign dart (the step-1 guards route).
     Downstream transport steps never case on ring membership themselves.
-    Standard 2-axiom footprint, 0 Admitted.  Next steps: the
-    window/endpoint plumbing tying corridor ends to the corner samples,
-    and the east-side story for ascending walk darts (mirror corridor or
-    twin-side samples) -- C-3e shapes.
+    Standard 2-axiom footprint, 0 Admitted.
+    **Step 3 (DONE, `MirrorCorridor.v`): east corridors by reflection --
+    C-3c COMPLETE as a corridor stack.**  The plane map `x |-> -x`
+    (`reflect_pt`/`reflect_edge`/`reflect_ring`) commutes with
+    `ring_edges`/`ring_image`/`twin`, negates the carrier abscissa
+    (`edge_x_at_reflect`, an unconditional `Rdiv` identity), and
+    preserves both twin-aware guards and `ring_taut` (all defining
+    conditions are linear in coordinates).  So the reflected dart's WEST
+    corridor is pointwise the reflection of the original dart's EAST
+    corridor (`corridor_reflect`), and the whole west stack transfers:
+    `walk_dart_corridor_east_clear` mirrors the step-2 dichotomy without
+    re-deriving any clearance.  Both sides of every non-horizontal walk
+    dart now carry ring-free corridors.  Standard 2-axiom footprint,
+    0 Admitted.  Next: the C-3e plumbing -- corridor ends at chosen
+    parking heights tied to the corner samples at the dart's two
+    vertices, and `corridor_connected`/east mirror wiring the segment.
   - **C-3d (general fan corner).**  The two-dart corner connector
     (`CornerConnector.v`) generalises to fans with non-ring darts.
     **Step 1 (DONE, `FanGapSector.v`): the fan-gap sector bridge.**
