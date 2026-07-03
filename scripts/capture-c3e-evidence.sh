@@ -22,7 +22,7 @@ mkdir -p "$SCRATCH"
   echo "=== STEP2_DESIGN_NOTE_OK ==="
   grep -n "TODO: C-3e open design note" theories/C3eEfCorridorAssumption.v \
     theories/C-3e-ef-corridor-assumption.v
-  grep -n "descending_sample_west_transport" theories/BaseToTipHeadline.v
+  grep -n "descending_sample_west_transport_clear" theories/BaseToTipHeadline.v
   echo ""
 } | tee "$SCRATCH/verification-plan.log"
 
@@ -42,6 +42,7 @@ if grep -q "^Error:" "$SCRATCH/build-c3e-chain.log"; then
 fi
 echo "STEP3_BUILD_OK" | tee -a "$SCRATCH/verification-plan.log"
 
+rm -f theories/C3eEfCorridorAssumption.vo
 make -f Makefile.full.gen theories/C3eEfCorridorAssumption.vo \
   2>&1 | tee "$SCRATCH/corridor-absorbs.log"
 echo "CORRIDOR_ABSORBS_OK" | tee -a "$SCRATCH/corridor-absorbs.log"
@@ -50,4 +51,4 @@ bash scripts/check_admitted.sh 2>&1 | tee "$SCRATCH/check-admitted.log"
 echo "STEP4_CHECK_ADMITTED_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 cp "$SCRATCH/build-c3e-chain.log" "$SCRATCH/build-c3e.log"
-echo "C3E_EVIDENCE_CAPTURE_OK"
+echo "C3E_EVIDENCE_CAPTURE_OK" | tee -a "$SCRATCH/verification-plan.log"
