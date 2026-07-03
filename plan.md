@@ -1260,9 +1260,17 @@ closed/min-points conditions. The planned ladder:
     global `delta` along the chain, per-vertex `rho_i` free).  The
     ride and corner legs stay caller-side hypotheses -- each is
     supplied per-orientation by the banked C-3e/C-3d theorems with
-    that step's thresholds; (ii) the induction over `k` from
-    `same_face_twin_first_step_index` (EdgeFaceBridge.v:479) chaining
-    (i) by `connected_in_complement_cont_trans`; (iii) the two end
+    that step's thresholds; (ii) DONE (`WalkChainInduction.v`):
+    `walk_chain_connected` -- the induction over `k`, folding (i) by
+    `connected_in_complement_cont_trans`; per-step parameters are TWO
+    FUNCTIONS `rho_out rho_in : nat -> R` so the induction carries no
+    index arithmetic, `delta` stays global, the ride/corner legs stay
+    caller-side hypothesis families, and the base case is
+    `connected_in_complement_cont_refl` at the start sample (one
+    `ring_complement` input).  `walk_chain_to_twin`: at the index from
+    `same_face_twin_first_step_index` (EdgeFaceBridge.v:479) the chain
+    ends at TWIN d's base sample via `dbase_twin` -- d's east side;
+    (iii) the two end
     ties: `d`'s west sample to `(X - ef', my)` and `twin d`'s
     right-side sample (= east of `d`) to `(X + ef', my)`, both by
     `along_dart_*_to_straddle_*` at a common small `ef'`; (iv) close
