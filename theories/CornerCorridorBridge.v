@@ -44,7 +44,7 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth Directi
                                RingClearance SectorPath CornerSamples CornerConnector
                                JCTCorridor StraddleSides MirrorCorridor DartSideKit
                                HandoffWedge WalkCorridor FaceTwinAware HBridgeCoreSlice
-                               RectangleJCT.
+                               RingExtract RectangleJCT.
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -1102,6 +1102,45 @@ Proof.
   - exact (foreign_dart_straddle_pair_chord_at_my r d ef my Hdedge Hchord).
 Qed.
 
+(* Foreign-dart branch of the C-3e-4 headline: both ±ef targets connected. *)
+Theorem corridor_safe_for_ef_foreign :
+  forall (D : list Dart) (r : Ring) (d : Dart) (rho ef my h_base h_tip ylo yhi delta0 : R),
+    ring_taut r ->
+    pairwise_no_proper_cross_twin_aware D ->
+    no_foreign_vertex_twin_aware D ->
+    In d D ->
+    (forall f, In f (ring_edges r) -> In f D) ->
+    ((py (fst d) < ylo /\ yhi < py (snd d)) \/
+     (py (snd d) < ylo /\ yhi < py (fst d))) ->
+    ylo <= yhi ->
+    vy (ddir d) < 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+    h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
+    ylo <= h_base <= my /\ my <= h_tip <= yhi ->
+    0 < delta0 ->
+    0 < ef ->
+    ef < corridor_safe_threshold delta0 / 3 ->
+    (forall delta, 0 < delta < delta0 ->
+       forall y, ylo <= y <= yhi ->
+         ~ ring_image r (corridor d delta y)) ->
+    ~ In d (ring_edges r) ->
+    (forall t, 0 <= t <= 1 ->
+       ring_complement r (mkPoint (edge_x_at d my - ef + t * (2 * ef)) my)) ->
+    let p_west := mkPoint (edge_x_at d my - ef) my in
+    let p_east := mkPoint (edge_x_at d my + ef) my in
+    connected_in_complement_cont r (corner_sample_left d rho ef) p_west /\
+    connected_in_complement_cont r (corner_sample_right d rho ef) p_west /\
+    connected_in_complement_cont r (corner_sample_right d rho ef) p_east.
+Proof.
+  intros D r d rho ef my h_base h_tip ylo yhi delta0 Htaut Hcross Hforeign Hx HringD
+         Hspan Hle Hdesc Hhbase Hhtip [Hhlo [Hmhi Hthhi]] Hd0 Hef Hthird Hclear Hdedge Hchord
+         p_west p_east.
+  destruct (corridor_safe_for_ef_west D r d rho ef my h_base h_tip ylo yhi delta0
+              Htaut Hcross Hforeign Hx HringD Hspan Hle Hdesc Hhbase Hhtip
+              (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird Hclear) as [Hleft Hright].
+  apply (foreign_dart_corridor_safe_for_ef r d rho ef my Hleft Hright Hdedge Hchord).
+Qed.
+
 (* C-3e-4 headline: names the exact `face_transport_premise` pair and wires
    west (descending) / east (ascending) corridor rides.  Ring-dart east at
    `my` is deferred to C-3f orbit (carrier blocks same-height chord). *)
@@ -1121,40 +1160,105 @@ Theorem corridor_safe_for_ef :
     ef < corridor_safe_threshold delta0 / 3 ->
     let p_west := mkPoint (edge_x_at d my - ef) my in
     let p_east := mkPoint (edge_x_at d my + ef) my in
-    p_west = corridor d ef my /\ p_east = corridor_east d ef my /\
-    (vy (ddir d) < 0 ->
+    (p_west = corridor d ef my /\ p_east = corridor_east d ef my) /\
+    ((vy (ddir d) < 0 ->
       h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
       h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
       (forall delta, 0 < delta < delta0 ->
          forall y, ylo <= y <= yhi ->
            ~ ring_image r (corridor d delta y)) ->
       connected_in_complement_cont r (corner_sample_left d rho ef) p_west /\
-      connected_in_complement_cont r (corner_sample_right d rho ef) p_west) /\
-    (vy (ddir d) > 0 ->
+      connected_in_complement_cont r (corner_sample_right d rho ef) p_west)) /\
+    ((vy (ddir d) > 0 ->
       h_base = bridge_height_base d rho (corner_delta_for_ef_east d ef) ->
       (forall delta, 0 < delta < delta0 ->
          forall y, ylo <= y <= yhi ->
            ~ ring_image r (corridor_east d delta y)) ->
-      connected_in_complement_cont r (corner_sample_left_east d rho ef) p_east).
+      connected_in_complement_cont r (corner_sample_left_east d rho ef) p_east)) /\
+    ((~ In d (ring_edges r) ->
+      vy (ddir d) < 0 ->
+      h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+      h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
+      (forall delta, 0 < delta < delta0 ->
+         forall y, ylo <= y <= yhi ->
+           ~ ring_image r (corridor d delta y)) ->
+      (forall t, 0 <= t <= 1 ->
+         ring_complement r (mkPoint (edge_x_at d my - ef + t * (2 * ef)) my)) ->
+      connected_in_complement_cont r (corner_sample_left d rho ef) p_west /\
+      connected_in_complement_cont r (corner_sample_right d rho ef) p_west /\
+      connected_in_complement_cont r (corner_sample_right d rho ef) p_east)).
 Proof.
   intros D r d rho ef my h_base h_tip ylo yhi delta0 Htaut Hcross Hforeign Hx HringD
          Hspan Hle [Hhlo [Hmhi Hthhi]] Hd0 Hef Hthird p_west p_east.
   destruct (face_transport_straddle_pair_eq d my ef) as [Heq_west Heq_east].
   assert (Hmyle : my <= yhi) by (apply (Rle_trans _ _ _ Hmhi Hthhi)).
-  split; [ exact Heq_west | split; [ exact Heq_east | ]].
   split.
-  - intros Hdesc Hhbase' Hhtip' Hclear.
+  { split; [ exact Heq_west | exact Heq_east ]. }
+  split.
+  { intros Hdesc Hhbase' Hhtip' Hclear.
     apply (corridor_safe_for_ef_west D r d rho ef my h_base h_tip ylo yhi delta0);
       [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
       | exact Hspan | exact Hle | exact Hdesc | exact Hhbase' | exact Hhtip'
       | exact (conj Hhlo (conj Hmhi Hthhi)) | exact Hd0 | exact Hef | exact Hthird
-      | exact Hclear ].
-  - intros Hasc Hhbase' Hclear_east.
+      | exact Hclear ]. }
+  split.
+  { intros Hasc Hhbase' Hclear_east.
     apply (corridor_safe_for_ef_east D r d rho ef my h_base ylo yhi delta0);
       [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
       | exact Hspan | exact Hle | exact Hasc | exact Hhbase'
       | exact (conj Hhlo Hmyle) | exact Hd0 | exact Hef | exact Hthird
-      | exact Hclear_east ].
+      | exact Hclear_east ]. }
+  { intros Hdedge Hdesc Hhbase' Hhtip' Hclear Hchord.
+    apply (corridor_safe_for_ef_foreign D r d rho ef my h_base h_tip ylo yhi delta0);
+      [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
+      | exact Hspan | exact Hle | exact Hdesc | exact Hhbase' | exact Hhtip'
+      | exact (conj Hhlo (conj Hmhi Hthhi)) | exact Hd0 | exact Hef | exact Hthird
+      | exact Hclear | exact Hdedge | exact Hchord ]. }
+Qed.
+
+(* Downstream discharge for `face_transport_premise` (HBridgeCoreSlice.v §2):
+   foreign dart off `ring_edges r` — both exact ±ef targets connected. *)
+Lemma face_transport_premise_foreign_straddle_connected :
+  forall (E : list Edge) (D : list Dart) (r : Ring) (d : Dart) (c : list Dart)
+         (rho ef my h_base h_tip ylo yhi delta0 : R),
+    face_transport_premise E ->
+    r = ring_of_chain (d :: c) ->
+    ring_taut r ->
+    pairwise_no_proper_cross_twin_aware D ->
+    no_foreign_vertex_twin_aware D ->
+    In d D ->
+    In d E ->
+    (forall f, In f (ring_edges r) -> In f D) ->
+    ((py (fst d) < ylo /\ yhi < py (snd d)) \/
+     (py (snd d) < ylo /\ yhi < py (fst d))) ->
+    ylo <= yhi ->
+    vy (ddir d) < 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+    h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
+    ylo <= h_base <= my /\ my <= h_tip <= yhi ->
+    0 < delta0 ->
+    0 < ef ->
+    ef < corridor_safe_threshold delta0 / 3 ->
+    (forall delta, 0 < delta < delta0 ->
+       forall y, ylo <= y <= yhi ->
+         ~ ring_image r (corridor d delta y)) ->
+    ~ In d (ring_edges r) ->
+    (forall t, 0 <= t <= 1 ->
+       ring_complement r (mkPoint (edge_x_at d my - ef + t * (2 * ef)) my)) ->
+    connected_in_complement_cont r (corner_sample_left d rho ef)
+      (mkPoint (edge_x_at d my - ef) my) /\
+    connected_in_complement_cont r (corner_sample_right d rho ef)
+      (mkPoint (edge_x_at d my - ef) my) /\
+    connected_in_complement_cont r (corner_sample_right d rho ef)
+      (mkPoint (edge_x_at d my + ef) my).
+Proof.
+  intros E D r d c rho ef my h_base h_tip ylo yhi delta0
+         Hprem Hr Htaut Hcross Hforeign Hx HdE HringD Hspan Hle Hdesc
+         Hhbase Hhtip [Hhlo [Hmhi Hthhi]] Hd0 Hef Hthird Hclear Hdedge Hchord.
+  destruct (corridor_safe_for_ef_west D r d rho ef my h_base h_tip ylo yhi delta0
+              Htaut Hcross Hforeign Hx HringD Hspan Hle Hdesc Hhbase Hhtip
+              (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird Hclear) as [Hleft Hright].
+  apply (foreign_dart_corridor_safe_for_ef r d rho ef my Hleft Hright Hdedge Hchord).
 Qed.
 
 (* Discharge hook for `face_transport_premise` (HBridgeCoreSlice.v §2): west
@@ -1646,9 +1750,7 @@ Proof.
       exact (sample_clearance_delta delta y Hdelta Hy). }
   destruct Hwest as [Hleft Hright].
   apply (foreign_dart_corridor_safe_for_ef sample_ring descending_sample_dart
-           sample_rho sample_ef sample_my).
-  - exact Hleft.
-  - exact Hright.
+           sample_rho sample_ef sample_my Hleft Hright).
   - exact sample_dart_not_on_ring.
   - exact sample_straddle_chord_clear.
 Qed.
@@ -1675,6 +1777,7 @@ Print Assumptions corridor_safe_for_ef.
 Print Assumptions corridor_safe_for_ef_west.
 Print Assumptions corridor_safe_for_ef_east.
 Print Assumptions foreign_dart_corridor_safe_for_ef.
+Print Assumptions face_transport_premise_foreign_straddle_connected.
 Print Assumptions face_transport_west_straddle_headline_connected.
 Print Assumptions face_transport_east_straddle_headline_connected.
 Print Assumptions descending_sample_corridor_safe_for_ef.

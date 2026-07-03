@@ -120,69 +120,9 @@ Definition face_transport_premise (E : list Edge) : Prop :=
        <-> point_in_ring (mkPoint (edge_x_at d my + ef) my)
                          (ring_of_chain (d :: c))).
 
-(* C-3e-4 discharge wiring (manifest spine: CornerCorridorBridge.v).
-   The premise's concrete straddle pair is EXACTLY the west/east corridor
-   samples; connectivity is supplied by `corridor_safe_for_ef` /
-   `corridor_safe_for_ef_west` / `corridor_safe_for_ef_east` on the manifest
-   spine (not imported here — CornerCorridorBridge imports this file). *)
-Lemma face_transport_premise_west_target_corridor :
-  forall (d : Dart) (my ef : R),
-    mkPoint (edge_x_at d my - ef) my = corridor d ef my.
-Proof.
-  intros d my ef. unfold corridor. reflexivity.
-Qed.
-
-(* East straddle sample (= MirrorCorridor.corridor_east; not imported — cycle). *)
-Definition face_transport_straddle_east (d : Dart) (my ef : R) : Point :=
-  mkPoint (edge_x_at d my + ef) my.
-
-Lemma face_transport_premise_east_target_corridor :
-  forall (d : Dart) (my ef : R),
-    mkPoint (edge_x_at d my + ef) my = face_transport_straddle_east d my ef.
-Proof.
-  intros d my ef. reflexivity.
-Qed.
-
-Lemma face_transport_premise_straddle_pair_eq :
-  forall (d : Dart) (my ef : R),
-    let p_west := mkPoint (edge_x_at d my - ef) my in
-    let p_east := mkPoint (edge_x_at d my + ef) my in
-    p_west = corridor d ef my /\ p_east = face_transport_straddle_east d my ef.
-Proof.
-  intros d my ef.
-  split; [ exact (face_transport_premise_west_target_corridor d my ef)
-           | exact (face_transport_premise_east_target_corridor d my ef) ].
-Qed.
-
-(* Apply the corridor identity at a `face_transport_premise` obligation:
-   rewrite the west straddle target to `corridor d ef my` before invoking
-   C-3e connectivity (CornerCorridorBridge.face_transport_west_straddle_headline_connected). *)
-Lemma face_transport_premise_west_in_complement :
-  forall (E : list Edge) (d : Dart) (c : list Dart) (my ef : R),
-    face_transport_premise E ->
-    In d E ->
-    ring_complement (ring_of_chain (d :: c))
-      (mkPoint (edge_x_at d my - ef) my) ->
-    ring_complement (ring_of_chain (d :: c)) (corridor d ef my).
-Proof.
-  intros E d c my ef Hprem HdE Hc.
-  rewrite <- (face_transport_premise_west_target_corridor d my ef).
-  exact Hc.
-Qed.
-
-Lemma face_transport_premise_east_in_complement :
-  forall (E : list Edge) (d : Dart) (c : list Dart) (my ef : R),
-    face_transport_premise E ->
-    In d E ->
-    ring_complement (ring_of_chain (d :: c))
-      (mkPoint (edge_x_at d my + ef) my) ->
-    ring_complement (ring_of_chain (d :: c))
-      (face_transport_straddle_east d my ef).
-Proof.
-  intros E d c my ef Hprem HdE Hc.
-  rewrite <- (face_transport_premise_east_target_corridor d my ef).
-  exact Hc.
-Qed.
+(* C-3e-4 connectivity discharge lives downstream in CornerCorridorBridge.v
+   (`face_transport_premise_foreign_straddle_connected`, `corridor_safe_for_ef`);
+   this file defines the premise only — Corner imports HBridge, not vice versa. *)
 
 (* -------------------------------------------------------------------------- *)
 (* §3  The one-sided core: same face + transport => not reachable.             *)

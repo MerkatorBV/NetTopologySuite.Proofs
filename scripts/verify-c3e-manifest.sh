@@ -13,21 +13,52 @@ if [[ -n "$(git status --porcelain)" ]]; then
 fi
 
 mkdir -p "$SCRATCH"
-# Preserve git-c3e.log across runs; refresh other logs.
 rm -f "$SCRATCH"/build-*.log "$SCRATCH"/check-admitted.log \
       "$SCRATCH"/c3e-lemma.log "$SCRATCH"/verification-plan.log \
-      "$SCRATCH"/vp5-wiring.log
+      "$SCRATCH"/vp5-wiring.log "$SCRATCH"/git-c3e.log \
+      "$SCRATCH"/git-c3e-run1.log "$SCRATCH"/git-c3e-run2.log \
+      "$SCRATCH"/plan-c3e-grep.log
+
+capture_git_block() {
+  local label="$1" outfile="$2"
+  {
+    echo "=== ${label}: git fetch origin ==="
+    git fetch origin
+    echo ""
+    echo "=== ${label}: git status ==="
+    git status
+    echo ""
+    echo "=== ${label}: git log --oneline -8 origin/main ==="
+    git log --oneline -8 origin/main
+    echo ""
+  } >"$outfile"
+}
+
+capture_git_block "VP0 run 1" "$SCRATCH/git-c3e-run1.log"
+capture_git_block "VP0 run 2" "$SCRATCH/git-c3e-run2.log"
 
 {
-  echo "=== VP0: objective git sequence (verification plan step 2) ==="
-  git fetch origin
-  git status
-  git log --oneline -8 origin/main
+  echo "=== plan-c3e-grep: cat plan.md | grep -A 30 C-3e|face_transport_premise ==="
   cat plan.md | grep -A 30 "C-3e\|face_transport_premise"
   echo ""
-} | tee -a "$SCRATCH/git-c3e.log"
+} >"$SCRATCH/plan-c3e-grep.log"
 
 {
+  echo "=== git-c3e.log assembly (VP0 step 2) ==="
+  cat "$SCRATCH/git-c3e-run1.log"
+  echo "---"
+  cat "$SCRATCH/git-c3e-run2.log"
+  echo "---"
+  cat "$SCRATCH/plan-c3e-grep.log"
+} >"$SCRATCH/git-c3e.log"
+
+if ! cmp -s "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log"; then
+  echo "VP0_FAIL: git-c3e-run1.log and git-c3e-run2.log differ" >&2
+  exit 1
+fi
+
+{
+  echo "VP0_GIT_CAPTURE_OK"
   echo "=== VP1: git status + log ==="
   git status --short
   echo "BRANCH=$(git branch --show-current)"
@@ -37,11 +68,11 @@ rm -f "$SCRATCH"/build-*.log "$SCRATCH"/check-admitted.log \
   echo "=== VP2: C-3e-4 plan + corridor_safe_for_ef + face_transport wiring ==="
   grep -n "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md
   grep -n "connect to exact (edge_x_at … ±ef, my) targets" plan.md
-  grep -n "corridor_safe_for_ef\|face_transport_west_straddle_headline_connected" \
+  grep -n "corridor_safe_for_ef\|face_transport_premise_foreign_straddle_connected" \
     plan.md theories/CornerCorridorBridge.v
   grep -n "face_transport_straddle_pair_eq\|face_transport_premise" \
     theories/CornerCorridorBridge.v theories/HBridgeCoreSlice.v | head -25
-  grep -n "Theorem corridor_safe_for_ef\|Lemma descending_sample_corridor_safe_for_ef\|Lemma face_transport_west_straddle" \
+  grep -n "Theorem corridor_safe_for_ef\|Lemma descending_sample_corridor_safe_for_ef\|Lemma face_transport_premise_foreign" \
     theories/CornerCorridorBridge.v
   echo ""
   echo "=== VP2b: verbatim design note + doc stub ==="
@@ -50,17 +81,7 @@ rm -f "$SCRATCH"/build-*.log "$SCRATCH"/check-admitted.log \
   grep -n "δ < threshold" theories/CornerCorridorBridge.v \
     theories/C-3e-ef-corridor-assumption.v
   echo "DOC_STUB_LINES=$(wc -l < theories/C-3e-ef-corridor-assumption.v)"
-  echo ""
 } | tee "$SCRATCH/verification-plan.log"
-
-{
-  echo "=== VP5: cross-file straddle wiring ==="
-  grep -n "edge_x_at d my - ef\|edge_x_at d my + ef" theories/HBridgeCoreSlice.v
-  grep -n "face_transport_premise_west_target_corridor\|face_transport_premise_straddle_pair_eq\|face_transport_premise_west_in_complement" \
-    theories/HBridgeCoreSlice.v
-  grep -n "face_transport_west_straddle_headline_connected\|face_transport_straddle_pair_eq\|Theorem corridor_safe_for_ef" \
-    theories/CornerCorridorBridge.v
-} | tee "$SCRATCH/vp5-wiring.log"
 
 if ! grep -q "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md; then
   echo "VP2_FAIL: C-3e-4 section missing in plan.md" | tee -a "$SCRATCH/verification-plan.log"
@@ -70,20 +91,15 @@ if ! grep -q "Theorem corridor_safe_for_ef" theories/CornerCorridorBridge.v; the
   echo "VP2_FAIL: corridor_safe_for_ef missing" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
-if ! grep -q "Lemma face_transport_west_straddle_headline_connected" theories/CornerCorridorBridge.v; then
-  echo "VP2_FAIL: face_transport bridge lemma missing" | tee -a "$SCRATCH/verification-plan.log"
+if ! grep -q "Lemma face_transport_premise_foreign_straddle_connected" theories/CornerCorridorBridge.v; then
+  echo "VP2_FAIL: face_transport_premise_foreign_straddle_connected missing" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
 if ! grep -q "Lemma descending_sample_corridor_safe_for_ef" theories/CornerCorridorBridge.v; then
   echo "VP2_FAIL: concrete sample application missing" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
-if ! grep -q "Lemma face_transport_premise_west_in_complement" theories/HBridgeCoreSlice.v; then
-  echo "VP5_FAIL: HBridgeCoreSlice cross-file wiring missing" | tee -a "$SCRATCH/verification-plan.log"
-  exit 1
-fi
 echo "VP2_C3E4_OK" | tee -a "$SCRATCH/verification-plan.log"
-echo "VP5_WIRING_OK" | tee -a "$SCRATCH/vp5-wiring.log"
 
 {
   echo "=== VP3: standard project build ==="
@@ -106,8 +122,8 @@ cat > "$SCRATCH/exercise_c3e.v" <<'COQ'
 From NTS.Proofs Require Import CornerCorridorBridge.
 Check corridor_safe_for_ef.
 Print descending_sample_corridor_safe_for_ef.
-Check face_transport_west_straddle_headline_connected.
-Print Assumptions descending_sample_corridor_safe_for_ef.
+Check face_transport_premise_foreign_straddle_connected.
+Print Assumptions face_transport_premise_foreign_straddle_connected.
 COQ
 
 {
@@ -121,9 +137,31 @@ if ! grep -q "edge_x_at descending_sample_dart sample_my" "$SCRATCH/c3e-lemma.lo
   echo "VP4_FAIL: edge_x_at sample_my missing from Print output" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
-if ! grep -q "face_transport_west_straddle_headline_connected" "$SCRATCH/c3e-lemma.log"; then
-  echo "VP4_FAIL: face_transport bridge missing from exercise" | tee -a "$SCRATCH/verification-plan.log"
+if ! grep -q "face_transport_premise_foreign_straddle_connected" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: face_transport_premise_foreign_straddle_connected missing from exercise" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "face_transport_premise" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: face_transport_premise missing from Check/Print output" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
 echo "VP4_LEMMA_OK" | tee -a "$SCRATCH/verification-plan.log"
+
+{
+  echo "=== VP5: downstream apply chain (CornerCorridorBridge only) ==="
+  grep -n "apply foreign_dart_corridor_safe_for_ef" theories/CornerCorridorBridge.v
+  grep -n "apply corridor_safe_for_ef_west" theories/CornerCorridorBridge.v
+  grep -n "face_transport_premise_foreign_straddle_connected\|face_transport_premise" \
+    theories/CornerCorridorBridge.v
+} | tee "$SCRATCH/vp5-wiring.log"
+
+if ! grep -q "apply foreign_dart_corridor_safe_for_ef" "$SCRATCH/vp5-wiring.log"; then
+  echo "VP5_FAIL: no apply foreign_dart_corridor_safe_for_ef in CornerCorridorBridge" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "face_transport_premise_foreign_straddle_connected" "$SCRATCH/vp5-wiring.log"; then
+  echo "VP5_FAIL: discharge lemma missing from VP5 grep" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+echo "VP5_WIRING_OK" | tee -a "$SCRATCH/vp5-wiring.log"
 echo "C3E_EVIDENCE_CAPTURE_OK" | tee -a "$SCRATCH/verification-plan.log"
