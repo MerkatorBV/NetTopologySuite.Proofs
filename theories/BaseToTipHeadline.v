@@ -26,7 +26,7 @@ From NTS.Proofs Require Import Distance Overlay Vec Azimuth Dart DartAngularOrde
                                MirrorCorridor WalkCorridor FaceTwinAware
                                HBridgeCoreSlice CornerSamples CornerConnector
                                CornerCorridorBridge HandoffConnector
-                               C3eEfCorridorAssumption.
+                               C3eEfCorridorAssumption RectangleJCT.
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -356,6 +356,89 @@ Proof.
     by (unfold d, ef, delta_c; exact bridge_delta_west_sample_closed).
   assert (Hbh : bridge_height_base d rho delta_c = h_base) by reflexivity.
   rewrite Hbd, Hbh. reflexivity.
+Qed.
+
+Definition sample_ef : R := 1 / 10.
+Definition sample_rho : R := 1 / 2.
+Definition sample_my : R := 1.
+Definition sample_h_base : R := 24 / 25.
+(* Ring placed far east so the sample corridor (x ~ 0.4, y in [24/25,1])
+   cannot meet any edge — clearance is explicit, not a load-bearing hypothesis. *)
+Definition sample_ring : Ring := rect_ring 10 10 12 12.
+
+Lemma sample_h_base_eq :
+  sample_h_base =
+  bridge_height_base descending_sample_dart sample_rho
+    (corner_delta_for_ef_west descending_sample_dart sample_ef).
+Proof.
+  unfold sample_h_base, sample_rho, sample_ef, bridge_height_base,
+         descending_sample_dart, corner_delta_for_ef_west.
+  cbn. field_simplify. lra.
+Qed.
+
+Lemma sample_h_base_le_my : sample_h_base <= sample_my.
+Proof. unfold sample_h_base, sample_my. lra. Qed.
+
+Lemma edge_x_at_descending_sample (y : R) :
+  edge_x_at descending_sample_dart y = (2 - y) / 2.
+Proof.
+  unfold descending_sample_dart, edge_x_at. cbn. field.
+Qed.
+
+Lemma corridor_px_sample_lt :
+  forall y_sample, sample_h_base <= y_sample <= sample_my ->
+    px (corridor descending_sample_dart sample_ef y_sample) < 1.
+Proof.
+  intros y_sample [Hylo Hyhi].
+  unfold corridor. cbn [px].
+  rewrite edge_x_at_descending_sample.
+  unfold sample_ef, sample_h_base, sample_my in *.
+  assert (Hle : (2 - y_sample) / 2 - 1 / 10 <= 21 / 50) by nra.
+  lra.
+Qed.
+
+Lemma sample_ring_edge_px_ge :
+  forall (f : Edge) (t : R),
+    In f (ring_edges sample_ring) ->
+    0 <= t <= 1 ->
+    10 <= (1 - t) * px (fst f) + t * px (snd f).
+Proof.
+  intros f t Hin Ht.
+  unfold sample_ring in Hin.
+  rewrite ring_edges_rect in Hin. cbn [In] in Hin.
+  destruct Hin as [Hf | [Hf | [Hf | [Hf | []]]]]; subst f; cbn [fst snd px];
+    destruct Ht as [Ht1 Ht2]; nra.
+Qed.
+
+Lemma sample_clearance :
+  forall y_sample, sample_h_base <= y_sample <= sample_my ->
+    ~ ring_image sample_ring
+         (corridor descending_sample_dart sample_ef y_sample).
+Proof.
+  intros y_sample Hy Himg.
+  destruct Himg as [f [s [Hin [[Hs1 Hs2] [Hx Hpy]]]]].
+  pose proof (corridor_px_sample_lt y_sample Hy) as Hclt.
+  pose proof (sample_ring_edge_px_ge f s Hin (conj Hs1 Hs2)) as Hcge.
+  unfold corridor in Hclt, Hx. cbn [px] in Hclt, Hx.
+  rewrite edge_x_at_descending_sample in Hclt, Hx.
+  unfold sample_ef in Hclt, Hx.
+  lra.
+Qed.
+
+(* Headline west transport on the concrete sample: corner -> straddle west. *)
+Lemma descending_sample_west_transport :
+  connected_in_complement_cont sample_ring
+    (point_at (dbase descending_sample_dart)
+       (corner_sample_out (ddir descending_sample_dart) sample_rho
+          (corner_delta_for_ef_west descending_sample_dart sample_ef)))
+    (mkPoint (edge_x_at descending_sample_dart sample_my - sample_ef) sample_my).
+Proof.
+  apply (along_dart_base_to_straddle_west sample_ring descending_sample_dart
+           sample_rho sample_ef sample_my sample_h_base).
+  - exact descending_sample_dart_vy.
+  - exact sample_h_base_eq.
+  - exact sample_h_base_le_my.
+  - exact sample_clearance.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
