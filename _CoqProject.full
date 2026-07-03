@@ -589,16 +589,6 @@ theories/HandoffWedge.v
 # d's own two endpoints specifically; left for the along-dart headline's
 # assembly to decide.  No Admitteds.
 theories/CornerCorridorBridge.v
-# H-bridge attack C-3e: ef-vs-corridor open design note + corridor_absorbs_ef probe.
-# No Admitteds.
-theories/C3eEfCorridorAssumption.v
-# H-bridge attack C-3e step 3: handoff connector -- pruned ball + side kit +
-# wedge sector => connected_in_complement_cont from corner sample to corridor end.
-# No Admitteds.
-theories/HandoffConnector.v
-# H-bridge attack C-3e step 4: along-dart headline -- base/tip corner sample ->
-# corridor ride -> straddle (edge_x_at d my ± ef, my).  No Admitteds.
-theories/BaseToTipHeadline.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
