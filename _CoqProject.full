@@ -542,6 +542,13 @@ theories/FanGapSector.v
 # bridge); and the off-ring corner closes with a single chord inside the
 # convex clearance ball.  No Admitteds.
 theories/CornerGapKit.v
+# H-bridge attack C-3d step 2b: the on-ring general-fan corner connector --
+# every fan germ is uncertified in the next-gap sector (walls fail the strict
+# certificate, the rest by the fan-gap bridge), incident ring edges fall to
+# foreign-ray exclusion, non-incident ones to the pruned clearance ball; the
+# reflex/convex sector polylines then connect any fan corner at a cycle
+# vertex inside the ring complement.  No Admitteds.
+theories/FanCorner.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

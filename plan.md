@@ -1037,10 +1037,25 @@ closed/min-points conditions. The planned ladder:
     entirely: a face-walk vertex in the ring complement carries a
     positive radius within which all corner samples connect by a single
     chord (`ball_chord_connected`; sup-balls are convex).  Standard
-    2-axiom footprint, 0 Admitted.  Step 2b (next): the on-ring general
-    fan corner -- assemble germ exclusion + the pruned clearance ball +
-    the sector polyline into the full-fan `connected_in_complement`
-    corner at a cycle vertex.
+    2-axiom footprint, 0 Admitted.
+    **Step 2b (DONE, `FanCorner.v`): the on-ring general-fan corner --
+    C-3d COMPLETE.**  `fan_gap_uncertified`: NO fan germ is certified in
+    the next-gap sector (the two walls fail the strict certificate
+    outright via `vcross u u = 0`, the rest by the fan-gap bridge), so
+    `sector_point_off_edge_in`/`_out` keep certified offsets off any
+    incident ring edge with an uncertified germ; non-incident ring edges
+    fall to the pruned clearance ball
+    (`fan_corner_offset_in_complement`).  The reflex three-hop / convex
+    single-chord polylines then run unchanged with GENERAL walls
+    (`fan_corner_connected_reflex`/`_convex`), parameters sized
+    internally (`fan_corner_connected`), and the headline
+    `fan_corner_connected_at_vertex` composes at an actual fan: walls
+    `ddir x`, `ddir (next F x)`, ring-edge germ exclusion from `fan_ok`,
+    gap nondegeneracy from pairwise nonparallelism.  Remaining caller
+    obligations: `x <> next F x` (min-degree-2) and vertex-off-non-
+    incident-ring-edges (the twin-aware no-T-junction guard).  Standard
+    2-axiom footprint, 0 Admitted.  Next campaign entry point: C-3c, the
+    along-edge corridor connector.
   - **C-3e (straddle tie-in).**  The chain's endpoints are corner
     samples; the premise's points are the straddle pair at height `my`.
     Connect same-side corner samples of `d` to `(edge_x_at d my -/+ ef,
