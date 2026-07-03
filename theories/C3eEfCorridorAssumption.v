@@ -19,8 +19,8 @@
    (standard "sufficiently small" + triangle-inequality chaining). *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay PointInRingTangents
-                               JCTCorridor WalkCorridor MirrorCorridor.
+From NTS.Proofs Require Import Distance Overlay Dart PointInRingTangents
+                               JCTCorridor MirrorCorridor.
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -41,6 +41,7 @@ Lemma corridor_absorbs_ef :
     0 < ef /\ ef < delta0.
 Proof.
   intros delta0 ef Hd0 Hef Hhalf.
+  unfold corridor_safe_half in Hhalf.
   split; [ exact Hef | ]. lra.
 Qed.
 
@@ -59,8 +60,9 @@ Lemma corridor_ef_inherits_clearance :
     ~ ring_image r (corridor x ef y).
 Proof.
   intros x r delta0 ef y ylo yhi Hd0 Hef Hhalf Hle Hclear Hy.
-  assert (Hef_lt : ef < delta0) by lra.
-  exact (Hclear ef Hef_lt y Hy).
+  unfold corridor_safe_half in Hhalf.
+  assert (Hef_bound : 0 < ef < delta0) by (split; [ exact Hef | lra ]).
+  exact (Hclear ef Hef_bound y Hy).
 Qed.
 
 Lemma corridor_ef_inherits_clearance_east :
@@ -76,8 +78,9 @@ Lemma corridor_ef_inherits_clearance_east :
     ~ ring_image r (corridor_east x ef y).
 Proof.
   intros x r delta0 ef y ylo yhi Hd0 Hef Hhalf Hle Hclear Hy.
-  assert (Hef_lt : ef < delta0) by lra.
-  exact (Hclear ef Hef_lt y Hy).
+  unfold corridor_safe_half in Hhalf.
+  assert (Hef_bound : 0 < ef < delta0) by (split; [ exact Hef | lra ]).
+  exact (Hclear ef Hef_bound y Hy).
 Qed.
 
 (* Straddle west sample = west corridor point at the same offset. *)
