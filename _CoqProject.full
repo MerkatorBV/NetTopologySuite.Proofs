@@ -562,6 +562,13 @@ theories/ForeignCorridor.v
 # theorem, twin of a ring dart via the same-carrier transfer, foreign dart
 # via the twin-aware-guards route).  No Admitteds.
 theories/WalkCorridor.v
+# H-bridge attack C-3c step 3: east corridors by reflection -- the plane map
+# x |-> -x commutes with ring_edges/ring_image/twin, negates the carrier
+# abscissa, and preserves the twin-aware guards and tautness, so the whole
+# westward corridor stack transfers to eastward offsets
+# (walk_dart_corridor_east_clear) without re-deriving any clearance.
+# No Admitteds.
+theories/MirrorCorridor.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
