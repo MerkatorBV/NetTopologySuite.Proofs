@@ -20,22 +20,22 @@ rm -f "$SCRATCH"/build-*.log "$SCRATCH"/check-admitted.log \
       "$SCRATCH"/plan-c3e-grep.log
 
 capture_git_block() {
-  local label="$1" outfile="$2"
+  local outfile="$1"
   {
-    echo "=== ${label}: git fetch origin ==="
+    echo "=== VP0: git fetch origin ==="
     git fetch origin
     echo ""
-    echo "=== ${label}: git status ==="
+    echo "=== VP0: git status ==="
     git status
     echo ""
-    echo "=== ${label}: git log --oneline -8 origin/main ==="
+    echo "=== VP0: git log --oneline -8 origin/main ==="
     git log --oneline -8 origin/main
     echo ""
   } >"$outfile"
 }
 
-capture_git_block "VP0 run 1" "$SCRATCH/git-c3e-run1.log"
-capture_git_block "VP0 run 2" "$SCRATCH/git-c3e-run2.log"
+capture_git_block "$SCRATCH/git-c3e-run1.log"
+capture_git_block "$SCRATCH/git-c3e-run2.log"
 
 {
   echo "=== plan-c3e-grep: cat plan.md | grep -A 30 C-3e|face_transport_premise ==="
