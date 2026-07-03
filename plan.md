@@ -1246,13 +1246,21 @@ closed/min-points conditions. The planned ladder:
     (3) Intermediate walk darts may COINCIDE with ring darts (the face
     walk can run along the cycle); those steps use the ring-dart
     corridor case of C-3c directly.
-    NEXT MICRO-STEPS for C-3f step 1 (the orbit chain): (i) the
-    per-step connector alternation lemma -- from the entry sample of
-    walk dart `x_i` to the entry sample of `x_{i+1} = fstep x_i` via
-    the along-dart ride (CornerCorridorBridge) + the fan corner at
-    `dtip x_i` (FanCorner, explicit-parameter forms), with per-step
-    `(rho_i, delta_i)` chosen below that vertex's clearance/smallness
-    thresholds; (ii) the induction over `k` from
+    NEXT MICRO-STEPS for C-3f step 1 (the orbit chain): (i) DONE
+    (`WalkStepChain.v`): the per-step glue -- `walk_corner_walls`
+    (`fstep` IS `next` of the tip fan at the arriving reversal,
+    definitional), `twin_in_fan` + `dbase_fstep` (the reversal is a fan
+    member; the successor is based at the shared vertex, by
+    `next_base`), `tip_sample_wall_form` (the ride's tip sample and the
+    corner's wall-1 sample are the SAME point, `reflexivity`), and
+    headline `walk_step_connected`: one along-dart ride + one fan
+    corner + `connected_in_complement_cont_trans` advance the chain
+    from the base sample of `x` to the base sample of `fstep D x`,
+    with the SHARED-delta discipline explicit in the statement (one
+    global `delta` along the chain, per-vertex `rho_i` free).  The
+    ride and corner legs stay caller-side hypotheses -- each is
+    supplied per-orientation by the banked C-3e/C-3d theorems with
+    that step's thresholds; (ii) the induction over `k` from
     `same_face_twin_first_step_index` (EdgeFaceBridge.v:479) chaining
     (i) by `connected_in_complement_cont_trans`; (iii) the two end
     ties: `d`'s west sample to `(X - ef', my)` and `twin d`'s

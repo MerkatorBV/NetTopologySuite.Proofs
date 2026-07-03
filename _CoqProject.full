@@ -589,6 +589,12 @@ theories/HandoffWedge.v
 # d's own two endpoints specifically; left for the along-dart headline's
 # assembly to decide.  No Admitteds.
 theories/CornerCorridorBridge.v
+# H-bridge attack C-3f step 1(i): the per-step glue of the orbit chain --
+# fstep is definitionally next-of-the-tip-fan at the arriving reversal, the
+# reversal is a fan member based at the shared vertex, the ride's tip sample
+# IS the corner's wall-1 sample, and ride + corner + transitivity advance the
+# chain one walk step under the shared-delta discipline.  No Admitteds.
+theories/WalkStepChain.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
