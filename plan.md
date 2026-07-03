@@ -1247,7 +1247,7 @@ closed/min-points conditions. The planned ladder:
     walk can run along the cycle); those steps use the ring-dart
     corridor case of C-3c directly.
     NEXT MICRO-STEPS for C-3f step 1 (the orbit chain): (i) DONE
-    (`WalkStepChain.v`): the per-step glue -- `walk_corner_walls`
+    (`WalkStepChain.v`, PR #344): the per-step glue -- `walk_corner_walls`
     (`fstep` IS `next` of the tip fan at the arriving reversal,
     definitional), `twin_in_fan` + `dbase_fstep` (the reversal is a fan
     member; the successor is based at the shared vertex, by

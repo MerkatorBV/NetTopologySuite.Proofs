@@ -24,14 +24,18 @@
        (`corner_sample_in (ddir (twin x))`, the FanCorner form) are the
        SAME point -- definitionally, `reflexivity`;
      - `walk_step_connected` (headline): ride + corner + one
-       `connected_in_complement_cont_trans`, with the SHARED-delta
-       discipline visible in the statement: the corner's `(rho1,
-       delta)` entry matches the ride's tip parameters, its `(rho2,
-       delta)` exit is the next ride's base sample verbatim.  The
-       per-step `delta` is one global value along the chain (each ride
-       needs it equal at both of its ends); the `rho_i` are free
-       per-vertex.  The orbit induction (step 1(ii)) folds this lemma
-       over `k` from `same_face_twin_first_step_index`.
+       `connected_in_complement_cont_trans`.  The SHARED POINT of the
+       two legs is the tip sample AT `dtip x`: the ride ends there in
+       CornerCorridorBridge form, the corner starts there in FanCorner
+       form, and `tip_sample_wall_form` says they are the same point;
+       `dbase_fstep` then rewrites the corner's exit
+       (`corner_sample_out (ddir (fstep D x))` at `dtip x`) into the
+       next ride's base sample verbatim.  The SHARED-delta discipline
+       is visible in the statement: the per-step `delta` is one global
+       value along the chain (each ride needs it equal at both of its
+       ends); the `rho_i` are free per-vertex.  The orbit induction
+       (step 1(ii)) folds this lemma over `k` from
+       `same_face_twin_first_step_index`.
 
    No `Admitted` / `Axiom` / `Parameter`; allowlist axioms only.
 
@@ -121,7 +125,12 @@ Theorem walk_step_connected :
          (corner_sample_out (ddir (fstep D x)) rho2 delta)).
 Proof.
   intros r D x rho0 rho1 rho2 delta Htw Hride Hcorner.
+  (* align the endpoint: the successor is based at dtip x, so the
+     conclusion's final sample is literally Hcorner's exit point *)
   rewrite (dbase_fstep D x Htw).
+  (* chain through the shared tip sample; the ride's endpoint and the
+     corner's entry are the same point definitionally
+     (tip_sample_wall_form), so no rewrite is needed between the legs *)
   eapply connected_in_complement_cont_trans; [ exact Hride | ].
   exact Hcorner.
 Qed.
