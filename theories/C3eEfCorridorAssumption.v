@@ -10,7 +10,7 @@
    AI assistance disclosure: AI-drafted, human-reviewed.
    ========================================================================== *)
 
-(* C-3e open design note (post-PR#339)
+(* TODO: C-3e open design note (post-PR#339)
    Both tracks currently connect only d's own two corner samples via corridor.
    Target for face_transport_premise: (edge_x_at d my - ef, my) and +ef.
    Question: corridor.safe_offset guarantees delta < threshold, but ef comes from
@@ -132,6 +132,14 @@ Lemma straddle_east_eq_corridor_east :
     corridor_east d ef my = mkPoint (edge_x_at d my + ef) my.
 Proof.
   intros d my ef. unfold corridor_east. reflexivity.
+Qed.
+
+Example corridor_absorbs_ef_numeric : 0 < 1 / 10 /\ 1 / 10 < 1.
+Proof.
+  assert (Hhalf : 1 / 10 < corridor_safe_half 1)
+    by (unfold corridor_safe_half; field_simplify; lra).
+  destruct (corridor_absorbs_ef 1 (1 / 10) (ltac:(lra)) (ltac:(lra)) Hhalf) as [Hef Hbound].
+  exact (conj Hef Hbound).
 Qed.
 
 Print Assumptions corridor_absorbs_ef.

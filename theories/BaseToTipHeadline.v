@@ -298,32 +298,65 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* §4  Representative exercise: bridge delta discharged for any dart.        *)
+(* §4  Representative exercise on a concrete descending dart.                *)
 (* -------------------------------------------------------------------------- *)
 
-(* Any descending dart with corridor clearance reaches the west straddle
-   point once rho picks the bridge height; `bridge_delta_west_for_ef` closes
-   the offset identity that `straddle_side_core` supplies as positive `ef`. *)
-Example along_dart_west_reaches_straddle :
-  forall (r : Ring) (d : Dart) (rho ef my h_base : R),
-    vy (ddir d) < 0 ->
-    h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
-    h_base <= my ->
-    (forall y, h_base <= y <= my -> ~ ring_image r (corridor d ef y)) ->
-    connected_in_complement_cont r
-      (point_at (dbase d)
-         (corner_sample_out (ddir d) rho (corner_delta_for_ef_west d ef)))
-      (mkPoint (edge_x_at d my - ef) my).
+(* Base (0,2) -> tip (1,0): vy (ddir d) = -2 < 0. *)
+Definition descending_sample_dart : Dart :=
+  (mkPoint 0 2, mkPoint 1 0).
+
+Lemma descending_sample_dart_vy :
+  vy (ddir descending_sample_dart) < 0.
 Proof.
-  intros r d rho ef my h_base Hdesc Hhbase Hle Hclear.
-  exact (along_dart_base_to_straddle_west r d rho ef my h_base
-           Hdesc Hhbase Hle Hclear).
+  unfold descending_sample_dart, ddir, point_diff, dtip, dbase, vy, fst, snd.
+  cbn. lra.
 Qed.
 
-Lemma along_dart_west_bridge_delta :
-  forall (d : Dart) (ef : R), vy (ddir d) < 0 ->
-    bridge_delta_west d (corner_delta_for_ef_west d ef) = ef.
-Proof. exact bridge_delta_west_for_ef. Qed.
+Lemma bridge_delta_west_sample_closed :
+  bridge_delta_west descending_sample_dart
+    (corner_delta_for_ef_west descending_sample_dart (1 / 10))
+  = 1 / 10.
+Proof.
+  apply bridge_delta_west_for_ef. exact descending_sample_dart_vy.
+Qed.
+
+Lemma edge_x_at_sample_closed :
+  edge_x_at descending_sample_dart 1 = 1 / 2.
+Proof.
+  unfold descending_sample_dart, edge_x_at. cbn.
+  field.
+Qed.
+
+Lemma straddle_west_target_sample_closed :
+  corridor descending_sample_dart (1 / 10) 1 = mkPoint (2 / 5) 1.
+Proof.
+  rewrite straddle_west_eq_corridor, edge_x_at_sample_closed.
+  f_equal. field_simplify. lra.
+Qed.
+
+Lemma handoff_base_sample_endpoint_closed :
+  point_at (dbase descending_sample_dart)
+    (corner_sample_out (ddir descending_sample_dart) (1 / 4)
+       (corner_delta_for_ef_west descending_sample_dart (1 / 10)))
+  = corridor descending_sample_dart (1 / 10)
+      (bridge_height_base descending_sample_dart (1 / 4)
+         (corner_delta_for_ef_west descending_sample_dart (1 / 10))).
+Proof.
+  set (d := descending_sample_dart).
+  set (ef := 1 / 10).
+  set (rho := 1 / 4).
+  set (delta_c := corner_delta_for_ef_west d ef).
+  set (h_base := bridge_height_base d rho delta_c).
+  rewrite (handoff_base_bridge_west d rho delta_c descending_sample_dart_vy).
+  change (delta_c * (vx (ddir d) * vx (ddir d) + vy (ddir d) * vy (ddir d))
+            / (- vy (ddir d))) with (bridge_delta_west d delta_c).
+  change (py (dbase d) + (rho * vy (ddir d) - delta_c * vx (ddir d)))
+    with (bridge_height_base d rho delta_c).
+  assert (Hbd : bridge_delta_west d delta_c = ef)
+    by (unfold d, ef, delta_c; exact bridge_delta_west_sample_closed).
+  assert (Hbh : bridge_height_base d rho delta_c = h_base) by reflexivity.
+  rewrite Hbd, Hbh. reflexivity.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.                                                                *)
