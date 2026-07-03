@@ -45,6 +45,12 @@ fi
 
 # Named artifacts: clean git-only log + full objective sequence (git + grep) x2.
 cat "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log" >"$SCRATCH/git-c3e.log"
+
+# VP0b: git-c3e.log must be git-only (plan grep lives in plan-c3e-grep.log).
+if grep -qE "face_transport_premise|Discharge campaign|## C-3e-4" "$SCRATCH/git-c3e.log"; then
+  echo "VP0_FAIL: git-c3e.log polluted with plan.md narrative" >&2
+  exit 1
+fi
 {
   capture_git_sequence
   capture_plan_c3e_grep
@@ -62,6 +68,9 @@ cat "$SCRATCH/objective-full-run1.log" "$SCRATCH/objective-full-run2.log" \
 
 {
   echo "VP0_GIT_CAPTURE_OK"
+  echo "GIT_C3E_LOG_LINES=$(wc -l < "$SCRATCH/git-c3e.log")"
+  echo "GIT_C3E_POLLUTION_CHECK=clean"
+  echo "OBJECTIVE_FULL_LOG_LINES=$(wc -l < "$SCRATCH/objective-full.log")"
   echo "=== VP1: git status + log ==="
   git status --short
   echo "BRANCH=$(git branch --show-current)"
@@ -141,6 +150,8 @@ Check face_transport_premise_ring_dart_straddle_pair_connected.
 Check face_transport_straddle_target_in_complement.
 Check face_transport_premise_ring_dart_west_straddle_in_complement.
 Check face_transport_premise_foreign_straddle_pair_in_complement.
+Check straddle_transport_clash_from_connected.
+Check c3e_ring_west_straddle_complement_via_connected.
 Print Assumptions face_transport_premise_ring_dart_straddle_pair_in_complement.
 COQ
 
@@ -165,6 +176,16 @@ if ! grep -q "face_transport_premise_ring_dart_west_straddle_in_complement" "$SC
   echo "VP4_FAIL: west in_complement apply hook missing from exercise" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
+if ! grep -q "straddle_transport_clash_from_connected" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: HBridge straddle_transport_clash_from_connected missing from exercise" \
+    | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "c3e_ring_west_straddle_complement_via_connected" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: C-3e→HBridge west complement discharge missing from exercise" \
+    | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
 if ! grep -qE "In d \(.*ring_edges r\)" "$SCRATCH/c3e-lemma.log"; then
   echo "VP4_FAIL: In d (ring_edges r) missing from Check/Print output" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
@@ -178,8 +199,10 @@ echo "VP4_LEMMA_OK" | tee -a "$SCRATCH/verification-plan.log"
     theories/CornerCorridorBridge.v
   grep -n "apply.*face_transport_premise_ring_dart\|apply face_transport_straddle_target_in_complement\|destruct (corridor_safe_for_ef" \
     theories/CornerCorridorBridge.v
-  grep -n "face_transport_straddle_target_in_complement\|face_transport_straddle_complements_of_connected" \
+  grep -n "face_transport_straddle_target_in_complement\|face_transport_straddle_complements_of_connected\|straddle_transport_clash_from_connected\|straddle_transport_clash_from_complements" \
     theories/HBridgeCoreSlice.v
+  grep -n "c3e_ring_west_straddle_complement_via_connected\|c3e_ring_east_straddle_complement_via_connected" \
+    theories/CornerCorridorBridge.v
   grep -n "In d (ring_edges r)" theories/CornerCorridorBridge.v
 } | tee "$SCRATCH/vp5-wiring.log"
 
@@ -197,6 +220,15 @@ if ! grep -q "face_transport_premise_ring_dart_west_straddle_in_complement" "$SC
 fi
 if ! grep -q "face_transport_straddle_target_in_complement" "$SCRATCH/vp5-wiring.log"; then
   echo "VP5_FAIL: HBridge premise-site apply hook missing" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "straddle_transport_clash_from_connected" "$SCRATCH/vp5-wiring.log"; then
+  echo "VP5_FAIL: HBridge straddle_transport_clash_from_connected apply hook missing" \
+    | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "c3e_ring_west_straddle_complement_via_connected" "$SCRATCH/vp5-wiring.log"; then
+  echo "VP5_FAIL: C-3e→HBridge west complement discharge missing" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
 echo "VP5_WIRING_OK" | tee -a "$SCRATCH/vp5-wiring.log"

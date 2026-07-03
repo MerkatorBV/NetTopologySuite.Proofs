@@ -1174,6 +1174,11 @@ closed/min-points conditions. The planned ladder:
     ## C-3e-4 (along-dart headline) – IN PROGRESS
     - [x] internal corner bridge via CornerCorridorBridge (PR#339)
     - [ ] connect to exact (edge_x_at … ±ef, my) targets ← **you are here**
+      - [x] unconditional `face_transport_straddle_pair_eq` names both targets
+      - [x] foreign dart: both ±ef connected + in complement
+      - [x] ring dart descending: `-ef` connected (both corners)
+      - [x] ring dart ascending: `+ef` connected (base east corner)
+      - [ ] ring dart cross-orientation ±ef (C-3f orbit; carrier blocks chord)
     - Proposed: Lemma `corridor_safe_for_ef` + `corridor_absorbs_ef` bypass application
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
