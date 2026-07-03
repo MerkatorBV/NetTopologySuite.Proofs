@@ -1130,7 +1130,22 @@ closed/min-points conditions. The planned ladder:
     `dart_side_chord` (affine), `chord_right_side`, and headline
     `chord_right_off_dart_edges` (same-side chords miss the dart AND its
     twin: on-edge points have side 0).  Standard 2-axiom footprint,
-    0 Admitted.  Next: step 2, the wedge certification.
+    0 Admitted.
+    **Step 2 (DONE, `HandoffWedge.v`): the wedge certification.**
+    `sector_chord_certified_wall1`/`_wall2` (both chord endpoints carry
+    the near-wall cross => every chord point is `in_open_sector`; reflex
+    gaps need nothing else, convex gaps demand the far-wall cross at the
+    endpoints -- everything affine via `vcross_affine_r`/`_l`);
+    `point_at_diff`; the corridor-end OFFSET DECOMPOSITIONS
+    (`corridor_offset_tip`/`_base` + east mirrors: at a vertex on the
+    carrier, corridor point = along-carrier component + horizontal
+    offset); and the four near-wall certificates
+    (`corridor_end_cert_tip_west`/`_base_west`/`_tip_east`/`_base_east`:
+    the along-carrier component dies on `vcross_self`, leaving the
+    explicit value `delta * (py-span)`).  Standard 2-axiom footprint,
+    0 Admitted.  Next: step 3, the handoff connector (pruned ball +
+    step-1 side + step-2 sector => `connected_in_complement_cont` from
+    corner sample to corridor end).
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_
