@@ -574,6 +574,21 @@ theories/MirrorCorridor.v
 # walk dart, the side form is affine along chords, so handoff chords never
 # meet the dart's edge or its twin.  No Admitteds.
 theories/DartSideKit.v
+# H-bridge attack C-3e step 2: the wedge certification -- wall-hugging chords
+# are in_open_sector-certified (the cross is affine along the chord; reflex
+# gaps need only the near wall, convex gaps demand the far wall at the
+# endpoints), and corridor ends decompose as along-carrier + horizontal
+# offset, giving explicit near-wall certificates at both dart corners on
+# both sides.  No Admitteds.
+theories/HandoffWedge.v
+# H-bridge attack C-3e, alternative to the side-kit/wedge sequence: the
+# corner-sample/corridor algebraic bridge -- the corner connector's sample
+# points at d's two endpoints are EXACTLY points on d's own west/east
+# corridor (for suitable rho/delta), the side pinned by d's ascending/
+# descending status.  Possible shortcut around the wedge/handoff steps for
+# d's own two endpoints specifically; left for the along-dart headline's
+# assembly to decide.  No Admitteds.
+theories/CornerCorridorBridge.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

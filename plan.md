@@ -1130,7 +1130,47 @@ closed/min-points conditions. The planned ladder:
     `dart_side_chord` (affine), `chord_right_side`, and headline
     `chord_right_off_dart_edges` (same-side chords miss the dart AND its
     twin: on-edge points have side 0).  Standard 2-axiom footprint,
-    0 Admitted.  Next: step 2, the wedge certification.
+    0 Admitted.
+    **Step 2 (DONE, `HandoffWedge.v`): the wedge certification.**
+    `sector_chord_certified_wall1`/`_wall2` (both chord endpoints carry
+    the near-wall cross => every chord point is `in_open_sector`; reflex
+    gaps need nothing else, convex gaps demand the far-wall cross at the
+    endpoints -- everything affine via `vcross_affine_r`/`_l`);
+    `point_at_diff`; the corridor-end OFFSET DECOMPOSITIONS
+    (`corridor_offset_tip`/`_base` + east mirrors: at a vertex on the
+    carrier, corridor point = along-carrier component + horizontal
+    offset); and the four near-wall certificates
+    (`corridor_end_cert_tip_west`/`_base_west`/`_tip_east`/`_base_east`:
+    the along-carrier component dies on `vcross_self`, leaving the
+    explicit value `delta * (py-span)`).  Standard 2-axiom footprint,
+    0 Admitted.  Next: step 3, the handoff connector (pruned ball +
+    step-1 side + step-2 sector => `connected_in_complement_cont` from
+    corner sample to corridor end).
+    **Alternative bypass (DONE, `CornerCorridorBridge.v`): the
+    corner-sample/corridor algebraic bridge.**  Built independently and
+    concurrently with the side-kit/wedge line above; NOT part of its
+    numbered sequence, and possibly a shortcut around step 3 (the
+    handoff connector) for the two SPECIAL vertices at d's own ends
+    specifically -- to be decided when the along-dart headline (step 4)
+    is actually assembled.
+    `corner_sample_out_on_corridor_west/east` (at `dbase d`) and
+    `corner_sample_in_on_corridor_west/east` (at `dtip d`): for EVERY
+    `(rho, delta)`, the corner connector's own sample point is EXACTLY a
+    point on `d`'s west (`JCTCorridor.corridor`) or east
+    (`MirrorCorridor.corridor_east`) corridor, at the height the
+    sample's own parameters produce -- a pure consequence of `{u,
+    perpL u}` being an orthogonal basis, needing only `d` non-horizontal.
+    The side is pinned by `d`'s own ascending/descending status
+    (`vy (ddir d) < 0` / `> 0`) and is the SAME at both endpoints (one
+    line throughout) -- matching `DartSideKit.v`/`MirrorCorridor.v`'s
+    documented "west on a descent, east on an ascent" convention
+    exactly.  IF the along-dart headline is free to choose `(rho,
+    delta)` at d's own two endpoints independently of any neighbouring
+    fan vertex's corner sample (unlike intermediate C-3f hops, which
+    must match a neighbour), this lets it reuse the corner sample
+    directly as a corridor endpoint with NO separate meeting-hop
+    certificate -- skipping step 3 entirely for those two vertices.
+    Standard 2-axiom footprint, 0 Admitted.
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_
