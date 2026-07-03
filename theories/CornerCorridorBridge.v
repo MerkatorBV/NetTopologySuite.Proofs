@@ -167,6 +167,28 @@ Proof.
   field_simplify; lra.
 Qed.
 
+Definition corridor_safe_third (delta0 : R) : R := delta0 / 3.
+
+Lemma corridor_third_pos :
+  forall (delta0 : R), 0 < delta0 -> 0 < corridor_safe_third delta0.
+Proof.
+  intros delta0 Hd0.
+  unfold corridor_safe_third, Rdiv.
+  field_simplify; lra.
+Qed.
+
+Lemma ef_lt_threshold_third_implies_half :
+  forall (delta0 ef : R),
+    0 < delta0 ->
+    0 < ef ->
+    ef < corridor_safe_threshold delta0 / 3 ->
+    ef < corridor_safe_half delta0.
+Proof.
+  intros delta0 ef Hd0 Hef Hthird.
+  unfold corridor_safe_threshold, corridor_safe_half, corridor_safe_third in *.
+  field_simplify in Hthird. lra.
+Qed.
+
 (* The straddle offset ef sits below the corridor half-threshold, hence below
    delta0 itself: the same uniform clearance window applies with delta := ef. *)
 Lemma corridor_absorbs_ef :
@@ -844,6 +866,101 @@ Proof.
     + lra.
 Qed.
 
+Theorem along_dart_base_to_straddle_east_clear :
+  forall (D : list Dart) (r : Ring) (d : Dart) (rho ef my h_base ylo yhi : R),
+    ring_taut r ->
+    pairwise_no_proper_cross_twin_aware D ->
+    no_foreign_vertex_twin_aware D ->
+    In d D ->
+    (forall f, In f (ring_edges r) -> In f D) ->
+    ((py (fst d) < ylo /\ yhi < py (snd d)) \/
+     (py (snd d) < ylo /\ yhi < py (fst d))) ->
+    ylo <= yhi ->
+    vy (ddir d) > 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_east d ef) ->
+    ylo <= h_base <= my /\ my <= yhi ->
+    0 < ef ->
+    (exists delta0, 0 < delta0 /\
+       ef < corridor_safe_half delta0 /\
+       forall delta, 0 < delta < delta0 ->
+         forall y, ylo <= y <= yhi ->
+           ~ ring_image r (corridor_east d delta y)) ->
+    connected_in_complement_cont r
+      (point_at (dbase d)
+         (corner_sample_out (ddir d) rho (corner_delta_for_ef_east d ef)))
+      (mkPoint (edge_x_at d my + ef) my).
+Proof.
+  intros D r d rho ef my h_base ylo yhi Htaut Hcross Hforeign Hx HringD
+         Hspan Hle Hasc Hhbase [[Hhlo Hhhi] Hmhi] Hef
+         [delta0 [Hd0 [Hhalf Hclear]]].
+  apply (along_dart_base_to_straddle_east r d rho ef my h_base Hasc Hhbase).
+  - exact Hhhi.
+  - intros y Hy.
+    apply (corridor_ef_inherits_clearance_east d r delta0 ef y ylo yhi Hd0 Hef Hhalf Hle).
+    + exact Hclear.
+    + lra.
+Qed.
+
+(* C-3e-4 headline packaging: corner samples reach the exact straddle pair
+   `(edge_x_at d my - ef, my)` / `(edge_x_at d my + ef, my)` under the
+   small-ef hypothesis `ef < corridor_safe_threshold delta0 / 3`.  West
+   (descending) and east (ascending) are split by `vy (ddir d)` because the
+   corridor ride uses `corridor` / `corridor_east` respectively. *)
+Theorem corridor_safe_for_ef :
+  forall (D : list Dart) (r : Ring) (d : Dart) (rho ef my h_base ylo yhi delta0 : R),
+    ring_taut r ->
+    pairwise_no_proper_cross_twin_aware D ->
+    no_foreign_vertex_twin_aware D ->
+    In d D ->
+    (forall f, In f (ring_edges r) -> In f D) ->
+    ((py (fst d) < ylo /\ yhi < py (snd d)) \/
+     (py (snd d) < ylo /\ yhi < py (fst d))) ->
+    ylo <= yhi ->
+    ylo <= h_base <= my /\ my <= yhi ->
+    0 < delta0 ->
+    0 < ef ->
+    ef < corridor_safe_threshold delta0 / 3 ->
+    (forall delta, 0 < delta < delta0 ->
+       forall y, ylo <= y <= yhi ->
+         ~ ring_image r (corridor d delta y)) ->
+    (forall delta, 0 < delta < delta0 ->
+       forall y, ylo <= y <= yhi ->
+         ~ ring_image r (corridor_east d delta y)) ->
+    let p_west := mkPoint (edge_x_at d my - ef) my in
+    let p_east := mkPoint (edge_x_at d my + ef) my in
+    (vy (ddir d) < 0 ->
+      h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+      connected_in_complement_cont r
+        (point_at (dbase d)
+           (corner_sample_out (ddir d) rho (corner_delta_for_ef_west d ef)))
+        p_west) /\
+    (vy (ddir d) > 0 ->
+      h_base = bridge_height_base d rho (corner_delta_for_ef_east d ef) ->
+      connected_in_complement_cont r
+        (point_at (dbase d)
+           (corner_sample_out (ddir d) rho (corner_delta_for_ef_east d ef)))
+        p_east).
+Proof.
+  intros D r d rho ef my h_base ylo yhi delta0 Htaut Hcross Hforeign Hx HringD
+         Hspan Hle [Hhlo Hmhi] Hd0 Hef Hthird Hclear_west Hclear_east
+         p_west p_east.
+  assert (Hhalf : ef < corridor_safe_half delta0)
+    by (apply (ef_lt_threshold_third_implies_half delta0 ef Hd0 Hef); exact Hthird).
+  split.
+  - intros Hdesc Hhbase.
+    apply (along_dart_base_to_straddle_west_clear D r d rho ef my h_base ylo yhi);
+      [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
+      | exact Hspan | exact Hle | exact Hdesc | exact Hhbase
+      | exact (conj Hhlo Hmhi) | exact Hef
+      | exists delta0; split; [exact Hd0 | split; [exact Hhalf | exact Hclear_west]] ].
+  - intros Hasc Hhbase.
+    apply (along_dart_base_to_straddle_east_clear D r d rho ef my h_base ylo yhi);
+      [ exact Htaut | exact Hcross | exact Hforeign | exact Hx | exact HringD
+      | exact Hspan | exact Hle | exact Hasc | exact Hhbase
+      | exact (conj Hhlo Hmhi) | exact Hef
+      | exists delta0; split; [exact Hd0 | split; [exact Hhalf | exact Hclear_east]] ].
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* §4  Representative exercise on a concrete descending dart.                *)
 (* -------------------------------------------------------------------------- *)
@@ -1232,5 +1349,7 @@ Print Assumptions handoff_base_to_corridor_west_convex.
 Print Assumptions handoff_base_bridge_connected_west.
 Print Assumptions along_dart_base_to_straddle_west.
 Print Assumptions along_dart_base_to_straddle_west_clear.
+Print Assumptions along_dart_base_to_straddle_east_clear.
+Print Assumptions corridor_safe_for_ef.
 Print Assumptions descending_sample_west_transport_clear.
 Print Assumptions along_dart_base_to_straddle_east.
