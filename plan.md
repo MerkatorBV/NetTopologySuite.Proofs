@@ -1222,21 +1222,46 @@ closed/min-points conditions. The planned ladder:
     carries per-step parameters -- use the EXPLICIT-parameter fan
     corner theorems (`fan_corner_connected_reflex`/`_convex`), not the
     `_auto` existentials.
-    (2) THE ef REGIME: `corner_delta_for_ef_*` pins each corner delta
-    from the premise's `ef`, but the corner connectors' smallness
-    bounds cap the deltas by each vertex's clearance ball -- so the
-    walk chain discharges the premise only for ef below a
-    walk-dependent threshold.  Either (a) strengthen
-    `face_transport_premise` with the near-`d` ball-freedom hypothesis
-    that `straddle_side_core`'s construction already provides (the
-    core-slice caller can discharge it), so the premise only ever
-    needs small `ef`; or (b) add an ef-shrink transport inside the
-    discharge (parity equality between `(X -/+ ef, my)` and
-    `(X -/+ ef', my)` across a ring-free horizontal strip).  Decide at
-    C-3f kickoff; (a) looks strictly simpler.
+    (2) THE ef REGIME -- RESOLVED via option (a) (C-3f step 0, DONE):
+    `face_transport_premise` now carries the near-`d` STRIP CLEARANCE
+    hypothesis (at height `my`, within `ef` of the crossing abscissa,
+    no ring edge but `d` itself is met), and `straddle_side_core`
+    provides it: its proof gains a pruned clearance ball around the
+    interior crossing point `m` (`off_edges_ball_list` on the
+    `<> e0`-filtered ring edges, each off-`m` by
+    `interior_point_off_other_edges`), and the offset `ef` is chosen
+    inside BOTH balls (`Rmin` with the crossing-status ball).  With the
+    strip clear, the discharge can ride/shrink the offset freely: the
+    parity between `(X -/+ ef, my)` and `(X -/+ ef', my)` transports
+    across the ring-free strip for any `0 < ef' <= ef`, so the walk
+    chain only ever needs its own small-offset regime
+    (`corridor_safe_for_ef`-style thresholds).  KEY INVARIANTS this
+    relies on from prior rungs (design-note for reviewers): `eps2 > 0`
+    is powered by `ring_taut` (derived for the cycle ring in the core
+    slice) through `interior_point_off_other_edges` at the interior
+    t-witness of `d`; the strip-in-ball projection is one-dimensional
+    (`py q = my` exactly, so only the horizontal sup-bound matters);
+    and the hypothesis is deliberately UNIVERSAL over the strip and
+    MONOTONE in `ef` (comments at the definition site).
     (3) Intermediate walk darts may COINCIDE with ring darts (the face
     walk can run along the cycle); those steps use the ring-dart
     corridor case of C-3c directly.
+    NEXT MICRO-STEPS for C-3f step 1 (the orbit chain): (i) the
+    per-step connector alternation lemma -- from the entry sample of
+    walk dart `x_i` to the entry sample of `x_{i+1} = fstep x_i` via
+    the along-dart ride (CornerCorridorBridge) + the fan corner at
+    `dtip x_i` (FanCorner, explicit-parameter forms), with per-step
+    `(rho_i, delta_i)` chosen below that vertex's clearance/smallness
+    thresholds; (ii) the induction over `k` from
+    `same_face_twin_first_step_index` (EdgeFaceBridge.v:479) chaining
+    (i) by `connected_in_complement_cont_trans`; (iii) the two end
+    ties: `d`'s west sample to `(X - ef', my)` and `twin d`'s
+    right-side sample (= east of `d`) to `(X + ef', my)`, both by
+    `along_dart_*_to_straddle_*` at a common small `ef'`; (iv) close
+    with `parity_constant_on_components` (JCTSeparation.v:58) + the
+    #341 premise-site hooks (`straddle_transport_clash_from_
+    complements`), then the strip transport lifts `ef'` back to the
+    premise's `ef`.
 
 ---
 

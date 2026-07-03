@@ -49,6 +49,7 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Dart
                                PointInRingCorrect JCTHalfOpenParity
                                JCTGenericStability JCTEscapeDescent
                                JordanCurveSeam JCT JCTHugStep JCTCorridor
+                               RingClearance
                                JCTTautClearance GeneralTautBridge
                                EdgeCrossParity FaceTwinAware
                                StraddlePair StraddleSides.
@@ -116,6 +117,24 @@ Definition face_transport_premise (E : list Edge) : Prop :=
                     (mkPoint (edge_x_at d my - ef) my) ->
     ring_complement (ring_of_chain (d :: c))
                     (mkPoint (edge_x_at d my + ef) my) ->
+    (* The near-d STRIP CLEARANCE `straddle_side_core` provides: at
+       height `my`, within `ef` of the crossing abscissa, no ring edge
+       but `d` itself is met.  Two deliberate design points:
+       (1) the UNIVERSAL (forall q) form, not just the two sample
+           points: the C-3f discharge rides/shrinks the offset along
+           the whole strip (parity transport between `(X -/+ ef, my)`
+           and `(X -/+ ef', my)`), so it needs every strip point, and
+           the producer has the full ball anyway;
+       (2) MONOTONE IN ef: the `Rabs .. <= ef` guard means the
+           hypothesis for `ef` implies it verbatim for every
+           0 < ef' <= ef -- the discharge gets a whole interval
+           (0, ef] of usable offsets and can always drop below its own
+           corridor_safe_for_ef-style thresholds (PR #341). *)
+    (forall (q : Point) (f : Edge),
+       In f (ring_edges (ring_of_chain (d :: c))) -> f <> d ->
+       py q = my ->
+       Rabs (px q - edge_x_at d my) <= ef ->
+       ~ on_edge f q) ->
     (point_in_ring (mkPoint (edge_x_at d my - ef) my) (ring_of_chain (d :: c))
        <-> point_in_ring (mkPoint (edge_x_at d my + ef) my)
                          (ring_of_chain (d :: c))).
@@ -230,11 +249,11 @@ Proof.
   set (r := ring_of_chain ((a0, b0) :: c)) in *.
   destruct (straddle_side_core r [] c (a0, b0) my Htaut Hnoh_r Hsplit
               Hdnotc Hgen Hint Hflip)
-    as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 Hiff]]]]]]]]]].
+    as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 [Hiff Hclear]]]]]]]]]]].
   rewrite Hp1 in Hav1, Hc1. rewrite Hp2 in Hav2, Hc2.
   rewrite Hp1, Hp2 in Hiff.
   pose proof (Hprem (a0, b0) c my ef HdE Hntwin Hproper Hsf Hp Hnd Hlen
-                Hgen Hint Hef Hav1 Hav2 Hc1 Hc2) as Hpar.
+                Hgen Hint Hef Hav1 Hav2 Hc1 Hc2 Hclear) as Hpar.
   fold r in Hpar.
   exact (straddle_transport_clash_from_complements r (a0, b0) my ef
            Hc1 Hc2 Hpar Hiff).
