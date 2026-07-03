@@ -48,7 +48,7 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Dart
                                RingExtract PointInRingTangents
                                PointInRingCorrect JCTHalfOpenParity
                                JCTGenericStability JCTEscapeDescent
-                               JCTHugStep JCTCorridor
+                               JordanCurveSeam JCT JCTHugStep JCTCorridor
                                JCTTautClearance GeneralTautBridge
                                EdgeCrossParity FaceTwinAware
                                StraddlePair StraddleSides.
@@ -120,11 +120,33 @@ Definition face_transport_premise (E : list Edge) : Prop :=
        <-> point_in_ring (mkPoint (edge_x_at d my + ef) my)
                          (ring_of_chain (d :: c))).
 
-(* C-3e-4 discharge apply hooks: CornerCorridorBridge.v
-   `face_transport_premise_ring_dart_straddle_pair_in_complement` applies
-   west/east `*_straddle_connected` lemmas (via `corridor_safe_for_ef`) and
-   yields `ring_complement` for exact `(edge_x_at d my ± ef, my)` under the
-   premise.  Import CornerCorridorBridge at discharge sites (no cyclic import). *)
+(* C-3e-4 premise-site hooks: connectivity discharge (CornerCorridorBridge.v)
+   applies `face_transport_straddle_target_in_complement` below; the premise
+   itself also projects `ring_complement` for each exact straddle target. *)
+
+Lemma face_transport_straddle_target_in_complement :
+  forall (r : Ring) (p_start p_straddle : Point),
+    connected_in_complement_cont r p_start p_straddle ->
+    ring_complement r p_straddle.
+Proof.
+  intros r p_start p_straddle Hconn.
+  exact (connected_in_complement_cont_right r p_start p_straddle Hconn).
+Qed.
+
+(* C-3e discharge supplies the Hc1/Hc2 inputs to `face_transport_premise`
+   (cf. `straddle_transport_clash`); this lemma packages both straddle targets
+   once corner-to-target connectivity is in hand. *)
+Lemma face_transport_straddle_complements_of_connected :
+  forall (r : Ring) (p_start_west p_west p_start_east p_east : Point),
+    connected_in_complement_cont r p_start_west p_west ->
+    connected_in_complement_cont r p_start_east p_east ->
+    ring_complement r p_west /\ ring_complement r p_east.
+Proof.
+  intros r psw pw pse pe Hconn_west Hconn_east.
+  split.
+  - apply (face_transport_straddle_target_in_complement r psw pw Hconn_west).
+  - apply (face_transport_straddle_target_in_complement r pse pe Hconn_east).
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* §3  The one-sided core: same face + transport => not reachable.             *)

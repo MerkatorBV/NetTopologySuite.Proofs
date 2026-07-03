@@ -1395,7 +1395,7 @@ Proof.
               rho ef my h_base h_tip ylo yhi delta0 Hprem Hr Hinring Htaut Hcross
               Hforeign Hx HdE HringD Hspan Hle Hdesc Hhbase Hhtip
               (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird Hclear) as [Hconn _].
-  exact (connected_in_complement_cont_right r _ _ Hconn).
+  apply (face_transport_straddle_target_in_complement r _ _ Hconn).
 Qed.
 
 Lemma face_transport_premise_ring_dart_east_straddle_in_complement :
@@ -1431,7 +1431,7 @@ Proof.
                rho ef my h_base h_tip ylo yhi delta0 Hprem Hr Hinring Htaut Hcross
                Hforeign Hx HdE HringD Hspan Hle Hasc Hhbase
                (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird Hclear_east) as Hconn.
-  exact (connected_in_complement_cont_right r _ _ Hconn).
+  apply (face_transport_straddle_target_in_complement r _ _ Hconn).
 Qed.
 
 Lemma face_transport_premise_ring_dart_straddle_pair_in_complement :
@@ -1490,6 +1490,51 @@ Proof.
                rho ef my h_base h_tip ylo yhi delta0 Hprem Hr Hinring Htaut Hcross
                Hforeign Hx HdE HringD Hspan Hle Hasc Hhbase_east
                (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird Hclear_east).
+Qed.
+
+(* Foreign-dart discharge: BOTH exact ±ef targets connected and in complement. *)
+Lemma face_transport_premise_foreign_straddle_pair_in_complement :
+  forall (E : list Edge) (D : list Dart) (r : Ring) (d : Dart) (c : list Dart)
+         (rho ef my h_base h_tip ylo yhi delta0 : R),
+    face_transport_premise E ->
+    r = ring_of_chain (d :: c) ->
+    ~ In d (ring_edges r) ->
+    ring_taut r ->
+    pairwise_no_proper_cross_twin_aware D ->
+    no_foreign_vertex_twin_aware D ->
+    In d D ->
+    In d E ->
+    (forall f, In f (ring_edges r) -> In f D) ->
+    ((py (fst d) < ylo /\ yhi < py (snd d)) \/
+     (py (snd d) < ylo /\ yhi < py (fst d))) ->
+    ylo <= yhi ->
+    vy (ddir d) < 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+    h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
+    ylo <= h_base <= my /\ my <= h_tip <= yhi ->
+    0 < delta0 ->
+    0 < ef ->
+    ef < corridor_safe_threshold delta0 / 3 ->
+    (forall delta, 0 < delta < delta0 ->
+       forall y, ylo <= y <= yhi ->
+         ~ ring_image r (corridor d delta y)) ->
+    (forall t, 0 <= t <= 1 ->
+       ring_complement r (mkPoint (edge_x_at d my - ef + t * (2 * ef)) my)) ->
+    let p_west := mkPoint (edge_x_at d my - ef) my in
+    let p_east := mkPoint (edge_x_at d my + ef) my in
+    (p_west = corridor d ef my /\ p_east = corridor_east d ef my) /\
+    ring_complement r p_west /\ ring_complement r p_east.
+Proof.
+  intros E D r d c rho ef my h_base h_tip ylo yhi delta0
+         Hprem Hr Hdedge Htaut Hcross Hforeign Hx HdE HringD Hspan Hle Hdesc
+         Hhbase Hhtip [Hhlo [Hmhi Hthhi]] Hd0 Hef Hthird Hclear Hchord p_west p_east.
+  destruct (face_transport_straddle_pair_eq d my ef) as [Heq_west Heq_east].
+  destruct (corridor_safe_for_ef_foreign D r d rho ef my h_base h_tip ylo yhi delta0
+              Htaut Hcross Hforeign Hx HringD Hspan Hle Hdesc Hhbase Hhtip
+              (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird Hclear Hdedge Hchord) as [Hleft [Hright Heast]].
+  split.
+  - split; assumption.
+  - apply (face_transport_straddle_complements_of_connected r _ _ _ _ Hleft Heast).
 Qed.
 
 (* Discharge hook for `face_transport_premise` (HBridgeCoreSlice.v §2): west
@@ -2014,6 +2059,7 @@ Print Assumptions face_transport_premise_ring_dart_straddle_pair_connected.
 Print Assumptions face_transport_premise_ring_dart_west_straddle_in_complement.
 Print Assumptions face_transport_premise_ring_dart_east_straddle_in_complement.
 Print Assumptions face_transport_premise_ring_dart_straddle_pair_in_complement.
+Print Assumptions face_transport_premise_foreign_straddle_pair_in_complement.
 Print Assumptions face_transport_west_straddle_headline_connected.
 Print Assumptions face_transport_east_straddle_headline_connected.
 Print Assumptions descending_sample_corridor_safe_for_ef.

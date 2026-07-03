@@ -1174,7 +1174,7 @@ closed/min-points conditions. The planned ladder:
     ## C-3e-4 (along-dart headline) – IN PROGRESS
     - [x] internal corner bridge via CornerCorridorBridge (PR#339)
     - [ ] connect to exact (edge_x_at … ±ef, my) targets ← **you are here**
-    - Proposed: Lemma `corridor_safe_absorbs_ef` + algebraic bypass application
+    - Proposed: Lemma `corridor_safe_for_ef` + `corridor_absorbs_ef` bypass application
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_

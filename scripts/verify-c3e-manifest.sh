@@ -16,7 +16,9 @@ mkdir -p "$SCRATCH"
 rm -f "$SCRATCH"/build-*.log "$SCRATCH"/check-admitted.log \
       "$SCRATCH"/c3e-lemma.log "$SCRATCH"/verification-plan.log \
       "$SCRATCH"/vp5-wiring.log "$SCRATCH"/git-c3e.log \
-      "$SCRATCH"/git-c3e-run1.log "$SCRATCH"/git-c3e-run2.log
+      "$SCRATCH"/git-c3e-run1.log "$SCRATCH"/git-c3e-run2.log \
+      "$SCRATCH"/plan-c3e-grep.log "$SCRATCH"/objective-full.log \
+      "$SCRATCH"/objective-full-run1.log "$SCRATCH"/objective-full-run2.log
 
 # VP0: clean git literal sequence (fetch; status; log) x2 — no plan grep.
 capture_git_sequence() {
@@ -41,8 +43,22 @@ if ! cmp -s "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log"; then
   exit 1
 fi
 
-# Named artifact: literal objective sequence twice (no headers/footers; cmp above).
+# Named artifacts: clean git-only log + full objective sequence (git + grep) x2.
 cat "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log" >"$SCRATCH/git-c3e.log"
+{
+  capture_git_sequence
+  capture_plan_c3e_grep
+} >"$SCRATCH/objective-full-run1.log"
+{
+  capture_git_sequence
+  capture_plan_c3e_grep
+} >"$SCRATCH/objective-full-run2.log"
+if ! cmp -s "$SCRATCH/objective-full-run1.log" "$SCRATCH/objective-full-run2.log"; then
+  echo "VP0_FAIL: objective-full-run1.log and objective-full-run2.log differ" >&2
+  exit 1
+fi
+cat "$SCRATCH/objective-full-run1.log" "$SCRATCH/objective-full-run2.log" \
+  >"$SCRATCH/objective-full.log"
 
 {
   echo "VP0_GIT_CAPTURE_OK"
@@ -117,13 +133,14 @@ bash scripts/check_admitted.sh 2>&1 | tee "$SCRATCH/check-admitted.log"
 echo "STEP4_CHECK_ADMITTED_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 cat > "$SCRATCH/exercise_c3e.v" <<'COQ'
-From NTS.Proofs Require Import CornerCorridorBridge.
+From NTS.Proofs Require Import HBridgeCoreSlice CornerCorridorBridge.
 Check face_transport_straddle_pair_eq.
 Check corridor_safe_for_ef.
 Print descending_sample_corridor_safe_for_ef.
 Check face_transport_premise_ring_dart_straddle_pair_connected.
+Check face_transport_straddle_target_in_complement.
 Check face_transport_premise_ring_dart_west_straddle_in_complement.
-Check face_transport_premise_ring_dart_east_straddle_in_complement.
+Check face_transport_premise_foreign_straddle_pair_in_complement.
 Print Assumptions face_transport_premise_ring_dart_straddle_pair_in_complement.
 COQ
 
@@ -159,8 +176,10 @@ echo "VP4_LEMMA_OK" | tee -a "$SCRATCH/verification-plan.log"
   grep -n "apply.*corridor_safe_for_ef\|destruct (corridor_safe_for_ef" theories/CornerCorridorBridge.v
   grep -n "face_transport_premise_ring_dart_west_straddle_connected\|face_transport_premise_ring_dart_east_straddle_connected\|face_transport_premise_ring_dart_straddle_pair_connected\|face_transport_premise_ring_dart_.*_in_complement\|face_transport_premise" \
     theories/CornerCorridorBridge.v
-  grep -n "apply.*face_transport_premise_ring_dart\|destruct (corridor_safe_for_ef\|eapply connected_in_complement_cont_right" \
+  grep -n "apply.*face_transport_premise_ring_dart\|apply face_transport_straddle_target_in_complement\|destruct (corridor_safe_for_ef" \
     theories/CornerCorridorBridge.v
+  grep -n "face_transport_straddle_target_in_complement\|face_transport_straddle_complements_of_connected" \
+    theories/HBridgeCoreSlice.v
   grep -n "In d (ring_edges r)" theories/CornerCorridorBridge.v
 } | tee "$SCRATCH/vp5-wiring.log"
 
@@ -174,6 +193,10 @@ if ! grep -q "face_transport_premise_ring_dart_straddle_pair_connected" "$SCRATC
 fi
 if ! grep -q "face_transport_premise_ring_dart_west_straddle_in_complement" "$SCRATCH/vp5-wiring.log"; then
   echo "VP5_FAIL: premise-layer in_complement apply hooks missing" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "face_transport_straddle_target_in_complement" "$SCRATCH/vp5-wiring.log"; then
+  echo "VP5_FAIL: HBridge premise-site apply hook missing" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
 echo "VP5_WIRING_OK" | tee -a "$SCRATCH/vp5-wiring.log"
