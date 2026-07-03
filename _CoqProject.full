@@ -536,6 +536,12 @@ theories/HBridgeCoreSlice.v
 # SectorPath.in_open_sector, refuting five impossible sign patterns via
 # vcross_chain_cert).  No Admitteds.
 theories/FanGapSector.v
+# H-bridge attack C-3d step 2a: corner gap kit -- the sector certificate is
+# scale-invariant in the query, so certified offsets avoid rays in
+# non-certified directions (the germ-exclusion mechanism fed by the fan-gap
+# bridge); and the off-ring corner closes with a single chord inside the
+# convex clearance ball.  No Admitteds.
+theories/CornerGapKit.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

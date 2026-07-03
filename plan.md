@@ -1027,9 +1027,20 @@ closed/min-points conditions. The planned ladder:
     `dir_lt_trans` style: same-half configs constructive, six mixed
     sub-cases by the free half-split ordering, five impossible sign
     patterns refuted by `vcross_chain_cert` + strict dichotomies +
-    `nra`).  Standard 2-axiom footprint, 0 Admitted.  Step 2 (next):
-    thread it through `CornerConnector.v`'s incident-exclusion so the
-    corner polyline avoids every E-edge germ at the vertex.
+    `nra`).  Standard 2-axiom footprint, 0 Admitted.
+    **Step 2a (DONE, `CornerGapKit.v`): the two corner tools.**
+    `in_open_sector_scale` (the certificate is scale-invariant in the
+    query) gives `sector_off_foreign_ray`: a certified offset never lies
+    on a ray in a NON-certified direction -- combined with the step-1
+    headline, every corner polyline point avoids every edge germ at the
+    vertex.  And `off_ring_corner_ball` closes the OFF-RING corner case
+    entirely: a face-walk vertex in the ring complement carries a
+    positive radius within which all corner samples connect by a single
+    chord (`ball_chord_connected`; sup-balls are convex).  Standard
+    2-axiom footprint, 0 Admitted.  Step 2b (next): the on-ring general
+    fan corner -- assemble germ exclusion + the pruned clearance ball +
+    the sector polyline into the full-fan `connected_in_complement`
+    corner at a cycle vertex.
   - **C-3e (straddle tie-in).**  The chain's endpoints are corner
     samples; the premise's points are the straddle pair at height `my`.
     Connect same-side corner samples of `d` to `(edge_x_at d my -/+ ef,
