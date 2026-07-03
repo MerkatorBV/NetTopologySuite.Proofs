@@ -1191,6 +1191,23 @@ closed/min-points conditions. The planned ladder:
     `along_dart_base_to_straddle_west_clear` + the worked
     `descending_sample_*` instance).  Standard 2-axiom footprint,
     0 Admitted.  C-3e is COMPLETE as a connector stack.
+    **C-3e-4 exact-target status ledger (PR #341,
+    `corridor_safe_for_ef`).**  Per-orientation wiring to the literal
+    `(edge_x_at d my -/+ ef, my)` targets:
+    - [x] internal corner bridge via CornerCorridorBridge (PR #339/#340)
+    - [x] foreign dart: both -/+ef connected + in complement
+    - [x] ring dart descending: `-ef` connected (both corners)
+    - [x] ring dart ascending: `+ef` connected (base east corner)
+    - [x] small-ef packaging: `corridor_safe_third` +
+      `ef_lt_threshold_third_implies_half` + `corridor_safe_for_ef`
+      (headline: under walk-dart clearance and
+      `ef < corridor_safe_threshold delta0 / 3`, the base corner sample
+      connects to `p_west` on a descent / `p_east` on an ascent) +
+      `along_dart_base_to_straddle_east_clear` (east `_clear` mirror)
+    - [ ] ring dart CROSS-ORIENTATION -/+ef: connecting the `-ef` and
+      `+ef` sides of `d` to EACH OTHER is exactly the C-3f orbit content
+      (d's own carrier blocks the direct chord) -- NOT an along-dart
+      gap; tracked under C-3f below.
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_
