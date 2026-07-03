@@ -1171,13 +1171,55 @@ closed/min-points conditions. The planned ladder:
     directly as a corridor endpoint with NO separate meeting-hop
     certificate -- skipping step 3 entirely for those two vertices.
     Standard 2-axiom footprint, 0 Admitted.
+    **Steps 3+4 (DONE via the bypass, `CornerCorridorBridge.v`
+    SS C-3e-A/B/C, PR #340): the along-dart connector reaches the
+    straddle pair.**  SS-A the ef-absorption kit
+    (`corridor_absorbs_ef`, `corridor_ef_inherits_clearance`/`_east`,
+    `corridor_small_ef_exists`: any `ef` below half a walk-dart
+    `delta0` rides the same uniform clearance window;
+    `straddle_west_eq_corridor`/`_east...`: the premise's pair IS a
+    corridor point at offset `ef`).  SS-B the handoff connector
+    (`handoff_chord_connected_convex`, `handoff_base_to_corridor_*`,
+    `handoff_base_bridge_connected_west` -- the bridge equalities make
+    the base/tip handoffs REFLEXIVE).  SS-C the along-dart headlines
+    (`bridge_delta_west/_east`, `corner_delta_for_ef_west/_east` with
+    `bridge_delta_*_for_ef` inverting the offset map, and
+    `along_dart_base_to_straddle_west/_east` +
+    `along_dart_tip_to_straddle_west/_east`: one corridor ride at
+    offset EXACTLY `ef` from either corner sample of `d` to either
+    straddle point, under a per-window ring-freedom hypothesis;
+    `along_dart_base_to_straddle_west_clear` + the worked
+    `descending_sample_*` instance).  Standard 2-axiom footprint,
+    0 Admitted.  C-3e is COMPLETE as a connector stack.
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_
-    segment`-style transport (`parity_constant_on_components`).  One
-    subtlety to resolve here: intermediate walk darts may COINCIDE with
-    ring darts (the face walk can run along the cycle); those steps use
-    the ring-dart corridor case of C-3c directly.
+    segment`-style transport (`parity_constant_on_components`,
+    JCTSeparation.v:58; the walk index from
+    `same_face_twin_first_step_index`, EdgeFaceBridge.v:479).  Design
+    obligations logged while closing C-3e (2026-07-03):
+    (1) INTERMEDIATE-VERTEX PARAMETER MATCHING: at a fan vertex the
+    arriving ride's `corner_sample_in` and the corner connector's
+    wall-1 sample must share `(rho, delta)`, and the corner's exit
+    sample fixes the NEXT ride's `delta_c`; the induction therefore
+    carries per-step parameters -- use the EXPLICIT-parameter fan
+    corner theorems (`fan_corner_connected_reflex`/`_convex`), not the
+    `_auto` existentials.
+    (2) THE ef REGIME: `corner_delta_for_ef_*` pins each corner delta
+    from the premise's `ef`, but the corner connectors' smallness
+    bounds cap the deltas by each vertex's clearance ball -- so the
+    walk chain discharges the premise only for ef below a
+    walk-dependent threshold.  Either (a) strengthen
+    `face_transport_premise` with the near-`d` ball-freedom hypothesis
+    that `straddle_side_core`'s construction already provides (the
+    core-slice caller can discharge it), so the premise only ever
+    needs small `ef`; or (b) add an ef-shrink transport inside the
+    discharge (parity equality between `(X -/+ ef, my)` and
+    `(X -/+ ef', my)` across a ring-free horizontal strip).  Decide at
+    C-3f kickoff; (a) looks strictly simpler.
+    (3) Intermediate walk darts may COINCIDE with ring darts (the face
+    walk can run along the cycle); those steps use the ring-dart
+    corridor case of C-3c directly.
 
 ---
 
