@@ -1252,10 +1252,10 @@ Proof.
   intros E D r d c rho ef my h_base h_tip ylo yhi delta0
          Hprem Hr Hinring Htaut Hcross Hforeign Hx HdE HringD Hspan Hle Hdesc
          Hhbase Hhtip [Hhlo [Hmhi Hthhi]] Hd0 Hef Hthird Hclear.
-  destruct (corridor_safe_for_ef_west D r d rho ef my h_base h_tip ylo yhi delta0
-              Htaut Hcross Hforeign Hx HringD Hspan Hle Hdesc Hhbase Hhtip
-              (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird Hclear) as [Hleft Hright].
-  split; [ exact Hleft | exact Hright ].
+  destruct (corridor_safe_for_ef D r d rho ef my h_base h_tip ylo yhi delta0
+              Htaut Hcross Hforeign Hx HringD Hspan Hle
+              (conj Hhlo (conj Hmhi Hthhi)) Hd0 Hef Hthird) as [_ [Hwest [_ _]]].
+  apply (Hwest (conj Hinring Hdesc) Hhbase Hhtip Hclear).
 Qed.
 
 (* Discharge hook for `face_transport_premise` (HBridgeCoreSlice.v §2): west
