@@ -27,15 +27,8 @@ capture_objective_sequence() {
   echo ""
 }
 
-{
-  echo "=== OBJECTIVE SEQUENCE RUN 1 ==="
-  capture_objective_sequence
-} | tee "$SCRATCH/git-c3e-run1.log" >/dev/null
-
-{
-  echo "=== OBJECTIVE SEQUENCE RUN 2 ==="
-  capture_objective_sequence
-} | tee "$SCRATCH/git-c3e-run2.log" >/dev/null
+capture_objective_sequence | tee "$SCRATCH/git-c3e-run1.log" >/dev/null
+capture_objective_sequence | tee "$SCRATCH/git-c3e-run2.log" >/dev/null
 
 if ! cmp -s "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log"; then
   echo "VP0_FAIL: git-c3e-run1.log and git-c3e-run2.log differ" >&2
@@ -43,8 +36,9 @@ if ! cmp -s "$SCRATCH/git-c3e-run1.log" "$SCRATCH/git-c3e-run2.log"; then
 fi
 
 {
+  echo "=== OBJECTIVE SEQUENCE RUN 1 ==="
   cat "$SCRATCH/git-c3e-run1.log"
-  echo "---"
+  echo "=== OBJECTIVE SEQUENCE RUN 2 ==="
   cat "$SCRATCH/git-c3e-run2.log"
 } >"$SCRATCH/git-c3e.log"
 
