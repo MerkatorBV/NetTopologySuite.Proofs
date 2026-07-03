@@ -77,9 +77,9 @@ Check corridor_safe_for_ef.
 Print corridor_safe_for_ef.
 Check descending_sample_corridor_safe_for_ef.
 Print descending_sample_corridor_safe_for_ef.
-Lemma c3e_instantiated_apply : descending_sample_corridor_safe_for_ef.
-Proof. exact descending_sample_corridor_safe_for_ef. Qed.
 Print face_transport_straddle_pair_eq.
+Eval compute in sample_ef.
+Eval compute in sample_my.
 COQ
 
 {
@@ -89,8 +89,12 @@ COQ
     -load-vernac-source "$SCRATCH/exercise_c3e.v"
 } 2>&1 | tee "$SCRATCH/c3e-lemma.log"
 
-if ! grep -q "descending_sample_corridor_safe_for_ef" "$SCRATCH/c3e-lemma.log"; then
-  echo "VP4_FAIL: sample instantiation missing from lemma log" | tee -a "$SCRATCH/verification-plan.log"
+if ! grep -q "edge_x_at descending_sample_dart sample_my - sample_ef" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: literal p1 target missing from Print output" | tee -a "$SCRATCH/verification-plan.log"
+  exit 1
+fi
+if ! grep -q "corner_sample_left descending_sample_dart sample_rho sample_ef" "$SCRATCH/c3e-lemma.log"; then
+  echo "VP4_FAIL: corner_sample_left instantiation missing" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi
 echo "VP4_LEMMA_OK" | tee -a "$SCRATCH/verification-plan.log"
