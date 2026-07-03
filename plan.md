@@ -1173,8 +1173,11 @@ closed/min-points conditions. The planned ladder:
     Standard 2-axiom footprint, 0 Admitted.
     ## C-3e-4 (along-dart headline) – IN PROGRESS
     - [x] internal corner bridge via CornerCorridorBridge (PR#339)
-    - [ ] connect to exact (edge_x_at … ±ef, my) targets ← **you are here**
-    - Proposed: Lemma `corridor_safe_for_ef` + algebraic bypass application
+    - [x] `corridor_safe_for_ef` wires corners → exact `(edge_x_at d my ±ef, my)`
+      targets; ring-dart west discharge via
+      `face_transport_premise_ring_dart_west_straddle_connected` (PR#341)
+    - [ ] full `face_transport_premise` discharge ← **you are here**
+      (ring-dart east @ `my` deferred to C-3f orbit induction)
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_
