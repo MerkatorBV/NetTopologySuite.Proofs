@@ -57,11 +57,11 @@ Lemma corner_sample_out_on_corridor_west :
              / (- vy (ddir d)))
           (py (dbase d) + (rho * vy (ddir d) - delta * vx (ddir d))).
 Proof.
-  intros [a b] rho delta Hneg.
+  intros [[xa ya] [xb yb]] rho delta Hneg.
   cbv [ddir dbase dtip point_diff point_at corner_sample_out
        vadd vscale vneg vperpL corridor edge_x_at fst snd vx vy px py]
     in *.
-  assert (Hnh : py b - py a <> 0) by lra.
+  assert (Hnh : yb - ya <> 0) by lra.
   f_equal; [ | ring ].
   field; lra.
 Qed.
@@ -75,11 +75,11 @@ Lemma corner_sample_out_on_corridor_east :
              / vy (ddir d))
           (py (dbase d) + (rho * vy (ddir d) - delta * vx (ddir d))).
 Proof.
-  intros [a b] rho delta Hpos.
+  intros [[xa ya] [xb yb]] rho delta Hpos.
   cbv [ddir dbase dtip point_diff point_at corner_sample_out
        vadd vscale vneg vperpL corridor_east edge_x_at fst snd vx vy px py]
     in *.
-  assert (Hnh : py b - py a <> 0) by lra.
+  assert (Hnh : yb - ya <> 0) by lra.
   f_equal; [ | ring ].
   field; lra.
 Qed.
@@ -98,11 +98,11 @@ Lemma corner_sample_in_on_corridor_west :
              / (- vy (ddir d)))
           (py (dtip d) + (- rho * vy (ddir d) - delta * vx (ddir d))).
 Proof.
-  intros [a b] rho delta Hneg.
+  intros [[xa ya] [xb yb]] rho delta Hneg.
   cbv [ddir dbase dtip point_diff point_at corner_sample_in
        vadd vscale vperpL corridor edge_x_at fst snd vx vy px py]
     in *.
-  assert (Hnh : py a - py b <> 0) by lra.
+  assert (Hnh : ya - yb <> 0) by lra.
   f_equal; [ | ring ].
   field; lra.
 Qed.
@@ -116,11 +116,11 @@ Lemma corner_sample_in_on_corridor_east :
              / vy (ddir d))
           (py (dtip d) + (- rho * vy (ddir d) - delta * vx (ddir d))).
 Proof.
-  intros [a b] rho delta Hpos.
+  intros [[xa ya] [xb yb]] rho delta Hpos.
   cbv [ddir dbase dtip point_diff point_at corner_sample_in
        vadd vscale vperpL corridor_east edge_x_at fst snd vx vy px py]
     in *.
-  assert (Hnh : py a - py b <> 0) by lra.
+  assert (Hnh : ya - yb <> 0) by lra.
   f_equal; [ | ring ].
   field; lra.
 Qed.
