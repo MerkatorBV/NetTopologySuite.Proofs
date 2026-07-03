@@ -556,6 +556,12 @@ theories/FanCorner.v
 # endpoint touches), and the shared case tree comes from the
 # per_edge_clear_core refactor of JCTWallClear.  No Admitteds.
 theories/ForeignCorridor.v
+# H-bridge attack C-3c step 2: the walk-dart corridor dichotomy -- every
+# non-horizontal E-dart carries a ring-free westward corridor over a
+# span-interior window, by a three-way split (ring dart via the taut wall
+# theorem, twin of a ring dart via the same-carrier transfer, foreign dart
+# via the twin-aware-guards route).  No Admitteds.
+theories/WalkCorridor.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
