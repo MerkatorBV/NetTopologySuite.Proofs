@@ -569,6 +569,11 @@ theories/WalkCorridor.v
 # (walk_dart_corridor_east_clear) without re-deriving any clearance.
 # No Admitteds.
 theories/MirrorCorridor.v
+# H-bridge attack C-3e step 1: the side kit for the corner<->corridor handoff
+# -- corner samples and face-side corridor points are strictly right of the
+# walk dart, the side form is affine along chords, so handoff chords never
+# meet the dart's edge or its twin.  No Admitteds.
+theories/DartSideKit.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

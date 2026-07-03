@@ -1095,11 +1095,42 @@ closed/min-points conditions. The planned ladder:
     incident-ring-edges (the twin-aware no-T-junction guard).  Standard
     2-axiom footprint, 0 Admitted.  Next campaign entry point: C-3c, the
     along-edge corridor connector.
-  - **C-3e (straddle tie-in).**  The chain's endpoints are corner
-    samples; the premise's points are the straddle pair at height `my`.
-    Connect same-side corner samples of `d` to `(edge_x_at d my -/+ ef,
-    my)` via the corridor along `d` itself (a ring edge, so the C-3c
-    obligations instantiate at `pre = []`/`suf = c`).
+  - **C-3e (straddle tie-in / along-dart connector).**  The chain's
+    endpoints are corner samples; the premise's points are the straddle
+    pair at height `my`.  Connect same-side corner samples of `d` to
+    `(edge_x_at d my -/+ ef, my)` via the corridor along `d` itself (a
+    ring edge, so the C-3c obligations instantiate at `pre = []`/`suf =
+    c`).  Refined decomposition (2026-07-03), after the C-3c stack
+    landed: (1) the SIDE KIT -- corner samples and face-side corridor
+    points are strictly right of the walk dart, chords preserve the
+    side, so handoff chords never meet the dart or its twin; (2) WEDGE
+    CERTIFICATION -- the handoff chord from a corner sample to the
+    adjacent corridor end hugs one sector wall, so it is
+    `in_open_sector`-certified under explicit smallness (near-wall cross
+    is affine-positive along the chord; far-wall by a
+    `corner_sample_*_cert_far`-style margin), which kills the OTHER
+    incident ring edge at the vertex via
+    `FanCorner.sector_point_off_edge_in`/`_out`; (3) the HANDOFF
+    connector -- pruned clearance ball + side (kills dart/twin) + sector
+    (kills the other incident edge) => the chord is a
+    `connected_in_complement_cont` piece; (4) the ALONG-DART headline --
+    base sample -> corridor ride (`corridor_connected` or the east
+    mirror) -> tip sample, by two handoffs + transitivity.
+    **Step 1 (DONE, `DartSideKit.v`): the side kit.**
+    `dart_side_at_base`/`_at_tip` (vertex-relative offsets read the side
+    form as one `vcross` against `ddir`; the tip version eats the
+    along-carrier shift), `ddir_twin`, `vperpL_neg`;
+    `corner_sample_out_base_side`/`corner_sample_in_tip_side` (the C-3b
+    corner samples parked at a dart's two ends are strictly RIGHT of
+    it); `corridor_west_side`/`corridor_east_side` (side value -/+
+    `(py tip - py base) * delta` via `dart_side_straddle` at `X :=
+    edge_x_at`), hence `corridor_right_of_descending` /
+    `corridor_east_right_of_ascending` -- the machine-checked
+    face-on-the-right convention meets the corridor stack;
+    `dart_side_chord` (affine), `chord_right_side`, and headline
+    `chord_right_off_dart_edges` (same-side chords miss the dart AND its
+    twin: on-edge points have side 0).  Standard 2-axiom footprint,
+    0 Admitted.  Next: step 2, the wedge certification.
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_
