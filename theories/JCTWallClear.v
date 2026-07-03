@@ -79,12 +79,27 @@ Qed.
    §2  The per-edge clearance.
    --------------------------------------------------------------------------- *)
 
-Lemma per_edge_clear : forall (r : Ring) (e1 f : Edge) (ylo yhi : R),
-  ring_taut r ->
-  In e1 (ring_edges r) -> In f (ring_edges r) ->
-  ((py (fst e1) < ylo /\ yhi < py (snd e1)) \/
-   (py (snd e1) < ylo /\ yhi < py (fst e1))) ->
+(* The tautness-free CORE of the per-edge clearance: the entire case tree,
+   parameterised over the TOUCH HANDLER -- any way of turning a touch
+   witness (the edge f meeting the carrier's LINE at a window height) into
+   the clearance conclusion.  Two instantiations: the taut route below
+   (`touch_clearance`, for ring edges of a taut ring) and the E-level
+   twin-aware-guards route (`ForeignCorridor.v`, for a carrier dart that
+   is neither a ring edge nor a ring edge's twin -- there a touch is
+   refuted outright). *)
+Lemma per_edge_clear_core : forall (e1 f : Edge) (ylo yhi : R),
+  py (fst e1) <> py (snd e1) ->
   ylo <= yhi ->
+  ((exists s y : R, 0 <= s <= 1 /\ ylo <= y <= yhi /\
+      y = (1 - s) * py (fst f) + s * py (snd f) /\
+      edge_x_at e1 y = (1 - s) * px (fst f) + s * px (snd f)) ->
+   exists df, 0 < df /\
+     forall delta, 0 < delta < df ->
+       forall y, ylo <= y <= yhi ->
+         ~ (exists s : R, 0 <= s <= 1 /\
+              edge_x_at e1 y - delta
+                = (1 - s) * px (fst f) + s * px (snd f) /\
+              y = (1 - s) * py (fst f) + s * py (snd f))) ->
   exists df, 0 < df /\
     forall delta, 0 < delta < df ->
       forall y, ylo <= y <= yhi ->
@@ -92,23 +107,7 @@ Lemma per_edge_clear : forall (r : Ring) (e1 f : Edge) (ylo yhi : R),
              edge_x_at e1 y - delta = (1 - s) * px (fst f) + s * px (snd f) /\
              y = (1 - s) * py (fst f) + s * py (snd f)).
 Proof.
-  intros r e1 f ylo yhi Htaut Hin1 Hinf Hspan Hle.
-  assert (Hnh : py (fst e1) <> py (snd e1)) by (destruct Hspan; lra).
-  (* shorthand for invoking the touch route *)
-  assert (Htouch : (exists s y : R, 0 <= s <= 1 /\ ylo <= y <= yhi /\
-            y = (1 - s) * py (fst f) + s * py (snd f) /\
-            edge_x_at e1 y = (1 - s) * px (fst f) + s * px (snd f)) ->
-          exists df, 0 < df /\
-            forall delta, 0 < delta < df ->
-              forall y, ylo <= y <= yhi ->
-                ~ (exists s : R, 0 <= s <= 1 /\
-                     edge_x_at e1 y - delta
-                       = (1 - s) * px (fst f) + s * px (snd f) /\
-                     y = (1 - s) * py (fst f) + s * py (snd f))).
-  { intro Hex. exists 1. split; [ lra | ].
-    intros delta Hd y Hw.
-    exact (touch_clearance r e1 f ylo yhi Htaut Hin1 Hinf Hnh Hspan
-             Hex delta y ltac:(lra)). }
+  intros e1 f ylo yhi Hnh Hle Htouch.
   destruct (Rtotal_order (py (fst f)) (py (snd f))) as [Hasc | [Hflat | Hdesc]].
   - (* ascending f *)
     destruct (Rle_or_lt ylo (py (snd f))) as [Hov1 | Hbelow];
@@ -398,6 +397,28 @@ Proof.
           unfold G0, G1 in *; lra.
 Qed.
 
+Lemma per_edge_clear : forall (r : Ring) (e1 f : Edge) (ylo yhi : R),
+  ring_taut r ->
+  In e1 (ring_edges r) -> In f (ring_edges r) ->
+  ((py (fst e1) < ylo /\ yhi < py (snd e1)) \/
+   (py (snd e1) < ylo /\ yhi < py (fst e1))) ->
+  ylo <= yhi ->
+  exists df, 0 < df /\
+    forall delta, 0 < delta < df ->
+      forall y, ylo <= y <= yhi ->
+        ~ (exists s : R, 0 <= s <= 1 /\
+             edge_x_at e1 y - delta = (1 - s) * px (fst f) + s * px (snd f) /\
+             y = (1 - s) * py (fst f) + s * py (snd f)).
+Proof.
+  intros r e1 f ylo yhi Htaut Hin1 Hinf Hspan Hle.
+  assert (Hnh : py (fst e1) <> py (snd e1)) by (destruct Hspan; lra).
+  apply (per_edge_clear_core e1 f ylo yhi Hnh Hle).
+  intro Hex. exists 1. split; [ lra | ].
+  intros delta Hd y Hw.
+  exact (touch_clearance r e1 f ylo yhi Htaut Hin1 Hinf Hnh Hspan
+           Hex delta y ltac:(lra)).
+Qed.
+
 (* ---------------------------------------------------------------------------
    §3  The fold and the wall theorem.
    --------------------------------------------------------------------------- *)
@@ -455,5 +476,6 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions touch_clearance.
+Print Assumptions per_edge_clear_core.
 Print Assumptions per_edge_clear.
 Print Assumptions wall_corridor_clear.

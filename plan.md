@@ -1016,6 +1016,22 @@ closed/min-points conditions. The planned ladder:
     edge relative to `x`'s carrier (from `pairwise_no_proper_cross_
     twin_aware` + `no_foreign_vertex_twin_aware`, mirroring how the
     escape-descent walk derived them from tautness via `JCTWallClear`).
+    **Step 1 (DONE, `ForeignCorridor.v` + `JCTWallClear` refactor): the
+    E-level wall theorem.**  `JCTWallClear.per_edge_clear` factored into
+    the tautness-free `per_edge_clear_core` (the whole case tree,
+    parameterised over the TOUCH HANDLER; `per_edge_clear`'s statement
+    unchanged).  `foreign_dart_no_line_touch`: for a carrier dart that
+    is neither a ring edge nor a ring edge's twin, a touch witness
+    inside the span-interior window is refuted OUTRIGHT by the two
+    twin-aware guards (interior touch = proper cross; endpoint touch =
+    foreign vertex).  `foreign_per_edge_clear` = core + refutation;
+    `foreign_corridor_clear` folds over `ring_edges r`: the corridor
+    along any such dart is ring-free for all small positive offsets --
+    the exact foreign-dart counterpart of `wall_corridor_clear` (which
+    covers ring darts on the taut cycle ring).  Standard 2-axiom
+    footprint, 0 Admitted.  Next steps: the ring-dart/twin instantiation
+    on the cycle ring + the window/endpoint plumbing tying corridor ends
+    to the corner samples (C-3e shapes).
   - **C-3d (general fan corner).**  The two-dart corner connector
     (`CornerConnector.v`) generalises to fans with non-ring darts.
     **Step 1 (DONE, `FanGapSector.v`): the fan-gap sector bridge.**
