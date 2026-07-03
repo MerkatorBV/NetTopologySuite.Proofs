@@ -1,7 +1,6 @@
 (* Documentation stub for the chore commit (a47059f).
-   The load-bearing module was renamed to theories/C3eEfCorridorAssumption.v
-   because Coq module names cannot contain hyphens.  This file is intentionally
-   NOT listed in _CoqProject.full. *)
+   Load-bearing C-3e lemmas live in CornerCorridorBridge.v §C-3e-A/B/C.
+   This file is intentionally NOT listed in _CoqProject.full. *)
 
 (* TODO: C-3e open design note (post-PR#339)
    Both tracks currently connect only d's own two corner samples via corridor.
