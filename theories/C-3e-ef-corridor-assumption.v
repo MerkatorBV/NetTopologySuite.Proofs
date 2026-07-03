@@ -6,5 +6,5 @@
    (standard "sufficiently small" + triangle-inequality chaining). *)
 (* ## C-3e-4 (along-dart headline) – IN PROGRESS
    - [x] internal corner bridge via CornerCorridorBridge (PR#339)
-   - [x] connect to exact (edge_x_at … ±ef, my) targets
-   - Proposed: Lemma `corridor_safe_for_ef` + algebraic bypass application *)
+   - [ ] connect to exact (edge_x_at … ±ef, my) targets ← you are here
+   - Proposed: Lemma `corridor_safe_absorbs_ef` + algebraic bypass application *)
