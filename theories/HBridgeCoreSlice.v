@@ -48,7 +48,8 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Dart
                                RingExtract PointInRingTangents
                                PointInRingCorrect JCTHalfOpenParity
                                JCTGenericStability JCTEscapeDescent
-                               JCTHugStep JCTCorridor RingClearance
+                               JordanCurveSeam JCT JCTHugStep JCTCorridor
+                               RingClearance
                                JCTTautClearance GeneralTautBridge
                                EdgeCrossParity FaceTwinAware
                                StraddlePair StraddleSides.
@@ -129,9 +130,80 @@ Definition face_transport_premise (E : list Edge) : Prop :=
        <-> point_in_ring (mkPoint (edge_x_at d my + ef) my)
                          (ring_of_chain (d :: c))).
 
+(* C-3e-4 premise-site hooks (CornerCorridorBridge.v discharge lemmas feed
+   `straddle_transport_clash_from_connected` in §3 via the lemmas below). *)
+
+Lemma face_transport_straddle_target_in_complement :
+  forall (r : Ring) (p_start p_straddle : Point),
+    connected_in_complement_cont r p_start p_straddle ->
+    ring_complement r p_straddle.
+Proof.
+  intros r p_start p_straddle Hconn.
+  exact (connected_in_complement_cont_right r p_start p_straddle Hconn).
+Qed.
+
+(* C-3e discharge supplies the Hc1/Hc2 inputs to `face_transport_premise`
+   (cf. `straddle_transport_clash`); this lemma packages both straddle targets
+   once corner-to-target connectivity is in hand. *)
+Lemma face_transport_straddle_complements_of_connected :
+  forall (r : Ring) (p_start_west p_west p_start_east p_east : Point),
+    connected_in_complement_cont r p_start_west p_west ->
+    connected_in_complement_cont r p_start_east p_east ->
+    ring_complement r p_west /\ ring_complement r p_east.
+Proof.
+  intros r psw pw pse pe Hconn_west Hconn_east.
+  split.
+  - apply (face_transport_straddle_target_in_complement r psw pw Hconn_west).
+  - apply (face_transport_straddle_target_in_complement r pse pe Hconn_east).
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* §3  The one-sided core: same face + transport => not reachable.             *)
 (* -------------------------------------------------------------------------- *)
+
+(* Intuitionistic clash at the exact `face_transport_premise` straddle pair
+   once complement membership and the two parity readings are in hand.
+   C-3e discharge (CornerCorridorBridge.v) supplies the complement inputs
+   via `straddle_transport_clash_from_connected` below. *)
+Lemma straddle_transport_clash_from_complements :
+  forall (r : Ring) (d : Dart) (my ef : R),
+    ring_complement r (mkPoint (edge_x_at d my - ef) my) ->
+    ring_complement r (mkPoint (edge_x_at d my + ef) my) ->
+    (point_in_ring (mkPoint (edge_x_at d my - ef) my) r <->
+     point_in_ring (mkPoint (edge_x_at d my + ef) my) r) ->
+    (point_in_ring (mkPoint (edge_x_at d my - ef) my) r <->
+     ~ point_in_ring (mkPoint (edge_x_at d my + ef) my) r) ->
+    False.
+Proof.
+  intros r d my ef Hcw Hce Hpar_equal Hpar_opp.
+  assert (HnB : ~ point_in_ring (mkPoint (edge_x_at d my + ef) my) r).
+  { intro HB. exact (proj1 Hpar_opp (proj2 Hpar_equal HB) HB). }
+  exact (HnB (proj1 Hpar_equal (proj2 Hpar_opp HnB))).
+Qed.
+
+(* C-3e apply hook: corner-to-target connectivity projects to complement,
+   then feeds `straddle_transport_clash_from_complements`. *)
+Lemma straddle_transport_clash_from_connected :
+  forall (r : Ring) (d : Dart) (my ef : R)
+         (p_start_west p_start_east : Point),
+    connected_in_complement_cont r p_start_west
+      (mkPoint (edge_x_at d my - ef) my) ->
+    connected_in_complement_cont r p_start_east
+      (mkPoint (edge_x_at d my + ef) my) ->
+    (point_in_ring (mkPoint (edge_x_at d my - ef) my) r <->
+     point_in_ring (mkPoint (edge_x_at d my + ef) my) r) ->
+    (point_in_ring (mkPoint (edge_x_at d my - ef) my) r <->
+     ~ point_in_ring (mkPoint (edge_x_at d my + ef) my) r) ->
+    False.
+Proof.
+  intros r d my ef psw pse Hconn_west Hconn_east Hpar_equal Hpar_opp.
+  assert (Hcw : ring_complement r (mkPoint (edge_x_at d my - ef) my)).
+  { apply (face_transport_straddle_target_in_complement r psw _ Hconn_west). }
+  assert (Hce : ring_complement r (mkPoint (edge_x_at d my + ef) my)).
+  { apply (face_transport_straddle_target_in_complement r pse _ Hconn_east). }
+  exact (straddle_transport_clash_from_complements r d my ef
+           Hcw Hce Hpar_equal Hpar_opp).
+Qed.
 
 (* Shared tail of the two orientation branches: once a generic height and
    the per-eps one-edge flip are in hand, `straddle_side_core` yields the
@@ -174,9 +246,8 @@ Proof.
   pose proof (Hprem (a0, b0) c my ef HdE Hntwin Hproper Hsf Hp Hnd Hlen
                 Hgen Hint Hef Hav1 Hav2 Hc1 Hc2 Hclear) as Hpar.
   fold r in Hpar.
-  assert (HnB : ~ point_in_ring (mkPoint (edge_x_at (a0, b0) my + ef) my) r)
-    by (intro HB; exact (proj1 Hiff (proj2 Hpar HB) HB)).
-  exact (HnB (proj1 Hpar (proj2 Hiff HnB))).
+  exact (straddle_transport_clash_from_complements r (a0, b0) my ef
+           Hc1 Hc2 Hpar Hiff).
 Qed.
 
 Lemma same_face_not_reachable_core :
