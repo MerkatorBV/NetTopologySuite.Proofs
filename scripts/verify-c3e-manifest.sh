@@ -72,7 +72,7 @@ bash scripts/check_admitted.sh 2>&1 | tee "$SCRATCH/check-admitted.log"
 echo "STEP4_CHECK_ADMITTED_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 cat > "$SCRATCH/exercise_c3e.v" <<'COQ'
-From NTS.Proofs Require Import CornerCorridorBridge.
+From NTS.Proofs Require Import Distance CornerCorridorBridge.
 Check corridor_safe_for_ef.
 Print corridor_safe_for_ef.
 Check descending_sample_corridor_safe_for_ef.
