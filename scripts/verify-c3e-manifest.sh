@@ -93,13 +93,14 @@ bash scripts/check_admitted.sh 2>&1 | tee "$SCRATCH/check-admitted.log"
 echo "STEP4_CHECK_ADMITTED_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 cat > "$SCRATCH/exercise_c3e.v" <<'COQ'
-From NTS.Proofs Require Import CornerCorridorBridge.
+From NTS.Proofs Require Import CornerCorridorBridge Distance JordanCurveSeam JCTCorridor.
 Check corridor_safe_for_ef.
 Print descending_sample_corridor_safe_for_ef.
 Check face_transport_west_straddle_headline_connected.
 Goal JordanCurveSeam.connected_in_complement_cont sample_ring
   (corner_sample_left descending_sample_dart sample_rho sample_ef)
-  (mkPoint (edge_x_at descending_sample_dart sample_my - sample_ef) sample_my).
+  (Distance.mkPoint (JCTCorridor.edge_x_at descending_sample_dart sample_my - sample_ef)
+     sample_my).
   apply (proj1 (descending_sample_corridor_safe_for_ef)).
 Qed.
 COQ
