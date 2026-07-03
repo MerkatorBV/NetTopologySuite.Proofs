@@ -1205,18 +1205,20 @@ closed/min-points conditions. The planned ladder:
     carries per-step parameters -- use the EXPLICIT-parameter fan
     corner theorems (`fan_corner_connected_reflex`/`_convex`), not the
     `_auto` existentials.
-    (2) THE ef REGIME: `corner_delta_for_ef_*` pins each corner delta
-    from the premise's `ef`, but the corner connectors' smallness
-    bounds cap the deltas by each vertex's clearance ball -- so the
-    walk chain discharges the premise only for ef below a
-    walk-dependent threshold.  Either (a) strengthen
-    `face_transport_premise` with the near-`d` ball-freedom hypothesis
-    that `straddle_side_core`'s construction already provides (the
-    core-slice caller can discharge it), so the premise only ever
-    needs small `ef`; or (b) add an ef-shrink transport inside the
-    discharge (parity equality between `(X -/+ ef, my)` and
-    `(X -/+ ef', my)` across a ring-free horizontal strip).  Decide at
-    C-3f kickoff; (a) looks strictly simpler.
+    (2) THE ef REGIME -- RESOLVED via option (a) (C-3f step 0, DONE):
+    `face_transport_premise` now carries the near-`d` STRIP CLEARANCE
+    hypothesis (at height `my`, within `ef` of the crossing abscissa,
+    no ring edge but `d` itself is met), and `straddle_side_core`
+    provides it: its proof gains a pruned clearance ball around the
+    interior crossing point `m` (`off_edges_ball_list` on the
+    `<> e0`-filtered ring edges, each off-`m` by
+    `interior_point_off_other_edges`), and the offset `ef` is chosen
+    inside BOTH balls (`Rmin` with the crossing-status ball).  With the
+    strip clear, the discharge can ride/shrink the offset freely: the
+    parity between `(X -/+ ef, my)` and `(X -/+ ef', my)` transports
+    across the ring-free strip for any `0 < ef' <= ef`, so the walk
+    chain only ever needs its own small-offset regime
+    (`corridor_safe_for_ef`-style thresholds).
     (3) Intermediate walk darts may COINCIDE with ring darts (the face
     walk can run along the cycle); those steps use the ring-dart
     corridor case of C-3c directly.

@@ -48,7 +48,7 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Dart
                                RingExtract PointInRingTangents
                                PointInRingCorrect JCTHalfOpenParity
                                JCTGenericStability JCTEscapeDescent
-                               JCTHugStep JCTCorridor
+                               JCTHugStep JCTCorridor RingClearance
                                JCTTautClearance GeneralTautBridge
                                EdgeCrossParity FaceTwinAware
                                StraddlePair StraddleSides.
@@ -116,6 +116,15 @@ Definition face_transport_premise (E : list Edge) : Prop :=
                     (mkPoint (edge_x_at d my - ef) my) ->
     ring_complement (ring_of_chain (d :: c))
                     (mkPoint (edge_x_at d my + ef) my) ->
+    (* the near-d strip clearance `straddle_side_core` provides: at
+       height `my`, within `ef` of the crossing abscissa, no ring edge
+       but `d` itself is met -- this is what lets the walk transport
+       shrink/ride the offset without re-crossing the ring (C-3f) *)
+    (forall (q : Point) (f : Edge),
+       In f (ring_edges (ring_of_chain (d :: c))) -> f <> d ->
+       py q = my ->
+       Rabs (px q - edge_x_at d my) <= ef ->
+       ~ on_edge f q) ->
     (point_in_ring (mkPoint (edge_x_at d my - ef) my) (ring_of_chain (d :: c))
        <-> point_in_ring (mkPoint (edge_x_at d my + ef) my)
                          (ring_of_chain (d :: c))).
@@ -159,11 +168,11 @@ Proof.
   set (r := ring_of_chain ((a0, b0) :: c)) in *.
   destruct (straddle_side_core r [] c (a0, b0) my Htaut Hnoh_r Hsplit
               Hdnotc Hgen Hint Hflip)
-    as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 Hiff]]]]]]]]]].
+    as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 [Hiff Hclear]]]]]]]]]]].
   rewrite Hp1 in Hav1, Hc1. rewrite Hp2 in Hav2, Hc2.
   rewrite Hp1, Hp2 in Hiff.
   pose proof (Hprem (a0, b0) c my ef HdE Hntwin Hproper Hsf Hp Hnd Hlen
-                Hgen Hint Hef Hav1 Hav2 Hc1 Hc2) as Hpar.
+                Hgen Hint Hef Hav1 Hav2 Hc1 Hc2 Hclear) as Hpar.
   fold r in Hpar.
   assert (HnB : ~ point_in_ring (mkPoint (edge_x_at (a0, b0) my + ef) my) r)
     by (intro HB; exact (proj1 Hiff (proj2 Hpar HB) HB)).

@@ -45,7 +45,8 @@ From NTS.Proofs Require Import Distance Overlay Vec Azimuth Dart RingExtract
                                JCTHalfOpenParity JCTGenericStability
                                JCTEscapeDescent EdgeCrossParity
                                JCTCorridor JCTTautClearance
-                               GeneralTautBridge JCTHugStep StraddlePair.
+                               GeneralTautBridge JCTHugStep StraddlePair
+                               EdgeConnectivity RingClearance.
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -145,7 +146,11 @@ Lemma straddle_side_core :
       ray_avoids_vertices p2 r /\
       ring_complement r p1 /\
       ring_complement r p2 /\
-      (point_in_ring p1 r <-> ~ point_in_ring p2 r).
+      (point_in_ring p1 r <-> ~ point_in_ring p2 r) /\
+      (forall (q : Point) (f : Edge),
+         In f (ring_edges r) -> f <> e0 ->
+         py q = my -> Rabs (px q - edge_x_at e0 my) <= ef ->
+         ~ on_edge f q).
 Proof.
   intros r pre suf e0 my Htaut Hnoh Hsplit Hnotin Hgen Hint Hflip.
   assert (He0in : In e0 (ring_edges r))
@@ -179,12 +184,35 @@ Proof.
     - exact (Hgen a Hfa).
     - exact (Hgen b Hfb). }
   destruct (ho_cross_agree_ball m (pre ++ suf) Hstab) as [eps [Heps Hball]].
-  (* choose the offset avoiding every crossing abscissa at height my *)
+  (* a pruned clearance ball around m: OFF every ring edge except e0
+     (m is interior to e0; tautness keeps the others away) *)
+  set (keep := fun f : Edge => if edge_eq_dec f e0 then false else true).
+  assert (Hkeep : forall f, In f (filter keep (ring_edges r)) <->
+                    (In f (ring_edges r) /\ f <> e0)).
+  { intro f. rewrite filter_In. unfold keep. split.
+    - intros [Hf Hb]. split; [ exact Hf | ].
+      destruct (edge_eq_dec f e0) as [He | Hne]; [ discriminate | exact Hne ].
+    - intros [Hf Hne]. split; [ exact Hf | ].
+      destruct (edge_eq_dec f e0); [ contradiction | reflexivity ]. }
+  destruct (off_edges_ball_list (filter keep (ring_edges r)) m)
+    as [eps2 [Heps2 Hball2]].
+  { intros f Hf. apply Hkeep in Hf. destruct Hf as [HfIn Hne].
+    apply off_edge_ball; [ exact (Hnoh f HfIn) | ].
+    destruct Hint as [t [Ht [HXt Hmyt]]].
+    apply (interior_point_off_other_edges r e0 f t m
+             Htaut He0in HfIn Hne Ht).
+    - unfold m. cbn [px]. unfold X. exact HXt.
+    - unfold m. cbn [py]. exact Hmyt. }
+  (* choose the offset avoiding every crossing abscissa at height my,
+     inside BOTH balls *)
+  assert (Hepsm : 0 < Rmin eps eps2) by (apply Rmin_glb_lt; assumption).
   destruct (avoid_finite_in_interval
               (map (fun f => X - edge_x_at f my) (ring_edges r)
                ++ map (fun f => edge_x_at f my - X) (ring_edges r))
-              0 eps Heps)
+              0 (Rmin eps eps2) Hepsm)
     as [ef [Hef Hefav]].
+  pose proof (Rmin_l eps eps2) as Hml.
+  pose proof (Rmin_r eps eps2) as Hmr.
   set (p1 := mkPoint (X - ef) my).
   set (p2 := mkPoint (X + ef) my).
   (* ball bounds *)
@@ -232,10 +260,22 @@ Proof.
   exists ef, p1, p2.
   split; [ lra | split; [ reflexivity | split; [ reflexivity |
     split; [ exact Hav1 | split; [ exact Hav2 |
-    split; [ exact Hcomp1 | split; [ exact Hcomp2 | ] ] ] ] ] ] ].
-  apply (point_in_ring_flip_one_edge p1 p2 r pre suf e0 Hsplit Hav1 Hav2).
-  - intros e He. exact (Hball p1 p2 Hb1x Hb1y Hb2x Hb2y e He).
-  - split; [ intros _; exact Hnc2 | intros _; exact Hc1 ].
+    split; [ exact Hcomp1 | split; [ exact Hcomp2 | split ] ] ] ] ] ] ].
+  - apply (point_in_ring_flip_one_edge p1 p2 r pre suf e0 Hsplit Hav1 Hav2).
+    + intros e He. exact (Hball p1 p2 Hb1x Hb1y Hb2x Hb2y e He).
+    + split; [ intros _; exact Hnc2 | intros _; exact Hc1 ].
+  - (* the strip clearance: every point at height my within ef of the
+       crossing abscissa is inside the pruned ball, hence off every
+       OTHER ring edge *)
+    intros q f HfIn Hne Hqy Hqx.
+    assert (HBX : Rabs (px q - px m) < eps2).
+    { unfold m. cbn [px].
+      eapply Rle_lt_trans; [ exact Hqx | lra ]. }
+    assert (HBY : Rabs (py q - py m) < eps2).
+    { unfold m. cbn [py]. rewrite Hqy.
+      unfold Rminus. rewrite Rplus_opp_r, Rabs_R0. lra. }
+    apply (Hball2 q HBX HBY f).
+    apply Hkeep. split; assumption.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -280,7 +320,7 @@ Proof.
     assert (Ht : 0 < t < 1) by nra.
     destruct (straddle_side_core r pre suf (a0, b0) my Htaut Hnoh Hsplit
                 Hnotin Hgen)
-      as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 Hiff]]]]]]]]]].
+      as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 [Hiff _]]]]]]]]]]].
     + exists t. split; [ exact Ht | ]. cbn [fst snd]. split.
       * unfold edge_x_at, t. field. lra.
       * nra.
@@ -306,7 +346,7 @@ Proof.
     assert (Ht : 0 < t < 1) by nra.
     destruct (straddle_side_core r pre suf (a0, b0) my Htaut Hnoh Hsplit
                 Hnotin Hgen)
-      as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 Hiff]]]]]]]]]].
+      as [ef [p1 [p2 [Hef [Hp1 [Hp2 [Hav1 [Hav2 [Hc1 [Hc2 [Hiff _]]]]]]]]]]].
     + exists t. split; [ exact Ht | ]. cbn [fst snd]. split.
       * unfold edge_x_at, t. field. lra.
       * nra.
