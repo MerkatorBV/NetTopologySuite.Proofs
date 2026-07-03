@@ -31,6 +31,22 @@ Definition corridor_safe_threshold
 
 Definition corridor_safe_half (delta0 : R) : R := delta0 / 2.
 
+Lemma corridor_half_pos :
+  forall (delta0 : R), 0 < delta0 -> 0 < corridor_safe_half delta0.
+Proof.
+  intros delta0 Hd0.
+  unfold corridor_safe_half, Rdiv.
+  field_simplify; lra.
+Qed.
+
+Lemma corridor_half_lt_full :
+  forall (delta0 : R), 0 < delta0 -> corridor_safe_half delta0 < delta0.
+Proof.
+  intros delta0 Hd0.
+  unfold corridor_safe_half, Rdiv.
+  field_simplify; lra.
+Qed.
+
 (* The straddle offset ef sits below the corridor half-threshold, hence below
    delta0 itself: the same uniform clearance window applies with delta := ef. *)
 Lemma corridor_absorbs_ef :
@@ -42,7 +58,9 @@ Lemma corridor_absorbs_ef :
 Proof.
   intros delta0 ef Hd0 Hef Hhalf.
   unfold corridor_safe_half in Hhalf.
-  split; [ exact Hef | ]. lra.
+  split; [ exact Hef | ].
+  apply (Rlt_trans _ _ _ Hhalf).
+  exact (corridor_half_lt_full delta0 Hd0).
 Qed.
 
 (* Headline-shaped probe: any ef below half of a walk-dart delta0 inherits the
@@ -61,8 +79,8 @@ Lemma corridor_ef_inherits_clearance :
 Proof.
   intros x r delta0 ef y ylo yhi Hd0 Hef Hhalf Hle Hclear Hy.
   unfold corridor_safe_half in Hhalf.
-  assert (Hef_bound : 0 < ef < delta0) by (split; [ exact Hef | lra ]).
-  exact (Hclear ef Hef_bound y Hy).
+  destruct (corridor_absorbs_ef delta0 ef Hd0 Hef Hhalf) as [Hefpos Hef_bound].
+  exact (Hclear ef (conj Hefpos Hef_bound) y Hy).
 Qed.
 
 Lemma corridor_ef_inherits_clearance_east :
@@ -79,8 +97,26 @@ Lemma corridor_ef_inherits_clearance_east :
 Proof.
   intros x r delta0 ef y ylo yhi Hd0 Hef Hhalf Hle Hclear Hy.
   unfold corridor_safe_half in Hhalf.
-  assert (Hef_bound : 0 < ef < delta0) by (split; [ exact Hef | lra ]).
-  exact (Hclear ef Hef_bound y Hy).
+  destruct (corridor_absorbs_ef delta0 ef Hd0 Hef Hhalf) as [Hefpos Hef_bound].
+  exact (Hclear ef (conj Hefpos Hef_bound) y Hy).
+Qed.
+
+(* ∃ ε₀ packaging for the proposed "sufficiently small ef" closure. *)
+Lemma corridor_small_ef_exists :
+  forall (delta0 : R), 0 < delta0 ->
+    exists eps0, eps0 = corridor_safe_half delta0 /\
+      0 < eps0 /\
+      (forall ef, 0 < ef -> ef < eps0 ->
+         ef < corridor_safe_half delta0 /\ ef < delta0).
+Proof.
+  intros delta0 Hd0.
+  exists (corridor_safe_half delta0).
+  split; [ reflexivity | ].
+  split.
+  - exact (corridor_half_pos delta0 Hd0).
+  - intros ef Hef Hlt. split.
+    + exact Hlt.
+    + destruct (corridor_absorbs_ef delta0 ef Hd0 Hef Hlt); lra.
 Qed.
 
 (* Straddle west sample = west corridor point at the same offset. *)

@@ -55,6 +55,40 @@ Definition corner_delta_for_ef_east (d : Dart) (ef : R) : R :=
   ef * vy (ddir d)
     / (vx (ddir d) * vx (ddir d) + vy (ddir d) * vy (ddir d)).
 
+Lemma ddir_sq_nez_of_vy_nez :
+  forall (d : Dart), vy (ddir d) <> 0 ->
+    vx (ddir d) * vx (ddir d) + vy (ddir d) * vy (ddir d) <> 0.
+Proof.
+  intros d Hvy H0.
+  apply Rplus_sqr_eq_0 in H0. destruct H0 as [_ Hvy0]. exact (Hvy Hvy0).
+Qed.
+
+Lemma bridge_delta_west_for_ef :
+  forall (d : Dart) (ef : R), vy (ddir d) < 0 ->
+    bridge_delta_west d (corner_delta_for_ef_west d ef) = ef.
+Proof.
+  intros d ef Hdesc.
+  unfold bridge_delta_west, corner_delta_for_ef_west.
+  assert (Hvy : vy (ddir d) <> 0)
+    by (intro Hz; rewrite Hz in Hdesc; cbn in Hdesc; lra).
+  assert (Hden := ddir_sq_nez_of_vy_nez d Hvy).
+  field.
+  - split; [ exact Hden | exact Hvy ].
+Qed.
+
+Lemma bridge_delta_east_for_ef :
+  forall (d : Dart) (ef : R), vy (ddir d) > 0 ->
+    bridge_delta_east d (corner_delta_for_ef_east d ef) = ef.
+Proof.
+  intros d ef Hasc.
+  unfold bridge_delta_east, corner_delta_for_ef_east.
+  assert (Hvy : vy (ddir d) <> 0)
+    by (intro Hz; rewrite Hz in Hasc; cbn in Hasc; lra).
+  assert (Hden := ddir_sq_nez_of_vy_nez d Hvy).
+  field.
+  - split; [ exact Hden | exact Hvy ].
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* §1  DESCENDING / west: base sample -> straddle west at `my`.                *)
 (* -------------------------------------------------------------------------- *)
@@ -63,7 +97,6 @@ Theorem along_dart_base_to_straddle_west :
   forall (r : Ring) (d : Dart) (rho ef my h_base : R),
     vy (ddir d) < 0 ->
     h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
-    bridge_delta_west d (corner_delta_for_ef_west d ef) = ef ->
     h_base <= my ->
     (forall y, h_base <= y <= my ->
        ~ ring_image r (corridor d ef y)) ->
@@ -72,7 +105,7 @@ Theorem along_dart_base_to_straddle_west :
          (corner_sample_out (ddir d) rho (corner_delta_for_ef_west d ef)))
       (mkPoint (edge_x_at d my - ef) my).
 Proof.
-  intros r d rho ef my h_base Hdesc Hhbase Hbridge Hle Hclear.
+  intros r d rho ef my h_base Hdesc Hhbase Hle Hclear.
   set (delta_c := corner_delta_for_ef_west d ef).
   assert (Hbase_eq :
     point_at (dbase d) (corner_sample_out (ddir d) rho delta_c)
@@ -82,7 +115,8 @@ Proof.
               / (- vy (ddir d))) with (bridge_delta_west d delta_c).
     change (py (dbase d) + (rho * vy (ddir d) - delta_c * vx (ddir d)))
       with (bridge_height_base d rho delta_c).
-    assert (Hbd : bridge_delta_west d delta_c = ef) by (unfold delta_c; exact Hbridge).
+    assert (Hbd : bridge_delta_west d delta_c = ef)
+      by (unfold delta_c; exact (bridge_delta_west_for_ef d ef Hdesc)).
     assert (Hbh : bridge_height_base d rho delta_c = h_base)
       by (unfold delta_c; symmetry; exact Hhbase).
     rewrite Hbd, Hbh. reflexivity. }
@@ -103,7 +137,6 @@ Theorem along_dart_tip_to_straddle_west :
     vy (ddir d) < 0 ->
     my <= h_tip ->
     h_tip = bridge_height_tip d rho (corner_delta_for_ef_west d ef) ->
-    bridge_delta_west d (corner_delta_for_ef_west d ef) = ef ->
     (forall y, my <= y <= h_tip ->
        ~ ring_image r (corridor d ef y)) ->
     connected_in_complement_cont r
@@ -112,7 +145,7 @@ Theorem along_dart_tip_to_straddle_west :
             (corner_delta_for_ef_west d ef)))
       (mkPoint (edge_x_at d my - ef) my).
 Proof.
-  intros r d rho ef my h_tip Hdesc Hle Hhtip Hbridge Hclear.
+  intros r d rho ef my h_tip Hdesc Hle Hhtip Hclear.
   set (delta_c := corner_delta_for_ef_west d ef).
   assert (Htip_eq :
     point_at (dtip d)
@@ -123,7 +156,8 @@ Proof.
               / (- vy (ddir d))) with (bridge_delta_west d delta_c).
     change (py (dtip d) + (- rho * vy (ddir d) - delta_c * vx (ddir d)))
       with (bridge_height_tip d rho delta_c).
-    assert (Hbd : bridge_delta_west d delta_c = ef) by (unfold delta_c; exact Hbridge).
+    assert (Hbd : bridge_delta_west d delta_c = ef)
+      by (unfold delta_c; exact (bridge_delta_west_for_ef d ef Hdesc)).
     assert (Hth : bridge_height_tip d rho delta_c = h_tip)
       by (unfold delta_c; symmetry; exact Hhtip).
     rewrite Hbd, Hth. reflexivity. }
@@ -148,7 +182,6 @@ Theorem along_dart_base_to_straddle_east :
   forall (r : Ring) (d : Dart) (rho ef my h_base : R),
     vy (ddir d) > 0 ->
     h_base = bridge_height_base d rho (corner_delta_for_ef_east d ef) ->
-    bridge_delta_east d (corner_delta_for_ef_east d ef) = ef ->
     h_base <= my ->
     (forall y, h_base <= y <= my ->
        ~ ring_image r (corridor_east d ef y)) ->
@@ -157,7 +190,7 @@ Theorem along_dart_base_to_straddle_east :
          (corner_sample_out (ddir d) rho (corner_delta_for_ef_east d ef)))
       (mkPoint (edge_x_at d my + ef) my).
 Proof.
-  intros r d rho ef my h_base Hasc Hhbase Hbridge Hle Hclear.
+  intros r d rho ef my h_base Hasc Hhbase Hle Hclear.
   set (delta_c := corner_delta_for_ef_east d ef).
   assert (Hbase_eq :
     point_at (dbase d) (corner_sample_out (ddir d) rho delta_c)
@@ -167,7 +200,8 @@ Proof.
               / vy (ddir d)) with (bridge_delta_east d delta_c).
     change (py (dbase d) + (rho * vy (ddir d) - delta_c * vx (ddir d)))
       with (bridge_height_base d rho delta_c).
-    assert (Hbd : bridge_delta_east d delta_c = ef) by (unfold delta_c; exact Hbridge).
+    assert (Hbd : bridge_delta_east d delta_c = ef)
+      by (unfold delta_c; exact (bridge_delta_east_for_ef d ef Hasc)).
     assert (Hbh : bridge_height_base d rho delta_c = h_base)
       by (unfold delta_c; symmetry; exact Hhbase).
     rewrite Hbd, Hbh. reflexivity. }
@@ -187,7 +221,6 @@ Theorem along_dart_tip_to_straddle_east :
     vy (ddir d) > 0 ->
     my <= h_tip ->
     h_tip = bridge_height_tip d rho (corner_delta_for_ef_east d ef) ->
-    bridge_delta_east d (corner_delta_for_ef_east d ef) = ef ->
     (forall y, my <= y <= h_tip ->
        ~ ring_image r (corridor_east d ef y)) ->
     connected_in_complement_cont r
@@ -196,7 +229,7 @@ Theorem along_dart_tip_to_straddle_east :
             (corner_delta_for_ef_east d ef)))
       (mkPoint (edge_x_at d my + ef) my).
 Proof.
-  intros r d rho ef my h_tip Hasc Hle Hhtip Hbridge Hclear.
+  intros r d rho ef my h_tip Hasc Hle Hhtip Hclear.
   set (delta_c := corner_delta_for_ef_east d ef).
   assert (Htip_eq :
     point_at (dtip d)
@@ -207,7 +240,8 @@ Proof.
               / vy (ddir d)) with (bridge_delta_east d delta_c).
     change (py (dtip d) + (- rho * vy (ddir d) - delta_c * vx (ddir d)))
       with (bridge_height_tip d rho delta_c).
-    assert (Hbd : bridge_delta_east d delta_c = ef) by (unfold delta_c; exact Hbridge).
+    assert (Hbd : bridge_delta_east d delta_c = ef)
+      by (unfold delta_c; exact (bridge_delta_east_for_ef d ef Hasc)).
     assert (Hth : bridge_height_tip d rho delta_c = h_tip)
       by (unfold delta_c; symmetry; exact Hhtip).
     rewrite Hbd, Hth. reflexivity. }
@@ -240,7 +274,6 @@ Theorem along_dart_base_to_straddle_west_clear :
     ylo <= yhi ->
     vy (ddir d) < 0 ->
     h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
-    bridge_delta_west d (corner_delta_for_ef_west d ef) = ef ->
     ylo <= h_base <= my /\ my <= yhi ->
     0 < ef ->
     (exists delta0, 0 < delta0 /\
@@ -254,15 +287,43 @@ Theorem along_dart_base_to_straddle_west_clear :
       (mkPoint (edge_x_at d my - ef) my).
 Proof.
   intros D r d rho ef my h_base ylo yhi Htaut Hcross Hforeign Hx HringD
-         Hspan Hle Hdesc Hhbase Hbridge [[Hhlo Hhhi] Hmhi] Hef
+         Hspan Hle Hdesc Hhbase [[Hhlo Hhhi] Hmhi] Hef
          [delta0 [Hd0 [Hhalf Hclear]]].
-  apply (along_dart_base_to_straddle_west r d rho ef my h_base Hdesc Hhbase Hbridge).
+  apply (along_dart_base_to_straddle_west r d rho ef my h_base Hdesc Hhbase).
   - exact Hhhi.
   - intros y Hy.
     apply (corridor_ef_inherits_clearance d r delta0 ef y ylo yhi Hd0 Hef Hhalf Hle).
     + exact Hclear.
     + lra.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* §4  Representative exercise: bridge delta discharged for any dart.        *)
+(* -------------------------------------------------------------------------- *)
+
+(* Any descending dart with corridor clearance reaches the west straddle
+   point once rho picks the bridge height; `bridge_delta_west_for_ef` closes
+   the offset identity that `straddle_side_core` supplies as positive `ef`. *)
+Example along_dart_west_reaches_straddle :
+  forall (r : Ring) (d : Dart) (rho ef my h_base : R),
+    vy (ddir d) < 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+    h_base <= my ->
+    (forall y, h_base <= y <= my -> ~ ring_image r (corridor d ef y)) ->
+    connected_in_complement_cont r
+      (point_at (dbase d)
+         (corner_sample_out (ddir d) rho (corner_delta_for_ef_west d ef)))
+      (mkPoint (edge_x_at d my - ef) my).
+Proof.
+  intros r d rho ef my h_base Hdesc Hhbase Hle Hclear.
+  exact (along_dart_base_to_straddle_west r d rho ef my h_base
+           Hdesc Hhbase Hle Hclear).
+Qed.
+
+Lemma along_dart_west_bridge_delta :
+  forall (d : Dart) (ef : R), vy (ddir d) < 0 ->
+    bridge_delta_west d (corner_delta_for_ef_west d ef) = ef.
+Proof. exact bridge_delta_west_for_ef. Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.                                                                *)
