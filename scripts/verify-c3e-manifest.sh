@@ -77,7 +77,8 @@ Check corridor_safe_for_ef.
 Print corridor_safe_for_ef.
 Check descending_sample_corridor_safe_for_ef.
 Print descending_sample_corridor_safe_for_ef.
-Lemma c3e_sample_instantiated := descending_sample_corridor_safe_for_ef.
+Lemma c3e_sample_instantiated : _.
+Proof. exact descending_sample_corridor_safe_for_ef. Qed.
 Check c3e_sample_instantiated.
 Print face_transport_straddle_pair_eq.
 COQ
