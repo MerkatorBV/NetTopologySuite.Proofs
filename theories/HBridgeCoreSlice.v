@@ -120,9 +120,11 @@ Definition face_transport_premise (E : list Edge) : Prop :=
        <-> point_in_ring (mkPoint (edge_x_at d my + ef) my)
                          (ring_of_chain (d :: c))).
 
-(* C-3e-4 connectivity discharge lives downstream in CornerCorridorBridge.v
-   (`face_transport_premise_foreign_straddle_connected`, `corridor_safe_for_ef`);
-   this file defines the premise only — Corner imports HBridge, not vice versa. *)
+(* C-3e-4 connectivity discharge: CornerCorridorBridge.v
+   `face_transport_premise_ring_dart_west_straddle_connected` (requires
+   `In d (ring_edges r)` — consistent with `ring_of_chain (d :: c)`);
+   `corridor_safe_for_ef` packages exact `(edge_x_at d my ± ef, my)` targets.
+   Corner imports HBridge; apply the discharge lemma from the manifest spine. *)
 
 (* -------------------------------------------------------------------------- *)
 (* §3  The one-sided core: same face + transport => not reachable.             *)
