@@ -549,6 +549,13 @@ theories/CornerGapKit.v
 # reflex/convex sector polylines then connect any fan corner at a cycle
 # vertex inside the ring complement.  No Admitteds.
 theories/FanCorner.v
+# H-bridge attack C-3c step 1: the E-level corridor clearance -- the westward
+# corridor along a NON-RING dart is skeleton-free against the cycle ring; the
+# taut route's touch witness is refuted outright by the twin-aware noding
+# guards (proper-cross exclusion for interior touches, no-foreign-vertex for
+# endpoint touches), and the shared case tree comes from the
+# per_edge_clear_core refactor of JCTWallClear.  No Admitteds.
+theories/ForeignCorridor.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
