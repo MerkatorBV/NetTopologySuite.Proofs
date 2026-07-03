@@ -1146,6 +1146,31 @@ closed/min-points conditions. The planned ladder:
     0 Admitted.  Next: step 3, the handoff connector (pruned ball +
     step-1 side + step-2 sector => `connected_in_complement_cont` from
     corner sample to corridor end).
+    **Alternative bypass (DONE, `CornerCorridorBridge.v`): the
+    corner-sample/corridor algebraic bridge.**  Built independently and
+    concurrently with the side-kit/wedge line above; NOT part of its
+    numbered sequence, and possibly a shortcut around step 3 (the
+    handoff connector) for the two SPECIAL vertices at d's own ends
+    specifically -- to be decided when the along-dart headline (step 4)
+    is actually assembled.
+    `corner_sample_out_on_corridor_west/east` (at `dbase d`) and
+    `corner_sample_in_on_corridor_west/east` (at `dtip d`): for EVERY
+    `(rho, delta)`, the corner connector's own sample point is EXACTLY a
+    point on `d`'s west (`JCTCorridor.corridor`) or east
+    (`MirrorCorridor.corridor_east`) corridor, at the height the
+    sample's own parameters produce -- a pure consequence of `{u,
+    perpL u}` being an orthogonal basis, needing only `d` non-horizontal.
+    The side is pinned by `d`'s own ascending/descending status
+    (`vy (ddir d) < 0` / `> 0`) and is the SAME at both endpoints (one
+    line throughout) -- matching `DartSideKit.v`/`MirrorCorridor.v`'s
+    documented "west on a descent, east on an ascent" convention
+    exactly.  IF the along-dart headline is free to choose `(rho,
+    delta)` at d's own two endpoints independently of any neighbouring
+    fan vertex's corner sample (unlike intermediate C-3f hops, which
+    must match a neighbour), this lets it reuse the corner sample
+    directly as a corridor endpoint with NO separate meeting-hop
+    certificate -- skipping step 3 entirely for those two vertices.
+    Standard 2-axiom footprint, 0 Admitted.
   - **C-3f (orbit induction).**  Chain C-3c/C-3d connectors along the
     walk by induction on the `same_face` index `k`, then close the
     parity equality with `SegmentParityTransport.parity_eq_of_clear_
