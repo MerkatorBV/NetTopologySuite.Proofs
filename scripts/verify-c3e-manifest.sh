@@ -72,20 +72,12 @@ bash scripts/check_admitted.sh 2>&1 | tee "$SCRATCH/check-admitted.log"
 echo "STEP4_CHECK_ADMITTED_OK" | tee -a "$SCRATCH/verification-plan.log"
 
 cat > "$SCRATCH/exercise_c3e.v" <<'COQ'
-From NTS.Proofs Require Import Distance CornerCorridorBridge.
+From NTS.Proofs Require Import CornerCorridorBridge.
 Check corridor_safe_for_ef.
 Print corridor_safe_for_ef.
 Check descending_sample_corridor_safe_for_ef.
-Lemma c3e_sample_instantiated :
-  let p1 := mkPoint (edge_x_at descending_sample_dart sample_my - sample_ef) sample_my in
-  let p2 := mkPoint (edge_x_at descending_sample_dart sample_my + sample_ef) sample_my in
-  connected_in_complement_cont sample_ring
-    (corner_sample_left descending_sample_dart sample_rho sample_ef) p1 /\
-  connected_in_complement_cont sample_ring
-    (corner_sample_right descending_sample_dart sample_rho sample_ef) p2.
-Proof.
-  exact descending_sample_corridor_safe_for_ef.
-Qed.
+Print descending_sample_corridor_safe_for_ef.
+Lemma c3e_sample_instantiated := descending_sample_corridor_safe_for_ef.
 Check c3e_sample_instantiated.
 Print face_transport_straddle_pair_eq.
 COQ
