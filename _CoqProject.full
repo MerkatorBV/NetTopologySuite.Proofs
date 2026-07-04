@@ -628,6 +628,13 @@ theories/WalkRides.v
 # nat-indexed threshold fold turning finitely many per-step thresholds into
 # one walk threshold.  No Admitteds.
 theories/WalkCorners.v
+# H-bridge attack C-3f discharge rung D-3: the strip lift -- the premise's
+# straddle pair at arbitrary ef connects to the walk's pair at any smaller
+# ef' via two horizontal segments inside the #343 strip clearance (on-d
+# points are pinned to the crossing abscissa, other edges excluded by the
+# strip hypothesis), so the orbit chain runs in its own small-offset regime.
+# No Admitteds.
+theories/WalkStripLift.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
