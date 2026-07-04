@@ -602,6 +602,13 @@ theories/WalkStepChain.v
 # induction carries no index arithmetic; ride/corner legs stay caller-side
 # hypothesis families.  No Admitteds.
 theories/WalkChainInduction.v
+# H-bridge attack C-3f step 1(iii): the end ties -- the chain's terminal
+# samples reach the premise's straddle pair, one corridor ride each; the
+# corner-delta consistency identity across the twin (east-of-twin = west,
+# same squared norm) means ONE shared delta serves the whole chain including
+# both ties, and twin corridors are pointwise the original's (same carrier).
+# No Admitteds.
+theories/WalkEndTies.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

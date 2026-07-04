@@ -1270,10 +1270,18 @@ closed/min-points conditions. The planned ladder:
     `ring_complement` input).  `walk_chain_to_twin`: at the index from
     `same_face_twin_first_step_index` (EdgeFaceBridge.v:479) the chain
     ends at TWIN d's base sample via `dbase_twin` -- d's east side;
-    (iii) the two end
-    ties: `d`'s west sample to `(X - ef', my)` and `twin d`'s
-    right-side sample (= east of `d`) to `(X + ef', my)`, both by
-    `along_dart_*_to_straddle_*` at a common small `ef'`; (iv) close
+    (iii) DONE (`WalkEndTies.v`): the two end ties.  The delta
+    CONSISTENCY identity `corner_delta_for_ef_east (twin d) ef =
+    corner_delta_for_ef_west d ef` (the twin negates both `vy` and the
+    side convention; the squared norm is twin-invariant, plus the
+    `_west (twin d) = _east d` mirror) means ONE shared delta serves
+    the whole chain INCLUDING both ties.  `corridor_east_twin` (same
+    carrier) states all clearances on d's OWN corridors.
+    `twin_base_to_straddle_east` (descending d): the chain's terminal
+    sample (twin d's base sample at `dtip d`, the face side = d's
+    east) rides to `(X + ef, my)`; `twin_base_to_straddle_west`
+    (ascending d): the mirror to `(X - ef, my)`.  The d-side ties are
+    `along_dart_base_to_straddle_west`/`_east` verbatim; (iv) close
     with `parity_constant_on_components` (JCTSeparation.v:58) + the
     #341 premise-site hooks (`straddle_transport_clash_from_
     complements`), then the strip transport lifts `ef'` back to the
