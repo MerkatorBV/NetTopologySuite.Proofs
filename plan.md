@@ -1439,6 +1439,60 @@ closed/min-points conditions. The planned ladder:
     `walk_straddle_connected_desc`/`_asc`.  Then
     `H_bridge_premise_of_transport` consumes the discharged premise
     and `euler_core_reduction` closes the unconditional Euler formula.
+    E-1 DONE (`WalkCornerRange.v`, PR #356): the RANGE-FORM corner
+    threshold `walk_corner_threshold_range` -- the D-2 point form pins
+    `rho = rho_factor * delta` exactly, but composing corners with the
+    D-1 rides needs `rho` free in a BAND (the ride's in-span smallness
+    bounds rho below relative to delta; the clearance bounds cap it
+    above).  Under the same vertex-side hypotheses there are `t,
+    rho_factor > 0` with the corner connected at EVERY `(rho, delta)`
+    satisfying `0 < delta < t`, `rho_factor * delta <= rho < t`: the
+    far-wall smallness is monotone in rho above the band edge
+    (`band_bound_lt`/`band_bound_single` do the atomized arithmetic),
+    removing the rho-band structural obstacle.
+    E-2a DONE (`WalkResidualKit.v`): the PER-STEP KIT --
+    `range_family_fold`/`cap_family_fold` (choice-free Rmin/Rmax folds
+    of per-index existential thresholds: induction on the index bound
+    keeps the existentials inside, so no function-valued choice is
+    needed to feed `walk_chain_connected`'s families);
+    `walk_corner_range_at` (at ANY arrangement dart's tip, the E-1
+    range corner holds for the walk wall pair `(ddir (twin x), ddir
+    (fstep D x))`: trichotomy dispatch via
+    `trace_vertex_incident_pair`/`off_trace_vertex_complement`, germ
+    exclusions purely from `fan_gap_uncertified` since both slot
+    germ-darts -- `twin e_in`, `e_out` -- are fan members at the
+    vertex, gap nondegeneracy from `no_spurs` + `fan_ok` pairwise);
+    `walk_ride_at` (ANY arrangement dart's base-to-tip sample ride
+    below an explicit delta cap: the corridor window is pinned at
+    rho-fractions `[tip + rho2*span/2, base - rho1*span/2]` of the
+    dart's y-span BEFORE the clearance threshold exists, and the
+    bridge heights land inside once `delta * (|vx|+1) < rho_i *
+    span/2`; the corridor offset drops below the threshold for `delta
+    < delta0 * span / K`).
+    E-2b (next): TIES + HEADLINE.  Tie lemmas with up/down dispatch
+    (`Rle_dec h my`: up-riders from CornerCorridorBridge/WalkEndTies,
+    down-riders from WalkFamilies §3; window = Rmin/Rmax hull of `my`
+    and the `rho*span`-neighbourhood of the sample height, fixed
+    before the clearance threshold; corridor offset here is `ef'`
+    itself via `bridge_delta_*_for_ef`); then
+    `walk_small_offset_connectivity_holds`: derive the ring facts from
+    the residual's own data (`cycle_closed_chain` +
+    `ring_edges_of_closed_chain`, `cycle_window_twin_free` +
+    `ring_simple_of_subset_twin_aware` + guard transfer +
+    `ring_taut_of_simple_and_no_foreign_vertex`), walk index from
+    `same_face_twin_first_step_index` (fan_ok + no_spurs standing),
+    fold corners (`range_family_fold` at `x_i := iter (fstep D) i d`,
+    membership by `OrbitCycle.iter_in` + `fstep_in`), fix ONE global
+    `rho := (Rmin t* (1/2))/2`, fold ride caps (`cap_family_fold`),
+    convert every delta cap to an `ef'` cap through the linear
+    `delta = corner_delta_for_ef_*(d, ef')`, pick `ef'` = half the min
+    (including the premise's `ef`), assemble sym(west tie) o
+    `walk_chain_to_twin` o east tie (start complement =
+    `connected_in_complement_cont_left` of the west tie).  Then
+    `face_transport_premise_of_walk_connectivity` +
+    `H_bridge_premise_of_transport` + `euler_core_reduction` close the
+    unconditional Euler formula (with `no_spurs` joining the standing
+    hypothesis set).
 
 ---
 
