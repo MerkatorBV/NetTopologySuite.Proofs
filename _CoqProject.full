@@ -641,6 +641,12 @@ theories/WalkStripLift.v
 # both germ exclusions free (the zero vector is never in an open sector), so
 # the D-2 corner threshold needs only the gap nondegeneracy.  No Admitteds.
 theories/WalkVertexPack.v
+# H-bridge attack C-3f discharge rung D-4b-1: the walk-vertex trichotomy
+# resolution -- a trace vertex has an incident chain-edge pair (tips are the
+# trace, bases its rotation), and an off-trace walk vertex is in the ring
+# complement (endpoint hits land in the trace; interior hits violate the
+# twin-aware foreign-vertex guard).  No Admitteds.
+theories/WalkFamilies.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
