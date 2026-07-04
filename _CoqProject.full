@@ -81,7 +81,10 @@ theories/BufferBevel.v
 # line endcaps (JTS#739/#1028).  flat_cap_length_sq/_perp_edge,
 # round_cap_endpoints_on_circle/round_cap_apex_on_circle,
 # square_cap_extension/square_cap_corner_dist_sq -- the defining geometry
-# of CAP_FLAT / CAP_ROUND / CAP_SQUARE.  Three-axiom.  No Admitted.
+# of CAP_FLAT / CAP_ROUND / CAP_SQUARE.  Section 7 (issue #65 RGR low-risk
+# pivot): flat_cap_ring / flat_cap_ring_closed -- the flat-capped buffer
+# boundary of a single-edge open chain is a BufferAssembly.closed_chain, by
+# construction from cap_endpoint alone.  Three-axiom.  No Admitted.
 theories/BufferEndcap.v
 # Buffer/noder pipeline, Stage 2 seam (docs/buffer-noder-pipeline.md S5):
 # edge-list assembly.  Interleaves offset walls with bevel joins
