@@ -2789,13 +2789,6 @@ theories-flocq/Validate_binary64_extract.v
 # pulled from HobbyTheorem_b64's snap_round_segments closure.
 theories-flocq/OverlayBridge.v
 
-# extract_rings_valid_of_guards (issue #67 track): replaces extract_rings_valid's
-# two raw euler_characteristic premises by the five standing guards, via
-# EulerUnconditional.euler_characteristic_holds -- pure composition, no new
-# geometric content, no Admitted.  Same Category C Flocq lineage as
-# OverlayBridge.v.
-theories-flocq/ExtractRingsValidOfGuards.v
-
 # RingCurvatureModels: does extract_rings_valid generalise from planar to
 # hyperbolic/spherical space?  Answer: its statement never mentions distance
 # or curvature, only px/py sign tests, so a Beltrami-Klein-disk (hyperbolic) or
