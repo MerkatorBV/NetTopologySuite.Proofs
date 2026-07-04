@@ -686,6 +686,14 @@ theories/WalkResidualTies.v
 # caps, one shrink-and-choose ef'.  Corollaries: face_transport_premise and
 # the FULL H_bridge_premise are now theorems of the guard set.  No Admitteds.
 theories/WalkResidualDischarge.v
+# H-bridge / Euler campaign rung E-3a: the core induction step of the
+# unconditional Euler formula -- deleting ANY edge of a min-degree->=2
+# arrangement transfers euler_characteristic, dispatched by the DECIDABLE
+# same_face test: same face => cut edge via the Euler-free
+# H_bridge_premise_holds (bridge deltas), different faces => face-walk bypass
+# (cycle deltas).  Kit: second fan dart, no_spurs from min-degree-2, endpoint
+# survival, Delta V = 0 from survivors.  No Admitteds.
+theories/EulerSameFaceStep.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
