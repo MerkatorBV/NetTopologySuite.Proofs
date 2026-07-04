@@ -18,6 +18,10 @@
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
+   Reference: J.R. Shewchuk, "Adaptive Precision Floating-Point Arithmetic
+   and Fast Robust Geometric Predicates", Discrete & Computational Geometry
+   18(3), 1997, §3 (the `incircle` predicate).
+
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
