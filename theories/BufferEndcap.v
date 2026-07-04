@@ -25,6 +25,20 @@
        sq_corner = cap_endpoint + d*unit_dir ein; each corner is distance |d|
        beyond its boundary point and distance sqrt(2)|d| from E.
 
+   §7 (issue #65 RGR pivot, low-risk/low-cost slice): the FLAT cap wired
+   into `BufferAssembly`'s closed-chain assembly, for the simplest open
+   chain -- a single edge (two-point LineString).  JTS's line buffer walks
+   the +d wall, caps flat at the far end, walks BACK along the -d wall,
+   caps flat at the near end, closing the loop; `flat_cap_ring` assembles
+   exactly that from `cap_endpoint` alone (no `BufferOffset.offset_seg`
+   bridging needed -- `cap_endpoint` already IS the boundary point by
+   definition), and `flat_cap_ring_closed` shows the result is a
+   `BufferAssembly.closed_chain`, by construction (every junction is the
+   same point written twice).  The general multi-edge chain (walls
+   interleaved with corner joins on each side, as `BufferAssembly.v` §6
+   does for closed rings) is NOT attempted here -- noted as the follow-up,
+   same honest-scope discipline as that file's round-join note.
+
    All pure-R, three-axiom (sqrt only; no atan / Flocq / classic).  No
    `Admitted` / `Axiom` / `Parameter`.
 
@@ -34,8 +48,9 @@
      Assisted-by: Claude (Opus-4.8)
    ========================================================================== *)
 
-From Stdlib Require Import Reals Lra.
-From NTS.Proofs Require Import Real Vec Direction Distance BufferOffset.
+From Stdlib Require Import Reals Lra List.
+From NTS.Proofs Require Import Real Vec Direction Distance BufferOffset BufferAssembly.
+Import ListNotations.
 Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
@@ -203,4 +218,38 @@ Proof.
   rewrite (vmag_sq_unit_perp ein Hin), (vmag_sq_unit_dir ein Hin),
           vdot_unit_perp_unit_dir.
   ring.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* §7  The flat-cap closed ring for a single-edge open chain.                 *)
+(* -------------------------------------------------------------------------- *)
+
+(* The edge direction of a (Point*Point) edge, matching BufferAssembly's
+   `owall`/`obevel` convention. *)
+Definition edge_dir (e : Point * Point) : Vec := seg_vec (fst e) (snd e).
+
+(* The flat-capped buffer boundary of a single edge e = (A, B): the +d wall
+   from A to B, the far flat cap at B, the -d wall walked BACKWARD from B to
+   A, and the near flat cap at A closing the loop back to the start.  Built
+   directly from `cap_endpoint` (already the proven boundary point), so no
+   bridging to `BufferOffset.offset_seg` is needed. *)
+Definition flat_cap_ring (e : Point * Point) (d : R) : list (Point * Point) :=
+  let ein := edge_dir e in
+  let A := fst e in
+  let B := snd e in
+  [ (cap_endpoint A ein d, cap_endpoint B ein d);
+    (cap_endpoint B ein d, cap_endpoint B ein (- d));
+    (cap_endpoint B ein (- d), cap_endpoint A ein (- d));
+    (cap_endpoint A ein (- d), cap_endpoint A ein d) ].
+
+(* The flat-cap ring is a closed chain -- BY CONSTRUCTION, exactly like
+   `BufferAssembly`'s bevel/miter joins: every junction is the identical
+   `cap_endpoint _ _ _` term written at the end of one segment and the start
+   of the next, so the equalities are `reflexivity`, not geometry. *)
+Theorem flat_cap_ring_closed : forall e d, closed_chain (flat_cap_ring e d).
+Proof.
+  intros e d. unfold flat_cap_ring, closed_chain, chain_ok.
+  split.
+  - repeat split; reflexivity.
+  - intros d0 _. reflexivity.
 Qed.
