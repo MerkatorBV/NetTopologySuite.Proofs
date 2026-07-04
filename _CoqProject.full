@@ -2789,6 +2789,13 @@ theories-flocq/OverlayBridge.v
 # No Admitteds.
 theories-flocq/OverlayBridgeUnconditional.v
 
+# Issue #64 V-CP: wires linearised CurveGeometry (CurveLinearise.to_geometry)
+# into the E-4 guard-only extract_rings_valid_of_guards, so a boolean overlay
+# op over two linearised curve geometries extracts only valid_polygon faces
+# under the six geometric/noding guards -- no euler_characteristic, no new
+# lemma redefinition (direct corollary). No Admitteds.
+theories-flocq/CurveLineariseGuardBridge.v
+
 # RingCurvatureModels: does extract_rings_valid generalise from planar to
 # hyperbolic/spherical space?  Answer: its statement never mentions distance
 # or curvature, only px/py sign tests, so a Beltrami-Klein-disk (hyperbolic) or

@@ -528,6 +528,16 @@ theories-flocq/OverlayBridge.v
 # with OverlayBridge under the parametric refactor.  No Admitteds.
 theories-flocq/OverlayBridgeUnconditional.v
 
+# Category C: CurveLineariseGuardBridge -- Issue #64 V-CP wiring of linearised
+# CurveGeometry (CurveLinearise.to_geometry) into the guard-only
+# extract_rings_valid_of_guards (rung E-4).  `to_geometry_result_valid_of_guards`
+# / `to_geometry_result_valid_geometry_of_guards` are direct corollaries at a
+# curve call site, no new proof content beyond instantiation.  Inherits
+# Classical_Prop.classic transitively via OverlayBridgeUnconditional's own
+# OverlayBridge import (same Flocq/HobbyTheorem_b64 lineage as above).  No
+# Admitteds.
+theories-flocq/CurveLineariseGuardBridge.v
+
 # Category C: RingCurvatureModels -- extract_rings_valid re-exposed for the
 # hyperbolic (Beltrami-Klein disk) and spherical-hemisphere (gnomonic
 # projection) readings.  extract_rings_valid_hyperbolic /
