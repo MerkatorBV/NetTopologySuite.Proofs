@@ -1525,15 +1525,26 @@ closed/min-points conditions. The planned ladder:
     d), `num_vertices_E_minus_eq_of_survivors`.  This closes the
     circularity flagged in EulerFormula.v's header: the per-edge delta
     no longer needs Euler to be classified.
-    NEXT (E-3b): the well-founded wrapper -- peel to the degree core
-    (`euler_core_reduction`; needs its E' related to E by iterated
-    E_minus so the geometric guards transfer, or a subset-monotonicity
-    restatement), apply `euler_characteristic_core_edge_transfer`,
-    recurse on the smaller edge set, base case
-    `euler_characteristic_nil`; headline
-    `euler_characteristic_holds : NoDup + no_twin_dup + fan_ok +
-    guards -> euler_characteristic E`, then thread into
-    `extract_rings_valid` to drop its Euler hypotheses.
+    E-3b DONE (`EulerUnconditional.v`): THE PLANAR EULER IDENTITY IS
+    UNCONDITIONAL -- `euler_characteristic_holds : NoDup E ->
+    no_twin_dup E -> (forall v, fan_ok (outgoing v (darts_of E))) ->
+    pairwise_no_proper_cross_twin_aware -> no_horizontal_darts ->
+    no_foreign_vertex_twin_aware -> euler_characteristic E` (V + F =
+    E + 2C), axiom footprint = the allowlist trio.
+    `euler_core_reduction_incl` replays the banked core reduction over
+    the exported `euler_core_step`, threading `incl E' E` (the core is
+    an iterated `E_minus`) and the length bound; the guards restrict
+    along inclusion (`darts_of_incl` + three `_incl` transfers); the
+    well-founded recursion alternates core peeling with E-3a's
+    same-face dispatch step.  THE CAMPAIGN'S CAPSTONE: every named
+    premise of the H-bridge/Euler thread (face_transport_premise,
+    H_bridge_premise, euler_characteristic) is now a theorem of the
+    five geometric/noding guards.
+    NEXT (E-4, optional): thread `euler_characteristic_holds` into the
+    downstream consumers (`extract_rings_valid` in
+    theories-flocq/OverlayBridge.v and `H_bridge_premise_from_euler`
+    call sites) to replace their named Euler hypotheses by the guard
+    set; also `docs/verified-claims.md` + README refresh.
 
 ---
 
