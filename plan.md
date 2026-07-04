@@ -1357,7 +1357,34 @@ closed/min-points conditions. The planned ladder:
     (west segment + inner connectivity + east segment = the premise's
     pair connects whenever the walk's does); D-4 the final assembly
     discharging `face_transport_premise` under
-    `H_bridge_premise_of_transport`'s hypothesis set (+ no_spurs).
+    `H_bridge_premise_of_transport`'s hypothesis set (+ no_spurs),
+    SPLIT (decided 2026-07-04) into:
+    D-4a PER-VERTEX HYPOTHESIS PACKAGING for the concrete cycle ring --
+    at each walk vertex `v = dtip x_i` a TRICHOTOMY feeds the corner:
+    (i) v ON the ring: its two incident chain edges fill the fan-corner
+    slots `(a, v)`/`(v, b)`; germ exclusions from `fan_gap_uncertified`
+    (chain darts are fan members at v); vertex-off-non-incident from
+    the twin-aware guards (the `vertex_pruned_clearance` obligation);
+    (ii) v OFF the ring: choose the slots vacuously (no ring edge is
+    incident), the pruned-clearance hypothesis then covers ALL ring
+    edges and is exactly `RingClearance.ring_complement_ball` /
+    `CornerGapKit.off_ring_corner_ball`'s content; each case yields the
+    `walk_corner_threshold` inputs, and `nat_threshold_fold` merges the
+    per-step thresholds.  Also here: the per-step ride windows
+    (`walk_dart_corridor_clear`/`_east_clear` at the bridge offset,
+    restricted by `ride_heights_in_span_*`) and the end-tie
+    windows/heights.
+    D-4b THE HEADLINE `face_transport_premise_holds`: intros the
+    premise's hypotheses, walk index from
+    `same_face_twin_first_step_index` (+ `no_spurs` standing), pick
+    `ef' := Rmin(walk threshold, tie thresholds, ef)/2 > 0`, set
+    `delta' := corner_delta_for_ef_*(d, ef')` and the rho functions
+    from D-4a's per-vertex factors, instantiate
+    `walk_straddle_connected_desc`/`_asc` with the D-4a families, lift
+    with `strip_lift_connected`, close with `walk_straddle_parity`.
+    Then `H_bridge_premise_of_transport` consumes the discharged
+    premise and `euler_core_reduction` closes the unconditional Euler
+    formula.
     Then, through `H_bridge_premise_of_transport` +
     `euler_core_reduction`, the unconditional Euler formula closes.
 
