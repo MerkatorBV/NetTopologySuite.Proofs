@@ -2754,6 +2754,9 @@ theories-flocq/InCircle_b64_compute.v
 # Issue #64 ask #4b: b64_inCircle sign-exactness (full-double Z.sgn predicate +
 # integer-regime bit-exactness).  Closes the deferred oracle sign bridge.
 theories-flocq/InCircle_b64_exact.v
+# Issue #68 ask #1: empty-circle (Delaunay) predicate `in_circle_test` over
+# `inCircle_R`, bridged to the discrete `b64_inCircle_exact` oracle.
+theories-flocq/DelaunayEmptyCircle.v
 # Phase 4 Scope A: first-stage bit-exactness for arc-line (circle-chord)
 # intersection coordinates (the prefix of the Cramer chain before division).
 # Ships R-side refs, b64 projections, safety predicate, and the four
