@@ -1359,7 +1359,12 @@ closed/min-points conditions. The planned ladder:
     discharging `face_transport_premise` under
     `H_bridge_premise_of_transport`'s hypothesis set (+ no_spurs),
     SPLIT (decided 2026-07-04) into:
-    D-4a PER-VERTEX HYPOTHESIS PACKAGING for the concrete cycle ring --
+    D-4a PER-VERTEX HYPOTHESIS PACKAGING for the concrete cycle ring
+    [(i) OFF-RING DONE, `WalkVertexPack.v`: `off_ring_corner_threshold`
+    -- slots chosen as the vertex itself make the pruned clearance
+    vacuously total (`off_ring_vertex_clearance`) and both germ
+    exclusions free (`point_diff_self` + `vzero_not_in_sector`), so
+    only the gap nondegeneracy remains; (ii) ON-RING next] --
     at each walk vertex `v = dtip x_i` a TRICHOTOMY feeds the corner:
     (i) v ON the ring: its two incident chain edges fill the fan-corner
     slots `(a, v)`/`(v, b)`; germ exclusions from `fan_gap_uncertified`

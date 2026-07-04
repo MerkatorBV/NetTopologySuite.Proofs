@@ -635,6 +635,12 @@ theories/WalkCorners.v
 # strip hypothesis), so the orbit chain runs in its own small-offset regime.
 # No Admitteds.
 theories/WalkStripLift.v
+# H-bridge attack C-3f discharge rung D-4a(i): per-vertex packaging, the
+# off-ring case -- choosing both pruned slots as the vertex itself makes the
+# clearance vacuously total (a complement vertex is off every ring edge) and
+# both germ exclusions free (the zero vector is never in an open sector), so
+# the D-2 corner threshold needs only the gap nondegeneracy.  No Admitteds.
+theories/WalkVertexPack.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
