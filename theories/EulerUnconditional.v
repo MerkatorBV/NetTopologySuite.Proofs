@@ -31,6 +31,19 @@
    residual is Qed, and the axiom footprint is the corpus allowlist
    trio.
 
+   IN PLAIN ENGLISH: repeatedly peel degree-1 vertices (each peel
+   provably preserves the identity) until every vertex has degree >= 2;
+   then delete edges one at a time, asking the decidable question "does
+   this edge see its own reversal along its face walk?" -- if yes it is
+   a bridge (the H-bridge theorem, proved geometrically from the five
+   guards, with no Euler input), if no its face walk is a detour around
+   it; either way all four counts move in lockstep.  The five guards
+   are not extra assumptions: they are exactly the noding /
+   general-position invariants a snap-rounded overlay arrangement
+   already maintains, and they are what makes the abstract rotation
+   system genuinely PLANAR (genus 0) -- which is the entire content of
+   the identity.
+
    No `Admitted` / `Axiom` / `Parameter`; allowlist axioms only.
 
    Author: NetTopologySuite.Proofs contributors
@@ -203,9 +216,28 @@ Proof.
   exact (Hind (length E) E eq_refl Hnd Hntd Hfan Hpw Hnh Hnfv).
 Qed.
 
+(* The classical count form, spelled out (this is definitionally what
+   `euler_characteristic` says: V + F = E + 2C, i.e. V - E + F = 2C for
+   a C-component plane graph; C = 1 gives the textbook V - E + F = 2).
+   A concrete worked instance lives in `EulerWitness.v` (`w1_euler`). *)
+Corollary euler_formula_classical :
+  forall E : list Edge,
+    NoDup E -> no_twin_dup E ->
+    (forall v : Point, fan_ok (outgoing v (darts_of E))) ->
+    pairwise_no_proper_cross_twin_aware (darts_of E) ->
+    no_horizontal_darts (darts_of E) ->
+    no_foreign_vertex_twin_aware (darts_of E) ->
+    (num_vertices E + num_faces E
+       = num_edges E + 2 * num_components E)%nat.
+Proof.
+  intros E Hnd Hntd Hfan Hpw Hnh Hnfv.
+  exact (euler_characteristic_holds E Hnd Hntd Hfan Hpw Hnh Hnfv).
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.  The unconditional Euler identity; allowlist axioms only.      *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions euler_core_reduction_incl.
 Print Assumptions euler_characteristic_holds.
+Print Assumptions euler_formula_classical.
