@@ -1388,19 +1388,40 @@ closed/min-points conditions. The planned ladder:
     (`walk_dart_corridor_clear`/`_east_clear` at the bridge offset,
     restricted by `ride_heights_in_span_*`) and the end-tie
     windows/heights.
-    D-4b THE HEADLINE `face_transport_premise_holds`: intros the
-    premise's hypotheses, walk index from
-    `same_face_twin_first_step_index` (+ `no_spurs` standing), pick
-    `ef' := Rmin(walk threshold, tie thresholds, ef)/2 > 0`, set
-    `delta' := corner_delta_for_ef_*(d, ef')` and the rho functions
-    from D-4a's per-vertex factors, instantiate
-    `walk_straddle_connected_desc`/`_asc` with the D-4a families, lift
-    with `strip_lift_connected`, close with `walk_straddle_parity`.
-    Then `H_bridge_premise_of_transport` consumes the discharged
-    premise and `euler_core_reduction` closes the unconditional Euler
-    formula.
-    Then, through `H_bridge_premise_of_transport` +
-    `euler_core_reduction`, the unconditional Euler formula closes.
+    D-4b THE HEADLINE `face_transport_premise_holds`, sliced:
+    D-4b-1 DONE (`WalkFamilies.v`): the walk-vertex trichotomy
+    resolution -- `trace_vertex_incident_pair` (tips ARE the trace,
+    bases its rotation, so `in_map_iff` extracts the incident pair
+    both ways) and `off_trace_vertex_complement` (an off-trace walk
+    vertex is in the ring complement: endpoint hits land in the
+    trace/rotation, interior hits violate the E-level twin-aware
+    guard, the `x = f`/`x = twin f` escapes closed by the same trace
+    membership).
+    D-4b-2 (next): TIE VARIANTS + per-step families.  FINDING
+    (2026-07-04): the banked tie theorems
+    (`along_dart_base_to_straddle_*`, `twin_base_to_straddle_*`) ride
+    only UPWARD (`h_base <= my`); the chain's corner-capped sample
+    rhos hug the endpoints, so the WEST tie at descending d's base
+    (top) sample needs the DOWN-riding mirror (`my <= h_base`, window
+    `[my, h_base]`) -- a trivial corridor_connected re-orientation,
+    same bridge equality, to be added (and the asc/twin mirrors).  The
+    EAST tie at twin d's base (bottom) sample already works with tiny
+    rho (`h_e` just above the bottom `<= my`).  Then instantiate the
+    ride family (walk_dart_corridor_clear/_east_clear windows at the
+    bridge offset, restricted by ride_heights_in_span_*), the corner
+    family (trichotomy dispatch + fan_gap_uncertified germ exclusions
+    at walls ddir (twin x_i)/ddir (fstep x_i); wall nondegeneracy from
+    no_spurs via next_neq + fan_ok pairwise), and fold thresholds
+    (nat_threshold_fold).
+    D-4b-3: the headline -- intros the premise's hypotheses, walk
+    index from `same_face_twin_first_step_index` (+ `no_spurs`
+    standing), pick `ef'` below the folded thresholds and `ef`, set
+    `delta' := corner_delta_for_ef_*(d, ef')` with per-my tie rhos
+    (h-heights solvable in rho, affine with slope vy <> 0),
+    instantiate `walk_straddle_connected_desc`/`_asc`, lift with
+    `strip_lift_connected`, close with `walk_straddle_parity`.  Then
+    `H_bridge_premise_of_transport` consumes the discharged premise
+    and `euler_core_reduction` closes the unconditional Euler formula.
 
 ---
 
