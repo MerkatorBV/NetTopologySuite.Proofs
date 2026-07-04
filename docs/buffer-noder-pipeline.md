@@ -143,7 +143,7 @@ Legend: ✅ Qed-closed and reusable · 🟡 present but partial / conditional
 | 3 noding | full noding of raw curve | ✅ | `HobbyTheorem_b64.snap_round_segments`, `fully_intersected`, `hobby_theorem_4_1_conditional` (✅, conditional on ⛓️ `hobby_lemma_4_3_no_proper`) |
 | 4a graph | build topology graph | ✅ | `OverlayGraph.{build_graph,build_labeled_graph,TopologyGraph,valid_topology_graph}`, `valid_topology_graph_build_labeled_graph` |
 | 4b labelling | **depth** label (in/out of d-region) | 🟡 | `theories/BufferDepth.v` reuses `EdgeLabel` as interior-side flags; the keep-the-boundary rule IS the SymDiff rule (`buffer_edge_in_result = edge_in_result SymDiff`); `kept_edges` + validity Qed. The depth-region/d-neighbourhood *correctness* is the remaining analytic seam. **Guard set complete** (`theories/BufferDepthGuarded.v`): `depth_region` is a sound enclosure test exactly under `kept_boundary_wellformed` (closed boundary + `no_horizontal_edge_at` + `ray_avoids_vertices`, per the #91/#93/#95 counterexamples), and `depth_region_is_geometric_interior_guarded` reduces depth labelling to the SAME named JCT seam as `point_in_ring` — no new analytic gap |
-| 5 ring assembly | faces → valid polygons | ⛓️ | `OverlayGraph.extract`; correctness is `OverlayBridge.extract_rings_valid` (Admitted, registered deferred) |
+| 5 ring assembly | faces → valid polygons | 🟡 | `ExtractFaces.extract_faces` / `ExtractFacesHoles.extract_faces_holes` (the corrected DCEL face extractor, not the refuted flatten `OverlayGraph.extract`); correctness is `OverlayBridge.extract_rings_valid` / `extract_rings_valid_holes` — **Qed**, conditional on two named `euler_characteristic` hypotheses (closed 2026-06-13), now further strengthened to **Euler-free**: `OverlayBridgeUnconditional.{extract_rings_valid_of_guards,extract_rings_valid_holes_of_guards}` discharge those two hypotheses outright from five geometric/noding guards a snap-rounded arrangement already maintains (2026-07-04). See the §2.5 re-audit note — buffer's own `H_valid` route does not currently go through any of this |
 | spec/JCT | point-in-result ⟺ interior | ⛓️ | `Overlay.{point_set,point_in_polygon,point_in_ring,valid_polygon}`; JCT seam `JordanCurveSeam.geometric_interior_cont` (H1 named hypothesis — re-pointed off the vacuous `geometric_interior_stdlib`, see `docs/jct-vacuity-finding.md` + §4 note below) |
 
 ### 2.1 Stage 1 — decompose (✅ reusable)
@@ -290,18 +290,56 @@ The merge/canonicalisation infrastructure
 family) is reusable as-is; note the recorded orientation-canonicalisation
 follow-up in `OverlayBridge.v §6` applies here too.
 
-### 2.5 Stage 5 — ring assembly (⛓️ inherited deferred gap)
+### 2.5 Stage 5 — ring assembly (🟡 re-audited 2026-07-04 — see below)
 
-Identical to overlay:
+Identical to overlay, but the overlay side of this row has moved twice
+since this doc's original text (which described the naive-flatten /
+Admitted state): the DCEL face traversal now exists (`ExtractFaces.
+extract_faces` / `ExtractFacesHoles.extract_faces_holes`, refuting the
+old naive `OverlayGraph.extract`), `OverlayBridge.extract_rings_valid` /
+`extract_rings_valid_holes` are **Qed** over it (conditional on two named
+`euler_characteristic` hypotheses), and — as of the H-bridge/Euler
+campaign close (2026-07-01) plus its with-holes companion (2026-07-04) —
+those two hypotheses are now DISCHARGED outright by
+`OverlayBridgeUnconditional.{extract_rings_valid_of_guards,
+extract_rings_valid_holes_of_guards}` from five geometric/noding guards
+a snap-rounded arrangement already maintains. The validity target
+throughout is `Overlay.valid_polygon` (the four OGC §6 conditions:
+`ring_closed`, `ring_simple`, `ring_has_minimum_points`,
+`hole_inside_outer`).
 
-- `OverlayGraph.extract : BooleanOp -> TopologyGraph -> Geometry`
-  (naive edge-filter form today) and its validity obligation
-  `OverlayBridge.extract_rings_valid` — **Admitted, registered** as a
-  deferred proof; the real fix is DCEL face traversal. Buffer inherits
-  this gap unchanged (a buffer-specific `extract` would still need the
-  same DCEL ring assembly). The validity target is
-  `Overlay.valid_polygon` (the four OGC §6 conditions: `ring_closed`,
-  `ring_simple`, `ring_has_minimum_points`, `hole_inside_outer`).
+**Re-audit finding (issue #65 track, 2026-07-04): buffer does NOT currently
+inherit any of this — its `H_valid` route is a separate, already-Euler-free
+argument.** `buffer_correct_conditional` (`theories/BufferCorrectness.v`)
+keeps `extract_buffer : TopologyGraph -> Geometry` fully abstract and
+applies it to `build_graph (node (offset_curve g d))` — the PLAIN,
+unlabelled `OverlayGraph.build_graph` (every edge gets `default_label =
+{in_left:=false; in_right:=false}`), not a depth-labelled graph. Concretely,
+`result_edges op (build_graph segs) = []` for **every** `BooleanOp` (each of
+`Union`/`Intersection`/`Difference`/`SymDiff` evaluates to `false` on
+`default_label`), so `extract_faces` / `extract_faces_holes` cannot be
+plugged into the buffer pipeline as-is — Stage 4b's depth labelling
+(`BufferDepth.v`, `buffer_edge_in_result = edge_in_result SymDiff`, row 4b)
+would first need to be threaded through `build_labeled_graph` in place of
+`build_graph`, exactly as §2.4 already specifies as 🔴 new work. That
+wiring is real, unstarted engineering — not a "swap Euler for guards"
+change — and is tracked as issue #65 item ③ (self-intersecting offset
+noding), not this item.
+
+Instead, `H_valid` is discharged today by `theories/ExtractBufferRings.v` +
+`theories/ExtractRingsShell.v` via a SEPARATE, self-contained argument over
+plain `Edge`/`(Point*Point)` chains (`pairwise_no_proper_cross`,
+`RingExtract.face_walk_core`, `RingSimple.ring_simple_of_subset`) that
+never touches `Dart`/`extract_faces`/Euler/guards at all — hole-free is
+UNCONDITIONAL (`valid_polygon_of_noded_chain`, `buffer_correct_hole_free`)
+and with-holes reduces to the single named `hole_inside_outer` residual
+(`valid_polygon_noded_shell`, `buffer_correct_with_holes`). So the Euler→
+guards migration changes **nothing** about buffer's current status: it was
+already Euler-free by construction, at a layer the migration doesn't touch.
+The migration's payoff for buffer is entirely prospective — *if* a future
+session lands the depth-labelled-graph route above, it would inherit the
+guard-only (not Euler-conditional) form of `extract_rings_valid_holes` for
+free.
 
 ---
 
@@ -336,7 +374,7 @@ keeps the rest:
 | `boolean_op op A B p` | `buffer_spec g d p` (Minkowski dilation, §1) |
 | `correct_labels op g A B` (source) | `buffer_correct_labels g d` (depth, 🔴 new) |
 | `noded_labeled_graph A B` | `noded_buffer_graph g d` (🔴 thin new def) |
-| `extract op g`, `extract_rings_valid` | same `extract`, same ⛓️ gap |
+| `extract op g`, `extract_rings_valid` | NOT currently shared — buffer's `H_valid` is its own Euler-free `ExtractBufferRings`/`ExtractRingsShell` route; see §2.5 re-audit |
 | H1 JCT, H_bridge | same shapes, single-input |
 
 ---
@@ -426,11 +464,21 @@ already covered by `docs/audit-exceptions.txt`).
 4. `hobby_lemma_4_3_no_proper` — noding preservation
    (`docs/admitted-deferred-proofs.txt`).
 5. `extract_rings_valid` — DCEL ring assembly. **Largely dispatched for
-   buffers:** `theories/ExtractBufferRings.v` discharges `H_valid` for the
+   buffers, independently of the overlay-side Dart/DCEL machinery:**
+   `theories/ExtractBufferRings.v` discharges `H_valid` for the
    hole-free regime with NO JCT residual (`valid_polygon_of_noded_chain`,
    composing `RingExtract.face_walk_core` + `RingSimple.ring_simple_of_subset`);
    `theories/RingExtract.v` + `theories/BoundedComponent.v` + `theories/RingSimple.v`
-   carry R1–R3. Only `hole_inside_outer` (with holes) remains = the H1/JCT gap.
+   carry R1–R3. **With holes is now also dispatched** down to the same
+   single residual (`theories/ExtractRingsShell.v:valid_polygon_noded_shell`
+   / `H_valid_of_chain_extractor_holes` / `buffer_correct_with_holes`): only
+   `hole_inside_outer` (the H1/JCT gap) remains. Note this route is
+   NOT the overlay `extract_faces`/`extract_faces_holes` DCEL path — it is a
+   separate, self-contained noded-chain argument that never carried Euler
+   content, so it is unaffected by (and did not need) the 2026-07-01/07-04
+   Euler→guards campaign on `OverlayBridge.extract_rings_valid{,_holes}`;
+   see the §2.5 re-audit note for the honest gap that remains before buffer
+   could share that machinery.
 6. JCT (H1) and the semantic `H_bridge` — carried as named hypotheses in
    the overlay headline; reappear identically here. `H_bridge` is now
    **decomposed** (`theories/BufferBridge.v`) into soundness (⊆ d-nbhd) +
@@ -549,12 +597,15 @@ defers the thesis-scale geometry.
 6. **S6 — depth labelling** (`buffer_correct_labels`), reusing the merge
    family; address edge-orientation canonicalisation
    (`OverlayBridge.v §6`).
-7. **Inherited** — `hobby_lemma_4_3_no_proper`, `extract_rings_valid`,
-   JCT close on their own tracks and discharge the shared hypotheses for
-   both overlay and buffer at once. A concrete, hole-topology-based route
-   for `extract_rings_valid` (with a buffer-specialised beachhead that
-   discharges `H_valid` here) is planned in
-   [`docs/extract-rings-proof-structure.md`](extract-rings-proof-structure.md).
+7. **Inherited** — `hobby_lemma_4_3_no_proper` and JCT close on their own
+   tracks and discharge the shared hypotheses for both overlay and buffer
+   at once. `extract_rings_valid` is no longer inherited *as a gap*: buffer
+   discharges its own `H_valid` via the independent `ExtractBufferRings.v`
+   / `ExtractRingsShell.v` route (§5 item 5, §2.5), which reduces to the
+   same single `hole_inside_outer` residual with holes and nothing at all
+   hole-free — see [`docs/extract-rings-proof-structure.md`](extract-rings-proof-structure.md)
+   for the general (overlay-side) proof structure, now itself Euler-free
+   via `OverlayBridgeUnconditional.v`.
 
 **Out of first landing:** negative `d` (erosion / inward offset);
 curve-aware buffer producing `CurvePolygon` arc output (Option A region
