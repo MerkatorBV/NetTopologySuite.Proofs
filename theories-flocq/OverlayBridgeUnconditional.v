@@ -32,7 +32,8 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph EdgeConnectivity
                                Dart DartNextSpec ExtractFaces EdgeFaceBridge
                                NoShortFaces FaceTwinAware VertexGeneralPosition
                                FaceOrbitSep HBridgeCoreSlice WalkPremiseBridge
-                               WalkResidualDischarge.
+                               WalkResidualDischarge FaceChain FacePolygonHoles
+                               ExtractFacesHoles RingExtract.
 From NTS.Proofs.Flocq Require Import OverlayBridge.
 
 Import ListNotations.
@@ -64,8 +65,53 @@ Proof.
               Hbr Hwn Hns H2ec) poly Hin).
 Qed.
 
+(* With-holes companion, at `extract_rings_valid_holes`'s exact use shape:
+   the same guard substitution (`pairwise_no_proper_cross_twin_aware` +
+   `no_horizontal_darts` + `no_foreign_vertex_twin_aware` standing in for the
+   two `euler_characteristic` clauses via `H_bridge_premise_holds`), with the
+   oracle well-formedness (`Hwf`) and hole-nesting (`Hinside`) hypotheses
+   threaded through unchanged. *)
+Theorem extract_rings_valid_holes_of_guards :
+  forall (hassign : Dart -> list Dart) (op : BooleanOp) (A B : Geometry),
+    well_noded_darts (result_edges op (noded_labeled_graph A B)) ->
+    no_spurs (result_darts op (noded_labeled_graph A B)) ->
+    edge_2_connected (result_edges op (noded_labeled_graph A B)) ->
+    pairwise_no_proper_cross_twin_aware
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    no_horizontal_darts
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    no_foreign_vertex_twin_aware
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    (forall d, In d (result_darts op (noded_labeled_graph A B)) ->
+       forall h, In h (hassign d) ->
+         In h (result_darts op (noded_labeled_graph A B))) ->
+    (forall d, In d (result_darts op (noded_labeled_graph A B)) ->
+       forall h, In h (hassign d) ->
+       hole_inside_outer
+         (ring_of_chain (face_chain (result_darts op (noded_labeled_graph A B)) d
+                           (face_period (result_darts op (noded_labeled_graph A B)) d)))
+         (hole_ring_of (result_darts op (noded_labeled_graph A B))
+            (h, face_period (result_darts op (noded_labeled_graph A B)) h))) ->
+    forall poly,
+      In poly (extract_faces_holes hassign op (noded_labeled_graph A B)) ->
+      valid_polygon poly.
+Proof.
+  intros hassign op A B Hwn Hns H2ec Hpw Hnh Hnfv Hwf Hinside poly Hin.
+  assert (Hfan : forall v : Point,
+            fan_ok (outgoing v
+                      (darts_of (result_edges op (noded_labeled_graph A B)))))
+    by (intro v; apply well_noded_fan_ok; exact Hwn).
+  assert (Hbr : H_bridge_premise (result_edges op (noded_labeled_graph A B)))
+    by (apply H_bridge_premise_holds; assumption).
+  exact (extract_faces_holes_valid_sep hassign op (noded_labeled_graph A B)
+           Hwn Hns (H_bridge_well_noded (result_edges op (noded_labeled_graph A B))
+              Hbr Hwn Hns H2ec)
+           Hwf Hinside poly Hin).
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.  Euler-hypothesis-free ring extraction; allowlist only.        *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions extract_rings_valid_of_guards.
+Print Assumptions extract_rings_valid_holes_of_guards.
