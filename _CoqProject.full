@@ -1971,6 +1971,17 @@ theories/ArcHotPixel.v
 # bisector geometry + S4's IVT-blocked soundness).  No Admitteds.
 theories/ArcChordApprox.v
 
+# Issue #64 ask #4c / #3 V-CP: single-arc "bulge-inclusion" building block for
+# TRUE-region soundness.  Every point affinely interior to an arc's inscribed
+# control triangle lies in the circular segment the arc bounds with its chord
+# (bulge side of the chord + inside the closed disk) -- no ray-casting, no
+# Jordan machinery.  Closes the narrow no-new-Jordan-content sub-case found
+# after surveying the JCT toolkit (RelateNG/RelateCurveArcSegment only ever
+# reason about the control triangle itself, never the true curved boundary).
+# Allowlist axioms only (sig_forall_dec + functional_extensionality_dep).
+# No Admitted.
+theories/ArcControlTriangleInSegment.v
+
 # Route (B) of docs/clothoid-open-questions-triage.md: the sagitta-density
 # bound -- "n chords achieve eps".  Conjugate identity
 # s*(r + sqrt(r^2-l^2)) = l^2 over ArcChordApprox.v's Pythagorean layer,
