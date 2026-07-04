@@ -519,6 +519,15 @@ theories-flocq/Orient_b64_stage_d_safe.v
 # arithmetic closure).  No Admitteds added by this file.
 theories-flocq/OverlayBridge.v
 
+# Category C: OverlayBridgeUnconditional -- extract_rings_valid restated over
+# the geometric/noding guard set (the euler_characteristic clauses replaced by
+# WalkResidualDischarge.H_bridge_premise_holds, rung E-4).  Inherits
+# Classical_Prop.classic transitively from OverlayBridge's noded_labeled_graph
+# (HobbyTheorem_b64 snap_round_segments, Flocq binary arithmetic closure) --
+# the guard-side inputs themselves are allowlist-trio only.  Clears together
+# with OverlayBridge under the parametric refactor.  No Admitteds.
+theories-flocq/OverlayBridgeUnconditional.v
+
 # Category C: RingCurvatureModels -- extract_rings_valid re-exposed for the
 # hyperbolic (Beltrami-Klein disk) and spherical-hemisphere (gnomonic
 # projection) readings.  extract_rings_valid_hyperbolic /

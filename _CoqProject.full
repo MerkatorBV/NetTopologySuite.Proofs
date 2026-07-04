@@ -2781,6 +2781,13 @@ theories-flocq/Validate_binary64_extract.v
 # Listed in audit-exceptions.txt due to Classical_Prop.classic transitively
 # pulled from HobbyTheorem_b64's snap_round_segments closure.
 theories-flocq/OverlayBridge.v
+# H-bridge / Euler campaign rung E-4: extract_rings_valid WITHOUT the two
+# euler_characteristic clauses -- they existed solely to feed
+# H_bridge_premise_from_euler, and the premise is now a theorem of the
+# geometric/noding guards (WalkResidualDischarge.H_bridge_premise_holds),
+# so the headline restates over the guard set.  Banked statement untouched.
+# No Admitteds.
+theories-flocq/OverlayBridgeUnconditional.v
 
 # RingCurvatureModels: does extract_rings_valid generalise from planar to
 # hyperbolic/spherical space?  Answer: its statement never mentions distance

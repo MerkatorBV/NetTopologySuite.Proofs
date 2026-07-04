@@ -1540,11 +1540,21 @@ closed/min-points conditions. The planned ladder:
     premise of the H-bridge/Euler thread (face_transport_premise,
     H_bridge_premise, euler_characteristic) is now a theorem of the
     five geometric/noding guards.
-    NEXT (E-4, optional): thread `euler_characteristic_holds` into the
-    downstream consumers (`extract_rings_valid` in
-    theories-flocq/OverlayBridge.v and `H_bridge_premise_from_euler`
-    call sites) to replace their named Euler hypotheses by the guard
-    set; also `docs/verified-claims.md` + README refresh.
+    ==> H-BRIDGE / EULER CAMPAIGN CLOSED (2026-07-04, PRs #334-#362):
+    every named premise of the lane is a theorem of the guard set, and
+    ring extraction consumes them Euler-hypothesis-free. <==
+    E-4 DONE (`theories-flocq/OverlayBridgeUnconditional.v`):
+    `extract_rings_valid_of_guards` -- ring extraction WITHOUT the two
+    `euler_characteristic` clauses.  They existed solely to feed
+    `H_bridge_premise_from_euler`; the corollary substitutes
+    `H_bridge_premise_holds` and carries the three geometric guards in
+    their place (well_noded + no_spurs + edge_2_connected unchanged).
+    Banked statement untouched.  File added to audit-exceptions
+    (inherits Classical_Prop.classic from OverlayBridge's Flocq
+    lineage, as OverlayBridge itself does; the guard-side inputs are
+    trio-only).  Campaign standing: face_transport_premise,
+    H_bridge_premise, euler_characteristic all theorems; ring
+    extraction consumes them Euler-hypothesis-free.
 
 ---
 
