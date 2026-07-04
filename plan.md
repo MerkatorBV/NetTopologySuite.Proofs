@@ -1507,9 +1507,33 @@ closed/min-points conditions. The planned ladder:
     `no_foreign_vertex_twin_aware`), axiom footprint = the allowlist
     trio.  The named-premise discipline is fully unwound for this
     thread: nothing of rung C/D/E remains hypothetical.
-    NEXT (E-3): feed `H_bridge_premise_holds` into the Euler assembly
-    (`euler_core_reduction` consumers) so the unconditional Euler
-    formula carries only the guard set.
+    E-3a DONE (`EulerSameFaceStep.v`): THE CORE INDUCTION STEP of the
+    unconditional Euler formula --
+    `euler_characteristic_core_edge_transfer`: deleting ANY edge of a
+    min-degree->=2 arrangement transfers `euler_characteristic`, with
+    the branch chosen by the DECIDABLE `same_face` test
+    (`same_face_twin_dec`, via period-walk membership): same face =>
+    cut edge via the Euler-free `H_bridge_premise_holds` => bridge
+    deltas (`num_faces_E_minus_splice`, `bridge_components_split`,
+    Delta V = 0 from endpoint survival); different faces => face-walk
+    bypass (`diff_face_bypass_E_minus`) => cycle deltas
+    (`num_faces_E_minus_merge`, `cycle_components_eq`).  Kit:
+    `outgoing_second` (a degree->=2 fan has a second dart, NoDup of
+    `darts_of` from NoDup+no_twin_dup), `no_spurs_of_min_degree_2`
+    (spur => singleton fan, refuted by `next_neq_self_of_other`),
+    `base/tip_endpoint_survives` (the second dart's carrier is not
+    d), `num_vertices_E_minus_eq_of_survivors`.  This closes the
+    circularity flagged in EulerFormula.v's header: the per-edge delta
+    no longer needs Euler to be classified.
+    NEXT (E-3b): the well-founded wrapper -- peel to the degree core
+    (`euler_core_reduction`; needs its E' related to E by iterated
+    E_minus so the geometric guards transfer, or a subset-monotonicity
+    restatement), apply `euler_characteristic_core_edge_transfer`,
+    recurse on the smaller edge set, base case
+    `euler_characteristic_nil`; headline
+    `euler_characteristic_holds : NoDup + no_twin_dup + fan_ok +
+    guards -> euler_characteristic E`, then thread into
+    `extract_rings_valid` to drop its Euler hypotheses.
 
 ---
 
