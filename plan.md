@@ -1281,11 +1281,27 @@ closed/min-points conditions. The planned ladder:
     sample (twin d's base sample at `dtip d`, the face side = d's
     east) rides to `(X + ef, my)`; `twin_base_to_straddle_west`
     (ascending d): the mirror to `(X - ef, my)`.  The d-side ties are
-    `along_dart_base_to_straddle_west`/`_east` verbatim; (iv) close
-    with `parity_constant_on_components` (JCTSeparation.v:58) + the
-    #341 premise-site hooks (`straddle_transport_clash_from_
-    complements`), then the strip transport lifts `ef'` back to the
-    premise's `ef`.
+    `along_dart_base_to_straddle_west`/`_east` verbatim; (iv) DONE
+    (`WalkAssembly.v`): `walk_straddle_connected_desc`/`_asc` -- orbit
+    chain + two end ties, three `connected_in_complement_cont_trans`/
+    `_sym` moves, connect `(X - ef, my)` to `(X + ef, my)` in the ring
+    complement (descending and ascending d, one shared corner delta
+    each), and `walk_straddle_parity` closes with
+    `parity_constant_on_components` (JCTSeparation.v:58) into EXACTLY
+    `face_transport_premise`'s biconditional (ring_closed + the
+    premise's own ray guards).  ALL heavy inputs remain caller-side
+    hypothesis families.  REMAINING for C-3f: the DISCHARGE rung(s) --
+    supply the per-step ride/corner families and tie clearances for
+    the concrete cycle ring from the C-3c/C-3d threshold theorems
+    (walk_dart_corridor_clear/_east_clear windows + fan corner bounds
+    + per-step parameter existence a la corner_params_exist), the
+    walk-index k from `same_face_twin_first_step_index`, the
+    horizontal-dart dichotomy (`no_horizontal_darts` covers d, but
+    INTERMEDIATE walk darts may be horizontal -- needs a horizontal
+    ride variant or exclusion), and the strip-transport ef-lift
+    (#343).  Then `face_transport_premise` discharges and, through
+    `H_bridge_premise_of_transport` + `euler_core_reduction`, the
+    unconditional Euler formula closes.
 
 ---
 

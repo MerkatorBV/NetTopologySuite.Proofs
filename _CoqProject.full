@@ -609,6 +609,13 @@ theories/WalkChainInduction.v
 # both ties, and twin corridors are pointwise the original's (same carrier).
 # No Admitteds.
 theories/WalkEndTies.v
+# H-bridge attack C-3f step 1(iv): the assembly -- orbit chain + two end ties
+# connect the premise's straddle pair in the ring complement (descending and
+# ascending d), and parity_constant_on_components turns that into exactly
+# face_transport_premise's biconditional.  Heavy inputs stay caller-side
+# hypothesis families; their concrete discharge is the next rung.
+# No Admitteds.
+theories/WalkAssembly.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
