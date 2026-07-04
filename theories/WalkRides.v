@@ -149,6 +149,13 @@ Qed.
 (* Axiom audit.  Assembly of banked pieces; allowlist axioms only.             *)
 (* -------------------------------------------------------------------------- *)
 
+(* Used by: the C-3f orbit chain (`WalkChainInduction.walk_chain_
+   connected`'s ride family) and the D-4 discharge assembly; the window
+   hypotheses come from `WalkCorridor.walk_dart_corridor_clear` /
+   `MirrorCorridor.walk_dart_corridor_east_clear` restricted by the
+   in-span lemmas above. *)
+
 Print Assumptions along_dart_ride_west.
 Print Assumptions along_dart_ride_east.
 Print Assumptions ride_heights_in_span_west.
+Print Assumptions ride_heights_in_span_east.
