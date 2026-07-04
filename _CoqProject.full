@@ -2042,6 +2042,12 @@ theories/ArcArcSound.v
 # P+ = M+h·perp(u) on both circles (ring+lra).  3-axiom.  Deferred:
 # arc_span_contains (atan2), arc_arc_intersects (full predicate), b64 layer.
 theories/ArcArcCircles.v
+# Issue #64 ask #5b / N-AA: promotes ArcArcCircles.arc_arc_circles_intersect
+# (both-circles existence) to the full arc_arc_intersects predicate (both
+# circles AND both spans), bundling the atan2-dependent span facts as one
+# named hypothesis on the common point -- same honest-conditional shape as
+# ArcArcSound.arc_arc_intersects_of_chord_cross_cond.  3-axiom.  No Admitted.
+theories/ArcArcCirclesSpan.v
 # Slice 7 / formal soundness of oracle/driver.ml:circumcentre_q.  Raw-coordinate
 # counterpart of arc_center_equidistant (ArcChordApprox) and
 # inCircle_R_zero_of_equidistant (ArcArcCircles): proves the circumcenter formula
