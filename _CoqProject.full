@@ -655,6 +655,12 @@ theories/WalkFamilies.v
 # corpus's named-premise discipline; its discharge is the remaining per-step
 # wiring over the fully Qed-banked D-1..D-4a pieces.  No Admitteds.
 theories/WalkPremiseBridge.v
+# H-bridge attack C-3f discharge rung E-1: the range-form corner threshold --
+# the corner is connected at EVERY (rho, delta) with 0 < delta < t and
+# rho_factor * delta <= rho < t (the far wall is monotone in rho above the
+# band edge; the ball bounds cap both above), enabling composition with the
+# rides' in-span lower bound on rho.  No Admitteds.
+theories/WalkCornerRange.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
