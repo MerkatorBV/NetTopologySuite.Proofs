@@ -1927,6 +1927,11 @@ theories/CurveLinearise.v
 # pulls.
 theories/ArcOrient.v
 
+# Issue #68 ask #2: full antisymmetry of `inCircle_R` under transposing any
+# two of its four point arguments (incl. the test-point/vertex swap) -- the
+# sign-algebra layer under the witness-sound flip criterion.
+theories/DelaunayFlipWitness.v
+
 # Phase 4 Session 4: arc-chord and arc-arc intersection predicates
 # (R-side, Prop-valued).  Defines arc_span_contains (Option S: chord
 # cross-product sign for arcs < pi), arc_chord_intersects (existence
