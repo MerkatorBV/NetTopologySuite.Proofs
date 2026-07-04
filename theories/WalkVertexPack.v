@@ -30,12 +30,14 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
+From Stdlib Require Import Permutation.
 From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                Direction Dart DartAngularOrder
                                PointInRingTangents JordanCurveSeam JCT
                                JCTHugStep RingClearance SectorPath
                                CornerSamples CornerConnector FanGapSector
-                               FanCorner WalkCorners.
+                               FanCorner WalkCorners DartPath RingExtract
+                               CycleRing GeneralTautBridge.
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -101,8 +103,126 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Axiom audit.  Vacuous-slot packaging; allowlist axioms only.                *)
+(* §3  The ON-RING case: clearance at a cycle vertex.  [D-4a(ii)]              *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma nodup_map_eq :
+  forall (A B : Type) (g : A -> B) (l : list A) (x y : A),
+    NoDup (map g l) -> In x l -> In y l -> g x = g y -> x = y.
+Proof.
+  intros A B g l.
+  induction l as [| a l IH]; intros x y Hnd Hx Hy Hg; [ destruct Hx | ].
+  cbn [map] in Hnd. inversion Hnd as [| ? ? Hnotin Hnd']; subst.
+  destruct Hx as [-> | Hx]; destruct Hy as [-> | Hy].
+  - reflexivity.
+  - exfalso. apply Hnotin. rewrite Hg. apply in_map. exact Hy.
+  - exfalso. apply Hnotin. rewrite <- Hg. apply in_map. exact Hx.
+  - apply IH; assumption.
+Qed.
+
+Lemma point_eq_of_coords :
+  forall p q : Point, px p = px q -> py p = py q -> p = q.
+Proof.
+  intros [x1 y1] [x2 y2]. cbn. intros -> ->. reflexivity.
+Qed.
+
+(* At a vertex-simple cycle vertex, every ring edge OTHER than the two
+   incident chain edges avoids the vertex: an endpoint hit would break
+   the NoDup trace (tips are the trace, bases its rotation), and an
+   interior hit is a foreign-vertex violation. *)
+Theorem on_ring_vertex_clearance :
+  forall (D : list Dart) (d : Dart) (c : list Dart) (v : Point)
+         (e_in e_out : Dart),
+    dpath D (dtip d) (dbase d) c ->
+    NoDup (dtip d :: map dtip c) ->
+    ring_no_vertex_on_foreign_edge_interior (ring_of_chain (d :: c)) ->
+    ring_edges (ring_of_chain (d :: c)) = d :: c ->
+    In e_in (d :: c) -> In e_out (d :: c) ->
+    dtip e_in = v -> dbase e_out = v ->
+    forall f, In f (ring_edges (ring_of_chain (d :: c))) ->
+      f <> e_in -> f <> e_out ->
+      ~ on_edge f v.
+Proof.
+  intros D d c v e_in e_out Hp Hnd Hnfv Hedges Hin Hout Htip Hbase
+         f Hf Hne1 Hne2 [s [Hs [Hx Hy]]].
+  rewrite Hedges in Hf.
+  assert (Htips : NoDup (map dtip (d :: c))) by (cbn [map]; exact Hnd).
+  assert (Hbases : NoDup (map dbase (d :: c))).
+  { cbn [map].
+    pose proof (dpath_base_trace D (dtip d) (dbase d) c Hp) as Htr.
+    eapply Permutation_NoDup.
+    - apply Permutation_sym.
+      apply (Permutation_cons_append (map dbase c) (dbase d)).
+    - rewrite Htr. exact Hnd. }
+  destruct (Rle_lt_or_eq_dec 0 s (proj1 Hs)) as [Hs0 | Hs0].
+  - destruct (Rle_lt_or_eq_dec s 1 (proj2 Hs)) as [Hs1 | Hs1].
+    + (* INTERIOR: v = snd e_in sits inside the foreign edge f *)
+      assert (HinR : In e_in (ring_edges (ring_of_chain (d :: c))))
+        by (rewrite Hedges; exact Hin).
+      assert (HfR : In f (ring_edges (ring_of_chain (d :: c))))
+        by (rewrite Hedges; exact Hf).
+      destruct (Hnfv f e_in HfR HinR Hne1) as [_ Hsnd].
+      apply Hsnd. exists s. split; [ lra | ].
+      unfold dtip in Htip. rewrite Htip.
+      split; [ exact Hx | exact Hy ].
+    + (* s = 1: v IS the tip of f, so f = e_in by trace NoDup *)
+      subst s.
+      assert (Hveq : v = dtip f).
+      { apply point_eq_of_coords.
+        - rewrite Hx. unfold dtip. ring.
+        - rewrite Hy. unfold dtip. ring. }
+      apply Hne1.
+      apply (nodup_map_eq _ _ dtip (d :: c) f e_in Htips Hf Hin).
+      rewrite <- Hveq. exact (eq_sym Htip).
+  - (* s = 0: v IS the base of f, so f = e_out by the rotated trace *)
+    subst s.
+    assert (Hveq : v = dbase f).
+    { apply point_eq_of_coords.
+      - rewrite Hx. unfold dbase. ring.
+      - rewrite Hy. unfold dbase. ring. }
+    apply Hne2.
+    apply (nodup_map_eq _ _ dbase (d :: c) f e_out Hbases Hf Hout).
+    rewrite <- Hveq. exact (eq_sym Hbase).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* §4  The on-ring corner threshold.                                           *)
+(* -------------------------------------------------------------------------- *)
+
+(* The incident chain edges fill the pruned slots; the germ exclusions
+   stay caller-side (discharged at the walk from `fan_gap_uncertified`:
+   the incident chain darts' germ-darts are fan members at v). *)
+Theorem on_ring_corner_threshold :
+  forall (D : list Dart) (d : Dart) (c : list Dart) (v a b : Point)
+         (u1 u2 : Vec),
+    no_horizontal_edges (ring_of_chain (d :: c)) ->
+    dpath D (dtip d) (dbase d) c ->
+    NoDup (dtip d :: map dtip c) ->
+    ring_no_vertex_on_foreign_edge_interior (ring_of_chain (d :: c)) ->
+    ring_edges (ring_of_chain (d :: c)) = d :: c ->
+    In ((a, v) : Dart) (d :: c) ->
+    In ((v, b) : Dart) (d :: c) ->
+    ~ in_open_sector u1 u2 (point_diff a v) ->
+    ~ in_open_sector u1 u2 (point_diff b v) ->
+    vcross u1 u2 <> 0 ->
+    exists t rho_factor : R,
+      0 < t /\ 0 < rho_factor /\
+      forall delta, 0 < delta < t ->
+        connected_in_complement_cont (ring_of_chain (d :: c))
+          (point_at v (corner_sample_in u1 (rho_factor * delta) delta))
+          (point_at v (corner_sample_out u2 (rho_factor * delta) delta)).
+Proof.
+  intros D d c v a b u1 u2 Hnoh Hp Hnd Hnfv Hedges Hin Hout Hma Hmb Hcne.
+  apply (walk_corner_threshold _ v a b u1 u2 Hnoh); try assumption.
+  apply (on_ring_vertex_clearance D d c v (a, v) (v, b) Hp Hnd Hnfv Hedges
+           Hin Hout); reflexivity.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Axiom audit.  Per-vertex packaging; allowlist axioms only.                  *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions off_ring_vertex_clearance.
 Print Assumptions off_ring_corner_threshold.
+Print Assumptions on_ring_vertex_clearance.
+Print Assumptions on_ring_corner_threshold.

@@ -1364,7 +1364,16 @@ closed/min-points conditions. The planned ladder:
     -- slots chosen as the vertex itself make the pruned clearance
     vacuously total (`off_ring_vertex_clearance`) and both germ
     exclusions free (`point_diff_self` + `vzero_not_in_sector`), so
-    only the gap nondegeneracy remains; (ii) ON-RING next] --
+    only the gap nondegeneracy remains; (ii) ON-RING DONE, same file:
+    `on_ring_vertex_clearance` -- at a vertex-simple cycle vertex,
+    every ring edge other than the two incident chain edges avoids the
+    vertex (endpoint hits break the NoDup trace: tips ARE the trace,
+    bases its rotation via `dpath_base_trace` + `Permutation_NoDup`;
+    interior hits violate `ring_no_vertex_on_foreign_edge_interior`,
+    already derived from the twin-aware guards in the core slice) --
+    and `on_ring_corner_threshold` fills the D-2 slots with the
+    incident chain edges, germ exclusions staying caller-side
+    (discharged at the walk from `fan_gap_uncertified`)] --
     at each walk vertex `v = dtip x_i` a TRICHOTOMY feeds the corner:
     (i) v ON the ring: its two incident chain edges fill the fan-corner
     slots `(a, v)`/`(v, b)`; germ exclusions from `fan_gap_uncertified`
