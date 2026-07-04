@@ -54,15 +54,10 @@ Theorem extract_rings_valid_of_guards :
       valid_polygon poly.
 Proof.
   intros op A B Hwn Hns H2ec Hpw Hnh Hnfv poly Hin.
-  assert (Hfan : forall v : Point,
-            fan_ok (outgoing v
-                      (darts_of (result_edges op (noded_labeled_graph A B)))))
-    by (intro v; apply well_noded_fan_ok; exact Hwn).
-  assert (Hbr : H_bridge_premise (result_edges op (noded_labeled_graph A B)))
-    by (apply H_bridge_premise_holds; assumption).
   exact (extract_faces_valid_sep op (noded_labeled_graph A B) Hwn Hns
-           (H_bridge_well_noded (result_edges op (noded_labeled_graph A B))
-              Hbr Hwn Hns H2ec) poly Hin).
+           (twins_in_different_faces_of_guards
+              (result_edges op (noded_labeled_graph A B))
+              Hwn Hns H2ec Hpw Hnh Hnfv) poly Hin).
 Qed.
 
 (* With-holes companion, at `extract_rings_valid_holes`'s exact use shape:
@@ -97,15 +92,11 @@ Theorem extract_rings_valid_holes_of_guards :
       valid_polygon poly.
 Proof.
   intros hassign op A B Hwn Hns H2ec Hpw Hnh Hnfv Hwf Hinside poly Hin.
-  assert (Hfan : forall v : Point,
-            fan_ok (outgoing v
-                      (darts_of (result_edges op (noded_labeled_graph A B)))))
-    by (intro v; apply well_noded_fan_ok; exact Hwn).
-  assert (Hbr : H_bridge_premise (result_edges op (noded_labeled_graph A B)))
-    by (apply H_bridge_premise_holds; assumption).
   exact (extract_faces_holes_valid_sep hassign op (noded_labeled_graph A B)
-           Hwn Hns (H_bridge_well_noded (result_edges op (noded_labeled_graph A B))
-              Hbr Hwn Hns H2ec)
+           Hwn Hns
+           (twins_in_different_faces_of_guards
+              (result_edges op (noded_labeled_graph A B))
+              Hwn Hns H2ec Hpw Hnh Hnfv)
            Hwf Hinside poly Hin).
 Qed.
 

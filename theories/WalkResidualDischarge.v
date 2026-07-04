@@ -63,7 +63,8 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                DartSideKit CornerCorridorBridge
                                WalkStepChain WalkChainInduction WalkEndTies
                                WalkRides WalkPremiseBridge WalkResidualKit
-                               WalkResidualTies.
+                               WalkResidualTies FaceOrbitSep
+                               VertexGeneralPosition.
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -427,6 +428,28 @@ Proof.
   apply face_transport_premise_holds; assumption.
 Qed.
 
+(* One-shot packaging of the two-step idiom every `_of_guards` call site was
+   re-deriving inline (`well_noded_fan_ok` to get the per-vertex fan, then
+   `H_bridge_premise_holds` to get the bridge premise, then
+   `EdgeFaceBridge.H_bridge_well_noded` to land on the single hypothesis
+   `extract_faces_valid_sep` / `extract_faces_holes_valid_sep` actually want):
+   from the six standing guards straight to `twins_in_different_faces`. *)
+Corollary twins_in_different_faces_of_guards :
+  forall E : list Edge,
+    well_noded_darts E ->
+    no_spurs (darts_of E) ->
+    edge_2_connected E ->
+    pairwise_no_proper_cross_twin_aware (darts_of E) ->
+    no_horizontal_darts (darts_of E) ->
+    no_foreign_vertex_twin_aware (darts_of E) ->
+    twins_in_different_faces (darts_of E).
+Proof.
+  intros E Hwn Hns H2ec Hpw Hnh Hnfv.
+  apply (H_bridge_well_noded E
+           (H_bridge_premise_holds E (well_noded_fan_ok E Hwn) Hns Hpw Hnh Hnfv)
+           Hwn Hns H2ec).
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.  The residual discharge; allowlist axioms only.                *)
 (* -------------------------------------------------------------------------- *)
@@ -434,3 +457,4 @@ Qed.
 Print Assumptions walk_small_offset_connectivity_holds.
 Print Assumptions face_transport_premise_holds.
 Print Assumptions H_bridge_premise_holds.
+Print Assumptions twins_in_different_faces_of_guards.
