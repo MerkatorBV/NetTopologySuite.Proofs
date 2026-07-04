@@ -10,8 +10,15 @@
    combinatorial or geometric invariant of the snap-rounded overlay
    arrangement itself, none is a global topological identity.
 
+   In one sentence: `extract_rings_valid_of_guards` is the Euler-free
+   strengthening of the banked theorem, obtained after discharging
+   `euler_characteristic` via the guard set (E-3b, PR #361).
+
    The banked `extract_rings_valid` is untouched; this is a corollary
-   at its exact use shape.
+   at its exact use shape.  MIGRATION NOTE: new call sites should
+   prefer this `_of_guards` variant -- it is strictly stronger (no
+   topological hypotheses) and its guards are the invariants the
+   snap-rounding pipeline already maintains.
 
    No `Admitted` / `Axiom` / `Parameter`; allowlist axioms only.
 

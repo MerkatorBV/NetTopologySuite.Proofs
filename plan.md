@@ -1540,6 +1540,9 @@ closed/min-points conditions. The planned ladder:
     premise of the H-bridge/Euler thread (face_transport_premise,
     H_bridge_premise, euler_characteristic) is now a theorem of the
     five geometric/noding guards.
+    ==> H-BRIDGE / EULER CAMPAIGN CLOSED (2026-07-04, PRs #334-#362):
+    every named premise of the lane is a theorem of the guard set, and
+    ring extraction consumes them Euler-hypothesis-free. <==
     E-4 DONE (`theories-flocq/OverlayBridgeUnconditional.v`):
     `extract_rings_valid_of_guards` -- ring extraction WITHOUT the two
     `euler_characteristic` clauses.  They existed solely to feed
