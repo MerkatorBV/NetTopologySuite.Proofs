@@ -1338,8 +1338,16 @@ closed/min-points conditions. The planned ladder:
     at one common offset, `corridor_connected`/`_east` carry the
     segment) + `ride_heights_in_span_west`/`_east` (under
     `|delta*vx| < rho_i*|vy|` the bridge heights are strictly inside
-    the dart's y-span, ordered when `rho1 + rho2 < 1`); D-2 per-vertex
-    corner instantiation + threshold fold; D-3 strip lift; D-4 the
+    the dart's y-span, ordered when `rho1 + rho2 < 1`); D-2 DONE
+    (`WalkCorners.v`): `walk_corner_threshold` -- under the same
+    vertex-side hypotheses as `fan_corner_connected`, there are
+    `t > 0` and `rho_factor > 0` such that EVERY `0 < delta < t`
+    connects the corner at `(rho_factor * delta, delta)` (reflex:
+    `rho_factor = 1`; convex: `rho_factor = (C1+C2+1)/gap`, making the
+    far-wall smallness hold identically; triple-product bounds
+    atomized in `scaled_bound_lt`/`_single`), and
+    `nat_threshold_fold` (finitely many positive per-step thresholds
+    fold into one positive walk threshold); D-3 strip lift; D-4 the
     final assembly discharging `face_transport_premise` under
     `H_bridge_premise_of_transport`'s hypothesis set (+ no_spurs).
     Then, through `H_bridge_premise_of_transport` +
