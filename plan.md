@@ -1347,8 +1347,16 @@ closed/min-points conditions. The planned ladder:
     far-wall smallness hold identically; triple-product bounds
     atomized in `scaled_bound_lt`/`_single`), and
     `nat_threshold_fold` (finitely many positive per-step thresholds
-    fold into one positive walk threshold); D-3 strip lift; D-4 the
-    final assembly discharging `face_transport_premise` under
+    fold into one positive walk threshold); D-3 DONE
+    (`WalkStripLift.v`): `strip_segment_west/_east_connected` (the
+    horizontal segments from the premise's pair at `ef` to the walk's
+    pair at any smaller `ef'` are complement-valued: on-`d` points are
+    pinned to the crossing abscissa by `on_edge_at_height_x` while the
+    segments stay `>= ef'` away, other edges die on the #343 strip
+    hypothesis; straight-path construction) and `strip_lift_connected`
+    (west segment + inner connectivity + east segment = the premise's
+    pair connects whenever the walk's does); D-4 the final assembly
+    discharging `face_transport_premise` under
     `H_bridge_premise_of_transport`'s hypothesis set (+ no_spurs).
     Then, through `H_bridge_premise_of_transport` +
     `euler_core_reduction`, the unconditional Euler formula closes.
