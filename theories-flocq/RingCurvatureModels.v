@@ -78,8 +78,8 @@
 From Stdlib Require Import Reals Lra List.
 From NTS.Proofs Require Import Distance Overlay Vec.
 From NTS.Proofs Require Import VertexGeneralPosition NoShortFaces EdgeConnectivity
-  ExtractFaces EulerArrangement.
-From NTS.Proofs.Flocq Require Import OverlayBridge.
+  ExtractFaces EulerArrangement FaceTwinAware HBridgeCoreSlice Dart.
+From NTS.Proofs.Flocq Require Import OverlayBridge OverlayBridgeUnconditional.
 Import ListNotations.
 
 Local Open Scope R_scope.
@@ -253,6 +253,36 @@ Proof.
   exact (extract_rings_valid op A B Hwn Hns H2ec Heul HeulM poly Hin).
 Qed.
 
+(* Guard-discharge audit companion (E-4-shaped): the same re-exposure, but of
+   `extract_rings_valid_of_guards` (OverlayBridgeUnconditional.v) instead of
+   the Euler-carrying `extract_rings_valid` -- the two `euler_characteristic`
+   clauses are replaced by the geometric/noding guards `H_bridge_premise_holds`
+   already discharges Euler-free.  Since the underlying proof term never used
+   curvature-specific content in the first place (per the file header), this
+   is a strictly stronger, no-new-math re-exposure: no topological hypothesis
+   survives, only combinatorial/geometric invariants of the arrangement. *)
+Corollary extract_rings_valid_hyperbolic_of_guards :
+  beltrami_klein_correspondence ->
+  forall (op : BooleanOp) (A B : Geometry),
+    hyperbolic_geometry_valid_domain A ->
+    hyperbolic_geometry_valid_domain B ->
+    well_noded_darts (result_edges op (noded_labeled_graph A B)) ->
+    no_spurs (result_darts op (noded_labeled_graph A B)) ->
+    edge_2_connected (result_edges op (noded_labeled_graph A B)) ->
+    pairwise_no_proper_cross_twin_aware
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    no_horizontal_darts
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    no_foreign_vertex_twin_aware
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    forall poly,
+      In poly (extract_faces op (noded_labeled_graph A B)) ->
+      valid_polygon poly.
+Proof.
+  intros _ op A B _ _ Hwn Hns H2ec Hpw Hnh Hnfv poly Hin.
+  exact (extract_rings_valid_of_guards op A B Hwn Hns H2ec Hpw Hnh Hnfv poly Hin).
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* §3  SPHERICAL geometry (one open hemisphere), via gnomonic projection.      *)
 (*                                                                            *)
@@ -299,6 +329,28 @@ Proof.
   exact (extract_rings_valid op A B Hwn Hns H2ec Heul HeulM poly Hin).
 Qed.
 
+(* Guard-discharge audit companion (E-4-shaped); see the hyperbolic case above
+   for the rationale -- same substitution, no domain-confinement hypotheses. *)
+Corollary extract_rings_valid_spherical_hemisphere_of_guards :
+  gnomonic_correspondence ->
+  forall (op : BooleanOp) (A B : Geometry),
+    well_noded_darts (result_edges op (noded_labeled_graph A B)) ->
+    no_spurs (result_darts op (noded_labeled_graph A B)) ->
+    edge_2_connected (result_edges op (noded_labeled_graph A B)) ->
+    pairwise_no_proper_cross_twin_aware
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    no_horizontal_darts
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    no_foreign_vertex_twin_aware
+      (darts_of (result_edges op (noded_labeled_graph A B))) ->
+    forall poly,
+      In poly (extract_faces op (noded_labeled_graph A B)) ->
+      valid_polygon poly.
+Proof.
+  intros _ op A B Hwn Hns H2ec Hpw Hnh Hnfv poly Hin.
+  exact (extract_rings_valid_of_guards op A B Hwn Hns H2ec Hpw Hnh Hnfv poly Hin).
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Audit footprint.                                                           *)
 (* -------------------------------------------------------------------------- *)
@@ -309,3 +361,5 @@ Print Assumptions vcross_sign_flipped_neg_det.
 Print Assumptions open_disk_convex.
 Print Assumptions extract_rings_valid_hyperbolic.
 Print Assumptions extract_rings_valid_spherical_hemisphere.
+Print Assumptions extract_rings_valid_hyperbolic_of_guards.
+Print Assumptions extract_rings_valid_spherical_hemisphere_of_guards.
