@@ -29,6 +29,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals List Lia Lra Ranalysis Bool Btauto.
+From NTS.Proofs Require Import Real.
 From NTS.Proofs Require Import DE9IM Distance Overlay Segment RelateBoundary
   RelateLineLine RelateAreaPoint RelateAreaLine RelateAreaArea
   RelateMatrixLineLine RelateMatrixAreaLine RelateMatrixRect RelateMatrixTriangle
@@ -37,6 +38,11 @@ From NTS.Proofs Require Import GeneralTriangleSeparation GeneralTriangleParity. 
 From NTS.Proofs Require Import GeneralTriangleJCT GeneralTriangleExterior
   TriangleValidPolygon JCTSeamAssembly PointInRingCorrect PointInRingTangents
   JordanCurveSeam.  (* assembled in-house JCT converse: point_in_ring -> 0 < gtri *)
+From NTS.Proofs Require Import TriangleContainmentConvex.
+  (* gtri_region_is_convex / gtri_region_contains_segment: the closed gtri
+     region is convex, so a segment with both endpoints inside stays inside --
+     the missing step to lift a vertex-only containment test to a whole-edge
+     containment fact for triangle_pair_regime's TPR_Contains case below. *)
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -186,14 +192,33 @@ Definition touch_edge_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
   (shares_edge_b a3 a1 b2 b3 && opposite_sides_b a3 a1 a2 b1) ||
   (shares_edge_b a3 a1 b3 b1 && opposite_sides_b a3 a1 a2 b2).
 
-(* Triangle regime classifier.  Now DETECTS the shared-edge touch regime
-   (the `touch_edge_b` decision, proven correct on the `triangles_touch_on_shared_edge`
-   inputs by `triangle_pair_regime_touch` below), returning TPR_Disjoint as the
-   default for the not-yet-classified regimes (contains/overlap). *)
+(* Decidable detector for the containment regime: A is CCW (0 < gdbl A) and
+   all three of B's vertices are strictly interior to A (0 < gtri A _).
+   `triangle_pair_regime_contains` below shows this is sound: it entails
+   `touch_edge_b` is false (a vertex strictly interior to A cannot equal any
+   of A's own vertices, so no shared-edge endpoint match is possible), and
+   `contains_b_ring_inside` shows it is geometrically meaningful: every
+   point on any of B's three edges -- not merely its vertices -- lies in
+   A's closed region (via TriangleContainmentConvex.gtri_region_contains_segment). *)
+Definition contains_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint dx dy)) then
+  if Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint ex ey)) then
+  if Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint fx fy)) then true
+  else false else false else false else false.
+
+(* Triangle regime classifier.  DETECTS the shared-edge touch regime (the
+   `touch_edge_b` decision, proven correct on the `triangles_touch_on_shared_edge`
+   inputs by `triangle_pair_regime_touch` below) and the containment regime
+   (the `contains_b` decision, proven correct by `triangle_pair_regime_contains`
+   below), returning TPR_Disjoint as the default for the remaining
+   not-yet-classified regime (overlap). *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   then TPR_TouchEdge
+  else if contains_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Contains
   else TPR_Disjoint.
 
 (* Decidable equality on the classifier's result type -- consistent with the
@@ -203,6 +228,158 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
 Lemma triangle_pair_regime_eq_dec :
   forall r1 r2 : TrianglePairRegime, {r1 = r2} + {r1 <> r2}.
 Proof. decide equality. Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Containment regime correctness.                                            *)
+(* -------------------------------------------------------------------------- *)
+
+(* `gtri` at A's own vertices is <= 0 (one of the three inward half-plane      *)
+(* tests is exactly 0 there), so a strictly-interior point (0 < gtri) can      *)
+(* never equal a vertex of A -- the fact `touch_edge_b`'s falsity rests on.    *)
+Lemma gtri_at_own_vertex_a_le0 : forall ax ay bx by_ cx cy,
+  gtri ax ay bx by_ cx cy (mkPoint ax ay) <= 0.
+Proof.
+  intros ax ay bx by_ cx cy. unfold gtri.
+  assert (H : gsA ax ay bx by_ (mkPoint ax ay) = 0) by (unfold gsA; simpl; ring).
+  rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ].
+Qed.
+
+Lemma gtri_at_own_vertex_b_le0 : forall ax ay bx by_ cx cy,
+  gtri ax ay bx by_ cx cy (mkPoint bx by_) <= 0.
+Proof.
+  intros ax ay bx by_ cx cy. unfold gtri.
+  assert (H : gsB bx by_ cx cy (mkPoint bx by_) = 0) by (unfold gsB; simpl; ring).
+  rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_r_le ].
+Qed.
+
+Lemma gtri_at_own_vertex_c_le0 : forall ax ay bx by_ cx cy,
+  gtri ax ay bx by_ cx cy (mkPoint cx cy) <= 0.
+Proof.
+  intros ax ay bx by_ cx cy. unfold gtri.
+  assert (H : gsC ax ay cx cy (mkPoint cx cy) = 0) by (unfold gsC; simpl; ring).
+  rewrite H. apply Rmin_r_le.
+Qed.
+
+Lemma gtri_pos_ne_vertex_a : forall ax ay bx by_ cx cy p,
+  0 < gtri ax ay bx by_ cx cy p -> p <> mkPoint ax ay.
+Proof.
+  intros ax ay bx by_ cx cy p Hpos ->.
+  pose proof (gtri_at_own_vertex_a_le0 ax ay bx by_ cx cy). lra.
+Qed.
+
+Lemma gtri_pos_ne_vertex_b : forall ax ay bx by_ cx cy p,
+  0 < gtri ax ay bx by_ cx cy p -> p <> mkPoint bx by_.
+Proof.
+  intros ax ay bx by_ cx cy p Hpos ->.
+  pose proof (gtri_at_own_vertex_b_le0 ax ay bx by_ cx cy). lra.
+Qed.
+
+Lemma gtri_pos_ne_vertex_c : forall ax ay bx by_ cx cy p,
+  0 < gtri ax ay bx by_ cx cy p -> p <> mkPoint cx cy.
+Proof.
+  intros ax ay bx by_ cx cy p Hpos ->.
+  pose proof (gtri_at_own_vertex_c_le0 ax ay bx by_ cx cy). lra.
+Qed.
+
+Lemma point_eqb_false : forall p q, p <> q -> point_eqb p q = false.
+Proof.
+  intros p q Hne. unfold point_eqb.
+  destruct (Req_dec_T (px p) (px q)) as [Hx | Hx]; [ | reflexivity ].
+  destruct (Req_dec_T (py p) (py q)) as [Hy | Hy]; [ | reflexivity ].
+  exfalso. apply Hne. destruct p as [px0 py0], q as [px1 py1]. simpl in *. subst. reflexivity.
+Qed.
+
+(* touch_edge_b is false whenever B's three vertices are each distinct from    *)
+(* all three of A's vertices: every `shares_edge_b` disjunct needs an          *)
+(* A-vertex to literally equal a B-vertex, which is exactly what is ruled out. *)
+Lemma touch_edge_b_false_of_ne :
+  forall a1 a2 a3 b1 b2 b3 : Point,
+    a1 <> b1 -> a1 <> b2 -> a1 <> b3 ->
+    a2 <> b1 -> a2 <> b2 -> a2 <> b3 ->
+    a3 <> b1 -> a3 <> b2 -> a3 <> b3 ->
+    touch_edge_b a1 a2 a3 b1 b2 b3 = false.
+Proof.
+  intros a1 a2 a3 b1 b2 b3 H11 H12 H13 H21 H22 H23 H31 H32 H33.
+  unfold touch_edge_b, shares_edge_b.
+  rewrite (point_eqb_false a1 b1 H11), (point_eqb_false a1 b2 H12), (point_eqb_false a1 b3 H13),
+          (point_eqb_false a2 b1 H21), (point_eqb_false a2 b2 H22), (point_eqb_false a2 b3 H23),
+          (point_eqb_false a3 b1 H31), (point_eqb_false a3 b2 H32), (point_eqb_false a3 b3 H33).
+  reflexivity.
+Qed.
+
+(* The headline: 0<gdbl A plus all three of B's vertices strictly interior to A
+   forces the classifier to TPR_Contains -- unconditionally (touch_edge_b's
+   falsity is DERIVED, not assumed, from the same three hypotheses). *)
+Theorem triangle_pair_regime_contains :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
+    0 < gdbl ax ay bx by_ cx cy ->
+    0 < gtri ax ay bx by_ cx cy (mkPoint dx dy) ->
+    0 < gtri ax ay bx by_ cx cy (mkPoint ex ey) ->
+    0 < gtri ax ay bx by_ cx cy (mkPoint fx fy) ->
+    triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy = TPR_Contains.
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy Hccw Hd He Hf.
+  assert (Hda : mkPoint ax ay <> mkPoint dx dy)
+    by (intro Heq; exact (gtri_pos_ne_vertex_a ax ay bx by_ cx cy _ Hd (eq_sym Heq))).
+  assert (Hea : mkPoint ax ay <> mkPoint ex ey)
+    by (intro Heq; exact (gtri_pos_ne_vertex_a ax ay bx by_ cx cy _ He (eq_sym Heq))).
+  assert (Hfa : mkPoint ax ay <> mkPoint fx fy)
+    by (intro Heq; exact (gtri_pos_ne_vertex_a ax ay bx by_ cx cy _ Hf (eq_sym Heq))).
+  assert (Hdb : mkPoint bx by_ <> mkPoint dx dy)
+    by (intro Heq; exact (gtri_pos_ne_vertex_b ax ay bx by_ cx cy _ Hd (eq_sym Heq))).
+  assert (Heb : mkPoint bx by_ <> mkPoint ex ey)
+    by (intro Heq; exact (gtri_pos_ne_vertex_b ax ay bx by_ cx cy _ He (eq_sym Heq))).
+  assert (Hfb : mkPoint bx by_ <> mkPoint fx fy)
+    by (intro Heq; exact (gtri_pos_ne_vertex_b ax ay bx by_ cx cy _ Hf (eq_sym Heq))).
+  assert (Hdc : mkPoint cx cy <> mkPoint dx dy)
+    by (intro Heq; exact (gtri_pos_ne_vertex_c ax ay bx by_ cx cy _ Hd (eq_sym Heq))).
+  assert (Hec : mkPoint cx cy <> mkPoint ex ey)
+    by (intro Heq; exact (gtri_pos_ne_vertex_c ax ay bx by_ cx cy _ He (eq_sym Heq))).
+  assert (Hfc : mkPoint cx cy <> mkPoint fx fy)
+    by (intro Heq; exact (gtri_pos_ne_vertex_c ax ay bx by_ cx cy _ Hf (eq_sym Heq))).
+  unfold triangle_pair_regime.
+  rewrite (touch_edge_b_false_of_ne (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+             (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+             Hda Hea Hfa Hdb Heb Hfb Hdc Hec Hfc).
+  unfold contains_b.
+  destruct (Rlt_dec 0 (gdbl ax ay bx by_ cx cy)) as [_ | Hn]; [ | contradiction ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint dx dy))) as [_ | Hn]; [ | contradiction ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint ex ey))) as [_ | Hn]; [ | contradiction ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint fx fy))) as [_ | Hn]; [ | contradiction ].
+  reflexivity.
+Qed.
+
+(* Geometric correctness: whenever `contains_b` flags containment, every point
+   on any of B's three EDGES (not just its vertices) is inside A's closed
+   region.  This is the honest content behind wiring TPR_Contains: the
+   vertex-only test would be unsound without it (an edge could otherwise dip
+   outside A between two vertices that individually pass). *)
+Theorem contains_b_ring_inside :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy p,
+    contains_b ax ay bx by_ cx cy dx dy ex ey fx fy = true ->
+    (between (mkPoint dx dy) (mkPoint ex ey) p \/
+     between (mkPoint ex ey) (mkPoint fx fy) p \/
+     between (mkPoint fx fy) (mkPoint dx dy) p) ->
+    0 <= gtri ax ay bx by_ cx cy p.
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy p Hc Hb.
+  unfold contains_b in Hc.
+  destruct (Rlt_dec 0 (gdbl ax ay bx by_ cx cy)) as [_ | Hn]; [ | discriminate ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint dx dy))) as [Hd | Hn]; [ | discriminate ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint ex ey))) as [He | Hn]; [ | discriminate ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint fx fy))) as [Hf | Hn]; [ | discriminate ].
+  clear Hc.
+  destruct Hb as [Hb | [Hb | Hb]].
+  - exact (gtri_region_contains_segment ax ay bx by_ cx cy (mkPoint dx dy) (mkPoint ex ey) p
+             (Rlt_le _ _ Hd) (Rlt_le _ _ He) Hb).
+  - exact (gtri_region_contains_segment ax ay bx by_ cx cy (mkPoint ex ey) (mkPoint fx fy) p
+             (Rlt_le _ _ He) (Rlt_le _ _ Hf) Hb).
+  - exact (gtri_region_contains_segment ax ay bx by_ cx cy (mkPoint fx fy) (mkPoint dx dy) p
+             (Rlt_le _ _ Hf) (Rlt_le _ _ Hd) Hb).
+Qed.
+
+Print Assumptions triangle_pair_regime_contains.
+Print Assumptions contains_b_ring_inside.
 
 (* bool dec helpers removed... (kept comment for style) *)
 
@@ -354,7 +531,19 @@ Proof.
   { unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
     cbn [px py].
     repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-    all: reflexivity. }
+    (* touch_edge_b is now pinned to `false`; the containment branch remains:
+       the two triangles don't even share an x-range, so gtri of the first
+       triangle at the second triangle's first vertex (2,0) is already
+       non-positive (its gsA slack is exactly 0 there). *)
+    unfold contains_b.
+    assert (Hcb : gtri 0 0 1 0 0 1 (mkPoint 2 0) <= 0).
+    { unfold gtri.
+      assert (H : gsA 0 0 1 0 (mkPoint 2 0) = 0) by (unfold gsA; simpl; ring).
+      rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
+    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn].
+    - destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _];
+        [ exfalso; lra | reflexivity ].
+    - exfalso. apply Hn. unfold gdbl. lra. }
   rewrite Hreg. reflexivity.
 Qed.
 
