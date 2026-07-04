@@ -36,7 +36,9 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                FanCorner WalkCorners DartPath RingExtract
                                CycleRing GeneralTautBridge EdgeConnectivity
                                ArrangementEMinus HBridgeCoreSlice
-                               WalkVertexPack.
+                               WalkVertexPack JCTCorridor JCTMinOpenStep
+                               WalkCorridor MirrorCorridor DartSideKit
+                               CornerCorridorBridge WalkEndTies.
 
 Import ListNotations.
 Local Open Scope R_scope.
@@ -126,8 +128,159 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Axiom audit.  Trace combinatorics + guard transfer; allowlist only.         *)
+(* §3  DOWN-riding tie variants.  [D-4b-2]                                     *)
+(*                                                                             *)
+(* The banked ties ride UP (`h <= my`); the chain's corner-capped sample       *)
+(* rhos hug the dart endpoints, so when `my` sits below the sample the         *)
+(* mirror window `[my, h]` is needed -- same bridge equality, the              *)
+(* corridor connector applied in its native orientation (no `sym`).            *)
+(* -------------------------------------------------------------------------- *)
+
+Theorem along_dart_base_to_straddle_west_down :
+  forall (r : Ring) (d : Dart) (rho ef my h_base : R),
+    vy (ddir d) < 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_west d ef) ->
+    my <= h_base ->
+    (forall y, my <= y <= h_base ->
+       ~ ring_image r (corridor d ef y)) ->
+    connected_in_complement_cont r
+      (point_at (dbase d)
+         (corner_sample_out (ddir d) rho (corner_delta_for_ef_west d ef)))
+      (mkPoint (edge_x_at d my - ef) my).
+Proof.
+  intros r d rho ef my h_base Hdesc Hhbase Hle Hclear.
+  set (delta_c := corner_delta_for_ef_west d ef).
+  assert (Hbase_eq :
+    point_at (dbase d) (corner_sample_out (ddir d) rho delta_c)
+      = corridor d ef h_base).
+  { rewrite (handoff_base_bridge_west d rho delta_c Hdesc).
+    change (delta_c * (vx (ddir d) * vx (ddir d) + vy (ddir d) * vy (ddir d))
+              / (- vy (ddir d))) with (bridge_delta_west d delta_c).
+    change (py (dbase d) + (rho * vy (ddir d) - delta_c * vx (ddir d)))
+      with (bridge_height_base d rho delta_c).
+    assert (Hbd : bridge_delta_west d delta_c = ef)
+      by (unfold delta_c; exact (bridge_delta_west_for_ef d ef Hdesc)).
+    assert (Hbh : bridge_height_base d rho delta_c = h_base)
+      by (unfold delta_c; symmetry; exact Hhbase).
+    rewrite Hbd, Hbh. reflexivity. }
+  assert (Hnh : py (dbase d) <> py (dtip d)).
+  { intro Heq. pose proof (dart_descend_tip_below_base d Hdesc) as Hw.
+    rewrite Heq in Hw. lra. }
+  rewrite Hbase_eq, <- straddle_west_eq_corridor.
+  exact (corridor_connected r d my h_base ef Hnh Hle Hclear).
+Qed.
+
+Theorem along_dart_base_to_straddle_east_down :
+  forall (r : Ring) (d : Dart) (rho ef my h_base : R),
+    vy (ddir d) > 0 ->
+    h_base = bridge_height_base d rho (corner_delta_for_ef_east d ef) ->
+    my <= h_base ->
+    (forall y, my <= y <= h_base ->
+       ~ ring_image r (corridor_east d ef y)) ->
+    connected_in_complement_cont r
+      (point_at (dbase d)
+         (corner_sample_out (ddir d) rho (corner_delta_for_ef_east d ef)))
+      (mkPoint (edge_x_at d my + ef) my).
+Proof.
+  intros r d rho ef my h_base Hasc Hhbase Hle Hclear.
+  set (delta_c := corner_delta_for_ef_east d ef).
+  assert (Hbase_eq :
+    point_at (dbase d) (corner_sample_out (ddir d) rho delta_c)
+      = corridor_east d ef h_base).
+  { rewrite (handoff_base_bridge_east d rho delta_c Hasc).
+    change (delta_c * (vx (ddir d) * vx (ddir d) + vy (ddir d) * vy (ddir d))
+              / vy (ddir d)) with (bridge_delta_east d delta_c).
+    change (py (dbase d) + (rho * vy (ddir d) - delta_c * vx (ddir d)))
+      with (bridge_height_base d rho delta_c).
+    assert (Hbd : bridge_delta_east d delta_c = ef)
+      by (unfold delta_c; exact (bridge_delta_east_for_ef d ef Hasc)).
+    assert (Hbh : bridge_height_base d rho delta_c = h_base)
+      by (unfold delta_c; symmetry; exact Hhbase).
+    rewrite Hbd, Hbh. reflexivity. }
+  assert (Hnh : py (dbase d) <> py (dtip d)).
+  { intro Heq. pose proof (dart_ascend_base_below_tip d Hasc) as Hw.
+    rewrite Heq in Hw. lra. }
+  rewrite Hbase_eq, <- straddle_east_eq_corridor_east.
+  assert (Hride := corridor_connected_east r d my h_base ef Hnh Hle).
+  unfold corridor_east.
+  apply Hride.
+  intros y Hy.
+  pose proof (Hclear y Hy) as H.
+  unfold corridor_east in H.
+  exact H.
+Qed.
+
+(* The twin-side mirrors: the chain's terminal sample rides DOWN to a
+   straddle point below it. *)
+Theorem twin_base_to_straddle_east_down :
+  forall (r : Ring) (d : Dart) (rho ef my h_base : R),
+    vy (ddir d) < 0 ->
+    h_base = bridge_height_base (twin d) rho (corner_delta_for_ef_west d ef) ->
+    my <= h_base ->
+    (forall y, my <= y <= h_base ->
+       ~ ring_image r (corridor_east d ef y)) ->
+    connected_in_complement_cont r
+      (point_at (dtip d)
+         (corner_sample_out (ddir (twin d))
+            rho (corner_delta_for_ef_west d ef)))
+      (mkPoint (edge_x_at d my + ef) my).
+Proof.
+  intros r d rho ef my h_base Hdesc Hhbase Hle Hclear.
+  assert (Hnh : py (fst d) <> py (snd d)).
+  { intro Heq.
+    assert (Hvy : vy (ddir d) = py (snd d) - py (fst d))
+      by (destruct d as [a b]; reflexivity).
+    lra. }
+  assert (Hasc : vy (ddir (twin d)) > 0)
+    by (rewrite ddir_twin, vy_vneg; lra).
+  pose proof (along_dart_base_to_straddle_east_down r (twin d) rho ef my
+                h_base Hasc) as Htie.
+  rewrite corner_delta_for_ef_twin_east in Htie.
+  rewrite (edge_x_at_twin d my Hnh) in Htie.
+  rewrite dbase_twin in Htie.
+  apply Htie; [ exact Hhbase | exact Hle | ].
+  intros y Hy.
+  rewrite (corridor_east_twin d ef y Hnh).
+  exact (Hclear y Hy).
+Qed.
+
+Theorem twin_base_to_straddle_west_down :
+  forall (r : Ring) (d : Dart) (rho ef my h_base : R),
+    0 < vy (ddir d) ->
+    h_base = bridge_height_base (twin d) rho (corner_delta_for_ef_east d ef) ->
+    my <= h_base ->
+    (forall y, my <= y <= h_base ->
+       ~ ring_image r (corridor d ef y)) ->
+    connected_in_complement_cont r
+      (point_at (dtip d)
+         (corner_sample_out (ddir (twin d))
+            rho (corner_delta_for_ef_east d ef)))
+      (mkPoint (edge_x_at d my - ef) my).
+Proof.
+  intros r d rho ef my h_base Hasc Hhbase Hle Hclear.
+  assert (Hnh : py (fst d) <> py (snd d)).
+  { intro Heq.
+    assert (Hvy : vy (ddir d) = py (snd d) - py (fst d))
+      by (destruct d as [a b]; reflexivity).
+    lra. }
+  assert (Hdesc : vy (ddir (twin d)) < 0)
+    by (rewrite ddir_twin, vy_vneg; lra).
+  pose proof (along_dart_base_to_straddle_west_down r (twin d) rho ef my
+                h_base Hdesc) as Htie.
+  rewrite corner_delta_for_ef_twin_west in Htie.
+  rewrite (edge_x_at_twin d my Hnh) in Htie.
+  rewrite dbase_twin in Htie.
+  apply Htie; [ exact Hhbase | exact Hle | ].
+  intros y Hy.
+  rewrite (corridor_twin d ef y Hnh).
+  exact (Hclear y Hy).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Axiom audit.  Trace combinatorics + tie mirrors; allowlist only.            *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions trace_vertex_incident_pair.
 Print Assumptions off_trace_vertex_complement.
+Print Assumptions along_dart_base_to_straddle_west_down.
+Print Assumptions twin_base_to_straddle_west_down.
