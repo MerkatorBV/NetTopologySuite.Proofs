@@ -669,6 +669,14 @@ theories/WalkCornerRange.v
 # per-dart ride below an explicit delta cap (window pinned at rho-fractions
 # of the y-span before the clearance threshold exists).  No Admitteds.
 theories/WalkResidualKit.v
+# H-bridge attack C-3f discharge rung E-2b: the end ties below explicit
+# ef-caps -- the four hookups between the orbit chain's terminal samples and
+# the straddle pair; the corridor offset of a tie is ef itself (the corner
+# delta inverts the bridge), the clearance window is the Rmin/Rmax hull of my
+# and the sample height's rho*span-neighbourhood (fixed before the cap), and
+# my-vs-height is decided, dispatching to the banked up-/down-riders.
+# No Admitteds.
+theories/WalkResidualTies.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

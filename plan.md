@@ -1469,12 +1469,20 @@ closed/min-points conditions. The planned ladder:
     bridge heights land inside once `delta * (|vx|+1) < rho_i *
     span/2`; the corridor offset drops below the threshold for `delta
     < delta0 * span / K`).
-    E-2b (next): TIES + HEADLINE.  Tie lemmas with up/down dispatch
-    (`Rle_dec h my`: up-riders from CornerCorridorBridge/WalkEndTies,
-    down-riders from WalkFamilies §3; window = Rmin/Rmax hull of `my`
-    and the `rho*span`-neighbourhood of the sample height, fixed
-    before the clearance threshold; corridor offset here is `ef'`
-    itself via `bridge_delta_*_for_ef`); then
+    E-2b DONE (`WalkResidualTies.v`): the four END TIES below explicit
+    ef-caps (`walk_tie_west_desc`/`_east_desc`/`_east_asc`/`_west_asc`)
+    -- up/down dispatch by `Rle_dec h my` (up-riders from
+    CornerCorridorBridge/WalkEndTies, down-riders from WalkFamilies
+    §3); window = Rmin/Rmax hull of `my` and the
+    `rho*span`-neighbourhood of the tie sample's limit height, fixed
+    before the clearance threshold exists (both hull corners strictly
+    inside the y-span since `(3/2)*rho < 1`); the corridor offset of a
+    tie is `ef` ITSELF (the corner delta inverts the bridge), so
+    `walk_dart_corridor_clear`/`_east_clear` apply verbatim; the
+    sample height lands in the hull once `ef < rho*K/(2*(|vx|+1))`;
+    `bridge_height_base_twin` restates the twin sample height in the
+    base dart's coordinates.
+    E-2c (next): THE HEADLINE
     `walk_small_offset_connectivity_holds`: derive the ring facts from
     the residual's own data (`cycle_closed_chain` +
     `ring_edges_of_closed_chain`, `cycle_window_twin_free` +
