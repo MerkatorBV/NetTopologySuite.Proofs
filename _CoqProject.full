@@ -2788,6 +2788,11 @@ theories-flocq/OverlayBridge.v
 # so the headline restates over the guard set.  Banked statement untouched.
 # No Admitteds.
 theories-flocq/OverlayBridgeUnconditional.v
+# With-holes companion to the above: extract_rings_valid_holes WITHOUT the
+# two euler_characteristic clauses, via the same guard set. hole_inside_outer
+# is left untouched (the named JCT/nesting residual, not Euler content).
+# No Admitteds.
+theories-flocq/OverlayBridgeUnconditionalHoles.v
 
 # RingCurvatureModels: does extract_rings_valid generalise from planar to
 # hyperbolic/spherical space?  Answer: its statement never mentions distance

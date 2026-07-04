@@ -528,6 +528,15 @@ theories-flocq/OverlayBridge.v
 # with OverlayBridge under the parametric refactor.  No Admitteds.
 theories-flocq/OverlayBridgeUnconditional.v
 
+# Category C: OverlayBridgeUnconditionalHoles -- the with-holes companion to
+# the above (extract_rings_valid_holes restated over the same guard set;
+# hole_inside_outer left untouched as the named JCT/nesting residual).
+# Inherits Classical_Prop.classic transitively from the identical
+# OverlayBridge / HobbyTheorem_b64 lineage -- the guard-side inputs
+# themselves are allowlist-trio only. Clears together with OverlayBridge
+# under the parametric refactor. No Admitteds.
+theories-flocq/OverlayBridgeUnconditionalHoles.v
+
 # Category C: RingCurvatureModels -- extract_rings_valid re-exposed for the
 # hyperbolic (Beltrami-Klein disk) and spherical-hemisphere (gnomonic
 # projection) readings.  extract_rings_valid_hyperbolic /
