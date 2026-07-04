@@ -1290,18 +1290,54 @@ closed/min-points conditions. The planned ladder:
     `parity_constant_on_components` (JCTSeparation.v:58) into EXACTLY
     `face_transport_premise`'s biconditional (ring_closed + the
     premise's own ray guards).  ALL heavy inputs remain caller-side
-    hypothesis families.  REMAINING for C-3f: the DISCHARGE rung(s) --
-    supply the per-step ride/corner families and tie clearances for
-    the concrete cycle ring from the C-3c/C-3d threshold theorems
-    (walk_dart_corridor_clear/_east_clear windows + fan corner bounds
-    + per-step parameter existence a la corner_params_exist), the
-    walk-index k from `same_face_twin_first_step_index`, the
-    horizontal-dart dichotomy (`no_horizontal_darts` covers d, but
-    INTERMEDIATE walk darts may be horizontal -- needs a horizontal
-    ride variant or exclusion), and the strip-transport ef-lift
-    (#343).  Then `face_transport_premise` discharges and, through
-    `H_bridge_premise_of_transport` + `euler_core_reduction`, the
-    unconditional Euler formula closes.
+    hypothesis families.
+    DISCHARGE SURVEY (2026-07-04) -- hypothesis-by-hypothesis mapping
+    for `walk_straddle_connected_desc`/`_asc`, no fundamental gaps:
+    * orientation `vy (ddir d) <> 0`: the E-level guard
+      `no_horizontal_darts (darts_of E)` is GLOBAL, so EVERY walk dart
+      is non-horizontal -- the earlier intermediate-horizontal worry
+      is unfounded; `Rtotal_order` picks the desc/asc branch per step.
+    * walk index `iter (fstep D) k d = twin d`:
+      `same_face_twin_first_step_index` (EdgeFaceBridge.v:479); needs
+      `no_spurs (darts_of E)` ADDED to the discharge context (already
+      standard in that file's same_face lemmas) + fan_ok per vertex
+      (standing).  Orbit membership: DartFace.v:136 (`iter` stays in
+      D, twin-closure from darts_of).
+    * per-step RIDES (base sample -> tip sample of x_i): re-derive the
+      sample-to-sample packaging (bridge equalities +
+      `corridor_connected`/`corridor_connected_east`; the discarded
+      AlongDartConnector shape) + in-span height lemmas
+      (`sample_heights_in_span_*` style); windows from
+      `walk_dart_corridor_clear`/`_east_clear` at the bridge offset.
+    * per-step CORNERS: `fan_corner_connected_reflex`/`_convex` take
+      ONE rho for both samples -- absorbed by choosing one rho per
+      VERTEX (`rho_in i := rho_out (S i)`; the chain statement already
+      permits it).  Germ exclusions from `fan_gap_uncertified` (ring
+      darts are fan members); reflex/convex split via `cross_nonzero`
+      + `Rdichotomy`; vertex-off-non-incident from the twin-aware
+      guard transfer (core-slice pattern); per-vertex smallness
+      thresholds exist since delta is linear in ef.
+    * THRESHOLD FOLD: finitely many steps (i < k) each demand
+      `ef < t_i > 0`; a nat-indexed Rmin fold (clear_fold analogue)
+      yields one walk threshold `ef0 > 0`.
+    * END TIES: `wall_corridor_clear` (d is a ring edge, taut ring)
+      west + `walk_dart_corridor_east_clear` east, through
+      `corridor_ef_inherits_clearance`/`_east`; start complement from
+      the same clearance at the base-sample height.
+    * EF-LIFT: for premise-ef > ef0, the #343 strip clearance makes
+      the horizontal segments `[X -/+ ef, X -/+ ef0] x {my}`
+      complement-valued (off d by `on_edge_at_height_x` at heights
+      generic, off others by the strip hypothesis), so parity
+      transports out to the premise's pair (new small lemma, the
+      STRIP LIFT).
+    * CLOSE: ring_closed from `non_cut_edge_cycle_ring`; ray guards
+      are premise hypotheses.
+    Rung plan: D-1 rides + in-span windows; D-2 per-vertex corner
+    instantiation + threshold fold; D-3 strip lift; D-4 the final
+    assembly discharging `face_transport_premise` under
+    `H_bridge_premise_of_transport`'s hypothesis set (+ no_spurs).
+    Then, through `H_bridge_premise_of_transport` +
+    `euler_core_reduction`, the unconditional Euler formula closes.
 
 ---
 
