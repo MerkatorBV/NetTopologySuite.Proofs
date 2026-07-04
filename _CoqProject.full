@@ -616,6 +616,12 @@ theories/WalkEndTies.v
 # hypothesis families; their concrete discharge is the next rung.
 # No Admitteds.
 theories/WalkAssembly.v
+# H-bridge attack C-3f discharge rung D-1: the sample-to-sample rides -- the
+# along-dart legs of the orbit chain at a prescribed corner delta (bridge
+# equalities + corridor_connected/east), plus the in-span height lemmas
+# putting the bridge heights strictly inside the dart's y-span under
+# explicit smallness.  No Admitteds.
+theories/WalkRides.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.

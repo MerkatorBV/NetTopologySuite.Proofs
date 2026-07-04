@@ -1332,9 +1332,15 @@ closed/min-points conditions. The planned ladder:
       STRIP LIFT).
     * CLOSE: ring_closed from `non_cut_edge_cycle_ring`; ray guards
       are premise hypotheses.
-    Rung plan: D-1 rides + in-span windows; D-2 per-vertex corner
-    instantiation + threshold fold; D-3 strip lift; D-4 the final
-    assembly discharging `face_transport_premise` under
+    Rung plan: D-1 DONE (`WalkRides.v`): `along_dart_ride_west`/`_east`
+    (base sample -> tip sample of x at a PRESCRIBED corner delta; the
+    two bridge equalities rewrite both samples onto x's own corridor
+    at one common offset, `corridor_connected`/`_east` carry the
+    segment) + `ride_heights_in_span_west`/`_east` (under
+    `|delta*vx| < rho_i*|vy|` the bridge heights are strictly inside
+    the dart's y-span, ordered when `rho1 + rho2 < 1`); D-2 per-vertex
+    corner instantiation + threshold fold; D-3 strip lift; D-4 the
+    final assembly discharging `face_transport_premise` under
     `H_bridge_premise_of_transport`'s hypothesis set (+ no_spurs).
     Then, through `H_bridge_premise_of_transport` +
     `euler_core_reduction`, the unconditional Euler formula closes.
