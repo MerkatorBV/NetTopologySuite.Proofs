@@ -1364,7 +1364,16 @@ closed/min-points conditions. The planned ladder:
     -- slots chosen as the vertex itself make the pruned clearance
     vacuously total (`off_ring_vertex_clearance`) and both germ
     exclusions free (`point_diff_self` + `vzero_not_in_sector`), so
-    only the gap nondegeneracy remains; (ii) ON-RING next] --
+    only the gap nondegeneracy remains; (ii) ON-RING DONE, same file:
+    `on_ring_vertex_clearance` -- at a vertex-simple cycle vertex,
+    every ring edge other than the two incident chain edges avoids the
+    vertex (endpoint hits break the NoDup trace: tips ARE the trace,
+    bases its rotation via `dpath_base_trace` + `Permutation_NoDup`;
+    interior hits violate `ring_no_vertex_on_foreign_edge_interior`,
+    already derived from the twin-aware guards in the core slice) --
+    and `on_ring_corner_threshold` fills the D-2 slots with the
+    incident chain edges, germ exclusions staying caller-side
+    (discharged at the walk from `fan_gap_uncertified`)] --
     at each walk vertex `v = dtip x_i` a TRICHOTOMY feeds the corner:
     (i) v ON the ring: its two incident chain edges fill the fan-corner
     slots `(a, v)`/`(v, b)`; germ exclusions from `fan_gap_uncertified`
@@ -1379,19 +1388,57 @@ closed/min-points conditions. The planned ladder:
     (`walk_dart_corridor_clear`/`_east_clear` at the bridge offset,
     restricted by `ride_heights_in_span_*`) and the end-tie
     windows/heights.
-    D-4b THE HEADLINE `face_transport_premise_holds`: intros the
-    premise's hypotheses, walk index from
+    D-4b THE HEADLINE `face_transport_premise_holds`, sliced:
+    D-4b-1 DONE (`WalkFamilies.v`): the walk-vertex trichotomy
+    resolution -- `trace_vertex_incident_pair` (tips ARE the trace,
+    bases its rotation, so `in_map_iff` extracts the incident pair
+    both ways) and `off_trace_vertex_complement` (an off-trace walk
+    vertex is in the ring complement: endpoint hits land in the
+    trace/rotation, interior hits violate the E-level twin-aware
+    guard, the `x = f`/`x = twin f` escapes closed by the same trace
+    membership).
+    D-4b-2 (next): TIE VARIANTS + per-step families.  FINDING
+    (2026-07-04): the banked tie theorems
+    (`along_dart_base_to_straddle_*`, `twin_base_to_straddle_*`) ride
+    only UPWARD (`h_base <= my`); the chain's corner-capped sample
+    rhos hug the endpoints, so the WEST tie at descending d's base
+    (top) sample needs the DOWN-riding mirror (`my <= h_base`, window
+    `[my, h_base]`) -- a trivial corridor_connected re-orientation,
+    same bridge equality, to be added (and the asc/twin mirrors).  The
+    EAST tie at twin d's base (bottom) sample already works with tiny
+    rho (`h_e` just above the bottom `<= my`).  Then instantiate the
+    ride family (walk_dart_corridor_clear/_east_clear windows at the
+    bridge offset, restricted by ride_heights_in_span_*), the corner
+    family (trichotomy dispatch + fan_gap_uncertified germ exclusions
+    at walls ddir (twin x_i)/ddir (fstep x_i); wall nondegeneracy from
+    no_spurs via next_neq + fan_ok pairwise), and fold thresholds
+    (nat_threshold_fold).
+    D-4b-2 part 1 DONE (`WalkFamilies.v` §3): the four DOWN-riding tie
+    mirrors (`along_dart_base_to_straddle_west_down`/`_east_down` +
+    twin wrappers) -- with the up-riders, every tie configuration is
+    covered.
+    D-4b CONDITIONAL CLOSE (`WalkPremiseBridge.v`, the RGR risk/cost
+    pivot): the named residual `walk_small_offset_connectivity` (under
+    the premise's own hypothesis set, SOME sub-offset `ef' <= ef` has
+    its straddle pair connected in the ring complement) and the Qed
+    bridge `face_transport_premise_of_walk_connectivity` -- the #343
+    strip hypothesis lifts the sub-offset connectivity to the
+    premise's `ef` (`strip_lift_connected`), `face_walk_closed` gives
+    `ring_closed`, and `walk_straddle_parity` lands the biconditional.
+    `face_transport_premise` is thereby DISCHARGED MODULO the one
+    named residual, carried in the corpus's named-premise discipline
+    exactly as the premise itself was.  The residual's own discharge
+    is pure per-step WIRING over fully Qed-banked pieces (rides,
+    corners + trichotomy dispatch, ties both directions, chain,
+    assembly, thresholds + fold): D-4b-3, the remaining work -- intros
+    the premise context, walk index from
     `same_face_twin_first_step_index` (+ `no_spurs` standing), pick
-    `ef' := Rmin(walk threshold, tie thresholds, ef)/2 > 0`, set
-    `delta' := corner_delta_for_ef_*(d, ef')` and the rho functions
-    from D-4a's per-vertex factors, instantiate
-    `walk_straddle_connected_desc`/`_asc` with the D-4a families, lift
-    with `strip_lift_connected`, close with `walk_straddle_parity`.
-    Then `H_bridge_premise_of_transport` consumes the discharged
-    premise and `euler_core_reduction` closes the unconditional Euler
-    formula.
-    Then, through `H_bridge_premise_of_transport` +
-    `euler_core_reduction`, the unconditional Euler formula closes.
+    `ef'` below the folded thresholds, `delta' :=
+    corner_delta_for_ef_*(d, ef')` with per-my tie rhos (h-heights
+    solvable in rho, affine with slope vy <> 0), instantiate
+    `walk_straddle_connected_desc`/`_asc`.  Then
+    `H_bridge_premise_of_transport` consumes the discharged premise
+    and `euler_core_reduction` closes the unconditional Euler formula.
 
 ---
 
