@@ -677,6 +677,15 @@ theories/WalkResidualKit.v
 # my-vs-height is decided, dispatching to the banked up-/down-riders.
 # No Admitteds.
 theories/WalkResidualTies.v
+# H-bridge attack C-3f discharge rung E-2c: THE RESIDUAL DISCHARGES --
+# walk_small_offset_connectivity holds outright under the standing guards
+# (fan_ok per vertex, no_spurs, pairwise twin-aware no-crossing, no
+# horizontal darts, twin-aware no-foreign-vertex): ring facts rederived from
+# the premise's own dpath data, walk index from
+# same_face_twin_first_step_index, folded E-1 corners + ride caps + E-2b tie
+# caps, one shrink-and-choose ef'.  Corollaries: face_transport_premise and
+# the FULL H_bridge_premise are now theorems of the guard set.  No Admitteds.
+theories/WalkResidualDischarge.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
