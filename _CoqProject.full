@@ -951,6 +951,13 @@ theories/GeneralTriangleSeparation.v
 # engine_produces_inhabited_interior (geometric_interior_cont is INHABITED, vs the
 # refuted geometric_interior_stdlib).  Three-axiom.  No Admitted.
 theories/GeneralTriangleParity.v
+# TriangleContainmentConvex (issue #67 RelateNG lane): the closed gtri region
+# {p | 0 <= gtri p} is convex (intersection of three affine half-planes via
+# Convex.v + Lattice.Rmin_le_iff), hence closed under `between` on any two
+# contained points -- the missing step before triangle_pair_regime's
+# TPR_Contains case can be justified from a vertex-only containment test.
+# Pure algebra; no new axioms; does not modify RelateNG.v.
+theories/TriangleContainmentConvex.v
 # RED for the arbitrary-triangle parity: gtri_parity_spec is FALSE as stated.
 # Witness (0,2) on the left edge of triangle (0,0),(4,0),(0,4): point_in_ring is
 # TRUE (half-open ray test, left edge included -- cf. point_in_ring_rect_iff's
