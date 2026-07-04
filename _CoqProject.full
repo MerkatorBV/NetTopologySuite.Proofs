@@ -622,6 +622,12 @@ theories/WalkAssembly.v
 # putting the bridge heights strictly inside the dart's y-span under
 # explicit smallness.  No Admitteds.
 theories/WalkRides.v
+# H-bridge attack C-3f discharge rung D-2: the per-vertex corner threshold
+# (all small deltas connect the corner at rho = rho_factor * delta; convex
+# gaps pick rho_factor so the far-wall smallness holds identically) + the
+# nat-indexed threshold fold turning finitely many per-step thresholds into
+# one walk threshold.  No Admitteds.
+theories/WalkCorners.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
