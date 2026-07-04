@@ -537,14 +537,27 @@ From NTS.Proofs Require Import RelateAreaPoint RectangleJCT RelateBoundary Gener
 Definition ii_has_dim2 (A B : Geometry) : Prop :=
   exists p, point_set A p /\ point_set B p.
 
-(* Headline (guarded; uses rect geometry + point_strictly_in_open_rect from S4). *)
-Lemma geom_de9im_ii_cell_dim2_sound_rect :
-  forall (x0 y0 x1 y1 : R) (m : IntersectionMatrix),
-    geom_de9im_pointset (rect_geometry x0 y0 x1 y1) (rect_geometry x0 y0 x1 y1) m ->
+(* RGR read: `geom_de9im_ii_cell_dim2_sound_rect` and `ii_cell_dim2_sound_gtri`
+   below were both stated ONLY for a shape against itself (A = B literally the
+   same six/four reals) -- an artificial restriction their own proofs never
+   used: both just project the existence witness straight out of `cell_ok`'s
+   OWN `dim_nonempty <-> exists p, ...` biconditional, never touching what A
+   or B actually ARE.  Generalizing costs nothing and immediately covers the
+   cases `relate` actually produces (two DIFFERENT triangles/rects, e.g. the
+   TPR_Contains pair from `triangle_pair_regime_contains` / `contains_b`).
+   Honest scope, unchanged from the original comment: the real remaining
+   Jordan content is not here -- it is in DISCHARGING `geom_de9im_pointset A B
+   m` itself (the full 9-cell `cell_ok` conjunction) for concrete `m`s such as
+   `triangle_pair_fill TPR_Contains` / `rect_pair_fill RPR_Contains`, which
+   needs an actual common-interior WITNESS POINT (through the `point_set` /
+   JCT seam), not merely this projection. *)
+Theorem geom_de9im_ii_cell_dim2_sound :
+  forall (A B : Geometry) (m : IntersectionMatrix),
+    geom_de9im_pointset A B m ->
     im_ii m = Some 2%nat ->
-    ii_has_dim2 (rect_geometry x0 y0 x1 y1) (rect_geometry x0 y0 x1 y1).
+    ii_has_dim2 A B.
 Proof.
-  intros x0 y0 x1 y1 m Hde9im Hii2.
+  intros A B m Hde9im Hii2.
   unfold geom_de9im_pointset, cell_ok in Hde9im.
   destruct Hde9im as [Hii _].
   destruct Hii as [_ Hiff].
@@ -552,6 +565,31 @@ Proof.
   assert (im_ii m <> None) by (rewrite Hii2; discriminate).
   destruct (proj1 (Hiff) H) as [p [HA HB]]; clear H.
   exists p; split; assumption.
+Qed.
+
+(* Headline (guarded; uses rect geometry + point_strictly_in_open_rect from S4).
+   Kept as the historical self-pair statement; now a one-line corollary of the
+   general `geom_de9im_ii_cell_dim2_sound` above (RGR refactor: dedup). *)
+Lemma geom_de9im_ii_cell_dim2_sound_rect :
+  forall (x0 y0 x1 y1 : R) (m : IntersectionMatrix),
+    geom_de9im_pointset (rect_geometry x0 y0 x1 y1) (rect_geometry x0 y0 x1 y1) m ->
+    im_ii m = Some 2%nat ->
+    ii_has_dim2 (rect_geometry x0 y0 x1 y1) (rect_geometry x0 y0 x1 y1).
+Proof.
+  intros x0 y0 x1 y1 m.
+  exact (geom_de9im_ii_cell_dim2_sound (rect_geometry x0 y0 x1 y1) (rect_geometry x0 y0 x1 y1) m).
+Qed.
+
+(* The general two-rect instance (heterogeneous: two DIFFERENT rects). *)
+Corollary geom_de9im_ii_cell_dim2_sound_rect_pair :
+  forall (x0 y0 x1 y1 x0' y0' x1' y1' : R) (m : IntersectionMatrix),
+    geom_de9im_pointset (rect_geometry x0 y0 x1 y1) (rect_geometry x0' y0' x1' y1') m ->
+    im_ii m = Some 2%nat ->
+    ii_has_dim2 (rect_geometry x0 y0 x1 y1) (rect_geometry x0' y0' x1' y1').
+Proof.
+  intros x0 y0 x1 y1 x0' y0' x1' y1' m.
+  exact (geom_de9im_ii_cell_dim2_sound
+           (rect_geometry x0 y0 x1 y1) (rect_geometry x0' y0' x1' y1') m).
 Qed.
 
 (* Boundary cell dim tie-in (0 from MOD2 isolated endpoint; see RelateBoundary). *)
@@ -572,14 +610,24 @@ Lemma ii_cell_dim2_sound_gtri :
     im_ii m = Some 2%nat ->
     ii_has_dim2 (gtri_geometry ax ay bx by_ cx cy) (gtri_geometry ax ay bx by_ cx cy).
 Proof.
-  intros ax ay bx by_ cx cy m Hde9im Hii2.
-  unfold geom_de9im_pointset, cell_ok in Hde9im.
-  destruct Hde9im as [Hii _].
-  destruct Hii as [_ Hiff].
-  assert (dim_nonempty (im_ii m)) as Hne by (rewrite Hii2; discriminate).
-  destruct (proj1 (Hiff) Hne) as [p Hp].
-  exists p.
-  exact Hp.
+  intros ax ay bx by_ cx cy m.
+  exact (geom_de9im_ii_cell_dim2_sound
+           (gtri_geometry ax ay bx by_ cx cy) (gtri_geometry ax ay bx by_ cx cy) m).
+Qed.
+
+(* The general two-triangle instance (heterogeneous: e.g. the TPR_Contains
+   pair -- A ⊃ B -- that `triangle_pair_regime_contains` / `contains_b` now
+   classify in RelateNG.v).  Same one-line projection; A and B need not
+   coincide. *)
+Corollary ii_cell_dim2_sound_gtri_pair :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy m,
+    geom_de9im_pointset (gtri_geometry ax ay bx by_ cx cy) (gtri_geometry dx dy ex ey fx fy) m ->
+    im_ii m = Some 2%nat ->
+    ii_has_dim2 (gtri_geometry ax ay bx by_ cx cy) (gtri_geometry dx dy ex ey fx fy).
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy m.
+  exact (geom_de9im_ii_cell_dim2_sound
+           (gtri_geometry ax ay bx by_ cx cy) (gtri_geometry dx dy ex ey fx fy) m).
 Qed.
 
 (* The capstone (Jordan cell dim soundness).  Clients (driver sampling, full
@@ -590,5 +638,8 @@ Definition geom_de9im_cell_dimensions_sound (A B : Geometry) (m : IntersectionMa
   (im_bb m = Some 0%nat \/ im_bb m = Some 1%nat \/ im_bb m = None).
 
 (* Audit extension. *)
+Print Assumptions geom_de9im_ii_cell_dim2_sound.
 Print Assumptions geom_de9im_ii_cell_dim2_sound_rect.
+Print Assumptions geom_de9im_ii_cell_dim2_sound_rect_pair.
+Print Assumptions ii_cell_dim2_sound_gtri_pair.
 Print Assumptions boundary_cell_from_mod2.
