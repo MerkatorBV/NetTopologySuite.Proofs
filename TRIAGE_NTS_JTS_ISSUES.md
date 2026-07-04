@@ -62,7 +62,7 @@ tracker: **#69**.
 - #2 Precision model / reducer: ✅ (idempotence `b64_snap_idempotent_finite`, shared-pixel etc.)
 - #3 OverlayNG boolean semantics: ✅ (`Overlay.v : boolean_op`, labelling)
 - #4 OverlayNG end-to-end correctness: 🟡 (conditional headline `overlay_ng_correct_conditional` under 3 hyps; ring extract conditional)
-- #5 DCEL / ring assembly (for overlay): 🟡 (extract_rings_valid conditional on planar Euler hyps; some JCT seams discharged)
+- #5 DCEL / ring assembly (for overlay): 🟢 (`extract_rings_valid_of_guards`, PRs #334–#362: the Euler hypotheses are DISCHARGED — `H_bridge_premise_holds` proves same-face ⇒ cut-edge Euler-free and `euler_characteristic_holds` proves V + F = E + 2C outright under the five geometric/noding guards; ring extraction is now guard-conditional only)
 - #6 Fixed-precision hole collapse (JTS#979): ✅ (mechanism in `RingArea979.v` + oracles)
 - #7 Curve snap (PRC-SN): ✅ (oracle `CURVE_SNAP_DECISION` / `CURVE_SNAP_INVARIANTS_EXACT`)
 - #8 Oracle / differential testing: 🟡 (many modes extracted; interface-boundary for transcendentals; passes-through C1 oracle etc.)
