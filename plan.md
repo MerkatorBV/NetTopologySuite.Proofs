@@ -1413,13 +1413,30 @@ closed/min-points conditions. The planned ladder:
     at walls ddir (twin x_i)/ddir (fstep x_i); wall nondegeneracy from
     no_spurs via next_neq + fan_ok pairwise), and fold thresholds
     (nat_threshold_fold).
-    D-4b-3: the headline -- intros the premise's hypotheses, walk
-    index from `same_face_twin_first_step_index` (+ `no_spurs`
-    standing), pick `ef'` below the folded thresholds and `ef`, set
-    `delta' := corner_delta_for_ef_*(d, ef')` with per-my tie rhos
-    (h-heights solvable in rho, affine with slope vy <> 0),
-    instantiate `walk_straddle_connected_desc`/`_asc`, lift with
-    `strip_lift_connected`, close with `walk_straddle_parity`.  Then
+    D-4b-2 part 1 DONE (`WalkFamilies.v` §3): the four DOWN-riding tie
+    mirrors (`along_dart_base_to_straddle_west_down`/`_east_down` +
+    twin wrappers) -- with the up-riders, every tie configuration is
+    covered.
+    D-4b CONDITIONAL CLOSE (`WalkPremiseBridge.v`, the RGR risk/cost
+    pivot): the named residual `walk_small_offset_connectivity` (under
+    the premise's own hypothesis set, SOME sub-offset `ef' <= ef` has
+    its straddle pair connected in the ring complement) and the Qed
+    bridge `face_transport_premise_of_walk_connectivity` -- the #343
+    strip hypothesis lifts the sub-offset connectivity to the
+    premise's `ef` (`strip_lift_connected`), `face_walk_closed` gives
+    `ring_closed`, and `walk_straddle_parity` lands the biconditional.
+    `face_transport_premise` is thereby DISCHARGED MODULO the one
+    named residual, carried in the corpus's named-premise discipline
+    exactly as the premise itself was.  The residual's own discharge
+    is pure per-step WIRING over fully Qed-banked pieces (rides,
+    corners + trichotomy dispatch, ties both directions, chain,
+    assembly, thresholds + fold): D-4b-3, the remaining work -- intros
+    the premise context, walk index from
+    `same_face_twin_first_step_index` (+ `no_spurs` standing), pick
+    `ef'` below the folded thresholds, `delta' :=
+    corner_delta_for_ef_*(d, ef')` with per-my tie rhos (h-heights
+    solvable in rho, affine with slope vy <> 0), instantiate
+    `walk_straddle_connected_desc`/`_asc`.  Then
     `H_bridge_premise_of_transport` consumes the discharged premise
     and `euler_core_reduction` closes the unconditional Euler formula.
 
