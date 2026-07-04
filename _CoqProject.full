@@ -694,6 +694,14 @@ theories/WalkResidualDischarge.v
 # (cycle deltas).  Kit: second fan dart, no_spurs from min-degree-2, endpoint
 # survival, Delta V = 0 from survivors.  No Admitteds.
 theories/EulerSameFaceStep.v
+# H-bridge / Euler campaign rung E-3b: THE PLANAR EULER IDENTITY IS
+# UNCONDITIONAL -- euler_characteristic_holds: V + F = E + 2C for any
+# NoDup + no_twin_dup + fan_ok arrangement under the four geometric/noding
+# guards.  euler_core_reduction_incl replays the banked core reduction
+# remembering incl E' E (the core is an iterated E_minus), the guards
+# restrict along inclusion, and the well-founded recursion alternates core
+# peeling with E-3a's same-face dispatch step.  No Admitteds.
+theories/EulerUnconditional.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
