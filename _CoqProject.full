@@ -661,6 +661,14 @@ theories/WalkPremiseBridge.v
 # band edge; the ball bounds cap both above), enabling composition with the
 # rides' in-span lower bound on rho.  No Admitteds.
 theories/WalkCornerRange.v
+# H-bridge attack C-3f discharge rung E-2a: the per-step kit for the walk
+# residual -- choice-free Rmin/Rmax folds of per-index thresholds (no
+# function-valued choice: the existentials stay inside the induction), the
+# per-vertex E-1 range corner at any walk dart's tip (trichotomy dispatch,
+# germ exclusions via fan_gap_uncertified on fan-member germ-darts), and the
+# per-dart ride below an explicit delta cap (window pinned at rho-fractions
+# of the y-span before the clearance threshold exists).  No Admitteds.
+theories/WalkResidualKit.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
 # linkage toward edge_2_connected => twins_in_different_faces (§3 open).
 # No Admitteds.
