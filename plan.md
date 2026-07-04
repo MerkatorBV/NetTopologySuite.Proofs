@@ -1482,7 +1482,7 @@ closed/min-points conditions. The planned ladder:
     sample height lands in the hull once `ef < rho*K/(2*(|vx|+1))`;
     `bridge_height_base_twin` restates the twin sample height in the
     base dart's coordinates.
-    E-2c (next): THE HEADLINE
+    E-2c DONE (`WalkResidualDischarge.v`): THE RESIDUAL DISCHARGES.
     `walk_small_offset_connectivity_holds`: derive the ring facts from
     the residual's own data (`cycle_closed_chain` +
     `ring_edges_of_closed_chain`, `cycle_window_twin_free` +
@@ -1496,11 +1496,20 @@ closed/min-points conditions. The planned ladder:
     `delta = corner_delta_for_ef_*(d, ef')`, pick `ef'` = half the min
     (including the premise's `ef`), assemble sym(west tie) o
     `walk_chain_to_twin` o east tie (start complement =
-    `connected_in_complement_cont_left` of the west tie).  Then
-    `face_transport_premise_of_walk_connectivity` +
-    `H_bridge_premise_of_transport` + `euler_core_reduction` close the
-    unconditional Euler formula (with `no_spurs` joining the standing
-    hypothesis set).
+    `connected_in_complement_cont_left` of the west tie; the actual
+    rho is `Rmin tC (1/3) / 2` -- below every corner cap, `<= 1/3` for
+    the ties, sum `< 1` for the rides; `lt_div_scale`/`le_div_scale`
+    do the linear ef'-cap conversions).  COROLLARIES (same file):
+    `face_transport_premise_holds` and `H_bridge_premise_holds` -- the
+    FULL H-bridge premise is now a THEOREM of the five standing guards
+    (per-vertex `fan_ok`, `no_spurs`,
+    `pairwise_no_proper_cross_twin_aware`, `no_horizontal_darts`,
+    `no_foreign_vertex_twin_aware`), axiom footprint = the allowlist
+    trio.  The named-premise discipline is fully unwound for this
+    thread: nothing of rung C/D/E remains hypothetical.
+    NEXT (E-3): feed `H_bridge_premise_holds` into the Euler assembly
+    (`euler_core_reduction` consumers) so the unconditional Euler
+    formula carries only the guard set.
 
 ---
 
