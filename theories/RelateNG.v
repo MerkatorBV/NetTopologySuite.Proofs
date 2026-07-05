@@ -380,12 +380,29 @@ Qed.
 
 (* RGR pivot (risk/cost): the sharper cousin of `contains_b_ring_inside`,
    costing nothing extra now that `TriangleContainmentConvex` supplies the
-   strict-region convexity lemma.  Every point on B's boundary is not merely
-   in A's CLOSURE but STRICTLY interior to A -- B's boundary never touches
-   A's boundary.  This is exactly the geometric BI/BE emptiness
-   `aa_matrix_contains` (RelateAreaArea.v) claims for the TPR_Contains cell:
-   the piece of `geom_de9im_pointset` this file's §"Containment regime
-   correctness" section was flagged as still owing. *)
+   strict-region convexity lemma (the extra work is a single three-way case
+   split on the convex-combination parameter t -- see that file's §5 -- since
+   strict positivity of a convex combination is a disjunctive fact
+   (endpoint-vs-interior) that isn't a one-shot `nra` certificate the way the
+   non-strict `0 <= gtri` version is). Every point on B's boundary is not
+   merely in A's CLOSURE but STRICTLY interior to A -- B's boundary never
+   touches A's boundary.  Closes the boundary-separation half of the
+   `geom_de9im_pointset` obligation for TPR_Contains flagged in
+   `RelateCurveMatrix.geom_de9im_ii_cell_dim2_sound`'s comment.
+
+   OPEN QUESTION for whoever attempts the full `geom_de9im_pointset A B
+   (triangle_pair_fill TPR_Contains)` capstone next: `aa_matrix_contains`
+   (RelateAreaArea.v) sets im_ib/im_bb/im_be to `aa_cell_empty`, i.e. it
+   claims A's interior never meets B's BOUNDARY. But THIS theorem shows the
+   opposite is geometrically true whenever contains_b actually fires --
+   every point of B's boundary lies in A's interior region (0 < gtri A), so
+   (modulo the point_set/JCT bridge from 0 < gtri to point_set membership)
+   IB should be a genuine 1-dimensional witness, not empty. `pat_contains`
+   only constrains II=T, EI=F, EB=F (IB/IE/BI/BB/BE/EE are wildcards), so
+   `aa_matrix_contains` is a valid PATTERN witness either way -- but it is
+   NOT yet claimed, let alone proven, to be the exact matrix any real
+   contains_b-classified triangle pair produces. That gap (not a common
+   INTERIOR witness point) may be the more concrete next rung. *)
 Theorem contains_b_ring_strictly_inside :
   forall ax ay bx by_ cx cy dx dy ex ey fx fy p,
     contains_b ax ay bx by_ cx cy dx dy ex ey fx fy = true ->
