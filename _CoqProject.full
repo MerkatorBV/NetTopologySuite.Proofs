@@ -94,8 +94,12 @@ theories/BufferEndcap.v
 # join wired into the same assembly (assemble_open_miter / _closed_miter,
 # assemble_open_miter_chain / assemble_closed_miter_closed), reusing the
 # already-Qed BufferMiter.miter_apex -- pure structural list assembly, same
-# argument as bevel generalised to a two-segment join.  Three-axiom.  No
-# Admitted.
+# argument as bevel generalised to a two-segment join.  Section 7: the
+# general open-chain two-sided buffer walk (two_sided_walk /
+# two_sided_walk_closed) -- forward +d wall, far flat cap, backward -d
+# wall (rwall / orbevel / assemble_open_rev), near flat cap; the
+# multi-edge generalisation of BufferEndcap.flat_cap_ring's single-edge
+# case.  Three-axiom.  No Admitted.
 theories/BufferAssembly.v
 # Issue #64 / Option-A arc primitives, foundation 1: two-argument atan2 built
 # on Stdlib Ratan (JTS Math.atan2 convention, range (-PI, PI]).  Headlines
