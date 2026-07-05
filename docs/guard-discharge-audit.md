@@ -53,6 +53,22 @@ independent; C1 should proceed on its own numeric merits (the exact-integer-
 determinant / tie-freeness route from the prior rung) without waiting on
 this audit's open items.
 
+## Next steps / open items
+
+- **`no_foreign_vertex_twin_aware`**: run the same witness-search discipline as
+  guard 4 — construct (or refute) a snap-rounding configuration where a third
+  point's snapped coordinate lands exactly on a snapped edge's interior.
+- **`no_spurs`**: scope a combinatorial (non-numeric) investigation of the
+  DCEL face-walk condition; likely independent of this track's numeric files.
+- **`noded_general_position` bridge** (guards 1, 3): not this track's file —
+  flag to whichever track owns `NodedGeneralPosition.v` / the Hobby-side
+  `fully_intersected` lineage that the bridge from `fully_intersected` +
+  non-collinearity is the concrete blocker.
+- **C1 width extension**: once the rounding-tie-freeness lemma lands
+  (`PassesThrough_b64_exact_comparator.v`'s open obligation), re-derive
+  `b64_passes_through_grid_exact` at `|n| <= 2^22` through `rat_le` first (a
+  no-regression check) before widening to `2^25`.
+
 ## References
 
 - `theories-flocq/SnapRoundingGuardAudit.v` — Qed witness for guard 4.

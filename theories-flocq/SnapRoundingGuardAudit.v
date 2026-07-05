@@ -97,6 +97,14 @@ Proof.
   exact snap_can_introduce_horizontal_alignment.
 Qed.
 
+(* Consumer pointer: `no_horizontal_darts` is a named hypothesis of
+   `WalkResidualDischarge.H_bridge_premise_holds` and, through it, of
+   `OverlayBridgeUnconditional.extract_rings_valid_of_guards` /
+   `extract_rings_valid_holes_of_guards`. The witness above is why those
+   theorems cannot be discharged for arbitrary noded output without a
+   separate per-arrangement check -- it is not a corollary of `well_noded_darts`
+   / `no_spurs`, the other hypotheses those theorems already carry. *)
+
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.                                                               *)
 (* -------------------------------------------------------------------------- *)
