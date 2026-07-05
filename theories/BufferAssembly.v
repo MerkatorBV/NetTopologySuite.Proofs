@@ -607,3 +607,4 @@ Proof.
     rewrite (assemble_open_hd (e0 :: rest) d d0 Hnees).
     reflexivity.
 Qed.
+Print Assumptions two_sided_walk_closed.
