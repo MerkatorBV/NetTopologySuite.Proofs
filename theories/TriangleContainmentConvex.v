@@ -134,8 +134,87 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* §5  RGR pivot (risk/cost): the OPEN region {p | 0 < gtri p} is ALSO        *)
+(* convex, by the identical `nra` argument -- a convex combination of two     *)
+(* strictly-positive values is itself strictly positive for every t in       *)
+(* [0,1] (at t=0/1 it IS one of the two positive values; in between it's a    *)
+(* sum of two nonnegative terms with at least one strictly positive factor,   *)
+(* since (1-t) and t can't both vanish).  This is the sharper fact           *)
+(* `contains_b`'s callers actually need: it shows B's whole boundary is      *)
+(* STRICTLY interior to A (not merely in A's closure), i.e. B's boundary      *)
+(* never touches A's boundary -- exactly the BI/BE emptiness `aa_matrix_     *)
+(* contains` (RelateAreaArea.v) claims for the TPR_Contains cell.            *)
+(* -------------------------------------------------------------------------- *)
+
+(* Strict positivity needs a three-way split on t: at the endpoints t=0/t=1
+   the combination IS one of the two given-positive values outright; only in
+   the interior (0<t<1) is it a genuine sum of two strictly-positive products
+   -- a disjunctive fact `nra` cannot certify in one shot without the split. *)
+Lemma gsA_gt0_is_convex :
+  forall ax ay bx by_ : R,
+    is_convex (fun p => 0 < gsA ax ay bx by_ p).
+Proof.
+  intros ax ay bx by_ P Q t HP HQ Ht0 Ht1.
+  unfold gsA, convex_combination in *. simpl in *.
+  destruct (Req_dec t 0) as [-> | Hne0]; [ nra | ].
+  destruct (Req_dec t 1) as [-> | Hne1]; [ nra | ].
+  assert (0 < t) by lra. assert (t < 1) by lra. nra.
+Qed.
+
+Lemma gsB_gt0_is_convex :
+  forall bx by_ cx cy : R,
+    is_convex (fun p => 0 < gsB bx by_ cx cy p).
+Proof.
+  intros bx by_ cx cy P Q t HP HQ Ht0 Ht1.
+  unfold gsB, convex_combination in *. simpl in *.
+  destruct (Req_dec t 0) as [-> | Hne0]; [ nra | ].
+  destruct (Req_dec t 1) as [-> | Hne1]; [ nra | ].
+  assert (0 < t) by lra. assert (t < 1) by lra. nra.
+Qed.
+
+Lemma gsC_gt0_is_convex :
+  forall ax ay cx cy : R,
+    is_convex (fun p => 0 < gsC ax ay cx cy p).
+Proof.
+  intros ax ay cx cy P Q t HP HQ Ht0 Ht1.
+  unfold gsC, convex_combination in *. simpl in *.
+  destruct (Req_dec t 0) as [-> | Hne0]; [ nra | ].
+  destruct (Req_dec t 1) as [-> | Hne1]; [ nra | ].
+  assert (0 < t) by lra. assert (t < 1) by lra. nra.
+Qed.
+
+Theorem gtri_region_strict_is_convex :
+  forall ax ay bx by_ cx cy : R,
+    is_convex (fun p => 0 < gtri ax ay bx by_ cx cy p).
+Proof.
+  intros ax ay bx by_ cx cy P Q t HP HQ Ht0 Ht1.
+  apply gtri_pos_iff in HP as [HPA [HPB HPC]].
+  apply gtri_pos_iff in HQ as [HQA [HQB HQC]].
+  apply gtri_pos_iff.
+  repeat split.
+  - exact (gsA_gt0_is_convex ax ay bx by_ P Q t HPA HQA Ht0 Ht1).
+  - exact (gsB_gt0_is_convex bx by_ cx cy P Q t HPB HQB Ht0 Ht1).
+  - exact (gsC_gt0_is_convex ax ay cx cy P Q t HPC HQC Ht0 Ht1).
+Qed.
+
+Corollary gtri_region_strict_contains_segment :
+  forall ax ay bx by_ cx cy P Q Rpt,
+    0 < gtri ax ay bx by_ cx cy P ->
+    0 < gtri ax ay bx by_ cx cy Q ->
+    between P Q Rpt ->
+    0 < gtri ax ay bx by_ cx cy Rpt.
+Proof.
+  intros ax ay bx by_ cx cy P Q Rpt HP HQ Hbtw.
+  destruct (between_implies_convex_combo P Q Rpt Hbtw) as [t [[Ht0 Ht1] Heq]].
+  subst Rpt.
+  exact (gtri_region_strict_is_convex ax ay bx by_ cx cy P Q t HP HQ Ht0 Ht1).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Axiom audit.                                                                *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions gtri_region_is_convex.
 Print Assumptions gtri_region_contains_segment.
+Print Assumptions gtri_region_strict_is_convex.
+Print Assumptions gtri_region_strict_contains_segment.

@@ -378,8 +378,41 @@ Proof.
              (Rlt_le _ _ Hf) (Rlt_le _ _ Hd) Hb).
 Qed.
 
+(* RGR pivot (risk/cost): the sharper cousin of `contains_b_ring_inside`,
+   costing nothing extra now that `TriangleContainmentConvex` supplies the
+   strict-region convexity lemma.  Every point on B's boundary is not merely
+   in A's CLOSURE but STRICTLY interior to A -- B's boundary never touches
+   A's boundary.  This is exactly the geometric BI/BE emptiness
+   `aa_matrix_contains` (RelateAreaArea.v) claims for the TPR_Contains cell:
+   the piece of `geom_de9im_pointset` this file's §"Containment regime
+   correctness" section was flagged as still owing. *)
+Theorem contains_b_ring_strictly_inside :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy p,
+    contains_b ax ay bx by_ cx cy dx dy ex ey fx fy = true ->
+    (between (mkPoint dx dy) (mkPoint ex ey) p \/
+     between (mkPoint ex ey) (mkPoint fx fy) p \/
+     between (mkPoint fx fy) (mkPoint dx dy) p) ->
+    0 < gtri ax ay bx by_ cx cy p.
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy p Hc Hb.
+  unfold contains_b in Hc.
+  destruct (Rlt_dec 0 (gdbl ax ay bx by_ cx cy)) as [_ | Hn]; [ | discriminate ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint dx dy))) as [Hd | Hn]; [ | discriminate ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint ex ey))) as [He | Hn]; [ | discriminate ].
+  destruct (Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint fx fy))) as [Hf | Hn]; [ | discriminate ].
+  clear Hc.
+  destruct Hb as [Hb | [Hb | Hb]].
+  - exact (gtri_region_strict_contains_segment ax ay bx by_ cx cy (mkPoint dx dy) (mkPoint ex ey) p
+             Hd He Hb).
+  - exact (gtri_region_strict_contains_segment ax ay bx by_ cx cy (mkPoint ex ey) (mkPoint fx fy) p
+             He Hf Hb).
+  - exact (gtri_region_strict_contains_segment ax ay bx by_ cx cy (mkPoint fx fy) (mkPoint dx dy) p
+             Hf Hd Hb).
+Qed.
+
 Print Assumptions triangle_pair_regime_contains.
 Print Assumptions contains_b_ring_inside.
+Print Assumptions contains_b_ring_strictly_inside.
 
 (* bool dec helpers removed... (kept comment for style) *)
 
