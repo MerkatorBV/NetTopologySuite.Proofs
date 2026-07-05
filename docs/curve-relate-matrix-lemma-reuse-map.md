@@ -164,7 +164,7 @@ Only lemmas/theorems that **actually exist** in the repo are listed. Vague entri
 ## Missing facts (honestly isolated; none invented for v1)
 
 - No unconditional "interior point of arc A lies on arc B" existence lemma beyond the conditional `arc_arc_intersects_of_chord_cross_cond` + IVT (ArcArcSound.v + ArcIntersectIVT.v). For v1 lineal we rely on the same witness enumeration used by ARC_ARC_XY (float candidates + span filter). The matrix only claims "contact exists" when the driver witness list is non-empty, consistent with how ARC_ARC_XY reports.
-- Reflex arcs (sweep >= pi) span characterisation remains the documented limitation of the chord-side `arc_span_contains` (everywhere, including RING_SIMPLE). v1 inherits it; tests avoid or note.
+- ~~Reflex arcs (sweep >= pi) span characterisation remains the documented limitation of the chord-side `arc_span_contains`~~ RESOLVED: `ArcSpanAtan2.arc_span_contains_atan2_iff_chord_sign` proves `arc_span_contains` exact for every sweep (unconditional, on-circumcircle points), via equivalence with an atan2-based angular sector test. No known limitation remains here.
 - Full cell-dimension soundness for lineal (II=1 for overlap runs) is test-pinned / independent-sampling, as for areal CURVE_RELATE (no overlay in proofs repo). We only populate 0/1 where the sampling + witness list + structure match give clear evidence.
 
 All other facts needed for the first slice (disjoint / touch / cross / pointOnBoundary / equal for the listed combinations) are covered by the reused items above.

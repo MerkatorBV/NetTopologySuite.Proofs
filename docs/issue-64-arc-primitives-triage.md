@@ -240,3 +240,34 @@ quarantined) and #5b (arc-arc quartic coordinates). The planar single-peak dot
 bound `ArcSinglePeak.arc_dot_max_at_endpoint` — formerly the only Tier-3 deferred
 obligation in the arc point-distance stack — is now **Qed** (discharged
 2026-07-01), so that stack is fully closed.
+
+## 11. Update: atan2 sector membership proved equivalent to `arc_span_contains` — for EVERY sweep
+
+`theories/ArcSpanAtan2.v` closes the "Option S vs Option F" question this
+triage left open since §1: `arc_span_contains_atan2_iff_chord_sign` proves the
+existing chord cross-product test (`arc_span_contains`) and a new atan2-based
+angular sector test (`arc_span_contains_atan2`, built from `Atan2.atan2` /
+`AngleBetween.angle_between`) agree on every on-circumcircle point --
+**unconditionally, including reflex arcs (sweep >= pi)**. So the "correct only
+for arcs < pi" qualifier attached to `arc_span_contains` throughout this
+document (row #2 above, and the #3c/#4c discussion in §9-§10) was **never a
+real limitation for on-circle points** -- a topological argument (a line meets
+a circle in at most two points, splitting it into exactly the two arcs the
+chord-sign test already distinguishes) plus this new atan2 proof confirm it.
+
+This does **not** close #5b (arc-arc quartic coordinates) unconditionally:
+`ArcArcCircles.two_circles_radical_point`'s explicit radical-line coordinates
+still need to be shown IN the relevant spans for a *specific* pair of arcs,
+which is a fact about where those arcs sit on their circles, not about which
+span-membership test is used. `ArcArcCirclesSpan.arc_arc_intersects_of_circles_and_radical_signs`
+now states that requirement as a concrete, checkable condition on the two
+named radical points (rather than an opaque universally-quantified bridge
+hypothesis) using `arc_span_contains` directly, but it remains a named
+hypothesis, not a derived fact -- and no hypothesis-free version can exist
+(two properly-intersecting circles can host arcs whose spans miss the
+crossing entirely). The *unconditional sweep<=pi promotion* named in §9-§10
+as "still quarantined" is the ArcChordSound.v chord-vs-span question (whether
+a chord's circle-crossing lands on the minor vs major arc) -- a different,
+still-open question from the one this update closes.
+
+4-axiom (atan2 lineage, `docs/audit-exceptions.txt`).  No `Admitted`.

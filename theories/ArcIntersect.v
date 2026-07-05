@@ -22,11 +22,15 @@
    2. ARC SPAN CONTAINMENT: Option S (chord cross product sign).
       `arc_span_contains a P := arc_interior_side a P \/ P = arc_start a
                                 \/ P = arc_end a`.
-      Correct for arcs with subtended angle < pi (the typical case).
-      Reflex arcs (> pi) are not characterised correctly; that's a known
-      limitation of the chord-sign test.  Option F (atan2-based angular
-      ordering) is structurally heavier and not justified for Option B's
-      chord-approximation thesis direction.
+      UPDATE (ArcSpanAtan2.arc_span_contains_atan2_iff_chord_sign, proved
+      unconditionally): this chord-sign test is exact for EVERY sweep,
+      including reflex arcs (>= pi) -- it was proved equivalent to an
+      atan2-based angular sector test (Option F) for any on-circumcircle
+      point, with no sweep restriction.  The "reflex arcs not characterised
+      correctly" limitation once claimed here was never actually load-bearing
+      for on-circle points; see ArcSpanAtan2.v for the closed-form proof
+      (cross_R_pt_cyclic_sum + a sine sum-to-product identity + a same-sign
+      combinator, no wraparound case split needed).
 
    3. SOUNDNESS PROOF: deferred.  An IVT-based proof showing the
       sign-change condition on `inCircle_R` along the chord parametrisation
@@ -68,10 +72,11 @@ Local Open Scope R_scope.
 (*   - P is on the interior side of the chord (same side as arc_mid), or     *)
 (*   - P equals arc_start or arc_end (boundary).                              *)
 (*                                                                            *)
-(* For arcs with subtended angle < pi this characterises arc membership      *)
-(* exactly (assuming P is also on the circumscribed circle, which the         *)
-(* intersection predicates below enforce).  Reflex arcs (> pi) fail this     *)
-(* characterisation -- documented as a known limitation.                      *)
+(* For a point P also on the circumscribed circle (which the intersection    *)
+(* predicates below enforce), this characterises arc membership exactly for  *)
+(* EVERY sweep -- including reflex arcs (>= pi).  See                        *)
+(* ArcSpanAtan2.arc_span_contains_atan2_iff_chord_sign for the unconditional  *)
+(* proof (equivalence with an atan2-based angular sector test).              *)
 (* -------------------------------------------------------------------------- *)
 
 Definition arc_span_contains (a : CircularArc) (P : Point) : Prop :=

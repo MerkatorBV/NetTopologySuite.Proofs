@@ -31,12 +31,15 @@
    (that enters only via `atan`/`sin_lt_x`), so no `docs/audit-exceptions.txt`
    entry is needed.  No `Admitted`/`Axiom`/`Parameter`.
 
-   DEFERRED (honest scope): the UNCONDITIONAL both-circles existence for two arcs
-   that cross at interior points (the radical-line / sqrt-discriminant coordinate
-   story -- still the genuinely hard #5b frontier); explicit intersection
-   coordinates and a binary64 layer; interior (non-endpoint) span membership for
-   a2-chord crossings; and reflex/sweep >= pi arcs (the chord-side `arc_span`
-   characterisation is exact only for sweep < pi -- quarantined, not Admitted).
+   DEFERRED (honest scope): explicit intersection coordinates promoted to full
+   span membership for two arcs crossing at interior points (the radical-line
+   points from `ArcArcCircles.two_circles_radical_point` land in both spans
+   only under the checkable hypothesis in
+   `ArcArcCirclesSpan.arc_arc_intersects_of_circles_and_radical_signs`, not
+   unconditionally -- see that file); a binary64 layer; interior (non-endpoint)
+   span membership for a2-chord crossings.  Reflex/sweep >= pi arcs are NOT a
+   live gap: `ArcSpanAtan2.arc_span_contains_atan2_iff_chord_sign` proves the
+   chord-side `arc_span` characterisation exact for every sweep.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)

@@ -39,9 +39,9 @@
    AI assistance disclosure: AI-drafted, human-reviewed.
    ========================================================================== *)
 
-From Stdlib Require Import Reals.
+From Stdlib Require Import Reals Lra.
 From NTS.Proofs Require Import Distance CurveGeometry ArcOrient ArcIntersect
-  ArcArcCircles.
+  ArcChordApprox ArcOffsetThreePoint ArcArcCircles.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
@@ -69,7 +69,71 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* §2  Audit footprint.                                                       *)
+(* §2  Concrete-hypothesis promotion: replace the opaque universally-         *)
+(*     quantified span bridge above with a checkable condition on the two    *)
+(*     NAMED radical-line points.                                             *)
+(*                                                                            *)
+(* `ArcArcCircles.two_circles_radical_point_unique` says any point on both    *)
+(* circles IS `radical_point_plus` or `radical_point_minus`.  So instead of   *)
+(* assuming span-membership for an arbitrary common-circle point (which is    *)
+(* essentially assuming the theorem), it suffices to check span-membership    *)
+(* for these two SPECIFIC, closed-form points -- a finite, per-instance       *)
+(* `nra`-checkable condition, not a universal.  This still cannot be made     *)
+(* hypothesis-free in general: two properly-intersecting circles can host     *)
+(* arcs whose spans both miss the crossing entirely (each arc a small cap on  *)
+(* the far side of its circle), in which case `arc_arc_intersects` is         *)
+(* genuinely false and no unconditional theorem could exist.                  *)
+(* -------------------------------------------------------------------------- *)
+
+Theorem arc_arc_intersects_of_circles_and_radical_signs :
+  forall a1 a2 : CircularArc,
+    valid_arc a1 ->
+    valid_arc a2 ->
+    0 < dist (arc_center a1) (arc_center a2) ->
+    Rabs (arc_radius a1 - arc_radius a2) < dist (arc_center a1) (arc_center a2) ->
+    dist (arc_center a1) (arc_center a2) < arc_radius a1 + arc_radius a2 ->
+    ((arc_span_contains a1
+        (radical_point_plus (arc_center a1) (arc_center a2) (arc_radius a1) (arc_radius a2)) /\
+      arc_span_contains a2
+        (radical_point_plus (arc_center a1) (arc_center a2) (arc_radius a1) (arc_radius a2)))
+     \/
+     (arc_span_contains a1
+        (radical_point_minus (arc_center a1) (arc_center a2) (arc_radius a1) (arc_radius a2)) /\
+      arc_span_contains a2
+        (radical_point_minus (arc_center a1) (arc_center a2) (arc_radius a1) (arc_radius a2)))) ->
+    arc_arc_intersects a1 a2.
+Proof.
+  intros a1 a2 Hva1 Hva2 Hdpos Hrabs Hdlt Hsigns.
+  assert (Hr1sq : arc_radius a1 * arc_radius a1 = dist_sq (arc_center a1) (arc_start a1)).
+  { rewrite arc_radius_eq_sqrt. rewrite sqrt_sqrt; [| apply arc_radius_sq_nonneg].
+    unfold arc_radius_sq. reflexivity. }
+  assert (Hr2sq : arc_radius a2 * arc_radius a2 = dist_sq (arc_center a2) (arc_start a2)).
+  { rewrite arc_radius_eq_sqrt. rewrite sqrt_sqrt; [| apply arc_radius_sq_nonneg].
+    unfold arc_radius_sq. reflexivity. }
+  destruct (radical_points_on_circles (arc_center a1) (arc_center a2)
+              (arc_radius a1) (arc_radius a2)
+              (arc_radius_pos a1 Hva1) (arc_radius_pos a2 Hva2) Hdpos Hrabs Hdlt)
+    as [[HdP1 HdP2] [HdM1 HdM2]].
+  destruct Hsigns as [[Hs1 Hs2] | [Hs1 Hs2]].
+  - exists (radical_point_plus (arc_center a1) (arc_center a2)
+              (arc_radius a1) (arc_radius a2)).
+    split; [| split; [| split]].
+    + apply inCircle_R_zero_of_equidistant; [exact Hva1 |]. lra.
+    + apply inCircle_R_zero_of_equidistant; [exact Hva2 |]. lra.
+    + exact Hs1.
+    + exact Hs2.
+  - exists (radical_point_minus (arc_center a1) (arc_center a2)
+              (arc_radius a1) (arc_radius a2)).
+    split; [| split; [| split]].
+    + apply inCircle_R_zero_of_equidistant; [exact Hva1 |]. lra.
+    + apply inCircle_R_zero_of_equidistant; [exact Hva2 |]. lra.
+    + exact Hs1.
+    + exact Hs2.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* §3  Audit footprint.                                                       *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions arc_arc_intersects_of_circles_and_span.
+Print Assumptions arc_arc_intersects_of_circles_and_radical_signs.
