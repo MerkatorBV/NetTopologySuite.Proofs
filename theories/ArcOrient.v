@@ -119,6 +119,15 @@ Definition arc_side_chord (a : CircularArc) (P : Point) : R :=
 Definition arc_interior_side (a : CircularArc) (P : Point) : Prop :=
   0 < arc_side_chord a (arc_mid a) * arc_side_chord a P.
 
+(* `arc_minor a`: the circumcenter is on the opposite side of the chord from
+   `arc_mid` (or exactly on the chord line, the semicircle boundary case) --
+   i.e. the arc's subtended (central) angle is <= pi.  Sagitta-based chord
+   approximation bounds (ArcChordApprox.v) only hold on this side: for the
+   "major" labeling (angle > pi, center on the SAME side as arc_mid), the
+   arc's distance from the chord segment is unbounded by the sagitta. *)
+Definition arc_minor (a : CircularArc) : Prop :=
+  arc_side_chord a (arc_center a) * arc_side_chord a (arc_mid a) <= 0.
+
 Inductive ArcSide : Type :=
   | ArcInterior
   | ArcExterior
@@ -140,6 +149,17 @@ Definition arc_orient (a : CircularArc) (P : Point) : ArcSide :=
 Lemma cross_R_pt_antisymm :
   forall P0 P1 Q : Point,
     cross_R_pt P0 P1 Q = - cross_R_pt P1 P0 Q.
+Proof. intros. unfold cross_R_pt. ring. Qed.
+
+(* Cyclic-sum identity: the (twice-signed-area) cross product of a triangle
+   A,C,P decomposes into the sum of three cross products pivoted at ANY
+   common point O.  Pure `ring` identity -- no circle/collinearity
+   hypothesis, holds for every O (this is the algebraic core of "signed area
+   is additive over a fan triangulation from an arbitrary apex"). *)
+Lemma cross_R_pt_cyclic_sum :
+  forall O A C P : Point,
+    cross_R_pt A C P
+    = cross_R_pt O A C + cross_R_pt O C P + cross_R_pt O P A.
 Proof. intros. unfold cross_R_pt. ring. Qed.
 
 (* arc_side_chord on arc_mid equals the negation of valid_arc's expression
@@ -346,6 +366,7 @@ Proof. intros p [_ Hy]. exact Hy. Qed.
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions cross_R_pt_antisymm.
+Print Assumptions cross_R_pt_cyclic_sum.
 Print Assumptions arc_side_chord_mid_eq_neg_valid.
 Print Assumptions arc_side_chord_mid_nonzero.
 Print Assumptions arc_interior_side_mid.

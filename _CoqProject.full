@@ -1994,6 +1994,21 @@ theories/ArcHotPixel.v
 # bisector geometry + S4's IVT-blocked soundness).  No Admitteds.
 theories/ArcChordApprox.v
 
+# Companion counterexample for ArcOrient.arc_minor (in the style of
+# SpectreChordArcWitness.v): a concrete valid arc where arc_mid sits on the
+# MAJOR side of the chord (subtended angle > pi), showing the sagitta bound
+# does not cover the arc's distance from its own chord segment when
+# arc_minor fails.  3-axiom.  No Admitted.
+theories/ArcMinorWitness.v
+
+# Issue #64 ask: the sagitta / hot-pixel bridge for arc-overlay chord
+# approximation.  Proves the correctly-qualified (arc_minor-conditioned,
+# sagitta-margin-dilated) replacement for the bare claim
+# SpectreChordArcWitness.v refutes: every in-span on-circle arc point is
+# within sagitta of a point of the actual chord SEGMENT (not just the chord
+# line or the fixed midpoint).  3-axiom.  No Admitted.
+theories/ArcHotPixelSagittaBridge.v
+
 # Issue #64 ask #4c / #3 V-CP: single-arc "bulge-inclusion" building block for
 # TRUE-region soundness.  Every point affinely interior to an arc's inscribed
 # control triangle lies in the circular segment the arc bounds with its chord
@@ -2004,6 +2019,17 @@ theories/ArcChordApprox.v
 # Allowlist axioms only (sig_forall_dec + functional_extensionality_dep).
 # No Admitted.
 theories/ArcControlTriangleInSegment.v
+
+# Issue #64 V-CP: a bounded "Jordan soundness" rung for the single-arc
+# circular-segment ("lens") curve geometry.  Bridges GeneralTriangleSeparation's
+# gtri-positivity ray-parity sign test to ArcControlTriangleInSegment's
+# affine control-triangle interior, then composes with
+# RelateCurveArcSegment.arc_seg_control_interior_in_curve_geometry to get:
+# genuine ray-parity membership on the real arc-segment to_geometry object
+# implies TRUE circular-segment membership.  Does NOT close multi-arc rings,
+# holes, self-tangency, or the general Jordan Curve Theorem.  3-axiom.
+# No Admitted.
+theories/ArcSegmentJordanSound.v
 
 # Route (B) of docs/clothoid-open-questions-triage.md: the sagitta-density
 # bound -- "n chords achieve eps".  Conjugate identity
@@ -2082,6 +2108,15 @@ theories/ArcArcCircles.v
 # named hypothesis on the common point -- same honest-conditional shape as
 # ArcArcSound.arc_arc_intersects_of_chord_cross_cond.  3-axiom.  No Admitted.
 theories/ArcArcCirclesSpan.v
+# Issue #64 ask: arc-span membership via atan2 sector comparison
+# (`arc_span_contains_atan2`), proved UNCONDITIONALLY equivalent to the
+# existing chord-sign test `ArcIntersect.arc_span_contains` -- covering the
+# reflex-arc (sweep >= pi) case the corpus's own comments previously
+# believed open.  Closed-form on-circle cross product identity
+# (cross_R_pt_cyclic_sum + Lagrange 2D identity + sin sum-to-product, nsatz)
+# plus a same-sign combinator (no iff fed to nra).  4-axiom (atan2 lineage,
+# see docs/audit-exceptions.txt).  No Admitted.
+theories/ArcSpanAtan2.v
 # Slice 7 / formal soundness of oracle/driver.ml:circumcentre_q.  Raw-coordinate
 # counterpart of arc_center_equidistant (ArcChordApprox) and
 # inCircle_R_zero_of_equidistant (ArcArcCircles): proves the circumcenter formula

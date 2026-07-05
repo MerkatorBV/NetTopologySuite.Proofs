@@ -25,12 +25,18 @@
 
    2. Soundness (disjunction => point-on-arc-in-pixel) and completeness
       (point-on-arc-in-pixel => disjunction) DEFERRED to a follow-up.
-      Soundness depends on S4's `arc_chord_intersect_sound`
-      (Admitted, IVT-blocked).  Completeness requires geometric
-      continuity reasoning that this session does not provide.  The
-      endpoint-disjunct half of soundness IS structural (arc_start /
-      arc_end in pixel => point on arc in pixel = arc_start / arc_end)
-      and lands here.
+      Soundness for the edge-crossing disjuncts needs a general
+      `arc_chord_intersect_sound`-style lemma; CORRECTION: the raw IVT
+      piece (`ArcIntersectIVT.chord_crosses_arc_circle_implies_circle_-
+      intersection`) is already Qed'd, not Admitted -- the actual gap is
+      generalising `ArcChordSound.v`'s endpoint-anchored pattern
+      (`chord_crosses_arc_circle_{start,end}_anchored_sound`) to
+      chords with NEITHER endpoint a control point, which the
+      pixel-edge chords here generally are not.  Completeness requires
+      geometric continuity reasoning that this session does not
+      provide.  The endpoint-disjunct half of soundness IS structural
+      (arc_start / arc_end in pixel => point on arc in pixel = arc_start
+      / arc_end) and lands here.
 
    3. Parameterised by `scale`, mirroring Phase 2 exactly.  Hard-coding
       1/2 (scale = 1) would diverge from the established pattern.
@@ -115,8 +121,9 @@ Definition arc_passes_through_hot_pixel
 (* The relationship to `arc_passes_through_hot_pixel`:                       *)
 (*   - `arc_passes_through_hot_pixel` => `arc_touches_hot_pixel` is          *)
 (*     SOUNDNESS.  Endpoint disjuncts close directly (the endpoint IS the    *)
-(*     witness).  Edge-crossing disjuncts depend on `arc_chord_intersect_-   *)
-(*     sound` (S4 Admitted, IVT-blocked).                                    *)
+(*     witness).  Edge-crossing disjuncts depend on a general               *)
+(*     `arc_chord_intersect_sound` (see §6 -- the raw IVT step is already   *)
+(*     Qed'd; the remaining gap is the anchored-pattern generalisation).     *)
 (*   - `arc_touches_hot_pixel` => `arc_passes_through_hot_pixel` is          *)
 (*     COMPLETENESS.  Requires geometric continuity reasoning; deferred.     *)
 (* -------------------------------------------------------------------------- *)
@@ -230,18 +237,23 @@ Qed.
 (*     in_hot_pixel iff also px-range satisfied.  CLOSES STRUCTURALLY.       *)
 (*                                                                            *)
 (*   - top edge: X has py(X) = py(C) + r.  Upper bound is OPEN -- X NOT in   *)
-(*     in_hot_pixel.  Requires IVT to slide along the arc to a strictly      *)
-(*     interior point.                                                        *)
+(*     in_hot_pixel.  Requires sliding along the arc to a strictly interior  *)
+(*     point.                                                                 *)
 (*                                                                            *)
 (*   - left / right edges: symmetric.                                         *)
 (*                                                                            *)
 (* The bottom + left edge cases are structurally closeable; top + right      *)
-(* depend on IVT machinery (the same dependency as S4's                       *)
-(* arc_chord_intersect_sound).  Deferred end-to-end to a follow-up session   *)
-(* that handles the IVT piece.                                                *)
+(* need a general edge-crossing soundness lemma.  CORRECTION (this was       *)
+(* previously mislabelled "IVT-blocked"): the underlying IVT step            *)
+(* (`ArcIntersectIVT.chord_crosses_arc_circle_implies_circle_intersection`)  *)
+(* is already Qed'd, not Admitted.  The actual remaining gap is             *)
+(* generalising `ArcChordSound.v`'s anchored pattern (proved only for       *)
+(* chords with one endpoint at a control point) to arbitrary pixel-edge      *)
+(* chords, whose endpoints are generally NOT arc control points.  Deferred  *)
+(* end-to-end to a follow-up session that closes that generalisation.        *)
 (*                                                                            *)
 (* This file lands the endpoint half (above) and stops; the edge half is the *)
-(* IVT-dependent piece.                                                       *)
+(* anchored-pattern-generalisation-dependent piece.                          *)
 (* -------------------------------------------------------------------------- *)
 
 (* -------------------------------------------------------------------------- *)

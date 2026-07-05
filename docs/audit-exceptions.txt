@@ -381,6 +381,18 @@ theories/RelateArcAnalytic.v
 # Admitteds; both headlines Qed-closed.  Removal tracks AngleBetween's cleanup.
 theories/ArcChordLength.v
 
+# Category C (R-side, same atan lineage as Atan2.v / AngleBetween.v): issue
+# #64 arc-span atan2 sector membership.  `arc_span_contains_atan2` and the
+# headline `arc_span_contains_atan2_iff_chord_sign` are built on
+# `signed_angle_from` = `AngleBetween.angle_between`, so they inherit
+# `Classical_Prop.classic` via the Atan2 / AngleBetween lane above (same
+# lineage as theories/RelateArcAnalytic.v).  The pure-algebra helpers
+# (`cross_dot_lagrange_2d`, `sin_sum_to_product`, `same_sign_mult`,
+# `two_circles_radical_point_unique`, `arc_arc_intersects_of_circles_and_radical_signs`)
+# stay on the 3-axiom allowlist; only the atan2-sector lemmas cross the lane.
+# No Admitteds; all headlines Qed-closed.  Removal tracks AngleBetween's cleanup.
+theories/ArcSpanAtan2.v
+
 # Category C: one explicitly-documented theorem whose statement cannot be
 # parametrised without losing content.  See the `(* CATEGORY C *)` block
 # in the file itself; resolution pending policy decision.

@@ -44,10 +44,18 @@
          intersection ⇒ ∃ X with inCircle_R = 0 on both arcs' circumcircles.
 
    DEFERRED (honest scope in the header):
-     - `arc_span_contains` for the radical-line points: angular sector
-       membership needs atan2 and stays deferred.
+     - `arc_span_contains` for the radical-line points: proved via an
+       atan2-based angular sector test in `ArcSpanAtan2.v`
+       (`arc_span_contains_atan2_iff_chord_sign`, unconditional in the
+       sweep), but only wired to a CHECKABLE hypothesis on the two named
+       radical points (`ArcArcCirclesSpan.arc_arc_intersects_of_circles_and_radical_signs`),
+       not derived unconditionally -- two properly-intersecting circles can
+       still have arcs whose spans miss the crossing entirely, so no
+       hypothesis-free version can exist.
      - `arc_arc_intersects` (requires both circles AND both spans).
-     - Binary64 soundness of ARC_ARC_XY; sweep ≥ π / reflex arcs.
+     - Binary64 soundness of ARC_ARC_XY.  Sweep >= pi / reflex arcs are NOT a
+       live gap here: `ArcSpanAtan2.arc_span_contains_atan2_iff_chord_sign`
+       proves `arc_span_contains` exact for every sweep.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -416,7 +424,221 @@ Qed.
 (* §4  Audit footprint.                                                       *)
 (* ========================================================================== *)
 
+(* ========================================================================== *)
+(* §5  Uniqueness: any point on both circles IS one of the two named          *)
+(*     radical-line coordinates.                                              *)
+(*                                                                            *)
+(* Named `Definition`s for the two `two_circles_radical_point` roots, so a    *)
+(* caller can state a CONCRETE, checkable span-membership condition on them   *)
+(* (see `ArcArcCirclesSpan.arc_arc_intersects_of_circles_and_radical_signs`)  *)
+(* instead of an opaque universally-quantified bridge hypothesis.             *)
+(*                                                                            *)
+(* Proof: decompose X - O1 in the orthonormal frame (u, perp u) where         *)
+(* u = (O2-O1)/d.  The two circle equations force the u-component to be      *)
+(* exactly `a` (by subtraction) and the perp-component to satisfy            *)
+(* `s2^2 = r1^2 - a^2`, hence `s2 = +-h`.  No properness hypothesis needed -- *)
+(* `s2^2 = r1^2-a^2 >= 0` falls out automatically from X existing.           *)
+(* ========================================================================== *)
+
+Definition radical_axis_ux (O1 O2 : Point) : R := (px O2 - px O1) / dist O1 O2.
+Definition radical_axis_uy (O1 O2 : Point) : R := (py O2 - py O1) / dist O1 O2.
+
+Definition radical_axis_a (O1 O2 : Point) (r1 r2 : R) : R :=
+  (dist O1 O2 * dist O1 O2 + r1 * r1 - r2 * r2) / (2 * dist O1 O2).
+
+Definition radical_axis_h (O1 O2 : Point) (r1 r2 : R) : R :=
+  sqrt (r1 * r1 - radical_axis_a O1 O2 r1 r2 * radical_axis_a O1 O2 r1 r2).
+
+Definition radical_point_plus (O1 O2 : Point) (r1 r2 : R) : Point :=
+  mkPoint (px O1 + radical_axis_a O1 O2 r1 r2 * radical_axis_ux O1 O2
+                  - radical_axis_h O1 O2 r1 r2 * radical_axis_uy O1 O2)
+          (py O1 + radical_axis_a O1 O2 r1 r2 * radical_axis_uy O1 O2
+                  + radical_axis_h O1 O2 r1 r2 * radical_axis_ux O1 O2).
+
+Lemma point_eq_of_coords : forall p q : Point,
+  px p = px q -> py p = py q -> p = q.
+Proof.
+  intros [x1 y1] [x2 y2]; cbn; intros Hx Hy; subst; reflexivity.
+Qed.
+
+Definition radical_point_minus (O1 O2 : Point) (r1 r2 : R) : Point :=
+  mkPoint (px O1 + radical_axis_a O1 O2 r1 r2 * radical_axis_ux O1 O2
+                  + radical_axis_h O1 O2 r1 r2 * radical_axis_uy O1 O2)
+          (py O1 + radical_axis_a O1 O2 r1 r2 * radical_axis_uy O1 O2
+                  - radical_axis_h O1 O2 r1 r2 * radical_axis_ux O1 O2).
+
+Theorem two_circles_radical_point_unique :
+  forall (O1 O2 : Point) (r1 r2 : R) (X : Point),
+    0 < dist O1 O2 ->
+    dist_sq O1 X = r1 * r1 ->
+    dist_sq O2 X = r2 * r2 ->
+    X = radical_point_plus O1 O2 r1 r2 \/ X = radical_point_minus O1 O2 r1 r2.
+Proof.
+  intros O1 O2 r1 r2 X Hdpos HX1 HX2.
+  unfold radical_point_plus, radical_point_minus,
+         radical_axis_a, radical_axis_h, radical_axis_ux, radical_axis_uy.
+  unfold radical_axis_a.
+  set (d := dist O1 O2) in *.
+  assert (Hd_ne : d <> 0) by lra.
+  set (o1x := px O1). set (o1y := py O1).
+  set (o2x := px O2). set (o2y := py O2).
+  assert (Hdd : d * d = (o2x - o1x) * (o2x - o1x) + (o2y - o1y) * (o2y - o1y)).
+  { unfold d, dist. rewrite sqrt_sqrt; [ | apply dist_sq_nonneg].
+    unfold dist_sq, o1x, o1y, o2x, o2y. ring. }
+  set (ux := (o2x - o1x) / d). set (uy := (o2y - o1y) / d).
+  assert (Hdux : d * ux = o2x - o1x) by (unfold ux; field; exact Hd_ne).
+  assert (Hduy : d * uy = o2y - o1y) by (unfold uy; field; exact Hd_ne).
+  assert (Hunit : ux * ux + uy * uy = 1).
+  { assert (Heq : d * d * (ux * ux + uy * uy) = d * d).
+    { transitivity ((d * ux) * (d * ux) + (d * uy) * (d * uy)).
+      - ring.
+      - rewrite Hdux, Hduy, Hdd. ring. }
+    assert (Hd2ne : d * d <> 0) by nra.
+    apply (Rmult_eq_reg_l (d * d) _ _); [ | exact Hd2ne].
+    ring_simplify. lra. }
+  set (a := (d * d + r1 * r1 - r2 * r2) / (2 * d)).
+  set (s1 := (px X - o1x) * ux + (py X - o1y) * uy).
+  set (s2 := (py X - o1y) * ux - (px X - o1x) * uy).
+  assert (Hdecomp_x : s1 * ux - s2 * uy = px X - o1x).
+  { unfold s1, s2.
+    transitivity ((px X - o1x) * (ux * ux + uy * uy)); [ring | rewrite Hunit; ring]. }
+  assert (Hdecomp_y : s1 * uy + s2 * ux = py X - o1y).
+  { unfold s1, s2.
+    transitivity ((py X - o1y) * (ux * ux + uy * uy)); [ring | rewrite Hunit; ring]. }
+  assert (HXeq1 : (px X - o1x) * (px X - o1x) + (py X - o1y) * (py X - o1y) = r1 * r1)
+    by (unfold o1x, o1y; rewrite <- HX1; unfold dist_sq; ring).
+  assert (Hpyth1 : (s1 * ux - s2 * uy) * (s1 * ux - s2 * uy)
+                   + (s1 * uy + s2 * ux) * (s1 * uy + s2 * ux)
+                   = (s1 * s1 + s2 * s2) * (ux * ux + uy * uy)) by ring.
+  rewrite Hdecomp_x, Hdecomp_y, Hunit in Hpyth1.
+  assert (Hsum1 : s1 * s1 + s2 * s2 = r1 * r1) by nra.
+  (* X - O2 uses the same decomposition with s1 replaced by (s1 - d). *)
+  assert (HY1eq : px X - o2x = (s1 - d) * ux - s2 * uy).
+  { replace ((s1 - d) * ux - s2 * uy) with ((s1 * ux - s2 * uy) - d * ux) by ring.
+    rewrite Hdecomp_x, Hdux. ring. }
+  assert (HY2eq : py X - o2y = (s1 - d) * uy + s2 * ux).
+  { replace ((s1 - d) * uy + s2 * ux) with ((s1 * uy + s2 * ux) - d * uy) by ring.
+    rewrite Hdecomp_y, Hduy. ring. }
+  assert (HYeq2 : (px X - o2x) * (px X - o2x) + (py X - o2y) * (py X - o2y) = r2 * r2)
+    by (unfold o2x, o2y; rewrite <- HX2; unfold dist_sq; ring).
+  assert (Hpyth2 : ((s1 - d) * ux - s2 * uy) * ((s1 - d) * ux - s2 * uy)
+                   + ((s1 - d) * uy + s2 * ux) * ((s1 - d) * uy + s2 * ux)
+                   = ((s1 - d) * (s1 - d) + s2 * s2) * (ux * ux + uy * uy)) by ring.
+  rewrite Hunit in Hpyth2.
+  rewrite <- HY1eq, <- HY2eq in Hpyth2.
+  assert (Hsum2 : (s1 - d) * (s1 - d) + s2 * s2 = r2 * r2) by nra.
+  (* Subtracting: s1 = a. *)
+  assert (Hs1a : s1 = a).
+  { assert (Hkey : 2 * s1 * d - d * d = r1 * r1 - r2 * r2) by nra.
+    unfold a. apply (Rmult_eq_reg_l (2 * d)); [ | nra].
+    field_simplify; nra. }
+  assert (Hs2sq : s2 * s2 = r1 * r1 - a * a) by nra.
+  assert (Hh2nn : 0 <= r1 * r1 - a * a) by nra.
+  assert (Hhh : sqrt (r1 * r1 - a * a) * sqrt (r1 * r1 - a * a) = r1 * r1 - a * a)
+    by (apply sqrt_sqrt; exact Hh2nn).
+  set (h := sqrt (r1 * r1 - a * a)) in *.
+  assert (Hs2h : (s2 - h) * (s2 + h) = 0) by nra.
+  destruct (Rmult_integral _ _ Hs2h) as [Hplus | Hminus].
+  - left. assert (Hs2eq : s2 = h) by lra.
+    rewrite Hs1a, Hs2eq in Hdecomp_x, Hdecomp_y.
+    apply point_eq_of_coords; cbn [px py]; lra.
+  - right. assert (Hs2eq : s2 = -h) by lra.
+    rewrite Hs1a, Hs2eq in Hdecomp_x, Hdecomp_y.
+    apply point_eq_of_coords; cbn [px py]; lra.
+Qed.
+
+(* ========================================================================== *)
+(* §5b  Both named points independently satisfy both circle equations.        *)
+(*                                                                            *)
+(* Two properly-intersecting circles meet in two points, symmetric across    *)
+(* the O1-O2 line -- `radical_point_plus`/`_minus` differ only in the sign of *)
+(* `h`, and both circle equations depend on `h` only through `h*h`, so both   *)
+(* points satisfy BOTH equations independently.  Same algebra as             *)
+(* `two_circles_radical_point`, restated about the two named points directly *)
+(* (rather than behind an existential) so a caller can pick whichever root   *)
+(* it needs without re-deriving the construction.                            *)
+(* ========================================================================== *)
+
+Theorem radical_points_on_circles :
+  forall (O1 O2 : Point) (r1 r2 : R),
+    0 < r1 -> 0 < r2 -> 0 < dist O1 O2 ->
+    Rabs (r1 - r2) < dist O1 O2 -> dist O1 O2 < r1 + r2 ->
+    (dist_sq O1 (radical_point_plus O1 O2 r1 r2) = r1 * r1 /\
+     dist_sq O2 (radical_point_plus O1 O2 r1 r2) = r2 * r2) /\
+    (dist_sq O1 (radical_point_minus O1 O2 r1 r2) = r1 * r1 /\
+     dist_sq O2 (radical_point_minus O1 O2 r1 r2) = r2 * r2).
+Proof.
+  intros O1 O2 r1 r2 Hr1 Hr2 Hdpos Hrabs Hdlt.
+  unfold radical_point_plus, radical_point_minus,
+         radical_axis_a, radical_axis_h, radical_axis_ux, radical_axis_uy.
+  unfold radical_axis_a.
+  set (d := dist O1 O2) in *.
+  set (o1x := px O1). set (o1y := py O1).
+  set (o2x := px O2). set (o2y := py O2).
+  assert (Hd_ne : d <> 0) by lra.
+  assert (Hdd : d * d = dist_sq O1 O2).
+  { unfold d, dist. rewrite sqrt_sqrt; [reflexivity | apply dist_sq_nonneg]. }
+  assert (Hdd_decomp : d * d = (o2x - o1x) * (o2x - o1x) + (o2y - o1y) * (o2y - o1y)).
+  { rewrite Hdd. unfold dist_sq, o1x, o1y, o2x, o2y. ring. }
+  assert (Hr12a : r1 - r2 < d)
+    by (apply (Rle_lt_trans _ (Rabs (r1 - r2))); [apply Rle_abs | lra]).
+  assert (Hr12b : r2 - r1 < d)
+    by (apply (Rle_lt_trans _ (Rabs (r1 - r2)));
+        [rewrite Rabs_minus_sym; apply Rle_abs | lra]).
+  set (ux := (o2x - o1x) / d). set (uy := (o2y - o1y) / d).
+  assert (Hdux : d * ux = o2x - o1x) by (unfold ux; field; exact Hd_ne).
+  assert (Hduy : d * uy = o2y - o1y) by (unfold uy; field; exact Hd_ne).
+  assert (Hunit : ux * ux + uy * uy = 1).
+  { assert (Heq : d * d * (ux * ux + uy * uy) = d * d).
+    { transitivity ((d * ux) * (d * ux) + (d * uy) * (d * uy)).
+      - ring.
+      - rewrite Hdux, Hduy, Hdd_decomp. ring. }
+    assert (Hd2ne : d * d <> 0) by nra.
+    apply (Rmult_eq_reg_l (d * d) _ _); [ring_simplify; lra | lra]. }
+  set (a := (d * d + r1 * r1 - r2 * r2) / (2 * d)).
+  assert (H2ad : 2 * a * d = d * d + r1 * r1 - r2 * r2) by (unfold a; field; exact Hd_ne).
+  assert (Hf1 : 0 < d + r1 + r2) by lra.
+  assert (Hf2 : 0 < d + r1 - r2) by lra.
+  assert (Hf3 : 0 < r2 + d - r1) by lra.
+  assert (Hf4 : 0 < r1 + r2 - d) by lra.
+  assert (Hpoly :
+    (d + r1 + r2) * (d + r1 - r2) * (r2 + d - r1) * (r1 + r2 - d)
+    = (2 * d * r1) * (2 * d * r1) - (d * d + r1 * r1 - r2 * r2) * (d * d + r1 * r1 - r2 * r2))
+    by ring.
+  assert (Hnum_pos :
+    0 < (2 * d * r1) * (2 * d * r1) - (d * d + r1 * r1 - r2 * r2) * (d * d + r1 * r1 - r2 * r2)).
+  { rewrite <- Hpoly. repeat apply Rmult_lt_0_compat; lra. }
+  assert (Hh2_pos : 0 < r1 * r1 - a * a).
+  { assert (Hkey : 4 * d * d * (r1 * r1 - a * a)
+              = (2*d*r1)*(2*d*r1) - (d*d+r1*r1-r2*r2)*(d*d+r1*r1-r2*r2))
+      by (rewrite <- H2ad; ring).
+    apply (Rmult_lt_reg_l (4 * d * d)); [nra | rewrite Rmult_0_r, Hkey; exact Hnum_pos]. }
+  assert (Hh2_nn : 0 <= r1 * r1 - a * a) by lra.
+  assert (Hhh : sqrt (r1 * r1 - a * a) * sqrt (r1 * r1 - a * a) = r1 * r1 - a * a)
+    by (apply sqrt_sqrt; exact Hh2_nn).
+  set (h := sqrt (r1 * r1 - a * a)) in *.
+  assert (Ho2x : o2x = o1x + d * ux) by lra.
+  assert (Ho2y : o2y = o1y + d * uy) by lra.
+  repeat split; unfold dist_sq; cbn [px py]; fold o1x o1y o2x o2y.
+  - transitivity ((a * a + h * h) * (ux * ux + uy * uy));
+      [ring | rewrite Hunit, Hhh; ring].
+  - rewrite Ho2x, Ho2y.
+    transitivity (((a - d) * (a - d) + h * h) * (ux * ux + uy * uy));
+      [ring | rewrite Hunit, Hhh; nra].
+  - transitivity ((a * a + h * h) * (ux * ux + uy * uy));
+      [ring | rewrite Hunit, Hhh; ring].
+  - rewrite Ho2x, Ho2y.
+    transitivity (((a - d) * (a - d) + h * h) * (ux * ux + uy * uy));
+      [ring | rewrite Hunit, Hhh; nra].
+Qed.
+
+(* ========================================================================== *)
+(* §6  Audit footprint.                                                       *)
+(* ========================================================================== *)
+
 Print Assumptions inCircle_R_zero_of_equidistant.
 Print Assumptions inCircle_R_zero_implies_equidistant.
+Print Assumptions radical_points_on_circles.
 Print Assumptions two_circles_radical_point.
 Print Assumptions arc_arc_circles_intersect.
+Print Assumptions two_circles_radical_point_unique.
