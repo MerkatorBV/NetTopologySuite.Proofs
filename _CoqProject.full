@@ -2800,6 +2800,13 @@ theories-flocq/PassesThrough_b64_compute.v
 # the exact-real spec (compute=true, spec=false on an oracle-confirmed sub-ulp
 # tangency witness).  Promotes docs/oracle-soundness-finding.md to a Qed.
 theories-flocq/PassesThrough_b64_compute_unsound.v
+# Issue #66 guard-discharge audit (round 2, item 1): machine-checked witness
+# that snap-rounding to the integer grid can CREATE a horizontal dart from a
+# non-horizontal input pair (0 and 1/2 both round-to-nearest-even to 0). So
+# `no_horizontal_darts` on noded output is a genuine per-arrangement
+# hypothesis, not a free corollary of noding -- pins down the regime the C1
+# width extension (and extract_rings_valid_of_guards) actually needs.
+theories-flocq/SnapRoundingGuardAudit.v
 # Compute-level refinement: the half-open compute filter is strictly tighter
 # than the closed one (the COMPUTE analog of the proven spec-level
 # b64_liang_barsky_touches_halfopen_implies_closed).  Pure boolean structure.
