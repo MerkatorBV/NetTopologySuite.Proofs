@@ -272,7 +272,8 @@ Proof.
   assert (HNsq : Nx * Nx + Ny * Ny = W * (perpY * perpY)).
   { unfold Nx, Ny, alongSY, W.
     unfold perpY. rewrite (Hside Y). ring. }
-  assert (Hseg_eq : segment_point S E (alongSY / W) = mkPoint (px S + (alongSY/W) * wx) (py S + (alongSY/W) * wy)).
+  assert (Hseg_eq : segment_point S E (alongSY / W)
+                     = mkPoint (px S + (alongSY/W) * wx) (py S + (alongSY/W) * wy)).
   { unfold segment_point, wx, wy. f_equal; ring. }
   exists (alongSY / W).
   split.

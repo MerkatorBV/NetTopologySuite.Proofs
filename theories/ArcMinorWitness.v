@@ -37,6 +37,8 @@ From Stdlib Require Import Reals Lra.
 From NTS.Proofs Require Import Distance CurveGeometry ArcOrient ArcChordApprox HotPixel.
 Local Open Scope R_scope.
 
+(* Control points trace the arc the LONG way around the unit circle: start
+   (1,0) -> mid (-1,0) -> end (0,1) covers 270 degrees, not 90. *)
 Definition major_arc_witness : CircularArc :=
   mkCircularArc (mkPoint 1 0) (mkPoint (-1) 0) (mkPoint 0 1).
 
