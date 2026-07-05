@@ -116,9 +116,11 @@ Qed.
    here once the cofactor is shown nonzero by valid_arc non-collinearity). *)
 (* Converse direction (inCircle_R = 0 ⇒ equidistant) is already proved above
    as `inCircle_R_zero_implies_equidistant` (used by the discharged D-PT lemmas
-   `radial_lower` and `centre_is_r`). The algebraic work for the on-arc case
-   was completed prior to this session; only the endpoint-fallback monotonicity
-   (via arc_orient) remains pending for the last D-PT stub. *)
+   `radial_lower` and `centre_is_r`). STALE NOTE UPDATE: the endpoint-fallback
+   monotonicity this comment once flagged as pending was itself discharged
+   (`ArcPointDistance.point_to_arc_dist_fallback_ends_lower`, 2026-06-28, via
+   `ArcSinglePeak.arc_dot_max_at_endpoint`, discharged 2026-07-01) -- D-PT is
+   now fully closed with no live entry in docs/admitted-deferred-proofs.txt. *)
 
 (* ========================================================================== *)
 (* §1c  Converse: on the circumcircle ⇒ equidistant from the circumcenter    *)
