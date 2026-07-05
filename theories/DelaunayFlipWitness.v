@@ -111,3 +111,5 @@ Proof. intros. unfold inCircle_R. ring. Qed.
 Corollary inCircle_R_flip_witness_iff : forall A B C D,
   0 < inCircle_R A B C D <-> 0 < inCircle_R B A D C.
 Proof. intros. rewrite inCircle_R_double_swap. tauto. Qed.
+Print Assumptions inCircle_R_double_swap.
+Print Assumptions inCircle_R_flip_witness_iff.
