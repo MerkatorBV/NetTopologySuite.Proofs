@@ -82,3 +82,5 @@ Proof.
   - exact (cross_BAD_ccw_of_opposite_sides A B C D Hccw Hopp).
   - apply inCircle_R_flip_witness_iff. exact Hin.
 Qed.
+Print Assumptions cross_BAD_ccw_of_opposite_sides.
+Print Assumptions inCircle_R_flip_witness_ccw.
