@@ -2807,6 +2807,13 @@ theories-flocq/PassesThrough_b64_compute_unsound.v
 # hypothesis, not a free corollary of noding -- pins down the regime the C1
 # width extension (and extract_rings_valid_of_guards) actually needs.
 theories-flocq/SnapRoundingGuardAudit.v
+# Issue #66 round 2, item 2, rung (a): the exact integer-determinant
+# comparator (`rat_le`) for Liang-Barsky rational t-bounds, correct
+# unconditionally (any sign, any magnitude) by cross-multiplication -- no
+# forward-error bound, no width limit. Pure Z/R algebra; does not itself
+# close the width extension (the remaining gap is a rounding-tie-freeness
+# lemma for the achievable LB-quotient family, documented in the header).
+theories-flocq/PassesThrough_b64_exact_comparator.v
 # Compute-level refinement: the half-open compute filter is strictly tighter
 # than the closed one (the COMPUTE analog of the proven spec-level
 # b64_liang_barsky_touches_halfopen_implies_closed).  Pure boolean structure.
