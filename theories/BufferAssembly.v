@@ -40,6 +40,21 @@
    this file's `list (Point * Point)` straight-segment model without a
    chord approximation (still open, per docs/buffer-noder-pipeline.md §3).
 
+   §7 (further RGR pivot): the general OPEN-CHAIN two-sided buffer walk,
+   the multi-edge generalisation of `BufferEndcap.flat_cap_ring`'s
+   single-edge case, and the linear analogue of the curve-side
+   `CurveCapWalk` rung 14b.  `two_sided_walk` walks the +d wall forward
+   (bevel joins), caps flat at the far end, walks the -d wall BACKWARD
+   (bevel joins on the reversed chain via the new `rwall`/`orbevel`/
+   `assemble_open_rev`), and caps flat back at the start;
+   `two_sided_walk_closed` shows the result is a `closed_chain` for any
+   nonempty edge list.  Same structural argument as §3/§6, glued via
+   `chain_ok_app`/`chain_ok_cons_nonempty` plus a handful of small `hd`/
+   `last`/`rev` bricks.  Pure structural list assembly: no new geometric
+   content, no self-intersection claim.  The caps are plain structural
+   bridges, not re-derived from `BufferEndcap.cap_endpoint` -- that
+   cross-file equivalence is left for a follow-up.
+
    All pure-R, three-axiom (no atan / Flocq / classic).  No `Admitted` /
    `Axiom` / `Parameter`.
 
@@ -241,6 +256,23 @@ Lemma hd_app_l : forall (l1 l2 : list (Point * Point)) e0,
   l1 <> [] -> hd e0 (l1 ++ l2) = hd e0 l1.
 Proof. intros l1 l2 e0 Hne. destruct l1 as [| x l1']; [contradiction | reflexivity]. Qed.
 
+Lemma app_ne_r : forall (l1 l2 : list (Point * Point)), l2 <> [] -> l1 ++ l2 <> [].
+Proof.
+  intros l1 l2 Hne Heq. apply app_eq_nil in Heq. destruct Heq as [_ Heq2]. contradiction.
+Qed.
+
+(* `last` needs peeling through EACH level of a right-associated `++` chain
+   (unlike `hd`, which only needs the outermost level). *)
+Lemma last_app_r : forall (l1 l2 : list (Point * Point)) d0,
+  l2 <> [] -> last (l1 ++ l2) d0 = last l2 d0.
+Proof.
+  induction l1 as [| x l1' IH]; intros l2 d0 Hne.
+  - reflexivity.
+  - cbn [app].
+    rewrite (last_cons_ne x (l1' ++ l2) d0 (app_ne_r l1' l2 Hne)).
+    apply IH. exact Hne.
+Qed.
+
 Lemma chain_ok_cons_nonempty : forall (s1 : Point * Point) (L : list (Point * Point)) d0,
   L <> [] ->
   snd s1 = fst (hd d0 L) ->
@@ -353,3 +385,226 @@ Proof.
   intros es d. unfold assemble_closed_miter.
   apply close_chain_closed. apply assemble_open_miter_chain.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* §7  The general OPEN-CHAIN two-sided buffer walk (linear analogue of the   *)
+(*     curve-side `CurveCapWalk` rung 14b, and the multi-edge generalisation  *)
+(*     of `BufferEndcap.flat_cap_ring`'s single-edge case): walk the +d wall  *)
+(*     forward with bevel joins, cap flat at the far end, walk the -d wall   *)
+(*     BACKWARD with bevel joins on the reversed chain, cap flat back at the *)
+(*     start.  Pure structural list assembly, same "closed by construction"  *)
+(*     argument as §3/§6, glued with the existing `chain_ok_app` /           *)
+(*     `chain_ok_cons_nonempty` lemmas.                                      *)
+(* -------------------------------------------------------------------------- *)
+
+(* The reversed wall: walking edge e backward along its own (-d) offset --
+   the (-d) wall with its two endpoints swapped. *)
+Definition rwall (e : Point * Point) (d : R) : Point * Point :=
+  (snd (owall e (- d)), fst (owall e (- d))).
+
+(* The bevel join between consecutive edges on the BACKWARD walk: same shape
+   as `obevel`, over `rwall` instead of `owall`. *)
+Definition orbevel (e1 e2 : Point * Point) (d : R) : Point * Point :=
+  (snd (rwall e1 d), fst (rwall e2 d)).
+
+(* The backward assembly: walls interleaved with bevel joins, exactly like
+   `assemble_open`, over `rwall`/`orbevel`.  Applied to `rev es`, this is the
+   RETURN leg of the two-sided buffer walk. *)
+Fixpoint assemble_open_rev (es : list (Point * Point)) (d : R) : list (Point * Point) :=
+  match es with
+  | [] => []
+  | e :: rest =>
+      match rest with
+      | [] => rwall e d :: nil
+      | e2 :: _ => rwall e d :: orbevel e e2 d :: assemble_open_rev rest d
+      end
+  end.
+
+Lemma assemble_open_rev_head : forall e es d,
+  exists r, assemble_open_rev (e :: es) d = rwall e d :: r.
+Proof. intros e es d. destruct es as [|e2 es']; eexists; reflexivity. Qed.
+
+Lemma assemble_open_rev_ne : forall es d, es <> [] -> assemble_open_rev es d <> [].
+Proof.
+  intros es d Hne. destruct es as [| e rest]; [ contradiction | ].
+  destruct (assemble_open_rev_head e rest d) as [r Hr]. rewrite Hr. discriminate.
+Qed.
+
+(* `hd`-phrased head facts for both walks, over an arbitrary (possibly
+   non-literal-cons) nonempty list -- the shape `chain_ok_app`'s junction
+   obligations need. *)
+Lemma assemble_open_hd : forall es d e0,
+  es <> [] -> hd e0 (assemble_open es d) = owall (hd e0 es) d.
+Proof.
+  intros es d e0 Hne. destruct es as [| e rest]; [ contradiction | ].
+  destruct (assemble_open_head e rest d) as [r Hr]. rewrite Hr. reflexivity.
+Qed.
+
+Lemma assemble_open_rev_hd : forall es d e0,
+  es <> [] -> hd e0 (assemble_open_rev es d) = rwall (hd e0 es) d.
+Proof.
+  intros es d e0 Hne. destruct es as [| e rest]; [ contradiction | ].
+  destruct (assemble_open_rev_head e rest d) as [r Hr]. rewrite Hr. reflexivity.
+Qed.
+
+Theorem assemble_open_rev_chain : forall es d, chain_ok (assemble_open_rev es d).
+Proof.
+  intros es d. induction es as [| e es' IH].
+  - exact I.
+  - destruct es' as [| e2 es''].
+    + exact I.
+    + change (assemble_open_rev (e :: e2 :: es'') d)
+        with (rwall e d :: orbevel e e2 d :: assemble_open_rev (e2 :: es'') d).
+      destruct (assemble_open_rev_head e2 es'' d) as [r Hr].
+      rewrite Hr. rewrite Hr in IH.
+      cbn [chain_ok].
+      split; [ reflexivity | split; [ reflexivity | exact IH ] ].
+Qed.
+
+(* Last-element characterisation of each walk: needed to glue the forward
+   and backward walks to the caps.  The last emitted segment is always the
+   wall of the chain's own last edge -- bevel joins never come last. *)
+Lemma assemble_open_last : forall es d e0,
+  es <> [] -> last (assemble_open es d) e0 = owall (last es e0) d.
+Proof.
+  induction es as [| e es' IH]; intros d e0 Hne.
+  - contradiction.
+  - destruct es' as [| e2 es''].
+    + reflexivity.
+    + destruct (assemble_open_head e2 es'' d) as [r Hr].
+      change (assemble_open (e :: e2 :: es'') d)
+        with (owall e d :: obevel e e2 d :: assemble_open (e2 :: es'') d).
+      rewrite (last_cons_ne (owall e d) (obevel e e2 d :: assemble_open (e2 :: es'') d) e0
+                 ltac:(discriminate)).
+      rewrite (last_cons_ne (obevel e e2 d) (assemble_open (e2 :: es'') d) e0
+                 ltac:(rewrite Hr; discriminate)).
+      rewrite (IH d e0 ltac:(discriminate)).
+      rewrite (last_cons_ne e (e2 :: es'') e0 ltac:(discriminate)).
+      reflexivity.
+Qed.
+
+Lemma assemble_open_rev_last : forall es d e0,
+  es <> [] -> last (assemble_open_rev es d) e0 = rwall (last es e0) d.
+Proof.
+  induction es as [| e es' IH]; intros d e0 Hne.
+  - contradiction.
+  - destruct es' as [| e2 es''].
+    + reflexivity.
+    + destruct (assemble_open_rev_head e2 es'' d) as [r Hr].
+      change (assemble_open_rev (e :: e2 :: es'') d)
+        with (rwall e d :: orbevel e e2 d :: assemble_open_rev (e2 :: es'') d).
+      rewrite (last_cons_ne (rwall e d) (orbevel e e2 d :: assemble_open_rev (e2 :: es'') d) e0
+                 ltac:(discriminate)).
+      rewrite (last_cons_ne (orbevel e e2 d) (assemble_open_rev (e2 :: es'') d) e0
+                 ltac:(rewrite Hr; discriminate)).
+      rewrite (IH d e0 ltac:(discriminate)).
+      rewrite (last_cons_ne e (e2 :: es'') e0 ltac:(discriminate)).
+      reflexivity.
+Qed.
+
+(* `rev` interacts with `hd`/`last` the expected way -- small bricks needed
+   to connect the forward chain's last edge to the backward walk's first. *)
+Lemma rev_ne : forall (l : list (Point * Point)), l <> [] -> rev l <> [].
+Proof.
+  intros l Hne Heq. apply Hne.
+  rewrite <- (rev_involutive l), Heq. reflexivity.
+Qed.
+
+Lemma hd_rev : forall (l : list (Point * Point)) d0,
+  l <> [] -> hd d0 (rev l) = last l d0.
+Proof.
+  induction l as [| e rest IH]; intros d0 Hne.
+  - contradiction.
+  - destruct rest as [| e2 rest'].
+    + reflexivity.
+    + change (rev (e :: e2 :: rest')) with (rev (e2 :: rest') ++ [e]).
+      rewrite (hd_app_l (rev (e2 :: rest')) [e] d0 (rev_ne (e2 :: rest') ltac:(discriminate))).
+      rewrite (IH d0 ltac:(discriminate)).
+      rewrite (last_cons_ne e (e2 :: rest') d0 ltac:(discriminate)).
+      reflexivity.
+Qed.
+
+Lemma last_rev : forall (l : list (Point * Point)) d0,
+  l <> [] -> last (rev l) d0 = hd d0 l.
+Proof.
+  intros l d0 Hne.
+  rewrite <- (rev_involutive l) at 2.
+  rewrite (hd_rev (rev l) d0 (rev_ne l Hne)).
+  reflexivity.
+Qed.
+
+(* The two-sided open-chain buffer walk: forward +d wall, far flat cap,
+   backward -d wall, near flat cap closing the loop.  The two caps are
+   plain structural bridges (same shape as `obevel`), not re-derived from
+   `BufferEndcap.cap_endpoint` -- that cross-file equivalence is left for a
+   follow-up; this is the structural closure fact only. *)
+Definition two_sided_walk (es : list (Point * Point)) (d : R) : list (Point * Point) :=
+  match es with
+  | [] => []
+  | e0 :: _ =>
+      assemble_open es d
+      ++ [ (snd (owall (last es e0) d), fst (rwall (last es e0) d)) ]
+      ++ assemble_open_rev (rev es) d
+      ++ [ (snd (rwall e0 d), fst (owall e0 d)) ]
+  end.
+
+(* The headline: for any nonempty chain, the two-sided walk closes into a
+   valid `closed_chain` -- the multi-edge generalisation of
+   `BufferEndcap.flat_cap_ring_closed`. *)
+Theorem two_sided_walk_closed : forall es d,
+  es <> [] -> closed_chain (two_sided_walk es d).
+Proof.
+  intros es d Hne.
+  destruct es as [| e0 rest]; [ contradiction | ]. clear Hne.
+  assert (Hnees : e0 :: rest <> []) by discriminate.
+  assert (Hnerev : rev (e0 :: rest) <> []) by (apply rev_ne, Hnees).
+  assert (Hopne : assemble_open (e0 :: rest) d <> [])
+    by (destruct (assemble_open_head e0 rest d) as [r Hr]; rewrite Hr; discriminate).
+  assert (Hrevopne : assemble_open_rev (rev (e0 :: rest)) d <> [])
+    by (apply assemble_open_rev_ne, Hnerev).
+  unfold two_sided_walk.
+  (* Name the two caps so no `cbn`/`rewrite` below can accidentally reach
+     into their internals (both mention `last (e0 :: rest) e0`, which must
+     stay in lock-step with the SAME default throughout). *)
+  set (far := (snd (owall (last (e0 :: rest) e0) d), fst (rwall (last (e0 :: rest) e0) d))).
+  set (near := (snd (rwall e0 d), fst (owall e0 d))).
+  split.
+  - apply chain_ok_app.
+    + apply assemble_open_chain.
+    + apply chain_ok_app.
+      * cbn [chain_ok]. exact I.
+      * apply chain_ok_app.
+        -- apply assemble_open_rev_chain.
+        -- cbn [chain_ok]. exact I.
+        -- intros d0 e1 _ Hne2.
+           cbn [last hd].
+           rewrite (assemble_open_rev_last (rev (e0 :: rest)) d d0 Hnerev).
+           rewrite (last_rev (e0 :: rest) d0 Hnees).
+           unfold near. reflexivity.
+      * intros d0 e1 _ Hne2.
+        cbn [last].
+        rewrite (hd_app_l (assemble_open_rev (rev (e0 :: rest)) d) _ e1 Hrevopne).
+        rewrite (assemble_open_rev_hd (rev (e0 :: rest)) d e1 Hnerev).
+        rewrite (hd_rev (e0 :: rest) e1 Hnees).
+        rewrite (last_indep (e0 :: rest) e1 e0 Hnees).
+        unfold far. reflexivity.
+    + intros d0 e1 _ Hne2.
+      cbn [hd].
+      rewrite (assemble_open_last (e0 :: rest) d d0 Hnees).
+      rewrite (last_indep (e0 :: rest) d0 e0 Hnees).
+      unfold far. reflexivity.
+  - intros d0 _.
+    rewrite (last_app_r (assemble_open (e0 :: rest) d)
+               ([far] ++ (assemble_open_rev (rev (e0 :: rest)) d ++ [near]))
+               d0 ltac:(discriminate)).
+    rewrite (last_app_r [far] _ d0
+               (app_ne_r (assemble_open_rev (rev (e0 :: rest)) d) [near]
+                  ltac:(discriminate))).
+    rewrite last_snoc.
+    cbn [fst snd].
+    unfold near; cbn [fst snd].
+    rewrite (hd_app_l (assemble_open (e0 :: rest) d) _ d0 Hopne).
+    rewrite (assemble_open_hd (e0 :: rest) d d0 Hnees).
+    reflexivity.
+Qed.
+Print Assumptions two_sided_walk_closed.
