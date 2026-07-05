@@ -18,6 +18,12 @@
    a SINGLE algebraic fact, regardless of which triangle you nominally test
    from.
 
+   RGR round 2: composing the test-point swap with the A/B swap cancels the
+   double negation, sharpening "related by a sign flip" into flatly EQUAL --
+   `inCircle_R A B C D = inCircle_R B A D C` unconditionally, no orientation
+   hypothesis needed.  This is the algebraic core of "the flip test doesn't
+   care which of the two candidate triangles you evaluate it from".
+
    Scope note (mirrors `DelaunayEmptyCircle.v`'s own deferral): this file is
    pure sign algebra, `ring`-closed, with no orientation (`triangle_ccw`)
    hypotheses anywhere.  Turning the swap identity into a genuine geometric
@@ -87,3 +93,23 @@ Proof.
   rewrite inCircle_R_swap_CP in H.
   lra.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* RGR pivot (round 2): composing `inCircle_R_swap_CP` with `inCircle_R_swap_AB`  *)
+(* cancels the double negation, for a SHARPER, unconditional fact -- not just  *)
+(* related-by-sign-flip but flatly EQUAL: testing D against circle(A,B,C) is  *)
+(* the exact same value as testing C against circle(B,A,D).  Read as: the     *)
+(* flip test is well-defined regardless of which of the two candidate         *)
+(* triangles, in its own CCW listing, you evaluate it from.  Still zero       *)
+(* orientation hypotheses, still `ring`-closed.                              *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma inCircle_R_double_swap : forall A B C D,
+  inCircle_R A B C D = inCircle_R B A D C.
+Proof. intros. unfold inCircle_R. ring. Qed.
+
+Corollary inCircle_R_flip_witness_iff : forall A B C D,
+  0 < inCircle_R A B C D <-> 0 < inCircle_R B A D C.
+Proof. intros. rewrite inCircle_R_double_swap. tauto. Qed.
+Print Assumptions inCircle_R_double_swap.
+Print Assumptions inCircle_R_flip_witness_iff.
