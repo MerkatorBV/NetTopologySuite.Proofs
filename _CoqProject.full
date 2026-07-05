@@ -1944,6 +1944,12 @@ theories/ArcOrient.v
 # sign-algebra layer under the witness-sound flip criterion.
 theories/DelaunayFlipWitness.v
 
+# Issue #68 ask #2, geometric layer: CCW-transport across the shared edge
+# (reusing #67's RelateMatrixTriangle.opposite_sides) plus the already-Qed'd
+# flip-witness algebra -- both candidate triangles of the shared-edge quad
+# fail their local empty-circle test simultaneously.
+theories/DelaunayFlipGeometric.v
+
 # Phase 4 Session 4: arc-chord and arc-arc intersection predicates
 # (R-side, Prop-valued).  Defines arc_span_contains (Option S: chord
 # cross-product sign for arcs < pi), arc_chord_intersects (existence
