@@ -401,6 +401,14 @@ theories/ArcChordLength.v
 # No Admitteds; all headlines Qed-closed.  Removal tracks AngleBetween's cleanup.
 theories/ArcSpanAtan2.v
 
+# #64 N-AA quartic certificate + atan2 discharge.  `arc_arc_intersects_of_atan2_radical_span`
+# imports `ArcSpanAtan2` (which carries `arc_span_contains_atan2` and the iff bridge), so the
+# entire file inherits `Classical_Prop.classic` via the same atan2/AngleBetween lineage.  The
+# Vieta sum/product lemmas and the `inCircle_R = 0` helpers are pure algebra and stay on the
+# 3-axiom allowlist, but the file as a whole is exempted.  No Admitteds; all headlines Qed-closed.
+# Removal tracks ArcSpanAtan2.v's cleanup (same upstream dependency).
+theories/ArcArcQuartic.v
+
 # Category C: one explicitly-documented theorem whose statement cannot be
 # parametrised without losing content.  See the `(* CATEGORY C *)` block
 # in the file itself; resolution pending policy decision.
