@@ -248,6 +248,14 @@ theories-flocq/PassesThroughHalfopen_b64.v
 # Admitteds; the counterexample theorem is Qed-closed.
 theories-flocq/PassesThrough_b64_compute_unsound.v
 
+# Category C: guard-discharge audit witness (issue #66 round 2, item 1).
+# References `b64_snap_coord` / `B2R` / `py` (BPoint-to-Point bridge, defined
+# in HotPixel_b64.v / Distance.v), pulling `Classical_Prop.classic` through
+# the same Flocq `B2R` lineage that exempts HotPixel_b64.v.  Not removable
+# without a parametric refactor of the spec layer.  No Admitteds; both
+# theorems are Qed-closed.
+theories-flocq/SnapRoundingGuardAudit.v
+
 # Category C: compute-level half-open => closed refinement.  Pure boolean
 # structural lemmas, but their statements reference the compute predicates
 # (`b64_liang_barsky_touches_compute` etc.), whose definition closure threads
