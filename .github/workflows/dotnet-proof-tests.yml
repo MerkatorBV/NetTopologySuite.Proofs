@@ -1,0 +1,37 @@
+name: dotnet proof tests
+
+# Validates the real NetTopologySuite (NuGet) against the proof-derived
+# oracle vectors via tests/NetTopologySuite.Tests.Proofs.XUnit (xUnit v3).
+
+on:
+  push:
+    paths:
+      - 'tests/**'
+      - 'oracle/*.txt'
+      - 'NuGet.config'
+      - 'global.json'
+      - '.github/workflows/dotnet-proof-tests.yml'
+  pull_request:
+    paths:
+      - 'tests/**'
+      - 'oracle/*.txt'
+      - 'NuGet.config'
+      - 'global.json'
+      - '.github/workflows/dotnet-proof-tests.yml'
+
+jobs:
+  test:
+    name: dotnet test (proof vectors)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Test
+        run: dotnet test tests/NetTopologySuite.Tests.Proofs.XUnit

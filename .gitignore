@@ -33,3 +33,7 @@ __pycache__/
 # Prebuilt oracle binary (from CI artifacts for local harden/vector gen; reproducible via Dockerfile+make)
 oracle/oracle_bin
 oracle/extracted.ml
+
+# .NET build output (tests/NetTopologySuite.Tests.Proofs.XUnit)
+[Bb]in/
+[Oo]bj/
