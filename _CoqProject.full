@@ -9,6 +9,12 @@ theories/Orientation.v
 # coordinate regime fits a 64-bit determinant on the nose, and pins down the
 # paper's tight cmax = floor(sqrt(2^63-1)) with range witnesses.
 theories/RelateIntDetBound.v
+# Exact total ordering of edge positions (num/den ratios of orientation
+# determinants) by one int128 cross-multiply: pos_compare + correctness vs the
+# real ratio order (pos_lt_iff_cross / _eq_ / _compare_spec) + int128 fit
+# (cmax^4 <= 2^127-1, difference too).  The exact-noding arithmetic brick.
+# No Admitted.
+theories/RelateEdgePosOrder.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
