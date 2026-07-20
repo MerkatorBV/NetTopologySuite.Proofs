@@ -12,6 +12,7 @@
   - `touch_triangle_pair_bb_cell` (Some 1 for SBnd/SBnd via shared bnd point)
   - `touch_triangle_pair_ee_cell` (Some 2 for SExt/SExt via two_geometries_exterior_meet)
 - Capstone: `touch_triangles_satisfy_pointset` (and `_and_general`) assembling the provable cells.
+- Regime→cell_ok TRIPLE: `touch_triangles_regime_cells_ii_bb_ee` (2026-07-20, Qed) — upgrades the capstone's *algebraic* II conjunct (`0<gtri` separation) to the actual DE-9IM II cell `cell_ok None SInt SInt` over the parity `point_set`, delivered alongside the BB and EE `cell_ok` facts under one regime guard `r = TPR_TouchEdge`. Composes `touch_triangle_pair_ii_cell_via_seam` (II, guarded) + `_bb_cell` + `_ee_cell`. The II cell carries the **irreducible** ray-genericity residual (not a deferral): a guard-free II `cell_ok None SInt SInt` is a *false* theorem, refuted by the Qed'd counterexample `touch_triangle_ii_separation_not_unconditional` (the `(-1,1)` vertex-graze). BB/EE unconditional; 3-axiom.
 - Honest notes everywhere on:
   - Strict interior for II (boundary points assigned to BB cell — half-open philosophy mirroring rect).
   - Trimmed F cells and full 9-cell geom_de9im_pointset DEFERRED (bnd inclusion in point_set).

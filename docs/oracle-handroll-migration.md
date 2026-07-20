@@ -156,7 +156,11 @@ half-open endpoint memberships); extracted and called by the driver, with the
 native `in_hot_pixel_halfopen` and the `crosses`/disjunction glue deleted.
 Bit-exact over 2,000,000 cases (`oracle/test_pixel.ml`); full corpus green;
 allowlist now empty. **Remaining (deferred):** sufficient-filter soundness
-rides on items 2/3 plus the S4 IVT bridge `arc_chord_intersect_sound`.
+rides on items 2/3 plus the S4 span bridge `arc_chord_intersect_sound`. That
+bridge is no longer "IVT-blocked": the raw IVT step is Qed'd
+(`ArcIntersectIVT`) and the arc-span promotion is Qed'd conditionally in
+`theories/ArcChordSound.v` (minor-side + control-point-anchored variants); the
+residual is generalising it to chords with neither endpoint a control point.
 
 Original analysis follows.
 

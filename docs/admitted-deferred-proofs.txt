@@ -162,6 +162,17 @@
 #   Qed: real conclusion (not True) assembled from strict_ii_no_common + bb_cell + ee_cell.
 # DISCHARGED 2026-06-21: theories/RelateNG.v:touch_triangles_satisfy_pointset_and_general
 #   Qed: regime guard (r = TPR_TouchEdge) + touch_triangles_satisfy_pointset.
+# DISCHARGED 2026-07-20: theories/RelateNG.v:touch_triangles_regime_cells_ii_bb_ee
+#   Qed: the regime->cell_ok TRIPLE. Upgrades touch_triangles_satisfy_pointset's
+#   algebraic II conjunct (0<gtri separation) to the actual DE-9IM II cell
+#   `cell_ok None SInt SInt` over the parity point_set, delivered together with
+#   the BB and EE cell_ok facts under one regime guard r = TPR_TouchEdge.
+#   Composes touch_triangle_pair_ii_cell_via_seam (II, guarded) + _bb_cell + _ee_cell.
+#   The II cell carries the IRREDUCIBLE ray-genericity residual Hgen (every common
+#   point_set witness off both ring images + ray-generic for both) -- NOT a deferral:
+#   a guard-free II cell_ok None SInt SInt is a FALSE theorem, refuted (Qed) by
+#   touch_triangle_ii_separation_not_unconditional (the (-1,1) vertex-graze). BB/EE
+#   unconditional. 3-axiom (classical-reals trio; Print Assumptions confirmed).
 
 # DISCHARGED 2026-06-21 (conditional Qed): theories/RelateNG.v:touch_triangle_pair_ii_cell
 #   Qed under named H_ii_disjoint : ~exists p, point_set A p /\ point_set B p (H_bridge pattern).

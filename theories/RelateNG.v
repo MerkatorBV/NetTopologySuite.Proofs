@@ -1300,6 +1300,56 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* Regime -> cell_ok TRIPLE (II / BB / EE) for the shared-edge touch regime.  *)
+(*                                                                            *)
+(* `touch_triangles_satisfy_pointset` bundles the *algebraic* interior        *)
+(* separation (0 < gtri) with the BB and EE cells, but never delivers the     *)
+(* interior conjunct as an actual DE-9IM II cell.  This capstone upgrades it: *)
+(* it produces `cell_ok None SInt SInt` over the parity `point_set` alongside *)
+(* the BB and EE `cell_ok`s, so all three provable strata cells are delivered *)
+(* as `cell_ok` facts under one regime guard `r = TPR_TouchEdge`.             *)
+(*                                                                            *)
+(* The II cell carries the ray-genericity residual `Hgen` (every common       *)
+(* point_set witness is off both ring images and ray-generic for both).  That *)
+(* residual is IRREDUCIBLE, not a deferral: `touch_triangle_ii_separation_-   *)
+(* not_unconditional` (Qed, above) exhibits two CCW shared-edge triangles     *)
+(* whose parity SInt point-sets genuinely overlap at a vertex-grazing witness,*)
+(* so a guard-free II `cell_ok None SInt SInt` would be a FALSE theorem.  BB   *)
+(* and EE stay unconditional.  Composes touch_triangle_pair_ii_cell_via_seam  *)
+(* + _bb_cell + _ee_cell.  3-axiom (classical-reals trio only). *)
+Lemma touch_triangles_regime_cells_ii_bb_ee :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy (r : TrianglePairRegime),
+    triangles_touch_on_shared_edge (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+                                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy) ->
+    r = TPR_TouchEdge ->
+    0 < gdbl ax ay bx by_ cx cy ->
+    0 < gdbl dx dy ex ey fx fy ->
+    (forall p,
+        point_set (triangle_geometry ax ay bx by_ cx cy) p ->
+        point_set (triangle_geometry dx dy ex ey fx fy) p ->
+        (ring_complement (gtri_ring ax ay bx by_ cx cy) p /\
+         ray_avoids_vertices p (gtri_ring ax ay bx by_ cx cy)) /\
+        (ring_complement (gtri_ring dx dy ex ey fx fy) p /\
+         ray_avoids_vertices p (gtri_ring dx dy ex ey fx fy))) ->
+    RelateCurveMatrix.cell_ok None RelateCurveMatrix.SInt RelateCurveMatrix.SInt
+      (triangle_geometry ax ay bx by_ cx cy) (triangle_geometry dx dy ex ey fx fy) /\
+    RelateCurveMatrix.cell_ok (Some 1%nat) RelateCurveMatrix.SBnd RelateCurveMatrix.SBnd
+      (triangle_geometry ax ay bx by_ cx cy) (triangle_geometry dx dy ex ey fx fy) /\
+    RelateCurveMatrix.cell_ok (Some 2%nat) RelateCurveMatrix.SExt RelateCurveMatrix.SExt
+      (triangle_geometry ax ay bx by_ cx cy) (triangle_geometry dx dy ex ey fx fy).
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy r Htouch Hr HccwA HccwB Hgen.
+  subst r.
+  split; [| split].
+  - apply (touch_triangle_pair_ii_cell_via_seam
+             ax ay bx by_ cx cy dx dy ex ey fx fy Htouch HccwA HccwB Hgen).
+  - apply touch_triangle_pair_bb_cell; assumption.
+  - apply touch_triangle_pair_ee_cell; assumption.
+Qed.
+
+Print Assumptions touch_triangles_regime_cells_ii_bb_ee.
+
+(* -------------------------------------------------------------------------- *)
 (* Triangle touch example + dispatch fidelity (mirrors rect).                 *)
 (* -------------------------------------------------------------------------- *)
 
