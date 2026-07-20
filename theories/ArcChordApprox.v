@@ -11,9 +11,14 @@
    The headline `chord_approx_error_bound` connecting chord-approximated
    `arc_passes_through_hot_pixel` to the original arc is deferred to a
    follow-up: it requires both `arc_mid_within_sagitta` (a perpendicular-
-   distance geometric proof) and S4's `arc_chord_intersect_sound` (IVT-
-   blocked).  This session lands the foundations on which that headline
-   composes.
+   distance geometric proof) and S4's `arc_chord_intersect_sound`.  The
+   latter is no longer "IVT-blocked": the raw IVT step
+   (`ArcIntersectIVT.chord_crosses_arc_circle_implies_circle_intersection`)
+   is Qed'd, and the arc-span promotion is Qed'd conditionally in
+   `ArcChordSound.v` (minor-side + control-point-anchored variants).  The
+   residual gap is the perpendicular-bisector geometry plus generalising
+   that span pattern to chords with neither endpoint a control point.  This
+   session lands the foundations on which that headline composes.
 
    See `docs/audit-phase4-chord-overfitting.md` §5 (Session 6 in the
    7-session plan).
@@ -429,10 +434,12 @@ Qed.
 (*       arc_mid -- chord_midpoint distance by the radius minus the          *)
 (*       center-to-chord distance.                                            *)
 (*                                                                            *)
-(* Both (a) and (b) compose with S4's `arc_chord_intersect_sound` (IVT-      *)
-(* blocked) to give the headline.  Deferred to a follow-up session that      *)
-(* handles the perpendicular-bisector geometry (independent of the IVT       *)
-(* gap; can land any time).                                                   *)
+(* Both (a) and (b) compose with S4's `arc_chord_intersect_sound` to give     *)
+(* the headline.  That soundness is no longer "IVT-blocked": the raw IVT      *)
+(* step is Qed'd (ArcIntersectIVT) and the arc-span promotion is Qed'd        *)
+(* conditionally in ArcChordSound.v.  What remains is the perpendicular-      *)
+(* bisector geometry (a) + generalising the anchored span pattern to non-     *)
+(* control-point chords; can land any time.                                   *)
 (*                                                                            *)
 (* This session lands the SAGITTA DEFINITION cleanly + the load-bearing      *)
 (* equidistance lemma (`arc_center_equidistant`) that everything downstream   *)
