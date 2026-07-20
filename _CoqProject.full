@@ -2758,6 +2758,16 @@ theories-flocq/Orient_b64_underflow_recovery.v
 # Stage D's expansion-safety hypothesis), (c) total (never Nan/Uncertain),
 # (d) OrientRPos on the underflow witness where the shipped Stage D fails.
 theories-flocq/Orient_b64_stage_d_safe.v
+# Stratified Adaptive Precision Filter (APF): witness-carrying refinement of
+# the filter+expansion Stage D decoder.  (a) Re-derives soundness of the
+# composed decoder in the integer regime WITHOUT the false-as-stated
+# fast_expansion_sum_strong_nonoverlap_headline hypothesis carried by
+# Orient_b64_stage_d's b64_orient_sign_stage_d_sound; (b) unconditional
+# decisiveness (never Nan/Uncertain) + the sharp "decides orientation"
+# bi-implication; (c) a provenance witness algebra (decode/run coherence,
+# decidable stratum, sign-negation homomorphism) tied to cross_R_BP
+# antisymmetry for argument-swap antisymmetry of the whole decoder.
+theories-flocq/OrientStratifiedAPF.v
 # Phase 2 foundations: binary64 mirror of theories/HotPixel.v.  Provides
 # the boolean decision `b64_in_hot_pixel` + a safety predicate + forward
 # soundness against a rounded-pixel R-side semantics.  Integer-regime
