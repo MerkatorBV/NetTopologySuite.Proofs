@@ -52,6 +52,9 @@ theories/RelateEdgeNoding.v
 # Proper-cross → interior EPos node (epos_of_proper_cross) feeding the
 # pipeline (edge_noding_sound_of_proper_cross).  No Admitted.
 theories/RelateEdgeNode.v
+# Multi-cut collection + eple insertion sort → noding pipeline
+# (sort_eple, collect_nodes, edge_noding_of_cuts).  No Admitted.
+theories/RelateEdgeMultiNode.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
