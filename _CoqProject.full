@@ -46,6 +46,9 @@ theories/RelateEdgeSplit.v
 # real split (edge_split_adj_meet, edge_params_adj_meet, cover_of_epos).
 # No Admitted.
 theories/RelateEdgeSplitAdj.v
+# Exact edge-noding pipeline: epdedup → epval → cover + exclusive meet
+# (edge_noding_cover, edge_noding_adj_meet, edge_noding_sound).  No Admitted.
+theories/RelateEdgeNoding.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
