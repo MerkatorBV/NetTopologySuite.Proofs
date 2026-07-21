@@ -15,6 +15,20 @@ theories/RelateIntDetBound.v
 # (cmax^4 <= 2^127-1, difference too).  The exact-noding arithmetic brick.
 # No Admitted.
 theories/RelateEdgePosOrder.v
+# Wires the exact edge-position comparator to real segment geometry: an
+# intersection point's along-edge parameter is the det/det ratio
+# cross(C,D,A)/(cross(C,D,A)-cross(C,D,B)) (inter_param_lands: lands on both
+# lines); over integer coords num/den are IZR of idet's (cross_ptZ_is_idet);
+# so along-edge order = one integer cross-multiply (inter_order_by_cross, via
+# RelateEdgePosOrder.pos_lt_iff_cross).  No Admitted.
+theories/RelateEdgeInterParam.v
+# Lifts the pairwise comparator to a strict TOTAL ORDER (eplt_trans is the
+# nonlinear crux; StrictOrder instance + trichotomy), gives a decidable
+# comparator (epcompare = pos_compare), and proves a comparator-sorted edge is
+# monotone in real position (sorted_eplt_monotone) — the rounding-free noding
+# sequence.  Order theory is pure Z; only the R-agreement + sort corollary
+# touch reals.  No Admitted.
+theories/RelateEdgePosSort.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
