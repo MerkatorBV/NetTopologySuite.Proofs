@@ -29,6 +29,15 @@ theories/RelateEdgeInterParam.v
 # sequence.  Order theory is pure Z; only the R-agreement + sort corollary
 # touch reals.  No Admitted.
 theories/RelateEdgePosSort.v
+# Proper-cross clip: det/det inter_param lands in (0,1) and is the unique
+# interior node of both closed segments (inter_param_is_proper_node /
+# inter_param_unique_node); integer regime is one idet-product sign
+# (inter_param_open_of_idet_product).  No Admitted.
+theories/RelateEdgeInterClip.v
+# Non-strict order + equal-ratio merge: epeq Equivalence, eple PreOrder,
+# sorted_eple_monotone, computational epdedup; payoff epdedup_sorted_eplt
+# (Sorted eple → Sorted eplt after collapsing Eq runs).  No Admitted.
+theories/RelateEdgePosMerge.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
