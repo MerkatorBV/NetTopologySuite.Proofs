@@ -689,6 +689,81 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* Universal range bound: Equation (4) off the non-negative box.               *)
+(*                                                                            *)
+(* `idet_abs_le_sq` bounds |det| by c^2 on the box [0,c] -- but real geometry  *)
+(* coordinates straddle the origin.  `idet` depends only on coordinate         *)
+(* DIFFERENCES, hence is invariant under a common translation of all three     *)
+(* points; translating an arbitrary common interval [lo,hi] by -lo into        *)
+(* [0, hi-lo] reuses the box result verbatim.  The governing quantity is the   *)
+(* coordinate SPREAD hi-lo (the bounding-box side), NOT the coordinate         *)
+(* magnitude: on the centred box [-c,c] the spread is 2c and the tight bound   *)
+(* is (2c)^2 = 4c^2 (witnessed below), so a bare `|det| <= c^2` on |coord|<=c  *)
+(* would be FALSE.  This is the brick Track 1's integer lane is gated on: it   *)
+(* removes the "non-negative, origin-anchored" restriction from the int64      *)
+(* window, keying the fit to the spread instead.                              *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma idet_translation_invariant :
+  forall t s ax ay bx by_ cx cy,
+    idet (ax + t) (ay + s) (bx + t) (by_ + s) (cx + t) (cy + s)
+    = idet ax ay bx by_ cx cy.
+Proof. intros. unfold idet. ring. Qed.
+
+Lemma idet_abs_le_sq_box :
+  forall lo hi ax ay bx by_ cx cy,
+    lo <= hi ->
+    lo <= ax <= hi -> lo <= ay <= hi -> lo <= bx <= hi ->
+    lo <= by_ <= hi -> lo <= cx <= hi -> lo <= cy <= hi ->
+    Z.abs (idet ax ay bx by_ cx cy) <= (hi - lo) * (hi - lo).
+Proof.
+  intros lo hi ax ay bx by_ cx cy Hlohi Hax Hay Hbx Hby Hcx Hcy.
+  (* Translate by -lo: every coordinate lands in [0, hi-lo]. *)
+  rewrite <- (idet_translation_invariant (- lo) (- lo) ax ay bx by_ cx cy).
+  apply idet_abs_le_sq; lia.
+Qed.
+
+(* Centred box [-c,c]: spread 2c, so the tight bound is 4c^2. *)
+Corollary idet_abs_le_4sq_centered :
+  forall c ax ay bx by_ cx cy,
+    0 <= c ->
+    - c <= ax <= c -> - c <= ay <= c -> - c <= bx <= c ->
+    - c <= by_ <= c -> - c <= cx <= c -> - c <= cy <= c ->
+    Z.abs (idet ax ay bx by_ cx cy) <= 4 * (c * c).
+Proof.
+  intros c ax ay bx by_ cx cy Hc0 Hax Hay Hbx Hby Hcx Hcy.
+  assert (H : Z.abs (idet ax ay bx by_ cx cy) <= (c - - c) * (c - - c)).
+  { apply idet_abs_le_sq_box; lia. }
+  replace ((c - - c) * (c - - c)) with (4 * (c * c)) in H by ring.
+  exact H.
+Qed.
+
+(* Tightness witness for the centred box: 4c^2 is attained, so the c^2 form   *)
+(* cannot hold on |coord| <= c.                                                *)
+Theorem idet_centered_witness :
+  forall c, idet (- c) (- c) c (- c) (- c) c = 4 * (c * c).
+Proof. intros. unfold idet. ring. Qed.
+
+(* Universal int64 fit: any triple whose coordinate SPREAD is within cmax has *)
+(* its determinant inside int64 -- no non-negativity, no origin anchoring.     *)
+Theorem idet_fits_int64_for_coords_in_box :
+  forall lo hi ax ay bx by_ cx cy,
+    hi - lo <= cmax ->
+    lo <= ax <= hi -> lo <= ay <= hi -> lo <= bx <= hi ->
+    lo <= by_ <= hi -> lo <= cx <= hi -> lo <= cy <= hi ->
+    - (2 ^ 63 - 1) <= idet ax ay bx by_ cx cy <= 2 ^ 63 - 1.
+Proof.
+  intros lo hi ax ay bx by_ cx cy Hspread Hax Hay Hbx Hby Hcx Hcy.
+  assert (Hlohi : lo <= hi) by lia.
+  assert (H := idet_abs_le_sq_box lo hi ax ay bx by_ cx cy Hlohi
+                 Hax Hay Hbx Hby Hcx Hcy).
+  apply Z.abs_le in H.
+  assert (Hsq : (hi - lo) * (hi - lo) <= cmax * cmax) by nia.
+  pose proof cmax_sq_le_int64 as Hcm.
+  lia.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Axiom audit.                                                               *)
 (* -------------------------------------------------------------------------- *)
 
@@ -698,3 +773,8 @@ Print Assumptions idet_fits_int64_for_cmax_coords.
 Print Assumptions cmax_sq_le_int64.
 Print Assumptions cmax_succ_sq_gt_int64.
 Print Assumptions idet_range_tight_at_int64_edge.
+Print Assumptions idet_translation_invariant.
+Print Assumptions idet_abs_le_sq_box.
+Print Assumptions idet_abs_le_4sq_centered.
+Print Assumptions idet_centered_witness.
+Print Assumptions idet_fits_int64_for_coords_in_box.
