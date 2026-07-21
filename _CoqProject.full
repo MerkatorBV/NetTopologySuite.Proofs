@@ -22,6 +22,13 @@ theories/RelateEdgePosOrder.v
 # so along-edge order = one integer cross-multiply (inter_order_by_cross, via
 # RelateEdgePosOrder.pos_lt_iff_cross).  No Admitted.
 theories/RelateEdgeInterParam.v
+# Lifts the pairwise comparator to a strict TOTAL ORDER (eplt_trans is the
+# nonlinear crux; StrictOrder instance + trichotomy), gives a decidable
+# comparator (epcompare = pos_compare), and proves a comparator-sorted edge is
+# monotone in real position (sorted_eplt_monotone) — the rounding-free noding
+# sequence.  Order theory is pure Z; only the R-agreement + sort corollary
+# touch reals.  No Admitted.
+theories/RelateEdgePosSort.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
