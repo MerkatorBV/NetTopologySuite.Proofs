@@ -55,6 +55,9 @@ theories/RelateEdgeNode.v
 # Multi-cut collection + eple insertion sort → noding pipeline
 # (sort_eple, collect_nodes, edge_noding_of_cuts).  No Admitted.
 theories/RelateEdgeMultiNode.v
+# Dual proper-cross filter: node on both closed segments; dual-cut noding
+# (dual_proper_cut, collect_dual_nodes, edge_noding_of_dual_cuts).  No Admitted.
+theories/RelateEdgeDualCross.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
