@@ -42,6 +42,10 @@ theories/RelateEdgePosMerge.v
 # multi-node covering pieces (edge_split_cover / edge_split_cover_pieces).
 # No Admitted.
 theories/RelateEdgeSplit.v
+# Adjacent pieces meet only at the shared node; EPos/epval bridge into the
+# real split (edge_split_adj_meet, edge_params_adj_meet, cover_of_epos).
+# No Admitted.
+theories/RelateEdgeSplitAdj.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
