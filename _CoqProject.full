@@ -38,6 +38,10 @@ theories/RelateEdgeInterClip.v
 # sorted_eple_monotone, computational epdedup; payoff epdedup_sorted_eplt
 # (Sorted eple → Sorted eplt after collapsing Eq runs).  No Admitted.
 theories/RelateEdgePosMerge.v
+# Edge split at sorted interior nodes: lerp reparam, one-node cover/meet,
+# multi-node covering pieces (edge_split_cover / edge_split_cover_pieces).
+# No Admitted.
+theories/RelateEdgeSplit.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
