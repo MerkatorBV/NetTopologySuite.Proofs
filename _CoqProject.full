@@ -58,6 +58,11 @@ theories/RelateEdgeMultiNode.v
 # Dual proper-cross filter: node on both closed segments; dual-cut noding
 # (dual_proper_cut, collect_dual_nodes, edge_noding_of_dual_cuts).  No Admitted.
 theories/RelateEdgeDualCross.v
+# Mutual pair noding: dual-proper is host/cut-symmetric; shared geometric
+# node from either EPos; one-node noder contract on both edges
+# (dual_proper_cut_sym, dual_proper_shared_point, edge_pair_noding_of_dual).
+# No Admitted.
+theories/RelateEdgePairNoding.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
