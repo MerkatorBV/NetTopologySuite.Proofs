@@ -49,6 +49,9 @@ theories/RelateEdgeSplitAdj.v
 # Exact edge-noding pipeline: epdedup → epval → cover + exclusive meet
 # (edge_noding_cover, edge_noding_adj_meet, edge_noding_sound).  No Admitted.
 theories/RelateEdgeNoding.v
+# Proper-cross → interior EPos node (epos_of_proper_cross) feeding the
+# pipeline (edge_noding_sound_of_proper_cross).  No Admitted.
+theories/RelateEdgeNode.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
