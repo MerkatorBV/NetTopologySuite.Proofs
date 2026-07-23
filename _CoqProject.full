@@ -63,6 +63,11 @@ theories/RelateEdgeDualCross.v
 # (dual_proper_cut_sym, dual_proper_shared_point, edge_pair_noding_of_dual).
 # No Admitted.
 theories/RelateEdgePairNoding.v
+# Segment-set dual noding: every host vs the full edge list; dual-proper
+# pairs inside the set contribute nodes on both hosts at one shared point
+# (host_noding_sound, set_noding_sound, dual_pair_in_set_shared_nodes).
+# No Admitted.
+theories/RelateEdgeSetNoding.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
