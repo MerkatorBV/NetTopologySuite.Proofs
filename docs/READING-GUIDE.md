@@ -353,6 +353,17 @@ bits exactly. Persistent-mode dispatch is the design (every mode
 except SIMPLIFY loops back). See Phase 0 `.Curve` C# port for the
 reference implementation.
 
+**In-process alternative (Phase 5).** For call sites where a
+subprocess per predicate is not viable — a noding loop, not a test
+corpus — the same extracted kernel is also a C ABI: `libntsrocq`
+([`oracle/nts_ffi.h`](../oracle/nts_ffi.h)), bound from .NET by
+[`oracle/csharp/RocqNative.cs`](../oracle/csharp/RocqNative.cs) and
+held bit-identical to the `oracle_bin` protocol by
+[`oracle/gen_ffi_parity_tests.py`](../oracle/gen_ffi_parity_tests.py).
+Read [`phase5-ffi-abi.md`](phase5-ffi-abi.md) first — §4 is the
+per-entry-point soundness ledger, including which predicates are
+sufficient-only and where the exact fallback is still missing.
+
 ---
 
 ## 🧭 NTS-Upstream Norm
