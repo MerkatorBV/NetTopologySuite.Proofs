@@ -191,6 +191,9 @@ jobs:
               test -f oracle/extracted.mli
               make -C oracle/
               test -x oracle/oracle_bin
+              make -C oracle/ ffi
+              test -f oracle/libntsrocq.so
+              test -x oracle/ffi_probe
             '
           sudo chown -R "$(id -u):$(id -g)" .
 
@@ -199,6 +202,22 @@ jobs:
           test -x oracle/oracle_bin
           file oracle/oracle_bin
           ls -la oracle/oracle_bin
+          test -f oracle/libntsrocq.so
+          file oracle/libntsrocq.so
+          ls -la oracle/libntsrocq.so
+
+      - name: FFI parity gate (libntsrocq == oracle_bin, bit for bit)
+        # Phase 5: the in-process C ABI and the stdin/stdout oracle protocol
+        # call the SAME extracted code, so any divergence is a marshalling bug
+        # (argument order, enum encoding, truncated result list).  Doubles are
+        # compared as raw IEEE 754 bit patterns.  Nonzero exit on any '!!'.
+        run: |
+          docker run --rm -v "$PWD:/workspace" -w /workspace \
+            nts-proofs-oracle:ci \
+            bash -lc '
+              set -euxo pipefail
+              python3 oracle/gen_ffi_parity_tests.py
+            '
 
       - name: Run oracle gated-invariant tests
         # Runs each oracle test generator that gates proven invariants.
@@ -215,8 +234,23 @@ jobs:
           path: oracle/oracle_bin
           retention-days: 90
 
+      - name: Upload libntsrocq artifact (90-day retention)
+        # Phase 5: the in-process native library + its ABI header, so the
+        # NetTopologySuite.Curve consumer can bind it without rebuilding the
+        # corpus.  Linux x64 only for now (the runner's architecture).
+        uses: actions/upload-artifact@v4
+        with:
+          name: libntsrocq-linux-x64
+          path: |
+            oracle/libntsrocq.so
+            oracle/nts_ffi.h
+          retention-days: 90
+
       - name: Attach oracle_bin to release (release events only)
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: oracle/oracle_bin
+          files: |
+            oracle/oracle_bin
+            oracle/libntsrocq.so
+            oracle/nts_ffi.h

@@ -36,7 +36,7 @@ SHELL := /bin/bash
 ROCQ := $(shell command -v rocq 2>/dev/null || command -v coqc 2>/dev/null || echo "")
 
 # Phony targets only — this file never produces real build artefacts.
-.PHONY: help status host full check ci-guards ci-pr ci-full theories-changed oracle clean-env env-info
+.PHONY: help status host full check ci-guards ci-pr ci-full theories-changed oracle oracle-ffi clean-env env-info
 
 # Base ref for `make theories-changed` (override: make theories-changed BASE=main).
 BASE ?= origin/main
@@ -94,6 +94,10 @@ help: status
 	@echo ""
 	@echo "  make oracle        Build the standalone RocqRefRunner binary"
 	@echo "                     (after extraction). See oracle/Makefile."
+	@echo ""
+	@echo "  make oracle-ffi    Build libntsrocq (the in-process C ABI over the"
+	@echo "                     same extracted kernel) and run the FFI<->oracle"
+	@echo "                     bit-parity gate. See docs/phase5-ffi-abi.md."
 	@echo ""
 	@echo "  make env-info      Show detected Rocq / Flocq versions (best effort)"
 	@echo ""
@@ -209,7 +213,7 @@ ci-pr: ci-guards host
 # ci-full — the full local gate: guardrails + the whole corpus
 # (`_CoqProject.full`, needs Flocq) + the oracle binary.  Matches what
 # `main` re-validates end to end on every merge.
-ci-full: ci-guards full oracle
+ci-full: ci-guards full oracle oracle-ffi
 	@echo ""
 	@echo "Full local gate complete."
 
@@ -228,6 +232,14 @@ oracle:
 	@echo "Building the oracle binary (RocqRefRunner) ..."
 	@echo "This usually follows extraction from Validate_binary64_extract.v."
 	$(MAKE) -C oracle
+
+# oracle-ffi — Phase 5: the in-process C ABI (libntsrocq) over the SAME
+# extracted kernel the oracle binary uses, plus the parity gate that holds the
+# two boundaries bit-identical.  See docs/phase5-ffi-abi.md.
+oracle-ffi: oracle
+	@echo "Building libntsrocq (Phase 5 in-process C ABI) ..."
+	$(MAKE) -C oracle ffi
+	$(MAKE) -C oracle ffi-parity
 
 env-info:
 	@echo "Rocq / environment information (best effort)"
@@ -248,6 +260,7 @@ clean-env:
 	rm -f theories/*.vo theories/*.glob theories/.*.aux
 	rm -f theories-flocq/*.vo theories-flocq/*.glob theories-flocq/.*.aux
 	rm -rf oracle/extracted.ml oracle/extracted.mli oracle/oracle_bin oracle/*.cm*
+	rm -f oracle/libntsrocq.so oracle/libntsrocq.dylib oracle/ffi_probe oracle/*.o
 	@echo "Clean done."
 
 # -----------------------------------------------------------------------------

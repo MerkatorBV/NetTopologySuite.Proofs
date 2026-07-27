@@ -12,12 +12,32 @@
 #   make -C oracle              # here: compiles oracle_bin from extracted + driver
 #
 # `extracted.ml` is gitignored -- always regenerated from `Validate_binary64_extract.v`.
+#
+# Phase 5 adds a second consumer of the SAME extracted.ml: the in-process C ABI
+# `libntsrocq` (nts_ffi.ml + nts_ffi_stubs.c + nts_ffi.h), which .NET binds with
+# DllImport instead of forking oracle_bin per call.
+#
+#   make -C oracle ffi          # builds libntsrocq.so + the ffi_probe driver
+#   make -C oracle ffi-parity   # gates FFI == oracle_bin, bit for bit
+#
 # =============================================================================
 
 OCAMLOPT := ocamlfind ocamlopt
 TARGET   := oracle_bin
 
-.PHONY: all clean arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests
+# ---- Phase 5 FFI -----------------------------------------------------------
+# The bundled OCaml runtime must be the PIC build (libasmrun_pic.a): the plain
+# libasmrun.a in -output-complete-obj is non-PIC and cannot go into a shared
+# object.  So: -output-obj (no runtime) + explicit -lasmrun_pic.
+OCAML_WHERE := $(shell $(OCAMLOPT) -where)
+CC          ?= cc
+FFI_SOEXT   := so
+FFI_LIB     := libntsrocq.$(FFI_SOEXT)
+FFI_PROBE   := ffi_probe
+FFI_CFLAGS  := -O2 -fPIC -I$(OCAML_WHERE) -I.
+FFI_LDLIBS  := -L$(OCAML_WHERE) -lasmrun_pic -lm -ldl -lpthread
+
+.PHONY: all clean ffi ffi-parity arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests
 
 all: $(TARGET)
 
@@ -176,5 +196,32 @@ driver.cmx: driver.ml extracted.cmi relate_matrix.cmx
 $(TARGET): extracted.cmx driver.cmx relate_matrix.cmx
 	$(OCAMLOPT) -package str,zarith -linkpkg extracted.cmx relate_matrix.cmx driver.cmx -o $@
 
+# ---- Phase 5: in-process C ABI (libntsrocq) --------------------------------
+
+ffi: $(FFI_LIB) $(FFI_PROBE)
+
+nts_ffi.cmx: nts_ffi.ml extracted.cmi extracted.cmx
+	$(OCAMLOPT) -c nts_ffi.ml
+
+# -output-obj emits the OCaml side WITHOUT the runtime; the runtime comes in
+# below as libasmrun_pic.a so the result is linkable into a shared object.
+nts_ffi_ml.o: extracted.cmx nts_ffi.cmx
+	$(OCAMLOPT) -output-obj extracted.cmx nts_ffi.cmx -o nts_ffi_ml.o
+
+nts_ffi_stubs.o: nts_ffi_stubs.c nts_ffi.h
+	$(CC) $(FFI_CFLAGS) -c nts_ffi_stubs.c -o nts_ffi_stubs.o
+
+$(FFI_LIB): nts_ffi_ml.o nts_ffi_stubs.o
+	$(CC) -shared -o $@ nts_ffi_ml.o nts_ffi_stubs.o $(FFI_LDLIBS)
+
+# Parity driver: same inputs as oracle_bin, results printed as raw IEEE 754
+# bit patterns so the comparison cannot be blurred by float formatting.
+$(FFI_PROBE): ffi_probe.c nts_ffi.h $(FFI_LIB)
+	$(CC) -O2 -I. ffi_probe.c -o $@ -L. -lntsrocq -Wl,-rpath,'$$ORIGIN'
+
+# Gate: every FFI entry point must agree with oracle_bin bit for bit.
+ffi-parity: $(TARGET) $(FFI_PROBE)
+	cd .. && python3 oracle/gen_ffi_parity_tests.py
+
 clean:
-	rm -f *.cmi *.cmo *.cmx *.o $(TARGET)
+	rm -f *.cmi *.cmo *.cmx *.o $(TARGET) $(FFI_LIB) $(FFI_PROBE)

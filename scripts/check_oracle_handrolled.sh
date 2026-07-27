@@ -43,6 +43,7 @@ set -u
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DRIVER="$REPO_ROOT/oracle/driver.ml"
+FFI="$REPO_ROOT/oracle/nts_ffi.ml"
 ALLOWLIST="$REPO_ROOT/docs/oracle-handrolled-allowlist.txt"
 
 for f in "$DRIVER" "$ALLOWLIST"; do
@@ -120,9 +121,53 @@ if [ -n "$STALE" ]; then
   echo "$STALE" | sed 's/^/    /' >&2
 fi
 
+# 4. The Phase 5 FFI layer (oracle/nts_ffi.ml) is held to a STRICTER rule than
+#    driver.ml: it is pure marshalling around extracted symbols, so it has no
+#    allowlist at all.  Any float arithmetic there means the in-process C ABI
+#    computes something the proofs do not cover -- which would be invisible to
+#    the FFI parity gate, since that gate only compares the FFI against the
+#    oracle protocol, and a shared shim could be wrong in both.
+if [ -r "$FFI" ]; then
+  FFI_CODE="$TMPDIR_RUN/nts_ffi.code.ml"
+  perl -0777 -e '
+    local $/; my $s=<>; my $out=""; my $d=0; my $i=0; my $n=length($s);
+    while ($i<$n) {
+      my $t=substr($s,$i,2);
+      if ($t eq "(*") { $d++; $i+=2; next; }
+      if ($t eq "*)" && $d>0) { $d--; $i+=2; next; }
+      $out.=substr($s,$i,1) if $d==0;
+      $i++;
+    }
+    print $out;
+  ' "$FFI" > "$FFI_CODE"
+
+  FFI_DETECTED="$(perl -ne '
+    if (/^let\s+(?:rec\s+)?([A-Za-z_][A-Za-z0-9_]*)/) {
+      print "$cur\n" if $cur && $hit;
+      $cur = $1; $hit = 0;
+    }
+    $hit = 1 if m{[-+*/]\.};
+    $hit = 1 if m{\b(?:acos|asin|atan2|atan|cos|sin|tan|sqrt|exp|log)\b};
+    $hit = 1 if m{Float\.(?:min|max|abs|is_finite|is_nan)};
+    END { print "$cur\n" if $cur && $hit; }
+  ' "$FFI_CODE" | sort -u)"
+
+  if [ -n "$FFI_DETECTED" ]; then
+    status=1
+    echo "::error::Hand-rolled float arithmetic in oracle/nts_ffi.ml is not allowed." >&2
+    echo "The FFI layer marshals arguments for EXTRACTED functions and nothing" >&2
+    echo "else; arithmetic here would ship uncertified numerics into production" >&2
+    echo "NTS through libntsrocq.  Offending functions:" >&2
+    echo "$FFI_DETECTED" | sed 's/^/    /' >&2
+    echo "" >&2
+    echo "Add the computation to a Coq module and extract it instead --" >&2
+    echo "see docs/phase5-ffi-abi.md." >&2
+  fi
+fi
+
 if [ "$status" -eq 0 ]; then
   n=$(wc -l < "$ALLOWED" | tr -d ' ')
-  echo "[check_oracle_handrolled] ratchet holds: $n frozen hand-rolled kernel(s), no new ones."
+  echo "[check_oracle_handrolled] ratchet holds: $n frozen hand-rolled kernel(s) in driver.ml, none in nts_ffi.ml."
 fi
 
 exit "$status"
