@@ -68,6 +68,13 @@ theories/RelateEdgePairNoding.v
 # (host_noding_sound, set_noding_sound, dual_pair_in_set_shared_nodes).
 # No Admitted.
 theories/RelateEdgeSetNoding.v
+# Wires the exact integer noding node into the lineal DE-9IM point-set:
+# a dual-proper integer cut's node sits in the LSInt (interior) stratum of both
+# edges (dual_proper_cut_LSInt_both), the segments share an interior-interior
+# point, and the cut populates the DE-9IM II point-cell
+# (dual_proper_cut_line_ii_point_cell / ll_matrix_point_ii).  Clean lineal side
+# (no half-open pathology; area capstone stays deferred to #68).  No Admitted.
+theories/RelateEdgeNodeStratum.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
