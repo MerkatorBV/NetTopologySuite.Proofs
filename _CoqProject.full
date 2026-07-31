@@ -75,6 +75,12 @@ theories/RelateEdgeSetNoding.v
 # (dual_proper_cut_line_ii_point_cell / ll_matrix_point_ii).  Clean lineal side
 # (no half-open pathology; area capstone stays deferred to #68).  No Admitted.
 theories/RelateEdgeNodeStratum.v
+# Decision layer: the exact chain becomes RUNNABLE.  dual_proper_cutb is one
+# andb of two Z.ltb's on cut_product/host_product (+ iff, false-iff, sumbool);
+# decide_line_ii_point_cell turns a true test into the DE-9IM II point-cell,
+# and cut_host_products_fit_int128 shows the decision arithmetic stays inside
+# signed 128-bit over the cmax window (cmax^4 <= 2^127-1).  No Admitted.
+theories/RelateEdgeNodeDecide.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
