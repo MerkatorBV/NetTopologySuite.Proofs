@@ -11,7 +11,7 @@
    Lemma: delaunay_edge_iff_empty_circumcircle
    ========================================================================== *)
 
-(* WITNESS {"claimId":"68-a","lemma":"delaunay_edge_iff_empty_circumcircle","title":"Delaunay edge ↔ empty circumcircle biconditional"} *)
+(* WITNESS {"claimId":"68-a","topic":"mesh","lemma":"delaunay_edge_iff_empty_circumcircle","title":"Delaunay edge ↔ empty circumcircle biconditional"} *)
 
 From Stdlib Require Import Reals Lra List.
 Import ListNotations.

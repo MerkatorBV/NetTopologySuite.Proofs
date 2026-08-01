@@ -156,6 +156,7 @@ Qed.
     triangles at once (and recovers BAD's own CCW witness).  This is the
     deferred [~(both locally Delaunay)] corollary named in
     [DelaunayFlipGeometric.v]'s scope note. *)
+(* WITNESS {"claimId":"68-b","topic":"mesh","lemma":"flip_witness_both_not_locally_delaunay","title":"Flip refutes both locally Delaunay","file":"theories/DelaunayLocallyDelaunay.v"} *)
 Theorem flip_witness_both_not_locally_delaunay :
   forall (A B C D : Point),
     triangle_ccw_pts A B C ->
