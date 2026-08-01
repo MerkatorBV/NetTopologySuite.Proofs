@@ -98,6 +98,16 @@ int main(int argc, char **argv)
     return 0;
   }
 
+  /* "<sign_code>" -- exact full-plane sign (escalation path); code 2 (NAN)
+     on any non-finite input, matching oracle_bin's ORIENT_EXACT[_EXTRACTED]
+     "NAN" answer. */
+  if (strcmp(mode, "ORIENT_EXACT") == 0) {
+    need(6, mode);
+    printf("%d\n", (int)nts_rocq_orient_sign_exact(vals[0], vals[1], vals[2],
+                                                   vals[3], vals[4], vals[5]));
+    return 0;
+  }
+
   /* "<intersect_code>" */
   if (strcmp(mode, "INTERSECT_FILTERED") == 0) {
     need(8, mode);

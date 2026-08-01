@@ -91,6 +91,10 @@ namespace NetTopologySuite.Robust.Native
             double p0x, double p0y, double p1x, double p1y, double qx, double qy);
 
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int nts_rocq_orient_sign_exact(
+            double p0x, double p0y, double p1x, double p1y, double qx, double qy);
+
+        [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int nts_rocq_intersect_sign_filtered(
             double p0x, double p0y, double p1x, double p1y,
             double q0x, double q0y, double q1x, double q1y);
@@ -204,6 +208,23 @@ namespace NetTopologySuite.Robust.Native
             lock (Gate)
             {
                 return (RocqOrientSign)RocqNativeMethods.nts_rocq_orient_sign_naive(
+                    p0x, p0y, p1x, p1y, qx, qy);
+            }
+        }
+
+        /// <summary>EXACT orientation sign over the full binary64 plane
+        /// (Orient_b64_exact_full.v, soundness Qed with no magnitude
+        /// restriction) — the escalation path for
+        /// <see cref="RocqOrientSign.Uncertain"/>.  Returns Pos/Neg/Zero for
+        /// finite inputs, Nan if any input is NaN or infinite; never
+        /// Uncertain.  Arbitrary-precision integer arithmetic: call it on the
+        /// Uncertain path, not as the primary predicate.</summary>
+        public static RocqOrientSign OrientSignExact(
+            double p0x, double p0y, double p1x, double p1y, double qx, double qy)
+        {
+            lock (Gate)
+            {
+                return (RocqOrientSign)RocqNativeMethods.nts_rocq_orient_sign_exact(
                     p0x, p0y, p1x, p1y, qx, qy);
             }
         }

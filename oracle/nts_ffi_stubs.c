@@ -154,6 +154,14 @@ double nts_rocq_orient2d(double p0x, double p0y,
   return nts_call_double("nts_ffi_orient2d", v, 6);
 }
 
+int32_t nts_rocq_orient_sign_exact(double p0x, double p0y,
+                                   double p1x, double p1y,
+                                   double qx,  double qy)
+{
+  const double v[6] = { p0x, p0y, p1x, p1y, qx, qy };
+  return nts_call_int("nts_ffi_orient_sign_exact", v, 6);
+}
+
 /* ---------------------------------------------------------------------- */
 /* Phase 1: segment intersection.                                          */
 /* ---------------------------------------------------------------------- */

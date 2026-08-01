@@ -107,6 +107,25 @@ let orient_sign_naive (a : float array) : int =
 
 let orient2d (a : float array) : float = b64_orient2d (pt a 0) (pt a 2) (pt a 4)
 
+(* [| p0x; p0y; p1x; p1y; qx; qy |] -- EXACT full-plane orientation sign
+   (Orient_b64_exact_full.v), the escalation path for UNCERTAIN.
+   `b64_orient2d_exact` is `Z.sgn` of the exact integer determinant, so the
+   extracted constructor IS the sign.  The finiteness gate mirrors
+   oracle_bin's ORIENT_EXACT / ORIENT_EXACT_EXTRACTED modes and the
+   soundness premise `all_finite` (b64_orient2d_exact_sound): non-finite
+   inputs answer the NAN code, never a sign. *)
+let orient_sign_exact (a : float array) : int =
+  let finite x =
+    match classify_float x with FP_nan | FP_infinite -> false | _ -> true
+  in
+  let all_finite = Array.for_all finite (Array.sub a 0 6) in
+  if not all_finite then 2 (* NTS_ORIENT_NAN *)
+  else
+    match b64_orient2d_exact (pt a 0) (pt a 2) (pt a 4) with
+    | Z0     ->  0
+    | Zpos _ ->  1
+    | Zneg _ -> -1
+
 (* ---------------------------------------------------------------------- *)
 (* Phase 1 -- segment intersection (Intersect_b64.v, Intersect_b64_exact). *)
 (* ---------------------------------------------------------------------- *)
@@ -211,6 +230,7 @@ let () =
   Callback.register "nts_ffi_orient_sign_filtered" orient_sign_filtered;
   Callback.register "nts_ffi_orient_sign_naive" orient_sign_naive;
   Callback.register "nts_ffi_orient2d" orient2d;
+  Callback.register "nts_ffi_orient_sign_exact" orient_sign_exact;
   Callback.register "nts_ffi_intersect_sign_filtered" intersect_sign_filtered;
   Callback.register "nts_ffi_intersect_point" intersect_point;
   Callback.register "nts_ffi_intersect_point_xy" intersect_point_xy;

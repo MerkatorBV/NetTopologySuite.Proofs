@@ -362,7 +362,8 @@ held bit-identical to the `oracle_bin` protocol by
 [`oracle/gen_ffi_parity_tests.py`](../oracle/gen_ffi_parity_tests.py).
 Read [`phase5-ffi-abi.md`](phase5-ffi-abi.md) first — §4 is the
 per-entry-point soundness ledger, including which predicates are
-sufficient-only and where the exact fallback is still missing.
+sufficient-only and which have an exact in-process fallback (orientation
+does: `nts_rocq_orient_sign_exact`; in-circle / passes-through do not yet).
 
 ---
 
@@ -402,7 +403,9 @@ algorithms. Bit-exact agreement holds on int-safe inputs (e.g.
 |coord| <= 2^25 for orient2d, |coord| <= 2^11 for inCircle_R); on
 mixed inputs, the filtered predicates give a sound 4-way
 classification (POS / NEG / ZERO / UNCERTAIN) and callers must
-fall back when UNCERTAIN.
+fall back when UNCERTAIN — for orientation that fallback is now
+in-process (`nts_rocq_orient_sign_exact`, exact over all finite
+doubles).
 
 ---
 

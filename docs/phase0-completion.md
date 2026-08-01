@@ -193,7 +193,10 @@ and its general bounded-magnitude soundness via Stages B/C/D is now an
 not the only path to a sound full-plane predicate — parallel to Phase 1's
 open Stage D: a substantial separate engagement, not chokepoint work.  The
 exact predicate is meanwhile the ground-truth spec to diff JTS/NTS
-double-double `Orientation.index` against (JTS #1106).
+double-double `Orientation.index` against (JTS #1106) — and, as of the
+Phase 5 extraction slice, it is also runnable: extracted as the oracle mode
+`ORIENT_EXACT_EXTRACTED` and the in-process FFI entry
+`nts_rocq_orient_sign_exact` (see `docs/phase5-ffi-abi.md`).
 
 **Descendant (Phase 4, PR #146).** This exact-`ℤ`-determinant route was reused
 verbatim for the in-circle predicate: `theories-flocq/InCircle_b64_exact.v`'s

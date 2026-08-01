@@ -81,6 +81,13 @@ theories/RelateEdgeNodeStratum.v
 # and cut_host_products_fit_int128 shows the decision arithmetic stays inside
 # signed 128-bit over the cmax window (cmax^4 <= 2^127-1).  No Admitted.
 theories/RelateEdgeNodeDecide.v
+# One-sign-test exact DISJOINTNESS certificate: cut_product > 0 means A,B lie
+# strictly on the same side of line C-D, so the segments share no point
+# (same_side_no_share, by convexity of cross along the edge); hence one integer
+# sign test empties ALL FOUR meet cells -- decide_line_no_ib_meet realises
+# ll_matrix_disjoint.  Coherent with the II classifier (mutually exclusive).
+# No Admitted.
+theories/RelateEdgeDisjointCert.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v

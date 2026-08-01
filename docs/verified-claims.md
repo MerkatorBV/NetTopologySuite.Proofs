@@ -40,7 +40,13 @@ headline", never as solved; offer the oracle to reproduce a concrete case.
 | `Orient_b64_exact_full.v : b64_orient2d_exact_sound` | **Full-plane headline.** The *exact* predicate's Pos/Neg/Zero agree with the true orientation sign for **all finite binary64** — no `\|coord\| ≤ 2²⁵` limit `[full-b64]` | 3 |
 
 `[oracle]` `RobustOrientation` bit-exact vs `ORIENT`/`ORIENT_FILTERED`;
-`ORIENT_EXACT` is the exact full-plane reference (mirrors `b64_orient2d_exact`).
+`ORIENT_EXACT` is the exact full-plane reference (an independent zarith
+mirror of `b64_orient2d_exact`), and `ORIENT_EXACT_EXTRACTED` runs the
+extracted `b64_orient2d_exact` itself (also exposed in-process as the FFI
+entry `nts_rocq_orient_sign_exact`, the escalation for `UNCERTAIN`); the two
+modes share no arithmetic and are gated against each other by
+`oracle/gen_ffi_parity_tests.py`. The canonical-sign range of the extracted
+predicate is Qed (`Orient_b64_exact_full.v : b64_orient2d_exact_range`).
 
 **Exact predicate — full plane, 3 axioms.** `b64_orient2d_exact` is proven
 sound over the *entire* binary64 plane (every finite double is a dyadic
@@ -106,6 +112,9 @@ window.
 | `RelateEdgeNodeDecide.v : dual_proper_cutb_iff` (+`dual_proper_cutb_false_iff`, `dual_proper_cut_dec`) | **The exact crossing test is decidable.** `dual_proper_cutb := (cut_product <? 0) && (host_product <? 0)` decides `dual_proper_cut` exactly — both directions, plus the sumbool. Pure `Z`/`bool`, no rounding `[int]` | 0 |
 | `RelateEdgeNodeDecide.v : decide_line_ii_point_cell` (+`decide_node_LSInt_both`) | **Runnable exact DE-9IM II-cell classifier.** The boolean returning `true` suffices to conclude `line_ii_point_cell … ll_matrix_point_ii`, and the node is `LSInt`-interior on both segments — so the lineal DE-9IM interior cell is decided by integer sign tests alone. Executable check: proper cross ⇒ `true`; disjoint, endpoint-touch and collinear-overlap ⇒ `false`. `[exact]` | 3 |
 | `RelateEdgeNodeDecide.v : cut_host_products_fit_int128` | **The decision arithmetic fits int128.** Over the `cmax` window both `cut_product` and `host_product` are products of two orientation determinants, hence bounded by `cmax⁴ ≤ 2¹²⁷−1` — the same budget as the position comparator, so deciding the crossing, locating the node, ordering the nodes and populating the cell all stay inside signed 128-bit. Pure `Z` `[int]` | 0 |
+| `RelateEdgeDisjointCert.v : same_side_no_share` (+`cross_between_convex`, `convex_comb_pos/_neg`, `pos_mult_pos_right`, `neg_mult_pos_right`) | **Strictly-same-side endpoints ⇒ no shared point.** If `0 < cross C D A · cross C D B` then segments A–B and C–D share nothing: `cross C D (·)` is affine along A–B, so at any point of the segment it is a convex combination of two same-sign endpoint values (hence never 0), while every point of C–D has `cross C D (·) = 0`. `[exact]` | 3 |
+| `RelateEdgeDisjointCert.v : decide_line_no_ib_meet` (+`same_side_cutb`, `same_side_cut_no_share`, `cut_product_is_cross_product`) | **One integer sign test empties all four meet cells.** `same_side_cutb := 0 <? cut_product` is a runnable exact DISJOINTNESS certificate: `true` ⇒ no shared point ⇒ `line_no_ib_meet … ll_matrix_disjoint` (II, IB, BI, BB all empty). The cheapest exact filter for the highest-frequency relate query. **Sufficient, not complete** — it declines on disjoint pairs whose cut-line separates the host endpoints (verified by `Compute`). `[exact]` | 3 |
+| `RelateEdgeDisjointCert.v : same_side_excludes_dual_proper` | **Coherence:** the disjointness certificate and the II-cell classifier are mutually exclusive — `same_side_cutb = true` forces `dual_proper_cutb = false`. Pure `Z` `[int]` | 0 |
 
 ## Phase 1 — Robust segment intersection (`RobustLineIntersector`) <!-- feat:overlay,relate geom:cs -->
 
