@@ -272,7 +272,7 @@ still-open question from the one this update closes.
 
 4-axiom (atan2 lineage, `docs/audit-exceptions.txt`).  No `Admitted`.
 
-## 12. Update (64-b / 64-c / 64-d): sweep orientation, in-arc, supporting disk
+## 12. Update (64-b / 64-c / 64-d / 64-e): sweep, in-arc, disk, sector
 
 - **64-b (`ArcSweepCcw.v`)** — principal sweep is CCW iff signed central angle
   is strictly positive. `sweep_ccw` is the orientation/cross-sign reading of
@@ -292,3 +292,10 @@ still-open question from the one this update closes.
   interior / boundary / centre membership; exterior rejection). **3-axiom**
   (no exemption). Distinct from `inCircle_R` (algebraic determinant) and from
   `InArc` (on-circle angular sector).
+- **64-e (`InSector.v`)** — closed minor circular sector (pie slice):
+  `InSector O A B P` = closed disk of radius `dist O A` + InArc angular order
+  on the principal sweep (centre included as sector vertex; off-centre points
+  use `central_angle`). Bridges `in_arc_implies_in_sector` /
+  `in_sector_implies_in_disk`. Unit-quarter witnesses (interior, ray, arc,
+  centre; wrong-angle + exterior rejected). 4-axiom atan2 lineage
+  (`docs/audit-exceptions.txt`).

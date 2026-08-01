@@ -336,6 +336,13 @@ theories/InArc.v
 # witnesses Qed-closed; no Admitteds.  Removal tracks AngleBetween's cleanup.
 theories/ArcSweepCcw.v
 
+# Category C (R-side, same atan lineage as AngleBetween.v / InArc.v): issue #64
+# subtask 64-e InSector closed minor circular-sector membership.  InSector uses
+# central_angle (via InArc) for the angular cone plus a closed-disk radial
+# bound, so inherits Classical_Prop.classic.  Headlines and unit-quarter
+# witnesses Qed-closed; no Admitteds.  Removal tracks AngleBetween's cleanup.
+theories/InSector.v
+
 # Category C (R-side, same atan lineage as AngleBetween.v): buffer/noder
 # pipeline seam S3 (docs/buffer-noder-pipeline.md), round-join corner-arc
 # relation.  corner_arc_sweep_eq_turn / _unit and atan2_pos_scale are built

@@ -2060,6 +2060,13 @@ theories/CurveGeometry.v
 # dist_le_iff_dist_sq_le.  Depends on Distance + CurveGeometry + Disk.
 # 3-axiom classical reals; no Admitted.
 theories/InDisk.v
+# Issue #64 subtask 64-e — GREEN: InSector closed minor circular-sector
+# (pie-slice) membership.  Angular order as InArc + closed disk as InDisk;
+# centre included as sector vertex.  Bridges in_arc_implies_in_sector /
+# in_sector_implies_in_disk.  Unit-quarter witnesses (interior, ray, arc,
+# centre; wrong-angle + exterior rejected).  4-axiom (atan2 lineage via
+# InArc / AngleBetween; see audit-exceptions).  No Admitted.
+theories/InSector.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed
 # Phase-3 ring (chord_approx_ring_closed), lifting to to_geometry outer/hole
