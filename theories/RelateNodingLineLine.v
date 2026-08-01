@@ -217,7 +217,8 @@ Lemma line_cell_ok_dim0 :
     line_cell_ok (Some 0%nat) sX sY A B C D.
 Proof.
   intros sX sY A B C D p HsX HsY.
-  apply (line_cell_ok_some 0 sX sY A B C D p); [ lia | assumption | assumption ].
+  apply (line_cell_ok_some 0 sX sY A B C D p);
+    [ repeat constructor | assumption | assumption ].
 Qed.
 
 Lemma line_cell_ok_dim1 :
@@ -227,7 +228,8 @@ Lemma line_cell_ok_dim1 :
     line_cell_ok (Some 1%nat) sX sY A B C D.
 Proof.
   intros sX sY A B C D p HsX HsY.
-  apply (line_cell_ok_some 1 sX sY A B C D p); [ lia | assumption | assumption ].
+  apply (line_cell_ok_some 1 sX sY A B C D p);
+    [ repeat constructor | assumption | assumption ].
 Qed.
 
 Lemma line_cell_ok_dim2 :
@@ -237,7 +239,8 @@ Lemma line_cell_ok_dim2 :
     line_cell_ok (Some 2%nat) sX sY A B C D.
 Proof.
   intros sX sY A B C D p HsX HsY.
-  apply (line_cell_ok_some 2 sX sY A B C D p); [ lia | assumption | assumption ].
+  apply (line_cell_ok_some 2 sX sY A B C D p);
+    [ repeat constructor | assumption | assumption ].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
