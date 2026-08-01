@@ -621,6 +621,7 @@ Qed.
 (** GREEN (68-a): under the weak triangulation skeleton, an undirected pair
     is a Delaunay edge of finite [S] iff it admits an empty circumcircle
     realised by a third site of [S] (incident-triangle form). *)
+(* WITNESS {"claimId":"68-a","topic":"mesh","lemma":"delaunay_edge_iff_empty_circumcircle","title":"Delaunay edge ↔ empty circumcircle biconditional","file":"theories/DelaunayEdgeEmptyCircle.v"} *)
 Theorem delaunay_edge_iff_empty_circumcircle :
   forall (S : list Point) (A B : Point),
     In A S ->
