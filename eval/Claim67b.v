@@ -113,8 +113,9 @@ Proof. reflexivity. Qed.
 Lemma bnd_bottom_edge_in_witness_edges :
   In bnd_bottom_edge (relateng_boundary_edges bnd_witness_P).
 Proof.
-  unfold relateng_boundary_edges, poly_edges, bnd_witness_P; cbn.
-  rewrite bnd_unit_square_edges. simpl. left. reflexivity.
+  unfold relateng_boundary_edges, poly_edges, bnd_witness_P.
+  (* flat_map / empty holes reduce to the four unit-square edges. *)
+  simpl. left. reflexivity.
 Qed.
 
 Lemma bnd_mid_bottom_between_bottom_edge :
