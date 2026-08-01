@@ -145,6 +145,38 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* Signed-side pins (ADR-0004 mutation hardening).                            *)
+(* The unsigned biconditional is genuinely invariant under the endpoint swap  *)
+(* (between is endpoint-symmetric) and under r |-> -r inside r*r -- the two   *)
+(* mutants that stayed Qed in the #426 review exploited exactly those         *)
+(* symmetries.  These pins break them: the cap offsets have SIGNED            *)
+(* cross-coordinate along J(t) exactly +r (cap_plus) and -r (cap_minus), so   *)
+(* a J |-> -J flip, a plus/minus swap, or an r sign flip each falsifies one.  *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma cap_plus_signed_side :
+  forall p t r,
+    px t * px t + py t * py t = 1 ->
+    px t * (py (cap_plus p t r) - py p)
+    - py t * (px (cap_plus p t r) - px p) = r.
+Proof.
+  intros p t r Hunit. unfold cap_plus; simpl.
+  transitivity (r * (px t * px t + py t * py t)); [ ring | ].
+  rewrite Hunit. ring.
+Qed.
+
+Lemma cap_minus_signed_side :
+  forall p t r,
+    px t * px t + py t * py t = 1 ->
+    px t * (py (cap_minus p t r) - py p)
+    - py t * (px (cap_minus p t r) - px p) = - r.
+Proof.
+  intros p t r Hunit. unfold cap_minus; simpl.
+  transitivity (- r * (px t * px t + py t * py t)); [ ring | ].
+  rewrite Hunit. ring.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Rational witness pins (Qed at Red).                                        *)
 (* Axis-aligned unit segment (0,0)→(1,0): terminal p=(1,0), tangent t=(1,0),  *)
 (* r = 1.  Diameter segment must be (1,-1)—(1,1).                             *)
@@ -156,6 +188,16 @@ Definition w_r : R := 1.
 
 Lemma w_tangent_unit : px w_t * px w_t + py w_t * py w_t = 1.
 Proof. unfold w_t; simpl. lra. Qed.
+
+(* Concrete signed pins at the rational witness: +1 / -1, not merely +/-r. *)
+Lemma w_signed_sides :
+  px w_t * (py (cap_plus w_p w_t w_r) - py w_p)
+  - py w_t * (px (cap_plus w_p w_t w_r) - px w_p) = 1 /\
+  px w_t * (py (cap_minus w_p w_t w_r) - py w_p)
+  - py w_t * (px (cap_minus w_p w_t w_r) - px w_p) = -1.
+Proof.
+  unfold cap_plus, cap_minus, w_p, w_t, w_r; simpl. split; lra.
+Qed.
 
 (* The cap endpoints are exactly (1,1) and (1,-1). *)
 Lemma w_cap_plus_eq  : cap_plus  w_p w_t w_r = mkPoint 1 1.

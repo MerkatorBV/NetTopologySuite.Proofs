@@ -172,7 +172,47 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* Signed-side pin (ADR-0004 mutation hardening).                             *)
+(*                                                                            *)
+(* The biconditional above is genuinely invariant under swapping the two cap  *)
+(* endpoints (between is endpoint-symmetric) and under d |-> -d inside d*d;   *)
+(* the #426 mutation suite's two surviving mutants exploited exactly those    *)
+(* symmetries.  This pin breaks them: the cap offset's SIGNED cross-          *)
+(* coordinate along the edge direction is exactly d -- for ALL signed d, so   *)
+(* cap_endpoint E ein d and cap_endpoint E ein (-d) are distinguished, and a  *)
+(* sign flip anywhere in the normal chain (vperp, unit_perp, d) falsifies it. *)
+(* -------------------------------------------------------------------------- *)
+
+Theorem cap_endpoint_signed_side :
+  forall (E : Point) (ein : Vec) (d : R),
+    ein <> vzero ->
+    vx (unit_dir ein) * (py (cap_endpoint E ein d) - py E)
+    - vy (unit_dir ein) * (px (cap_endpoint E ein d) - px E) = d.
+Proof.
+  intros E ein d Hnz.
+  set (ex := vx ein). set (ey := vy ein). set (m := vmag ein).
+  assert (Hpos : 0 < vmag_sq ein) by (apply vmag_sq_pos; exact Hnz).
+  assert (Hm : 0 < m).
+  { unfold m, vmag. apply sqrt_lt_R0. exact Hpos. }
+  assert (Hmne : m <> 0) by lra.
+  assert (Hmm : m * m = ex * ex + ey * ey).
+  { unfold m, vmag. rewrite sqrt_sqrt by lra.
+    unfold vmag_sq, vdot, ex, ey. ring. }
+  assert (Hinv : / m * m = 1) by (apply Rinv_l; exact Hmne).
+  unfold cap_endpoint, pt_translate, unit_perp, unit_dir, vperp, vscale,
+         m, ex, ey in *.
+  simpl.
+  transitivity (d * ((vx ein * vx ein + vy ein * vy ein)
+                     * (/ vmag ein * / vmag ein))); [ ring | ].
+  rewrite <- Hmm.
+  replace (vmag ein * vmag ein * (/ vmag ein * / vmag ein))
+    with ((/ vmag ein * vmag ein) * (/ vmag ein * vmag ein)) by ring.
+  rewrite Hinv. ring.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Audit footprint.                                                           *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions flat_endcap_is_diameter_segment.
+Print Assumptions cap_endpoint_signed_side.
