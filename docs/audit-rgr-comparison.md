@@ -1,5 +1,14 @@
 # Cross-audit RGR comparison: ranking the open targets by risk/cost
 
+> **Staleness note (2026-08-01).** This document is a dated audit snapshot;
+> its registry citations and the §8.2 ranking are **superseded**: both
+> registries are EMPTY as of 2026-07-01 (`extract_rings_valid` was discharged
+> guard-conditionally, PRs #334–#372, and every counterexample entry is now a
+> Qed-closed disproof theorem), and the §8.3 queue's P1/P10/P3 landed as
+> rungs 9–11. Current sequencing lives on the #64–#69 track issues (umbrella
+> #69); a full re-rank is queued there. The body below is kept as the
+> historical record of the 2026-06 decision.
+
 **Status.** Written 2026-06-09. The six `audit-*` documents each scope one
 chokepoint (Phase 0 Shewchuk stages, Phase 2 snap-rounding, Phase 3 overlay
 ×2, Phase 4 curves ×2). Individually they answer *"what's reusable / what's

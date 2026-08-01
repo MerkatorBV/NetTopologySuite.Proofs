@@ -4,8 +4,10 @@
    Slice A Piece 5b -- Route 2 framework + Route 1 cascade_state evolution.
 
    This file was originally Session 1 of the Route 2 design for closing
-   `fast_expansion_sum_nonoverlap_shewchuk` (currently Admitted/deferred
-   in `B64_FastExpansionSum_Shewchuk.v`).
+   `fast_expansion_sum_nonoverlap_shewchuk` (then Admitted/deferred in
+   `B64_FastExpansionSum_Shewchuk.v`; since REFUTED as stated and Abort'd
+   there -- see B64_Shewchuk_Thm13_counterexample.v -- with the
+   integer-safe specialisations Qed-closed instead).
 
    After Session 2's Route 2 collapse
    (`docs/slice-a-piece-5b-session-2-collapse.md`) and the Route 1
@@ -34,9 +36,11 @@
        `cascade_state` (preservation + h-chain deferred to the next
        session).
 
-   The headline `fast_expansion_sum_nonoverlap_shewchuk` remains
-   Admitted in `B64_FastExpansionSum_Shewchuk.v` until the
-   preservation lemma + h-chain + composition land.
+   The headline `fast_expansion_sum_nonoverlap_shewchuk` was later
+   REFUTED as stated (machine-checked counterexample; now Abort'd in
+   `B64_FastExpansionSum_Shewchuk.v`, no Admitted anywhere) -- the
+   preservation-lemma route below survives in its integer-safe
+   specialisations.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -1946,9 +1950,10 @@ Qed.
 (* zero error terms.  This bypasses Path 1's cascade_pathA_chain entirely. *)
 (*                                                                            *)
 (* The general fast_expansion_sum_nonoverlap_shewchuk for ARBITRARY inputs   *)
-(* remains the deferred-proof registry entry (the Admitted in                *)
-(* B64_FastExpansionSum_Shewchuk.v:483).  Session 17 attempts that general  *)
-(* case directly.                                                             *)
+(* was then the deferred-proof registry entry; it has since been REFUTED as  *)
+(* stated and Abort'd at B64_FastExpansionSum_Shewchuk.v:483 (registries     *)
+(* empty as of 2026-07-01).  Session 17 attempted that general case          *)
+(* directly -- the historical record follows.                                *)
 (* -------------------------------------------------------------------------- *)
 
 (* Forall preservation under the insertion-sort building blocks. *)
@@ -2144,9 +2149,9 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 (* DELIVERABLE 14 -- attempting the general theorem (Session 17).             *)
 (*                                                                            *)
-(* The Admitted fast_expansion_sum_nonoverlap_shewchuk at                    *)
+(* The (then-Admitted, since Abort'd/refuted) headline at                    *)
 (* B64_FastExpansionSum_Shewchuk.v:483 takes ARBITRARY inputs.  Session 17  *)
-(* attempts it.                                                              *)
+(* attempted it; the outcome below stands as the historical record.          *)
 (*                                                                            *)
 (* The corpus has Sessions 1-12 building cascade_pathA_chain machinery.     *)
 (* Session 12's `cascade_run_output_nonoverlap` gives the cascade output as *)
