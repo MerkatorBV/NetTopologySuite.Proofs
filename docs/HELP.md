@@ -130,6 +130,6 @@ The corpus rule is simple and non-negotiable:
 
 > Every theorem ends with `Qed.` (or `Defined.`).  
 > No bare `Admitted`, no `Axiom`, no `Parameter`, no `admit.` in the `.v` files.  
-> The only exceptions are the six registered entries with explicit, documented justification.
+> There are no `Admitted` theorems today — both registries are empty. Any `Admitted` must appear in one of them or CI fails.
 
 Welcome. Pick your card and go.

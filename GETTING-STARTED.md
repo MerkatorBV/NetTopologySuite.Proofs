@@ -8,7 +8,7 @@ This repository contains mechanically verified Rocq proofs of foundational prope
 
 > Every theorem ends with `Qed.` (or `Defined.`).  
 > No `Axiom`, no `Parameter`, no bare `admit.` in the `.v` files.  
-> The only exceptions are six explicitly registered `Admitted` entries with documented justification.
+> There are no `Admitted` theorems today — both registries (counterexample and deferred-proof) are empty. Any `Admitted` must be registered in one of them or CI fails.
 
 ## First 60 seconds
 
