@@ -2106,6 +2106,13 @@ theories/DelaunayFlipGeometric.v
 # (Distance + Orientation + Triangle).
 theories/DelaunayEdgeEmptyCircle.v
 
+# Issue #68 subtask 68-b — GREEN: local-Delaunay packaging + flip refutes
+# both-locally-Delaunay (classical reals).  triangle_locally_delaunay /
+# both_locally_delaunay_at_shared_edge; both ≡ single test via
+# inCircle_R_double_swap; flip_witness_both_not_locally_delaunay (+ mirror);
+# rational flip witness A=(0,0),B=(2,0),C=(1,1),D=(1,-1/2).  3-axiom.
+theories/DelaunayLocallyDelaunay.v
+
 # Phase 4 Session 4: arc-chord and arc-arc intersection predicates
 # (R-side, Prop-valued).  Defines arc_span_contains (Option S: chord
 # cross-product sign for arcs < pi), arc_chord_intersects (existence

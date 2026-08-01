@@ -29,9 +29,10 @@
    Scope note: kept in `theories/`, not `theories-flocq/`, matching
    `DelaunayFlipWitness.v`'s own choice to stay Flocq-independent -- stated in
    raw `cross`/`inCircle_R` terms, not the `in_circle_test`/`triangle_ccw`
-   names.  A `theories-flocq/` corollary bridging to those named Props, the
-   symmetric mirror-direction theorem, and a `~(both locally Delaunay)`
-   corollary are all cheap follow-ups, deliberately not attempted here.
+   names.  Subtask 68-b (`DelaunayLocallyDelaunay.v`) packages the named
+   local-Delaunay Props, the `~(both locally Delaunay)` corollary, and the
+   symmetric mirror-direction theorem; a `theories-flocq/` bridge to
+   `in_circle_test`/`triangle_ccw` remains a cheap follow-up.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
