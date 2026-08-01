@@ -40,7 +40,13 @@ headline", never as solved; offer the oracle to reproduce a concrete case.
 | `Orient_b64_exact_full.v : b64_orient2d_exact_sound` | **Full-plane headline.** The *exact* predicate's Pos/Neg/Zero agree with the true orientation sign for **all finite binary64** — no `\|coord\| ≤ 2²⁵` limit `[full-b64]` | 3 |
 
 `[oracle]` `RobustOrientation` bit-exact vs `ORIENT`/`ORIENT_FILTERED`;
-`ORIENT_EXACT` is the exact full-plane reference (mirrors `b64_orient2d_exact`).
+`ORIENT_EXACT` is the exact full-plane reference (an independent zarith
+mirror of `b64_orient2d_exact`), and `ORIENT_EXACT_EXTRACTED` runs the
+extracted `b64_orient2d_exact` itself (also exposed in-process as the FFI
+entry `nts_rocq_orient_sign_exact`, the escalation for `UNCERTAIN`); the two
+modes share no arithmetic and are gated against each other by
+`oracle/gen_ffi_parity_tests.py`. The canonical-sign range of the extracted
+predicate is Qed (`Orient_b64_exact_full.v : b64_orient2d_exact_range`).
 
 **Exact predicate — full plane, 3 axioms.** `b64_orient2d_exact` is proven
 sound over the *entire* binary64 plane (every finite double is a dyadic

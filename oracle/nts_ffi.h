@@ -109,6 +109,20 @@ double nts_rocq_orient2d(double p0x, double p0y,
                          double p1x, double p1y,
                          double qx,  double qy);
 
+/* b64_orient2d_exact -- EXACT orientation sign over the FULL binary64 plane
+   (Orient_b64_exact_full.v; full-plane soundness Qed as
+   b64_orient2d_exact_sound, no |coord| restriction).  This is the in-process
+   escalation for NTS_ORIENT_UNCERTAIN: when the filtered predicate declines,
+   call this instead of coercing UNCERTAIN to ZERO.
+   Returns NTS_ORIENT_POS / NEG / ZERO for finite inputs, NTS_ORIENT_NAN if
+   any input is NaN or infinite (the soundness premise is all-finite), and
+   never UNCERTAIN.  Arbitrary-precision integer arithmetic extracted from
+   the Coq development -- expect it to be orders of magnitude slower than the
+   filter, so keep it on the escalation path, not the hot path. */
+int32_t nts_rocq_orient_sign_exact(double p0x, double p0y,
+                                   double p1x, double p1y,
+                                   double qx,  double qy);
+
 /* ---- Phase 1: segment intersection ------------------------------------- */
 
 /* b64_intersect_sign_filtered p0 p1 q0 q1.  Returns one of NTS_INTERSECT_*. */

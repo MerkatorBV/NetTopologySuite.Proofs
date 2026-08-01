@@ -3,16 +3,20 @@
    ----------------------------------------------------------------------------
    Native-float OCaml extraction for the RocqRefRunner binary.
 
-   Currently extracts:
-     - `greedy_simplify_perp_b64`   from `Validate_binary64.v`
-     - `b64_orient2d`               from `Orientation_b64.v`
-     - `b64_orient_sign`            from `Orientation_b64.v`
+   Extracts the RocqRefRunner kernel surface (twenty functions; see the
+   single `Extraction` command at the end of this file for the exact list):
+   the Phase 0a simplifier, the Phase 0 orientation family (naive, filtered,
+   raw determinant, and the exact full-plane sign `b64_orient2d_exact`),
+   Phase 1 intersection, Phase 2 snap rounding / hot pixels, the Phase 3
+   overlay labelling core, Phase 4 arc predicates, and the Stage D
+   expansion building blocks.
 
    The companion `oracle/driver.ml` dispatches on a mode line on stdin
-   (`SIMPLIFY` or `ORIENT`) and routes the rest of the input through the
+   (`SIMPLIFY`, `ORIENT`, ...) and routes the rest of the input through the
    appropriate function.  Producing a single binary lets the C# side
-   point one env var (`ROCQ_REF_BIN`) at one path for both Phase 0a
-   (simplifier) and Phase 0 (orientation).
+   point one env var (`ROCQ_REF_BIN`) at one path for every mode; the same
+   extracted symbols are also linked into `libntsrocq` (oracle/nts_ffi.ml)
+   for in-process calls.
 
    IMPORTANT: this extraction is NOT part of the trusted proof base.
    The Coq proofs in `Validate_binary64.v` stay on Flocq's abstract
@@ -50,6 +54,7 @@ From NTS.Proofs.Flocq Require Import B64_FastExpansionSum.  (* b64_grow_expansio
 From NTS.Proofs.Flocq Require Import ArcCircle_b64_compute.  (* b64_chord_crosses_arc_circle *)
 From NTS.Proofs.Flocq Require Import ArcPixel_b64_compute.   (* b64_arc_passes_through_hot_pixel *)
 From NTS.Proofs.Flocq Require Import SnapRoundingScale_b64.  (* b64_snap_coord_scaled (C1 power-of-two grid) *)
+From NTS.Proofs.Flocq Require Import Orient_b64_exact_full.  (* b64_orient2d_exact (full-plane exact sign) *)
 From Flocq Require Import IEEE754.Binary.
 From Stdlib Require Import Extraction.
 From Stdlib Require Import ExtrOcamlBasic.
@@ -138,6 +143,63 @@ Extract Constant HotPixel_b64.b64_snap_coord =>
         else if d > 0.5 then f +. 1.0
         else if Float.rem f 2.0 = 0.0 then f else f +. 1.0)".
 
+(* --- Exact full-plane orientation (Orient_b64_exact_full.v) -------------- *)
+(* `b64_orient2d_exact` is Z-valued integer arithmetic all the way down       *)
+(* (min-exponent alignment, shifted mantissas, a 2x2 integer determinant,     *)
+(* Z.sgn), so the whole computation extracts as VERIFIED code over the Coq    *)
+(* `z`/`positive` representation -- arbitrary precision by construction, no   *)
+(* zarith dependency.  The only parts that cannot extract are the two decode  *)
+(* projections `b64_mant` / `b64_exp`: they pattern-match on Flocq's          *)
+(* `binary_float`, which this file maps to native `float` (the match stub     *)
+(* faults).  Override them with an IEEE 754 bit-level decode that lands on    *)
+(* exactly the Flocq `B754_finite` canonical pair:                            *)
+(*                                                                            *)
+(*   normal    (biased in 1..2046): mant = +/-(2^52 + frac), exp = biased-1075 *)
+(*   subnormal (biased = 0, frac<>0): mant = +/-frac,        exp = -1074      *)
+(*   zero / infinity / NaN:           mant = 0,              exp = 0          *)
+(*                                                                            *)
+(* The zero/inf/NaN row is the Coq catch-all (`| _ => 0%Z`).  These two       *)
+(* overrides are the unverified surface of the exact path (they are glue,     *)
+(* like Bplus above); everything downstream of them is extracted from the     *)
+(* Qed-closed development, and `oracle/gen_ffi_parity_tests.py` gates the     *)
+(* extracted sign against the independent zarith re-implementation in         *)
+(* `oracle/driver.ml` (ORIENT_EXACT) case for case.                           *)
+Extract Constant Orient_b64_exact_full.b64_mant =>
+"(fun x ->
+    if x <> x || x = infinity || x = neg_infinity || x = 0.0 then Z0
+    else
+      let bits = Int64.bits_of_float x in
+      let frac = Int64.logand bits 0xFFFFFFFFFFFFFL in
+      let biased =
+        Int64.to_int (Int64.logand (Int64.shift_right_logical bits 52) 0x7FFL) in
+      let m =
+        if biased = 0 then frac else Int64.logor frac 0x10000000000000L in
+      let rec pos_of (n : int64) =
+        if Int64.equal n 1L then XH
+        else
+          let q = pos_of (Int64.shift_right_logical n 1) in
+          if Int64.equal (Int64.logand n 1L) 1L then XI q else XO q
+      in
+      if Int64.compare bits 0L < 0 then Zneg (pos_of m) else Zpos (pos_of m))".
+
+Extract Constant Orient_b64_exact_full.b64_exp =>
+"(fun x ->
+    if x <> x || x = infinity || x = neg_infinity || x = 0.0 then Z0
+    else
+      let bits = Int64.bits_of_float x in
+      let biased =
+        Int64.to_int (Int64.logand (Int64.shift_right_logical bits 52) 0x7FFL) in
+      let e = if biased = 0 then (-1074) else biased - 1075 in
+      let rec pos_of n =
+        if n = 1 then XH
+        else
+          let q = pos_of (n lsr 1) in
+          if n land 1 = 1 then XI q else XO q
+      in
+      if e = 0 then Z0
+      else if e > 0 then Zpos (pos_of e)
+      else Zneg (pos_of (-e)))".
+
 Extraction Language OCaml.
 
 (* Write the extracted code to `oracle/extracted.ml` (relative to the    *)
@@ -166,4 +228,5 @@ Extraction "oracle/extracted.ml"
   b64_arc_passes_through_hot_pixel
   b64_TwoSum
   b64_grow_expansion_aux
-  b64_snap_coord_scaled.
+  b64_snap_coord_scaled
+  b64_orient2d_exact.

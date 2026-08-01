@@ -19,7 +19,7 @@ The roadmap row read "pending Phase 1+ / 0%", which had gone stale in one
 direction and was accurate in another:
 
 * **Extraction toolchain — already shipped, incidentally.**
-  `theories-flocq/Validate_binary64_extract.v` extracts nineteen kernel
+  `theories-flocq/Validate_binary64_extract.v` extracts twenty kernel
   functions to OCaml with native-float overrides, `oracle/Makefile` links them
   into `oracle_bin`, and `.github/workflows/build-oracle.yml` builds and
   publishes that binary from a clean container on every relevant push. It was
@@ -38,11 +38,11 @@ is now callable **in-process** through a C ABI that .NET binds with `DllImport`.
 
 | Piece | File | What it is |
 |---|---|---|
-| OCaml callback layer | `oracle/nts_ffi.ml` | Registers 18 extracted entry points as `Callback` closures with a uniform `float array` calling convention |
+| OCaml callback layer | `oracle/nts_ffi.ml` | Registers 19 extracted entry points as `Callback` closures with a uniform `float array` calling convention |
 | C entry points | `oracle/nts_ffi_stubs.c` | Plain C functions marshalling doubles in / codes and doubles out, with CAMLparam GC discipline |
 | ABI contract | `oracle/nts_ffi.h` | Signatures, enum encodings, lifecycle, threading and numerics caveats |
 | Build | `oracle/Makefile` | `make -C oracle ffi` → `libntsrocq.so` + `ffi_probe`; `make -C oracle ffi-parity` runs the gate |
-| Parity gate | `oracle/gen_ffi_parity_tests.py` | ~1050 cases per run; every FFI entry point vs the `oracle_bin` protocol, compared as raw IEEE 754 bit patterns |
+| Parity gate | `oracle/gen_ffi_parity_tests.py` | ~1200 cases per run; every FFI entry point vs the `oracle_bin` protocol, compared as raw IEEE 754 bit patterns |
 | .NET binding | `oracle/csharp/RocqNative.cs` | Reference `DllImport` surface + managed façade (reference source; no .NET toolchain in this CI) |
 | CI | `.github/workflows/build-oracle.yml` | Builds the library in the pinned container, runs the parity gate, uploads `libntsrocq.so` + `nts_ffi.h` as an artifact and attaches them to releases |
 
@@ -54,6 +54,10 @@ plus an explicit runtime link.
 ## 3. Why the parity gate is the interesting part
 
 `libntsrocq` and `oracle_bin` call the *same* `oracle/extracted.ml` symbols.
+(One deliberate exception: `nts_rocq_orient_sign_exact` is additionally gated
+against the `ORIENT_EXACT` mode, which is an independent zarith
+re-implementation — for that pairing the gate is a genuine arithmetic
+differential test, not just marshalling parity; see §4.)
 So no arithmetic difference between them is possible — but a **marshalling**
 difference very much is: a swapped argument pair, a sign dropped from an enum,
 a result list truncated at the C boundary, a `-0.0` normalised on the way out.
@@ -81,9 +85,10 @@ production code must not assume more than the proof gives.
 
 | Entry point | Extracted symbol | Proof status |
 |---|---|---|
-| `nts_rocq_orient_sign_filtered` | `b64_orient_sign_filtered` | Totality + decidability + NaN-safety Qed (`b64_orient_sign_filtered_total`, `orient_sign_robust_eq_dec`, `Orientation_b64.v`); exact soundness for `\|coord\| <= 2^25` Qed (`b64_orient_sign_filtered_sound_small_int`, `Orient_b64_exact.v`). General bounded-magnitude soundness (Stages B–D) **deferred** — `docs/soundness-strategy.md`. `UNCERTAIN` is never a wrong sign; callers must escalate, not coerce it to `ZERO` |
+| `nts_rocq_orient_sign_filtered` | `b64_orient_sign_filtered` | Totality + decidability + NaN-safety Qed (`b64_orient_sign_filtered_total`, `orient_sign_robust_eq_dec`, `Orientation_b64.v`); exact soundness for `\|coord\| <= 2^25` Qed (`b64_orient_sign_filtered_sound_small_int`, `Orient_b64_exact.v`). General bounded-magnitude soundness (Stages B–D) **deferred** — `docs/soundness-strategy.md`. `UNCERTAIN` is never a wrong sign; callers must escalate (to `nts_rocq_orient_sign_exact`), not coerce it to `ZERO` |
 | `nts_rocq_orient_sign_naive` | `b64_orient_sign_naive` | Total (`b64_orient_sign_naive_total`); **not robust** — differential-testing use only |
 | `nts_rocq_orient2d` | `b64_orient2d` | The raw determinant value; no soundness claim on its own |
+| `nts_rocq_orient_sign_exact` | `b64_orient2d_exact` | **Full-plane exact-sign soundness Qed** (`b64_orient2d_exact_sound`, `Orient_b64_exact_full.v`, no magnitude restriction, within the three-axiom allowlist and no `Classical_Prop.classic`) + canonical-sign range Qed (`b64_orient2d_exact_range`). The escalation target for `UNCERTAIN`. Everything downstream of decode is extracted verified `Z` arithmetic; the two IEEE 754 decode overrides (`b64_mant`/`b64_exp`, `Validate_binary64_extract.v`) are unverified glue, gated case-for-case against the *independent* zarith `ORIENT_EXACT`. Non-finite inputs return `NAN` via the marshalling guard (soundness premise is `all_finite`); never `UNCERTAIN`. Arbitrary-precision integers — escalation-path speed, not hot-path speed |
 | `nts_rocq_intersect_sign_filtered` | `b64_intersect_sign_filtered` | Integer-regime soundness Qed for both decisive verdicts (`b64_intersect_sign_filtered_{none,point}_sound_small_int`, headline `..._sound_small_int`, `Intersect_b64.v`); `COLLINEAR` sub-case disambiguation is the known open gap (`docs/phase1-completion.md`) |
 | `nts_rocq_intersect_point` / `_xy` | `b64_intersect_point{,_x,_y}` | Totality, finiteness, magnitude bounds and a forward-error bound in `K·eps` form Qed (`Intersect_b64_exact.v`); `b64_intersect_point_returns_some_when_point` ties the option wrapper to the predicate |
 | `nts_rocq_passes_through_hot_pixel{,_halfopen}` | `b64_passes_through_hot_pixel{,_halfopen}_compute` | Conservative **over-approximation** of the exact relation: it over-accepts within O(ulp) of tangency, machine-checked in `PassesThrough_b64_compute_unsound.v` / `PassesThroughHalfopen_b64_compute_unsound.v`. The exact R-side spec is non-computational and not extractable |
@@ -105,13 +110,19 @@ Two structural caveats apply to everything above:
   The proofs are about the Flocq model; the extracted code is bit-equal to it on
   a 64-bit SSE2/NEON runtime with round-to-nearest-even, and diverges on a
   32-bit x87 runtime (double rounding).
-* **No exact fallback is exposed yet.** `oracle_bin`'s `ORIENT_EXACT` /
-  `INCIRCLE_EXACT` / `PASSES_THROUGH_EXACT` modes are zarith re-implementations
-  in `driver.ml`, not extracted code, so they are deliberately absent from the
-  FFI. Extracting an exact escalation path for `UNCERTAIN` is the obvious next
-  Phase 5 slice (`b64_orient2d_exact` / `b64_orient2d_exact_sound`,
-  `Orient_b64_exact_full.v`, is Qed-closed over the entire double plane — it is
-  the extraction, not the proof, that is missing).
+* **The exact orientation fallback is now extracted and exposed.**
+  `b64_orient2d_exact` (`Orient_b64_exact_full.v`, Qed-closed over the entire
+  double plane) extracts as verified Coq `Z` arithmetic — no zarith — plus two
+  unverified IEEE 754 bit-decode overrides (`b64_mant` / `b64_exp`,
+  `Validate_binary64_extract.v`), and ships as `nts_rocq_orient_sign_exact`:
+  the in-process escalation for `NTS_ORIENT_UNCERTAIN`. The zarith
+  `ORIENT_EXACT` in `driver.ml` deliberately survives as the
+  arithmetic-independent half of a differential pair (the new
+  `ORIENT_EXACT_EXTRACTED` oracle mode runs the extracted path; the parity
+  gate compares the FFI against both, case for case). The in-circle and
+  passes-through exact modes (`INCIRCLE_EXACT` / `PASSES_THROUGH_EXACT`)
+  remain zarith-only and absent from the FFI — extracting those counterparts
+  is the next slice of this lane.
 
 ## 5. Using it
 
@@ -130,6 +141,10 @@ From C:
 
 nts_rocq_init();                       /* once, before anything else */
 int32_t s = nts_rocq_orient_sign_filtered(0, 0, 1, 0, 0, 1);   /* NTS_ORIENT_POS */
+if (s == NTS_ORIENT_UNCERTAIN) {
+  /* escalate: exact over the full plane, never UNCERTAIN */
+  s = nts_rocq_orient_sign_exact(0, 0, 1, 0, 0, 1);
+}
 ```
 
 From .NET: copy `oracle/csharp/RocqNative.cs` into the consumer, ship
@@ -153,9 +168,12 @@ never write past the declared capacity.
 
 ## 6. What Phase 5 still needs
 
-1. **Exact escalation in the FFI** — extract `b64_orient2d_exact` (and the
-   in-circle / passes-through exact counterparts) so `UNCERTAIN` has an
-   in-process resolution instead of falling back to a subprocess.
+1. **Exact escalation in the FFI** — the orientation half is **done**:
+   `b64_orient2d_exact` is extracted and exposed as
+   `nts_rocq_orient_sign_exact`, so `UNCERTAIN` has an in-process resolution.
+   Still open: the in-circle / passes-through exact counterparts
+   (`INCIRCLE_EXACT` / `PASSES_THROUGH_EXACT` are still zarith-only oracle
+   modes).
 2. **Multi-platform native assets** — the CI artifact is Linux x64 only.
    macOS (x64 + arm64) and Windows x64 builds, plus a runtimes/-shaped NuGet
    package, are needed before the consumer can take a dependency.

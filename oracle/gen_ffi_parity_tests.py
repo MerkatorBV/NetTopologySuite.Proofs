@@ -24,6 +24,10 @@
 # Coverage: every FFI entry point that has an oracle_bin counterpart.
 # `nts_rocq_snap_coord` has no standalone oracle mode; it is exercised
 # indirectly through SNAP_SCALED (scale = 1) and listed in the summary.
+# `nts_rocq_orient_sign_exact` is gated twice: against ORIENT_EXACT (the
+# independent zarith re-implementation — a genuine arithmetic differential
+# test, the only pairing here whose two sides share no code) and against
+# ORIENT_EXACT_EXTRACTED (the same extracted symbol — marshalling parity).
 #
 # Run from repo root (after `make -C oracle` and `make -C oracle ffi`):
 #   python3 oracle/gen_ffi_parity_tests.py
@@ -154,13 +158,18 @@ def norm_probe_int_only(out):
 MODES = {}
 
 
-def mode(name, arity, oracle_lines, norm_oracle, norm_probe, gen):
+def mode(name, arity, oracle_lines, norm_oracle, norm_probe, gen, probe_mode=None):
+    # probe_mode lets several oracle_bin modes gate the SAME ffi_probe entry
+    # point (e.g. ORIENT_EXACT and ORIENT_EXACT_EXTRACTED both against
+    # nts_rocq_orient_sign_exact, making the gate a differential check
+    # between the zarith and extracted implementations).
     MODES[name] = dict(
         arity=arity,
         oracle_lines=oracle_lines,
         norm_oracle=norm_oracle,
         norm_probe=norm_probe,
         gen=gen,
+        probe_mode=probe_mode or name,
     )
 
 
@@ -213,6 +222,63 @@ mode(
     norm_sign_and_value(ORIENT_CODE),
     norm_probe_int_and_value,
     gen_orient,
+)
+
+
+def gen_orient_exact(rng, curated_only=False):
+    """Adversarial corpus for the EXACT full-plane sign: everything the
+    filtered corpus has, plus cases that only bite once mantissas are
+    aligned to a common exponent (huge binade spreads, all-subnormal
+    triangles, one-ulp perturbations at the top of the range)."""
+    out = gen_orient(rng, curated_only=True)
+    extra = [
+        # exact collinearity across a ~2000-binade exponent spread: the
+        # shifted integer mantissas are ~2000-bit on both sides
+        (0, 0, 2.0 ** -1000, 2.0 ** -1000, 2.0 ** 1000, 2.0 ** 1000),
+        (0, 0, 5e-324, 5e-324, 1e308, 1e308),          # min subnormal -> near max
+        (5e-324, 0, 0, 5e-324, -5e-324, 0),            # all-subnormal triangle
+        # smallest representable CCW / CW perturbations at 2^1000
+        (0, 0, 2.0 ** 1000, 2.0 ** 1000, 2.0 ** 1000, 2.0 ** 1000 + 2.0 ** 948),
+        (0, 0, 2.0 ** 1000, 2.0 ** 1000 + 2.0 ** 948, 2.0 ** 1000, 2.0 ** 1000),
+        (float("inf"), float("inf"), float("-inf"), float("-inf"),
+         float("nan"), float("nan")),                  # all-non-finite
+    ]
+    out += [tuple(map(hx, c)) for c in extra]
+    if curated_only:
+        return out
+    scales = [1.0, 1e-8, 1e8, 2.0 ** 27, 2.0 ** 60,
+              2.0 ** -300, 2.0 ** 300, 2.0 ** -1022]
+    for _ in range(CASES_PER_MODE):
+        # per-coordinate scales stress the min-exponent alignment
+        c = [rng.uniform(-1.0, 1.0) * rng.choice(scales) for _ in range(6)]
+        if rng.random() < 0.35:  # force (near-)collinearity
+            c[4] = c[0] + (c[2] - c[0]) * 2.0
+            c[5] = c[1] + (c[3] - c[1]) * 2.0 + rng.choice([0.0, 1e-9, -1e-9])
+        out.append(tuple(map(hx, c)))
+    return out
+
+
+# nts_rocq_orient_sign_exact vs the zarith ORIENT_EXACT mode: the two sides
+# share NO arithmetic (frexp + zarith bignums vs extracted Coq Z plus the
+# bit-level decode overrides), so this pairing is a genuine differential
+# correctness check, not just marshalling parity.
+mode(
+    "ORIENT_EXACT", 6,
+    lambda v: ["ORIENT_EXACT"] + pts(v, 3),
+    norm_code_only(ORIENT_CODE),
+    norm_probe_int_only,
+    gen_orient_exact,
+)
+
+# ... and vs ORIENT_EXACT_EXTRACTED, which routes through the same extracted
+# symbol the FFI calls: this half IS the marshalling-parity gate.
+mode(
+    "ORIENT_EXACT_EXTRACTED", 6,
+    lambda v: ["ORIENT_EXACT_EXTRACTED"] + pts(v, 3),
+    norm_code_only(ORIENT_CODE),
+    norm_probe_int_only,
+    gen_orient_exact,
+    probe_mode="ORIENT_EXACT",
 )
 
 
@@ -653,7 +719,7 @@ def main():
         mismatches = 0
         for case in cases:
             oracle_out = run_oracle(spec["oracle_lines"](case))
-            probe_out = run_probe(name, list(case))
+            probe_out = run_probe(spec["probe_mode"], list(case))
             checked += 1
             if oracle_out is None or probe_out is None:
                 fail(name, case, oracle_out, probe_out, "I2 TOTALITY: a side errored")

@@ -176,9 +176,28 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* ABI range lemma (Phase 5 extraction).  The exact predicate only ever      *)
+(* returns a canonical sign value, on ALL inputs (finite or not) -- this is  *)
+(* the totality half of the C ABI contract for the extracted escalation      *)
+(* path (`nts_rocq_orient_sign_exact`, oracle/nts_ffi.h).                    *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma b64_orient2d_exact_range :
+  forall P0 P1 Q,
+    b64_orient2d_exact P0 P1 Q = (-1)%Z \/
+    b64_orient2d_exact P0 P1 Q = 0%Z \/
+    b64_orient2d_exact P0 P1 Q = 1%Z.
+Proof.
+  intros P0 P1 Q. unfold b64_orient2d_exact.
+  destruct (b64_orient2d_intdet P0 P1 Q);
+    [ right; left | right; right | left ]; reflexivity.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Audit footprint.                                                           *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions b64_decode.
 Print Assumptions cross_R_BP_factor.
 Print Assumptions b64_orient2d_exact_sound.
+Print Assumptions b64_orient2d_exact_range.

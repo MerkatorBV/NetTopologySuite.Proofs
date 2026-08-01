@@ -39,6 +39,17 @@
         line 2..4:    points as above.
         output:       single token "<sign>": POS / NEG / ZERO / NAN.
 
+     ORIENT_EXACT_EXTRACTED -- same contract as ORIENT_EXACT, but routed
+                        through the EXTRACTED `b64_orient2d_exact` itself
+                        (Orient_b64_exact_full.v): verified Coq integer
+                        arithmetic plus the IEEE 754 decode overrides in
+                        Validate_binary64_extract.v.  ORIENT_EXACT (zarith)
+                        and this mode share no arithmetic, so they form a
+                        differential pair; gen_ffi_parity_tests.py gates
+                        them against each other.
+        line 2..4:    points as above.
+        output:       single token "<sign>": POS / NEG / ZERO / NAN.
+
      INTERSECT_FILTERED -- segment-pair intersection predicate, Stage A.
         line 2:       <x0> <y0>     -- P0
         line 3:       <x1> <y1>     -- P1
@@ -346,10 +357,12 @@ let run_orient_filtered () =
    for all finite inputs the sign returned here equals the true real
    orientation sign -- no |coord| <= 2^25 restriction.
 
-   It is a faithful re-implementation rather than an extraction: the oracle's
-   native-float extraction maps Flocq's `binary_float` to OCaml `float` and
-   stubs the `B754_finite` decode, so the Coq decode cannot be extracted; the
-   theorem certifies this algorithm.  (Oracle code is not the trusted base.) *)
+   It is a faithful re-implementation rather than an extraction (zarith
+   bignums, frexp decode).  Since the ORIENT_EXACT_EXTRACTED mode below now
+   routes through the extracted `b64_orient2d_exact` itself, this version's
+   remaining job is to be the INDEPENDENT half of a differential pair: the
+   two modes share no arithmetic, and gen_ffi_parity_tests.py gates them
+   against each other.  (Oracle code is not the trusted base.) *)
 
 (* value = m * 2^e, m a bignum *)
 let dyad_of_float (d : float) : BigZ.t * int =
@@ -381,6 +394,32 @@ let run_orient_exact () =
   if not (finite_bpoint p0 && finite_bpoint p1 && finite_bpoint q) then print_endline "NAN"
   else
     let s = orient_exact_sign p0 p1 q in
+    print_endline (if s > 0 then "POS" else if s < 0 then "NEG" else "ZERO")
+
+(* ----- ORIENT_EXACT_EXTRACTED mode. --------------------------------------- *)
+
+(* Same protocol and output as ORIENT_EXACT, but the sign comes from the
+   EXTRACTED `b64_orient2d_exact` (Orient_b64_exact_full.v; full-plane
+   soundness Qed as `b64_orient2d_exact_sound`, range as
+   `b64_orient2d_exact_range`).  Min-exponent alignment, shifted integer
+   mantissas and the 2x2 determinant all run as verified Coq `Z` arithmetic;
+   only the two IEEE 754 decode projections (`b64_mant` / `b64_exp`) are
+   extraction overrides (Validate_binary64_extract.v).  The finiteness gate
+   below mirrors ORIENT_EXACT: the soundness theorem's premise is
+   `all_finite`, so non-finite inputs answer NAN rather than a sign. *)
+
+(* The extracted exact predicate returns `Z.sgn` of the integer determinant,
+   so the constructor IS the sign -- no magnitude to convert. *)
+let z_sign (s : z) : int =
+  match s with Z0 -> 0 | Zpos _ -> 1 | Zneg _ -> -1
+
+let run_orient_exact_extracted () =
+  let p0 = parse_point (input_line stdin) in
+  let p1 = parse_point (input_line stdin) in
+  let q  = parse_point (input_line stdin) in
+  if not (finite_bpoint p0 && finite_bpoint p1 && finite_bpoint q) then print_endline "NAN"
+  else
+    let s = z_sign (b64_orient2d_exact p0 p1 q) in
     print_endline (if s > 0 then "POS" else if s < 0 then "NEG" else "ZERO")
 
 (* ----- INCIRCLE_EXACT mode. ---------------------------------------------- *)
@@ -3950,6 +3989,7 @@ let () =
        | "ORIENT"                   -> run_orient ()
        | "ORIENT_FILTERED"          -> run_orient_filtered ()
        | "ORIENT_EXACT"             -> run_orient_exact ()
+       | "ORIENT_EXACT_EXTRACTED"   -> run_orient_exact_extracted ()
        | "TWOSUM"                   -> run_twosum ()
        | "GROW_EXPANSION"           -> run_grow_expansion ()
        | "INTERSECT_FILTERED"       -> run_intersect_filtered ()
