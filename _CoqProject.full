@@ -230,6 +230,13 @@ theories/Atan2.v
 # identity; plus atan2_range (-PI, PI].  Pulls classic via atan (see
 # audit-exceptions).  No Admitted.
 theories/AngleBetween.v
+# Issue #64 subtask 64-c — RED surface only: InArc minor-arc membership via
+# central-angle order, plus rational unit-circle witness
+# (A=(1,0), P=(3/5,4/5), B=(0,1); major counter Q=(-1,0)).  Headline claims
+# in_arc_point_on_minor_arc and in_arc_point_on_major_arc_rejected are Abort
+# (not Admitted).  Green/Refactor out of scope.  4-axiom (atan2 lineage via
+# AngleBetween; no Print Assumptions until Green closes a Qed consumer).
+theories/InArc.v
 # Buffer/noder pipeline, Stage 2b seam (docs/buffer-noder-pipeline.md S3):
 # round-join corner-arc relation (Roadmap target 6).  The sweep between the
 # two offset normals equals the turn between the edges
