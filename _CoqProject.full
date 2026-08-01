@@ -2388,20 +2388,15 @@ theories/RelateCurveMatrix.v
 # OverlayContactSound chord_chord_contact_* + RelateCurveMatrix cell machinery.
 # 3-axiom, no Admitted.
 theories/RelateCurveBoundaryMeet.v
-# Issue #67 subtask 67-b — RED surface only: classical boundary operator ∂
-# equals the RelateNG boundary-graph extraction (polygonal regions,
-# classical reals).  Spec-shaped boundary_op (neighbourhood frontier of
-# point_set) / RelateNGBoundaryGraph (on-edge ring extraction twin of
-# geom_boundary) plus rational unit-square witness P with midpoint
-# m=(1/2,0) on the bottom edge.  Headlines
-# boundary_op_eq_relateng_boundary_graph,
-# boundary_op_eq_relateng_boundary_graph_on_witness,
-# bnd_mid_bottom_on_classical_boundary,
-# bnd_mid_bottom_boundary_sides_agree are Abort (not Admitted).
-# Green/Refactor out of scope: later identify frontier of point_set with
-# the combinatorial ring-edge graph (Eval → Qed via nts-eval; operator CI
-# unknown at Red time).  Depends on Distance + Overlay + Segment.
-# No Print Assumptions until Green closes a Qed consumer.
+# Issue #67 subtask 67-b — GREEN: classical boundary operator ∂ equals the
+# RelateNG boundary-graph extraction on the rational unit-square witness
+# (core: any axis-aligned rectangle under ray-parity point_set).
+# Headlines boundary_op_eq_relateng_boundary_graph (+ _on_witness),
+# bnd_mid_bottom_on_classical_boundary, bnd_mid_bottom_boundary_sides_agree
+# and reusable boundary_op_eq_relateng_boundary_graph_rect are Qed.
+# Depends on Distance + Overlay + Segment + PointInRingTangents + RectangleJCT.
+# 3-axiom classical-reals base (+ sig_not_dec via decidable comparisons).
+# No Admitted.
 theories/RelateNGBoundaryGraph.v
 # S13: RelateNG pipeline (strata, relate, dim, MOD2+area integration)
 theories/RelateNG.v
