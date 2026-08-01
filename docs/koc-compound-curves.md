@@ -139,3 +139,35 @@ introduce exactly these through sign errors and frame-drift accumulation.
 | `koc_assembly_C1_in_grid` | **The C¹ contract survives stakeout**: distances by the isometry, perpendicularity by dot preservation with the tangent direction transported as the image of a direction segment. Kink-freedom in the design frame = kink-freedom on the ground |
 | `koc_assembly_example_345` | Full rational assembly on the lane's circles: K1=(0,0), s₁=3/4, R₁=5 ⇒ S₁=(3,−4); leave at the apex (s₂=0) ⇒ O2=(3,1); K2=(10,0), s₃=0, R₂=10 ⇒ S₂=(10,−10); leave at s₄=−3/4 ⇒ K3=(16,−2) — all four contracts by `lra` |
 | `koc_assembly_example_reverse` | Reverse-curve joint: same K2, s₃ with R₂=−10 puts the centre at (10,10) — other side, same contract, nothing new needed |
+
+## Part 5 — C⁰ curvature continuity (`CompoundCurveCurvature.v`)
+
+The dual of Part 4's C¹ (tangent) contract: **no jump in curvature** at any
+of the four joints, plus the intermediate transition TC2's linear ramp
+`1/R1 → 1/R2` that is *not* a start-from-straight clothoid.  Part 4 keeps
+the alignment kink-free; Part 5 keeps lateral acceleration continuous
+(passenger comfort / EN 13803-1 jerk envelope at the papers' 110 km/h).
+
+| Lemma | Content |
+|---|---|
+| `joint_C0_curvature` | The interface contract: `k_left = k_right` — no jump in lateral acceleration. Sign-agnostic (reverse curves included) |
+| `koc_arc_curvature` | Constant arc curvature `1/R` (signed) |
+| `koc_joint_tc1_to_ca_C0` | TC1→CA1: reuses part 1's `koc_clothoid_end_curvature` (`k(L)=1/R`) as a joint contract |
+| `koc_tc2_curvature` / `koc_tc2_angle` | Intermediate ramp: `k(l) = 1/R1 + l·(1/R2 − 1/R1)/L`, integrated angle `θ(l)` |
+| `koc_tc2_start` / `koc_tc2_end` | Boundary values: `k(0)=1/R1`, `k(L)=1/R2` |
+| `koc_tc2_linear_ramp` | The ramp is the affine interpolation of the two arc curvatures |
+| `koc_tc2_angle_deriv` | **θ′ = k** for the intermediate ramp — dual of part 1's clothoid derivative |
+| `koc_joint_ca_to_tc2_C0` / `koc_joint_tc2_to_ca_C0` | CA1→TC2 and TC2→CA2 satisfy C⁰ |
+| `koc_exit_clothoid_curvature` | TC3-style exit ramp `1/R → 0`: `k(l)=(L−l)/(R L)` |
+| `koc_exit_is_reversed_entry` | Exit = entry clothoid read backwards: `k_exit(l) = k_entry(L−l)` |
+| `koc_exit_clothoid_angle_deriv` | θ′ = k for the exit ramp |
+| `koc_joint_ca_to_tc3_C0` | CA2→TC3 satisfies C⁰ |
+| `koc_compound_assembly_C0` | **Headline:** the four-joint C⁰ conjunction for the whole chain, radii **signed** (reverse curve = R₂ < 0) |
+| `koc_assembly_C0_to_straight` | TC3 lands on curvature 0 — the join back onto the second main direction |
+| `koc_curvature_example_345` | Rational witness R₁=5, R₂=10, L=4: all four joints + midpoint mean + land-on-straight |
+| `koc_curvature_example_reverse` | Reverse-curve TC2: R₂=−10 ends at −1/10 — same contracts |
+
+Proof note: angle derivatives reuse part 1's `derivable_pt_lim_scal` /
+`_plus` / `_minus` shape (`a·l + c·l²`); no `functional_extensionality`
+required.  Sqrt-free, classical-reals trio only.
+
