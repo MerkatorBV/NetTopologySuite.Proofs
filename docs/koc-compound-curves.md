@@ -67,3 +67,19 @@ algebra. Natural next rungs: the compound-curve *assembly* invariant
 (tangent conformity at all four joints K1–K3, O2 as one theorem chain), and
 the symmetric main-direction intersection (eqs (37)–(41)) that places the
 local frame in the grid.
+
+## Part 2 — pinning the frame to the grid (`CompoundCurveKocFrame.v`)
+
+Koc §7–§8 (eqs (37)–(41)), the step that turns an in-frame design into
+stakeout coordinates. A wrong vertex or a wrong walk direction shifts the
+*entire* alignment along the old track axis — internally perfect geometry,
+globally misplaced, caught only when the setting-out crew finds the curve
+starting metres from where the survey said.
+
+| Koc eq. | Lemma | Content |
+|---|---|---|
+| (37),(38) | `koc_vertex_on_both_directions` | The closed-form vertex W lies on **both** symmetric main directions (slopes ∓m, m = tan(α/2)) |
+| — (scout) | `koc_vertex_unique` | …and is the **only** such point (transversality, m ≠ 0). The paper never states this; without it eqs (40)–(41) would anchor to an arbitrary member of a solution set |
+| (39) | `koc_vertex_dist_sq` | `OW² = (1+m²)·t²/(4m²)`, `t = yO3 − m·xO3`, sqrt-free |
+| (40),(41) | `koc_grid_origin_placement` | Walking distance d from the surveyed vertex along the grid line `X = A1 + B1·Y` stays **on the line** at squared distance exactly `d²` — proven for **both** branch signs (the paper's `(A2−A1)/(B1−B2)` selector picks one) |
+| example | `koc_example_345_vertex`, `koc_example_345_grid_origin` | Third 3-4-5 of the lane: m = 3/4, O3 = (8,0) ⇒ W = (4,−3), OW = 5; in the grid, walking d = 5 down `X = (3/4)Y` from (4,3) lands the origin at exactly (0,0) — closing the rational loop with part 1's example |

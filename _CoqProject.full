@@ -126,6 +126,13 @@ theories/ClothoidResidual.v
 # circle, tangent-length setting out (R tan(alpha/2)), exact 3-4-5 example.
 # All sqrt-free (u>0, u^2=1+s^2).  No Admitted.
 theories/CompoundCurveKoc.v
+# Part 2 (Koc Sec 7-8, eqs 37-41): pin the design frame to the national grid.
+# Vertex of the symmetric main directions exists (koc_vertex_on_both_
+# directions), is UNIQUE (koc_vertex_unique -- transversality m<>0), with
+# sqrt-free OW^2 (koc_vertex_dist_sq); walking OW along the grid line X=A1+B1Y
+# stays on the line at distance exactly d, both branches
+# (koc_grid_origin_placement).  Exact 3-4-5 loop example.  No Admitted.
+theories/CompoundCurveKocFrame.v
 # Degenerate straight-chord regime (k0 = k1 = 0): the residual collapses to
 # L^2 - d^2 with exact unique positive root L = d, and all three Section
 # hypotheses of ClothoidResidual.v are discharged concretely (MVT witness
