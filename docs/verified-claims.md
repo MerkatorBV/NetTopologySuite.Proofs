@@ -720,6 +720,26 @@ Minimal `ClothoidChord` carrier; witnesses reuse S2 line-line matrices.
 | `RelateClothoid.v : cl_matrix_point_ii_crosses` / `_intersects` / `cl_matrix_disjoint_witness` | **Witness:** the reused S2 matrices satisfy `Crosses`/`Intersects`/`Disjoint` `[exact]` | 0 |
 | `RelateClothoid.v : clothoid_L_unique_on_branch` | Conditional Halley/L uniqueness on monotone clothoid branch `[exact]` | 0 |
 
+## Koc compound curves — satellite-survey railway alignment (`CompoundCurveKoc.v`) <!-- feat:curves geom:cs -->
+
+The analytic core of Koc (2015), *Archives of Transport* 34(2): compound-curve
+(EN 13803-1) railway re-alignment from mobile GNSS surveys, when the design
+straights are unrecoverable and two arcs of different radii + three transitions
+must connect the surveyed directions. Sqrt-free (`u > 0, u² = 1+s²` carried as
+hypotheses); see `docs/koc-compound-curves.md` for the equation→lemma map and
+the field failure modes each lemma guards.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CompoundCurveKoc.v : koc_roundtrip_global_local` (+`koc_roundtrip_local_global`) | **Frame conversions are lossless** (Koc eqs 1–2 vs 42–43): system-2000 → local → system-2000 and local → grid → local are both the identity — survey points and design geometry move between frames with zero information loss `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_to_local_isometry` | The grid→local transform preserves squared distances: chainage/gauge/clearance computations agree in both frames `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_clothoid_angle_deriv` (+`koc_clothoid_start`, `koc_clothoid_end_curvature`) | **θ′ = k** (the paper's silent integration step): the tangent-angle function `l²/(2RL)` has derivative exactly the linear curvature `l/(RL)` at every `l`; start conditions `k(0)=θ(0)=0`; end curvature `k(L)=1/R` — the C⁰ curvature join to the arc `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_clothoid_end_angle` | **The type-independent end angle θ(L) = L/(2R)** that all downstream tangency formulas (Koc eqs 7, 22, 30) consume `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_center_on_normal` | **Arc centre from tangency point** (eqs 8–9/23–24): `S = K + (R/u)(s, −1)` has `dist²(S,K) = R²` and `(S−K) ⊥ (1,s)` — the centre sits on the normal, guarding the wrong-side-centre kink bug `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_slope_point_on_circle` | **Prescribed-slope point of a circle** (eqs 31–32): `K = S + (R/u)(−s, 1)` is on the circle with radius ⊥ the slope-`s` direction — where arc CA2 must end for transition TC3 to land on the second main direction `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_tangent_setout` (+`koc_tangent_length`) | **Setting out along a tangent** (eqs 11–12/14–15): `M = K + (d/u)(1,s)` lies on the slope-`s` line at squared distance `d²`; with `d = R·tan(α/2)` this is the surveyor's tangent-length step `\|KM\| = R·tan(α/2)` `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_example_345_center` (+`_center_is_koc`, `_setout`) | **Exact 3-4-5 witness**: s = 3/4 ⇒ u = 5/4; K=(0,0), R=5 ⇒ centre (3,−4); d=2 ⇒ M=(8/5,6/5) — rational, sqrt-free, non-vacuous `[exact]` | 3 |
+
 ## Issue #67 — clothoid Flocq + Halley (`ClothoidDegenerate_b64.v`, `ClothoidResidual_b64_exact.v`, `ClothoidHalley_b64.v`, `ClothoidHalley.v`) <!-- feat:relate geom:cs -->
 
 Route **(A)** b64 mirror of the κ₀ = κ₁ = 0 degenerate residual; route **(C)**

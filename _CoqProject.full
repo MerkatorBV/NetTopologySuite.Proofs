@@ -120,6 +120,12 @@ theories/Azimuth.v
 # Print Assumptions audit (scripts/audit_axioms.sh) checks it against the
 # three-axiom allowlist.  No Admitted, no Axiom, no Parameter.
 theories/ClothoidResidual.v
+# Koc (2015) compound-curve railway alignment core: system-2000<->local frame
+# round-trips + isometry, clothoid end conditions (theta' = k, theta(L)=L/2R),
+# arc centre on the normal at the tangency point, prescribed-slope point of a
+# circle, tangent-length setting out (R tan(alpha/2)), exact 3-4-5 example.
+# All sqrt-free (u>0, u^2=1+s^2).  No Admitted.
+theories/CompoundCurveKoc.v
 # Degenerate straight-chord regime (k0 = k1 = 0): the residual collapses to
 # L^2 - d^2 with exact unique positive root L = d, and all three Section
 # hypotheses of ClothoidResidual.v are discharged concretely (MVT witness
