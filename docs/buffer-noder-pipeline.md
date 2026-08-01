@@ -654,6 +654,58 @@ semantics — rides behind `arc_overlay_correct_chord_approx`'s deferred
   Stage-2 modules may additionally go in the host `_CoqProject` if they
   avoid Flocq.
 
+## §9 — Per-hypothesis disposition of `buffer_correct_conditional` (2026-08-01)
+
+The #65 round-2 audit item: dispose each named hypothesis of the headline
+(`theories/BufferCorrectness.v : buffer_correct_conditional`) against the
+now guard-only overlay spine (#66's campaign, `extract_rings_valid_of_guards`
+/ `extract_rings_valid_holes_of_guards`, PRs #334–#372). The headline carries
+exactly **two** named hypotheses.
+
+**`H_valid`** — *the extractor turns any valid topology graph into a valid
+geometry* (the DCEL ring-assembly seam).
+
+- **Hole-free case: discharged in-lane.** `ExtractBufferRings.v` /
+  `ExtractRingsShell.v` discharge it via the self-contained noded-chain
+  route, which the #377 audit confirmed is **already Euler-free** — it never
+  consumed the overlay extractor, so the guard-only spine changes nothing
+  for it (there was no Euler debt to remove).
+- **With-holes case: open (round-2 item 1).** Two candidate routes: extend
+  the in-lane noded-chain discharge to the nesting tree, or borrow the
+  overlay spine's `extract_rings_valid_holes_of_guards`. The second is
+  **blocked by the labelling gap, not by Euler**: `OverlayGraph.build_graph`
+  assigns `default_label`, making `result_edges op (build_graph segs) = []`
+  for every `BooleanOp` — the overlay extractor sees an empty result on
+  buffer graphs, so direct sharing is vacuous. Bridging `default_label` (a
+  buffer-op labelling) is the prerequisite for the borrow route; absent
+  that, the in-lane route is the cheaper path.
+- **Net effect of the guard-only spine on `H_valid`: disposition unchanged,
+  provenance improved.** If the borrow route is ever taken, its cost is now
+  five snap-rounding-pipeline guards (see #66's guard-discharge audit item)
+  instead of Euler hypotheses.
+
+**`H_bridge`** — *on any valid graph whose extract is valid, the extracted
+point-set is exactly the d-neighbourhood* (consolidating offset-soundness +
+depth-labelling + JCT).
+
+- **Remains named; the guard-only spine does not touch it.** The spine is
+  structural (ring assembly); `H_bridge` is semantic. Its three components
+  each have a precise current frontier: (a) point-set/Minkowski semantics
+  is **P2, parked** (research-scale, pinned by `gen_buffer_region_tests.py`);
+  (b) depth labelling is bounded by the three honest counterexamples
+  (`BufferDepth*Counterexample.v` — enclosure, horizontal-edge,
+  vertex-graze), so any discharge must carry their guards; (c) the JCT
+  parity seam is discharged for the family ladder and algebraically closed
+  for strict-convex, with the `conv_min` → `geometric_interior_cont` lift
+  still open (see #66).
+- No slice of `H_bridge` is unblocked by recent work; it stays the
+  thesis-shaped residual by design.
+
+**Conclusion.** `buffer_correct_conditional` remains a two-hypothesis
+conditional. The actionable next slice in this lane is the **with-holes
+in-lane extraction** (round-2 item 1); the `default_label` bridge is the
+alternative only if the overlay borrow is wanted for its own sake.
+
 ---
 
 ## References
