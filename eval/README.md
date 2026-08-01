@@ -11,7 +11,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
 
-Production home for 67-b (Red surface, Abort headlines + rational unit-square
+Production home for 67-b (Green/Qed: rectangle core + rational unit-square
 witness): `theories/RelateNGBoundaryGraph.v` (same WITNESS tag).
 
 Production home for 68-a (full witness cluster, shared helpers):
