@@ -202,6 +202,12 @@ theories/BufferBevel.v
 # boundary of a single-edge open chain is a BufferAssembly.closed_chain, by
 # construction from cap_endpoint alone.  Three-axiom.  No Admitted.
 theories/BufferEndcap.v
+# GREEN for micro-claim 65-a: flat endcap = perpendicular diameter segment.
+# between(cap_endpoint E ein (-d), cap_endpoint E ein d, q) <-> q on the
+# perpendicular through E (dot with unit_dir = 0) within dist_sq <= d^2.
+# Sqrt-free (m>0, m*m = vmag_sq ein).  Mirrors eval/Claim65a.v (same WITNESS
+# tag, claimId 65-a).  No Admitted.
+theories/BufferEndcapDiameter.v
 # Buffer/noder pipeline, Stage 2 seam (docs/buffer-noder-pipeline.md S5):
 # edge-list assembly.  Interleaves offset walls with bevel joins
 # (assemble_open / assemble_closed) and proves the assembled boundary is a
