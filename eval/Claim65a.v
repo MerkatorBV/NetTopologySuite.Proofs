@@ -1,5 +1,6 @@
 (* ============================================================================
    nts-eval micro unit — claimId 65-a (GREEN)
+   Red planted 2026-08-01 (9be9840) · Green closed 2026-08-01 (127a707)
    ----------------------------------------------------------------------------
    Flat endcap geometry is the DIAMETER SEGMENT through the offset terminal
    point, perpendicular to the terminal unit tangent: endpoints p ± r·J(t)
