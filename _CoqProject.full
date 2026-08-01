@@ -2094,6 +2094,16 @@ theories/DelaunayFlipWitness.v
 # fail their local empty-circle test simultaneously.
 theories/DelaunayFlipGeometric.v
 
+# Issue #68 subtask 68-a — GREEN: Delaunay edge ↔ empty circumcircle
+# (classical reals, weak triangulation skeleton).  Spec-shaped
+# delaunay_edge / exists_empty_circle_through_edge (incident-triangle form)
+# plus rational finite-set witness S={(0,0),(2,0),(1,1),(1,-2)} with edge
+# AB=(0,0)-(2,0).  Headlines delaunay_edge_iff_empty_circumcircle,
+# delaunay_witness_empty_circle_through_AB,
+# delaunay_witness_AB_is_delaunay_edge, in_open_disk_iff_squared_radius are
+# Qed.  3-axiom classical reals (Distance + Orientation + Triangle).
+theories/DelaunayEdgeEmptyCircle.v
+
 # Phase 4 Session 4: arc-chord and arc-arc intersection predicates
 # (R-side, Prop-valued).  Defines arc_span_contains (Option S: chord
 # cross-product sign for arcs < pi), arc_chord_intersects (existence
