@@ -1,9 +1,11 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 67-a (GREEN)
+   nts-eval micro unit — claimId 67-a (GREEN, mutation-hardened)
    ----------------------------------------------------------------------------
    Unit-square self-relate yields OGC equal DE-9IM under classical strata.
-   Self-contained classical-reals micro-kernel; no NTS.Proofs Requires.
-   Mirrors theories/RelateNGMatrixEqual.v.
+   Headline pins exact encoding + separations + II/BB dim content so
+   de9im-cell-encoding / witness mutants break.  Self-contained classical-
+   reals micro-kernel; no NTS.Proofs Requires.  Mirrors
+   theories/RelateNGMatrixEqual.v.
 
    WITNESS claimId: 67-a
    Lemma: unit_square_self_relate_de9im_eq
@@ -423,22 +425,158 @@ Proof.
   split; assumption.
 Qed.
 
-(* ---- Headlines (67-a) — Qed ----------------------------------------------- *)
+(* ---- Anti-vacuity: encoding pins + separations + dim content -------------- *)
+
+Definition de9im_equal_areal_encoding (m : IntersectionMatrix) : Prop :=
+  im_ii m = Some 2%nat /\ im_ib m = None /\ im_ie m = None /\
+  im_bi m = None /\ im_bb m = Some 1%nat /\ im_be m = None /\
+  im_ei m = None /\ im_eb m = None /\ im_ee m = Some 2%nat.
+
+Lemma de9im_equal_areal_encoding_holds :
+  de9im_equal_areal_encoding de9im_equal_areal.
+Proof. unfold de9im_equal_areal_encoding, de9im_equal_areal; simpl. repeat split. Qed.
+
+Definition mat_mid_left : Point := mkPoint 0 (1 / 2).
+
+Lemma dist_shift_x :
+  forall x y d, dist (mkPoint x y) (mkPoint (x + d) y) = Rabs d.
+Proof.
+  intros x y d. unfold dist, dist_sq; cbn.
+  replace ((x-(x+d))*(x-(x+d))+(y-y)*(y-y)) with (d*d) by ring.
+  destruct (Rle_dec 0 d) as [Hd|Hd].
+  - rewrite (Rabs_pos_eq d Hd). rewrite (sqrt_square d Hd). reflexivity.
+  - apply Rnot_le_lt in Hd. rewrite (Rabs_left d Hd).
+    replace (d * d) with ((- d) * (- d)) by ring.
+    rewrite (sqrt_square (- d)) by lra. reflexivity.
+Qed.
+
+Theorem mat_mid_left_classical_boundary :
+  classical_boundary mat_witness_P mat_mid_left.
+Proof.
+  intros eps Heps.
+  set (d := Rmin (eps / 2) (1 / 2)).
+  assert (Hdpos : 0 < d) by (unfold d; apply Rmin_glb_lt; lra).
+  assert (Hdlt : d < eps)
+    by (unfold d; apply Rle_lt_trans with (eps / 2); [apply Rmin_l|lra]).
+  assert (Hdhalf : d <= 1 / 2) by (unfold d; apply Rmin_r).
+  split.
+  - exists (mkPoint d (1 / 2)).
+    split.
+    + unfold mat_mid_left.
+      replace (dist (mkPoint 0 (1/2)) (mkPoint d (1/2)))
+        with (dist (mkPoint 0 (1/2)) (mkPoint (0 + d) (1/2)))
+        by (f_equal; f_equal; ring).
+      rewrite dist_shift_x. rewrite (Rabs_pos_eq d) by lra. exact Hdlt.
+    + rewrite mat_witness_P_eq. split; [reflexivity|].
+      unfold closed_unit_square; cbn [px py].
+      split; [split; lra|]. split; lra.
+  - exists (mkPoint (- d) (1 / 2)).
+    split.
+    + unfold mat_mid_left.
+      replace (dist (mkPoint 0 (1/2)) (mkPoint (- d) (1/2)))
+        with (dist (mkPoint 0 (1/2)) (mkPoint (0 + (- d)) (1/2)))
+        by (f_equal; f_equal; ring).
+      rewrite dist_shift_x. rewrite Rabs_Ropp. rewrite (Rabs_pos_eq d) by lra.
+      exact Hdlt.
+    + intros [_ Hin]. unfold closed_unit_square in Hin; cbn in Hin. lra.
+Qed.
+
+Theorem mat_center_not_boundary :
+  ~ classical_boundary mat_witness_P mat_center.
+Proof.
+  intros Hb.
+  apply (classical_interior_boundary_disjoint mat_witness_P mat_center).
+  split; [exact mat_center_classical_interior|exact Hb].
+Qed.
+
+Theorem mat_mid_bottom_not_interior :
+  ~ classical_interior mat_witness_P mat_mid_bottom.
+Proof.
+  intros Hi.
+  apply (classical_interior_boundary_disjoint mat_witness_P mat_mid_bottom).
+  split; [exact Hi|exact mat_mid_bottom_classical_boundary].
+Qed.
+
+Theorem mat_outside_not_closed_carrier :
+  ~ closed_carrier mat_witness_P mat_outside.
+Proof.
+  intros [_ Hin]. unfold closed_unit_square, mat_outside in Hin; cbn in Hin. lra.
+Qed.
+
+Lemma Rabs_diff_le_sum :
+  forall a b c, Rabs (a - c) <= Rabs (a - b) + Rabs (b - c).
+Proof.
+  intros a b c.
+  replace (a - c) with ((a - b) + (b - c)) by ring.
+  apply Rabs_triang.
+Qed.
+
+Definition areal_ii_open_disk (P : Geometry) (c : Point) (r : R) : Prop :=
+  0 < r /\ forall q, dist c q < r -> classical_interior P q.
+
+Theorem mat_center_ii_open_disk :
+  areal_ii_open_disk mat_witness_P mat_center (1 / 4).
+Proof.
+  split; [lra|].
+  intros q Hq.
+  exists (1 / 4). split; [lra|].
+  intros s Hs.
+  rewrite mat_witness_P_eq. split; [reflexivity|].
+  unfold closed_unit_square.
+  assert (Hxq : Rabs (px mat_center - px q) < 1 / 4)
+    by (apply Rle_lt_trans with (dist mat_center q); [apply abs_coord_le_dist_x|exact Hq]).
+  assert (Hyq : Rabs (py mat_center - py q) < 1 / 4)
+    by (apply Rle_lt_trans with (dist mat_center q); [apply abs_coord_le_dist_y|exact Hq]).
+  assert (Hxs : Rabs (px q - px s) < 1 / 4)
+    by (apply Rle_lt_trans with (dist q s); [apply abs_coord_le_dist_x|exact Hs]).
+  assert (Hys : Rabs (py q - py s) < 1 / 4)
+    by (apply Rle_lt_trans with (dist q s); [apply abs_coord_le_dist_y|exact Hs]).
+  assert (Hx : Rabs (px mat_center - px s) < 1 / 2).
+  { eapply Rle_lt_trans; [apply (Rabs_diff_le_sum (px mat_center) (px q) (px s))|].
+    lra. }
+  assert (Hy : Rabs (py mat_center - py s) < 1 / 2).
+  { eapply Rle_lt_trans; [apply (Rabs_diff_le_sum (py mat_center) (py q) (py s))|].
+    lra. }
+  apply Rabs_def2 in Hx; apply Rabs_def2 in Hy.
+  unfold mat_center in Hx, Hy; cbn [px py] in Hx, Hy.
+  split; split; lra.
+Qed.
+
+Definition areal_bb_dim1_content (P : Geometry) : Prop :=
+  exists a b : Point,
+    (px a <> px b \/ py a <> py b) /\
+    classical_boundary P a /\ classical_boundary P b.
+
+Theorem mat_bb_dim1_two_edge_mids :
+  areal_bb_dim1_content mat_witness_P.
+Proof.
+  exists mat_mid_bottom, mat_mid_left.
+  split.
+  - right. unfold mat_mid_bottom, mat_mid_left; cbn [px py]. lra.
+  - split; [exact mat_mid_bottom_classical_boundary
+           |exact mat_mid_left_classical_boundary].
+Qed.
+
+(* ---- Headlines (67-a) — Qed, mutation-hardened ---------------------------- *)
 
 Theorem unit_square_self_relate_ii_bb_cells :
   cell_ok (im_ii de9im_equal_areal) SInt SInt mat_witness_P mat_witness_P /\
-  cell_ok (im_bb de9im_equal_areal) SBnd SBnd mat_witness_P mat_witness_P.
+  cell_ok (im_bb de9im_equal_areal) SBnd SBnd mat_witness_P mat_witness_P /\
+  im_ii de9im_equal_areal = Some 2%nat /\
+  im_bb de9im_equal_areal = Some 1%nat.
 Proof.
-  split.
+  split; [|split; [|split]].
   - unfold de9im_equal_areal; cbn [im_ii].
     apply cell_ok_some; [lia|].
     exists mat_center. cbn. split; exact mat_center_classical_interior.
   - unfold de9im_equal_areal; cbn [im_bb].
     apply cell_ok_some; [lia|].
     exists mat_mid_bottom. cbn. split; exact mat_mid_bottom_classical_boundary.
+  - unfold de9im_equal_areal; simpl. reflexivity.
+  - unfold de9im_equal_areal; simpl. reflexivity.
 Qed.
 
-Theorem unit_square_self_relate_de9im_eq :
+Theorem unit_square_self_relate_de9im_pointset :
   de9im_pointset_classical mat_witness_P mat_witness_P de9im_equal_areal.
 Proof.
   unfold de9im_pointset_classical, de9im_equal_areal;
@@ -456,6 +594,27 @@ Proof.
   - apply cell_ok_empty. exact no_ext_bnd_self.
   - apply cell_ok_some; [lia|].
     exists mat_outside. cbn. split; exact mat_outside_classical_exterior.
+Qed.
+
+Theorem unit_square_self_relate_de9im_eq :
+  de9im_equal_areal_encoding de9im_equal_areal /\
+  de9im_pointset_classical mat_witness_P mat_witness_P de9im_equal_areal /\
+  ~ classical_boundary mat_witness_P mat_center /\
+  ~ classical_interior mat_witness_P mat_mid_bottom /\
+  ~ closed_carrier mat_witness_P mat_outside /\
+  areal_ii_open_disk mat_witness_P mat_center (1 / 4) /\
+  areal_bb_dim1_content mat_witness_P /\
+  im_ee de9im_equal_areal = Some 2%nat.
+Proof.
+  refine (conj _ (conj _ (conj _ (conj _ (conj _ (conj _ (conj _ _))))))).
+  - exact de9im_equal_areal_encoding_holds.
+  - exact unit_square_self_relate_de9im_pointset.
+  - exact mat_center_not_boundary.
+  - exact mat_mid_bottom_not_interior.
+  - exact mat_outside_not_closed_carrier.
+  - exact mat_center_ii_open_disk.
+  - exact mat_bb_dim1_two_edge_mids.
+  - unfold de9im_equal_areal; simpl. reflexivity.
 Qed.
 
 Print Assumptions unit_square_self_relate_de9im_eq.
