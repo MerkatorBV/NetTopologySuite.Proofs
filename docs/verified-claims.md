@@ -720,6 +720,36 @@ Minimal `ClothoidChord` carrier; witnesses reuse S2 line-line matrices.
 | `RelateClothoid.v : cl_matrix_point_ii_crosses` / `_intersects` / `cl_matrix_disjoint_witness` | **Witness:** the reused S2 matrices satisfy `Crosses`/`Intersects`/`Disjoint` `[exact]` | 0 |
 | `RelateClothoid.v : clothoid_L_unique_on_branch` | Conditional Halley/L uniqueness on monotone clothoid branch `[exact]` | 0 |
 
+## Koc compound curves — satellite-survey railway alignment (`CompoundCurveKoc.v`) <!-- feat:curves geom:cs -->
+
+The analytic core of Koc (2015), *Archives of Transport* 34(2): compound-curve
+(EN 13803-1) railway re-alignment from mobile GNSS surveys, when the design
+straights are unrecoverable and two arcs of different radii + three transitions
+must connect the surveyed directions. Sqrt-free (`u > 0, u² = 1+s²` carried as
+hypotheses); see `docs/koc-compound-curves.md` for the equation→lemma map and
+the field failure modes each lemma guards.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CompoundCurveKoc.v : koc_roundtrip_global_local` (+`koc_roundtrip_local_global`) | **Frame conversions are lossless** (Koc eqs 1–2 vs 42–43): system-2000 → local → system-2000 and local → grid → local are both the identity — survey points and design geometry move between frames with zero information loss `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_to_local_isometry` | The grid→local transform preserves squared distances: chainage/gauge/clearance computations agree in both frames `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_clothoid_angle_deriv` (+`koc_clothoid_start`, `koc_clothoid_end_curvature`) | **θ′ = k** (the paper's silent integration step): the tangent-angle function `l²/(2RL)` has derivative exactly the linear curvature `l/(RL)` at every `l`; start conditions `k(0)=θ(0)=0`; end curvature `k(L)=1/R` — the C⁰ curvature join to the arc `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_clothoid_end_angle` | **The type-independent end angle θ(L) = L/(2R)** that all downstream tangency formulas (Koc eqs 7, 22, 30) consume `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_center_on_normal` | **Arc centre from tangency point** (eqs 8–9/23–24): `S = K + (R/u)(s, −1)` has `dist²(S,K) = R²` and `(S−K) ⊥ (1,s)` — the centre sits on the normal, guarding the wrong-side-centre kink bug `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_slope_point_on_circle` | **Prescribed-slope point of a circle** (eqs 31–32): `K = S + (R/u)(−s, 1)` is on the circle with radius ⊥ the slope-`s` direction — where arc CA2 must end for transition TC3 to land on the second main direction `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_tangent_setout` (+`koc_tangent_length`) | **Setting out along a tangent** (eqs 11–12/14–15): `M = K + (d/u)(1,s)` lies on the slope-`s` line at squared distance `d²`; with `d = R·tan(α/2)` this is the surveyor's tangent-length step `\|KM\| = R·tan(α/2)` `[exact]` | 3 |
+| `CompoundCurveKoc.v : koc_example_345_center` (+`_center_is_koc`, `_setout`) | **Exact 3-4-5 witness**: s = 3/4 ⇒ u = 5/4; K=(0,0), R=5 ⇒ centre (3,−4); d=2 ⇒ M=(8/5,6/5) — rational, sqrt-free, non-vacuous `[exact]` | 3 |
+| `CompoundCurveKocFrame.v : koc_vertex_on_both_directions` (+`koc_vertex_unique`) | **The frame vertex exists and is unique** (Koc eqs 37–38): the closed-form W lies on both symmetric main directions (slopes ∓m, m = tan(α/2)), and transversality (m ≠ 0) makes it the *only* such point — the well-definedness fact the paper leaves implicit, without which the grid-placement step would anchor to an arbitrary solution `[exact]` | 3 |
+| `CompoundCurveKocFrame.v : koc_vertex_dist_sq` | **Vertex distance sqrt-free** (eq 39): `OW² = (1+m²)(yO3 − m·xO3)²/(4m²)` — the length walked along the grid line; an error here translates the whole alignment `[exact]` | 3 |
+| `CompoundCurveKocFrame.v : koc_grid_origin_placement` | **Pinning the frame to the grid** (eqs 40–41): walking distance d from the surveyed vertex along the first main direction `X = A1 + B1·Y` stays on the line at squared distance exactly `d²`, proven for both branch signs (the paper's side-selector picks one). Sqrt-free via `u² = 1+B1²` `[exact]` | 3 |
+| `CompoundCurveKocFrame.v : koc_example_345_vertex` (+`koc_example_345_grid_origin`) | **The 3-4-5 loop closes**: m = 3/4, O3 = (8,0) ⇒ W = (4,−3), OW = 5; walking d = 5 down `X = (3/4)Y` from (4,3) lands the frame origin at exactly (0,0) — all rational `[exact]` | 3 |
+| `CompoundCurveKocJoin.v : koc25_circle_graph_deriv` (+`koc25_apex`) | **The circle-graph tangent slope, proven as a derivative** (Koc 2025 eqs 10–11): `yS + √(R²−(xS−x)²)` has `derivable_pt_lim` equal to `(xS−x)/√(R²−(xS−x)²)` wherever the radicand is positive; at the apex H = (xS, yS+R) the slope is zero `[exact]` | 3 |
+| `CompoundCurveKocJoin.v : koc25_slope_at_prescribed_point` | **Algebraic and analytic tangency coincide** (eqs 15–16): the prescribed-slope point `x = xS − sR/u` (part 1's radius-⊥ characterisation) has graph value `yS + R/u` and *analytic* slope exactly `s` — eq (16)'s placement of the second arc really equalises the slopes at the junction `[exact]` | 3 |
+| `CompoundCurveKocJoin.v : koc25_mirror_negates_slope` | **The Figure-4 mirror step is sound**: reflection about a vertical axis preserves radius lengths (`dist_sq` invariant) and negates tangent slopes — the branch built at slope −s lands with slope +s after the mirror `[exact]` | 3 |
+| `CompoundCurveKocJoin.v : koc25_compound_join_C1` (+`koc25_compound_centers_collinear`) | **The C¹ compound join** (eq 16 core): centres `Sᵢ = C + (Rᵢ/u)(s,−1)` put the junction on *both* circles with *both* radii perpendicular to the one tangent direction (1,s) — kink-free by construction (reverse curve = R₂ < 0); and S₁, C, S₂ are **collinear** (`cross = 0`), the classical Tonias & Tonias compound-curve characterisation `[exact]` | 3 |
+| `CompoundCurveKocJoin.v : koc25_vertex_case1` (+`_case2`, `koc25_case_duality`) | **Case I/II endpoint vertices + duality** (eqs 21–26): both tangent-line intersections in closed form, and Case II *is* Case I under `y ↦ −y` — the paper's two computational-algorithm variants are one theorem and its mirror `[exact]` | 3 |
+| `CompoundCurveKocJoin.v : koc25_example_345_join` (+`_is_koc`) | **Exact 3-4-5-10 join**: C=(0,0), s=3/4, u=5/4, R₁=5, R₂=10 ⇒ S₁=(3,−4), S₂=(6,−8) on one ray through C, dist² 25/100 — sharp-then-gentle compound, all rational `[exact]` | 3 |
+
 ## Issue #67 — clothoid Flocq + Halley (`ClothoidDegenerate_b64.v`, `ClothoidResidual_b64_exact.v`, `ClothoidHalley_b64.v`, `ClothoidHalley.v`) <!-- feat:relate geom:cs -->
 
 Route **(A)** b64 mirror of the κ₀ = κ₁ = 0 degenerate residual; route **(C)**
