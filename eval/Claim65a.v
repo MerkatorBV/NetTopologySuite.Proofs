@@ -1,20 +1,19 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 65-a (RED)
+   nts-eval micro unit — claimId 65-a (GREEN)
    ----------------------------------------------------------------------------
    Flat endcap geometry is the DIAMETER SEGMENT through the offset terminal
    point, perpendicular to the terminal unit tangent: endpoints p ± r·J(t)
    (J = π/2 rotation), and the cap is exactly the segment joining them —
    equivalently, the perpendicular chord of the radius-r circle at p.
 
-   RED SURFACE.  The headline biconditional is STATED below
-   (`flat_endcap_is_diameter_segment_claim`) and deliberately NOT proved in
-   this unit — no `Admitted` (forbidden), no `Axiom`; the claim is a named
-   `Definition ... : Prop`, so the Eval → Qed matcher finds no Qed lemma of
-   this statement here or in production and reports 65-a red.  Green must
-   land `Lemma flat_endcap_is_diameter_segment : flat_endcap_is_diameter_
-   segment_claim.` (or the unfolded statement verbatim) under classical
-   reals in the production Buffer/Offset lane (`BufferEndcap.v`
-   neighbourhood), same WITNESS tag.
+   GREEN.  The headline biconditional is stated
+   (`flat_endcap_is_diameter_segment_claim`) and CLOSED in this unit
+   (`flat_endcap_is_diameter_segment`, Qed) — the m = 1 self-contained
+   version of the production proof.  Production home:
+   `theories/BufferEndcapDiameter.v`, the same statement over the corpus's
+   `cap_endpoint`/`unit_dir` vocabulary (sqrt-free normaliser m = vmag ein),
+   same WITNESS tag.  Red history: the claim was planted 2026-08-01 with
+   only the witness pins Qed; Green closed it the same day.
 
    What IS Qed here: the rational witness pins that fix the intended
    semantics so a wrong Green cannot close the claim vacuously —
@@ -53,7 +52,7 @@ Definition cap_minus (p t : Point) (r : R) : Point :=
   mkPoint (px p + r * py t) (py p - r * px t).
 
 (* -------------------------------------------------------------------------- *)
-(* The 65-a claim (RED: stated, not closed).                                  *)
+(* The 65-a claim (closed below by flat_endcap_is_diameter_segment).          *)
 (* Flat endcap = { q : q ⊥-aligned with t through p, within radius r }        *)
 (*             = the segment cap_minus(p,t,r) — cap_plus(p,t,r).              *)
 (* -------------------------------------------------------------------------- *)
@@ -67,10 +66,83 @@ Definition flat_endcap_is_diameter_segment_claim : Prop :=
       ((px q - px p) * px t + (py q - py p) * py t = 0 /\
        dist_sq q p <= r * r).
 
-(* RED: no proof of the claim in this unit.  Green target statement:
-     Lemma flat_endcap_is_diameter_segment :
-       flat_endcap_is_diameter_segment_claim.
-   in the production Buffer/Offset lane, same WITNESS tag. *)
+(* GREEN: the claim is closed below; production home
+   theories/BufferEndcapDiameter.v carries the same statement over the
+   corpus's cap_endpoint/unit_dir vocabulary (same WITNESS tag). *)
+
+Lemma flat_endcap_is_diameter_segment :
+  flat_endcap_is_diameter_segment_claim.
+Proof.
+  unfold flat_endcap_is_diameter_segment_claim.
+  intros p t r Hr Hunit q.
+  set (VX := px q - px p). set (VY := py q - py p).
+  split.
+  - (* between => perpendicular within radius *)
+    intros [s [Hs0 [Hs1 [Hqx Hqy]]]].
+    unfold cap_minus, cap_plus in Hqx, Hqy; simpl in Hqx, Hqy.
+    assert (HVX : VX = (1 - 2 * s) * (r * py t))
+      by (unfold VX; rewrite Hqx; ring).
+    assert (HVY : VY = - (1 - 2 * s) * (r * px t))
+      by (unfold VY; rewrite Hqy; ring).
+    split.
+    + fold VX VY. rewrite HVX, HVY. ring.
+    + assert (Hds : dist_sq q p =
+                    ((1 - 2 * s) * (1 - 2 * s)) * (r * r)
+                    * (px t * px t + py t * py t)).
+      { unfold dist_sq. fold VX VY. rewrite HVX, HVY. ring. }
+      rewrite Hds, Hunit.
+      assert (Hsq : (1 - 2 * s) * (1 - 2 * s) <= 1) by nra.
+      nra.
+  - (* perpendicular within radius => between *)
+    intros [Hdot Hle].
+    fold VX VY in Hdot.
+    set (lam := VY * px t - VX * py t).
+    assert (HVXlam : VX = lam * (- py t)).
+    { unfold lam.
+      replace ((VY * px t - VX * py t) * - py t)
+        with (VX * (px t * px t + py t * py t)
+              - px t * (VX * px t + VY * py t)) by ring.
+      rewrite Hunit, Hdot. ring. }
+    assert (HVYlam : VY = lam * px t).
+    { unfold lam.
+      replace ((VY * px t - VX * py t) * px t)
+        with (VY * (px t * px t + py t * py t)
+              - py t * (VX * px t + VY * py t)) by ring.
+      rewrite Hunit, Hdot. ring. }
+    assert (Hlam_sq : lam * lam = dist_sq q p).
+    { unfold dist_sq. fold VX VY. rewrite HVXlam, HVYlam.
+      transitivity (lam * lam * (px t * px t + py t * py t)); [ | ring ].
+      rewrite Hunit. ring. }
+    assert (Hlam_le : lam * lam <= r * r) by (rewrite Hlam_sq; exact Hle).
+    assert (Hlam_bnd : - r <= lam <= r) by nra.
+    exists ((r + lam) / (2 * r)).
+    assert (H2r : 0 < 2 * r) by lra.
+    assert (Hs0 : 0 <= (r + lam) / (2 * r)).
+    { unfold Rdiv. apply Rmult_le_pos; [ lra | ].
+      left. apply Rinv_0_lt_compat. exact H2r. }
+    assert (Hs1 : (r + lam) / (2 * r) <= 1).
+    { apply (Rmult_le_reg_r (2 * r)); [ exact H2r | ].
+      replace ((r + lam) / (2 * r) * (2 * r)) with (r + lam) by (field; lra).
+      lra. }
+    assert (H2s : 1 - 2 * ((r + lam) / (2 * r)) = - (lam * / r))
+      by (field; lra).
+    unfold cap_minus, cap_plus; simpl.
+    repeat split; [ exact Hs0 | exact Hs1 | | ].
+    + transitivity (px p + (1 - 2 * ((r + lam) / (2 * r))) * (r * py t));
+        [ | ring ].
+      rewrite H2s.
+      replace (px p + - (lam * / r) * (r * py t))
+        with (px p + lam * - py t * (r * / r)) by ring.
+      rewrite Rinv_r by lra.
+      rewrite <- HVXlam. unfold VX. ring.
+    + transitivity (py p + (1 - 2 * ((r + lam) / (2 * r))) * (- (r * px t)));
+        [ | ring ].
+      rewrite H2s.
+      replace (py p + - (lam * / r) * (- (r * px t)))
+        with (py p + lam * px t * (r * / r)) by ring.
+      rewrite Rinv_r by lra.
+      rewrite <- HVYlam. unfold VY. ring.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Rational witness pins (Qed at Red).                                        *)
