@@ -149,6 +149,14 @@ theories/CompoundCurveKocJoin.v
 # isometry => koc_assembly_C1_in_grid).  Full rational assembly example +
 # reverse-curve instance.  No Admitted.
 theories/CompoundCurveAssembly.v
+# Part 5: C0 curvature continuity at all four joints of TC1-CA1-TC2-CA2-TC3,
+# plus the intermediate TC2 linear ramp 1/R1 -> 1/R2 (not a start-from-
+# straight clothoid).  joint_C0_curvature contract; TC1 end reuses part 1;
+# koc_tc2_curvature/angle + angle_deriv (theta'=k) + linear_ramp form;
+# exit clothoid TC3 (1/R -> 0) as reversed entry; assembly_C0 headline with
+# signed radii; land-on-straight; rational R1=5,R2=10 and reverse examples.
+# No Admitted.
+theories/CompoundCurveCurvature.v
 # Degenerate straight-chord regime (k0 = k1 = 0): the residual collapses to
 # L^2 - d^2 with exact unique positive root L = d, and all three Section
 # hypotheses of ClothoidResidual.v are discharged concretely (MVT witness
