@@ -116,3 +116,26 @@ everything else stays sqrt-free as in parts 1–2. Pitfalls hit: `set`-bound
 radicands break `field`'s atom matching (unfold before `replace`), and
 `replace s with …` clobbers the `s` inside the evaluation point (use a
 targeted `rewrite` of the derivative expression instead).
+
+## Part 4 — the assembly invariant (`CompoundCurveAssembly.v`)
+
+The "one theorem chain" flagged above: tangent conformity at **all four
+joints** of the five-element EN 13803-1 system TC1–CA1–TC2–CA2–TC3, plus
+its survival through the stakeout transform. The failure mode is the
+whole-system version of the per-joint bugs: a designer substitutes radii
+and transition lengths into the closed forms and gets an alignment that is
+kinked at an interface — un-runnable — or whose curvature jump breaks the
+lateral-jerk envelope at line speed. Floating-point implementations
+introduce exactly these through sign errors and frame-drift accumulation.
+
+| Lemma | Content |
+|---|---|
+| `joint_C1` | The interface contract: joint point on the arc's circle, radius ⊥ the shared tangent direction (1,s). For a transition piece the tangent *is* (1,s) by definition of slope, so this is the full C¹ condition. Sign-agnostic in R (reverse curves included) |
+| `koc_joint_transition_to_arc` / `koc_joint_arc_to_transition` | Entering (K1, K2) and leaving (O2, K3) an arc satisfy the contract — wrappers of part 1's centre-on-normal and prescribed-slope point |
+| `koc_compound_assembly_C1` | **Headline:** the four-joint conjunction for the whole chain, interface points defined once and shared by both sides, radii **signed** (reverse curve = R₂ < 0, no separate case) |
+| `koc_assembly_slope_provenance` | The outer-joint slopes are the clothoid's: `tan(θ(L) − α/2)` with `θ(L) = L/(2R)` — a wrong transition length breaks joint 1 visibly, not a remote formula |
+| `koc_global_pt_isometry` | The stakeout transform is an isometry — **derived** from part 1's local isometry via the round-trip, not re-proven |
+| `koc_global_preserves_dot` | Rotations preserve dot products of difference vectors (shifts cancel) — the new algebraic ingredient |
+| `koc_assembly_C1_in_grid` | **The C¹ contract survives stakeout**: distances by the isometry, perpendicularity by dot preservation with the tangent direction transported as the image of a direction segment. Kink-freedom in the design frame = kink-freedom on the ground |
+| `koc_assembly_example_345` | Full rational assembly on the lane's circles: K1=(0,0), s₁=3/4, R₁=5 ⇒ S₁=(3,−4); leave at the apex (s₂=0) ⇒ O2=(3,1); K2=(10,0), s₃=0, R₂=10 ⇒ S₂=(10,−10); leave at s₄=−3/4 ⇒ K3=(16,−2) — all four contracts by `lra` |
+| `koc_assembly_example_reverse` | Reverse-curve joint: same K2, s₃ with R₂=−10 puts the centre at (10,10) — other side, same contract, nothing new needed |

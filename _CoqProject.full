@@ -141,6 +141,14 @@ theories/CompoundCurveKocFrame.v
 # the junction (classical characterisation); Case I/II vertex + duality
 # (Case II = Case I under y |-> -y).  Exact 3-4-5-10 join example.  No Admitted.
 theories/CompoundCurveKocJoin.v
+# Part 4: the ASSEMBLY invariant.  joint_C1 interface contract (on-circle +
+# radius perp to shared tangent); the four joints of TC1-CA1-TC2-CA2-TC3 as
+# one conjunction with shared interface points and SIGNED radii (reverse
+# curve = R2<0); slope provenance from the clothoid end angle; and the C1
+# contract SURVIVES stakeout (koc_global_preserves_dot + derived global
+# isometry => koc_assembly_C1_in_grid).  Full rational assembly example +
+# reverse-curve instance.  No Admitted.
+theories/CompoundCurveAssembly.v
 # Degenerate straight-chord regime (k0 = k1 = 0): the residual collapses to
 # L^2 - d^2 with exact unique positive root L = d, and all three Section
 # hypotheses of ClothoidResidual.v are discharged concretely (MVT witness
