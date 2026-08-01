@@ -9,14 +9,9 @@ matching can bind the formal lemma to the claim id without loading the full
 | claimId | topic | File | Lemma |
 |--------:|-------|------|-------|
 | `65-a` | `buffer` | [`Claim65a.v`](Claim65a.v) | `flat_endcap_is_diameter_segment` |
+| `67-a` | `relate` | [`Claim67a.v`](Claim67a.v) | `unit_square_self_relate_de9im_eq` |
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
-
-Production home for 67-b (Green/Qed: rectangle core + rational unit-square
-witness): `theories/RelateNGBoundaryGraph.v` (same WITNESS tag).
-
-Production home for 68-a (full witness cluster, shared helpers):
-`theories/DelaunayEdgeEmptyCircle.v` (also tagged with the same WITNESS).
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
@@ -24,12 +19,23 @@ and the two mismatch probes): `theories/BufferEndcapDiameter.v` (same
 WITNESS tag; sqrt-free `m = vmag ein` normaliser). The unit here carries
 the self-contained m = 1 proof plus the pins.
 
+Production home for 67-a (Green/Qed: classical strata + rational unit-square
+self-relate / OGC equal DE-9IM): `theories/RelateNGMatrixEqual.v` (same WITNESS tag).
+
+Production home for 67-b (Green/Qed: rectangle core + rational unit-square
+witness): `theories/RelateNGBoundaryGraph.v` (same WITNESS tag).
+
+Production home for 68-a (full witness cluster, shared helpers):
+`theories/DelaunayEdgeEmptyCircle.v` (also tagged with the same WITNESS).
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim67b.v | eval/Claim68a.v
+#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v
 # full compile (needs Rocq / nts-eval switch):
+rocq compile eval/Claim65a.v
+rocq compile eval/Claim67a.v
 rocq compile eval/Claim67b.v
 rocq compile eval/Claim68a.v
 ```

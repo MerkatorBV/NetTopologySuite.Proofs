@@ -2411,6 +2411,15 @@ theories/RelateCurveBoundaryMeet.v
 # 3-axiom classical-reals base (+ sig_not_dec via decidable comparisons).
 # No Admitted.
 theories/RelateNGBoundaryGraph.v
+# Issue #67 subtask 67-a — GREEN: rational unit-square self-relate yields
+# true OGC equal DE-9IM "2FFF1FFF2" under classical topological
+# Interior/Boundary/Exterior of the closed filled square (not half-open
+# ray-parity alone).  Headlines unit_square_self_relate_de9im_eq,
+# mat_center_classical_interior, mat_mid_bottom_classical_boundary,
+# unit_square_self_relate_ii_bb_cells are Qed (no Abort/Admitted).
+# Depends on Distance + Overlay + Segment + DE9IM.
+# 3-axiom classical-reals base.  No Admitted.
+theories/RelateNGMatrixEqual.v
 # S13: RelateNG pipeline (strata, relate, dim, MOD2+area integration)
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
