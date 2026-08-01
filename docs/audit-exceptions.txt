@@ -329,6 +329,13 @@ theories/AngleBetween.v
 # witness; no Admitteds.
 theories/InArc.v
 
+# Category C (R-side, same atan lineage as AngleBetween.v / InArc.v): issue #64
+# subtask 64-b sweep CCW ↔ signed central angle > 0.  sweep_ccw /
+# sweep_ccw_iff_signed_central_angle_pos are built on atan2 / angle_between /
+# central_angle, so inherit Classical_Prop.classic.  Headline and unit-circle
+# witnesses Qed-closed; no Admitteds.  Removal tracks AngleBetween's cleanup.
+theories/ArcSweepCcw.v
+
 # Category C (R-side, same atan lineage as AngleBetween.v): buffer/noder
 # pipeline seam S3 (docs/buffer-noder-pipeline.md), round-join corner-arc
 # relation.  corner_arc_sweep_eq_turn / _unit and atan2_pos_scale are built

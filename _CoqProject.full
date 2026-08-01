@@ -236,6 +236,12 @@ theories/AngleBetween.v
 # in_arc_point_on_minor_arc and in_arc_point_on_major_arc_rejected are Qed.
 # 4-axiom (atan2 lineage via AngleBetween; see audit-exceptions).
 theories/InArc.v
+# Issue #64 subtask 64-b — GREEN: circular-arc sweep is CCW iff signed central
+# angle is strictly positive.  sweep_ccw is the orientation/cross-sign reading
+# of atan2(cross,dot) (incl. antipodal +π cut); reuses InArc.central_angle.
+# Headline sweep_ccw_iff_signed_central_angle_pos Qed (sqrt-free case analysis).
+# 4-axiom (atan2 lineage via AngleBetween / InArc; see audit-exceptions).
+theories/ArcSweepCcw.v
 # Buffer/noder pipeline, Stage 2b seam (docs/buffer-noder-pipeline.md S3):
 # round-join corner-arc relation (Roadmap target 6).  The sweep between the
 # two offset normals equals the turn between the edges

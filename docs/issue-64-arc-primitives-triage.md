@@ -272,8 +272,15 @@ still-open question from the one this update closes.
 
 4-axiom (atan2 lineage, `docs/audit-exceptions.txt`).  No `Admitted`.
 
-## 12. Update (64-c / 64-d): in-arc and supporting-circle disk membership
+## 12. Update (64-b / 64-c / 64-d): sweep orientation, in-arc, supporting disk
 
+- **64-b (`ArcSweepCcw.v`)** — principal sweep is CCW iff signed central angle
+  is strictly positive. `sweep_ccw` is the orientation/cross-sign reading of
+  `atan2(cross,dot)` (strict left turn, or antipodal +π cut); equivalent to
+  `0 < InArc.central_angle` for nonzero radius vectors
+  (`sweep_ccw_iff_signed_central_angle_pos`). Sqrt-free case analysis; rational
+  unit witnesses (CCW/CW quarters + +π semicircle). 4-axiom atan2 lineage
+  (`docs/audit-exceptions.txt`).
 - **64-c (`InArc.v`)** — minor-arc membership via central-angle order
   (`angle_between` / `atan2`). Rational unit-circle witness Qed
   (`in_arc_point_on_minor_arc`, `in_arc_point_on_major_arc_rejected`).
