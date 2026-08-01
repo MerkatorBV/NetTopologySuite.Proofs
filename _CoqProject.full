@@ -2045,16 +2045,14 @@ theories/BufferDepthGuarded.v
 # docs/audit-phase4-chord-overfitting.md §7).  Six Qed-closed
 # structural lemmas; no Admitteds; no Classical_Prop.classic.
 theories/CurveGeometry.v
-# Issue #64 subtask 64-d — RED surface only: InDisk / InDisk_supporting_circle
-# closed-disk membership on the supporting circle of a CircularArc, plus
-# rational unit-arc witness (a=(1,0)→(0,1)→(−1,0); interior (0,1/2),
-# boundary (3/5,4/5), exterior (2,0)).  Headlines
-# in_disk_iff_squared_radius, disk_unit_arc_supporting_circle,
-# in_disk_supporting_circle_*_witness / exterior_rejected are Abort
-# (not Admitted).  Green/Refactor out of scope: later prove geometric
-# InDisk ↔ squared-radius (px-ox)²+(py-oy)² ≤ r² over R and discharge
-# the unit-arc centre/radius.  Depends on Distance + CurveGeometry + Disk.
-# No Print Assumptions until Green closes a Qed consumer.
+# Issue #64 subtask 64-d — GREEN: InDisk / InDisk_supporting_circle closed-disk
+# membership on the supporting circle of a CircularArc, plus rational unit-arc
+# witness (a=(1,0)→(0,1)→(−1,0); interior (0,1/2), boundary (3/5,4/5),
+# exterior (2,0)).  Headlines in_disk_iff_squared_radius,
+# disk_unit_arc_supporting_circle, in_disk_supporting_circle_*_witness /
+# exterior_rejected are Qed.  Geometric ↔ squared-radius via
+# dist_le_iff_dist_sq_le.  Depends on Distance + CurveGeometry + Disk.
+# 3-axiom classical reals; no Admitted.
 theories/InDisk.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed
