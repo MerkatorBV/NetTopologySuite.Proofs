@@ -2395,6 +2395,16 @@ theories/RelateCurveMatrix.v
 # OverlayContactSound chord_chord_contact_* + RelateCurveMatrix cell machinery.
 # 3-axiom, no Admitted.
 theories/RelateCurveBoundaryMeet.v
+# Issue #67 subtask 67-b — GREEN: classical boundary operator ∂ equals the
+# RelateNG boundary-graph extraction on the rational unit-square witness
+# (core: any axis-aligned rectangle under ray-parity point_set).
+# Headlines boundary_op_eq_relateng_boundary_graph (+ _on_witness),
+# bnd_mid_bottom_on_classical_boundary, bnd_mid_bottom_boundary_sides_agree
+# and reusable boundary_op_eq_relateng_boundary_graph_rect are Qed.
+# Depends on Distance + Overlay + Segment + PointInRingTangents + RectangleJCT.
+# 3-axiom classical-reals base (+ sig_not_dec via decidable comparisons).
+# No Admitted.
+theories/RelateNGBoundaryGraph.v
 # S13: RelateNG pipeline (strata, relate, dim, MOD2+area integration)
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
