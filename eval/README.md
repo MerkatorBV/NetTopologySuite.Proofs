@@ -8,6 +8,7 @@ matching can bind the formal lemma to the claim id without loading the full
 
 | claimId | topic | File | Lemma |
 |--------:|-------|------|-------|
+| `65-a` | `buffer` | [`Claim65a.v`](Claim65a.v) | `flat_endcap_is_diameter_segment` |
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
 
@@ -16,6 +17,12 @@ witness): `theories/RelateNGBoundaryGraph.v` (same WITNESS tag).
 
 Production home for 68-a (full witness cluster, shared helpers):
 `theories/DelaunayEdgeEmptyCircle.v` (also tagged with the same WITNESS).
+
+Production home for 65-a (Green/Qed: full biconditional — flat endcap =
+perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
+and the two mismatch probes): `theories/BufferEndcapDiameter.v` (same
+WITNESS tag; sqrt-free `m = vmag ein` normaliser). The unit here carries
+the self-contained m = 1 proof plus the pins.
 
 ## Re-run
 
