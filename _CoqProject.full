@@ -2093,6 +2093,13 @@ theories/DelaunayFlipWitness.v
 # flip-witness algebra -- both candidate triangles of the shared-edge quad
 # fail their local empty-circle test simultaneously.
 theories/DelaunayFlipGeometric.v
+# #68 round-2 item 2: degenerate pins.  JTS#1190 single-triangle -- a lone
+# triangle is unconditionally Delaunay over its own vertex set (inCircle_R
+# vanishes at each vertex, pure ring); JTS#1039 4-point cocircular -- the
+# square tie has determinant exactly 0 on BOTH diagonals, the strict flip
+# guard correctly excludes it, and the tie is knife-edge (+3 / -5 at 1/2
+# perturbations).  Oracle adversarial vectors.  No Admitted.
+theories/DelaunayDegeneratePins.v
 
 # Issue #68 subtask 68-a — GREEN (refactored): Delaunay edge ↔ empty
 # circumcircle (classical reals, weak triangulation skeleton).  Spec-shaped
