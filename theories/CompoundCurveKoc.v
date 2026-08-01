@@ -83,6 +83,12 @@ Local Open Scope R_scope.
 (* the local design frame with origin (Y0,X0) and rotation beta.  Eqs (42),   *)
 (* (43) are the inverse used to send the chosen design variant back to the    *)
 (* grid for setting out.                                                      *)
+(*                                                                            *)
+(* CONVENTION NOTE: the grid coordinates follow the papers' surveying (Y,X)   *)
+(* ordering -- Y is the easting-like abscissa, X the northing-like ordinate   *)
+(* of the Polish "system 2000" -- NOT the usual mathematical (X,Y).  The      *)
+(* lemmas are order-agnostic (they never compare the two axes), but readers   *)
+(* matching them against the papers should keep the (Y,X) order in mind.      *)
 (* -------------------------------------------------------------------------- *)
 
 Definition koc_local_x (Y0 X0 beta Y X : R) : R :=
@@ -244,6 +250,13 @@ Qed.
 (* whole statement is rational in the inputs and closes by field/nra.        *)
 (* A sign error here is the classic alignment bug: the centre lands on the    *)
 (* wrong side of the track and the "arc" meets the transition in a kink.      *)
+(*                                                                            *)
+(* SIGN CONVENTION: the normal offset direction is (s, -1)/u -- the centre    *)
+(* BELOW the curve (Koc's Figs 2-3: system convex upward, positive            *)
+(* curvature).  The mirrored convention (-s, 1)/u (centre above) appears in   *)
+(* §4 as the point-from-centre direction, and both are exercised by the       *)
+(* 3-4-5 examples.  This is intentional -- do NOT "fix" the sign; flipping    *)
+(* it here silently moves every centre to the wrong side of the track.        *)
 (* -------------------------------------------------------------------------- *)
 
 Theorem koc_center_on_normal :
