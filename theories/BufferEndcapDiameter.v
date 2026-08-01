@@ -34,8 +34,8 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra.
-From NTS.Proofs Require Import Real Vec Direction Distance Segment
-                               BufferOffset BufferAssembly BufferEndcap.
+From NTS.Proofs Require Import Vec Direction Distance Segment
+                               BufferOffset BufferEndcap.
 Open Scope R_scope.
 
 (* WITNESS {"claimId":"65-a","topic":"buffer","lemma":"flat_endcap_is_diameter_segment","title":"Flat endcap = perpendicular diameter segment at the offset terminal"} *)
