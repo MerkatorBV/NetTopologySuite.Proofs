@@ -149,6 +149,8 @@ Qed.
 (* §3  Audit footprint.                                                       *)
 (* -------------------------------------------------------------------------- *)
 
+(* WITNESS {"claimId":"68-c","topic":"mesh","lemma":"cocircular_square_tie_1039","title":"Degenerate pins: single-triangle no-violation + cocircular tie (JTS#1190/#1039)","file":"theories/DelaunayDegeneratePins.v"} *)
+
 Print Assumptions single_triangle_delaunay.
 Print Assumptions cocircular_square_tie_1039.
 Print Assumptions cocircular_tie_is_knife_edge.
