@@ -271,3 +271,17 @@ a chord's circle-crossing lands on the minor vs major arc) -- a different,
 still-open question from the one this update closes.
 
 4-axiom (atan2 lineage, `docs/audit-exceptions.txt`).  No `Admitted`.
+
+## 12. Update (64-c / 64-d): in-arc and supporting-circle disk membership
+
+- **64-c (`InArc.v`)** — minor-arc membership via central-angle order
+  (`angle_between` / `atan2`). Rational unit-circle witness Qed
+  (`in_arc_point_on_minor_arc`, `in_arc_point_on_major_arc_rejected`).
+  4-axiom atan2 lineage (`docs/audit-exceptions.txt`).
+- **64-d (`InDisk.v`)** — closed-disk membership on the supporting circle of
+  a `CircularArc`: geometric `InDisk` ↔ squared-radius form; packaging
+  `InDisk_supporting_circle` via `arc_center` / `arc_radius` agrees with
+  `Disk.in_disk`. Rational unit-arc witness Qed (centre origin, radius 1;
+  interior / boundary / centre membership; exterior rejection). **3-axiom**
+  (no exemption). Distinct from `inCircle_R` (algebraic determinant) and from
+  `InArc` (on-circle angular sector).
