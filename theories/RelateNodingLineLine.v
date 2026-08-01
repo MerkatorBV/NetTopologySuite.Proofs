@@ -193,6 +193,23 @@ Proof.
   - intros Hex. exfalso. apply Hempty. exact Hex.
 Qed.
 
+(* Parametric core of the dim-indexed family below: any in-range dimension
+   value is witnessed by a single shared point.  The three named instances
+   (dim0/dim1/dim2) are the citable surface; keep using those downstream. *)
+Lemma line_cell_ok_some :
+  forall n sX sY A B C D p,
+    (n <= 2)%nat ->
+    seg_in_stratum sX A B p ->
+    seg_in_stratum sY C D p ->
+    line_cell_ok (Some n) sX sY A B C D.
+Proof.
+  intros n sX sY A B C D p Hn HsX HsY.
+  split.
+  - exact Hn.
+  - split; [ intros _; exists p; split; assumption | ].
+    intros [p' [Hp' _]]. intro H. discriminate H.
+Qed.
+
 Lemma line_cell_ok_dim0 :
   forall sX sY A B C D p,
     seg_in_stratum sX A B p ->
@@ -200,10 +217,7 @@ Lemma line_cell_ok_dim0 :
     line_cell_ok (Some 0%nat) sX sY A B C D.
 Proof.
   intros sX sY A B C D p HsX HsY.
-  split.
-  - unfold dim_value_ok. simpl. repeat constructor.
-  - split; [ intros _; exists p; split; assumption | ].
-    intros [p' [Hp' _]]. intro H. discriminate H.
+  apply (line_cell_ok_some 0 sX sY A B C D p); [ lia | assumption | assumption ].
 Qed.
 
 Lemma line_cell_ok_dim1 :
@@ -213,10 +227,7 @@ Lemma line_cell_ok_dim1 :
     line_cell_ok (Some 1%nat) sX sY A B C D.
 Proof.
   intros sX sY A B C D p HsX HsY.
-  split.
-  - unfold dim_value_ok. simpl. repeat constructor.
-  - split; [ intros _; exists p; split; assumption | ].
-    intros [p' [Hp' _]]. intro H. discriminate H.
+  apply (line_cell_ok_some 1 sX sY A B C D p); [ lia | assumption | assumption ].
 Qed.
 
 Lemma line_cell_ok_dim2 :
@@ -226,10 +237,7 @@ Lemma line_cell_ok_dim2 :
     line_cell_ok (Some 2%nat) sX sY A B C D.
 Proof.
   intros sX sY A B C D p HsX HsY.
-  split.
-  - unfold dim_value_ok. simpl. repeat constructor.
-  - split; [ intros _; exists p; split; assumption | ].
-    intros [p' [Hp' _]]. intro H. discriminate H.
+  apply (line_cell_ok_some 2 sX sY A B C D p); [ lia | assumption | assumption ].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -815,16 +823,6 @@ Proof.
   apply (line_cell_ok_dim0 LSInt LSBnd A B C D p); assumption.
 Qed.
 
-Theorem segments_share_int_bnd_touches_ib_cell :
-  forall A B C D,
-    segments_share A B C D ->
-    segments_int_bnd_contact A B C D ->
-    line_ib_point_cell A B C D ll_matrix_touches_endpoint.
-Proof.
-  intros A B C D _ Hint.
-  apply segments_int_bnd_touches_ib_cell. exact Hint.
-Qed.
-
 Theorem segments_endpoint_contact_bb_cell :
   forall A B C D,
     segments_endpoint_contact A B C D ->
@@ -835,16 +833,6 @@ Proof.
   apply (line_cell_ok_dim0 LSBnd LSBnd A B C D X).
   - unfold seg_in_stratum. simpl. exact HendAB.
   - unfold seg_in_stratum. simpl. exact HendCD.
-Qed.
-
-Theorem segments_share_endpoint_contact_bb_cell :
-  forall A B C D,
-    segments_share A B C D ->
-    segments_endpoint_contact A B C D ->
-    line_bb_point_cell A B C D ll_matrix_overlap_ii.
-Proof.
-  intros A B C D _ Hcontact.
-  apply segments_endpoint_contact_bb_cell. exact Hcontact.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -1320,8 +1308,7 @@ Theorem line_collection_bnd_int_bi_cell_ok :
     line_collection_cell_ok segsA segsB (ll_dim0) LSBnd LSInt.
 Proof.
   intros segsA segsB [A [B [C [D [HinA [HinB Hcontact]]]]]].
-  exists A; exists B; exists C; exists D.
-  split; [exact HinA | split; [exact HinB | ]].
+  apply (line_collection_pair_cell_sub segsA segsB A B C D _ _ _ HinA HinB).
   apply segments_bnd_int_bi_cell in Hcontact.
   unfold line_bi_point_cell, ll_matrix_paper_test10 in Hcontact.
   simpl in Hcontact. exact Hcontact.
@@ -1336,8 +1323,7 @@ Theorem line_collection_no_share_ie_cell :
     line_collection_cell_ok segsA segsB (ll_dim1) LSInt LSExt.
 Proof.
   intros segsA segsB A B C D HinA HinB Hne Hnoshare.
-  exists A; exists B; exists C; exists D.
-  split; [exact HinA | split; [exact HinB | ]].
+  apply (line_collection_pair_cell_sub segsA segsB A B C D _ _ _ HinA HinB).
   apply no_share_midpoint_ie_cell.
   - exact Hne.
   - apply Hnoshare; assumption.
@@ -1352,8 +1338,7 @@ Theorem line_collection_no_share_ei_cell :
     line_collection_cell_ok segsA segsB (ll_dim1) LSExt LSInt.
 Proof.
   intros segsA segsB A B C D HinA HinB Hne Hnoshare.
-  exists A; exists B; exists C; exists D.
-  split; [exact HinA | split; [exact HinB | ]].
+  apply (line_collection_pair_cell_sub segsA segsB A B C D _ _ _ HinA HinB).
   apply no_share_midpoint_ei_cell.
   - exact Hne.
   - apply Hnoshare; assumption.
@@ -1366,8 +1351,8 @@ Theorem line_collection_ee_dim2_cell :
     line_collection_cell_ok segsA segsB (ll_dim2) LSExt LSExt.
 Proof.
   intros segsA segsB A B C D HinA HinB.
-  exists A; exists B; exists C; exists D.
-  split; [exact HinA | split; [exact HinB | apply segments_bounded_ee_dim2_cell]].
+  apply (line_collection_pair_cell_sub segsA segsB A B C D _ _ _ HinA HinB).
+  apply segments_bounded_ee_dim2_cell.
 Qed.
 
 Theorem line_collection_test10_de9im_rows :
