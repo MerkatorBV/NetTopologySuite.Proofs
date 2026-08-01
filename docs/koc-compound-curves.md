@@ -83,3 +83,36 @@ starting metres from where the survey said.
 | (39) | `koc_vertex_dist_sq` | `OW² = (1+m²)·t²/(4m²)`, `t = yO3 − m·xO3`, sqrt-free |
 | (40),(41) | `koc_grid_origin_placement` | Walking distance d from the surveyed vertex along the grid line `X = A1 + B1·Y` stays **on the line** at squared distance exactly `d²` — proven for **both** branch signs (the paper's `(A2−A1)/(B1−B2)` selector picks one) |
 | example | `koc_example_345_vertex`, `koc_example_345_grid_origin` | Third 3-4-5 of the lane: m = 3/4, O3 = (8,0) ⇒ W = (4,−3), OW = 5; in the grid, walking d = 5 down `X = (3/4)Y` from (4,3) lands the origin at exactly (0,0) — closing the rational loop with part 1's example |
+
+## Part 3 — the compound join itself (`CompoundCurveKocJoin.v`)
+
+**Source.** W. Koc, *"Modeling of Compound Curves on Railway Lines"*,
+Geomatics 5(2):21, MDPI, 2025 (doi:10.3390/geomatics5020021) — the 2025
+sequel. Compound curves (two arcs of different radii, **directly**
+connected, no transition between them) survive on tramways and mountain
+lines; new ones are no longer built, so the task is to *model* an existing
+layout well enough to correct it. The algorithm inscribes both arcs in one
+frame, mirrors the second branch about the vertical through the junction
+(the paper's Figure 4), and shifts it to restore continuity. The analytic
+heart: at the junction C both arcs must share the tangent direction — a
+**C¹ join**. Get a sign wrong and the model has a kink at C; a tamping/
+lining machine working to that model would try to bend rail through an
+angle — precisely the defect the modeling is meant to remove.
+
+| Koc 2025 eq. | Lemma | Content |
+|---|---|---|
+| (10),(11) | `koc25_circle_graph_deriv` | The upper-semicircle graph `yS + √(R²−(xS−x)²)` has derivative `(xS−x)/√(R²−(xS−x)²)` wherever the radicand is positive — the paper's tangent-slope formula proven as a real `derivable_pt_lim`, not assumed |
+| after (11) | `koc25_apex` | The summit H = (xS, yS+R): on the graph, derivative **zero** (the paper bounds the junction's abscissa around H) |
+| (15),(16) | `koc25_slope_at_prescribed_point` | The point `x = xS − sR/u` has graph value `yS + R/u` and **analytic slope exactly s** — the algebraic (radius ⊥) and analytic (derivative) tangency notions coincide, so eq (16)'s placement really equalises slopes at C |
+| Figure 4 | `koc25_mirror_negates_slope` | Vertical-axis mirror preserves radius lengths and negates tangent slopes — the reflection step of the algorithm is sound |
+| (16) core | `koc25_compound_join_C1` | **Headline:** centres on the junction normal (`Sᵢ = C + (Rᵢ/u)(s,−1)`) put C on both circles with both radii ⊥ one tangent direction (1,s) — the kink-free C¹ compound join. A reverse curve is the same statement with R₂ < 0 |
+| — (classic) | `koc25_compound_centers_collinear` | S₁, C, S₂ **collinear** (`cross = 0`, no hypotheses beyond u≠0) — the textbook compound-curve characterisation (paper's ref [17], Tonias & Tonias), falling out of the two ⊥ conditions |
+| (23)–(26) | `koc25_vertex_case1` / `_case2` / `koc25_case_duality` | Case I and Case II endpoint-vertex formulas, plus the duality: **Case II is Case I under y ↦ −y** — the paper's two algorithm variants (§6, Tables 1–2) are one theorem and its mirror |
+| example | `koc25_example_345_join` (+`_is_koc`) | The 3-4-5-**10** join: C=(0,0), s=3/4, u=5/4, R₁=5, R₂=10 ⇒ S₁=(3,−4), S₂=(6,−8) on one ray through C, dist² 25 and 100 — a sharp-then-gentle compound, all rational |
+
+Proof note: sqrt appears only where the paper's own object is a sqrt (the
+graph and its derivative, via `derivable_pt_lim_sqrt` + composition);
+everything else stays sqrt-free as in parts 1–2. Pitfalls hit: `set`-bound
+radicands break `field`'s atom matching (unfold before `replace`), and
+`replace s with …` clobbers the `s` inside the evaluation point (use a
+targeted `rewrite` of the derivative expression instead).

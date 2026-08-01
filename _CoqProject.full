@@ -133,6 +133,14 @@ theories/CompoundCurveKoc.v
 # stays on the line at distance exactly d, both branches
 # (koc_grid_origin_placement).  Exact 3-4-5 loop example.  No Admitted.
 theories/CompoundCurveKocFrame.v
+# Part 3 (Koc 2025, Geomatics 5:21): the compound-curve JOIN.  Circle-graph
+# derivative proven as derivable_pt_lim (eq 11) + apex H; the prescribed-slope
+# point has that ANALYTIC slope (algebra & derivative agree); vertical mirror
+# negates slopes (Fig 4 soundness); C1 compound join -- junction on both
+# circles, both radii perp to one tangent direction, centres collinear with
+# the junction (classical characterisation); Case I/II vertex + duality
+# (Case II = Case I under y |-> -y).  Exact 3-4-5-10 join example.  No Admitted.
+theories/CompoundCurveKocJoin.v
 # Degenerate straight-chord regime (k0 = k1 = 0): the residual collapses to
 # L^2 - d^2 with exact unique positive root L = d, and all three Section
 # hypotheses of ClothoidResidual.v are discharged concretely (MVT witness
