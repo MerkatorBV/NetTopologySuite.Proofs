@@ -19,6 +19,8 @@ on:
       - docs/admitted-deferred-proofs.txt
       - docs/oracle-handrolled-allowlist.txt
       - scripts/gen_dashboard.py
+      - docs/macro-meso-micro.md
+      - dashboard/**
       - .github/workflows/pages.yml
   workflow_dispatch:
 
