@@ -179,26 +179,28 @@ Theorem koc_tc2_angle_deriv :
 Proof.
   intros R1 R2 L l HR1 HR2 HL.
   unfold koc_tc2_angle, koc_tc2_curvature.
-  (* Target derivative rewritten as a*1 + c*(l+l). *)
-  set (a := / R1).
-  set (c := (/ R2 - / R1) / (2 * L)).
-  assert (Htgt : / R1 + l * (/ R2 - / R1) / L = a * 1 + c * (l + l)).
-  { unfold a, c. field; lra. }
-  rewrite Htgt.
+  (* Rewrite the limit into the shape the derivative lemmas produce,
+     matching part 1's replace-before-exact pattern. *)
+  replace (/ R1 + l * (/ R2 - / R1) / L)
+    with (/ R1 * 1 + (/ R2 - / R1) / (2 * L) * (l + l))
+    by (field; lra).
   assert (Hid : derivable_pt_lim id l 1) by apply derivable_pt_lim_id.
-  assert (Hlin : derivable_pt_lim (fun x => a * x) l (a * 1)).
+  assert (Hlin : derivable_pt_lim (fun x => (/ R1) * x) l ((/ R1) * 1)).
   { apply derivable_pt_lim_scal. exact Hid. }
   assert (Hsq : derivable_pt_lim (fun x => x * x) l (l + l)).
   { pose proof (derivable_pt_lim_mult id id l 1 1 Hid Hid) as H.
     unfold id in H.
     replace (l + l) with (1 * l + l * 1) by ring. exact H. }
-  assert (Hquad : derivable_pt_lim (fun x => c * (x * x)) l (c * (l + l))).
+  assert (Hquad :
+    derivable_pt_lim
+      (fun x => ((/ R2 - / R1) / (2 * L)) * (x * x)) l
+      (((/ R2 - / R1) / (2 * L)) * (l + l))).
   { apply derivable_pt_lim_scal. exact Hsq. }
-  pose proof (derivable_pt_lim_plus (fun x => a * x) (fun x => c * (x * x))
-                l (a * 1) (c * (l + l)) Hlin Hquad) as Hsum.
-  (* a, c are transparent lets: fun x => a*x + c*(x*x) converts to the
-     unfolded koc_tc2_angle body, and the rewritten target matches. *)
-  exact Hsum.
+  exact (derivable_pt_lim_plus
+           (fun x => (/ R1) * x)
+           (fun x => ((/ R2 - / R1) / (2 * L)) * (x * x))
+           l ((/ R1) * 1) (((/ R2 - / R1) / (2 * L)) * (l + l))
+           Hlin Hquad).
 Qed.
 
 (* CA1 -> TC2: the arc's constant curvature meets TC2's start. *)
@@ -276,23 +278,26 @@ Theorem koc_exit_clothoid_angle_deriv :
 Proof.
   intros Rr L l HR HL.
   unfold koc_exit_clothoid_angle, koc_exit_clothoid_curvature.
-  set (a := / Rr).
-  set (c := / (2 * Rr * L)).
-  assert (Htgt : (L - l) / (Rr * L) = a * 1 - c * (l + l)).
-  { unfold a, c. field; lra. }
-  rewrite Htgt.
+  replace ((L - l) / (Rr * L))
+    with (/ Rr * 1 - / (2 * Rr * L) * (l + l))
+    by (field; lra).
   assert (Hid : derivable_pt_lim id l 1) by apply derivable_pt_lim_id.
-  assert (Hlin : derivable_pt_lim (fun x => a * x) l (a * 1)).
+  assert (Hlin : derivable_pt_lim (fun x => (/ Rr) * x) l ((/ Rr) * 1)).
   { apply derivable_pt_lim_scal. exact Hid. }
   assert (Hsq : derivable_pt_lim (fun x => x * x) l (l + l)).
   { pose proof (derivable_pt_lim_mult id id l 1 1 Hid Hid) as H.
     unfold id in H.
     replace (l + l) with (1 * l + l * 1) by ring. exact H. }
-  assert (Hquad : derivable_pt_lim (fun x => c * (x * x)) l (c * (l + l))).
+  assert (Hquad :
+    derivable_pt_lim
+      (fun x => (/ (2 * Rr * L)) * (x * x)) l
+      ((/ (2 * Rr * L)) * (l + l))).
   { apply derivable_pt_lim_scal. exact Hsq. }
-  pose proof (derivable_pt_lim_minus (fun x => a * x) (fun x => c * (x * x))
-                l (a * 1) (c * (l + l)) Hlin Hquad) as Hsum.
-  exact Hsum.
+  exact (derivable_pt_lim_minus
+           (fun x => (/ Rr) * x)
+           (fun x => (/ (2 * Rr * L)) * (x * x))
+           l ((/ Rr) * 1) ((/ (2 * Rr * L)) * (l + l))
+           Hlin Hquad).
 Qed.
 
 (* CA2 -> TC3: the second arc meets the exit ramp's start. *)
