@@ -234,8 +234,6 @@ stating stopping conditions up front prevents scope creep mid-session.
 
 ---
 
-
-
 ## 🌱 Newbie Nate (incl. Plain Reader Pete / 🧮 Rocq Rookie Ray)
 
 **Role.** First contribution to the corpus; or casual reader who picked up the repo from a link and wants the elevator pitch; or absolute beginner with zero prior exposure to proof assistants (Rocq/Coq).
@@ -273,8 +271,6 @@ the PR. Review cadence is typically same-day for PR triage, 1-3
 days for full review.
 
 ---
-
-
 
 ## 🧑‍🔧 Tech-Lead Tess
 

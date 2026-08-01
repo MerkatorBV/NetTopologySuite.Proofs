@@ -28,7 +28,9 @@ written in [Rocq Prover](https://rocq-prover.org/) (formerly Coq).
 
 ---
 
-**Over 3,400 theorems, every proof sealed with `Qed.` on just three
+## The invariant
+
+**Over 5,100 theorems, every proof sealed with `Qed.` on just three
 axioms** — the standard classical-reals trio Rocq ships with, none of
 this corpus's own; `Axiom`, `Parameter`, and `admit.` appear nowhere.
 There are **no `Admitted` theorems today** — both the deferred-proof and
@@ -46,7 +48,7 @@ discipline across both directories:
   [`docs/admitted-counterexamples.txt`](docs/admitted-counterexamples.txt)
   is allowed permanently: the theorem *as stated* is false, with a
   verified counterexample on file. **None today — the counterexample
-  registry is currently unpopulated.** The headline disproofs it once carried — Hobby Lemma
+  registry is currently unpopulated.** The headline disproofs the registry once carried — Hobby Lemma
   4.3's no-proper-intersection half, and Shewchuk Theorem 13's general
   headline + O7 completeness (all **false as stated** because half-ulp
   `strict_succ_b64` is stronger than Shewchuk's bit-disjoint nonoverlapping) —
@@ -122,8 +124,8 @@ The repository has two source directories:
   container), not about which proof standard it meets.
 
 The host `_CoqProject` builds 40 foundational `theories/` modules;
-the container `_CoqProject.full` builds the entire corpus (all 348
-modules — 281 in `theories/`, 67 in `theories-flocq/`).
+the container `_CoqProject.full` builds the entire corpus (431
+registered modules — 357 in `theories/`, 74 in `theories-flocq/`).
 
 **Status.** The foundational layer (real-number, vector, distance,
 orientation, segment, bbox, triangle, convex, lex-order, plus their
@@ -181,6 +183,7 @@ Key modules at a high level:
 The individual theorems and proofs are in the `.v` files and are cited from the
 phase documents. The long bullet lists that used to live here have been
 condensed to keep the README scannable.
+
 ## In-flight work
 
 **Modules atop the core primitives in active development.** Detailed histories live in `plan.md` (per-rung records) and the linked docs; this section only names the active threads and where each stands.
@@ -196,7 +199,6 @@ condensed to keep the README scannable.
 These feed the oracle consumed by [NetTopologySuite.Curve](https://github.com/grootstebozewolf/NetTopologySuite.Curve).
 
 See [`docs/HELP.md`](docs/HELP.md) and [`docs/READING-GUIDE.md`](docs/READING-GUIDE.md) for the documents that matter to your role (e.g. GIS Gus / BIM Bea → phase completion + audit files; Scholar Sam / Tech-Lead Tess → retros + proof-structure + seam maps; Newbie Nate → one completion doc + development-environment).
-
 
 ## Roadmap
 
@@ -275,72 +277,18 @@ the simplifier R-bridge, Stage A's arithmetic identities for
 
 ### Progress log
 
-
-      forall P0 P1 Q,
-        b64_orient2d_safe P0 P1 Q ->
-        match b64_orient_sign_filtered P0 P1 Q with
-        | OrientRPos       => 0 < B2R (b64_orient2d P0 P1 Q)
-        | OrientRNeg       => B2R (b64_orient2d P0 P1 Q) < 0
-        | OrientRZero      => B2R (b64_orient2d P0 P1 Q) = 0
-        | OrientRNan       => True
-        | OrientRUncertain => True
-        end.
-
-  The "internal consistency" half of soundness: the five-valued
-  sign decoder agrees with the sign of the rounded binary64 value.
-  Same 4-axiom set, Qed-closed.
-
-  The cross_R-valued soundness theorem -- relating the decoder's
-  sign to the *exact* mathematical cross product -- is documented
-  as a future target in the file's PROOF STATUS block.  It requires
-  the Shewchuk Stage A forward-error theorem:
-
-      Rabs (B2R (b64_orient2d P0 P1 Q) - cross_R_BP P0 P1 Q)
-        <= b64_errbound_A_coeff_value * detsum
-
-  which is the substantive proof slice (~1-3 days), needing per-op
-  forward-error lemmas (`Plus_error.plus_error`, etc.) plus the
-  accumulation analysis through the four `b64_minus` / two
-  `b64_mult` / outer `b64_minus` chain.  Once that lemma lands,
-  cross_R soundness follows mechanically by composition with the
-  decoder-consistency theorem from this slice.
-
-      Rabs (B2R (b64_op x y) - exact_op (B2R x) (B2R y))
-        <= ulp radix2 (SpecFloat.fexp prec emax) (exact_op ...).
-
-  Built on Flocq's `error_le_ulp` from `Core/Ulp.v`; unconditional
-  (no normal-range precondition).  These are the per-step pieces
-  the Shewchuk Stage A chain composition would eventually thread
-  through the four `b64_minus` / two `b64_mult` / outer `b64_minus`
-  structure of `b64_orient2d`.  Same 4-axiom set, Qed-closed.
-
-      Theorem b64_orient_sign_filtered_sound_small_int :
-        forall P0 P1 Q,
-          orient2d_inputs_int_safe P0 P1 Q ->
-          match b64_orient_sign_filtered P0 P1 Q with
-          | OrientRPos       => 0 < cross_R_BP P0 P1 Q
-          | OrientRNeg       => cross_R_BP P0 P1 Q < 0
-          | OrientRZero      => cross_R_BP P0 P1 Q = 0
-          | OrientRNan       => True
-          | OrientRUncertain => True
-          end.
-
-  This is the cross_R headline the project was working toward,
-  restricted to the integer regime: each input coordinate is integer-
-  valued with `|coord| <= 2^25`.  In that regime every intermediate in
-  the orient2d chain stays within binary64's 53-bit integer-exactness
-  window, so `B2R det = cross_R_BP` *on the nose* -- no rounding error,
-  no inequality.  Composes mechanically with the decoder-consistency
-  theorem from `Orient_b64_sound.v`.  Same 4-axiom set, Qed-closed.
-  The general bounded-magnitude regime remains an open Path 1.
-(See the dedicated phase completion, audit, and retro documents listed in
-the actor Reading Guide for the current detailed status. The full dated
-forensic log of slices, consolidations, and openings has been moved to
-the phase-specific docs and `docs/history/` to keep this README scannable
-for all the defined actor roles (collapsed from initial 17 for overlap). Key high-level outcomes remain in the table above and
-the phase docs; the complete session-by-session record is in the
-retros and history/sessions/ for Scholar Sam / Tech-Lead Tess / Joost
-the BDFL paths.)
+The full dated, session-by-session forensic log — per-slice proof
+narratives, forward-error derivations, Stage A/B/C/D notes — has been
+moved to the phase-specific completion/audit docs and `docs/history/`
+to keep this README scannable for all the defined actor roles
+(collapsed from an initial 17 for overlap). See
+[`docs/phase0-completion.md`](docs/phase0-completion.md) and
+[`docs/soundness-strategy.md`](docs/soundness-strategy.md) for the
+Shewchuk Stage A decoder-consistency and cross_R-soundness narrative
+specifically, and the actor Reading Guide for the rest. Key
+high-level outcomes remain in the Roadmap table above; the complete
+session-by-session record is in the retros and `history/sessions/`
+for Scholar Sam / Tech-Lead Tess / Joost the BDFL paths.
 
 - **registry framework (in force since the Stage D / Phase 2-3
   engagement)**: the Flocq layer's `Admitted` theorems are governed by
@@ -365,12 +313,13 @@ the BDFL paths.)
 - This is **not** a substitute for unit tests. Tests cover behaviour the
   proofs don't reach: floating-point rounding, exceptions, performance,
   cross-platform consistency, interaction with the rest of the runtime.
-- This is **not** complete. Current coverage is over 3,400 Qed-closed
-  theorems across 348 `.v` modules (281 under `theories/` — 40 of them in
-  the host `_CoqProject` foundational target — plus 67 Flocq-dependent
-  modules under `theories-flocq/`), with exactly 1 `Admitted` theorem
-  (0 counterexample + 1 deferred-proof), registered in the deferred-proof
-  registry (see the registries and `scripts/check_admitted.sh`).
+- This is **not** complete. Current coverage is over 5,100 Qed-closed
+  theorems across 431 registered `.v` modules (357 under `theories/` —
+  40 of them in the host `_CoqProject` foundational target — plus 74
+  Flocq-dependent modules under `theories-flocq/`). There are **no
+  `Admitted` theorems today** — both the counterexample and
+  deferred-proof registries are empty (see the registries and
+  `scripts/check_admitted.sh`).
   Coverage spans the algebraic foundations (real-number, vector, distance,
   orientation, line, disk, lattice, lex order), segment and bounding-box
   primitives, triangle / convex / centroid / reflection laws, the
