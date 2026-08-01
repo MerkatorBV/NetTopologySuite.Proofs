@@ -230,12 +230,11 @@ theories/Atan2.v
 # identity; plus atan2_range (-PI, PI].  Pulls classic via atan (see
 # audit-exceptions).  No Admitted.
 theories/AngleBetween.v
-# Issue #64 subtask 64-c — RED surface only: InArc minor-arc membership via
-# central-angle order, plus rational unit-circle witness
-# (A=(1,0), P=(3/5,4/5), B=(0,1); major counter Q=(-1,0)).  Headline claims
-# in_arc_point_on_minor_arc and in_arc_point_on_major_arc_rejected are Abort
-# (not Admitted).  Green/Refactor out of scope.  4-axiom (atan2 lineage via
-# AngleBetween; no Print Assumptions until Green closes a Qed consumer).
+# Issue #64 subtask 64-c — GREEN: InArc minor-arc membership via central-angle
+# order, plus rational unit-circle witness
+# (A=(1,0), P=(3/5,4/5), B=(0,1); major counter Q=(-1,0)).  Headlines
+# in_arc_point_on_minor_arc and in_arc_point_on_major_arc_rejected are Qed.
+# 4-axiom (atan2 lineage via AngleBetween; see audit-exceptions).
 theories/InArc.v
 # Buffer/noder pipeline, Stage 2b seam (docs/buffer-noder-pipeline.md S3):
 # round-join corner-arc relation (Roadmap target 6).  The sweep between the
@@ -2046,6 +2045,17 @@ theories/BufferDepthGuarded.v
 # docs/audit-phase4-chord-overfitting.md §7).  Six Qed-closed
 # structural lemmas; no Admitteds; no Classical_Prop.classic.
 theories/CurveGeometry.v
+# Issue #64 subtask 64-d — RED surface only: InDisk / InDisk_supporting_circle
+# closed-disk membership on the supporting circle of a CircularArc, plus
+# rational unit-arc witness (a=(1,0)→(0,1)→(−1,0); interior (0,1/2),
+# boundary (3/5,4/5), exterior (2,0)).  Headlines
+# in_disk_iff_squared_radius, disk_unit_arc_supporting_circle,
+# in_disk_supporting_circle_*_witness / exterior_rejected are Abort
+# (not Admitted).  Green/Refactor out of scope: later prove geometric
+# InDisk ↔ squared-radius (px-ox)²+(py-oy)² ≤ r² over R and discharge
+# the unit-arc centre/radius.  Depends on Distance + CurveGeometry + Disk.
+# No Print Assumptions until Green closes a Qed consumer.
+theories/InDisk.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed
 # Phase-3 ring (chord_approx_ring_closed), lifting to to_geometry outer/hole
