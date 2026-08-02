@@ -94,18 +94,6 @@ Definition directed_discrete_hausdorff_claim : Prop :=
    production over the corpus Point/dist_sq vocabulary
    (theories/HausdorffDiscrete.v, same WITNESS tag). *)
 
-(* The inner min is a lower bound on every candidate distance. *)
-Lemma min_dist_sq_to_le : forall a B b,
-    In b B -> min_dist_sq_to a B <= dist_sq a b.
-Proof.
-  intros a B. induction B as [ | b0 B' IH ]; intros b Hin.
-  - destruct Hin.
-  - destruct Hin as [-> | Hin].
-    + destruct B' as [ | b1 B'' ]; simpl; [ lra | apply Rmin_l ].
-    + destruct B' as [ | b1 B'' ]; [ destruct Hin | ].
-      simpl. eapply Rle_trans; [ apply Rmin_r | ]. apply IH. exact Hin.
-Qed.
-
 (* One-step unfolding equations (by conversion), so the cons cases can be
    opened without disturbing the folded inner calls. *)
 Lemma min_dist_sq_to_step : forall a b0 b1 B'',
@@ -117,6 +105,20 @@ Lemma ddh_step : forall a0 a1 A'' B,
     directed_hausdorff_sq (a0 :: a1 :: A'') B
     = Rmax (min_dist_sq_to a0 B) (directed_hausdorff_sq (a1 :: A'') B).
 Proof. reflexivity. Qed.
+
+(* The inner min is a lower bound on every candidate distance. *)
+Lemma min_dist_sq_to_le : forall a B b,
+    In b B -> min_dist_sq_to a B <= dist_sq a b.
+Proof.
+  intros a B. induction B as [ | b0 B' IH ]; intros b Hin.
+  - destruct Hin.
+  - destruct Hin as [-> | Hin].
+    + destruct B' as [ | b1 B'' ]; [ apply Rle_refl | ].
+      rewrite min_dist_sq_to_step. apply Rmin_l.
+    + destruct B' as [ | b1 B'' ]; [ destruct Hin | ].
+      rewrite min_dist_sq_to_step.
+      eapply Rle_trans; [ apply Rmin_r | ]. apply IH. exact Hin.
+Qed.
 
 (* ... and it is attained on a nonempty list. *)
 Lemma min_dist_sq_to_attained : forall a B,
@@ -144,9 +146,11 @@ Proof.
   intros A B. induction A as [ | a0 A' IH ]; intros a Hin.
   - destruct Hin.
   - destruct Hin as [-> | Hin].
-    + destruct A' as [ | a1 A'' ]; simpl; [ lra | apply Rmax_l ].
+    + destruct A' as [ | a1 A'' ]; [ apply Rle_refl | ].
+      rewrite ddh_step. apply Rmax_l.
     + destruct A' as [ | a1 A'' ]; [ destruct Hin | ].
-      simpl. eapply Rle_trans; [ apply IH; exact Hin | apply Rmax_r ].
+      rewrite ddh_step.
+      eapply Rle_trans; [ apply IH; exact Hin | apply Rmax_r ].
 Qed.
 
 (* ... and it is attained on a nonempty list. *)

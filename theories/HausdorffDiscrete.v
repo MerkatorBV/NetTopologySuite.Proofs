@@ -90,7 +90,7 @@ Proof.
   intros a B. induction B as [ | b0 B' IH ]; intros b Hin.
   - destruct Hin.
   - destruct Hin as [-> | Hin].
-    + destruct B' as [ | b1 B'' ]; [ simpl; lra | ].
+    + destruct B' as [ | b1 B'' ]; [ apply Rle_refl | ].
       rewrite min_dist_sq_to_step. apply Rmin_l.
     + destruct B' as [ | b1 B'' ]; [ destruct Hin | ].
       rewrite min_dist_sq_to_step.
@@ -123,7 +123,7 @@ Proof.
   intros A B. induction A as [ | a0 A' IH ]; intros a Hin.
   - destruct Hin.
   - destruct Hin as [-> | Hin].
-    + destruct A' as [ | a1 A'' ]; [ simpl; lra | ].
+    + destruct A' as [ | a1 A'' ]; [ apply Rle_refl | ].
       rewrite ddh_step. apply Rmax_l.
     + destruct A' as [ | a1 A'' ]; [ destruct Hin | ].
       rewrite ddh_step.
@@ -180,22 +180,20 @@ Qed.
 Lemma min_dist_sq_to_nonneg : forall a B, 0 <= min_dist_sq_to a B.
 Proof.
   intros a B. induction B as [ | b0 B' IH ].
-  - simpl. lra.
+  - apply Rle_refl.
   - destruct B' as [ | b1 B'' ]; [ apply dist_sq_nonneg | ].
     rewrite min_dist_sq_to_step.
-    pose proof (dist_sq_nonneg a b0).
-    unfold Rmin. destruct (Rle_dec _ _); lra.
+    apply Rmin_glb; [ apply dist_sq_nonneg | exact IH ].
 Qed.
 
 Lemma directed_hausdorff_sq_nonneg : forall A B,
     0 <= directed_hausdorff_sq A B.
 Proof.
   intros A B. induction A as [ | a0 A' IH ].
-  - simpl. lra.
+  - apply Rle_refl.
   - destruct A' as [ | a1 A'' ]; [ apply min_dist_sq_to_nonneg | ].
     rewrite ddh_step.
-    pose proof (min_dist_sq_to_nonneg a0 B).
-    unfold Rmax. destruct (Rle_dec _ _); lra.
+    eapply Rle_trans; [ apply (min_dist_sq_to_nonneg a0 B) | apply Rmax_l ].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
