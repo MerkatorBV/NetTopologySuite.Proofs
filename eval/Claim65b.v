@@ -1,6 +1,6 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 65-b (RED)
-   Red planted 2026-08-02 · Green pending
+   nts-eval micro unit — claimId 65-b (GREEN)
+   Red planted 2026-08-02 (e9eaaba) · Green closed 2026-08-02
    ----------------------------------------------------------------------------
    Round endcap geometry is the FORWARD SEMICIRCLE at the offset terminal:
    the set of points at distance exactly r from the terminal p on the
@@ -8,19 +8,18 @@
    t >= 0), and that carrier is exactly the frame image of the unit
    half-circle -- q = p + r*(a*J(t) + b*t) with a^2 + b^2 = 1, b >= 0.
 
-   RED SURFACE.  The headline biconditional is STATED below
-   (`round_endcap_is_forward_semicircle_claim`) and deliberately NOT proved
-   in this unit -- no `Admitted`, no `Axiom`; the claim is a named
-   `Definition ... : Prop`, so the Eval -> Qed matcher reports 65-b red.
-   Green target:
-     Lemma round_endcap_is_forward_semicircle :
-       round_endcap_is_forward_semicircle_claim.
-   with the production home in the BufferEndcap.v neighbourhood
-   (suggested file: theories/BufferEndcapSemicircle.v) over the corpus's
-   `cap_endpoint` / `round_apex` / `unit_dir` vocabulary, same WITNESS tag.
-   The proof machinery is the 65-a frame decomposition: backward direction
+   GREEN.  The headline biconditional is stated
+   (`round_endcap_is_forward_semicircle_claim`) and CLOSED in this unit
+   (`round_endcap_is_forward_semicircle`, Qed) -- the unit-tangent
+   self-contained version of the production proof.  Production home:
+   `theories/BufferEndcapSemicircle.v`, the same statement over the
+   corpus's `cap_endpoint` / `round_apex` / `unit_dir` / `unit_perp`
+   vocabulary, same WITNESS tag.  Red history: the claim was planted
+   2026-08-02 with only the witness pins Qed; Green closed it the same
+   day.  The proof is the 65-a frame decomposition: forward direction
    sets b := (q-p)·t / r and a := (q-p)·J(t) / r, gets a^2 + b^2 = 1 from
-   dist_sq = r^2, and b >= 0 from the forward-side constraint.
+   dist_sq = r^2, and b >= 0 from the forward-side constraint; the
+   backward direction is ring algebra over the unit-tangent identity.
 
    What IS Qed here: rational witness pins fixing the intended semantics --
    terminal p = (1,0), tangent t = (1,0), r = 1:
@@ -70,9 +69,65 @@ Definition round_endcap_is_forward_semicircle_claim : Prop :=
           px q = px p + r * (a * (- py t) + b * px t) /\
           py q = py p + r * (a * px t + b * py t)).
 
-(* RED: no proof of the claim in this unit or in production.  Green must Qed
-   `round_endcap_is_forward_semicircle` with this statement (micro-kernel)
-   and its production mirror over cap_endpoint/round_apex/unit_dir. *)
+(* GREEN: the claim is closed here (self-contained) and mirrored in
+   production over cap_endpoint/round_apex/unit_dir/unit_perp
+   (theories/BufferEndcapSemicircle.v, same WITNESS tag). *)
+
+Lemma round_endcap_is_forward_semicircle :
+  round_endcap_is_forward_semicircle_claim.
+Proof.
+  unfold round_endcap_is_forward_semicircle_claim.
+  intros p t r Hr Hunit q.
+  assert (Hr0 : r <> 0) by lra.
+  unfold on_round_cap, dist_sq.
+  split.
+  - (* on the cap => frame image of the unit half-circle *)
+    intros [Hdist Hfwd].
+    (* Frame coordinates of q - p, scaled by r: A along J(t), B along t. *)
+    set (A := (py q - py p) * px t - (px q - px p) * py t).
+    set (B := (px q - px p) * px t + (py q - py p) * py t) in Hfwd |- *.
+    assert (Hkey : A * A + B * B = r * r).
+    { unfold A, B.
+      transitivity
+        (((px q - px p) * (px q - px p) + (py q - py p) * (py q - py p)) *
+         (px t * px t + py t * py t)); [ ring | ].
+      rewrite Hunit, Hdist. ring. }
+    exists (A / r), (B / r).
+    repeat split.
+    + (* a^2 + b^2 = 1, by the Lagrange-style identity Hkey *)
+      apply (Rmult_eq_reg_r (r * r));
+        [ transitivity (A * A + B * B);
+          [ field; lra | rewrite Hkey; ring ]
+        | intros He; nra ].
+    + (* b >= 0 from the forward-side constraint *)
+      unfold Rdiv. apply Rmult_le_pos; [ exact Hfwd | ].
+      left. apply Rinv_0_lt_compat. lra.
+    + (* x component: the frame reconstructs q *)
+      symmetry.
+      transitivity (px p + (A * - py t + B * px t)); [ field; lra | ].
+      unfold A, B.
+      transitivity (px p + (px q - px p) * (px t * px t + py t * py t));
+        [ ring | ].
+      rewrite Hunit. ring.
+    + (* y component *)
+      symmetry.
+      transitivity (py p + (A * px t + B * py t)); [ field; lra | ].
+      unfold A, B.
+      transitivity (py p + (py q - py p) * (px t * px t + py t * py t));
+        [ ring | ].
+      rewrite Hunit. ring.
+  - (* frame image => on the cap *)
+    intros [a [b [Hab [Hb [Hqx Hqy]]]]].
+    split.
+    + rewrite Hqx, Hqy.
+      transitivity ((a * a + b * b) * (px t * px t + py t * py t) * (r * r));
+        [ ring | rewrite Hab, Hunit; ring ].
+    + rewrite Hqx, Hqy.
+      replace ((px p + r * (a * - py t + b * px t) - px p) * px t +
+               (py p + r * (a * px t + b * py t) - py p) * py t)
+        with (b * (px t * px t + py t * py t) * r) by ring.
+      rewrite Hunit. nra.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Rational witness pins (Qed at Red).                                        *)
