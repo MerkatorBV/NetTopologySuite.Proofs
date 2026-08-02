@@ -57,7 +57,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra.
-From NTS.Proofs Require Import Vec Direction Distance Segment
+From NTS.Proofs Require Import Vec Distance Segment
                                BufferOffset BufferEndcap.
 Open Scope R_scope.
 
