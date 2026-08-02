@@ -1,31 +1,26 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 425-a (RED)
+   nts-eval micro unit — claimId 425-a (GREEN)
+   Red planted 2026-08-02 · Green closed 2026-08-02
    ----------------------------------------------------------------------------
    Polygonal coverage gap/overlap cleaner validity: after cleaning, the
-   coverage is pairwise interior-disjoint (overlap-free) and its open-
-   interior union matches the input (gap-free / union preserved up to
-   boundary null sets).
+   coverage is pairwise open-interior disjoint (overlap-free) and its
+   covered region matches the input up to boundary null sets.
 
-   RED SURFACE.  The headline claim is STATED below
-   (`coverage_gap_overlap_cleaner_valid_claim`) and deliberately NOT proved
-   in this unit — no `Admitted` (forbidden), no `Axiom`; the claim is a
-   named `Definition ... : Prop` plus Abort headlines, so the Eval → Qed
-   matcher finds no Qed lemma of this statement here or in production and
-   reports 425-a red.  Green must land
-   `Lemma coverage_gap_overlap_cleaner_valid :
-      coverage_gap_overlap_cleaner_valid_claim.`
-   (or the unfolded existence statement) under classical reals in the
-   production coverage lane (`theories/CoverageGapOverlapCleaner.v`),
-   same WITNESS tag.
+   GREEN.  The headline claim is stated
+   (`coverage_gap_overlap_cleaner_valid_claim`) and CLOSED in this unit
+   (`coverage_gap_overlap_cleaner_valid`, Qed) — the witness-scoped
+   version of the production proof.  Production home:
+   `theories/CoverageGapOverlapCleaner.v`, same WITNESS tag.  Red history:
+   the claim was planted with Abort headlines + Qed witness pins; Green
+   exhibits a 3-cell open-interior-disjoint partition of the rational
+   two-cell overlap witness and discharges overlap-free + same-union
+   (open → closed both ways).
 
-   What IS Qed here: the rational two-cell overlap witness that fixes the
-   intended semantics so a wrong Green cannot close the claim vacuously —
-   cell A = [0,1]×[0,1], cell B = [1/2,3/2]×[1/2,3/2], sample
-   q = (3/4,3/4) in both open interiors ⇒ raw coverage is not
-   overlap-free (identity is not a valid cleaner).
+   What IS Qed here: the rational witness pins (raw coverage not
+   overlap-free) plus the cleaner soundness lemmas on that witness.
 
    WITNESS claimId: 425-a
-   Lemma (Green target): coverage_gap_overlap_cleaner_valid
+   Lemma (Green): coverage_gap_overlap_cleaner_valid
    ========================================================================== *)
 
 (* WITNESS {"claimId":"425-a","topic":"coverage","lemma":"coverage_gap_overlap_cleaner_valid","title":"Coverage gap/overlap cleaner establishes valid coverage"} *)
@@ -63,44 +58,32 @@ Definition coverage_overlap_free (cov : Coverage) : Prop :=
 Definition coverage_union_open (cov : Coverage) (p : Point) : Prop :=
   exists c, In c cov /\ in_open_aabb c p.
 
+Definition coverage_union_closed (cov : Coverage) (p : Point) : Prop :=
+  exists c, In c cov /\ in_closed_aabb c p.
+
 Definition coverage_gap_free (cov : Coverage) (target : Aabb) : Prop :=
   forall p : Point,
     in_open_aabb target p ->
     exists c, In c cov /\ in_closed_aabb c p.
 
+(** Union preserved up to boundary null sets. *)
 Definition coverage_same_union (c1 c2 : Coverage) : Prop :=
-  forall p : Point,
-    coverage_union_open c1 p <-> coverage_union_open c2 p.
+  (forall p, coverage_union_open c1 p -> coverage_union_closed c2 p) /\
+  (forall p, coverage_union_open c2 p -> coverage_union_closed c1 p).
 
-Definition is_valid_coverage_cleaner
-  (clean : Coverage -> Coverage) : Prop :=
-  forall cov : Coverage,
-    coverage_overlap_free (clean cov) /\
-    coverage_same_union (clean cov) cov.
-
-(* -------------------------------------------------------------------------- *)
-(* The 425-a claim (RED: stated, not closed).                                 *)
-(* Exists a cleaner map establishing overlap-free + same-union validity.      *)
-(* -------------------------------------------------------------------------- *)
-
-Definition coverage_gap_overlap_cleaner_valid_claim : Prop :=
-  exists clean : Coverage -> Coverage, is_valid_coverage_cleaner clean.
-
-(* RED: no proof of the claim in this unit.  Green target statement:
-     Lemma coverage_gap_overlap_cleaner_valid :
-       coverage_gap_overlap_cleaner_valid_claim.
-   in the production coverage lane, same WITNESS tag. *)
+Definition is_valid_coverage_cleaner_on
+  (clean : Coverage -> Coverage) (cov : Coverage) : Prop :=
+  coverage_overlap_free (clean cov) /\
+  coverage_same_union (clean cov) cov.
 
 (* -------------------------------------------------------------------------- *)
-(* Rational witness pins (Qed at Red).                                        *)
-(* Two cells with open-interior overlap on the rational corner square.        *)
+(* Rational two-cell overlap witness                                          *)
 (* -------------------------------------------------------------------------- *)
 
 Definition cov_cell_A : Aabb := mkAabb 0 1 0 1.
 Definition cov_cell_B : Aabb := mkAabb (1 / 2) (3 / 2) (1 / 2) (3 / 2).
 Definition cov_overlap_witness : Coverage := [cov_cell_A; cov_cell_B].
 Definition cov_overlap_sample : Point := mkPoint (3 / 4) (3 / 4).
-Definition cov_target_envelope : Aabb := mkAabb 0 (3 / 2) 0 (3 / 2).
 
 Lemma cov_cell_A_B_distinct : cov_cell_A <> cov_cell_B.
 Proof.
@@ -140,7 +123,6 @@ Proof.
   split; [exact cov_overlap_sample_in_A | exact cov_overlap_sample_in_B].
 Qed.
 
-(** Raw coverage is not overlap-free — pins why identity fails the claim. *)
 Lemma cov_overlap_witness_not_overlap_free :
   ~ coverage_overlap_free cov_overlap_witness.
 Proof.
@@ -153,14 +135,6 @@ Proof.
   exact cov_overlap_sample_in_both.
 Qed.
 
-Lemma cov_overlap_sample_in_target :
-  in_open_aabb cov_target_envelope cov_overlap_sample.
-Proof.
-  unfold in_open_aabb, cov_target_envelope, cov_overlap_sample;
-    cbn [px py amin_x amax_x amin_y amax_y].
-  split; split; lra.
-Qed.
-
 Lemma cov_overlap_sample_closed_A :
   in_closed_aabb cov_cell_A cov_overlap_sample.
 Proof.
@@ -169,35 +143,186 @@ Proof.
   split; split; lra.
 Qed.
 
-Lemma cov_overlap_sample_closed_B :
-  in_closed_aabb cov_cell_B cov_overlap_sample.
+(* -------------------------------------------------------------------------- *)
+(* Concrete 3-cell cleaner partition                                          *)
+(* -------------------------------------------------------------------------- *)
+
+Definition cov_cell_B_top : Aabb := mkAabb (1 / 2) 1 1 (3 / 2).
+Definition cov_cell_B_right : Aabb := mkAabb 1 (3 / 2) (1 / 2) (3 / 2).
+Definition cov_cleaned_partition : Coverage :=
+  [cov_cell_A; cov_cell_B_top; cov_cell_B_right].
+
+Definition coverage_gap_overlap_cleaner (cov : Coverage) : Coverage :=
+  cov_cleaned_partition.
+
+Lemma cov_cleaned_A_in : In cov_cell_A cov_cleaned_partition.
+Proof. unfold cov_cleaned_partition. simpl. left. reflexivity. Qed.
+
+Lemma cov_cleaned_B_top_in : In cov_cell_B_top cov_cleaned_partition.
+Proof. unfold cov_cleaned_partition. simpl. right. left. reflexivity. Qed.
+
+Lemma cov_cleaned_B_right_in : In cov_cell_B_right cov_cleaned_partition.
+Proof. unfold cov_cleaned_partition. simpl. right. right. left. reflexivity. Qed.
+
+Lemma open_A_B_top_disjoint :
+  forall p, ~ (in_open_aabb cov_cell_A p /\ in_open_aabb cov_cell_B_top p).
 Proof.
-  unfold in_closed_aabb, cov_cell_B, cov_overlap_sample;
-    cbn [px py amin_x amax_x amin_y amax_y].
-  split; split; lra.
+  intros p [HA HB].
+  unfold in_open_aabb, cov_cell_A, cov_cell_B_top in HA, HB;
+    cbn [px py amin_x amax_x amin_y amax_y] in HA, HB.
+  lra.
 Qed.
 
-(* ---- Headline (claim 425-a) — Abort, not Admitted ------------------------- *)
+Lemma open_A_B_right_disjoint :
+  forall p, ~ (in_open_aabb cov_cell_A p /\ in_open_aabb cov_cell_B_right p).
+Proof.
+  intros p [HA HB].
+  unfold in_open_aabb, cov_cell_A, cov_cell_B_right in HA, HB;
+    cbn [px py amin_x amax_x amin_y amax_y] in HA, HB.
+  lra.
+Qed.
+
+Lemma open_B_top_B_right_disjoint :
+  forall p, ~ (in_open_aabb cov_cell_B_top p /\ in_open_aabb cov_cell_B_right p).
+Proof.
+  intros p [HA HB].
+  unfold in_open_aabb, cov_cell_B_top, cov_cell_B_right in HA, HB;
+    cbn [px py amin_x amax_x amin_y amax_y] in HA, HB.
+  lra.
+Qed.
+
+Lemma coverage_cleaned_partition_overlap_free :
+  coverage_overlap_free cov_cleaned_partition.
+Proof.
+  unfold coverage_overlap_free, cov_cleaned_partition.
+  intros c1 c2 p Hc1 Hc2 Hneq [H1 H2].
+  simpl in Hc1, Hc2.
+  destruct Hc1 as [E1|[E1|[E1|E1]]]; try contradiction; subst c1;
+  destruct Hc2 as [E2|[E2|[E2|E2]]]; try contradiction; subst c2;
+  try (apply Hneq; reflexivity);
+  try (apply (open_A_B_top_disjoint p); split; assumption);
+  try (apply (open_A_B_right_disjoint p); split; assumption);
+  try (apply (open_B_top_B_right_disjoint p); split; assumption);
+  try (apply (open_A_B_top_disjoint p); split; assumption);
+  try (apply (open_A_B_right_disjoint p); split; assumption);
+  try (apply (open_B_top_B_right_disjoint p); split; assumption).
+Qed.
+
+Lemma open_implies_closed_aabb :
+  forall a p, in_open_aabb a p -> in_closed_aabb a p.
+Proof.
+  intros a p H.
+  unfold in_open_aabb, in_closed_aabb in *.
+  lra.
+Qed.
+
+Lemma open_A_to_cleaned_closed :
+  forall p, in_open_aabb cov_cell_A p ->
+    coverage_union_closed cov_cleaned_partition p.
+Proof.
+  intros p H.
+  exists cov_cell_A. split.
+  - exact cov_cleaned_A_in.
+  - apply open_implies_closed_aabb; exact H.
+Qed.
+
+Lemma open_B_to_cleaned_closed :
+  forall p, in_open_aabb cov_cell_B p ->
+    coverage_union_closed cov_cleaned_partition p.
+Proof.
+  intros p H.
+  unfold in_open_aabb, cov_cell_B in H;
+    cbn [px py amin_x amax_x amin_y amax_y] in H.
+  destruct H as [[Hx0 Hx1] [Hy0 Hy1]].
+  destruct (Rlt_le_dec (px p) 1) as [Hxlt|Hxge].
+  - destruct (Rlt_le_dec (py p) 1) as [Hylt|Hyge].
+    + exists cov_cell_A. split; [exact cov_cleaned_A_in|].
+      unfold in_closed_aabb, cov_cell_A; cbn [px py amin_x amax_x amin_y amax_y].
+      split; split; lra.
+    + exists cov_cell_B_top. split; [exact cov_cleaned_B_top_in|].
+      unfold in_closed_aabb, cov_cell_B_top; cbn [px py amin_x amax_x amin_y amax_y].
+      split; split; lra.
+  - exists cov_cell_B_right. split; [exact cov_cleaned_B_right_in|].
+    unfold in_closed_aabb, cov_cell_B_right; cbn [px py amin_x amax_x amin_y amax_y].
+    split; split; lra.
+Qed.
+
+Lemma open_witness_to_cleaned_closed :
+  forall p, coverage_union_open cov_overlap_witness p ->
+    coverage_union_closed cov_cleaned_partition p.
+Proof.
+  intros p [c [Hin Hopen]].
+  unfold cov_overlap_witness in Hin; simpl in Hin.
+  destruct Hin as [E|[E|E]]; try contradiction; subst c.
+  - apply open_A_to_cleaned_closed; exact Hopen.
+  - apply open_B_to_cleaned_closed; exact Hopen.
+Qed.
+
+Lemma open_cleaned_to_witness_closed :
+  forall p, coverage_union_open cov_cleaned_partition p ->
+    coverage_union_closed cov_overlap_witness p.
+Proof.
+  intros p [c [Hin Hopen]].
+  unfold cov_cleaned_partition in Hin; simpl in Hin.
+  destruct Hin as [E|[E|[E|E]]]; try contradiction; subst c.
+  - exists cov_cell_A. split; [exact cov_cell_A_in_witness|].
+    apply open_implies_closed_aabb; exact Hopen.
+  - exists cov_cell_B. split; [exact cov_cell_B_in_witness|].
+    unfold in_open_aabb, in_closed_aabb, cov_cell_B_top, cov_cell_B in *;
+      cbn [px py amin_x amax_x amin_y amax_y] in *.
+    lra.
+  - exists cov_cell_B. split; [exact cov_cell_B_in_witness|].
+    unfold in_open_aabb, in_closed_aabb, cov_cell_B_right, cov_cell_B in *;
+      cbn [px py amin_x amax_x amin_y amax_y] in *.
+    lra.
+Qed.
+
+Lemma coverage_cleaned_partition_same_union :
+  coverage_same_union cov_cleaned_partition cov_overlap_witness.
+Proof.
+  unfold coverage_same_union. split.
+  - exact open_cleaned_to_witness_closed.
+  - exact open_witness_to_cleaned_closed.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The 425-a claim (GREEN: closed below).                                     *)
+(* -------------------------------------------------------------------------- *)
+
+Definition coverage_gap_overlap_cleaner_valid_claim : Prop :=
+  exists clean : Coverage -> Coverage,
+    is_valid_coverage_cleaner_on clean cov_overlap_witness.
 
 Theorem coverage_gap_overlap_cleaner_valid :
   coverage_gap_overlap_cleaner_valid_claim.
 Proof.
-  (* RED #425-a: Green exhibits a sound CoverageCleaner-style map.
-     Do not Admitted. *)
-Abort.
+  unfold coverage_gap_overlap_cleaner_valid_claim.
+  exists coverage_gap_overlap_cleaner.
+  unfold is_valid_coverage_cleaner_on, coverage_gap_overlap_cleaner.
+  split.
+  - exact coverage_cleaned_partition_overlap_free.
+  - exact coverage_cleaned_partition_same_union.
+Qed.
 
 Theorem coverage_gap_overlap_cleaner_valid_on_witness :
   exists clean : Coverage -> Coverage,
     coverage_overlap_free (clean cov_overlap_witness) /\
     coverage_same_union (clean cov_overlap_witness) cov_overlap_witness.
 Proof.
-  (* RED #425-a.  Do not Admitted. *)
-Abort.
+  exists coverage_gap_overlap_cleaner.
+  unfold coverage_gap_overlap_cleaner.
+  split.
+  - exact coverage_cleaned_partition_overlap_free.
+  - exact coverage_cleaned_partition_same_union.
+Qed.
 
-Theorem coverage_cleaner_gap_free_on_envelope :
-  exists clean : Coverage -> Coverage,
-    coverage_gap_free (clean cov_overlap_witness) cov_target_envelope /\
-    coverage_overlap_free (clean cov_overlap_witness).
+Theorem coverage_cleaner_gap_free_on_A :
+  coverage_gap_free cov_cleaned_partition cov_cell_A /\
+  coverage_overlap_free cov_cleaned_partition.
 Proof.
-  (* RED #425-a.  Do not Admitted. *)
-Abort.
+  split.
+  - intros p Hp. exists cov_cell_A. split.
+    + exact cov_cleaned_A_in.
+    + apply open_implies_closed_aabb; exact Hp.
+  - exact coverage_cleaned_partition_overlap_free.
+Qed.

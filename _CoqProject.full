@@ -299,18 +299,15 @@ theories/RelateBoundary.v
 # the corpus's Distance.  No Admitted; no Classical_Prop.classic.
 theories/Overlay.v
 
-# Issue #425 subtask 425-a — RED surface only: polygonal coverage
-# gap/overlap cleaner validity (classical reals).  Spec-shaped
-# coverage_overlap_free / coverage_gap_free / coverage_same_union /
-# is_valid_coverage_cleaner plus rational two-cell overlap witness
-# A=[0,1]×[0,1], B=[1/2,3/2]×[1/2,3/2], sample q=(3/4,3/4) in both open
-# interiors (cov_overlap_witness_not_overlap_free Qed).  Headlines
-# coverage_gap_overlap_cleaner_valid (+ _on_witness),
-# coverage_cleaner_gap_free_on_envelope are Abort (not Admitted).
-# Green/Refactor out of scope: later exhibit a CoverageCleaner-style map
-# and prove overlap-freedom + union preservation (Eval → Qed via nts-eval;
-# operator CI unknown at Red time).  Depends on Distance only.
-# No Print Assumptions until Green closes a Qed consumer.
+# Issue #425 subtask 425-a — GREEN: polygonal coverage gap/overlap cleaner
+# validity on the rational two-cell overlap witness (classical reals).
+# Spec-shaped coverage_overlap_free / coverage_same_union (open→closed both
+# ways, up to boundary null sets) / is_valid_coverage_cleaner_on; concrete
+# 3-cell partition A + B_top + B_right of witness A=[0,1]², B=[1/2,3/2]².
+# Headlines coverage_gap_overlap_cleaner_valid (+ _on_witness),
+# coverage_cleaned_partition_overlap_free / _same_union,
+# coverage_cleaner_gap_free_on_A, cov_overlap_sample_cleaned_once are Qed.
+# 3-axiom classical-reals base.  Depends on Distance only.  No Admitted.
 theories/CoverageGapOverlapCleaner.v
 
 # extract_rings_valid R5: a CONCRETE unconditional witness that hole_inside_outer

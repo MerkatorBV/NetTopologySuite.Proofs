@@ -221,6 +221,7 @@ snap-rounding machinery; pure rational, no transcendental and no new axiom.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
+| `CoverageGapOverlapCleaner.v : coverage_gap_overlap_cleaner_valid` (+`coverage_gap_overlap_cleaner_valid_on_witness`, `coverage_cleaned_partition_overlap_free`, `coverage_cleaned_partition_same_union`, `coverage_cleaner_gap_free_on_A`, `cov_overlap_sample_cleaned_once`) | **425-a Green — CoverageCleaner soundness on the rational two-cell overlap witness:** exists a cleaner map repairing `cov_overlap_witness` (A=[0,1]² overlapping B=[1/2,3/2]² at sample (3/4,3/4)) to a 3-cell open-interior-disjoint partition A + B_top + B_right with the same covered region up to boundary null sets (`coverage_same_union` = open→closed both ways). Identity is not a cleaner (`cov_overlap_witness_not_overlap_free`). Witness-scoped (∀-coverage cleaner deferred); mirrored in `eval/Claim425a.v` (WITNESS 425-a). AABB carrier, Distance only `[exact]` | 3 |
 | `Overlay.v : boolean_op` (+comm. lemmas) | Set semantics of union/intersection/difference/symdiff `[exact]` | 3 |
 | `OverlayBridge.v : correct_labels_all_ops` | Edge labelling correct for every boolean op `[int-b64]` | 4 |
 | `OverlayCorrectness.v : overlay_ng_correct_conditional` | **Conditional headline:** extracted overlay = boolean op, under 3 named hypotheses `[cond]` | 4 |
