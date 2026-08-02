@@ -194,6 +194,15 @@ theories/PenetrationMinimax.v
 # stays on the eval Red surface); 1D two-site Voronoi-surface pins
 # (ridge midpoint, translation covariance, 1-Lipschitz cone).
 theories/HausdorffMetricSym.v
+# HKR metric, discretely instantiated: generic score-agnostic max-min layer
+# (the 423-a aggregation facts over an abstract score); zero law = List.incl
+# (h = 0 iff every A-vertex coincides with a B-vertex, via dist_eq_zero_iff);
+# the DIRECTED triangle inequality at the unsquared metric (route the
+# arg-max vertex through nearest neighbours + dist_triangle); and the Hsym
+# instantiation on nonempty lists (sig carrier -- the empty sentinel
+# genuinely falsifies both laws): H = max(h(A,B), h(B,A)) with symmetry,
+# mutual-inclusion zero law, and triangle.  Metric-unit pins 2/3.
+theories/HausdorffMetricInstance.v
 # Meinert (arXiv:2404.05708, 2024) / Eiter-Mannila (1994) discrete-Frechet
 # lane: the 4-LoC maxmin kernel's invariants (current-pair lower bound,
 # carry monotonicity -- the bottom-up-rewrite soundness facts), the 2x2
