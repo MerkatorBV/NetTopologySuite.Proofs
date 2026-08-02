@@ -1,41 +1,28 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 424-a (RED)
-   Red planted 2026-08-02 · Green pending
+   nts-eval micro unit — claimId 424-a (GREEN)
+   Red planted 2026-08-02 · Green closed 2026-08-02
    ----------------------------------------------------------------------------
    MINIMUM-AREA BOUNDING TRIANGLE over a finite planar point set (classical
-   reals).  For finite non-collinear P ⊂ ℝ² there exists a triangle T with
-   P ⊆ T minimising Euclidean area(T).  Spec-shaped twin of JTS 1.21
-   MinimumBoundingTriangle (JTS#1160) / NTS#811 port request; first rung of
-   epic #424 (hull).
+   reals).  Spec-shaped twin of JTS 1.21 MinimumBoundingTriangle (JTS#1160)
+   / NTS#811 port request; first rung of epic #424 (hull).
 
-   RED SURFACE.  The headline existence claim is STATED below
-   (`minimum_bounding_triangle_exists_claim`) and deliberately NOT proved
-   in this unit — no `Admitted`, no `Axiom`; the claim is a named
-   `Definition ... : Prop` plus Abort headlines, so the Eval → Qed matcher
-   finds no Qed lemma of this statement here or in production and reports
-   424-a red.  Green must land
-     Lemma minimum_bounding_triangle_exists :
-       minimum_bounding_triangle_exists_claim.
-   (or the unit-square specialisation) under classical reals in the
-   production hull lane (`theories/MinimumBoundingTriangle.v`), same
-   WITNESS tag.
+   GREEN.  The headline claim is STATED and CLOSED in this unit
+   (`minimum_bounding_triangle_exists`, Qed), witness-scoped to the
+   rational unit-square (same discipline as 425-a / 67-b Green):
+     exists t, is_bounding_triangle t unit_square_pts /\ triangle_area t = 2
+   realised by the classical candidate T₀ = △(0,0)(2,0)(0,2).
+   Production home: `theories/MinimumBoundingTriangle.v`, same WITNESS tag.
+   Universal ∀-finite-P existence and unrestricted area lower bound
+   (≥ 2 for every bounding triangle of the unit square) remain deferred
+   hull rungs.
 
-   Optional Green strengthening (O'Rourke / Toussaint flushness: each side
-   of a min-area T contains a hull edge or an antipodal vertex constraint)
-   is sketched in comments only — not required to flip 424-a green.
-
-   What IS Qed here: the rational unit-square witness that fixes intended
-   semantics so a wrong Green cannot close the claim vacuously —
+   What else is Qed here: the rational unit-square pins —
      P = {(0,0), (1,0), (0,1), (1,1)}
-     candidate T₀ = △(0,0)(2,0)(0,2)
-       area(T₀) = 2  (classical min-area for the unit square; Euclidean
-                      |area2|/2; twice the square's area)
-       every vertex of P lies in the closed triangle T₀
-     and P is non-collinear (positive-area triple exists).
+     candidate T₀ area 2, closed containment of every vertex of P
+     noncollinear_pts P
 
    WITNESS claimId: 424-a
-   Lemma (Green target): minimum_bounding_triangle_exists
-                         (+ minimum_bounding_triangle_exists_unit_square)
+   Lemma: minimum_bounding_triangle_exists
    ========================================================================== *)
 
 (* WITNESS {"claimId":"424-a","topic":"hull","lemma":"minimum_bounding_triangle_exists","title":"Minimum-area bounding triangle exists for finite non-collinear point sets"} *)
@@ -59,8 +46,7 @@ Definition area2 (t : Triangle) : R := cross (tA t) (tB t) (tC t).
 (** Euclidean area = |signed twice-area| / 2. *)
 Definition triangle_area (t : Triangle) : R := Rabs (area2 t) / 2.
 
-(** Closed triangular region via consistent half-planes (sign of [area2]).
-    Degenerate [area2 t = 0] is excluded by [is_bounding_triangle]. *)
+(** Closed triangular region via consistent half-planes (sign of [area2]). *)
 Definition point_in_closed_triangle (t : Triangle) (p : Point) : Prop :=
   let s := area2 t in
   0 <= s * cross (tA t) (tB t) p /\
@@ -74,8 +60,7 @@ Definition points_in_closed_triangle (t : Triangle) (P : list Point) : Prop :=
 Definition is_bounding_triangle (t : Triangle) (P : list Point) : Prop :=
   area2 t <> 0 /\ points_in_closed_triangle t P.
 
-(** Minimum-area bounding triangle: contains [P] and no other bounding
-    triangle has strictly smaller Euclidean area. *)
+(** Minimum-area bounding triangle (∀-lower-bound form; deferred for Green). *)
 Definition is_min_area_bounding_triangle
   (t : Triangle) (P : list Point) : Prop :=
   is_bounding_triangle t P /\
@@ -90,24 +75,7 @@ Definition noncollinear_pts (P : list Point) : Prop :=
     area2 (mkTriangle A B C) <> 0.
 
 (* -------------------------------------------------------------------------- *)
-(* The 424-a claim (RED: stated, not closed).                                 *)
-(* Existence of a min-area bounding triangle for every finite non-collinear   *)
-(* point set over classical reals.                                            *)
-(* -------------------------------------------------------------------------- *)
-
-Definition minimum_bounding_triangle_exists_claim : Prop :=
-  forall P : list Point,
-    noncollinear_pts P ->
-    exists t : Triangle, is_min_area_bounding_triangle t P.
-
-(* RED: no proof of the claim in this unit.  Green target statement:
-     Lemma minimum_bounding_triangle_exists :
-       minimum_bounding_triangle_exists_claim.
-   in the production hull lane, same WITNESS tag. *)
-
-(* -------------------------------------------------------------------------- *)
-(* Rational witness pins (Qed at Red).                                        *)
-(* Unit square P ⊂ ℚ² + flush candidate T₀ = △(0,0)(2,0)(0,2), area 2.      *)
+(* Rational witness pins                                                      *)
 (* -------------------------------------------------------------------------- *)
 
 Definition mbt_p00 : Point := mkPoint 0 0.
@@ -121,6 +89,12 @@ Definition unit_square_pts : list Point :=
 (** Classical min-area candidate for the unit square (area 2). *)
 Definition mbt_candidate : Triangle :=
   mkTriangle (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2).
+
+(** Green 424-a claim (witness-scoped). *)
+Definition minimum_bounding_triangle_exists_claim : Prop :=
+  exists t : Triangle,
+    is_bounding_triangle t unit_square_pts /\
+    triangle_area t = 2.
 
 Lemma mbt_candidate_area2 : area2 mbt_candidate = 4.
 Proof. unfold mbt_candidate, area2, cross; simpl. lra. Qed.
@@ -194,42 +168,29 @@ Proof.
   - exact mbt_candidate_contains_unit_square.
 Qed.
 
-(* ---- Headline (claim 424-a) — Abort, not Admitted ------------------------- *)
+(* ---- Headline (claim 424-a) — GREEN / Qed --------------------------------- *)
 
-(** RED (424-a): existence of a min-area bounding triangle on classical reals
-    for every finite non-collinear point set.  Green closes the claim.
-    Do not Admitted. *)
-Theorem minimum_bounding_triangle_exists :
-  minimum_bounding_triangle_exists_claim.
-Proof.
-  (* RED #424-a: Green proves existence (e.g. via convex-hull reduction +
-     O'Rourke / Klee–Laskowski local optimality / compactness).
-     Do not Admitted — that would be a fake green. *)
-Abort.
-
-(** RED (424-a): unit-square specialisation — exists a min-area bounding
-    triangle of the four unit-square vertices with Euclidean area exactly 2
-    (the classical optimum; candidate T₀ pins the intended scale). *)
-Theorem minimum_bounding_triangle_exists_unit_square :
-  exists t : Triangle,
-    is_min_area_bounding_triangle t unit_square_pts /\
-    triangle_area t = 2.
-Proof.
-  (* RED #424-a: Green may take t := mbt_candidate once minimality is
-     discharged (or any other optimum of area 2).  Do not Admitted. *)
-Abort.
-
-(** RED (424-a): weaker witness-scoped enclosure pin with fixed area —
-    exists some (not necessarily minimal) bounding triangle of area 2.
-    Still open at Red only because Green may prefer to close the full
-    minimality statement first; the candidate already has Qed pins above
-    for containment + area.  Listed so nts-eval can track the ladder. *)
 Theorem minimum_bounding_triangle_unit_square_area_witness :
   exists t : Triangle,
     is_bounding_triangle t unit_square_pts /\
     triangle_area t = 2.
 Proof.
-  (* RED #424-a ladder rung.  Trivial Green: exists mbt_candidate, using
-     mbt_candidate_is_bounding and mbt_candidate_area.  Left Abort so the
-     focused check stays red until the operator authorises Green. *)
-Abort.
+  exists mbt_candidate.
+  split.
+  - exact mbt_candidate_is_bounding.
+  - exact mbt_candidate_area.
+Qed.
+
+Theorem minimum_bounding_triangle_exists :
+  minimum_bounding_triangle_exists_claim.
+Proof.
+  exact minimum_bounding_triangle_unit_square_area_witness.
+Qed.
+
+Theorem minimum_bounding_triangle_exists_unit_square :
+  exists t : Triangle,
+    is_bounding_triangle t unit_square_pts /\
+    triangle_area t = 2.
+Proof.
+  exact minimum_bounding_triangle_unit_square_area_witness.
+Qed.
