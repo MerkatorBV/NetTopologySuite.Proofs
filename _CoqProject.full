@@ -211,6 +211,13 @@ theories/HausdorffMetricInstance.v
 # Frechet-sees-direction pin (reversed curve: same vertex set, leash 3).
 # General list DP left as epic #423's future Frechet RED claim.
 theories/FrechetMaxmin.v
+# 423-b Green production home (Eiter-Mannila 1994 / Meinert 2024): the
+# discrete Frechet recurrence (nested structural fixpoint) equals the min
+# over monotone couplings (4-constructor two-frogs inductive) of the max
+# pairwise leash -- lower bound by induction on the coupling derivation,
+# attainment by nested list induction constructing the optimal walk; plus
+# nonnegativity.  Mirrors eval/Claim423b.v (same WITNESS tag).
+theories/FrechetDiscrete.v
 # Buffer/noder pipeline, Stage 2a seam (docs/buffer-noder-pipeline.md S2):
 # offset-segment soundness -- the offset of an edge is parallel to it
 # (offset_seg_dir / offset_seg_parallel) and sits at perpendicular distance

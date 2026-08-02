@@ -14,6 +14,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
 | `423-a` | `metric` | [`Claim423a.v`](Claim423a.v) | `directed_discrete_hausdorff_max_min` |
+| `423-b` | `metric` | [`Claim423b.v`](Claim423b.v) | `discrete_frechet_min_coupling` |
 | `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
@@ -44,6 +45,15 @@ list inductions, plus nonnegativity): `theories/HausdorffDiscrete.v`
 (same WITNESS tag). The unit here carries the self-contained version
 plus the rational pins (pair example 1/1; asymmetric 4/9 direction
 killers).
+
+Production home for 423-b (Green/Qed: discrete Fréchet = min over
+monotone couplings of the max leash — lower bound by induction on the
+coupling derivation, attainment by nested list induction constructing
+the optimal two-frogs walk, plus nonnegativity):
+`theories/FrechetDiscrete.v` (same WITNESS tag). The unit here carries
+the self-contained version plus the rational pins (identical 0 with the
+diagonal coupling exhibited; reversal 9; crossing pairing refuted;
+Fréchet 9 > Hausdorff 4 on the 423-a witness).
 
 Production home for 425-a (Green/Qed: witness-scoped cleaner soundness —
 3-cell open-interior-disjoint partition of the rational two-cell overlap
