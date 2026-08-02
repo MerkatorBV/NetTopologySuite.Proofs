@@ -1,6 +1,6 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 423-a (RED)
-   Red planted 2026-08-02 · Green pending
+   nts-eval micro unit — claimId 423-a (GREEN)
+   Red planted 2026-08-02 (dbc6a00) · Green closed 2026-08-02
    ----------------------------------------------------------------------------
    DIRECTED DISCRETE HAUSDORFF distance on finite point lists
    (Huttenlocher-Klanderman-Rucklidge 1993, the h(A,B) of JTS/NTS
@@ -15,20 +15,19 @@
    predicate on continuous Shapes -- there is no discrete max-min VALUE,
    and no attainment fact, anywhere in the corpus: that is the gap.
 
-   RED SURFACE.  The headline spec is STATED below
-   (`directed_discrete_hausdorff_claim`) and deliberately NOT proved in
-   this unit -- no `Admitted`, no `Axiom`; the claim is a named
-   `Definition ... : Prop`, so the Eval -> Qed matcher reports 423-a red.
-   The spec pins the computed value h = directed_hausdorff_sq A B from
-   both sides on nonempty lists:
+   GREEN.  The headline spec is stated
+   (`directed_discrete_hausdorff_claim`) and CLOSED in this unit
+   (`directed_discrete_hausdorff_max_min`, Qed).  The spec pins the
+   computed value h = directed_hausdorff_sq A B from both sides on
+   nonempty lists:
      (cover)  every a in A has some b in B with dist_sq a b <= h;
      (attain) some a in A has dist_sq a b >= h against EVERY b in B.
-   Together these say h is exactly the attained max-min.
-   Green target:
-     Lemma directed_discrete_hausdorff_max_min :
-       directed_discrete_hausdorff_claim.
-   with the production home suggested as theories/HausdorffDiscrete.v
-   (list induction over Rmin/Rmax; no sqrt anywhere), same WITNESS tag.
+   Together these say h is exactly the attained max-min.  The proof is
+   four list inductions over Rmin/Rmax (min attained / min lower bound /
+   max upper bound / max attained); no sqrt anywhere.  Production home:
+   `theories/HausdorffDiscrete.v` over the corpus Point/dist_sq
+   vocabulary, same WITNESS tag.  Red history: claim planted 2026-08-02
+   with only the witness pins Qed; Green closed it the same day.
 
    What IS Qed here: rational witness pins fixing the intended
    max-min/direction semantics --
@@ -91,9 +90,100 @@ Definition directed_discrete_hausdorff_claim : Prop :=
     (exists a, In a A /\
        forall b, In b B -> directed_hausdorff_sq A B <= dist_sq a b).
 
-(* RED: no proof of the claim in this unit or in production.  Green must Qed
-   `directed_discrete_hausdorff_max_min` with this statement (micro-kernel)
-   and a production mirror (suggested theories/HausdorffDiscrete.v). *)
+(* GREEN: the claim is closed here (self-contained) and mirrored in
+   production over the corpus Point/dist_sq vocabulary
+   (theories/HausdorffDiscrete.v, same WITNESS tag). *)
+
+(* The inner min is a lower bound on every candidate distance. *)
+Lemma min_dist_sq_to_le : forall a B b,
+    In b B -> min_dist_sq_to a B <= dist_sq a b.
+Proof.
+  intros a B. induction B as [ | b0 B' IH ]; intros b Hin.
+  - destruct Hin.
+  - destruct Hin as [-> | Hin].
+    + destruct B' as [ | b1 B'' ]; simpl; [ lra | apply Rmin_l ].
+    + destruct B' as [ | b1 B'' ]; [ destruct Hin | ].
+      simpl. eapply Rle_trans; [ apply Rmin_r | ]. apply IH. exact Hin.
+Qed.
+
+(* One-step unfolding equations (by conversion), so the cons cases can be
+   opened without disturbing the folded inner calls. *)
+Lemma min_dist_sq_to_step : forall a b0 b1 B'',
+    min_dist_sq_to a (b0 :: b1 :: B'')
+    = Rmin (dist_sq a b0) (min_dist_sq_to a (b1 :: B'')).
+Proof. reflexivity. Qed.
+
+Lemma ddh_step : forall a0 a1 A'' B,
+    directed_hausdorff_sq (a0 :: a1 :: A'') B
+    = Rmax (min_dist_sq_to a0 B) (directed_hausdorff_sq (a1 :: A'') B).
+Proof. reflexivity. Qed.
+
+(* ... and it is attained on a nonempty list. *)
+Lemma min_dist_sq_to_attained : forall a B,
+    B <> nil -> exists b, In b B /\ min_dist_sq_to a B = dist_sq a b.
+Proof.
+  intros a B. induction B as [ | b0 B' IH ]; intros Hne.
+  - congruence.
+  - destruct B' as [ | b1 B'' ].
+    + exists b0. split; [ left; reflexivity | reflexivity ].
+    + destruct IH as [b [Hb Heq]]; [ discriminate | ].
+      rewrite min_dist_sq_to_step.
+      destruct (Rle_dec (dist_sq a b0) (min_dist_sq_to a (b1 :: B'')))
+        as [Hle | Hgt].
+      * exists b0. split; [ left; reflexivity | ].
+        rewrite Rmin_left; [ reflexivity | exact Hle ].
+      * apply Rnot_le_lt in Hgt.
+        exists b. split; [ right; exact Hb | ].
+        rewrite Rmin_right; [ exact Heq | lra ].
+Qed.
+
+(* The outer max dominates every per-point min. *)
+Lemma ddh_ge_component : forall A B a,
+    In a A -> min_dist_sq_to a B <= directed_hausdorff_sq A B.
+Proof.
+  intros A B. induction A as [ | a0 A' IH ]; intros a Hin.
+  - destruct Hin.
+  - destruct Hin as [-> | Hin].
+    + destruct A' as [ | a1 A'' ]; simpl; [ lra | apply Rmax_l ].
+    + destruct A' as [ | a1 A'' ]; [ destruct Hin | ].
+      simpl. eapply Rle_trans; [ apply IH; exact Hin | apply Rmax_r ].
+Qed.
+
+(* ... and it is attained on a nonempty list. *)
+Lemma ddh_attained : forall A B,
+    A <> nil ->
+    exists a, In a A /\ directed_hausdorff_sq A B = min_dist_sq_to a B.
+Proof.
+  intros A B. induction A as [ | a0 A' IH ]; intros Hne.
+  - congruence.
+  - destruct A' as [ | a1 A'' ].
+    + exists a0. split; [ left; reflexivity | reflexivity ].
+    + destruct IH as [a [Ha Heq]]; [ discriminate | ].
+      rewrite ddh_step.
+      destruct (Rle_dec (directed_hausdorff_sq (a1 :: A'') B)
+                        (min_dist_sq_to a0 B)) as [Hle | Hgt].
+      * exists a0. split; [ left; reflexivity | ].
+        rewrite Rmax_left; [ reflexivity | exact Hle ].
+      * apply Rnot_le_lt in Hgt.
+        exists a. split; [ right; exact Ha | ].
+        rewrite Rmax_right; [ exact Heq | lra ].
+Qed.
+
+Lemma directed_discrete_hausdorff_max_min :
+  directed_discrete_hausdorff_claim.
+Proof.
+  unfold directed_discrete_hausdorff_claim.
+  intros A B HA HB. split.
+  - (* cover: route each a through its attained nearest b *)
+    intros a Hin.
+    destruct (min_dist_sq_to_attained a B HB) as [b [Hb Heq]].
+    exists b. split; [ exact Hb | ].
+    rewrite <- Heq. apply ddh_ge_component. exact Hin.
+  - (* attain: the arg-max vertex beats every b in B *)
+    destruct (ddh_attained A B HA) as [a [Ha Heq]].
+    exists a. split; [ exact Ha | ].
+    intros b Hb. rewrite Heq. apply min_dist_sq_to_le. exact Hb.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Rational witness pins (Qed at Red).                                        *)
