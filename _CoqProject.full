@@ -174,6 +174,43 @@ theories/ClothoidHalley.v
 # of B), four Rmin/Rmax list inductions over Distance.dist_sq; plus
 # nonnegativity.  Mirrors eval/Claim423a.v (same WITNESS tag).
 theories/HausdorffDiscrete.v
+# Wen-Zhang (IEEE RA-L 2022) generalized penetration-distance lane, part 1:
+# paper Lemma 2 (gauge is essentially a norm) at the paper's hexagon gauge
+# (eq 18a) plus l^inf/l^1; sublevel identity lam*F = {g <= lam}; the
+# (l^1)/2 <= hex <= l^inf <= l^1 sandwich; rational vertex/edge/interior
+# pins.  Pure Stdlib, rational Rmax/Rabs algebra.  No Admitted.
+theories/PenetrationGauge.v
+# Wen-Zhang lane, part 2: penetration depth = largest zero of the convex
+# profile f(lam) = h(lam*F, C) (eqs 9-11) pinned on the box instance
+# f_box = max(0, lam - c); 1D interval Minkowski difference; Theorem 2's
+# secant never-undershoot guarantee derived from the convexity inequality
+# alone (three-slope lemma); one-step-exact secant pin with the paper's
+# lam0 = 200 initialisation.  See docs/hausdorff-penetration.md.
+theories/PenetrationMinimax.v
+# Huttenlocher-Klanderman-Rucklidge (IEEE PAMI 1993) Hausdorff lane:
+# eq (1) symmetrization H = max(h(A,B), h(B,A)) is a metric ABSTRACTLY
+# (zero law + triangle from the directed triangle axiom -- the layer
+# micro-claim 423-a's Green will instantiate; the discrete max-min itself
+# stays on the eval Red surface); 1D two-site Voronoi-surface pins
+# (ridge midpoint, translation covariance, 1-Lipschitz cone).
+theories/HausdorffMetricSym.v
+# HKR metric, discretely instantiated: generic score-agnostic max-min layer
+# (the 423-a aggregation facts over an abstract score); zero law = List.incl
+# (h = 0 iff every A-vertex coincides with a B-vertex, via dist_eq_zero_iff);
+# the DIRECTED triangle inequality at the unsquared metric (route the
+# arg-max vertex through nearest neighbours + dist_triangle); and the Hsym
+# instantiation on nonempty lists (sig carrier -- the empty sentinel
+# genuinely falsifies both laws): H = max(h(A,B), h(B,A)) with symmetry,
+# mutual-inclusion zero law, and triangle.  Metric-unit pins 2/3.
+theories/HausdorffMetricInstance.v
+# Meinert (arXiv:2404.05708, 2024) / Eiter-Mannila (1994) discrete-Frechet
+# lane: the 4-LoC maxmin kernel's invariants (current-pair lower bound,
+# carry monotonicity -- the bottom-up-rewrite soundness facts), the 2x2
+# recurrence in closed form max(d11,d22), padding invariance (footnote 1,
+# the SIMD-batching law) on the unrolled 3x2 instance, and the
+# Frechet-sees-direction pin (reversed curve: same vertex set, leash 3).
+# General list DP left as epic #423's future Frechet RED claim.
+theories/FrechetMaxmin.v
 # Buffer/noder pipeline, Stage 2a seam (docs/buffer-noder-pipeline.md S2):
 # offset-segment soundness -- the offset of an edge is parallel to it
 # (offset_seg_dir / offset_seg_parallel) and sits at perpendicular distance
