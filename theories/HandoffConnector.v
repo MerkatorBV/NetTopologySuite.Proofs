@@ -1,1 +1,0 @@
-(* C-3e handoff connector moved to CornerCorridorBridge.v §C-3e-B. *)

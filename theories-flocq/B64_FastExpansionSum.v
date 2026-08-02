@@ -3,14 +3,17 @@
    ----------------------------------------------------------------------------
    Stage D chain composition primitive: Shewchuk's GROW-EXPANSION at binary64.
 
-   Sum correctness (`b64_grow_expansion_correct`) -- Qed-closed in this
-   session.  Nonoverlap preservation (`b64_grow_expansion_nonoverlap`) --
-   still Admitted, the load-bearing piece for the next session.
-
-   CI's Qed-invariant grep (no Admitted, no Axiom, no Parameter) continues
-   to flag this file for the remaining Admitted theorem.  THAT FLAG IS THE
-   CORRECT BEHAVIOUR for now.  The marker comes out when the nonoverlap
-   proof comes in.
+   Sum correctness (`b64_grow_expansion_correct`) -- Qed-closed.
+   Nonoverlap preservation (`b64_grow_expansion_nonoverlap`) -- the general
+   statement is FALSE as stated (the grow-expansion counterexample family;
+   see the Abort'd statement at its original site below, kept with the
+   refutation notes) and is deliberately Abort'd, NOT Admitted -- an
+   Admitted false statement would be `apply`-able downstream.  The
+   achievable Qed-closed forms are the dominated/path-A variants
+   (`b64_grow_expansion_nonoverlap_dominated`, `_pathA`) and the
+   integer-safe headlines in the Stage-D stack.  This file carries no
+   `Admitted`; the historical "CI flags this file" note is retired
+   (registries empty as of 2026-07-01).
 
    Design rationale, survey, and proof plan: see
    `docs/stage-d-chain-composition-approach.md`.

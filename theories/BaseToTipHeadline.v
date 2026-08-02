@@ -1,1 +1,0 @@
-(* C-3e along-dart headline moved to CornerCorridorBridge.v §C-3e-C. *)
