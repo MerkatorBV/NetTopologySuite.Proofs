@@ -194,6 +194,14 @@ theories/PenetrationMinimax.v
 # stays on the eval Red surface); 1D two-site Voronoi-surface pins
 # (ridge midpoint, translation covariance, 1-Lipschitz cone).
 theories/HausdorffMetricSym.v
+# Meinert (arXiv:2404.05708, 2024) / Eiter-Mannila (1994) discrete-Frechet
+# lane: the 4-LoC maxmin kernel's invariants (current-pair lower bound,
+# carry monotonicity -- the bottom-up-rewrite soundness facts), the 2x2
+# recurrence in closed form max(d11,d22), padding invariance (footnote 1,
+# the SIMD-batching law) on the unrolled 3x2 instance, and the
+# Frechet-sees-direction pin (reversed curve: same vertex set, leash 3).
+# General list DP left as epic #423's future Frechet RED claim.
+theories/FrechetMaxmin.v
 # Buffer/noder pipeline, Stage 2a seam (docs/buffer-noder-pipeline.md S2):
 # offset-segment soundness -- the offset of an edge is parallel to it
 # (offset_seg_dir / offset_seg_parallel) and sits at perpendicular distance

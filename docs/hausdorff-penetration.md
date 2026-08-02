@@ -11,6 +11,11 @@
    Robotics and Automation Letters 7(3):6123–6130, 2022
    (doi:10.1109/LRA.2022.3166111). Mechanised in
    `theories/PenetrationGauge.v` and `theories/PenetrationMinimax.v`.
+3. N. Meinert, *"Walking Your Frog Fast in 4 LoC"*, arXiv:2404.05708,
+   2024 (DLR) — the recursion-free, linear-memory reformulation of the
+   Eiter–Mannila (1994) **discrete Fréchet distance**, the ordered
+   counterpart of the discrete Hausdorff. Mechanised in
+   `theories/FrechetMaxmin.v`.
 
 All `Qed`, three-axiom footprint, rational witnesses throughout — no
 `sqrt`, no limits, no `Admitted`.
@@ -57,6 +62,10 @@ bodies still overlap.
 | WZ eqs (9)–(11), Thm 1 | `f_box_nonneg`, `f_box_nondecreasing`, `f_box_convex`, `f_box_zero_iff`, `box_inclusion_iff_le`, `box_inclusion_iff_fzero` | The box-instance profile `f(λ) = max(0, λ−c)` satisfies Theorem 1, and eq (10)'s "inclusion ⟺ h = 0 ⟺ λ ≤ c" chain holds exactly; the largest zero is the inscribed radius (eq (9)). `f_box_nondecreasing` is also Lemma 1(i) in this model. |
 | WZ Thm 2, eqs (12)–(13) | `convex_three_point`, `secant_step_safe` | The secant iterate stays in `[λ*, λᵏ)` — monotone decrease, never undershoot — derived from the convexity inequality **alone** (even the slope gap `f(λᵏ) < f(λᵏ⁻¹)` is derived, not assumed). |
 | WZ §IV initialisation | `secant_one_step_exact`, `secant_pin_paper_init`, `secant_box_never_undershoots` | On the affine stretch the secant is exact: starting from the paper's own `λ⁰ = 200` with depth 2, one step lands on 2 — and the abstract safety theorem instantiates at the box model. |
+| Meinert Alg. 2 kernel | `FrechetMaxmin.v : frechet_maxmin_ge_current`, `frechet_maxmin_carry_monotone`, `frechet_maxmin_pred_monotone`, `frechet_maxmin_le_envelope` | The 4-LoC kernel `max(min(a,x1),x2)`: the leash always covers the current pair, and the cell value is monotone in its predecessors — the soundness core of replacing Eiter–Mannila's top-down recursion by a bottom-up row sweep. |
+| EM eq (1), 2×2 | `dF_2x2_closed_form` | Unrolling the DP on two 2-point curves gives `max(d11, d22)` identically: the diagonal coupling wins and the min correctly discards both detour cells — for **all** real inputs, no metric facts needed. |
+| Meinert footnote 1 | `dF_pad_invariant` | Repeating a vertex leaves the discrete Fréchet value unchanged (padded 3×2 = 2×2, all inputs) — the law that makes SIMD batch length-equalisation sound. |
+| Fréchet vs Hausdorff | `frechet_sees_direction`, `dF_2x2_discards_detour` | A route and its reverse have identical vertex sets (all set distances 0 — cf. 423-a) but ordered leash 3: why trajectory analytics needs Fréchet. The detour probe kills the "max of all four entries" misreading. |
 
 ## Proof engineering notes
 
@@ -94,3 +103,9 @@ bodies still overlap.
   epic #423; the 1-Lipschitz lemma is the seed of the §IV half-pixel
   bound.
 - The discrete max-min itself — **RED by design** (423-a).
+- Meinert's general `P×Q` list DP, his Theorem 1 (the fold/scan
+  Algorithm 2 computes eq (1) in `O(Q)` memory), and the Eiter–Mannila
+  sandwich `δ_F ≤ δ_dF ≤ δ_F + max(ε_p, ε_q)` — the list DP with its
+  monotone-coupling spec is the natural future **Fréchet RED claim** of
+  epic #423, sibling of 423-a; only the shape-fixed unrollings and the
+  kernel invariants are Qed here.
