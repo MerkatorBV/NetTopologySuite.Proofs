@@ -893,7 +893,7 @@ the NTS#819 area-line carrier.
 | `RelatePreparedCacheAreaLine.v : rect_envelope_disjoint_all_edges` | **Polygon-envelope early-exit soundness (issue #67 S14b / NTS#819):** when the rectangle envelope `bbox_of_rect` and the query-segment envelope are disjoint, no boundary edge of `rect_boundary_segments` can meet the query segment — the soundness floor for skipping the STRtree query entirely `[exact]` | 3 |
 | `RelatePreparedCacheAreaLine.v : prepared_area_line_envelope_early_exit` | **Early-exit corollary (S14b):** under the same envelope-disjoint hypothesis, the brute-force `area_line_intersects_brute` fold is `false` for any sound `intersect_test` — the prepared area-line predicate may short-circuit before per-edge enumeration `[exact]` | 3 |
 
-## Issue #67 — line×line noding bridge (`RelateNodingLineLine.v`, S15a–S15k) <!-- feat:overlay,relate geom:cs -->
+## Issue #67 — line×line noding bridge (`RelateNodingLineLine*.v`, S15a–S15k; split 2026-08, `RelateNodingLineLine.v` is the re-export umbrella) <!-- feat:overlay,relate geom:cs -->
 
 First RelateNG-noding rung: closed-segment strata + point-set DE-9IM
 specification (`line_de9im_pointset`), with meet-layer bridges from S8
@@ -907,58 +907,58 @@ without hypotheses, and Touches-vs-Share fill split remain S15l+.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
-| `RelateNodingLineLine.v : two_segments_exterior_meet` | Two bounded segments share an exterior point (EE-inhabited substrate) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_de9im_ee_inhabited` | Full `line_de9im_pointset` ⇒ EE cell nonempty `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_disjoint_line_no_ib_meet` | `LPR_Disjoint` ⇒ four interior/boundary-meet cells empty for `ll_matrix_disjoint` `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_proper_cross_line_ii_cell` | `LPR_ProperCross` ⇒ II = 0-dim point cell for `ll_matrix_point_ii` `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_proper_cross_line_point_ii_ib_meet` | `LPR_ProperCross` ⇒ II = 0 + IB/BI/BB empty for `ll_matrix_point_ii` `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_collinear_overlap_line_ii_cell` | `LPR_CollinearOverlap` + `C <> D` ⇒ II = 1-dim cell for `ll_matrix_overlap_ii` `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_share_interior_line_ii_cell` | `LPR_Share` + `segments_interior_share` ⇒ II = 0-dim point cell for `ll_matrix_point_ii` `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_collinear_overlap_CeqD_point_ii_cell` | `LPR_CollinearOverlap` + `C = D` + strict interior on AB ⇒ point II cell for `ll_matrix_point_ii` `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_collinear_overlap_shared_endpoint_bb_cell` | `LPR_CollinearOverlap` + shared endpoint ⇒ BB = 0-dim cell for `ll_matrix_overlap_ii` `[exact]` | 3 |
-| `RelateNodingLineLine.v : segments_int_bnd_touches_ib_cell` | T-junction (int×bnd) ⇒ IB = 0-dim for `ll_matrix_touches_endpoint` `[exact]` | 3 |
-| `RelateNodingLineLine.v : segments_endpoint_contact_bb_cell` | Mutual endpoint contact ⇒ BB = 0-dim for `ll_matrix_overlap_ii` `[exact]` | 3 |
-| `RelateNodingLineLine.v : paper_matrix_ee_dim2_cell` | Romanschek EE = 2 row inhabited for any bounded segment pair `[exact]` | 3 |
-| `RelateNodingLineLine.v : no_share_midpoint_ie_cell` | No-share + `A <> B` ⇒ IE = 1-dim via AB midpoint witness `[exact]` | 3 |
-| `RelateNodingLineLine.v : no_share_midpoint_ei_cell` | No-share + `C <> D` ⇒ EI = 1-dim via CD midpoint witness `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_disjoint_midpoint_ie_ei_cells` | `LPR_Disjoint` + non-degenerate segments ⇒ test-10 IE/EI = 1-dim `[exact]` | 3 |
-| `RelateNodingLineLine.v : segments_bnd_int_bi_cell` | Bnd×int contact ⇒ BI = 0-dim for `ll_matrix_paper_test10` `[exact]` | 3 |
-| `RelateNodingLineLine.v : jts1175_no_share_pointset_bi_empty` | No-share ⇒ point-set BI cell empty (test-10 BI=0 not derivable on nominated pair alone) `[exact]` | 3 |
-| `RelateNodingLineLine.v : endpoint_a_exterior_be_cell` | `A` exterior to CD ⇒ BE = 0-dim for test 10 `[exact]` | 3 |
-| `RelateNodingLineLine.v : endpoint_b_exterior_be_cell` | `B` exterior to CD ⇒ BE = 0-dim for test 10 `[exact]` | 3 |
-| `RelateNodingLineLine.v : endpoint_c_exterior_eb_cell` | `C` exterior to AB ⇒ EB = 0-dim for test 10 `[exact]` | 3 |
-| `RelateNodingLineLine.v : endpoint_d_exterior_eb_cell` | `D` exterior to AB ⇒ EB = 0-dim for test 10 `[exact]` | 3 |
-| `RelateNodingLineLine.v : paper_test10_ie_ei_ee_cells` | No-share + non-degenerate segments ⇒ test-10 IE/EI/EE row witnesses `[exact]` | 3 |
-| `RelateNodingLineLine.v : bnd_int_contact_implies_segments_share` | Bnd×int contact ⇒ `segments_share` (single-pair BI needs share) `[exact]` | 3 |
-| `RelateNodingLineLine.v : jts1175_no_share_nominated_pair_bi_empty` | No-share nominated pair cannot carry test-10 BI = 0-dim cell `[exact]` | 3 |
-| `RelateNodingLineLine.v : jts1175_collection_bi_witness` | Multi-segment collection bnd×int contact ⇒ ∃ cross-product pair with test-10 BI = 0-dim `[exact]` | 3 |
-| `RelateNodingLineLine.v : mod2_endpoint_bnd_int_bi_cell` | MOD2 degree-1 endpoint + bnd×int contact ⇒ test-10 BI = 0-dim `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_disjoint_exterior_be_eb_cells` | `LPR_Disjoint` + four endpoint-exterior hypotheses ⇒ test-10 BE/EB = 0-dim `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_pair_cell_sub` | Pairwise `line_cell_ok` ⇒ collection cross-product cell witness `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_bnd_int_bi_cell_ok` | Collection bnd×int contact ⇒ collection BI = 0-dim witness `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_test10_de9im_rows` | Collection bnd×int + all-no-share ⇒ test-10 BI/IE/EI/EE row witnesses `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_test10_intersects` | Collection bnd×int + all-no-share ⇒ `im_intersects` for test-10 matrix `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_classify_disjoint_test10_rows` | Collection disjoint regime + bnd×int + all-no-share ⇒ test-10 exterior rows `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_disjoint_test10_empty_meet_rows` | `LPR_Disjoint` ⇒ test-10 II/IB/BB meet cells empty (S15h per-pair fill) `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_disjoint_line_de9im_pointset_test10` | `LPR_Disjoint` + non-degenerate segments ⇒ full test-10 meet + exterior rows (S15h) `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_proper_cross_line_de9im_pointset` | `LPR_ProperCross` ⇒ `line_de9im_pointset` for proper-cross fill (S15h) `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_collinear_overlap_line_de9im_pointset` | `LPR_CollinearOverlap` + `C <> D` ⇒ `line_de9im_pointset` for overlap fill (S15h) `[exact]` | 3 |
-| `RelateNodingLineLine.v : dim_value_join_idem` | `dim_value_join` idempotent on max-cell algebra (S15k) `[exact]` | 3 |
-| `RelateNodingLineLine.v : matrix_dim_join_idem` | `matrix_dim_join` idempotent — constant-fold substrate (S15k) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_de9im_pointset_join` | Pairwise `line_collection_de9im_pointset` closed under `matrix_dim_join` (S15i) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_matrix_fold_sound` | Cross-product fold sound when every pair satisfies `line_de9im_pointset` (S15i) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_test10_de9im_pointset` | Collection bnd×int + all-no-share ⇒ full 9-cell `line_collection_de9im_pointset` for test 10 (S15i) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_cell_ok_pinned_implies_ok` | `line_cell_ok_pinned` ⇒ `line_cell_ok` forward bridge (S15j) `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_disjoint_ii_dim_pinned` | `LPR_Disjoint` pins test-10 II cell dimension (S15j) `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_proper_cross_ii_dim_pinned` | `LPR_ProperCross` pins II = 0-dim point cell (S15j) `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_share_interior_ii_dim_pinned` | `LPR_Share` + interior share pins II = 0-dim (S15j) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_pair_fill_share_ii_not_pinned_int_bnd_only` | Share fill II not pinned when only int×bnd contact (Touches gap) (S15j) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_relate_matrix_fold_sound` | Fold-assign interface soundness headline (S15k capstone) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_relate_matrix_regime_fold_sound` | Regime-driven fold sound with separate classify + de9im hypotheses (S15k) `[exact]` | 3 |
-| `RelateNodingLineLine.v : classify_disjoint_pair_de9im_pointset_test10` | Disjoint + bnd×int + non-degenerate ⇒ per-pair full 9-cell test-10 pointset (S15k) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_relate_matrix_test10` | Collection test-10 pointset + fold equals oracle matrix (S15k) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_relate_matrix_test10_intersects` | Collection test-10 fold ⇒ `im_intersects` (S15k) `[exact]` | 3 |
-| `RelateNodingLineLine.v : line_collection_relate_matrix_test10_meet_pinned` | Collection disjoint + all-no-share ⇒ II/BB meet cells pinned on witness pairs (S15k) `[exact]` | 3 |
+| `RelateNodingLineLineStrata.v : two_segments_exterior_meet` | Two bounded segments share an exterior point (EE-inhabited substrate) `[exact]` | 3 |
+| `RelateNodingLineLineStrata.v : line_de9im_ee_inhabited` | Full `line_de9im_pointset` ⇒ EE cell nonempty `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : classify_disjoint_line_no_ib_meet` | `LPR_Disjoint` ⇒ four interior/boundary-meet cells empty for `ll_matrix_disjoint` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : classify_proper_cross_line_ii_cell` | `LPR_ProperCross` ⇒ II = 0-dim point cell for `ll_matrix_point_ii` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : classify_proper_cross_line_point_ii_ib_meet` | `LPR_ProperCross` ⇒ II = 0 + IB/BI/BB empty for `ll_matrix_point_ii` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : classify_collinear_overlap_line_ii_cell` | `LPR_CollinearOverlap` + `C <> D` ⇒ II = 1-dim cell for `ll_matrix_overlap_ii` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : classify_share_interior_line_ii_cell` | `LPR_Share` + `segments_interior_share` ⇒ II = 0-dim point cell for `ll_matrix_point_ii` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : classify_collinear_overlap_CeqD_point_ii_cell` | `LPR_CollinearOverlap` + `C = D` + strict interior on AB ⇒ point II cell for `ll_matrix_point_ii` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : classify_collinear_overlap_shared_endpoint_bb_cell` | `LPR_CollinearOverlap` + shared endpoint ⇒ BB = 0-dim cell for `ll_matrix_overlap_ii` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell` | T-junction (int×bnd) ⇒ IB = 0-dim for `ll_matrix_touches_endpoint` `[exact]` | 3 |
+| `RelateNodingLineLineMeet.v : segments_endpoint_contact_bb_cell` | Mutual endpoint contact ⇒ BB = 0-dim for `ll_matrix_overlap_ii` `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : paper_matrix_ee_dim2_cell` | Romanschek EE = 2 row inhabited for any bounded segment pair `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : no_share_midpoint_ie_cell` | No-share + `A <> B` ⇒ IE = 1-dim via AB midpoint witness `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : no_share_midpoint_ei_cell` | No-share + `C <> D` ⇒ EI = 1-dim via CD midpoint witness `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : classify_disjoint_midpoint_ie_ei_cells` | `LPR_Disjoint` + non-degenerate segments ⇒ test-10 IE/EI = 1-dim `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : segments_bnd_int_bi_cell` | Bnd×int contact ⇒ BI = 0-dim for `ll_matrix_paper_test10` `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : jts1175_no_share_pointset_bi_empty` | No-share ⇒ point-set BI cell empty (test-10 BI=0 not derivable on nominated pair alone) `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : endpoint_a_exterior_be_cell` | `A` exterior to CD ⇒ BE = 0-dim for test 10 `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : endpoint_b_exterior_be_cell` | `B` exterior to CD ⇒ BE = 0-dim for test 10 `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : endpoint_c_exterior_eb_cell` | `C` exterior to AB ⇒ EB = 0-dim for test 10 `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : endpoint_d_exterior_eb_cell` | `D` exterior to AB ⇒ EB = 0-dim for test 10 `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : paper_test10_ie_ei_ee_cells` | No-share + non-degenerate segments ⇒ test-10 IE/EI/EE row witnesses `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : bnd_int_contact_implies_segments_share` | Bnd×int contact ⇒ `segments_share` (single-pair BI needs share) `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : jts1175_no_share_nominated_pair_bi_empty` | No-share nominated pair cannot carry test-10 BI = 0-dim cell `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : jts1175_collection_bi_witness` | Multi-segment collection bnd×int contact ⇒ ∃ cross-product pair with test-10 BI = 0-dim `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : mod2_endpoint_bnd_int_bi_cell` | MOD2 degree-1 endpoint + bnd×int contact ⇒ test-10 BI = 0-dim `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : classify_disjoint_exterior_be_eb_cells` | `LPR_Disjoint` + four endpoint-exterior hypotheses ⇒ test-10 BE/EB = 0-dim `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_pair_cell_sub` | Pairwise `line_cell_ok` ⇒ collection cross-product cell witness `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_bnd_int_bi_cell_ok` | Collection bnd×int contact ⇒ collection BI = 0-dim witness `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_test10_de9im_rows` | Collection bnd×int + all-no-share ⇒ test-10 BI/IE/EI/EE row witnesses `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_test10_intersects` | Collection bnd×int + all-no-share ⇒ `im_intersects` for test-10 matrix `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_classify_disjoint_test10_rows` | Collection disjoint regime + bnd×int + all-no-share ⇒ test-10 exterior rows `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : classify_disjoint_test10_empty_meet_rows` | `LPR_Disjoint` ⇒ test-10 II/IB/BB meet cells empty (S15h per-pair fill) `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : classify_disjoint_line_de9im_pointset_test10` | `LPR_Disjoint` + non-degenerate segments ⇒ full test-10 meet + exterior rows (S15h) `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : classify_proper_cross_line_de9im_pointset` | `LPR_ProperCross` ⇒ `line_de9im_pointset` for proper-cross fill (S15h) `[exact]` | 3 |
+| `RelateNodingLineLineRows.v : classify_collinear_overlap_line_de9im_pointset` | `LPR_CollinearOverlap` + `C <> D` ⇒ `line_de9im_pointset` for overlap fill (S15h) `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : dim_value_join_idem` | `dim_value_join` idempotent on max-cell algebra (S15k) `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : matrix_dim_join_idem` | `matrix_dim_join` idempotent — constant-fold substrate (S15k) `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_de9im_pointset_join` | Pairwise `line_collection_de9im_pointset` closed under `matrix_dim_join` (S15i) `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_matrix_fold_sound` | Cross-product fold sound when every pair satisfies `line_de9im_pointset` (S15i) `[exact]` | 3 |
+| `RelateNodingLineLineCollection.v : line_collection_test10_de9im_pointset` | Collection bnd×int + all-no-share ⇒ full 9-cell `line_collection_de9im_pointset` for test 10 (S15i) `[exact]` | 3 |
+| `RelateNodingLineLinePinned.v : line_cell_ok_pinned_implies_ok` | `line_cell_ok_pinned` ⇒ `line_cell_ok` forward bridge (S15j) `[exact]` | 3 |
+| `RelateNodingLineLinePinned.v : classify_disjoint_ii_dim_pinned` | `LPR_Disjoint` pins test-10 II cell dimension (S15j) `[exact]` | 3 |
+| `RelateNodingLineLinePinned.v : classify_proper_cross_ii_dim_pinned` | `LPR_ProperCross` pins II = 0-dim point cell (S15j) `[exact]` | 3 |
+| `RelateNodingLineLinePinned.v : classify_share_interior_ii_dim_pinned` | `LPR_Share` + interior share pins II = 0-dim (S15j) `[exact]` | 3 |
+| `RelateNodingLineLinePinned.v : line_pair_fill_share_ii_not_pinned_int_bnd_only` | Share fill II not pinned when only int×bnd contact (Touches gap) (S15j) `[exact]` | 3 |
+| `RelateNodingLineLineCapstone.v : line_collection_relate_matrix_fold_sound` | Fold-assign interface soundness headline (S15k capstone) `[exact]` | 3 |
+| `RelateNodingLineLineCapstone.v : line_collection_relate_matrix_regime_fold_sound` | Regime-driven fold sound with separate classify + de9im hypotheses (S15k) `[exact]` | 3 |
+| `RelateNodingLineLineCapstone.v : classify_disjoint_pair_de9im_pointset_test10` | Disjoint + bnd×int + non-degenerate ⇒ per-pair full 9-cell test-10 pointset (S15k) `[exact]` | 3 |
+| `RelateNodingLineLineCapstone.v : line_collection_relate_matrix_test10` | Collection test-10 pointset + fold equals oracle matrix (S15k) `[exact]` | 3 |
+| `RelateNodingLineLineCapstone.v : line_collection_relate_matrix_test10_intersects` | Collection test-10 fold ⇒ `im_intersects` (S15k) `[exact]` | 3 |
+| `RelateNodingLineLineCapstone.v : line_collection_relate_matrix_test10_meet_pinned` | Collection disjoint + all-no-share ⇒ II/BB meet cells pinned on witness pairs (S15k) `[exact]` | 3 |
 | `Intersect.v : strict_intersection_point_open_ab` | Proper-cross intersection point lies in strict interior of AB `[exact]` | 3 |
 | `Intersect.v : strict_intersection_point_open_cd` | Proper-cross intersection point lies in strict interior of CD `[exact]` | 3 |
 

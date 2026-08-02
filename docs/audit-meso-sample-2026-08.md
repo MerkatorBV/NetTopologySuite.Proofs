@@ -86,7 +86,7 @@ Definition-level vacuity — worth remembering when reviewing new
 | B4 | Extract `PassesThrough_b64_grid_exact.v` slices 12–13 (lines ~1204–1315; 3-axiom `[exact]`, no classic) into a pure-R module that can **leave** `audit-exceptions.txt` | **Flag:** `docs/category-c-policy.md` §10 pauses the refactor cadence pending decision.  This is R-side extraction, not the parametric b64 refactor — argued orthogonal, but get explicit BDFL ack in the PR. |
 | B5 | Add `docs/verified-claims.md` rows for `CornerCorridorBridge` and `InArc` headlines | Must land **after** B2 (rows citing to-be-moved lemmas would orphan on extraction). |
 | B6 | RelateNG triangle/rect untangle (`rect_pair_regime` at line ~436 sits inside the triangle block) | Prerequisite to any RelateNG split; no split before it. |
-| — | `HotPixel_b64.v` split: **blocked** (21-dep blast radius incl. oracle path).  `RelateNodingLineLine.v` split: deferred indefinitely (healthiest giant).  `CurveRingOffset.v`: frozen.  Category-C policy decision: BDFL-blocked (`docs/category-c-policy.md` §7/§10). | Recorded to prevent re-litigating. |
+| — | `HotPixel_b64.v` split: **blocked** (21-dep blast radius incl. oracle path).  `RelateNodingLineLine.v` split: deferred indefinitely (healthiest giant) — *superseded later in 2026-08: split executed at maintainer request into six layered modules along the recorded §13/§14 seam, with `RelateNodingLineLine.v` kept as a re-export umbrella so the 3 reverse deps import unchanged.*  `CurveRingOffset.v`: frozen.  Category-C policy decision: BDFL-blocked (`docs/category-c-policy.md` §7/§10). | Recorded to prevent re-litigating. |
 
 ## References
 
