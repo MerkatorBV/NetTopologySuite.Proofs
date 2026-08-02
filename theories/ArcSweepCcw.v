@@ -234,18 +234,16 @@ Qed.
 Lemma sweep_gamma_cw_eq :
   central_angle sweep_O sweep_A sweep_B_cw = - (PI / 2).
 Proof.
-  unfold central_angle, angle_between, sweep_O, sweep_A, sweep_B_cw, atan2.
+  unfold central_angle, angle_between, sweep_O, sweep_A, sweep_B_cw.
   cbn [px py].
   (* cross = −1, dot = 0 → atan2 (−1) 0 = −π/2 *)
-  destruct (Rlt_dec 0 ((1 - 0) * (0 - 0) + (0 - 0) * ((-1) - 0))) as [Hd|Hd];
-    [exfalso; lra|].
-  destruct (Rlt_dec ((1 - 0) * (0 - 0) + (0 - 0) * ((-1) - 0)) 0) as [Hd2|Hd2];
-    [exfalso; lra|].
-  destruct (Rlt_dec 0 ((1 - 0) * ((-1) - 0) - (0 - 0) * (0 - 0))) as [Hc|Hc];
-    [exfalso; lra|].
-  destruct (Rlt_dec ((1 - 0) * ((-1) - 0) - (0 - 0) * (0 - 0)) 0) as [Hc2|Hc2];
-    [|exfalso; lra].
-  reflexivity.
+  replace ((1 - 0) * (0 - 0) + (0 - 0) * ((-1) - 0)) with 0 by ring.
+  replace ((1 - 0) * ((-1) - 0) - (0 - 0) * (0 - 0)) with (-1) by ring.
+  unfold atan2.
+  destruct (Rlt_dec 0 0); [lra|].
+  destruct (Rlt_dec 0 0); [lra|].
+  destruct (Rlt_dec 0 (-1)); [lra|].
+  destruct (Rlt_dec (-1) 0); [reflexivity|lra].
 Qed.
 
 Lemma sweep_gamma_pi_eq :
