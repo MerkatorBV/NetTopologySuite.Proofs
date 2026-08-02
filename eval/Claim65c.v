@@ -1,6 +1,6 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 65-c (RED)
-   Red planted 2026-08-02 · Green pending
+   nts-eval micro unit — claimId 65-c (GREEN)
+   Red planted 2026-08-02 (20bd629) · Green closed 2026-08-02
    ----------------------------------------------------------------------------
    SQUARE endcap geometry completes the ENDCAP TRIO (JTS
    BufferParameters.CAP_FLAT / CAP_ROUND / CAP_SQUARE; 65-a flat = the
@@ -17,21 +17,20 @@
    segment-parametrisation algebra over the same J(t)-frame the trio
    shares.
 
-   RED SURFACE.  The headline biconditional is STATED below
-   (`square_endcap_is_diameter_square_claim`) and deliberately NOT
-   proved in this unit — no `Admitted`, no `Axiom`; the claim is a named
-   `Definition ... : Prop`, so the Eval -> Qed matcher reports 65-c red.
-   Green target:
-     Lemma square_endcap_is_diameter_square :
-       square_endcap_is_diameter_square_claim.
-   with the production home in the BufferEndcap.v neighbourhood
-   (suggested file: theories/BufferEndcapSquare.v) over the corpus's
-   `cap_endpoint` / `sq_corner` / `unit_dir` / `unit_perp` vocabulary,
-   same WITNESS tag.  The proof machinery is the 65-a frame
-   decomposition per side: each of the three segments pins one frame
-   coordinate (a = -1, b = 1, a = 1) and lets the between-parameter s
-   sweep the other — three linear equivalences, no sqrt, no nra beyond
-   products with s.
+   GREEN.  The headline biconditional is stated
+   (`square_endcap_is_diameter_square_claim`) and CLOSED in this unit
+   (`square_endcap_is_diameter_square`, Qed).  Proof shape: each of the
+   three segments pins one frame coordinate (a = -1, b = 1, a = 1) and
+   lets the between-parameter s sweep the other — forward direction
+   reads (a,b) off the segment parameter (s, 2s-1, 1-s respectively);
+   backward direction rebuilds the parameter from the pinned frame
+   coordinates (b, (a+1)/2, 1-b).  Every goal is LINEAR in the
+   ring-normalised monomials, so all six branches close by lra — no
+   sqrt, no nra, no circle.  Production home:
+   `theories/BufferEndcapSquare.v` over the corpus's `cap_endpoint` /
+   `sq_corner` / `unit_dir` / `unit_perp` vocabulary, same WITNESS tag.
+   Red history: claim planted 2026-08-02 (20bd629) with only the
+   witness pins Qed; Green closed it the same day.
 
    What IS Qed here: rational witness pins fixing the intended
    semantics — terminal p = (1,0), tangent t = (1,0), r = 1
@@ -107,9 +106,36 @@ Definition square_endcap_is_diameter_square_claim : Prop :=
           px q = px p + r * (a * (- py t) + b * px t) /\
           py q = py p + r * (a * px t + b * py t)).
 
-(* RED: no proof of the claim in this unit or in production.  Green must Qed
-   `square_endcap_is_diameter_square` with this statement (micro-kernel)
-   and its production mirror over cap_endpoint/sq_corner/unit_dir/unit_perp. *)
+(* GREEN: the claim is closed here (self-contained) and mirrored in
+   production over cap_endpoint/sq_corner/unit_dir/unit_perp
+   (theories/BufferEndcapSquare.v, same WITNESS tag). *)
+
+Lemma square_endcap_is_diameter_square :
+  square_endcap_is_diameter_square_claim.
+Proof.
+  unfold square_endcap_is_diameter_square_claim.
+  intros p t r Hr Hunit q.
+  unfold on_square_cap, between, cap_minus, cap_plus,
+         corner_minus, corner_plus; simpl.
+  split.
+  - (* walk => frame image: read (a,b) off the segment parameter *)
+    intros [ [s [H0 [H1 [Hx Hy]]]]
+           | [ [s [H0 [H1 [Hx Hy]]]] | [s [H0 [H1 [Hx Hy]]]] ] ].
+    + (* minus side: a = -1, b = s *)
+      exists (-1), s.
+      split; [ left; repeat split; lra | split; lra ].
+    + (* forward face: b = 1, a = 2s - 1 *)
+      exists (2 * s - 1), 1.
+      split; [ right; left; repeat split; lra | split; lra ].
+    + (* plus side: a = 1, b = 1 - s *)
+      exists 1, (1 - s).
+      split; [ right; right; repeat split; lra | split; lra ].
+  - (* frame image => walk: rebuild the segment parameter *)
+    intros [a [b [ [ [Ha Hb] | [ [Hb Ha] | [Ha Hb] ] ] [Hx Hy] ] ] ].
+    + subst a. left. exists b. repeat split; lra.
+    + subst b. right. left. exists ((a + 1) / 2). repeat split; lra.
+    + subst a. right. right. exists (1 - b). repeat split; lra.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Rational witness pins (Qed at Red).                                        *)
