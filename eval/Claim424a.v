@@ -25,7 +25,7 @@
    Lemma: minimum_bounding_triangle_exists
    ========================================================================== *)
 
-(* WITNESS {"claimId":"424-a","topic":"hull","lemma":"minimum_bounding_triangle_exists","title":"Minimum-area bounding triangle exists for finite non-collinear point sets"} *)
+(* WITNESS {"claimId":"424-a","topic":"hull","lemma":"minimum_bounding_triangle_exists","title":"Unit-square vertices admit a bounding triangle of Euclidean area 2"} *)
 
 From Stdlib Require Import Reals Lra List.
 Import ListNotations.

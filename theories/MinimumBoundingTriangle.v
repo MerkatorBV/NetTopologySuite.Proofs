@@ -45,7 +45,7 @@ From NTS.Proofs Require Import Distance Orientation Triangle.
 
 Local Open Scope R_scope.
 
-(* WITNESS {"claimId":"424-a","topic":"hull","lemma":"minimum_bounding_triangle_exists","title":"Minimum-area bounding triangle exists for finite non-collinear point sets","file":"theories/MinimumBoundingTriangle.v"} *)
+(* WITNESS {"claimId":"424-a","topic":"hull","lemma":"minimum_bounding_triangle_exists","title":"Unit-square vertices admit a bounding triangle of Euclidean area 2","file":"theories/MinimumBoundingTriangle.v"} *)
 
 (* -------------------------------------------------------------------------- *)
 (* §1  Spec shape — area, containment, bounding triangle.                     *)
