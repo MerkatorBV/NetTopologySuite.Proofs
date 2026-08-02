@@ -13,17 +13,26 @@
 #     immediately above the file line explaining what makes the file
 #     Category C / transitional and the planned resolution).
 #
-# Current state: 24 files in `theories-flocq/` are listed below (initial ~11
-# for binary ops Bplus/Bminus/Bmult pulling `Classical_Prop.classic` via Flocq,
-# plus additional Category C for snap-rounding, overlay, expansion-arithmetic,
-# and Stage D as documented per-file).  This contamination is a pre-existing
-# condition the corpus inherited from Flocq's binary model; the parametric
-# refactor clears files one by one where possible.  Removal from this list is
-# the per-file completion criterion for the binary-op lineage.
+# Current state: 80 files are listed below -- 64 in `theories-flocq/` (the
+# initial bulk block for binary ops Bplus/Bminus/Bmult pulling
+# `Classical_Prop.classic` via Flocq, plus additional Category C for
+# snap-rounding, overlay, expansion-arithmetic, and Stage D as documented
+# per-file) and 16 in `theories/` (a distinct R-side lineage: Stdlib
+# `atan`/`Ratan` and `sin_lt_x` pull `Classical_Prop.classic`, documented
+# per-file below).  The Flocq contamination is a pre-existing condition the
+# corpus inherited from Flocq's binary model; the parametric refactor clears
+# files one by one where possible.  Removal from this list is the per-file
+# completion criterion for the binary-op lineage.
 
-# Transitional: clean of `classic` once parametric-architecture refactor
-# applied per the policy designed in `docs/category-c-policy.md`
-# (to be written).
+# Category C (binary-op lineage, original bulk block): the fifteen files
+# below are the b64 arithmetic foundation -- their theorem types mention
+# Flocq's `Bplus`/`Bminus`/`Bmult` (directly or via the `b64_*` aliases),
+# whose definition closure carries `Classical_Prop.classic` (Category C1 in
+# `docs/category-c-policy.md`; policy status: Draft, decision pending).
+# This block predates the per-file justification rule above.  Transitional:
+# a file leaves this list when the parametric-architecture refactor reaches
+# it (note the policy doc's section 6: C1 removal is impossible while
+# Flocq's binary model is in use).
 theories-flocq/Orient_b64_exact.v
 theories-flocq/ClothoidDegenerate_b64.v
 theories-flocq/ClothoidScopeA_b64.v
@@ -36,6 +45,11 @@ theories-flocq/B64_lib.v
 theories-flocq/Orient_b64_R.v
 theories-flocq/Validate_binary64_bridge.v
 theories-flocq/Orientation_b64.v
+# HotPixel_b64.v: hot-pixel membership + segment-crossing + passes-through
+# layer over b64 predicates.  `b64_lt`/`b64_le` route through classical
+# Rcompare (the canonical Category C2 exemplar `b64_le_R_of_true` lives
+# here); highest-fan-in b64 module (21 dependents incl. the oracle
+# extraction path via Validate_binary64_extract.v).
 theories-flocq/HotPixel_b64.v
 theories-flocq/B64_Pff_bridge.v
 theories-flocq/Orient_b64_sound.v
@@ -89,11 +103,12 @@ theories-flocq/B64_Shewchuk_Thm13_counterexample.v
 theories-flocq/B64_pathB_trace_4A.v
 
 # Category C: Shewchuk Theorem 13 pathA∨pathB cascade scaffolding.
-# B64_Shewchuk_Thm13_pathAB.v: O1–O6 + bootstrap Qed; one registered Admitted
-# (O7-completeness cascade_pathAB_chain_from_nonoverlap) is a Tier-2
-# counterexample per PR #142; conditional O8 machinery remains sound.  The
-# headline Admitted lives in B64_FastExpansionSum_Shewchuk.v (separate registry
-# entry).
+# B64_Shewchuk_Thm13_pathAB.v: O1–O6 + bootstrap Qed.  (Historical: the
+# O7-completeness cascade_pathAB_chain_from_nonoverlap was a registered
+# Tier-2 counterexample per PR #142, and the headline was Admitted in
+# B64_FastExpansionSum_Shewchuk.v; both have since been Qed-closed -- the
+# registries are empty and the corpus is Admitted-free.  Discharge history:
+# docs/history/deferred-proofs-registry-archive.md.)
 theories-flocq/B64_Shewchuk_Thm13_pathAB.v
 
 # Category C: C1 division-rounding core (division-by-power-of-two is exact).
@@ -208,9 +223,9 @@ theories-flocq/SnapRounding_b64.v
 theories-flocq/TopologicalCorrectness_b64.v
 
 # Category C: Phase 2 Hobby Theorem 4.1 infrastructure.
-# Definitions + conditional theorem + two Admitted supporting lemmas
-# (hobby_lemma_4_2, hobby_lemma_4_3 registered in
-# docs/admitted-deferred-proofs.txt).  References `snap_round` via
+# Definitions + conditional theorem + supporting lemmas hobby_lemma_4_2 /
+# hobby_lemma_4_3 (formerly Admitted with deferred-proof registry entries;
+# since Qed-closed).  References `snap_round` via
 # `snap_round_segments`, pulling `Classical_Prop.classic` through Flocq's
 # `round` / `round_mode` -- identical lineage to the other snap files.
 theories-flocq/HobbyTheorem_b64.v
@@ -290,12 +305,18 @@ theories-flocq/PassesThrough_b64_compute_asymmetric.v
 # R-spec layer pulls `Classical_Prop.classic` transitively.  No Admitteds.
 theories-flocq/PassesThrough_b64_spec_symmetric.v
 
-# Category C (GREEN reduction, same lineage): issue #66 C1 grid-exactness
-# REDUCTION layer (docs/snap-rounding-rgr-pivot.md).  On the unit grid the
-# snap-consistency conjunct of passes-through is vacuous, reducing compute=spec
-# to a single Liang-Barsky touch.  Imports HotPixel_b64 / SnapRounding_b64 /
-# PassesThrough_b64_compute, whose binary64 layer pulls `Classical_Prop.classic`
-# transitively.  No Admitteds; Qed-closed.
+# Category C (same lineage): issue #66 C1 grid-exactness layer
+# (docs/snap-rounding-rgr-pivot.md).  Began as the GREEN reduction (on the
+# unit grid the snap-consistency conjunct of passes-through is vacuous,
+# reducing compute=spec to a single Liang-Barsky touch); now 18 slices deep,
+# closing C1 on-grid soundness UNCONDITIONALLY on the tight integer grid
+# (|n| <= 2^22, Slice 18).  Imports HotPixel_b64 / SnapRounding_b64 /
+# PassesThrough_b64_compute, whose binary64 layer pulls
+# `Classical_Prop.classic` transitively.  No Admitteds; Qed-closed.
+# KNOWN GAP: the file currently has ZERO in-file `Print Assumptions`
+# footers, so this exemption covers no PA blocks today -- backfill queued
+# (B1 in docs/audit-meso-sample-2026-08.md); slices 12-13 are 3-axiom
+# [exact] and a candidate to leave this list after extraction (B4).
 theories-flocq/PassesThrough_b64_grid_exact.v
 
 # Category C (GREEN witness, same lineage): a witness test of the C1 grid
@@ -440,16 +461,12 @@ theories-flocq/Validate_binary64.v
 # closure (same lineage as the other expansion-arithmetic files
 # listed above).
 #
-# The file also contains THREE Admitted theorems with verified
-# counterexamples, each registered in `docs/admitted-counterexamples.txt`
-# and enforced by `scripts/check_admitted.sh`.  These are
-# known-unprovable-as-stated:
-#   - `b64_grow_expansion_nonoverlap` (loose general case).
-#   - `round_eq_under_strict_dominance` (loose round-eq helper).
-#   - `b64_grow_expansion_nonoverlap_dominated` (loose dominated variant).
-# The achievable versions (`b64_grow_expansion_nonoverlap_pathA`,
-# `round_eq_pathA_{positive, negative, zero}`, etc.) are all Qed-closed
-# in this same file.
+# (Historical: the file formerly carried THREE Admitted theorems with
+# verified counterexamples registered in `docs/admitted-counterexamples.txt`
+# -- `b64_grow_expansion_nonoverlap`, `round_eq_under_strict_dominance`,
+# `b64_grow_expansion_nonoverlap_dominated`.  All statements now in the
+# file, including those names and the pathA variants, are Qed-closed; both
+# registries are empty and the corpus is Admitted-free.)
 #
 # See `docs/stage-d-grow-expansion-nonoverlap-tangent.md` for the full
 # design history and the verified counterexample arithmetic.
@@ -498,12 +515,10 @@ theories-flocq/B64_FastExpansionSum_Shewchuk.v
 # transitively via the B2R chain (same lineage as the expansion-arithmetic
 # files above).  Sum-correctness is Qed-closed (under an explicit
 # diffs_exact precondition).  Nonoverlap and sign-correctness theorems
-# reference `fast_expansion_sum_nonoverlap_shewchuk` (currently Admitted
-# in B64_FastExpansionSum_Shewchuk.v with deferred-proof registry entry).
-# That Admitted reference shows up in the file's Print Assumptions
-# blocks as an extra axiom; this exception entry covers it.  Per the
-# deferred-proof discipline, once Piece 5b closes, the reference becomes
-# Qed-closed and only the Category C lineage remains.
+# reference `fast_expansion_sum_nonoverlap_shewchuk` (formerly Admitted in
+# B64_FastExpansionSum_Shewchuk.v with a deferred-proof registry entry;
+# since Qed-closed, so the extra-axiom line no longer appears in this
+# file's Print Assumptions blocks and only the Category C lineage remains).
 theories-flocq/Orient_b64_expansion.v
 
 # Category C: Slice A piece 7.  Stage D headline.  Composes Piece 6's
