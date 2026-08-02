@@ -168,6 +168,12 @@ theories/ClothoidDegenerate.v
 # Companion: clothoid-halley-coq Solver.cs; corpus witness golden_vectors.json.
 # See docs/clothoid-open-questions-triage.md section 11.
 theories/ClothoidHalley.v
+# Score-agnostic max-min aggregation layer shared by the epic-#423 metric
+# rungs: min_score_to / max_min_score with attained lower/upper bounds,
+# one-step conversion equations, and nonnegativity under a nonnegative
+# score.  Instantiated at dist_sq (HausdorffDiscrete.v) and at dist
+# (HausdorffMetricInstance.v).  Extracted post-#431/#432.
+theories/MaxMinScore.v
 # 423-a Green production home (HKR 1993 eq (2)): the directed discrete
 # Hausdorff value on finite point lists is the attained max-min -- cover
 # (every A-point within h of B) + attain (some A-point at >= h from all

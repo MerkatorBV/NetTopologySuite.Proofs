@@ -19,20 +19,22 @@
    Together: h is exactly the attained max-min -- the value a ranked
    shape-matching pipeline (or a geometry similarity test) can trust.
 
-   Proof: four list inductions over Rmin/Rmax (min lower bound, min
-   attained, max dominates components, max attained), each opened by a
-   one-step conversion equation so the folded inner calls stay intact
-   for micromega.  No sqrt anywhere.
+   Proof: the four aggregation facts (min lower bound, min attained,
+   max dominates components, max attained) are instantiations of the
+   score-agnostic layer in MaxMinScore.v at score := dist_sq -- the
+   post-#431/#432 refactor consolidating the machinery shared with the
+   unsquared instance in HausdorffMetricInstance.v.  No sqrt anywhere.
 
    Mirrors eval/Claim423a.v (same WITNESS tag), which carries the
    self-contained version plus the rational pins: pair example h_sq = 1
    both ways; asymmetric example [(0,0)] vs [(0,2);(3,0)] with forward
    4 / backward 9 (min-inside / max-outside / directedness killers).
 
-   The symmetrization layer H = max(h(A,B), h(B,A)) is already proved
-   abstractly in HausdorffMetricSym.v (the Hsym lemmas); instantiating it at
-   this h needs the zero law and the directed triangle inequality --
-   natural next rungs of epic #423, not claimed here.
+   The symmetrization layer H = max(h(A,B), h(B,A)) is proved
+   abstractly in HausdorffMetricSym.v and CLOSED at the unsquared
+   metric in HausdorffMetricInstance.v (zero law = List.incl, directed
+   triangle, full HKR metric) -- this file remains the squared 423-a
+   claim surface only.
 
    WITNESS claimId: 423-a
    topic: metric
@@ -47,7 +49,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance.
+From NTS.Proofs Require Import Distance MaxMinScore.
 Import ListNotations.
 Open Scope R_scope.
 
@@ -58,30 +60,22 @@ Open Scope R_scope.
 (*     The [] sentinels are outside the spec's domain (nonempty lists).       *)
 (* -------------------------------------------------------------------------- *)
 
-Fixpoint min_dist_sq_to (a : Point) (B : list Point) : R :=
-  match B with
-  | [] => 0
-  | [b] => dist_sq a b
-  | b :: B' => Rmin (dist_sq a b) (min_dist_sq_to a B')
-  end.
+Definition min_dist_sq_to (a : Point) (B : list Point) : R :=
+  min_score_to dist_sq a B.
 
-Fixpoint directed_hausdorff_sq (A B : list Point) : R :=
-  match A with
-  | [] => 0
-  | [a] => min_dist_sq_to a B
-  | a :: A' => Rmax (min_dist_sq_to a B) (directed_hausdorff_sq A' B)
-  end.
+Definition directed_hausdorff_sq (A B : list Point) : R :=
+  max_min_score dist_sq A B.
 
-(* One-step unfolding equations (by conversion). *)
+(* One-step unfolding equations (by conversion, via the shared layer). *)
 Lemma min_dist_sq_to_step : forall a b0 b1 B'',
     min_dist_sq_to a (b0 :: b1 :: B'')
     = Rmin (dist_sq a b0) (min_dist_sq_to a (b1 :: B'')).
-Proof. reflexivity. Qed.
+Proof. intros. exact (min_score_to_step dist_sq a b0 b1 B''). Qed.
 
 Lemma ddh_step : forall a0 a1 A'' B,
     directed_hausdorff_sq (a0 :: a1 :: A'') B
     = Rmax (min_dist_sq_to a0 B) (directed_hausdorff_sq (a1 :: A'') B).
-Proof. reflexivity. Qed.
+Proof. intros. exact (max_min_score_step dist_sq a0 a1 A'' B). Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* §2  The four aggregate facts.                                              *)
@@ -90,69 +84,23 @@ Proof. reflexivity. Qed.
 (* The inner min is a lower bound on every candidate distance. *)
 Lemma min_dist_sq_to_le : forall a B b,
     In b B -> min_dist_sq_to a B <= dist_sq a b.
-Proof.
-  intros a B. induction B as [ | b0 B' IH ]; intros b Hin.
-  - destruct Hin.
-  - destruct Hin as [-> | Hin].
-    + destruct B' as [ | b1 B'' ]; [ apply Rle_refl | ].
-      rewrite min_dist_sq_to_step. apply Rmin_l.
-    + destruct B' as [ | b1 B'' ]; [ destruct Hin | ].
-      rewrite min_dist_sq_to_step.
-      eapply Rle_trans; [ apply Rmin_r | ]. apply IH. exact Hin.
-Qed.
+Proof. exact (min_score_to_le dist_sq). Qed.
 
 (* ... and it is attained on a nonempty list. *)
 Lemma min_dist_sq_to_attained : forall a B,
     B <> nil -> exists b, In b B /\ min_dist_sq_to a B = dist_sq a b.
-Proof.
-  intros a B. induction B as [ | b0 B' IH ]; intros Hne.
-  - congruence.
-  - destruct B' as [ | b1 B'' ].
-    + exists b0. split; [ left; reflexivity | reflexivity ].
-    + destruct IH as [b [Hb Heq]]; [ discriminate | ].
-      rewrite min_dist_sq_to_step.
-      destruct (Rle_dec (dist_sq a b0) (min_dist_sq_to a (b1 :: B'')))
-        as [Hle | Hgt].
-      * exists b0. split; [ left; reflexivity | ].
-        rewrite Rmin_left; [ reflexivity | exact Hle ].
-      * apply Rnot_le_lt in Hgt.
-        exists b. split; [ right; exact Hb | ].
-        rewrite Rmin_right; [ exact Heq | lra ].
-Qed.
+Proof. exact (min_score_to_attained dist_sq). Qed.
 
 (* The outer max dominates every per-point min. *)
 Lemma ddh_ge_component : forall A B a,
     In a A -> min_dist_sq_to a B <= directed_hausdorff_sq A B.
-Proof.
-  intros A B. induction A as [ | a0 A' IH ]; intros a Hin.
-  - destruct Hin.
-  - destruct Hin as [-> | Hin].
-    + destruct A' as [ | a1 A'' ]; [ apply Rle_refl | ].
-      rewrite ddh_step. apply Rmax_l.
-    + destruct A' as [ | a1 A'' ]; [ destruct Hin | ].
-      rewrite ddh_step.
-      eapply Rle_trans; [ apply IH; exact Hin | apply Rmax_r ].
-Qed.
+Proof. exact (max_min_score_ge_component dist_sq). Qed.
 
 (* ... and it is attained on a nonempty list. *)
 Lemma ddh_attained : forall A B,
     A <> nil ->
     exists a, In a A /\ directed_hausdorff_sq A B = min_dist_sq_to a B.
-Proof.
-  intros A B. induction A as [ | a0 A' IH ]; intros Hne.
-  - congruence.
-  - destruct A' as [ | a1 A'' ].
-    + exists a0. split; [ left; reflexivity | reflexivity ].
-    + destruct IH as [a [Ha Heq]]; [ discriminate | ].
-      rewrite ddh_step.
-      destruct (Rle_dec (directed_hausdorff_sq (a1 :: A'') B)
-                        (min_dist_sq_to a0 B)) as [Hle | Hgt].
-      * exists a0. split; [ left; reflexivity | ].
-        rewrite Rmax_left; [ reflexivity | exact Hle ].
-      * apply Rnot_le_lt in Hgt.
-        exists a. split; [ right; exact Ha | ].
-        rewrite Rmax_right; [ exact Heq | lra ].
-Qed.
+Proof. exact (max_min_score_attained dist_sq). Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* §3  The 423-a headline: h is exactly the attained max-min.                 *)
@@ -182,23 +130,11 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Lemma min_dist_sq_to_nonneg : forall a B, 0 <= min_dist_sq_to a B.
-Proof.
-  intros a B. induction B as [ | b0 B' IH ].
-  - apply Rle_refl.
-  - destruct B' as [ | b1 B'' ]; [ apply dist_sq_nonneg | ].
-    rewrite min_dist_sq_to_step.
-    apply Rmin_glb; [ apply dist_sq_nonneg | exact IH ].
-Qed.
+Proof. exact (min_score_to_nonneg dist_sq dist_sq_nonneg). Qed.
 
 Lemma directed_hausdorff_sq_nonneg : forall A B,
     0 <= directed_hausdorff_sq A B.
-Proof.
-  intros A B. induction A as [ | a0 A' IH ].
-  - apply Rle_refl.
-  - destruct A' as [ | a1 A'' ]; [ apply min_dist_sq_to_nonneg | ].
-    rewrite ddh_step.
-    eapply Rle_trans; [ apply (min_dist_sq_to_nonneg a0 B) | apply Rmax_l ].
-Qed.
+Proof. exact (max_min_score_nonneg dist_sq dist_sq_nonneg). Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Audit footprint.                                                           *)
