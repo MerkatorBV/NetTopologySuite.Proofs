@@ -12,6 +12,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `65-b` | `buffer` | [`Claim65b.v`](Claim65b.v) | `round_endcap_is_forward_semicircle` |
 | `65-c` | `buffer` | [`Claim65c.v`](Claim65c.v) | `offset_artifacts_within_envelope` **ABORTED** |
 | `65-d` | `buffer` | [`Claim65d.v`](Claim65d.v) | `miter_clipped_at_limit_distance` |
+| `65-e` | `buffer` | [`Claim65e.v`](Claim65e.v) | `square_endcap_is_diameter_square` |
 | `67-a` | `relate` | [`Claim67a.v`](Claim67a.v) | `unit_square_self_relate_de9im_eq` |
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
@@ -52,6 +53,13 @@ from the corner through the unrestricted apex):
 The unit here carries the self-contained proof plus the rational
 right-angle witness pins. (Board plan text said “65-b”; that id is already
 Green as round endcap.)
+
+Production home for 65-e (Green/Qed: full biconditional — square endcap
+= U-shaped boundary of the forward square on the flat diameter, three
+segment equivalences over the trio's shared J(t)-frame, all linear, plus
+the both-corners signed forward pin and the corpus sq_corner bridge):
+`theories/BufferEndcapSquare.v` (same WITNESS tag). The unit here
+carries the self-contained unit-tangent proof plus the pins.
 
 Production home for 67-a (Green/Qed: classical strata + rational unit-square
 self-relate / OGC equal DE-9IM): `theories/RelateNGMatrixEqual.v` (same WITNESS tag).
