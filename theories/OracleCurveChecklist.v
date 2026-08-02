@@ -1,56 +1,55 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 69-a (GREEN)
-   Red planted 2026-08-02 (4476c3e) · Green closed 2026-08-02
-   (Plan alias: OracleChecklist_W1_W5 — the issue-#69 oracle-mode
-   checklist surface, documentation-as-claim.)
+   NetTopologySuite.Proofs.OracleCurveChecklist
    ----------------------------------------------------------------------------
-   ORACLE-MODE CHECKLIST W1–W5 for the SQL/MM Part 3 + OGC SFA curve
-   umbrella (issue #69 / JTS#1195): five witness obligations that any
-   curve-aware oracle mode must discharge, each anchored to a standard
-   predicate, a curve class, and a rational witness.
+   GREEN for micro-claim 69-a: the ORACLE-MODE CHECKLIST W1-W5 for the
+   SQL/MM Part 3 + OGC SFA curve umbrella (issue #69 / JTS#1195) closes
+   over its repaired table.
 
-   THE COVERAGE TABLE (documentation-as-claim; formal rows below):
+   Five witness obligations any curve-aware oracle mode must discharge,
+   each anchored to a standard predicate, a curve class, and a rational
+   witness:
 
-   | row | obligation (witness)            | curve class     | SQL/MM–SFA anchor      | statement shape        |
-   |-----|---------------------------------|-----------------|------------------------|------------------------|
-   | W1  | closed / not-closed pair        | LineString ring | SFA ST_IsClosed        | decidable pt equality  |
-   | W2  | exact squared perimeter         | LineString ring | SFA ST_Length (M-LEN)  | rational sum equality  |
-   | W3  | 3-point circle membership       | CircularString  | SQL/MM ST_CircularString | dist_sq = r^2 each   |
-   | W4  | point-on-curve, forward side    | circular arc    | SFA relate / R-* (65-b) | dist_sq + signed dot  |
-   | W5  | closed => no pinch  (AS TABLED) | LineString ring | SQL/MM ST_IsRing       | MISSING witness — row  |
-   |     |                                 |                 |                        | CONTRADICTED below     |
+   | row | obligation (witness)          | curve class     | anchor                   |
+   |-----|-------------------------------|-----------------|--------------------------|
+   | W1  | closed / not-closed pair      | LineString ring | SFA ST_IsClosed          |
+   | W2  | exact squared perimeter       | LineString ring | SFA ST_Length (M-LEN)    |
+   | W3  | 3-point circle membership     | CircularString  | SQL/MM ST_CircularString |
+   | W4  | point-on-curve, forward side  | circular arc    | SFA relate / R-* (65-b)  |
+   | W5  | ring = closed AND pinch-free  | LineString ring | SQL/MM ST_IsRing         |
 
-   GREEN — BY TABLE REPAIR.  Red history: the claim was planted
-   2026-08-02 (4476c3e) with the W5 row deliberately MIS-TABLED
-   (SQL/MM ST_IsRing rendered as "every closed linestring is
-   pinch-free", the simplicity witness obligation missing), and that
-   row PROVED CONTRADICTED by the rational pinched ring
-   (0,0)-(1,0)-(0,0)-(0,1)-(0,0) — so the tabled conjunction
-   (`w1_w5_coverage_table_claim`) is refutable
-   (`w1_w5_table_as_tabled_refuted`, still Qed below: the historical
-   record of WHY the repair is the Green).  Green repairs the row —
-   the ring predicate carries BOTH obligations as witnesses
-   (is_ring = closed /\ no_pinch, matching SQL/MM's closed AND simple)
-   with the pinched ring now correctly EXCLUDED — and closes the
-   repaired table:
-     Lemma w1_w5_coverage_table_complete : w1_w5_coverage_table_repaired.
-   Production home: theories/OracleCurveChecklist.v (same WITNESS tag).
+   RED-to-GREEN story (the table repair): at Red the W5 row was
+   deliberately MIS-TABLED as "closedness alone implies pinch-freeness"
+   (the simplicity witness obligation missing) and PROVED contradicted
+   by the rational pinched ring (0,0)-(1,0)-(0,0)-(0,1)-(0,0) -- closed,
+   but its interior vertex 2 revisits the start.  Green repairs the
+   row: the ring predicate carries BOTH obligations as witnesses
+   (is_ring = closed /\ no_pinch, SQL/MM's closed AND simple), the
+   pinched ring is now correctly EXCLUDED, and the repaired table
+   closes (w1_w5_coverage_table_complete, Qed).  The mis-tabled row and
+   its refutation are kept Qed as ADR-0004 hardening: they kill the
+   "derive simplicity from closedness" misreading permanently.
+
+   Mirrors eval/Claim69a.v (same WITNESS tag), which carries the
+   self-contained version.  All rational; no sqrt, no limits.
 
    WITNESS claimId: 69-a
    topic: oracle
-   Lemma (Green target): w1_w5_coverage_table_complete
+   Lemma: w1_w5_coverage_table_complete
+
+   No `Admitted`, no `Axiom`, no `Parameter`.
+
+   Author: NetTopologySuite.Proofs contributors
+   License: BSD-3-Clause (see LICENSE)
+   AI assistance disclosure: AI-drafted, human-reviewed.
+     Assisted-by: Claude
    ========================================================================== *)
 
-(* WITNESS {"claimId":"69-a","topic":"oracle","lemma":"w1_w5_coverage_table_complete","title":"Oracle-mode checklist W1-W5 covers the SQL/MM-SFA curve predicates"} *)
-
 From Stdlib Require Import Reals Lra List Lia.
+From NTS.Proofs Require Import Distance.
 Import ListNotations.
-Local Open Scope R_scope.
+Open Scope R_scope.
 
-Record Point : Type := mkPoint { px : R; py : R }.
-
-Definition dist_sq (p q : Point) : R :=
-  (px p - px q) * (px p - px q) + (py p - py q) * (py p - py q).
+(* WITNESS {"claimId":"69-a","topic":"oracle","lemma":"w1_w5_coverage_table_complete","title":"Oracle-mode checklist W1-W5 covers the SQL/MM-SFA curve predicates"} *)
 
 Definition origin : Point := mkPoint 0 0.
 
@@ -127,22 +126,15 @@ Definition W5_is_ring_row_tabled : Prop :=
   forall l, closed_ls l -> no_pinch l.
 
 (* -------------------------------------------------------------------------- *)
-(* The 69-a claim (RED: stated, not closed — and refutable AS TABLED).        *)
+(* The claim AS TABLED at Red (kept for the historical record: refutable).    *)
 (* -------------------------------------------------------------------------- *)
 
 Definition w1_w5_coverage_table_claim : Prop :=
   W1_is_closed_row /\ W2_length_row /\ W3_circularstring_row /\
   W4_point_on_curve_row /\ W5_is_ring_row_tabled.
 
-(* RED: no proof of the claim in this unit or in production — and none is
-   possible AS TABLED: `w5_row_contradicted` below refutes the W5 row, so
-   `w1_w5_table_as_tabled_refuted` refutes the conjunction.  Green must
-   REPAIR the table (make the no-pinch witness part of the ring
-   predicate: ST_IsRing = closed /\ no_pinch, not a consequence of
-   closedness) and then Qed
-     w1_w5_coverage_table_complete
-   over the repaired rows (micro-kernel + production mirror, suggested
-   theories/OracleCurveChecklist.v). *)
+(* Historical note: this tabled conjunction is refutable (proved below) —
+   the Green is the repaired table further down, not this Definition. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Row pins (Qed at Red): W1–W4 hold individually — the ONLY red mass is      *)
@@ -240,3 +232,10 @@ Proof.
               (conj w3_row_holds
                  (conj w4_row_holds w5_row_repaired_holds)))).
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+
+Print Assumptions w1_w5_coverage_table_complete.
+Print Assumptions w1_w5_table_as_tabled_refuted.
