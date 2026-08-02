@@ -134,15 +134,11 @@ Definition w1_w5_coverage_table_claim : Prop :=
   W1_is_closed_row /\ W2_length_row /\ W3_circularstring_row /\
   W4_point_on_curve_row /\ W5_is_ring_row_tabled.
 
-(* RED: no proof of the claim in this unit or in production — and none is
-   possible AS TABLED: `w5_row_contradicted` below refutes the W5 row, so
-   `w1_w5_table_as_tabled_refuted` refutes the conjunction.  Green must
-   REPAIR the table (make the no-pinch witness part of the ring
-   predicate: ST_IsRing = closed /\ no_pinch, not a consequence of
-   closedness) and then Qed
-     w1_w5_coverage_table_complete
-   over the repaired rows (micro-kernel + production mirror, suggested
-   theories/OracleCurveChecklist.v). *)
+(* Historical Red record: no proof of this tabled conjunction is possible —
+   `w5_row_contradicted` below refutes the W5 row, so
+   `w1_w5_table_as_tabled_refuted` refutes the conjunction.  The Green is
+   the REPAIRED table further down (ST_IsRing = closed /\ no_pinch as
+   witness obligations), closed by `w1_w5_coverage_table_complete`. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Row pins (Qed at Red): W1–W4 hold individually — the ONLY red mass is      *)
@@ -177,14 +173,19 @@ Qed.
 Lemma pinched_ring_closed : closed_ls pinched_ring.
 Proof. reflexivity. Qed.
 
+(* The pinch core, proved once: interior vertex 2 revisits the start. *)
+Lemma pinched_ring_pinched : ~ no_pinch pinched_ring.
+Proof.
+  intros Hnp. specialize (Hnp 2%nat).
+  apply Hnp; [ lia | cbn; lia | reflexivity ].
+Qed.
+
 (* ...but its interior vertex 2 IS the start point, so the W5 row as
    tabled is contradicted — the missing simplicity witness is exactly
    what the row forgot. *)
 Lemma w5_row_contradicted : ~ W5_is_ring_row_tabled.
 Proof.
-  intros H.
-  specialize (H pinched_ring pinched_ring_closed 2%nat).
-  apply H; [ lia | cbn; lia | reflexivity ].
+  intros H. exact (pinched_ring_pinched (H _ pinched_ring_closed)).
 Qed.
 
 (* Hence the table AS TABLED is refutable: the focused check could not go
@@ -223,11 +224,7 @@ Qed.
 
 (* The pinched ring is correctly excluded by the repaired predicate. *)
 Lemma pinched_ring_not_ring : ~ is_ring pinched_ring.
-Proof.
-  intros [_ Hnp].
-  specialize (Hnp 2%nat).
-  apply Hnp; [ lia | cbn; lia | reflexivity ].
-Qed.
+Proof. intros [_ Hnp]. exact (pinched_ring_pinched Hnp). Qed.
 
 Lemma w5_row_repaired_holds : W5_is_ring_row_repaired.
 Proof. split; [ exact sq_ring_is_ring | exact pinched_ring_not_ring ]. Qed.

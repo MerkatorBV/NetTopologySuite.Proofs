@@ -169,14 +169,19 @@ Qed.
 Lemma pinched_ring_closed : closed_ls pinched_ring.
 Proof. reflexivity. Qed.
 
+(* The pinch core, proved once: interior vertex 2 revisits the start. *)
+Lemma pinched_ring_pinched : ~ no_pinch pinched_ring.
+Proof.
+  intros Hnp. specialize (Hnp 2%nat).
+  apply Hnp; [ lia | cbn; lia | reflexivity ].
+Qed.
+
 (* ...but its interior vertex 2 IS the start point, so the W5 row as
    tabled is contradicted — the missing simplicity witness is exactly
    what the row forgot. *)
 Lemma w5_row_contradicted : ~ W5_is_ring_row_tabled.
 Proof.
-  intros H.
-  specialize (H pinched_ring pinched_ring_closed 2%nat).
-  apply H; [ lia | cbn; lia | reflexivity ].
+  intros H. exact (pinched_ring_pinched (H _ pinched_ring_closed)).
 Qed.
 
 (* Hence the table AS TABLED is refutable: the focused check could not go
@@ -215,11 +220,7 @@ Qed.
 
 (* The pinched ring is correctly excluded by the repaired predicate. *)
 Lemma pinched_ring_not_ring : ~ is_ring pinched_ring.
-Proof.
-  intros [_ Hnp].
-  specialize (Hnp 2%nat).
-  apply Hnp; [ lia | cbn; lia | reflexivity ].
-Qed.
+Proof. intros [_ Hnp]. exact (pinched_ring_pinched Hnp). Qed.
 
 Lemma w5_row_repaired_holds : W5_is_ring_row_repaired.
 Proof. split; [ exact sq_ring_is_ring | exact pinched_ring_not_ring ]. Qed.
