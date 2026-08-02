@@ -179,13 +179,6 @@ Lemma maxleash_cons : forall a b c,
     = Rmax (dist_sq a b) (max_pair_dist_sq c).
 Proof. intros a b c Hne. destruct c; [ congruence | reflexivity ]. Qed.
 
-(* Rmax is monotone in its second argument. *)
-Lemma Rmax_mono_r : forall x y z, y <= z -> Rmax x y <= Rmax x z.
-Proof.
-  intros x y z H. unfold Rmax.
-  destruct (Rle_dec x y); destruct (Rle_dec x z); lra.
-Qed.
-
 (* -------------------------------------------------------------------------- *)
 (* Lower bound: no monotone coupling beats the recurrence.  Induction on      *)
 (* the coupling derivation; each constructor lands on one of the             *)
@@ -201,20 +194,20 @@ Proof.
   - (* cpl_advA: frog 1 advances; branch u of the min *)
     rewrite (maxleash_cons a b c) by (eapply coupling_c_nonempty; eauto).
     destruct B as [ | y B0 ].
-    + rewrite dF_step_n1. apply Rmax_mono_r. exact IHcoupling.
-    + rewrite dF_step_nn. apply Rmax_mono_r.
+    + rewrite dF_step_n1. apply Rle_max_compat_l. exact IHcoupling.
+    + rewrite dF_step_nn. apply Rle_max_compat_l.
       eapply Rle_trans; [ apply Rmin_l | ].
       eapply Rle_trans; [ apply Rmin_l | ]. exact IHcoupling.
   - (* cpl_advB: frog 2 advances; branch v of the min *)
     rewrite (maxleash_cons a b c) by (eapply coupling_c_nonempty; eauto).
     destruct A as [ | x A1 ].
-    + rewrite dF_step_1n. apply Rmax_mono_r. exact IHcoupling.
-    + rewrite dF_step_nn. apply Rmax_mono_r.
+    + rewrite dF_step_1n. apply Rle_max_compat_l. exact IHcoupling.
+    + rewrite dF_step_nn. apply Rle_max_compat_l.
       eapply Rle_trans; [ | exact IHcoupling ].
       eapply Rle_trans; [ apply Rmin_l | apply Rmin_r ].
   - (* cpl_advAB: both advance; branch w of the min *)
     rewrite (maxleash_cons a b c) by (eapply coupling_c_nonempty; eauto).
-    rewrite dF_step_nn. apply Rmax_mono_r.
+    rewrite dF_step_nn. apply Rle_max_compat_l.
     eapply Rle_trans; [ apply Rmin_r | ]. exact IHcoupling.
 Qed.
 
@@ -293,6 +286,15 @@ Qed.
 (* Rational witness pins (Qed at Red).                                        *)
 (* -------------------------------------------------------------------------- *)
 
+(* Concrete evaluations reduce to Rmax/Rmin on rational literals; opening
+   the underlying Rle_dec closes every branch by lra. *)
+Ltac pin_crunch :=
+  unfold Rmax, Rmin;
+  repeat match goal with
+         | |- context [Rle_dec ?x ?y] => destruct (Rle_dec x y)
+         end;
+  lra.
+
 Definition pA : Point := mkPoint 0 0.
 Definition pB : Point := mkPoint 3 0.
 
@@ -300,10 +302,7 @@ Definition pB : Point := mkPoint 3 0.
 Lemma wf_identical_zero : dF_sq [pA; pB] [pA; pB] = 0.
 Proof.
   cbn. unfold dist_sq, pA, pB. cbn.
-  unfold Rmax, Rmin.
-  repeat match goal with
-         | |- context [Rle_dec ?x ?y] => destruct (Rle_dec x y)
-         end; lra.
+  pin_crunch.
 Qed.
 
 (* The diagonal coupling EXISTS as a derivation of the inductive, and its
@@ -315,10 +314,7 @@ Proof.
   split.
   - apply cpl_advAB. apply cpl_last.
   - cbn. unfold dist_sq, pA, pB. cbn.
-    unfold Rmax.
-    repeat match goal with
-           | |- context [Rle_dec ?x ?y] => destruct (Rle_dec x y)
-           end; lra.
+    pin_crunch.
 Qed.
 
 (* REVERSAL: same vertex set, leash_sq 9 -- the coupling ORDER is
@@ -326,10 +322,7 @@ Qed.
 Lemma wf_reversed_nine : dF_sq [pA; pB] [pB; pA] = 9.
 Proof.
   cbn. unfold dist_sq, pA, pB. cbn.
-  unfold Rmax, Rmin.
-  repeat match goal with
-         | |- context [Rle_dec ?x ?y] => destruct (Rle_dec x y)
-         end; lra.
+  pin_crunch.
 Qed.
 
 (* MISMATCH PROBE: the crossing pairing that WOULD give leash 0 on the
@@ -358,8 +351,5 @@ Lemma wf_lone_frog_visits_all :
 Proof.
   split; [ | lra ].
   cbn. unfold dist_sq. cbn.
-  unfold Rmax.
-  repeat match goal with
-         | |- context [Rle_dec ?x ?y] => destruct (Rle_dec x y)
-         end; lra.
+  pin_crunch.
 Qed.

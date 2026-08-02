@@ -146,13 +146,6 @@ Lemma maxleash_cons : forall a b c,
     = Rmax (dist_sq a b) (max_pair_dist_sq c).
 Proof. intros a b c Hne. destruct c; [ congruence | reflexivity ]. Qed.
 
-(* Rmax is monotone in its second argument. *)
-Lemma Rmax_mono_r : forall x y z, y <= z -> Rmax x y <= Rmax x z.
-Proof.
-  intros x y z H. unfold Rmax.
-  destruct (Rle_dec x y); destruct (Rle_dec x z); lra.
-Qed.
-
 (* -------------------------------------------------------------------------- *)
 (* Lower bound: no monotone coupling beats the recurrence.  Induction on      *)
 (* the coupling derivation; each constructor lands on one of the             *)
@@ -168,20 +161,20 @@ Proof.
   - (* cpl_advA: frog 1 advances; branch u of the min *)
     rewrite (maxleash_cons a b c) by (eapply coupling_c_nonempty; eauto).
     destruct B as [ | y B0 ].
-    + rewrite dF_step_n1. apply Rmax_mono_r. exact IHcoupling.
-    + rewrite dF_step_nn. apply Rmax_mono_r.
+    + rewrite dF_step_n1. apply Rle_max_compat_l. exact IHcoupling.
+    + rewrite dF_step_nn. apply Rle_max_compat_l.
       eapply Rle_trans; [ apply Rmin_l | ].
       eapply Rle_trans; [ apply Rmin_l | ]. exact IHcoupling.
   - (* cpl_advB: frog 2 advances; branch v of the min *)
     rewrite (maxleash_cons a b c) by (eapply coupling_c_nonempty; eauto).
     destruct A as [ | x A1 ].
-    + rewrite dF_step_1n. apply Rmax_mono_r. exact IHcoupling.
-    + rewrite dF_step_nn. apply Rmax_mono_r.
+    + rewrite dF_step_1n. apply Rle_max_compat_l. exact IHcoupling.
+    + rewrite dF_step_nn. apply Rle_max_compat_l.
       eapply Rle_trans; [ | exact IHcoupling ].
       eapply Rle_trans; [ apply Rmin_l | apply Rmin_r ].
   - (* cpl_advAB: both advance; branch w of the min *)
     rewrite (maxleash_cons a b c) by (eapply coupling_c_nonempty; eauto).
-    rewrite dF_step_nn. apply Rmax_mono_r.
+    rewrite dF_step_nn. apply Rle_max_compat_l.
     eapply Rle_trans; [ apply Rmin_r | ]. exact IHcoupling.
 Qed.
 
