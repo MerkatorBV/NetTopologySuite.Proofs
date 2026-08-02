@@ -13,6 +13,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `67-a` | `relate` | [`Claim67a.v`](Claim67a.v) | `unit_square_self_relate_de9im_eq` |
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
+| `423-a` | `metric` | [`Claim423a.v`](Claim423a.v) | `directed_discrete_hausdorff_max_min` — **RED** (claim stated, witness pins Qed; Green pending) |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
