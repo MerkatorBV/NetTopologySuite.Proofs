@@ -127,7 +127,7 @@ Definition W5_is_ring_row_tabled : Prop :=
   forall l, closed_ls l -> no_pinch l.
 
 (* -------------------------------------------------------------------------- *)
-(* The 69-a claim (RED: stated, not closed — and refutable AS TABLED).        *)
+(* The claim AS TABLED at Red (kept for the historical record: refutable).    *)
 (* -------------------------------------------------------------------------- *)
 
 Definition w1_w5_coverage_table_claim : Prop :=
