@@ -93,6 +93,15 @@ theories/Intersect.v
 theories/Vec.v
 theories/Bbox.v
 theories/Triangle.v
+# Issue #424 subtask 424-a — GREEN: minimum-area bounding triangle on the
+# rational unit-square witness (classical reals).  Spec-shaped triangle_area
+# / is_bounding_triangle plus candidate T₀=△(0,0)(2,0)(0,2) with
+# triangle_area=2 and closed containment.  Headlines
+# minimum_bounding_triangle_exists (+ _exists_unit_square,
+# _unit_square_area_witness) are Qed (witness-scoped; universal ∀-P and
+# unrestricted lower bound deferred).  Depends on Distance + Orientation +
+# Triangle.  Mirrors eval/Claim424a.v (WITNESS claimId 424-a).
+theories/MinimumBoundingTriangle.v
 theories/RingArea979.v
 theories/Convex.v
 theories/LexOrder.v
