@@ -41,6 +41,7 @@
        and 4 <> 9 kills any symmetrised reading (h is DIRECTED).
 
    WITNESS claimId: 423-a
+   topic: metric
    Lemma (Green target): directed_discrete_hausdorff_max_min
    ========================================================================== *)
 

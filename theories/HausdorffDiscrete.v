@@ -34,6 +34,10 @@
    this h needs the zero law and the directed triangle inequality --
    natural next rungs of epic #423, not claimed here.
 
+   WITNESS claimId: 423-a
+   topic: metric
+   Lemma: directed_discrete_hausdorff_max_min
+
    No `Admitted`, no `Axiom`, no `Parameter`.
 
    Author: NetTopologySuite.Proofs contributors
