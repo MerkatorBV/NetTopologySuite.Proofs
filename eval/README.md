@@ -11,7 +11,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `65-a` | `buffer` | [`Claim65a.v`](Claim65a.v) | `flat_endcap_is_diameter_segment` |
 | `65-b` | `buffer` | [`Claim65b.v`](Claim65b.v) | `round_endcap_is_forward_semicircle` |
 | `65-c` | `buffer` | [`Claim65c.v`](Claim65c.v) | `offset_artifacts_within_envelope` **ABORTED** |
-| `65-d` | `buffer` | [`Claim65d.v`](Claim65d.v) | `miter_clipped_at_limit_distance` **RED** |
+| `65-d` | `buffer` | [`Claim65d.v`](Claim65d.v) | `miter_clipped_at_limit_distance` |
 | `67-a` | `relate` | [`Claim67a.v`](Claim67a.v) | `unit_square_self_relate_de9im_eq` |
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
@@ -43,14 +43,12 @@ the positive theorem is `Abort`ed and
 `offset_artifacts_within_envelope_aborted` is Qed. Round-join-only
 variants remain bounded; the general claim does not hold.
 
-**65-d is RED (Green pending).** When the unrestricted mitre apex
-overshoots the limit sphere of radius `L·d` (`L ≥ 1`), the emitted join
-vertex is the ray-scale clip: distance exactly `L·d` from the corner and
-on the segment from the corner through the unrestricted apex. Rational
-witness: unit right-angle corner `ein=(1,0)`, `eout=(0,1)`, `d=1`, `L=1`
-→ unrestricted apex `(−1,1)`, `dist_sq = 2 > 1`. Claim stated as
-`miter_clipped_at_limit_distance_claim` only (no Qed of the lemma);
-suggested production home next to `BufferMiter.miter_within_limit_iff`.
+Production home for 65-d (Green/Qed: when unrestricted `miter_apex`
+overshoots the limit sphere of radius `L·d`, `L ≥ 1`, the ray-scale
+`limited_miter_apex` is at squared distance `(L·d)²` and on the segment
+from the corner through the unrestricted apex):
+`theories/BufferMiterClip.v` (same WITNESS tag). The unit here carries the
+self-contained proof plus the rational right-angle witness pins.
 (Board plan text said “65-b”; that id is already Green as round endcap.)
 
 Production home for 67-a (Green/Qed: classical strata + rational unit-square

@@ -1,6 +1,6 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 65-d (RED)
-   Red planted 2026-08-02 · Green pending
+   nts-eval micro unit — claimId 65-d (GREEN)
+   Red planted 2026-08-02 · Green closed 2026-08-02
    ----------------------------------------------------------------------------
    When a mitre join's unrestricted apex length exceeds the configured
    mitre limit L·d (L ≥ 1, d > 0), the emitted join vertex is the
@@ -9,38 +9,26 @@
    exactly L·d from V — not beyond the limit sphere, and not left at the
    unrestricted apex.
 
-   Board note: the plan text called this "subtask 65-b", but claimId 65-b
-   is already GREEN as `round_endcap_is_forward_semicircle` (Claim65b.v).
-   This mitre-limit clip obligation is therefore planted as 65-d.
+   Board note: plan text said "subtask 65-b", but claimId 65-b is already
+   GREEN as `round_endcap_is_forward_semicircle`.  This mitre-limit clip
+   obligation is 65-d.
 
-   RED SURFACE.  The headline is STATED below
-   (`miter_clipped_at_limit_distance_claim`) and deliberately NOT proved —
-   no `Admitted`, no `Axiom`; the claim is a named `Definition ... : Prop`,
-   so the Eval → Qed matcher finds no Qed of this statement here or in
-   production and reports 65-d red.  Green target:
-     Lemma miter_clipped_at_limit_distance :
-       miter_clipped_at_limit_distance_claim.
-   Production home suggested: theories/BufferMiter.v neighbourhood (next to
-   `miter_within_limit_iff` / `BufferMiterAngle.miter_cap_iff_sin_half`),
-   same WITNESS tag.  The algebraic ray-scale identity is short; the Green
-   content is packaging it as the emitted-join contract under the overshoot
-   hypothesis (and optionally bridging to JTS bevel-vs-limited-miter policy).
+   GREEN.  The headline is stated (`miter_clipped_at_limit_distance_claim`)
+   and CLOSED here (`miter_clipped_at_limit_distance`, Qed) — ray-scale
+   algebra under the overshoot hypothesis.  Production home:
+   `theories/BufferMiterClip.v`, same WITNESS tag, over corpus
+   `BufferMiter.miter_apex` / `Segment.between`.
 
-   What IS Qed here: rational witness pins for the unit right-angle corner
-   (exact Q coordinates, no trig residual):
-     V = (0,0), ein = (1,0), eout = (0,1), d = 1, L = 1
-     unrestricted apex = (−1, 1), dist_sq = 2 > 1 = (L·d)²  (overshoot)
-     so the clip is active; the claimed clipped distance is L·d = 1.
-   Mismatch probes: the unrestricted apex is NOT at distance L·d; a point
-   beyond the limit sphere on the same ray is also rejected.
+   Proof: with M = miter_apex, r = |M−V|, overshoot ⇒ (L·d)² < r² and
+   L·d > 0 ⇒ 0 < L·d < r.  Clipped = V + ((L·d)/r)·(M−V) has
+   |clipped−V| = L·d and is the segment point at parameter s = (L·d)/r ∈ (0,1).
 
-   Neighbouring #65 surface: `BufferMiter.miter_apex` / `miter_within_limit_iff`
-   (decision only — does not yet emit the clipped vertex).  Claim 65-c
-   (aborted) showed raw mitre artifacts can exit expandBy(d); this claim
-   is the positive clip-at-limit obligation for the join emitter.
+   Rational witness pins (Qed at Red, kept): unit right-angle corner
+   V=(0,0), ein=(1,0), eout=(0,1), d=1, L=1 → apex (−1,1), dist_sq=2>1;
+   mismatch probes reject raw apex and beyond-limit ray points.
 
    WITNESS claimId: 65-d
-   Lemma (Green target): miter_clipped_at_limit_distance
+   Lemma: miter_clipped_at_limit_distance
    ========================================================================== *)
 
 (* WITNESS {"claimId":"65-d","topic":"buffer","lemma":"miter_clipped_at_limit_distance","title":"Mitre join vertex is clipped at limit distance L·d when unrestricted apex overshoots"} *)
@@ -86,7 +74,7 @@ Definition between (V M Q : Point) : Prop :=
     py Q = (1 - s) * py V + s * py M.
 
 (* -------------------------------------------------------------------------- *)
-(* The 65-d claim (RED: stated, not closed).                                  *)
+(* The 65-d claim (closed below by miter_clipped_at_limit_distance).          *)
 (* When the unrestricted mitre apex overshoots the limit sphere of radius     *)
 (* L·d about V, the emitted (clipped) join vertex is:                         *)
 (*   (i)  at squared distance exactly (L·d)² from V, and                      *)
@@ -105,12 +93,86 @@ Definition miter_clipped_at_limit_distance_claim : Prop :=
     between V (miter_apex V ein eout d)
               (limited_miter_apex V ein eout d L).
 
-(* RED: no proof of the claim in this unit or in production.  Green must Qed
-   `miter_clipped_at_limit_distance` with this statement (micro-kernel) and
-   its production mirror next to BufferMiter.miter_within_limit_iff. *)
+(* GREEN: ray-scale identity under overshoot. *)
+Lemma miter_clipped_at_limit_distance :
+  miter_clipped_at_limit_distance_claim.
+Proof.
+  unfold miter_clipped_at_limit_distance_claim.
+  intros V ein eout d L Hd HL _Hin _Hout _Hdet Hover.
+  assert (HLd : 0 < L * d) by nra.
+  set (M := miter_apex V ein eout d).
+  set (dx := px M - px V).
+  set (dy := py M - py V).
+  set (r := sqrt (dx * dx + dy * dy)).
+  assert (Hnn : 0 <= dx * dx + dy * dy).
+  { apply Rplus_le_le_0_compat;
+      [ pose proof (Rle_0_sqr dx) as H; unfold Rsqr in H; exact H
+      | pose proof (Rle_0_sqr dy) as H; unfold Rsqr in H; exact H ]. }
+  assert (Hr2 : r * r = dx * dx + dy * dy)
+    by (unfold r; apply sqrt_sqrt; exact Hnn).
+  assert (Hdist : dist_sq V M = dx * dx + dy * dy).
+  { unfold dist_sq, dx, dy.
+    replace (px V - px M) with (- (px M - px V)) by ring.
+    replace (py V - py M) with (- (py M - py V)) by ring.
+    ring. }
+  assert (Hover' : (L * d) * (L * d) < r * r).
+  { rewrite Hr2, <- Hdist. unfold M in Hover |- *. exact Hover. }
+  assert (Hrpos : 0 < r).
+  { assert (Hr0 : r <> 0).
+    { intro Hz. rewrite Hz in Hover'. rewrite Rmult_0_l in Hover'. nra. }
+    pose proof (sqrt_pos (dx * dx + dy * dy)) as Hge.
+    change (0 <= r) in Hge. lra. }
+  assert (Hr0 : r <> 0) by (apply Rgt_not_eq; exact Hrpos).
+  assert (HLdr : L * d < r).
+  { apply Rsqr_incrst_0; try nra.
+    unfold Rsqr. nra. }
+  set (s := (L * d) / r).
+  assert (Hs0 : 0 < s).
+  { unfold s, Rdiv. apply Rmult_lt_0_compat; [ exact HLd | ].
+    apply Rinv_0_lt_compat. exact Hrpos. }
+  assert (Hs1 : s < 1).
+  { unfold s. apply (Rmult_lt_reg_r r); [ exact Hrpos | ].
+    replace ((L * d) / r * r) with (L * d) by (field; exact Hr0).
+    lra. }
+  assert (Hs01 : 0 <= s <= 1) by lra.
+  (* limited_miter_apex unfolds to V + (L·d)·(dx,dy)/r *)
+  assert (Hlim :
+    limited_miter_apex V ein eout d L =
+    mkPoint (px V + (L * d) * dx / r) (py V + (L * d) * dy / r)).
+  { unfold limited_miter_apex, M, dx, dy, r. reflexivity. }
+  split.
+  - (* dist_sq = (L·d)² ; dist_sq uses (V − Q) so signs flip twice *)
+    rewrite Hlim. unfold dist_sq; simpl.
+    set (a := L * d).
+    replace (px V - (px V + a * dx / r)) with (- (a * dx / r))
+      by (unfold a; ring).
+    replace (py V - (py V + a * dy / r)) with (- (a * dy / r))
+      by (unfold a; ring).
+    replace ((- (a * dx / r)) * (- (a * dx / r))
+             + (- (a * dy / r)) * (- (a * dy / r)))
+      with ((a * dx / r) * (a * dx / r) + (a * dy / r) * (a * dy / r))
+      by ring.
+    transitivity (a * a * (dx * dx + dy * dy) / (r * r)).
+    { field; exact Hr0. }
+    rewrite <- Hr2. field; exact Hr0.
+  - (* between V M clipped, parameter s = (L·d)/r *)
+    rewrite Hlim. unfold between.
+    exists s. repeat split; [ lra | lra | | ].
+    + (* px clipped = (1−s)·px V + s·px M *)
+      unfold s. fold dx.
+      replace (px V + (L * d) * dx / r)
+        with ((1 - (L * d) / r) * px V + ((L * d) / r) * px M).
+      2: { unfold dx. field; exact Hr0. }
+      reflexivity.
+    + unfold s. fold dy.
+      replace (py V + (L * d) * dy / r)
+        with ((1 - (L * d) / r) * py V + ((L * d) / r) * py M).
+      2: { unfold dy. field; exact Hr0. }
+      reflexivity.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Rational witness pins (Qed at Red).                                        *)
+(* Rational witness pins (Qed at Red; kept under Green).                      *)
 (* Unit right-angle corner: V=(0,0), ein=(1,0), eout=(0,1), d=1, L=1.         *)
 (* Unrestricted apex = (−1,1), dist_sq = 2 > 1 = (L·d)² — clip is active.     *)
 (* -------------------------------------------------------------------------- *)

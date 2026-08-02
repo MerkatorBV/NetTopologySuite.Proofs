@@ -237,6 +237,9 @@ theories/BufferMiter.v
 # (Azimuth.miter_ratio_le_iff) decide the same thing.  Three-axiom (Azimuth's
 # sin_half_turn is sqrt-only).  No Admitted.
 theories/BufferMiterAngle.v
+# 65-d Green: limited_miter_apex + miter_clipped_at_limit_distance (ray-scale
+# clip under overshoot).  Pure-R three-axiom.  No Admitted.
+theories/BufferMiterClip.v
 # Buffer/noder pipeline, Stage 2b seam (docs/buffer-noder-pipeline.md S3):
 # bevel-join chord.  bevel_length_sq_dot (law-of-cosines) and
 # bevel_length_sq_sin_half show the bevel segment = 2 d sin(theta/2), the

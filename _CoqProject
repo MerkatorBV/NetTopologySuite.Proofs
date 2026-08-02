@@ -38,6 +38,8 @@ theories/ClothoidHalley.v
 theories/BufferOffset.v
 theories/BufferMiter.v
 theories/BufferMiterAngle.v
+# 65-d Green: limited_miter_apex + clip-at-limit under overshoot (pure-R).
+theories/BufferMiterClip.v
 theories/BufferBevel.v
 theories/BufferEndcap.v
 theories/BufferAssembly.v
