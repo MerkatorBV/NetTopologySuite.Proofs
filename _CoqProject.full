@@ -168,6 +168,12 @@ theories/ClothoidDegenerate.v
 # Companion: clothoid-halley-coq Solver.cs; corpus witness golden_vectors.json.
 # See docs/clothoid-open-questions-triage.md section 11.
 theories/ClothoidHalley.v
+# 423-a Green production home (HKR 1993 eq (2)): the directed discrete
+# Hausdorff value on finite point lists is the attained max-min -- cover
+# (every A-point within h of B) + attain (some A-point at >= h from all
+# of B), four Rmin/Rmax list inductions over Distance.dist_sq; plus
+# nonnegativity.  Mirrors eval/Claim423a.v (same WITNESS tag).
+theories/HausdorffDiscrete.v
 # Buffer/noder pipeline, Stage 2a seam (docs/buffer-noder-pipeline.md S2):
 # offset-segment soundness -- the offset of an edge is parallel to it
 # (offset_seg_dir / offset_seg_parallel) and sits at perpendicular distance
