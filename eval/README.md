@@ -10,9 +10,13 @@ matching can bind the formal lemma to the claim id without loading the full
 |--------:|-------|------|-------|
 | `65-a` | `buffer` | [`Claim65a.v`](Claim65a.v) | `flat_endcap_is_diameter_segment` |
 | `65-b` | `buffer` | [`Claim65b.v`](Claim65b.v) | `round_endcap_is_forward_semicircle` |
+| `65-c` | `buffer` | [`Claim65c.v`](Claim65c.v) | `offset_artifacts_within_envelope` **ABORTED** |
+| `65-d` | `buffer` | [`Claim65d.v`](Claim65d.v) | `miter_clipped_at_limit_distance` |
+| `65-e` | `buffer` | [`Claim65e.v`](Claim65e.v) | `square_endcap_is_diameter_square` |
 | `67-a` | `relate` | [`Claim67a.v`](Claim67a.v) | `unit_square_self_relate_de9im_eq` |
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
+| `69-a` | `oracle` | [`Claim69a.v`](Claim69a.v) | `w1_w5_coverage_table_complete` |
 | `423-a` | `metric` | [`Claim423a.v`](Claim423a.v) | `directed_discrete_hausdorff_max_min` |
 | `423-b` | `metric` | [`Claim423b.v`](Claim423b.v) | `discrete_frechet_min_coupling` |
 | `424-a` | `hull` | [`Claim424a.v`](Claim424a.v) | `minimum_bounding_triangle_exists` |
@@ -31,6 +35,33 @@ signed apex pin and the diameter-endpoint seam pins):
 `theories/BufferEndcapSemicircle.v` (same WITNESS tag). The unit here
 carries the self-contained unit-tangent proof plus the pins.
 
+**65-c is ABORTED (disproven), not Green.** The naive claim that every raw
+offset-graph artifact of `G` at distance `d` (mitre joins included) lies
+inside `Envelope(G).expandBy(d)` is refuted by the rational sharp corner
+`(0,0)→(1,0)→(1/2,1/10)`, `d = 1`, default `mitreLimit = 5`: the mitre
+apex has `x = −4 − 10·|eout| < −4 < −1` (strictly left of the expanded
+box), and even the limit radius `L·d = 5` exceeds the box's max reach
+about the corner (`dist_sq ≤ 4 + (11/10)² < 25`). No production repair;
+the positive theorem is `Abort`ed and
+`offset_artifacts_within_envelope_aborted` is Qed. Round-join-only
+variants remain bounded; the general claim does not hold.
+
+Production home for 65-d (Green/Qed: when unrestricted `miter_apex`
+overshoots the limit sphere of radius `L·d`, `L ≥ 1`, the ray-scale
+`limited_miter_apex` is at squared distance `(L·d)²` and on the segment
+from the corner through the unrestricted apex):
+`theories/BufferMiterClip.v` (same WITNESS tag; core `ray_scale_to_radius`).
+The unit here carries the self-contained proof plus the rational
+right-angle witness pins. (Board plan text said “65-b”; that id is already
+Green as round endcap.)
+
+Production home for 65-e (Green/Qed: full biconditional — square endcap
+= U-shaped boundary of the forward square on the flat diameter, three
+segment equivalences over the trio's shared J(t)-frame, all linear, plus
+the both-corners signed forward pin and the corpus sq_corner bridge):
+`theories/BufferEndcapSquare.v` (same WITNESS tag). The unit here
+carries the self-contained unit-tangent proof plus the pins.
+
 Production home for 67-a (Green/Qed: classical strata + rational unit-square
 self-relate / OGC equal DE-9IM): `theories/RelateNGMatrixEqual.v` (same WITNESS tag).
 
@@ -39,6 +70,12 @@ witness): `theories/RelateNGBoundaryGraph.v` (same WITNESS tag).
 
 Production home for 68-a (full witness cluster, shared helpers):
 `theories/DelaunayEdgeEmptyCircle.v` (also tagged with the same WITNESS).
+
+Production home for 69-a (Green/Qed by TABLE REPAIR: the SQL/MM + SFA
+oracle-mode checklist W1–W5 closes over the repaired table — is_ring =
+closed AND no_pinch as witness obligations, the mis-tabled
+"closed ⇒ pinch-free" row and its pinched-ring refutation kept Qed as
+hardening): `theories/OracleCurveChecklist.v` (same WITNESS tag).
 
 Production home for 423-a (Green/Qed: directed discrete Hausdorff =
 attained max-min — cover + attain spec on nonempty lists, four Rmin/Rmax
@@ -71,13 +108,19 @@ area lower bound deferred.
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim423a.v | eval/Claim424a.v | eval/Claim425a.v
+#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
+rocq compile eval/Claim65b.v
+rocq compile eval/Claim65c.v
+rocq compile eval/Claim65d.v
+rocq compile eval/Claim65e.v
 rocq compile eval/Claim67a.v
 rocq compile eval/Claim67b.v
 rocq compile eval/Claim68a.v
+rocq compile eval/Claim69a.v
 rocq compile eval/Claim423a.v
+rocq compile eval/Claim423b.v
 rocq compile eval/Claim424a.v
 rocq compile eval/Claim425a.v
 ```

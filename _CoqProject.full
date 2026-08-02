@@ -233,6 +233,13 @@ theories/FrechetMaxmin.v
 # attainment by nested list induction constructing the optimal walk; plus
 # nonnegativity.  Mirrors eval/Claim423b.v (same WITNESS tag).
 theories/FrechetDiscrete.v
+# 69-a Green production home: the SQL/MM + SFA oracle-mode checklist
+# W1-W5 (ST_IsClosed pair, M-LEN squared perimeter, ST_CircularString
+# 3-point membership, relate/R-* point-on-curve, ST_IsRing) closes over
+# the REPAIRED table -- is_ring = closed AND no_pinch as witness
+# obligations; the mis-tabled "closed => pinch-free" row and its pinched
+# -ring refutation kept Qed as hardening.  Mirrors eval/Claim69a.v.
+theories/OracleCurveChecklist.v
 # Buffer/noder pipeline, Stage 2a seam (docs/buffer-noder-pipeline.md S2):
 # offset-segment soundness -- the offset of an edge is parallel to it
 # (offset_seg_dir / offset_seg_parallel) and sits at perpendicular distance
@@ -252,6 +259,9 @@ theories/BufferMiter.v
 # (Azimuth.miter_ratio_le_iff) decide the same thing.  Three-axiom (Azimuth's
 # sin_half_turn is sqrt-only).  No Admitted.
 theories/BufferMiterAngle.v
+# 65-d Green: limited_miter_apex + miter_clipped_at_limit_distance (ray-scale
+# clip under overshoot).  Pure-R three-axiom.  No Admitted.
+theories/BufferMiterClip.v
 # Buffer/noder pipeline, Stage 2b seam (docs/buffer-noder-pipeline.md S3):
 # bevel-join chord.  bevel_length_sq_dot (law-of-cosines) and
 # bevel_length_sq_sin_half show the bevel segment = 2 d sin(theta/2), the
@@ -274,6 +284,13 @@ theories/BufferEndcap.v
 # tag, claimId 65-a).  No Admitted.
 theories/BufferEndcapDiameter.v
 theories/BufferEndcapSemicircle.v
+# 65-c Green production home: the SQUARE endcap is the U-shaped boundary
+# of the forward square on the flat diameter (completes the endcap trio's
+# carrier characterisations).  Three-segment walk <-> frame image of the
+# unit square's boundary minus the open bottom; all linear, six lra
+# branches; sq_corner_fwd bridges to the corpus sq_corner on the plus
+# side; both corners' signed forward coordinate = d for all side values.
+theories/BufferEndcapSquare.v
 # Buffer/noder pipeline, Stage 2 seam (docs/buffer-noder-pipeline.md S5):
 # edge-list assembly.  Interleaves offset walls with bevel joins
 # (assemble_open / assemble_closed) and proves the assembled boundary is a
