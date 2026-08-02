@@ -93,6 +93,18 @@ theories/Intersect.v
 theories/Vec.v
 theories/Bbox.v
 theories/Triangle.v
+# Issue #424 subtask 424-a — RED surface only: minimum-area bounding triangle
+# existence on classical reals.  Spec-shaped triangle_area /
+# is_bounding_triangle / is_min_area_bounding_triangle /
+# minimum_bounding_triangle_exists_claim plus rational unit-square witness
+# P={(0,0),(1,0),(0,1),(1,1)}, candidate T₀=△(0,0)(2,0)(0,2) with
+# triangle_area=2 and closed containment (mbt_candidate_is_bounding Qed).
+# Headlines minimum_bounding_triangle_exists (+ _exists_unit_square,
+# _unit_square_area_witness) are Abort (not Admitted).  Green/Refactor out
+# of scope: later prove existence (hull reduction + local optimality);
+# operator Eval → Qed via nts-eval.  Depends on Distance + Orientation +
+# Triangle.
+theories/MinimumBoundingTriangle.v
 theories/RingArea979.v
 theories/Convex.v
 theories/LexOrder.v

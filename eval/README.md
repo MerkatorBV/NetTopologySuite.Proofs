@@ -14,6 +14,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
 | `423-a` | `metric` | [`Claim423a.v`](Claim423a.v) | `directed_discrete_hausdorff_max_min` |
+| `424-a` | `hull` | [`Claim424a.v`](Claim424a.v) | `minimum_bounding_triangle_exists` — **RED** (claim stated, witness pins Qed; Green pending) |
 | `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
@@ -50,16 +51,25 @@ Production home for 425-a (Green/Qed: witness-scoped cleaner soundness —
 coverage, same-union up to boundary null sets):
 `theories/CoverageGapOverlapCleaner.v` (same WITNESS tag).
 
+**424-a is RED**: `Claim424a.v` states `minimum_bounding_triangle_exists_claim`
+(for every finite non-collinear planar point set there exists a min-area
+bounding triangle) with the rational unit-square witness pinned Qed
+(P = unit-square vertices; candidate T₀ = △(0,0)(2,0)(0,2) has area 2 and
+contains P; `unit_square_noncollinear`). Production home:
+`theories/MinimumBoundingTriangle.v` (same WITNESS tag; Abort headlines
+until Green). Optional O'Rourke/Toussaint flushness is comment-only.
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim423a.v | eval/Claim425a.v
+#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim423a.v | eval/Claim424a.v | eval/Claim425a.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim67a.v
 rocq compile eval/Claim67b.v
 rocq compile eval/Claim68a.v
 rocq compile eval/Claim423a.v
+rocq compile eval/Claim424a.v
 rocq compile eval/Claim425a.v
 ```
