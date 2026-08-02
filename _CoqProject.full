@@ -93,6 +93,15 @@ theories/Intersect.v
 theories/Vec.v
 theories/Bbox.v
 theories/Triangle.v
+# Issue #424 subtask 424-a — GREEN: minimum-area bounding triangle on the
+# rational unit-square witness (classical reals).  Spec-shaped triangle_area
+# / is_bounding_triangle plus candidate T₀=△(0,0)(2,0)(0,2) with
+# triangle_area=2 and closed containment.  Headlines
+# minimum_bounding_triangle_exists (+ _exists_unit_square,
+# _unit_square_area_witness) are Qed (witness-scoped; universal ∀-P and
+# unrestricted lower bound deferred).  Depends on Distance + Orientation +
+# Triangle.  Mirrors eval/Claim424a.v (WITNESS claimId 424-a).
+theories/MinimumBoundingTriangle.v
 theories/RingArea979.v
 theories/Convex.v
 theories/LexOrder.v
@@ -168,6 +177,12 @@ theories/ClothoidDegenerate.v
 # Companion: clothoid-halley-coq Solver.cs; corpus witness golden_vectors.json.
 # See docs/clothoid-open-questions-triage.md section 11.
 theories/ClothoidHalley.v
+# Score-agnostic max-min aggregation layer shared by the epic-#423 metric
+# rungs: min_score_to / max_min_score with attained lower/upper bounds,
+# one-step conversion equations, and nonnegativity under a nonnegative
+# score.  Instantiated at dist_sq (HausdorffDiscrete.v) and at dist
+# (HausdorffMetricInstance.v).  Extracted post-#431/#432.
+theories/MaxMinScore.v
 # 423-a Green production home (HKR 1993 eq (2)): the directed discrete
 # Hausdorff value on finite point lists is the attained max-min -- cover
 # (every A-point within h of B) + attain (some A-point at >= h from all

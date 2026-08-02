@@ -19,6 +19,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `69-a` | `oracle` | [`Claim69a.v`](Claim69a.v) | `w1_w5_coverage_table_complete` |
 | `423-a` | `metric` | [`Claim423a.v`](Claim423a.v) | `directed_discrete_hausdorff_max_min` |
 | `423-b` | `metric` | [`Claim423b.v`](Claim423b.v) | `discrete_frechet_min_coupling` |
+| `424-a` | `hull` | [`Claim424a.v`](Claim424a.v) | `minimum_bounding_triangle_exists` |
 | `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
@@ -97,19 +98,29 @@ Production home for 425-a (Green/Qed: witness-scoped cleaner soundness —
 coverage, same-union up to boundary null sets):
 `theories/CoverageGapOverlapCleaner.v` (same WITNESS tag).
 
+Production home for 424-a (Green/Qed: witness-scoped existence of a
+bounding triangle of the unit-square vertices with Euclidean area 2,
+candidate T₀ = △(0,0)(2,0)(0,2)): `theories/MinimumBoundingTriangle.v`
+(same WITNESS tag). Universal ∀-finite-P existence and unrestricted
+area lower bound deferred.
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim423a.v | eval/Claim425a.v
+#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim65b.v
 rocq compile eval/Claim65c.v
 rocq compile eval/Claim65d.v
+rocq compile eval/Claim65e.v
 rocq compile eval/Claim67a.v
 rocq compile eval/Claim67b.v
 rocq compile eval/Claim68a.v
+rocq compile eval/Claim69a.v
 rocq compile eval/Claim423a.v
+rocq compile eval/Claim423b.v
+rocq compile eval/Claim424a.v
 rocq compile eval/Claim425a.v
 ```
