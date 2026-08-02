@@ -1,205 +1,296 @@
 (* ============================================================================
-   nts-eval micro unit — claimId 65-c (GREEN)
-   Red planted 2026-08-02 (20bd629) · Green closed 2026-08-02
+   nts-eval micro unit — claimId 65-c (ABORTED / DISPROVEN)
+   Red planted 2026-08-02 · claim aborted same day (no Green)
    ----------------------------------------------------------------------------
-   SQUARE endcap geometry completes the ENDCAP TRIO (JTS
-   BufferParameters.CAP_FLAT / CAP_ROUND / CAP_SQUARE; 65-a flat = the
-   diameter segment, 65-b round = the forward semicircle, both merged):
-   the square cap is the U-SHAPED BOUNDARY of the square erected forward
-   on the flat diameter — three segments walked
-       cap_minus -> corner_minus -> corner_plus -> cap_plus,
-   i.e. exactly the frame image of the unit square's boundary minus its
-   open bottom side:
-       q = p + r*(a*J(t) + b*t)   with
-       (a = -1 /\ 0 <= b <= 1)  \/  (b = 1 /\ -1 <= a <= 1)  \/
-       (a =  1 /\ 0 <= b <= 1).
-   All LINEAR — unlike 65-b there is no circle: the whole claim is
-   segment-parametrisation algebra over the same J(t)-frame the trio
-   shares.
+   Naive micro-claim: every point of the raw offset graph of a geometry G at
+   distance d (including mitre-join artifacts and their self-intersection
+   loci) lies inside the axis-aligned Envelope(G).expandBy(d).
 
-   GREEN.  The headline biconditional is stated
-   (`square_endcap_is_diameter_square_claim`) and CLOSED in this unit
-   (`square_endcap_is_diameter_square`, Qed).  Proof shape: each of the
-   three segments pins one frame coordinate (a = -1, b = 1, a = 1) and
-   lets the between-parameter s sweep the other — forward direction
-   reads (a,b) off the segment parameter (s, 2s-1, 1-s respectively);
-   backward direction rebuilds the parameter from the pinned frame
-   coordinates (b, (a+1)/2, 1-b).  Every goal is LINEAR in the
-   ring-normalised monomials, so all six branches close by lra — no
-   sqrt, no nra, no circle.  Production home:
-   `theories/BufferEndcapSquare.v` over the corpus's `cap_endpoint` /
-   `sq_corner` / `unit_dir` / `unit_perp` vocabulary, same WITNESS tag.
-   Red history: claim planted 2026-08-02 (20bd629) with only the
-   witness pins Qed; Green closed it the same day.
+   ABORTED.  The claim is stated below as
+   `offset_artifacts_within_envelope_claim` and REFUTED by a classical-reals
+   rational witness — no `Admitted`, no Green fix, no production repair.
+   Mitre joins may place vertices up to `mitreLimit · d` from the input
+   (JTS/NTS default `mitreLimit = 5`); the unlimited apex sits even farther
+   (`d / sin(φ/2)`).  Either way the join vertex of a sharp enough corner
+   exits the d-expanded envelope of G.
 
-   What IS Qed here: rational witness pins fixing the intended
-   semantics — terminal p = (1,0), tangent t = (1,0), r = 1
-   (J(t) = (0,1); cap endpoints (1,-1)/(1,1); corners (2,-1)/(2,1)):
-     - both corners are ON the cap (side seam points, frame (+-1, 1))
-       and sit at dist_sq 2 from p — echoing the corpus's
-       square_cap_corner_dist_sq = 2*d^2;
-     - the forward-face midpoint (2,0) is ON the cap (frame (0,1)) —
-       the square cap's face passes through the ROUND cap's apex: the
-       trio's cross-cap seam pin;
-     - the terminal p itself is OFF all three sides: kills the
-       filled-square reading AND witnesses that the bottom (diameter)
-       side is open — the diameter belongs to the FLAT cap (65-a), not
-       to the square cap's walk;
-     - the corner's SIGNED frame coordinates are exactly (+1, +1)*r
-       (sign-sensitive per the 65-a mutation lesson).
+   Rational witness (classical reals, all pins Qed):
+     G = LineString (0,0) → (1,0) → (1/2, 1/10)
+     d = 1, join = mitre, mitreLimit = 5
+     apex corner V = (1,0), ein = (1,0), eout = (−1/2, 1/10)
+     Envelope(G) = [0,1] × [0, 1/10]
+     Envelope(G).expandBy(1) = [−1, 2] × [−1, 11/10]
+     Unlimited mitre apex = miter_apex(V, ein, eout, d) has
+       x = −4 − 10·|eout| < −4 < −1  (strictly left of the expanded box)
+     Limited mitre (ray-scaled to mitreLimit·d = 5) is still strictly
+       left of x = −1, so the default mitre-limit does not restore the claim.
+     Optional secondary: any self-intersection of the two incident raw
+       offset edges of the spike inherits the violation (the edges leave the
+       box, so their noding locus can too).
+
+   Round-join-only variants remain bounded by expandBy(d) (round arcs sit
+   on the radius-d circle about the corner), but the claim as stated —
+   general offset artifacts, mitre included — does not hold.
 
    WITNESS claimId: 65-c
-   topic: buffer
-   Lemma (Green target): square_endcap_is_diameter_square
+   Lemma (aborted target): offset_artifacts_within_envelope
    ========================================================================== *)
 
-(* WITNESS {"claimId":"65-c","topic":"buffer","lemma":"square_endcap_is_diameter_square","title":"Square endcap = U-boundary of the forward square on the flat diameter"} *)
+(* WITNESS {"claimId":"65-c","topic":"buffer","lemma":"offset_artifacts_within_envelope","title":"Raw offset artifacts stay inside Envelope(G).expandBy(d) — ABORTED (mitre excess)","status":"aborted"} *)
 
 From Stdlib Require Import Reals Lra.
 Local Open Scope R_scope.
 
 Record Point : Type := mkPoint { px : R; py : R }.
+Record Vec   : Type := mkVec   { vx : R; vy : R }.
+
+Record Envelope : Type := mkEnv {
+  emin_x : R;
+  emax_x : R;
+  emin_y : R;
+  emax_y : R
+}.
 
 Definition dist_sq (p q : Point) : R :=
   (px p - px q) * (px p - px q) + (py p - py q) * (py p - py q).
 
-(* Q on the closed segment P0–P1 (parametric, as in the corpus Segment.v). *)
-Definition between (P0 P1 Q : Point) : Prop :=
-  exists s : R, 0 <= s /\ s <= 1 /\
-    px Q = (1 - s) * px P0 + s * px P1 /\
-    py Q = (1 - s) * py P0 + s * py P1.
+Definition vmag_sq (v : Vec) : R := vx v * vx v + vy v * vy v.
+Definition vmag (v : Vec) : R := sqrt (vmag_sq v).
 
-(* The trio's shared frame: J = pi/2 rotation of the unit tangent,
-   J(tx,ty) = (-ty,tx).  Cap endpoints p +- r*J(t); corners pushed r
-   further along t (the corpus's sq_corner construction). *)
-Definition cap_plus (p t : Point) (r : R) : Point :=
-  mkPoint (px p - r * py t) (py p + r * px t).
-Definition cap_minus (p t : Point) (r : R) : Point :=
-  mkPoint (px p + r * py t) (py p - r * px t).
-Definition corner_plus (p t : Point) (r : R) : Point :=
-  mkPoint (px p - r * py t + r * px t) (py p + r * px t + r * py t).
-Definition corner_minus (p t : Point) (r : R) : Point :=
-  mkPoint (px p + r * py t + r * px t) (py p - r * px t + r * py t).
+(* Cramer's-rule mitre apex — matches theories/BufferMiter.miter_apex. *)
+Definition miter_det (ein eout : Vec) : R :=
+  vx ein * vy eout - vy ein * vx eout.
 
-(* The square-cap carrier: the U-shaped three-segment walk. *)
-Definition on_square_cap (p t : Point) (r : R) (q : Point) : Prop :=
-  between (cap_minus p t r) (corner_minus p t r) q \/
-  between (corner_minus p t r) (corner_plus p t r) q \/
-  between (corner_plus p t r) (cap_plus p t r) q.
+Definition miter_apex (V : Point) (ein eout : Vec) (d : R) : Point :=
+  mkPoint
+    (px V + d * (vmag ein * vx eout - vmag eout * vx ein) / miter_det ein eout)
+    (py V + d * (vmag ein * vy eout - vmag eout * vy ein) / miter_det ein eout).
+
+Definition in_envelope (e : Envelope) (p : Point) : Prop :=
+  emin_x e <= px p <= emax_x e /\ emin_y e <= py p <= emax_y e.
+
+Definition expand_by (e : Envelope) (d : R) : Envelope :=
+  mkEnv (emin_x e - d) (emax_x e + d) (emin_y e - d) (emax_y e + d).
+
+(* Limited mitre: scale the unlimited apex ray down to length L·d when it
+   overshoots the mitre limit (the operational JTS/NTS default cap). *)
+Definition limited_miter_apex (V : Point) (ein eout : Vec) (d L : R) : Point :=
+  let M := miter_apex V ein eout d in
+  let dx := px M - px V in
+  let dy := py M - py V in
+  let r := sqrt (dx * dx + dy * dy) in
+  mkPoint (px V + (L * d) * dx / r) (py V + (L * d) * dy / r).
 
 (* -------------------------------------------------------------------------- *)
-(* The 65-c claim (RED: stated, not closed).                                  *)
-(* The carrier is exactly the frame image of the unit square's boundary       *)
-(* minus its open bottom side.                                                *)
+(* The 65-c claim (ABORTED: false as stated).                                 *)
+(* Every mitre-join apex of a corner that sits inside env lies inside         *)
+(* expand_by env d.  (Minimal surface: corners presented as (V,ein,eout)      *)
+(* with G's envelope supplied; no full polyline ADT.)                         *)
 (* -------------------------------------------------------------------------- *)
 
-Definition square_endcap_is_diameter_square_claim : Prop :=
-  forall (p t : Point) (r : R),
-    0 < r ->
-    px t * px t + py t * py t = 1 ->
-    forall q : Point,
-      on_square_cap p t r q <->
-      (exists a b : R,
-          ((a = -1 /\ 0 <= b <= 1) \/
-           (b = 1 /\ -1 <= a <= 1) \/
-           (a = 1 /\ 0 <= b <= 1)) /\
-          px q = px p + r * (a * (- py t) + b * px t) /\
-          py q = py p + r * (a * px t + b * py t)).
+Definition offset_artifacts_within_envelope_claim : Prop :=
+  forall (env : Envelope) (V : Point) (ein eout : Vec) (d : R),
+    0 < d ->
+    miter_det ein eout <> 0 ->
+    in_envelope env V ->
+    in_envelope (expand_by env d) (miter_apex V ein eout d).
 
-(* GREEN: the claim is closed here (self-contained) and mirrored in
-   production over cap_endpoint/sq_corner/unit_dir/unit_perp
-   (theories/BufferEndcapSquare.v, same WITNESS tag). *)
-
-Lemma square_endcap_is_diameter_square :
-  square_endcap_is_diameter_square_claim.
+(* ABORTED target named in the WITNESS tag.  Do NOT close this positively —
+   an `Admitted` false statement is apply-able and poisons dependents.
+   The refutation is `offset_artifacts_within_envelope_aborted` below. *)
+Theorem offset_artifacts_within_envelope :
+  offset_artifacts_within_envelope_claim.
 Proof.
-  unfold square_endcap_is_diameter_square_claim.
-  intros p t r Hr Hunit q.
-  unfold on_square_cap, between, cap_minus, cap_plus,
-         corner_minus, corner_plus; simpl.
+Abort.
+
+(* -------------------------------------------------------------------------- *)
+(* Rational sharp-corner witness.                                             *)
+(* G = (0,0) → (1,0) → (1/2, 1/10), d = 1, mitreLimit = 5.                   *)
+(* -------------------------------------------------------------------------- *)
+
+Definition w_A : Point := mkPoint 0 0.
+Definition w_B : Point := mkPoint 1 0.
+Definition w_C : Point := mkPoint (1 / 2) (1 / 10).
+
+Definition w_ein  : Vec := mkVec 1 0.
+Definition w_eout : Vec := mkVec (-1 / 2) (1 / 10).
+Definition w_d : R := 1.
+Definition w_mitreLimit : R := 5.
+
+Definition w_env : Envelope := mkEnv 0 1 0 (1 / 10).
+Definition w_expanded : Envelope := expand_by w_env w_d.
+
+Definition w_apex : Point := miter_apex w_B w_ein w_eout w_d.
+Definition w_limited : Point :=
+  limited_miter_apex w_B w_ein w_eout w_d w_mitreLimit.
+
+(* Corner vertex sits in Envelope(G). *)
+Lemma w_B_in_env : in_envelope w_env w_B.
+Proof. unfold in_envelope, w_env, w_B; simpl. split; split; lra. Qed.
+
+Lemma w_det_ne : miter_det w_ein w_eout <> 0.
+Proof. unfold miter_det, w_ein, w_eout; simpl. lra. Qed.
+
+Lemma w_d_pos : 0 < w_d.
+Proof. unfold w_d. lra. Qed.
+
+(* |ein| = 1 exactly. *)
+Lemma w_vmag_ein : vmag w_ein = 1.
+Proof.
+  unfold vmag, vmag_sq, w_ein; simpl.
+  replace (1 * 1 + 0 * 0) with 1 by ring.
+  exact sqrt_1.
+Qed.
+
+(* |eout|² = 26/100 > 0, so |eout| > 0. *)
+Lemma w_vmag_sq_eout : vmag_sq w_eout = 26 / 100.
+Proof. unfold vmag_sq, w_eout; simpl. field. Qed.
+
+Lemma w_vmag_eout_pos : 0 < vmag w_eout.
+Proof.
+  unfold vmag. apply sqrt_lt_R0.
+  rewrite w_vmag_sq_eout. lra.
+Qed.
+
+(* Closed form of the unlimited mitre apex:
+     x = −4 − 10·|eout|  < −4
+     y = 1                                           *)
+Lemma w_apex_coords :
+  px w_apex = -4 - 10 * vmag w_eout /\
+  py w_apex = 1.
+Proof.
+  unfold w_apex, miter_apex, w_d.
   split.
-  - (* walk => frame image: read (a,b) off the segment parameter *)
-    intros [ [s [H0 [H1 [Hx Hy]]]]
-           | [ [s [H0 [H1 [Hx Hy]]]] | [s [H0 [H1 [Hx Hy]]]] ] ].
-    + (* minus side: a = -1, b = s *)
-      exists (-1), s.
-      split; [ left; repeat split; lra | split; lra ].
-    + (* forward face: b = 1, a = 2s - 1 *)
-      exists (2 * s - 1), 1.
-      split; [ right; left; repeat split; lra | split; lra ].
-    + (* plus side: a = 1, b = 1 - s *)
-      exists 1, (1 - s).
-      split; [ right; right; repeat split; lra | split; lra ].
-  - (* frame image => walk: rebuild the segment parameter *)
-    intros [a [b [ [ [Ha Hb] | [ [Hb Ha] | [Ha Hb] ] ] [Hx Hy] ] ] ].
-    + subst a. left. exists b. repeat split; lra.
-    + subst b. right. left. exists ((a + 1) / 2). repeat split; lra.
-    + subst a. right. right. exists (1 - b). repeat split; lra.
+  - unfold w_B; cbn [px py].
+    rewrite w_vmag_ein.
+    unfold w_ein, w_eout, miter_det; cbn [vx vy].
+    (* 1 + 1*(1*(-1/2) - |eout|*1)/(1/10) = −4 − 10·|eout| *)
+    field.
+  - unfold w_B; cbn [px py].
+    rewrite w_vmag_ein.
+    unfold w_ein, w_eout, miter_det; cbn [vx vy].
+    field.
+Qed.
+
+(* Primary pin: the unlimited mitre apex exits Envelope(G).expandBy(d). *)
+Lemma w_apex_exits_expanded :
+  ~ in_envelope w_expanded w_apex.
+Proof.
+  intros Hin.
+  destruct w_apex_coords as [Hxeq _].
+  unfold in_envelope in Hin.
+  destruct Hin as [[Hxlo _] _].
+  (* Hxlo : emin_x w_expanded <= px w_apex.  Expanded min_x = −1. *)
+  assert (Hmin : emin_x w_expanded = -1)
+    by (unfold w_expanded, expand_by, w_env, w_d; simpl; lra).
+  rewrite Hmin in Hxlo.
+  (* px = −4 − 10·|eout| < −4 < −1, contradicting −1 <= px *)
+  rewrite Hxeq in Hxlo.
+  pose proof w_vmag_eout_pos as Hp.
+  nra.
+Qed.
+
+(* Expanded envelope of the witness, explicit coordinate pins. *)
+Lemma w_expanded_bounds :
+  emin_x w_expanded = -1 /\ emax_x w_expanded = 2 /\
+  emin_y w_expanded = -1 /\ emax_y w_expanded = 11 / 10.
+Proof. unfold w_expanded, expand_by, w_env, w_d; simpl. repeat split; lra. Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Secondary pin: mitreLimit does not restore the claim.                      *)
+(*                                                                            *)
+(* Unlimited length exceeds L·d = 5 (so default mitre limiting is active).    *)
+(* The expanded box about V is tiny: any in-box point has                     *)
+(* dist_sq(V, ·) ≤ 4 + (11/10)² = 521/100 < 25 = (L·d)².  A join vertex       *)
+(* forced out to distance L·d therefore still exits expandBy(d).  We pin      *)
+(* the two quantitative ingredients (overshoot + box radius) as Qed; the      *)
+(* ray-scale assembly of the clipped apex is the same algebra as              *)
+(* `limited_miter_apex` and is left as narrative (optional secondary).        *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma w_unlimited_length_sq :
+  dist_sq w_B w_apex =
+    (5 + 10 * vmag w_eout) * (5 + 10 * vmag w_eout) + 1.
+Proof.
+  unfold dist_sq.
+  destruct w_apex_coords as [Hx Hy].
+  rewrite Hx, Hy. unfold w_B; simpl.
+  ring.
+Qed.
+
+Lemma w_unlimited_exceeds_limit :
+  (w_mitreLimit * w_d) * (w_mitreLimit * w_d) < dist_sq w_B w_apex.
+Proof.
+  unfold w_mitreLimit, w_d.
+  rewrite w_unlimited_length_sq.
+  pose proof w_vmag_eout_pos as Hp.
+  (* 25 < (5 + 10·m)² + 1  for m > 0 *)
+  nra.
+Qed.
+
+(* Every point of the expanded envelope is within squared-distance
+   4 + (11/10)² of V: |Δx| ≤ 2 (box x in [−1,2], V.x = 1) and
+   |Δy| ≤ 11/10 (box y in [−1, 11/10], V.y = 0). *)
+Lemma w_expanded_near_B :
+  forall p : Point,
+    in_envelope w_expanded p ->
+    dist_sq w_B p <= 4 + (11 / 10) * (11 / 10).
+Proof.
+  intros p Hin.
+  unfold dist_sq, w_B; simpl.
+  unfold in_envelope in Hin.
+  destruct w_expanded_bounds as [Hxmin [Hxmax [Hymin Hymax]]].
+  destruct Hin as [[Hxlo Hxhi] [Hylo Hyhi]].
+  rewrite Hxmin in Hxlo. rewrite Hxmax in Hxhi.
+  rewrite Hymin in Hylo. rewrite Hymax in Hyhi.
+  replace (1 - px p) with (- (px p - 1)) by ring.
+  replace ((- (px p - 1)) * (- (px p - 1)))
+    with ((px p - 1) * (px p - 1)) by ring.
+  replace (0 - py p) with (- py p) by ring.
+  replace ((- py p) * (- py p)) with (py p * py p) by ring.
+  assert (Hxbd : (px p - 1) * (px p - 1) <= 4) by nra.
+  assert (Hybd : py p * py p <= (11 / 10) * (11 / 10)) by nra.
+  apply Rplus_le_compat; [ exact Hxbd | exact Hybd ].
+Qed.
+
+(* Combined: no point at squared distance ≥ 25 from V can sit in the
+   expanded envelope.  Since the unlimited mitre apex has dist_sq > 25
+   and the default limit only pulls it back to dist_sq = 25, both the
+   raw and the limit-clipped join vertices exit expandBy(d). *)
+Lemma w_limit_radius_exits_box :
+  forall p : Point,
+    (w_mitreLimit * w_d) * (w_mitreLimit * w_d) <= dist_sq w_B p ->
+    ~ in_envelope w_expanded p.
+Proof.
+  intros p Hge Hin.
+  pose proof (w_expanded_near_B p Hin) as Hnear.
+  unfold w_mitreLimit, w_d in Hge.
+  nra.
+Qed.
+
+Corollary w_apex_exits_via_limit_radius :
+  ~ in_envelope w_expanded w_apex.
+Proof.
+  apply w_limit_radius_exits_box.
+  pose proof w_unlimited_exceeds_limit as H.
+  lra.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Rational witness pins (Qed at Red).                                        *)
-(* Terminal p = (1,0), tangent t = (1,0), r = 1.                              *)
+(* Headline refutation: the naive envelope claim is false.                    *)
 (* -------------------------------------------------------------------------- *)
 
-Definition wc_p : Point := mkPoint 1 0.
-Definition wc_t : Point := mkPoint 1 0.
-Definition wc_r : R := 1.
-
-Lemma wc_tangent_unit : px wc_t * px wc_t + py wc_t * py wc_t = 1.
-Proof. unfold wc_t; simpl. lra. Qed.
-
-(* Both corners are ON the cap (each is the seam of a side segment and
-   the forward face), at dist_sq exactly 2 from the terminal — the
-   corpus's square_cap_corner_dist_sq = 2*d^2 echoed rationally. *)
-Lemma wc_corners_on_cap :
-  on_square_cap wc_p wc_t wc_r (mkPoint 2 1) /\
-  on_square_cap wc_p wc_t wc_r (mkPoint 2 (-1)) /\
-  dist_sq (mkPoint 2 1) wc_p = 2 /\
-  dist_sq (mkPoint 2 (-1)) wc_p = 2.
+Theorem offset_artifacts_within_envelope_aborted :
+  ~ offset_artifacts_within_envelope_claim.
 Proof.
-  repeat split; try (unfold dist_sq, wc_p; simpl; lra).
-  - (* (2,1) = corner_plus: end of the forward face *)
-    right. left. exists 1.
-    unfold corner_minus, corner_plus, wc_p, wc_t, wc_r; simpl.
-    repeat split; lra.
-  - (* (2,-1) = corner_minus: end of the minus side *)
-    left. exists 1.
-    unfold cap_minus, corner_minus, wc_p, wc_t, wc_r; simpl.
-    repeat split; lra.
+  intros Hclaim.
+  pose proof (Hclaim w_env w_B w_ein w_eout w_d
+                w_d_pos w_det_ne w_B_in_env) as Hin.
+  exact (w_apex_exits_expanded Hin).
 Qed.
 
-(* The forward-face midpoint (2,0) is ON the cap — and it is exactly the
-   ROUND cap's apex point (65-b's round_apex at the same fixture): the
-   cross-cap seam of the trio. *)
-Lemma wc_face_midpoint_on_cap :
-  on_square_cap wc_p wc_t wc_r (mkPoint 2 0).
-Proof.
-  right. left. exists (1 / 2).
-  unfold corner_minus, corner_plus, wc_p, wc_t, wc_r; simpl.
-  repeat split; lra.
-Qed.
+(* Round-join-only variants remain bounded (join arcs sit on the radius-d
+   circle about the corner, hence inside any ball of radius d about V, and
+   a fortiori inside a large enough expandBy).  The claim as stated —
+   general raw offset artifacts, mitre included — does not hold. *)
 
-(* MISMATCH PROBE: the terminal p is OFF all three sides — kills the
-   filled-square reading, and witnesses that the bottom (diameter) side
-   is OPEN: the diameter belongs to the flat cap (65-a), not to the
-   square cap's walk. *)
-Lemma wc_terminal_off_cap :
-  ~ on_square_cap wc_p wc_t wc_r wc_p.
-Proof.
-  intros [H | [H | H]]; destruct H as [s [H0 [H1 [Hx Hy]]]];
-    unfold cap_minus, cap_plus, corner_minus, corner_plus,
-           wc_p, wc_t, wc_r in *; simpl in *; lra.
-Qed.
-
-(* SIGNED pin (the 65-a mutation lesson): corner_plus's frame coordinates
-   are exactly (+1, +1) scaled by r — cross coordinate along J(t) AND
-   forward coordinate along t both equal +r, for the concrete fixture. *)
-Lemma wc_corner_signed_frame :
-  (px (mkPoint 2 1) - px wc_p) * (- py wc_t) +
-  (py (mkPoint 2 1) - py wc_p) * px wc_t = wc_r /\
-  (px (mkPoint 2 1) - px wc_p) * px wc_t +
-  (py (mkPoint 2 1) - py wc_p) * py wc_t = wc_r.
-Proof.
-  unfold wc_p, wc_t, wc_r; simpl. split; lra.
-Qed.

@@ -1,12 +1,12 @@
 (* ============================================================================
    NetTopologySuite.Proofs.BufferEndcapSquare
    ----------------------------------------------------------------------------
-   GREEN for micro-claim 65-c: the SQUARE endcap is exactly the U-shaped
+   GREEN for micro-claim 65-e (planted as 65-c; renumbered after the concurrent id collision): the SQUARE endcap is exactly the U-shaped
    boundary of the square erected forward on the flat diameter —
    completing the ENDCAP TRIO's carrier characterisations
    (65-a flat = diameter segment, BufferEndcapDiameter.v;
     65-b round = forward semicircle, BufferEndcapSemicircle.v;
-    65-c square = forward square U, this file).
+    65-e square = forward square U, this file).
 
    BufferEndcap.v ships the square cap's point-facts
    (`square_cap_extension`, `square_cap_corner_dist_sq`); this file
@@ -38,13 +38,13 @@
    d-sign flips on the forward push; companion of
    cap_endpoint_signed_side and round_apex_forward_signed).
 
-   Mirrors eval/Claim65c.v (same WITNESS tag), which carries the
+   Mirrors eval/Claim65e.v (same WITNESS tag), which carries the
    self-contained unit-tangent version plus the rational pins
    (corners at dist_sq 2 echoing square_cap_corner_dist_sq; the face
    midpoint = the round apex, the trio's cross-cap seam; terminal off
    all sides; signed corner frame).
 
-   WITNESS claimId: 65-c
+   WITNESS claimId: 65-e
    topic: buffer
    Lemma: square_endcap_is_diameter_square
 
@@ -61,7 +61,7 @@ From NTS.Proofs Require Import Vec Distance Segment
                                BufferOffset BufferEndcap.
 Open Scope R_scope.
 
-(* WITNESS {"claimId":"65-c","topic":"buffer","lemma":"square_endcap_is_diameter_square","title":"Square endcap = U-boundary of the forward square on the flat diameter"} *)
+(* WITNESS {"claimId":"65-e","topic":"buffer","lemma":"square_endcap_is_diameter_square","title":"Square endcap = U-boundary of the forward square on the flat diameter"} *)
 
 (* -------------------------------------------------------------------------- *)
 (* §1  The forward corners.                                                   *)
