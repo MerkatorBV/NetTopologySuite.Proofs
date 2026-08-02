@@ -19,8 +19,9 @@
    unit's mismatch probes (eval/Claim65b.v) this pins the round-endcap
    geometry the JTS round-cap constructor is about.
 
-   Proof style: sqrt-free.  The unit facts enter only through
-   `vmag_sq_unit_dir` (tx² + ty² = 1) and the component identities
+   Proof style: sqrt-free — no `vmag`/`sqrt` term appears in any proof
+   here.  The unit facts enter only through `vmag_sq_unit_dir` /
+   `vmag_sq_unit_perp` (unit-length squares) and the component identity
    `unit_perp = J(unit_dir)`; the geometric core is a raw-real frame
    lemma (`semicircle_frame_core`) closed by `ring`/`field`/`nra`, with
    the frame coordinates a := (q−E)·J(t)/d, b := (q−E)·t/d.
@@ -171,20 +172,12 @@ Theorem round_apex_forward_signed :
     + (py (round_apex E ein d) - py E) * vy (unit_dir ein) = d.
 Proof.
   intros E ein d Hnz.
-  assert (Hpos : 0 < vmag_sq ein) by (apply vmag_sq_pos; exact Hnz).
-  assert (Hm : 0 < vmag ein).
-  { unfold vmag. apply sqrt_lt_R0. exact Hpos. }
-  assert (Hmne : vmag ein <> 0) by lra.
-  assert (Hmm : vmag ein * vmag ein = vx ein * vx ein + vy ein * vy ein).
-  { unfold vmag. rewrite sqrt_sqrt by lra. unfold vmag_sq, vdot. ring. }
-  assert (Hinv : / vmag ein * vmag ein = 1) by (apply Rinv_l; exact Hmne).
-  unfold round_apex, pt_translate, unit_dir, vscale. simpl.
-  transitivity (d * ((vx ein * vx ein + vy ein * vy ein)
-                     * (/ vmag ein * / vmag ein))); [ ring | ].
-  rewrite <- Hmm.
-  replace (vmag ein * vmag ein * (/ vmag ein * / vmag ein))
-    with ((/ vmag ein * vmag ein) * (/ vmag ein * vmag ein)) by ring.
-  rewrite Hinv. ring.
+  pose proof (vmag_sq_unit_dir ein Hnz) as Hu.
+  unfold vmag_sq, vdot in Hu.
+  unfold round_apex, pt_translate. cbn [px py].
+  transitivity (d * (vx (unit_dir ein) * vx (unit_dir ein)
+                     + vy (unit_dir ein) * vy (unit_dir ein))); [ ring | ].
+  rewrite Hu. ring.
 Qed.
 
 (* The flat-diameter endpoints sit exactly ON the forward boundary of the
