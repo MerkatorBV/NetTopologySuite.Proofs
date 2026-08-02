@@ -14,6 +14,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
 | `423-a` | `metric` | [`Claim423a.v`](Claim423a.v) | `directed_discrete_hausdorff_max_min` |
+| `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
@@ -44,14 +45,21 @@ list inductions, plus nonnegativity): `theories/HausdorffDiscrete.v`
 plus the rational pins (pair example 1/1; asymmetric 4/9 direction
 killers).
 
+Production home for 425-a (Green/Qed: witness-scoped cleaner soundness —
+3-cell open-interior-disjoint partition of the rational two-cell overlap
+coverage, same-union up to boundary null sets):
+`theories/CoverageGapOverlapCleaner.v` (same WITNESS tag).
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v
+#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim423a.v | eval/Claim425a.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim67a.v
 rocq compile eval/Claim67b.v
 rocq compile eval/Claim68a.v
+rocq compile eval/Claim423a.v
+rocq compile eval/Claim425a.v
 ```
