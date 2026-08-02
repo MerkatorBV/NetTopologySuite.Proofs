@@ -218,6 +218,13 @@ theories/FrechetMaxmin.v
 # attainment by nested list induction constructing the optimal walk; plus
 # nonnegativity.  Mirrors eval/Claim423b.v (same WITNESS tag).
 theories/FrechetDiscrete.v
+# 69-a Green production home: the SQL/MM + SFA oracle-mode checklist
+# W1-W5 (ST_IsClosed pair, M-LEN squared perimeter, ST_CircularString
+# 3-point membership, relate/R-* point-on-curve, ST_IsRing) closes over
+# the REPAIRED table -- is_ring = closed AND no_pinch as witness
+# obligations; the mis-tabled "closed => pinch-free" row and its pinched
+# -ring refutation kept Qed as hardening.  Mirrors eval/Claim69a.v.
+theories/OracleCurveChecklist.v
 # Buffer/noder pipeline, Stage 2a seam (docs/buffer-noder-pipeline.md S2):
 # offset-segment soundness -- the offset of an edge is parallel to it
 # (offset_seg_dir / offset_seg_parallel) and sits at perpendicular distance
