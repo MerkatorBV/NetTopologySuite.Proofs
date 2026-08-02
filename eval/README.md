@@ -47,9 +47,10 @@ Production home for 65-d (Green/Qed: when unrestricted `miter_apex`
 overshoots the limit sphere of radius `L·d`, `L ≥ 1`, the ray-scale
 `limited_miter_apex` is at squared distance `(L·d)²` and on the segment
 from the corner through the unrestricted apex):
-`theories/BufferMiterClip.v` (same WITNESS tag). The unit here carries the
-self-contained proof plus the rational right-angle witness pins.
-(Board plan text said “65-b”; that id is already Green as round endcap.)
+`theories/BufferMiterClip.v` (same WITNESS tag; core `ray_scale_to_radius`).
+The unit here carries the self-contained proof plus the rational
+right-angle witness pins. (Board plan text said “65-b”; that id is already
+Green as round endcap.)
 
 Production home for 67-a (Green/Qed: classical strata + rational unit-square
 self-relate / OGC equal DE-9IM): `theories/RelateNGMatrixEqual.v` (same WITNESS tag).
