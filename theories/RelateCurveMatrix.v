@@ -47,6 +47,8 @@
 From Stdlib Require Import List Reals Lra Lia.
 From NTS.Proofs Require Import Distance Overlay CurveGeometry DE9IM Segment
   RelateCurveRingReduction.
+From NTS.Proofs Require Import RelateAreaPoint RectangleJCT RelateBoundary
+  GeneralTriangleJCT GeneralTriangleSeparation.  (* Jordan section below *)
 Import ListNotations.
 Local Open Scope R_scope.
 
@@ -526,10 +528,6 @@ Print Assumptions cg_interior_iff_inscribed.
 (* Guarded on existing JCT facts (RectangleJCT / PointInRingCorrect seam).    *)
 (* Full general-polygon version inherits the seam honestly.                   *)
 (* -------------------------------------------------------------------------- *)
-
-(* (RelateAreaPoint + RectangleJCT already required above via prior import chain
-   for the area lemmas; explicit here for the Jordan section.) *)
-From NTS.Proofs Require Import RelateAreaPoint RectangleJCT RelateBoundary GeneralTriangleJCT GeneralTriangleSeparation.
 
 (* Cell dim soundness: when we assign Some 2 for II, interiors intersect
    (witnessed by point existence; 2D region interpretation uses JCT guards in

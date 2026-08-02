@@ -14,9 +14,8 @@
    geom_boundary + edge tests. Full noding is future refinement.
 
    Delivers (initial):
-     - relate / geom_de9im : Geometry -> Geometry -> IntersectionMatrix
+     - relate : Geometry -> Geometry -> IntersectionMatrix
      - stratum classifiers (interior/boundary/exterior)
-     - dim_of_stratum_intersection (ties to mod2_boundary_dim and JCT for dim2)
      - delegation lemmas showing agreement with S2/S5/S6 witnesses for rect/seg
      - Next rung: rect-regime fills wired to matrix_ok + im_overlaps (full
        geom_de9im_pointset satisfaction is the immediate follow-up rung)
@@ -72,34 +71,14 @@ Definition in_stratum (s : Stratum) (g : Geometry) (p : Point) : Prop :=
   end.
 
 (* -------------------------------------------------------------------------- *)
-(* Dimension of stratum intersection (MOD2 + Jordan hooks).                   *)
-(* -------------------------------------------------------------------------- *)
-
-Definition dim_of_stratum_pair (sX sY : Stratum) (A B : Geometry) : DimValue :=
-  (* Uses MOD2 policy for boundary point contributions. Full run-length (dim 1)
-     and Jordan area (dim 2) filled by caller / noding layer. *)
-  match sX, sY with
-  | SBnd, SInt | SInt, SBnd | SBnd, SBnd =>
-      (* For isolated boundary point contact (e.g. line endpoint), MOD2 degree 1 gives dim 0.
-         Positive length runs give 1 (detected via between_strict + collinear elsewhere). *)
-      None
-  | _, _ => None
-  end.
-
-(* Use MOD2 policy directly for line endpoint boundary contribution. *)
-Definition line_endpoint_boundary_cell (deg : nat) : DimValue :=
-  mod2_boundary_dim deg.
-
-(* -------------------------------------------------------------------------- *)
 (* Core relate (delegating for base cases; general stub).                     *)
 (* -------------------------------------------------------------------------- *)
 
 (* relate is defined below with rect dispatch (and stub fallback). *)
 
-(* Specification link (strengthened in Jordan + pipeline work). *)
-Definition geom_de9im (A B : Geometry) (m : IntersectionMatrix) : Prop :=
-  (* To be populated from cell_ok style + dim soundness.  For now a marker. *)
-  True.
+(* The point-set specification link lives in RelateCurveMatrix
+   (`geom_de9im_pointset`); per-regime satisfaction lemmas below target it
+   directly, so no marker predicate is kept here. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Delegation / agreement examples (smoke for rect + line cases).             *)
