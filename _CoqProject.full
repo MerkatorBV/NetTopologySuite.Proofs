@@ -300,6 +300,16 @@ theories/RelateBoundary.v
 # the corpus's Distance.  No Admitted; no Classical_Prop.classic.
 theories/Overlay.v
 
+# Issue #425 subtask 425-a — GREEN+REFACTOR: polygonal coverage gap/overlap
+# cleaner validity on the rational two-cell overlap witness (classical reals).
+# Spec-shaped coverage_overlap_free / coverage_same_union (open→closed both
+# ways) / is_valid_coverage_cleaner_on; 3-cell partition A+B_top+B_right;
+# open_aabb_sep_{x,y} helpers.  Headlines coverage_gap_overlap_cleaner_valid
+# (+ _on_witness), coverage_cleaned_partition_overlap_free / _same_union,
+# coverage_cleaner_gap_free_on_A, cov_overlap_sample_cleaned_once are Qed.
+# 3-axiom classical-reals base.  Depends on Distance only.  No Admitted.
+theories/CoverageGapOverlapCleaner.v
+
 # extract_rings_valid R5: a CONCRETE unconditional witness that hole_inside_outer
 # is reachable (docs/hole-inside-outer.md).  A 4x4 square outer with a smaller
 # square hole sharing the centre; proved by walking the ray_parity_odd

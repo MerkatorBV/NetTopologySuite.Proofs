@@ -13,6 +13,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `67-a` | `relate` | [`Claim67a.v`](Claim67a.v) | `unit_square_self_relate_de9im_eq` |
 | `67-b` | `relate` | [`Claim67b.v`](Claim67b.v) | `boundary_op_eq_relateng_boundary_graph` |
 | `68-a` | `mesh` | [`Claim68a.v`](Claim68a.v) | `delaunay_edge_iff_empty_circumcircle` |
+| `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
@@ -36,14 +37,20 @@ witness): `theories/RelateNGBoundaryGraph.v` (same WITNESS tag).
 Production home for 68-a (full witness cluster, shared helpers):
 `theories/DelaunayEdgeEmptyCircle.v` (also tagged with the same WITNESS).
 
+Production home for 425-a (Green/Qed: witness-scoped cleaner soundness —
+3-cell open-interior-disjoint partition of the rational two-cell overlap
+coverage, same-union up to boundary null sets):
+`theories/CoverageGapOverlapCleaner.v` (same WITNESS tag).
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v
+#   source = eval/Claim65a.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim425a.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim67a.v
 rocq compile eval/Claim67b.v
 rocq compile eval/Claim68a.v
+rocq compile eval/Claim425a.v
 ```
