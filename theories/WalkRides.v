@@ -31,7 +31,7 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                JCTHugStep RingClearance SectorPath
                                CornerSamples CornerConnector JCTCorridor
                                JCTMinOpenStep WalkCorridor MirrorCorridor
-                               DartSideKit CornerCorridorBridge.
+                               DartSideKit CornerCorridorBridge HandoffConnector.
 
 Import ListNotations.
 Local Open Scope R_scope.

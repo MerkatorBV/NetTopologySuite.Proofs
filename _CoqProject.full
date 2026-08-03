@@ -3,6 +3,9 @@
 theories/Real.v
 theories/Lattice.v
 theories/Distance.v
+# WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
+# (AST identity, not string formatting).  No Admitted.
+theories/WktGeoJsonRoundtrip.v
 theories/Orientation.v
 # Integer-coordinate determinant range bound (Romanschek et al. 2021, §3.2):
 # grounds the robust DE-9IM / relate approach (#67).  Proves the 32-bit
@@ -806,6 +809,15 @@ theories/HandoffWedge.v
 # d's own two endpoints specifically; left for the along-dart headline's
 # assembly to decide.  No Admitteds.
 theories/CornerCorridorBridge.v
+# H-bridge attack C-3e-A: ef-vs-corridor thresholds + corridor_absorbs_ef.
+# No Admitteds.
+theories/C3eEfCorridorAssumption.v
+# H-bridge attack C-3e-B: handoff connector (pruned ball + side kit + wedge)
+# and the algebraic zero-hop bypass via CornerCorridorBridge.  No Admitteds.
+theories/HandoffConnector.v
+# H-bridge attack C-3e-C: along-dart headline -> straddle, corridor_safe_for_ef
+# discharge, face_transport_premise apply hooks, sample exercise.  No Admitteds.
+theories/BaseToTipHeadline.v
 # H-bridge attack C-3f step 1(i): the per-step glue of the orbit chain --
 # fstep is definitionally next-of-the-tip-fan at the arriving reversal, the
 # reversal is a fan member based at the shared vertex, the ride's tip sample

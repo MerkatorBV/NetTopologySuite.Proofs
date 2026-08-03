@@ -38,7 +38,8 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                ArrangementEMinus HBridgeCoreSlice
                                WalkVertexPack JCTCorridor JCTMinOpenStep
                                WalkCorridor MirrorCorridor DartSideKit
-                               CornerCorridorBridge WalkEndTies.
+                               CornerCorridorBridge HandoffConnector
+                               C3eEfCorridorAssumption BaseToTipHeadline WalkEndTies.
 
 Import ListNotations.
 Local Open Scope R_scope.

@@ -43,7 +43,9 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                CornerConnector GeneralTautBridge
                                HBridgeCoreSlice JCTCorridor JCTMinOpenStep
                                WalkCorridor MirrorCorridor DartSideKit
-                               CornerCorridorBridge WalkEndTies WalkFamilies
+                               CornerCorridorBridge HandoffConnector
+                               C3eEfCorridorAssumption BaseToTipHeadline
+                               WalkEndTies WalkFamilies
                                WalkResidualKit.
 
 Import ListNotations.

@@ -60,7 +60,8 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                HBridgeCoreSlice WalkVertexPack WalkFamilies
                                JCTCorridor JCTMinOpenStep WalkCorridor
                                MirrorCorridor DartSideKit
-                               CornerCorridorBridge WalkStepChain WalkRides.
+                               CornerCorridorBridge HandoffConnector
+                               WalkStepChain WalkRides.
 
 Import ListNotations.
 Local Open Scope R_scope.
