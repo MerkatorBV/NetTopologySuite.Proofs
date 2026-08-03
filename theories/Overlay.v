@@ -348,3 +348,51 @@ Lemma boolean_op_symdiff_comm :
 Proof.
   intros A B p. unfold boolean_op. tauto.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* §  Self-op algebra (A ⋆ A) — OverlayNGCurve mnemonics.                      *)
+(*                                                                            *)
+(*   CAP ∩  Common Area of Partners     G1  A ∩ A = A                         *)
+(*   CUP ∪  Cover Under Partners        G2  A ∪ A = A                         *)
+(*   SUB ∖  Subtract B's shadow         G3  A ∖ A = ∅                         *)
+(*   XOR Δ  eXclusive OR                G4  A Δ A = ∅                         *)
+(*                                                                            *)
+(* docs/overlay-ng-curve-ops-mnemonics.md · curve-polygon-self-overlay-       *)
+(* guardrails.md. Empirical NTS dumps often break SUB/XOR after linearize;    *)
+(* these lemmas pin the point-set *spec*.                                     *)
+(* -------------------------------------------------------------------------- *)
+
+(** CUP: union is idempotent on the point-set model (G2). *)
+Lemma boolean_op_union_self :
+  forall A p, boolean_op Union A A p <-> point_set A p.
+Proof.
+  intros A p. unfold boolean_op. tauto.
+Qed.
+
+(** CAP: intersection is idempotent on the point-set model (G1). *)
+Lemma boolean_op_intersection_self :
+  forall A p, boolean_op Intersection A A p <-> point_set A p.
+Proof.
+  intros A p. unfold boolean_op. tauto.
+Qed.
+
+(** SUB: self-difference is empty (G3). *)
+Lemma boolean_op_difference_self_empty :
+  forall A p, ~ boolean_op Difference A A p.
+Proof.
+  intros A p. unfold boolean_op. tauto.
+Qed.
+
+(** XOR: self-symmetric-difference is empty (G4). *)
+Lemma boolean_op_symdiff_self_empty :
+  forall A p, ~ boolean_op SymDiff A A p.
+Proof.
+  intros A p. unfold boolean_op. tauto.
+Qed.
+
+(** SUB (BA form): B ∖ A with A = B is empty. *)
+Lemma boolean_op_difference_BA_self_empty :
+  forall A p, ~ boolean_op Difference A A p.
+Proof.
+  exact boolean_op_difference_self_empty.
+Qed.
