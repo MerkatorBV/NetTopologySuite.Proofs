@@ -17,6 +17,8 @@
 > #67 S15l JCT seam + Jordan cell-dimension + touch dispatch discharges;
 > #64 arc point-dist two D-PT stubs discharged (one deferred remains);
 > dashboard/claims refreshes. See per-child and oracle-curve-wishlist.md.
+> **Wire map** (upstream → Proofs epic + `topic:`) authored **2026-08-03** —
+> see §Wire map below (JTS/NTS drivers + proposed `topic: hull` / MBT epic).
 > The prior reconciliation (2026-06-14,
 > branch `claude/cycle-count-partition-yjgjmy`, PR #195 — the H_bridge Euler
 > route + `ClassCount` convergence) predates the **arc-metrics / curve-relate /
@@ -90,7 +92,7 @@ proven, soundness or coordinates open) · **⬜ planned** (not yet started) ·
 | **D-AA** | Arc-arc distance | #64 | `ArcArcDistance.v`, `ArcIntersect.v` (predicate); oracle `ARC_ARC_DISTANCE` | 🟡 disjoint circle-to-circle core ✅; sweep clamp deferred |
 | **D-SL** | Arc-segment distance | #64 | `ArcSegmentDistance.v`; oracle `ARC_SEGMENT_DISTANCE` | 🟡 line-outside-circle core ✅; sweep/segment clamp deferred |
 | **C-\*** | Centroid of curve geometries | #69, #64 | `ArcCentroid.v` (`arc_centroid_offset`), `ArcAreaCentroid.v`; oracle `ARC_CENTROID` / `ARC_AREA_CENTROID` | 🟡 offset spec proven (exact invariants); centroid POINT is interface-boundary (transcendental) |
-| **H-\*** | Hulls over curve inputs | #69 | `Convex.v` (linear) | ⬜ curve case planned |
+| **H-\*** | Hulls over curve inputs | #69 · **proposed `topic: hull` epic** (JTS#1160 MinimumBoundingTriangle / JTS 1.21) | `Convex.v` (linear); MBT port proposed in wire map | ⬜ linear hull foundation partial; MBT + curve hulls planned |
 | **S-\*** | Simplification of curves | #69 | `Simplify.v` (greedy-perp structural), `Linearise.v`; oracle `CP_BOUNDARY_SIMPLIFY` (extracted simplifier ∘ densify, `oracle/curve_polygon.py`) | 🟡 oracle composes extracted `greedy_simplify_perp_b64` over a densified boundary; simplification-preserves-curve soundness open |
 | **AT-\*** | Affine transforms (non-similarity → detect-and-densify, §7 risk) | #69 | — | ⬜ |
 | **LRF-\*** | Linear referencing on curves | #69 | — | ⬜ |
@@ -144,6 +146,66 @@ spending further proof effort — several are stale.
 | NTS#719, #638 — GeometryPrecisionReducer / buffer holes | #66 | Open — both confirmed open `bug` (2026-06-20 scan) |
 | NTS#429 — Simplification and topology | #69 | Open (`bug`) — S-* / `Simplify.v`; the deferred *simplification-preserves-topology / curve* soundness frontier; new driver, 2026-06-20 scan |
 | NTS#780 — InputLines not set when calling RobustLineIntersector | #66, #67 | Open (`bug`) — port/API surface on the `RobustLineIntersector` differential-test path (Phase 0/1 oracle); note, 2026-06-20 scan |
+
+## Wire map — upstream → Proofs epic + topic
+
+> **Macro routing table** for PR machine headers (`topic:`) and blast-cone
+> epicenters. One upstream issue maps to **one primary** Proofs epic; secondary
+> touch is allowed in prose but the wire is the default home.
+>
+> Last authored **2026-08-03** from the board wire list (JTS + NTS).
+
+| Upstream | Proofs epic | `topic:` | Notes |
+|---|---|---|---|
+| [locationtech/jts#1191](https://github.com/locationtech/jts/issues/1191) | [#410](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/410) | `koc` | Compound-curve / Koc railway alignment cluster |
+| [locationtech/jts#1195](https://github.com/locationtech/jts/issues/1195) | [#64](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/64) | `core` | Curve Awareness EPIC — arc primitives / structural core (umbrella still #69) |
+| [locationtech/jts#1190](https://github.com/locationtech/jts/issues/1190) | [#68](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/68) | `mesh` | Conforming Delaunay / triangulation quality |
+| [locationtech/jts#1169](https://github.com/locationtech/jts/issues/1169) | [#1200](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/1200) | `core` | Primary core epic for this driver (open/create board issue if missing) |
+| [locationtech/jts#1000](https://github.com/locationtech/jts/issues/1000) | [#66](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/66) | `precision` | OverlayNG failures summary |
+| [locationtech/jts#1183](https://github.com/locationtech/jts/issues/1183) | [#65](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/65) | `buffer` | Buffer / offset quality |
+| [locationtech/jts#1102](https://github.com/locationtech/jts/issues/1102) | [#65](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/65) | `buffer` | Buffer quality |
+| [locationtech/jts#1181](https://github.com/locationtech/jts/issues/1181) | [#814](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/814) | `core` | Shared core epic with NTS#814 |
+| [locationtech/jts#1180](https://github.com/locationtech/jts/issues/1180) | [#65](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/65) | `buffer` | Buffer / offset |
+| [locationtech/jts#1153](https://github.com/locationtech/jts/issues/1153) | [#64](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/64) | `core` | Arc / curve-core adjacent |
+| [locationtech/jts#1039](https://github.com/locationtech/jts/issues/1039) | [#68](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/68) | `mesh` | Delaunay / mesh robustness |
+| [NetTopologySuite/NetTopologySuite#851](https://github.com/NetTopologySuite/NetTopologySuite/issues/851) | [#65](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/65) | `buffer` | Buffer / offset |
+| [NetTopologySuite/NetTopologySuite#844](https://github.com/NetTopologySuite/NetTopologySuite/issues/844) | [#66](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/66) | `precision` | Precision / snap / overlay |
+| [NetTopologySuite/NetTopologySuite#819](https://github.com/NetTopologySuite/NetTopologySuite/issues/819) | [#67](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/67) | `relate` | RelateNG prepared / A-L cache |
+| [NetTopologySuite/NetTopologySuite#818](https://github.com/NetTopologySuite/NetTopologySuite/issues/818) | [#69](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/69) | `core` | Umbrella / SQL-MM align surface |
+| [NetTopologySuite/NetTopologySuite#817](https://github.com/NetTopologySuite/NetTopologySuite/issues/817) | [#64](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/64) | `core` | Arc / curve-core |
+| [NetTopologySuite/NetTopologySuite#815](https://github.com/NetTopologySuite/NetTopologySuite/issues/815) | [#64](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/64) | `core` | OffsetCurve miter track → arc/core companion (buffer detail still #65) |
+| [NetTopologySuite/NetTopologySuite#814](https://github.com/NetTopologySuite/NetTopologySuite/issues/814) | [#814](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/814) | `core` | 1:1 NTS → Proofs mirror epic |
+| [NetTopologySuite/NetTopologySuite#813](https://github.com/NetTopologySuite/NetTopologySuite/issues/813) | [#68](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/68) | `mesh` | Mesh / triangulation |
+| [NetTopologySuite/NetTopologySuite#812](https://github.com/NetTopologySuite/NetTopologySuite/issues/812) | [#423](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/423) | `metric` | Metric / distance cluster |
+| [NetTopologySuite/NetTopologySuite#810](https://github.com/NetTopologySuite/NetTopologySuite/issues/810) | [#425](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/425) | `coverage` | Coverage cleaner / gap-overlap |
+
+### Topic palette (macro)
+
+| `topic:` | Primary epics | Domain |
+|---|---|---|
+| `core` | #64, #69, #814, #1200 | Arc primitives, SQL/MM structure, shared core |
+| `buffer` | #65 | Buffer / offset / clothoid rings |
+| `precision` | #66 | Snap-rounding, OverlayNG, precision models |
+| `relate` | #67 | DE-9IM / RelateNG / prepared |
+| `mesh` | #68 | Delaunay / Voronoi / local DT |
+| `koc` | #410 | Koc compound-curve alignment |
+| `metric` | #423 | Distance / Hausdorff / Frechet cluster |
+| `coverage` | #425 | Coverage validation / cleaning |
+| `hull` | *(proposed)* | Convex / minimum bounding hulls |
+
+### Proposed new epics (paper ∪ major group)
+
+| `topic:` | Proposal | Upstream / paper | Proofs home today | Action |
+|---|---|---|---|---|
+| **`hull`** | Port **MinimumBoundingTriangle** from JTS 1.21 | [locationtech/jts#1160](https://github.com/locationtech/jts/issues/1160) (major uncovered group) | Linear `Convex.v` only; curve **H-\*** TAG still ⬜; local `.vo` artifacts for MBT may exist off-manifest | Open a board epic (e.g. **#hull** / next free id), wire JTS#1160 → that epic, land `MinimumBoundingTriangle.v` on `_CoqProject.full`, claim-register headlines |
+
+PR body template once wired:
+
+```text
+topic: hull
+claimId: <micro>
+witness: <fixture or none>
+```
 
 ## Cross-cutting findings
 
