@@ -70,14 +70,11 @@
 
 ---
 
-## Cross-walk (legacy numbering)
+## Id discipline
 
-Older scorecards used different G-ids. Prefer this mnemonic suite going forward.
+**This numbering is canonical** for board, tests, and scorecards:
 
-| Legacy (guardrails.md §1) | This suite |
-|---------------------------|------------|
-| G1 difference empty | **G3** SUB self |
-| G2 differenceBA empty | G5 / nested BA (not a sticky four-op) |
-| G3 symDifference empty | **G4** XOR self |
-| G4 intersection covers | **G1** CAP self |
-| G5 union covers | **G2** CUP self |
+G1 CAP · G2 CUP · G3 SUB · G4 XOR · G5 empty partner · G6 completes · V* · R* · F1.
+
+`docs/curve-polygon-self-overlay-guardrails.md` uses the same ids (no parallel
+legacy table).
