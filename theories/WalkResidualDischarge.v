@@ -60,7 +60,8 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                EdgeFaceBridge HBridgeCoreSlice
                                WalkVertexPack WalkFamilies JCTCorridor
                                JCTMinOpenStep WalkCorridor MirrorCorridor
-                               DartSideKit CornerCorridorBridge
+                               DartSideKit CornerCorridorBridge HandoffConnector
+                               C3eEfCorridorAssumption BaseToTipHeadline
                                WalkStepChain WalkChainInduction WalkEndTies
                                WalkRides WalkPremiseBridge WalkResidualKit
                                WalkResidualTies FaceOrbitSep

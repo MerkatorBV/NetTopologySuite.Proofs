@@ -139,7 +139,7 @@ Definition face_transport_premise (E : list Edge) : Prop :=
        <-> point_in_ring (mkPoint (edge_x_at d my + ef) my)
                          (ring_of_chain (d :: c))).
 
-(* C-3e-4 premise-site hooks (CornerCorridorBridge.v discharge lemmas feed
+(* C-3e-4 premise-site hooks (BaseToTipHeadline.v discharge lemmas feed
    `straddle_transport_clash_from_connected` in §3 via the lemmas below). *)
 
 Lemma face_transport_straddle_target_in_complement :
@@ -172,7 +172,7 @@ Qed.
 
 (* Intuitionistic clash at the exact `face_transport_premise` straddle pair
    once complement membership and the two parity readings are in hand.
-   C-3e discharge (CornerCorridorBridge.v) supplies the complement inputs
+   C-3e discharge (BaseToTipHeadline.v) supplies the complement inputs
    via `straddle_transport_clash_from_connected` below. *)
 Lemma straddle_transport_clash_from_complements :
   forall (r : Ring) (d : Dart) (my ef : R),

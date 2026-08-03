@@ -40,7 +40,8 @@ From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
                                JCTSeparation JCTHugStep RingClearance
                                SectorPath CornerSamples CornerConnector
                                JCTCorridor WalkCorridor MirrorCorridor
-                               DartSideKit CornerCorridorBridge
+                               DartSideKit CornerCorridorBridge HandoffConnector
+                               C3eEfCorridorAssumption BaseToTipHeadline
                                WalkStepChain WalkChainInduction
                                WalkEndTies.
 

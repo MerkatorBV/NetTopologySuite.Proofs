@@ -3,6 +3,9 @@
 theories/Real.v
 theories/Lattice.v
 theories/Distance.v
+# WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
+# (AST identity, not string formatting).  No Admitted.
+theories/WktGeoJsonRoundtrip.v
 theories/Orientation.v
 theories/Segment.v
 theories/Intersect.v
