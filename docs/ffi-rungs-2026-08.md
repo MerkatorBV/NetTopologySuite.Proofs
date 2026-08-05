@@ -20,9 +20,9 @@ process — not new ABI symbols.
 | **1** | Re-extract `Validate_binary64_extract.v` → freshen `oracle/extracted.ml` | **GREEN** (local WSL; extract is gitignored) |
 | **2** | `make -C oracle ffi` → full `libntsrocq.so` + `ffi_probe` | **GREEN** after rung 1 |
 | **3** | `make -C oracle ffi-parity` | **YELLOW** — 3 ORIENT_EXACT* cases segfault on extreme coords (see §3) |
-| **4** | Orientation differential scout for [jts#1093](https://github.com/locationtech/jts/pull/1093) | **Harness landed** (`oracle/gen_jts1093_orient_scout.py`) |
+| **4** | Orientation differential scout for [jts#1093](https://github.com/locationtech/jts/pull/1093) | **GREEN** — 45 vectors; see [`jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md) |
 | **5** | Retire / demote `scout_incircle_*` once full FFI is the default path | Pending CI green on parity |
-| **6** | Optional: post numbers on jts#1093 / keep #1197 green | Later |
+| **6** | Optional: post numbers on jts#1093 / keep #1197 green | Draft: `tests/Discussion839Mre/jts-1093-comment.md` |
 
 ---
 
@@ -102,7 +102,7 @@ allocation under the shared-lib runtime), not the abstract algorithm.
 
 ---
 
-## §4 — Orientation lane (rung 4)
+## §4 — Orientation lane (rung 4) — GREEN
 
 Upstream: [jts#1093](https://github.com/locationtech/jts/pull/1093) replaces
 JTS `orientationIndexFilter` Shewchuk-ish / `DP_SAFE_EPSILON=1e-15` path with
@@ -122,10 +122,13 @@ Corpus counterpart:
 |---|---|
 | `b64_orient_sign_filtered` | Shewchuk Stage A (corpus / FFI) |
 | `b64_orient2d_exact` / `ORIENT_EXACT` | Full-plane sign GT |
-| `oracle/gen_jts1093_orient_scout.py` | Ozaki mirror vs Shewchuk filter vs exact |
+| `oracle/gen_jts1093_orient_scout.py` | Three-way: master / Ozaki / Shewchuk vs exact |
+| [`jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md) | Session write-up |
 
-Gate intent: **Ozaki CERTAIN never disagrees with exact**; report how often
-Ozaki is CERTAIN when Shewchuk is UNCERTAIN (tighter filter claim).
+**Gate (2026-08-05, 45 vectors):** Ozaki / Shewchuk / master CERTAIN vs exact
+conflicts all **0**. Ozaki CERTAIN while master UNCERTAIN: **4** (same-sign
+\(h \in \{10^{-15}, 2\cdot10^{-15}\}\) band). Ozaki ↔ corpus Shewchuk certainty
+splits: **0**. Details and PR comment draft in the lane doc.
 
 ---
 
@@ -142,8 +145,8 @@ Ozaki is CERTAIN when Shewchuk is UNCERTAIN (tighter filter claim).
 ## §6 — Next actions
 
 1. Track ORIENT_EXACT FFI segfault (rung 3 close-out) — isolated repro above.
-2. Run `python3 oracle/gen_jts1093_orient_scout.py` in CI-ish local loop; comment
-   on jts#1093 only with numbers.
+2. ~~Run `python3 oracle/gen_jts1093_orient_scout.py`~~ **done** (rung 4 GREEN);
+   optional: post `tests/Discussion839Mre/jts-1093-comment.md` on jts#1093.
 3. Wire `make -C oracle ffi` into developer docs / optional CI once parity is
    green or exact is skipped under a named env flag.
 

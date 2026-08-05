@@ -1,16 +1,67 @@
 # JTS #1093 Ozaki orientation filter scout
 # topic: precision  epic: #66
 # OZAKI_K = 3.3306690621773724e-16
+# JTS_DP_SAFE_EPSILON = 1e-15
 # CCWERRBOUND_A (Shewchuk) = 3.3306690738754716e-16
-# Columns: name EXACT OZAKI_SIGN/CERT SHEW_SIGN/CERT FFI_FILT note
+# Columns: name EXACT JTS_MASTER OZAKI SHEW FFI_FILT note
+# CERT = filter commits sign; UNC = escalate to DD/exact
 #
-pin_ccw_unit	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# area +1/2
-pin_cw_unit	EXACT=NEG	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# area -1/2
-pin_collinear_x	EXACT=ZERO	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# on segment
-pin_collinear_diag	EXACT=ZERO	OZAKI=ZERO/UNC	SHEW=ZERO/UNC	FFI_FILT=ZERO	# diagonal
-near_collinear_1e-8	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# slightly above segment
-near_collinear_1e-12	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# may be filter-uncertain
-large_ccw	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# homothetic CCW
-jts_style_near_col	EXACT=NEG	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# near-collinear geographic-scale sample
-int_tri	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# 3-4-5 area
-int_vertex	EXACT=ZERO	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# q = a
+pin_ccw_unit	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# area +1/2
+pin_cw_unit	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# area -1/2
+pin_collinear_x	EXACT=ZERO	JTS=ZERO/CERT	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# on segment
+pin_collinear_diag	EXACT=ZERO	JTS=ZERO/UNC	OZAKI=ZERO/UNC	SHEW=ZERO/UNC	FFI_FILT=ZERO	# diagonal
+int_tri	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# 3-4-5 area
+int_vertex	EXACT=ZERO	JTS=ZERO/CERT	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# q = a
+int_vertex_b	EXACT=ZERO	JTS=ZERO/CERT	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# q = b
+int_mid_edge	EXACT=ZERO	JTS=ZERO/CERT	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# mid edge
+near_col_1e-6	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# clear of 1e-15 band
+near_col_1e-8	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# slightly above segment
+near_col_1e-12	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# may sit near Shewchuk/Ozaki bound
+near_col_1e-14	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# deep near-col; expect filter UNCERTAIN on some filters
+near_col_1e-16	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# sub-ulp of unit segment half-length scale
+near_col_neg_1e-12	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# mirror below segment
+large_ccw_1e6	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# homothetic CCW scale=1e6
+large_near_col_1e6	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# near-col at scale 1e6
+large_ccw_1e8	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# homothetic CCW scale=1e8
+large_near_col_1e8	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# near-col at scale 1e8
+large_ccw_1e12	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# homothetic CCW scale=1e12
+large_near_col_1e12	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# near-col at scale 1e12
+jts_style_near_col	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# near-collinear geographic-scale sample
+opp_sign_ccw	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# detleft/detright opposite signs; early CERTAIN on detsum filters
+opp_sign_cw	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# opposite-sign products; CW
+samesign_h_1e-12	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# same-sign products; h=1e-12; detsum vs Ozaki band probe
+samesign_h_neg_1e-12	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# same-sign products; h=-1e-12
+samesign_h_1e-14	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# same-sign products; h=1e-14; detsum vs Ozaki band probe
+samesign_h_neg_1e-14	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# same-sign products; h=-1e-14
+samesign_h_1e-15	EXACT=POS	JTS=POS/UNC	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=UNCERTAIN	# same-sign products; h=1e-15; detsum vs Ozaki band probe
+samesign_h_neg_1e-15	EXACT=NEG	JTS=NEG/UNC	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=UNCERTAIN	# same-sign products; h=-1e-15
+samesign_h_2e-15	EXACT=POS	JTS=POS/UNC	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# same-sign products; h=2e-15; detsum vs Ozaki band probe
+samesign_h_neg_2e-15	EXACT=NEG	JTS=NEG/UNC	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# same-sign products; h=-2e-15
+samesign_h_5e-16	EXACT=POS	JTS=POS/UNC	OZAKI=POS/UNC	SHEW=POS/UNC	FFI_FILT=UNCERTAIN	# same-sign products; h=5e-16; detsum vs Ozaki band probe
+samesign_h_neg_5e-16	EXACT=NEG	JTS=NEG/UNC	OZAKI=NEG/UNC	SHEW=NEG/UNC	FFI_FILT=UNCERTAIN	# same-sign products; h=-5e-16
+samesign_h_3p3e-16	EXACT=POS	JTS=POS/UNC	OZAKI=POS/UNC	SHEW=POS/UNC	FFI_FILT=UNCERTAIN	# same-sign products; h=3p3e-16; detsum vs Ozaki band probe
+samesign_h_neg_3p3e-16	EXACT=NEG	JTS=NEG/UNC	OZAKI=NEG/UNC	SHEW=NEG/UNC	FFI_FILT=UNCERTAIN	# same-sign products; h=-3p3e-16
+samesign_h_1e-16	EXACT=ZERO	JTS=ZERO/UNC	OZAKI=ZERO/UNC	SHEW=ZERO/UNC	FFI_FILT=ZERO	# same-sign products; h=1e-16; detsum vs Ozaki band probe
+samesign_h_neg_1e-16	EXACT=NEG	JTS=NEG/UNC	OZAKI=NEG/UNC	SHEW=NEG/UNC	FFI_FILT=UNCERTAIN	# same-sign products; h=-1e-16
+samesign_scaled_1000	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# same-sign near-col at scale 1000
+samesign_scaled_1e+06	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# same-sign near-col at scale 1e+06
+fp_almost_col	EXACT=ZERO	JTS=ZERO/UNC	OZAKI=ZERO/UNC	SHEW=ZERO/UNC	FFI_FILT=ZERO	# decimal .1 chain; may be exact-zero or not in b64
+fp_almost_col_rev	EXACT=ZERO	JTS=ZERO/UNC	OZAKI=ZERO/UNC	SHEW=ZERO/UNC	FFI_FILT=ZERO	# decimal .1 reverse order
+zero_edge	EXACT=ZERO	JTS=ZERO/UNC	OZAKI=ZERO/UNC	SHEW=ZERO/UNC	FFI_FILT=ZERO	# a = b; det = 0
+anti_abq	EXACT=POS	JTS=POS/CERT	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# antisym partner of anti_baq
+anti_baq	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# swap a/b flips sign
+geos955_abc_orient	EXACT=NEG	JTS=NEG/CERT	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# GEOS 955 / jts#1171 triangle orientation (mesh spillover)
+
+# --- summary ---
+# vectors=45
+# expected_fail=0
+# ozaki_certain_vs_exact_conflict=0
+# shew_certain_vs_exact_conflict=0
+# jts_master_certain_vs_exact_conflict=0
+# ozaki_uncertain=10
+# shew_uncertain=10
+# jts_master_uncertain=14
+# ozaki_tighter_than_jts_master=4
+# jts_master_tighter_than_ozaki=0
+# ozaki_tighter_than_shew=0
+# shew_tighter_than_ozaki=0
