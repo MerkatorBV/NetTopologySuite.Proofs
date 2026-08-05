@@ -1,13 +1,14 @@
 # Scout — NTS discussion #839 (ConformingDelaunay + concave polygon)
 
-**Date**: 2026-08-05.
+**topic:** `mesh` (Delaunay / CDTB legality; PIP post-filter is secondary substrate).  
+**Date**: 2026-08-05.  
 **Upstream**: [NetTopologySuite/NetTopologySuite#discussion-839](https://github.com/NetTopologySuite/NetTopologySuite/discussions/839)
-  — *ConformingDelaunayTriangulationBuilder Concave polygon* (CodeTwentyNineLtd, 2026-03-15; unanswered at scout time).
+  — *ConformingDelaunayTriangulationBuilder Concave polygon* (CodeTwentyNineLtd, 2026-03-15; unanswered at scout time).  
 **Corpus home**: epic [#68](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/68) (`topic: mesh`), with
-  PIP / ray-parity substrate from Phase 3 JCT (`point_in_ring`, counterexample gallery).
+  PIP / ray-parity substrate from Phase 3 JCT (`point_in_ring`, counterexample gallery).  
 **Related upstream**: [locationtech/jts#1190](https://github.com/locationtech/jts/issues/1190)
-  (ConformingDelaunay quality / already-Delaunay constraints) — already wired to #68 in `TRIAGE_NTS_JTS_ISSUES.md`.
-**Scope**: 1–2 hour corpus inventory + claim triage (no new proofs this session).
+  (ConformingDelaunay quality / already-Delaunay constraints) — already wired to #68 in `TRIAGE_NTS_JTS_ISSUES.md`.  
+**Scope**: 1–2 hour corpus inventory + claim triage (no new proofs this session).  
 **Question**: What can this corpus *already* say, with `Qed`, about the two complaints in #839 —
   (A) an apparently non-Delaunay triangle in the CDT output, and
   (B) exterior triangles surviving centroid + `IndexedPointInAreaLocator` filtering?

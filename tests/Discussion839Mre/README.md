@@ -32,7 +32,10 @@ Oracle resolution order:
 
 1. `ORACLE_BIN` — native Windows path to `oracle_bin` if present  
 2. `WSL_ORACLE_BIN` — Linux path, invoked as `wsl.exe -e <path>`  
-3. Default: `/home/user/nettopologysuite.proofs/oracle/oracle_bin`
+3. Built-in fallback: `/home/user/nettopologysuite.proofs/oracle/oracle_bin`
+
+The fallback path is a **local template** (one developer’s WSL home layout), not
+portable. Set `ORACLE_BIN` or `WSL_ORACLE_BIN` on any other machine.
 
 ## Relation to Phase 5 FFI
 
