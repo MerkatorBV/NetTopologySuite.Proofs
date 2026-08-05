@@ -1,0 +1,26 @@
+# JTS #1145 YStripes PIP gallery differential (2026-08-05)
+# Source: docs/nts-oracle-gallery.md + C# port of micycle1/jts ystripes tip
+# Harness: tests/Discussion839Mre --jts1145
+# GT = geometric / OGC Location; parity column notes naive ray-parity where it differs
+# status: all PASS (YStripes == Indexed == Simple == GT)
+#
+# id  x  y  GT  parity  Indexed  Simple  YStripes  status  theorem
+
+VGRAZE_G	0	0.5	INT	odd	INT	INT	INT	PASS	diamond_point_in_ring_A
+VGRAZE0	0	0	INT	even*	INT	INT	INT	PASS	diamond_refutes_parity_seam
+HORZ_E	-1	1	EXT	odd*	EXT	EXT	EXT	PASS	notch_refutes_parity_without_guard
+RECT_IN	2	1.5	INT	in	INT	INT	INT	PASS	point_in_ring_rect_iff
+RECT_L	0	1.5	BND	parity-in	BND	BND	BND	PASS	point_in_ring_rect_iff_left
+RECT_R	4	1.5	BND	parity-out	BND	BND	BND	PASS	point_in_ring_rect_iff_right
+RECT_B	2	0	BND	parity-out	BND	BND	BND	PASS	point_in_ring_rect_iff_bottom
+RECT_T	2	3	BND	parity-out	BND	BND	BND	PASS	point_in_ring_rect_iff_top
+PIX_C	0	0	INT	in	INT	INT	INT	PASS	unit_pixel_centre_in_ring
+PIX_BOT	0	-0.5	BND	parity-out*	BND	BND	BND	PASS	pixel_grazing_bottom_edge
+SPECT_IN	5	0.5	INT	odd	INT	INT	INT	PASS	spectre_parity_classification
+SPECT_POCK	3.5	0.5	EXT	even	EXT	EXT	EXT	PASS	spectre_parity_classification_pocket
+HAT_IN	4.25	2.1650635094610964	INT	odd	INT	INT	INT	PASS	hat_parity_classification_interior_APPROX
+HAT_POCK	3.5	0.4330127018922193	EXT	even	EXT	EXT	EXT	PASS	hat_parity_classification_pocket_APPROX
+
+# Summary: 14/14 PASS, 0 YStripes≠GT, 0 Y≠Indexed, 0 Y≠Simple
+# Critical robustness: VGRAZE0 INT, HORZ_E EXT, SPECT_POCK EXT, HAT_POCK EXT — all GREEN
+# Write-up: docs/jts-1145-pip-lane-2026-08.md

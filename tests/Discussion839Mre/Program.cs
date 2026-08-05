@@ -16,9 +16,11 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using Discussion839Mre;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Algorithm.Locate;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.IO;
 using NetTopologySuite.Noding;
 using NetTopologySuite.Noding.Snapround;
 using NetTopologySuite.Triangulate;
@@ -65,6 +67,14 @@ static class Program
             || args.Contains("--scaled-noder", StringComparer.OrdinalIgnoreCase))
         {
             return RunJts90ScaledNoderMre();
+        }
+
+        // JTS#1145 YStripes PIP gallery vs corpus oracle (no Rocq binary required).
+        if (args.Contains("--jts1145", StringComparer.OrdinalIgnoreCase)
+            || args.Contains("--ystripes", StringComparer.OrdinalIgnoreCase)
+            || args.Contains("--pip-gallery", StringComparer.OrdinalIgnoreCase))
+        {
+            return RunJts1145PipGallery();
         }
 
         bool useScaled = !args.Contains("--no-scale", StringComparer.OrdinalIgnoreCase);
@@ -281,6 +291,209 @@ static class Program
 
         return 0;
     }
+
+    /// <summary>
+    /// JTS PR #1145 YStripesPointInAreaLocator vs NTS Indexed/Simple locators
+    /// on the corpus PIP gallery (docs/nts-oracle-gallery.md). Geometric GT is
+    /// the Qed-backed correct answer; pure ray-parity is recorded separately
+    /// where it disagrees at vertex-graze / horizontal-edge rows.
+    /// </summary>
+    private static int RunJts1145PipGallery()
+    {
+        Console.WriteLine("=== JTS#1145 YStripes PIP gallery (corpus oracle) ===");
+        Console.WriteLine($"NTS: {typeof(Geometry).Assembly.GetName().Version}");
+        Console.WriteLine("Locators: IndexedPointInAreaLocator | SimplePointInAreaLocator | YStripes (PR#1145 port)");
+        Console.WriteLine("GT: geometric correct answer from docs/nts-oracle-gallery.md (Qed theorems)");
+        Console.WriteLine();
+
+        var rdr = new WKTReader();
+        var cases = GalleryCases();
+        int pass = 0, fail = 0, warn = 0;
+        var rows = new List<string>();
+
+        Console.WriteLine(
+            $"{"id",-8} {"pt",-22} {"GT",-9} {"parity",-9} {"Indexed",-9} {"Simple",-9} {"YStripes",-9} note");
+        Console.WriteLine(new string('-', 110));
+
+        foreach (var c in cases)
+        {
+            var geom = rdr.Read(c.Wkt);
+            var pt = new Coordinate(c.X, c.Y);
+            var indexed = new IndexedPointInAreaLocator(geom).Locate(pt);
+            var simple = SimplePointInAreaLocator.Locate(pt, geom);
+            var ystripes = new YStripesPointInAreaLocator(geom).Locate(pt);
+
+            bool idxOk = MatchesGallery(indexed, c.GeomExpected);
+            bool simOk = MatchesGallery(simple, c.GeomExpected);
+            bool ysOk = MatchesGallery(ystripes, c.GeomExpected);
+            bool parityMismatch = c.NaiveParityDiffers;
+
+            string status;
+            if (ysOk && idxOk && simOk)
+            {
+                pass++;
+                status = "PASS";
+            }
+            else if (ysOk)
+            {
+                // YStripes correct vs GT; baseline may differ only on BOUNDARY convention
+                warn++;
+                status = "WARN";
+            }
+            else
+            {
+                fail++;
+                status = "FAIL";
+            }
+
+            string note = status;
+            if (parityMismatch) note += " | naive-parity≠geom";
+            if (!idxOk) note += " | Indexed≠GT";
+            if (!simOk) note += " | Simple≠GT";
+            if (!ysOk) note += " | YStripes≠GT";
+            if (ystripes != indexed) note += " | Y≠Indexed";
+            if (ystripes != simple) note += " | Y≠Simple";
+
+            string ptStr = $"({Fmt(c.X)},{Fmt(c.Y)})";
+            Console.WriteLine(
+                $"{c.Id,-8} {ptStr,-22} {LocTag(c.GeomExpected),-9} {c.NaiveParityTag,-9} " +
+                $"{LocTag(indexed),-9} {LocTag(simple),-9} {LocTag(ystripes),-9} {note}");
+
+            rows.Add(string.Join('\t',
+                c.Id, c.X.ToString("G17", CultureInfo.InvariantCulture),
+                c.Y.ToString("G17", CultureInfo.InvariantCulture),
+                LocTag(c.GeomExpected), c.NaiveParityTag,
+                LocTag(indexed), LocTag(simple), LocTag(ystripes), status, c.Theorem));
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("=== SUMMARY ===");
+        Console.WriteLine($"cases: {cases.Count}  PASS(all=GT): {pass}  WARN(YStripes=GT): {warn}  FAIL(YStripes≠GT): {fail}");
+
+        // Critical robustness rows that the gallery was built for
+        var critical = new[] { "VGRAZE0", "HORZ_E", "SPECT_POCK", "HAT_POCK" };
+        int critFail = 0;
+        foreach (var c in cases.Where(c => critical.Contains(c.Id)))
+        {
+            var geom = rdr.Read(c.Wkt);
+            var ys = new YStripesPointInAreaLocator(geom).Locate(new Coordinate(c.X, c.Y));
+            if (!MatchesGallery(ys, c.GeomExpected))
+            {
+                critFail++;
+                Console.WriteLine($"  CRITICAL FAIL {c.Id}: YStripes={LocTag(ys)} GT={LocTag(c.GeomExpected)}");
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("=== VERDICT ===");
+        if (fail == 0 && critFail == 0)
+        {
+            Console.WriteLine("  GREEN: YStripes port matches geometric GT on all gallery vectors");
+            Console.WriteLine("         (vertex-graze, horizontal-edge, Spectre pocket, Hat pocket, rect/pixel boundary).");
+            Console.WriteLine("  Product: safe soundness gate for JTS#1145; recommend adding these WKT pins to AbstractPointInRingTest.");
+        }
+        else
+        {
+            Console.WriteLine($"  RED: {fail} YStripes≠GT ({critFail} critical). Do not rubber-stamp #1145.");
+        }
+        Console.WriteLine("See docs/jts-1145-pip-lane-2026-08.md");
+        Console.WriteLine();
+        Console.WriteLine("--- machine table (tab) ---");
+        Console.WriteLine("id\tx\ty\tGT\tparity\tIndexed\tSimple\tYStripes\tstatus\ttheorem");
+        foreach (var r in rows) Console.WriteLine(r);
+
+        return fail == 0 ? 0 : 1;
+    }
+
+    private sealed record GalleryCase(
+        string Id,
+        string Wkt,
+        double X,
+        double Y,
+        Location GeomExpected,
+        string NaiveParityTag,
+        bool NaiveParityDiffers,
+        string Theorem);
+
+    private static List<GalleryCase> GalleryCases()
+    {
+        // WKT + geometric answers from docs/nts-oracle-gallery.md.
+        // Location.Boundary rows are OGC boundary (Contains=false); pure parity half-open
+        // is recorded in NaiveParityTag where relevant.
+        const string diamond =
+            "POLYGON ((0 1, 1 0, 0 -1, -1 0, 0 1))";
+        const string notch =
+            "POLYGON ((0 0, 4 0, 4 2, 2 2, 2 1, 0 1, 0 0))";
+        const string rect =
+            "POLYGON ((0 0, 4 0, 4 3, 0 3, 0 0))";
+        const string pixel =
+            "POLYGON ((-0.5 -0.5, 0.5 -0.5, 0.5 0.5, -0.5 0.5, -0.5 -0.5))";
+        const string spectre =
+            "POLYGON ((0 0, 2 0, 3.5 1, 4 0, 6 0, 7.5 1, 7 2, 5 2, 4.5 3, 3 2, 1 2, 0.5 1, -0.5 1, 0 0))";
+        // Hat monotile APPROX (exact uses √3); still exercises concave pocket.
+        const string hat =
+            "POLYGON ((0 0, 2 0, 3.5 0.8660254, 4 0, 6 0, 7.5 0.8660254, 7 1.7320508, 5 1.7320508, 4.5 2.5980762, 3 1.7320508, 1 1.7320508, 0.5 0.8660254, -0.5 0.8660254, 0 0))";
+
+        double s3 = Math.Sqrt(3.0);
+
+        return new List<GalleryCase>
+        {
+            // Tier 1.1 vertex graze
+            new("VGRAZE_G", diamond, 0, 0.5, Location.Interior, "odd", false,
+                "diamond_point_in_ring_A"),
+            new("VGRAZE0", diamond, 0, 0, Location.Interior, "even*", true,
+                "diamond_refutes_parity_seam"),
+
+            // Tier 1.2 horizontal edge
+            new("HORZ_E", notch, -1, 1, Location.Exterior, "odd*", true,
+                "notch_refutes_parity_without_guard"),
+
+            // Tier 1.3 rectangle half-open / OGC boundary
+            new("RECT_IN", rect, 2, 1.5, Location.Interior, "in", false,
+                "point_in_ring_rect_iff"),
+            new("RECT_L", rect, 0, 1.5, Location.Boundary, "parity-in", true,
+                "point_in_ring_rect_iff left"),
+            new("RECT_R", rect, 4, 1.5, Location.Boundary, "parity-out", false,
+                "point_in_ring_rect_iff right"),
+            new("RECT_B", rect, 2, 0, Location.Boundary, "parity-out", false,
+                "point_in_ring_rect_iff bottom"),
+            new("RECT_T", rect, 2, 3, Location.Boundary, "parity-out", false,
+                "point_in_ring_rect_iff top"),
+
+            // Tier 1.4 hot pixel
+            new("PIX_C", pixel, 0, 0, Location.Interior, "in", false,
+                "unit_pixel_centre_in_ring"),
+            new("PIX_BOT", pixel, 0, -0.5, Location.Boundary, "parity-out*", true,
+                "pixel_grazing_bottom_edge"),
+
+            // Tier 2 Spectre
+            new("SPECT_IN", spectre, 5, 0.5, Location.Interior, "odd", false,
+                "spectre_parity_classification"),
+            new("SPECT_POCK", spectre, 3.5, 0.5, Location.Exterior, "even", false,
+                "spectre_parity_classification pocket"),
+
+            // Tier 2 Hat (approx WKT; GT from geometric pocket/interior)
+            new("HAT_IN", hat, 4.25, 5 * s3 / 4, Location.Interior, "odd", false,
+                "hat_parity_classification interior APPROX"),
+            new("HAT_POCK", hat, 3.5, s3 / 4, Location.Exterior, "even", false,
+                "hat_parity_classification pocket APPROX"),
+        };
+    }
+
+    /// <summary>
+    /// Gallery GT for robust OGC-style locators: Interior / Exterior / Boundary.
+    /// Pure parity may disagree on * rows; MatchesGallery accepts Boundary as a
+    /// correct robust answer whenever GT is Boundary.
+    /// </summary>
+    private static bool MatchesGallery(Location got, Location expected) => got == expected;
+
+    private static string LocTag(Location loc) => loc switch
+    {
+        Location.Interior => "INT",
+        Location.Exterior => "EXT",
+        Location.Boundary => "BND",
+        _ => loc.ToString(),
+    };
 
     /// <summary>
     /// JTS PR #90 / mukoki OpenJUMP beanshell: ScaledNoder(scale=1) vs scale≠1
