@@ -1,7 +1,7 @@
 # ScaledNoder lane — JTS #90 scale=0 / scale=1 policy scope
 
 **Date**: 2026-08-05.  
-**topic:** `precision` · epic **#66** (snap / noding wrapper; buffer fixed-precision path)  
+**topic:** `precision` · `buffer` · `docs` · epic **#66** (snap / noding wrapper; buffer fixed-precision path)  
 **Upstream**: [locationtech/jts#90](https://github.com/locationtech/jts/pull/90)
   *Fix ScaledNoder behaviour* (jnh5y / mukoki lineage, draft since 2017) — 2-line
   control-flow change in `ScaledNoder`.  
@@ -214,9 +214,20 @@ scale=1 inversion.
 | `docs/jts-90-scalednoder-lane-2026-08.md` | This write-up |
 | `tests/Discussion839Mre/jts-90-comment.md` | Optional JTS PR comment draft |
 
+### Keep-green (bit-rot gate)
+
+Named test plan — re-run after NTS package bumps or `ScaledNoder` edits:
+
 ```powershell
 dotnet run --project tests/Discussion839Mre -c Release -- --jts90
+# expect: process exit code 0
+# expect: "Mukoki mixed-precision ... MASKED by SnapRoundingNoder"
+# expect: "scale=0 footgun LIVE"
 ```
+
+Exit **0** encodes the live findings (SRN masks mukoki **and** scale=0 collapse
+observed). Exit **1** means the NTS control flow or noder behaviour drifted —
+update this lane doc before treating the scout as current.
 
 ---
 

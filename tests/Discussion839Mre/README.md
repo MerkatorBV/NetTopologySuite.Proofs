@@ -58,6 +58,7 @@ Replays the scale=0 / scale=1 control-flow question from
 dotnet run --project tests/Discussion839Mre -c Release -- --jts90
 # alias:
 dotnet run --project tests/Discussion839Mre -c Release -- --scaled-noder
+# keep-green: expect exit code 0 (SRN masks mukoki + scale=0 footgun observed)
 ```
 
 Write-up: [`docs/jts-90-scalednoder-lane-2026-08.md`](../../docs/jts-90-scalednoder-lane-2026-08.md).  
