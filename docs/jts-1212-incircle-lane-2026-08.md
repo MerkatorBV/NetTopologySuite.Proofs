@@ -127,7 +127,7 @@ exactly the fix shape.
 | 1b | Add `jts1212_incircle_vectors.txt` to CI smoke (`make -C oracle` optional target) | small |
 | 1c | Comment on jts#1212 with GEOS955 StageA=0 / oracle=POS table (numbers only) | 15 min |
 | 1d | Extract more quads from full circle expected MULTILINESTRING if needed | medium |
-| 2 | Orientation lane (#1093 Ozaki) — separate session | — |
+| 2 | Orientation lane (#1093 Ozaki) — separate session | **GREEN** ([jts-1093-orient-lane-2026-08.md](jts-1093-orient-lane-2026-08.md)) |
 
 ---
 

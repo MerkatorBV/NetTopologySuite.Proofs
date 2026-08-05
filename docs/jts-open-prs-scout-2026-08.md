@@ -37,7 +37,7 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
 | **1** | [#1212](https://github.com/locationtech/jts/pull/1212) | Improve triangulation robustness | **#68** `mesh` | H | L–M | H | `TrianglePredicate.isInCircleRobust` Shewchuk-style filter + `Vertex.isCCW` → `Orientation.index`. Corpus has `b64_inCircle` / `DelaunayLocallyDelaunay` / empty-circle pins — can **diff-test** the new filter against `INCIRCLE_SIGN` / `nts_rocq_in_circle`. Direct NTS port path. |
 | **2** | [#1094](https://github.com/locationtech/jts/pull/1094) | Make isInCircleRobust robust | **#68** `mesh` | H | L | H | Older sibling of #1212 on the same class. Same gate; prefer whichever is current tip — treat as **one lane**. |
 | **3** | [#311](https://github.com/locationtech/jts/pull/311) | isInCircleAdapt sketch Java port | **#68** `mesh` | H | L | H | Shewchuk adaptive sketch; updated 2026-05. Superseded in spirit by #1094/#1212 but useful as **design history**. Corpus Stage D expansion work is the formal counterpart. |
-| **4** | [#1093](https://github.com/locationtech/jts/pull/1093) | Change Shewchuk Orientation filter to Ozaki et al. | **#66/#64** `precision`/`core` | H | M | H | Changes production `CGAlgorithmsDD` orientation filter. Corpus ground truth: `Orient_b64_exact*` / `nts_rocq_orient_sign_exact`. **Must** differential-test before blessing; Ozaki vs Shewchuk Stage A is a real soundness product decision. |
+| **4** | [#1093](https://github.com/locationtech/jts/pull/1093) | Change Shewchuk Orientation filter to Ozaki et al. | **#66/#64** `precision`/`core` | H | M | H | Production `CGAlgorithmsDD` filter. **Lane GREEN 2026-08-05:** 45-vector three-way gate (master `1e-15` / Ozaki / corpus Shewchuk) vs `ORIENT_EXACT` — 0 CERTAIN conflicts; Ozaki tighter than master on 4 same-sign band cases. See [`jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md). |
 | **5** | [#1197](https://github.com/locationtech/jts/pull/1197) | Characterize DD orientation soundness (#1106) | **#66** `precision` | H | L | M | **Ours.** Test-only characterization + `RocqRefRunner`. Aligns with `docs/verified-claims.md` orient rows and oracle vectors. **Push merge / keep green** — low cost, high signalling. |
 | **6** | [#90](https://github.com/locationtech/jts/pull/90) | Fix ScaledNoder behaviour (draft) | **#66** `precision` | H | M | H | Scale=0 vs scale=1 noding inconsistency. Corpus: snap / noding / `GeometryPrecisionReducer` lane. Draft but high risk if scaled noding is wrong. |
 | **7** | [#1145](https://github.com/locationtech/jts/pull/1145) | YStripesPointInAreaLocator | **#67** `relate` (+ JCT) | H | L–M | M | New PIP implementation. Corpus `point_in_ring` + gallery (`nts-oracle-gallery.md`) is the **regression oracle** — run hat/Spectre/vertex-graze/horizontal-edge vectors. |
@@ -65,13 +65,18 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
      + [`docs/jts-311-incircle-lane-2026-08.md`](jts-311-incircle-lane-2026-08.md).  
      Stage A sketch + DDFast lineage; **ε = `ulp(1.0)` = \(2^{-52}\)** (looser than
      Shewchuk \(2^{-53}\)); name is not full `incircleadapt` (#1094). Product tip stays **#1212**.  
-2. **Orientation lane (P0)** — **STARTED 2026-08-05 (FFI rungs):**  
-   Full `libntsrocq` rebuild path after re-extract (`docs/ffi-rungs-2026-08.md`,
-   `scripts/rebuild_oracle_ffi.sh`).  
-   Differential scout: `oracle/gen_jts1093_orient_scout.py` (Ozaki mirror vs
-   Shewchuk Stage A vs `ORIENT_EXACT`).  
-   Note: `ORIENT_EXACT` **FFI** still has a segfault class on extreme coords
-   (parity YELLOW); use `oracle_bin` for exact GT. Keep #1197 green.  
+2. **Orientation lane (P0)** — **LANDED 2026-08-05 (session GREEN):**  
+   - Full `libntsrocq` rebuild path after re-extract (`docs/ffi-rungs-2026-08.md`,
+     `scripts/rebuild_oracle_ffi.sh`).  
+   - Differential scout: `oracle/gen_jts1093_orient_scout.py` — **three-way**
+     mirror (JTS-master `1e-15` vs Ozaki #1093 vs corpus Shewchuk Stage A) vs
+     `ORIENT_EXACT`.  
+   - Table + write-up: `oracle/jts1093_orient_vectors.txt` (45 vectors) +
+     [`docs/jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md).  
+   - Gate: 0 CERTAIN conflicts; Ozaki CERTAIN while master UNCERTAIN on **4**
+     same-sign band vectors; Ozaki ↔ corpus Shewchuk certainty splits **0**.  
+   - Note: `ORIENT_EXACT` **FFI** still has a segfault class on extreme coords
+     (parity YELLOW); use `oracle_bin` for exact GT. Keep #1197 green.  
 3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
 4. **ScaledNoder #90 (P1)** — Scope whether scale=0/1 bug maps to a named snap claim.  
 5. **Coverage #1084 (P1)** — Spec sketch only until #425 cleaner is stable.
@@ -176,7 +181,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 | Cluster | Members | Action |
 |---|---|---|
 | **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged. History: [`jts-311-incircle-lane-2026-08.md`](jts-311-incircle-lane-2026-08.md). FFI scout + review: [`jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md). Tip differential: [`jts-1212-incircle-lane-2026-08.md`](jts-1212-incircle-lane-2026-08.md) |
-| **Orientation filters** | #1093 (Ozaki production), #1197 (DD limits tests), #1189 (isCCW test INVALID) | Gate #1093 against corpus exact; keep #1197; mine #1189 for vectors only |
+| **Orientation filters** | #1093 (Ozaki production), #1197 (DD limits tests), #1189 (isCCW test INVALID) | **#1093 lane GREEN** ([jts-1093-orient-lane-2026-08.md](jts-1093-orient-lane-2026-08.md)); keep #1197; mine #1189 for vectors only |
 | **DistanceOp / LineSegment** | #926, #930 | One review pass if either moves; low proof cost |
 | **CI matrix** | #638, #646 | Ignore unless JTS maintainers revive |
 
@@ -230,7 +235,7 @@ Do **not** open multi-session theory work for P2 PRs.
 ## §9 — Suggested one-liner picks for Joost / BDFL
 
 1. **Bet the mesh lane on #1212** (with #1094/#311 as history) — highest corpus leverage per hour.  
-2. **Gate any orientation filter change (#1093) on exact orient** — never merge on vibes.  
+2. **Orientation filter change (#1093) gated on exact orient** — session GREEN; re-run table if the PR is revised.  
 3. **Use the PIP gallery as free CI for #1145**.  
 4. **Ignore ~55% of the open queue** (CI/IO/docs/API) for proof planning.  
 5. **Keep our four PRs** green; only #1197 and #1216 need corpus-adjacent attention.
