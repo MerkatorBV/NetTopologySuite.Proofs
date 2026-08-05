@@ -1,0 +1,34 @@
+# JTS #1094 mesh in-circle differential vectors (FFI scout)
+# topic: mesh  epic: #68
+# Format: name  A  B  C  P  FFI  STAGE_A1094  CERTAIN  STAGE_A1212_CERT  EXPECTED  note
+# FFI = nts_rocq_in_circle / b64_inCircle via scout_incircle_probe.
+# STAGE_A1094 uses |det| >= errbound (PR#1094); STAGE_A1212_CERT is strict > (PR#1212).
+# EXPECTED is POS|NEG|ZERO when a corpus pin applies; else -
+#
+pin_1190_vertex_A	0 0	4 0	0 4	0 0	ZERO	ZERO	CERTAIN	UNCERTAIN	ZERO	DelaunayDegeneratePins.single_triangle_pin_1190 / inCircle_R_at_vertex
+pin_1190_vertex_B	0 0	4 0	0 4	4 0	ZERO	ZERO	CERTAIN	UNCERTAIN	ZERO	DelaunayDegeneratePins.single_triangle_pin_1190 / inCircle_R_at_vertex
+pin_1190_vertex_C	0 0	4 0	0 4	0 4	ZERO	ZERO	CERTAIN	UNCERTAIN	ZERO	DelaunayDegeneratePins.single_triangle_pin_1190 / inCircle_R_at_vertex
+pin_1039_diag_ABC_D	0 0	2 0	2 2	0 2	ZERO	ZERO	UNCERTAIN	UNCERTAIN	ZERO	cocircular_square_tie_1039
+pin_1039_diag_ABD_C	0 0	2 0	0 2	2 2	ZERO	ZERO	UNCERTAIN	UNCERTAIN	ZERO	cocircular_square_tie_1039 mirror diagonal
+pin_1039_knife_in	0 0	2 0	2 2	0 1.5	POS	POS	CERTAIN	CERTAIN	POS	cocircular_tie_is_knife_edge +3
+pin_1039_knife_out	0 0	2 0	2 2	0 2.5	NEG	NEG	CERTAIN	CERTAIN	NEG	cocircular_tie_is_knife_edge -5
+pin_68b_flip_witness	0 0	2 0	1 1	1 -0.5	POS	POS	CERTAIN	CERTAIN	POS	loc_in_circle_test_D; inCircle_R = 3/2
+pin_68a_D_outside_ABC	0 0	2 0	1 1	1 -2	NEG	NEG	CERTAIN	CERTAIN	NEG	DelaunayEdgeEmptyCircle: D outside empty circumdisk of ABC
+jts1190_vertex_t0	-221.72957795130824 -26.56505117707799	-149.72957795130824 -26.56505117707799	0 -90	-221.72957795130824 -26.56505117707799	ZERO	ZERO	CERTAIN	UNCERTAIN	ZERO	single-triangle constraint sites; vertex on circumcircle
+jts1190_vertex_t1	-221.72957795130824 -26.56505117707799	-149.72957795130824 -26.56505117707799	0 -90	-149.72957795130824 -26.56505117707799	ZERO	ZERO	CERTAIN	UNCERTAIN	ZERO	single-triangle constraint sites; vertex on circumcircle
+jts1190_vertex_t2	-221.72957795130824 -26.56505117707799	-149.72957795130824 -26.56505117707799	0 -90	0 -90	ZERO	ZERO	CERTAIN	UNCERTAIN	ZERO	single-triangle constraint sites; vertex on circumcircle
+jts1094_circle_quad_0	42 30	41.960000000000001 29.609999999999999	41.850000000000001 29.23	41.659999999999997 28.890000000000001	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_quad_4	41.409999999999997 28.59	41.109999999999999 28.34	40.770000000000003 28.149999999999999	40.390000000000001 28.039999999999999	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_quad_8	40 28	39.609999999999999 28.039999999999999	39.229999999999997 28.149999999999999	38.890000000000001 28.34	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_quad_12	38.590000000000003 28.59	38.340000000000003 28.890000000000001	38.149999999999999 29.23	38.039999999999999 29.609999999999999	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_quad_16	38 30	38.039999999999999 30.390000000000001	38.149999999999999 30.77	38.340000000000003 31.109999999999999	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_quad_20	38.590000000000003 31.41	38.890000000000001 31.66	39.229999999999997 31.850000000000001	39.609999999999999 31.960000000000001	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_quad_24	40 32	40.390000000000001 31.960000000000001	40.770000000000003 31.850000000000001	41.109999999999999 31.66	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_quad_28	41.409999999999997 31.41	41.659999999999997 31.109999999999999	41.850000000000001 30.77	41.960000000000001 30.390000000000001	NEG	NEG	CERTAIN	CERTAIN	-	DelaunayTest.testCircle near-cocircular sample quad (#1094 retarget)
+jts1094_circle_cardinal	42 30	40 28	38 30	40 32	ZERO	ZERO	UNCERTAIN	UNCERTAIN	-	four cardinal-ish points on densified circle
+jts_geos1040_quad	6.6584000000000003 53.583000000000006	6.6576000000000004 53.583600000000004	6.657 53.584800000000001	6.6572000000000005 53.584200000000003	NEG	NEG	CERTAIN	CERTAIN	-	VoronoiTest nearly cocircular GEOS#1040 / JTS#1171
+jts_geos955_subset	18.682857142857159 100.105	13.41 104.82100000000001	13.41 107.179	18.682857142857145 111.89500000000001	POS	ZERO	UNCERTAIN	UNCERTAIN	-	VoronoiTest JTS#1171 ex2 — Stage A must decline (adaptive path)
+adv_unit_circle_eps_0	1 0	0 1	-1 0	0 -0.99999999999900002	POS	POS	CERTAIN	CERTAIN	-	south pole of unit circle nudged by 1e-12
+adv_unit_circle_eps_1	1 0	0 1	-1 0	0 -0.99999999900000003	POS	POS	CERTAIN	CERTAIN	-	south pole of unit circle nudged by 1e-09
+adv_unit_circle_eps_2	1 0	0 1	-1 0	0 -0.99999899999999997	POS	POS	CERTAIN	CERTAIN	-	south pole of unit circle nudged by 1e-06
+adv_large_scale_flip	0 0	200000000 0	100000000 100000000	100000000 -50000000	POS	POS	CERTAIN	CERTAIN	POS	scaled flip witness (homothety preserves sign)

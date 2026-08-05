@@ -49,12 +49,17 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
 
 ### Recommended immediate work sequence (this repo)
 
-1. **Mesh in-circle lane (P0)** — **LANDED 2026-08-05 (session 1 GREEN):**  
-   `oracle/gen_jts1212_incircle_vectors.py` + `oracle/jts1212_incircle_vectors.txt`  
-   + outcome [`docs/jts-1212-incircle-lane-2026-08.md`](jts-1212-incircle-lane-2026-08.md).  
-   29 vectors; all EXPECTED pins match `INCIRCLE_SIGN`; Stage A CERTAIN never
-   disagrees with oracle; GEOS955 subset forces Stage A UNCERTAIN while oracle
-   POS (DD path necessary). Optional follow-ups: CI smoke, comment on #1212.
+1. **Mesh in-circle lane (P0)** — **LANDED 2026-08-05:**  
+   - **Session 1 GREEN (#1212 tip):**  
+     `oracle/gen_jts1212_incircle_vectors.py` + `oracle/jts1212_incircle_vectors.txt`  
+     + [`docs/jts-1212-incircle-lane-2026-08.md`](jts-1212-incircle-lane-2026-08.md).  
+     29 vectors; Stage A CERTAIN never disagrees with oracle; GEOS955 → UNCERTAIN / oracle POS.  
+   - **Session 2 GREEN (#1094 FFI scout + corpus review):**  
+     `oracle/gen_jts1094_incircle_scout.py` + `oracle/jts1094_incircle_vectors.txt`  
+     + scout FFI (`scout_incircle_probe` / `nts_rocq_in_circle`)  
+     + [`docs/jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md).  
+     27 vectors; FFI≡oracle_bin bits; CERTAIN vs FFI clean; review: tip stays **#1212**,
+     nits on `>=` bound / `Math.fma` / missing `Vertex.isCCW` fix.
 2. **Orientation lane (P0)** — Differential plan for #1093 (Ozaki) vs `b64_orient_sign_filtered` / exact escalation; keep #1197 green.  
 3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
 4. **ScaledNoder #90 (P1)** — Scope whether scale=0/1 bug maps to a named snap claim.  
@@ -159,7 +164,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 
 | Cluster | Members | Action |
 |---|---|---|
-| **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged |
+| **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged. FFI scout + review: [`jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md) |
 | **Orientation filters** | #1093 (Ozaki production), #1197 (DD limits tests), #1189 (isCCW test INVALID) | Gate #1093 against corpus exact; keep #1197; mine #1189 for vectors only |
 | **DistanceOp / LineSegment** | #926, #930 | One review pass if either moves; low proof cost |
 | **CI matrix** | #638, #646 | Ignore unless JTS maintainers revive |
