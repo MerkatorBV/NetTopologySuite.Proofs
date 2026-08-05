@@ -63,3 +63,23 @@ dotnet run --project tests/Discussion839Mre -c Release -- --scaled-noder
 
 Write-up: [`docs/jts-90-scalednoder-lane-2026-08.md`](../../docs/jts-90-scalednoder-lane-2026-08.md).  
 Optional PR comment draft: [`jts-90-comment.md`](jts-90-comment.md).
+
+## JTS #1145 YStripes PIP gallery mode
+
+Differential gate for
+[locationtech/jts#1145](https://github.com/locationtech/jts/pull/1145)
+(`YStripesPointInAreaLocator`) against the Qed-backed corpus gallery
+([`docs/nts-oracle-gallery.md`](../../docs/nts-oracle-gallery.md)).
+Compares Indexed / Simple / YStripes (faithful C# port) — **no Rocq oracle**.
+
+```powershell
+dotnet run --project tests/Discussion839Mre -c Release -- --jts1145
+# aliases:
+dotnet run --project tests/Discussion839Mre -c Release -- --ystripes
+dotnet run --project tests/Discussion839Mre -c Release -- --pip-gallery
+# keep-green: expect exit code 0 (14/14 geometric GT)
+```
+
+Write-up: [`docs/jts-1145-pip-lane-2026-08.md`](../../docs/jts-1145-pip-lane-2026-08.md).  
+Vectors: [`oracle/jts1145_pip_gallery_vectors.txt`](../../oracle/jts1145_pip_gallery_vectors.txt).  
+Optional PR comment draft: [`jts-1145-comment.md`](jts-1145-comment.md).

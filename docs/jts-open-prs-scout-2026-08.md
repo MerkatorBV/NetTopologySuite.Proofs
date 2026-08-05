@@ -40,7 +40,7 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
 | **4** | [#1093](https://github.com/locationtech/jts/pull/1093) | Change Shewchuk Orientation filter to Ozaki et al. | **#66/#64** `precision`/`core` | H | M | H | Production `CGAlgorithmsDD` filter. **Lane GREEN 2026-08-05:** 45-vector three-way gate (master `1e-15` / Ozaki / corpus Shewchuk) vs `ORIENT_EXACT` — 0 CERTAIN conflicts; Ozaki tighter than master on 4 same-sign band cases. See [`jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md). |
 | **5** | [#1197](https://github.com/locationtech/jts/pull/1197) | Characterize DD orientation soundness (#1106) | **#66** `precision` | H | L | M | **Ours.** Test-only + `RocqRefRunner`. **Keep-green 2026-08-05 GREEN:** rebased onto master; corpus integer pins refreshed; local 22/22 + GHA `build-and-test` pass; merge ping posted ([comment](https://github.com/locationtech/jts/pull/1197#issuecomment-5186644725)). Awaiting maintainer review/merge. |
 | **6** | [#90](https://github.com/locationtech/jts/pull/90) | Fix ScaledNoder behaviour (draft) | **#66** `precision` · **P1 policy** | H | L | M | **Lane YELLOW 2026-08-05 (not P0 theory):** mukoki scale=1 mixed-precision **masked** by modern `SnapRoundingNoder`; scale=0 `round(x*0)` footgun live; do **not** merge draft as written. No new snap claim. See [`jts-90-scalednoder-lane-2026-08.md`](jts-90-scalednoder-lane-2026-08.md). |
-| **7** | [#1145](https://github.com/locationtech/jts/pull/1145) | YStripesPointInAreaLocator | **#67** `relate` (+ JCT) | H | L–M | M | New PIP implementation. Corpus `point_in_ring` + gallery (`nts-oracle-gallery.md`) is the **regression oracle** — run hat/Spectre/vertex-graze/horizontal-edge vectors. |
+| **7** | [#1145](https://github.com/locationtech/jts/pull/1145) | YStripesPointInAreaLocator | **#67** `relate` (+ JCT) | H | L–M | M | **Lane GREEN 2026-08-05:** gallery 14/14 (vertex-graze/horizontal/Spectre/Hat) — YStripes port ≡ Indexed ≡ Simple ≡ geometric GT. See [`jts-1145-pip-lane-2026-08.md`](jts-1145-pip-lane-2026-08.md). |
 | **8** | [#1084](https://github.com/locationtech/jts/pull/1084) | CoverageEdgeExtractor | **#425** `coverage` | M–H | M | M | Unique edges from polygonal coverage. Corpus has `CoverageGapOverlapCleaner.v` / #425. Good **next coverage claim** after cleaner. |
 | **9** | [#1216](https://github.com/locationtech/jts/pull/1216) | Explicit stack in DouglasPeucker (#1127) | **#69** S-* | M | L | L–M | **Ours.** Stack overflow fix; behaviour-preserving. Corpus `Simplify.v` is structural only — **no new proof** needed; port to NTS when merged. |
 | **10** | [#1140](https://github.com/locationtech/jts/pull/1140) | Hausdorff distance percentile | **#423** `metric` | M | M | L–M | Extends discrete Hausdorff. Corpus `HausdorffDiscrete.v` / Claim423a pins directed max-min — can pin percentile semantics or mark out-of-scope. |
@@ -81,7 +81,12 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
      `feature/orientation-robustness-tests` onto `master`; refreshed
      `orientation_proof_vectors.txt` integer pins; local suite 22/22 + GHA
      `build-and-test` pass; merge-ping comment posted.  
-3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
+3. **PIP gallery on #1145 (P0/P1)** — **LANDED 2026-08-05 GREEN:**  
+   - Faithful C# port: `tests/Discussion839Mre/YStripesPointInAreaLocator.cs`  
+   - Harness: `dotnet run … -- --jts1145` (+ `oracle/jts1145_pip_gallery_vectors.txt`)  
+   - Write-up: [`docs/jts-1145-pip-lane-2026-08.md`](jts-1145-pip-lane-2026-08.md).  
+   - 14/14 geometric GT; critical rows (diamond graze INT, notch horizontal EXT, Spectre/Hat pockets EXT) all pass; Y ≡ Indexed ≡ Simple.  
+   - Optional: post gallery pins comment (`tests/Discussion839Mre/jts-1145-comment.md`).  
 4. **ScaledNoder #90 (P1)** — **SCOPED 2026-08-05 YELLOW:**  
    - MRE: `tests/Discussion839Mre` `--jts90` + [`jts-90-scalednoder-lane-2026-08.md`](jts-90-scalednoder-lane-2026-08.md).  
    - Does **not** map to a missing `SnapRoundingScale_b64` claim (wrapper policy + scale=0 safety).  
@@ -111,7 +116,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 | 1189 | WIP Orientation isCCW GEOS test | strk | P1 | H | L | M | precision | `status-INVALID`; still a useful negative test seed |
 | 1170 | Generics on geom.util extractors | micycle1 | P2 | L | L | L | — | API typing |
 | 1164 | GeoJsonWriter create() for subclasses | krizleebear | P2 | L | L | L | — | IO |
-| **1145** | **YStripesPointInAreaLocator** | micycle1 | **P0** | H | L–M | M | **relate**/JCT | New PIP; gallery |
+| **1145** | **YStripesPointInAreaLocator** | micycle1 | **P0** | H | L–M | M | **relate**/JCT | **GREEN** gallery 14/14 ([lane](jts-1145-pip-lane-2026-08.md)) |
 | **1140** | **Hausdorff distance percentile** | ikgh9 | **P1** | M | M | L–M | **metric** | Extends HausdorffDiscrete |
 | 1137 | Gh pages to docs | jodygarnett | P2 | L | L | L | — | docs |
 | 1135 | HilbertEncoder.sort() | micycle1 | P2 | L | L | L | — | spatial index util |
@@ -190,6 +195,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 |---|---|---|
 | **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged. History: [`jts-311-incircle-lane-2026-08.md`](jts-311-incircle-lane-2026-08.md). FFI scout + review: [`jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md). Tip differential: [`jts-1212-incircle-lane-2026-08.md`](jts-1212-incircle-lane-2026-08.md) |
 | **Orientation filters** | #1093 (Ozaki production), #1197 (DD limits tests), #1189 (isCCW test INVALID) | **#1093 lane GREEN** ([jts-1093-orient-lane-2026-08.md](jts-1093-orient-lane-2026-08.md)); keep #1197; mine #1189 for vectors only |
+| **PIP / YStripes** | **#1145** | **GREEN** ([jts-1145-pip-lane-2026-08.md](jts-1145-pip-lane-2026-08.md)): gallery 14/14; free CI for locator merge |
 | **ScaledNoder policy** | #90 (draft) | **YELLOW** ([jts-90-scalednoder-lane-2026-08.md](jts-90-scalednoder-lane-2026-08.md)): SRN masks mukoki; scale=0 only; no algebra claim |
 | **DistanceOp / LineSegment** | #926, #930 | One review pass if either moves; low proof cost |
 | **CI matrix** | #638, #646 | Ignore unless JTS maintainers revive |
@@ -245,7 +251,7 @@ Do **not** open multi-session theory work for P2 PRs.
 
 1. **Bet the mesh lane on #1212** (with #1094/#311 as history) — highest corpus leverage per hour.  
 2. **Orientation filter change (#1093) gated on exact orient** — session GREEN; re-run table if the PR is revised.  
-3. **Use the PIP gallery as free CI for #1145**.  
+3. **Use the PIP gallery as free CI for #1145** — **done GREEN** (14/14); suggest pinning WKT into JTS tests.  
 4. **Ignore ~55% of the open queue** (CI/IO/docs/API) for proof planning.  
 5. **Keep our four PRs** green; only #1197 and #1216 need corpus-adjacent attention.
 
