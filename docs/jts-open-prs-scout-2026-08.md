@@ -59,7 +59,12 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
      + scout FFI (`scout_incircle_probe` / `nts_rocq_in_circle`)  
      + [`docs/jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md).  
      27 vectors; FFI≡oracle_bin bits; CERTAIN vs FFI clean; review: tip stays **#1212**,
-     nits on `>=` bound / `Math.fma` / missing `Vertex.isCCW` fix.
+     nits on `>=` bound / `Math.fma` / missing `Vertex.isCCW` fix.  
+   - **Session 3 GREEN (#311 design history):**  
+     `oracle/gen_jts311_incircle_history.py` + `oracle/jts311_incircle_history.txt`  
+     + [`docs/jts-311-incircle-lane-2026-08.md`](jts-311-incircle-lane-2026-08.md).  
+     Stage A sketch + DDFast lineage; **ε = `ulp(1.0)` = \(2^{-52}\)** (looser than
+     Shewchuk \(2^{-53}\)); name is not full `incircleadapt` (#1094). Product tip stays **#1212**.  
 2. **Orientation lane (P0)** — Differential plan for #1093 (Ozaki) vs `b64_orient_sign_filtered` / exact escalation; keep #1197 green.  
 3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
 4. **ScaledNoder #90 (P1)** — Scope whether scale=0/1 bug maps to a named snap claim.  
@@ -164,7 +169,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 
 | Cluster | Members | Action |
 |---|---|---|
-| **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged. FFI scout + review: [`jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md) |
+| **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged. History: [`jts-311-incircle-lane-2026-08.md`](jts-311-incircle-lane-2026-08.md). FFI scout + review: [`jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md). Tip differential: [`jts-1212-incircle-lane-2026-08.md`](jts-1212-incircle-lane-2026-08.md) |
 | **Orientation filters** | #1093 (Ozaki production), #1197 (DD limits tests), #1189 (isCCW test INVALID) | Gate #1093 against corpus exact; keep #1197; mine #1189 for vectors only |
 | **DistanceOp / LineSegment** | #926, #930 | One review pass if either moves; low proof cost |
 | **CI matrix** | #638, #646 | Ignore unless JTS maintainers revive |
