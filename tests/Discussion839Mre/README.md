@@ -47,3 +47,19 @@ same extracted `b64_inCircle` (parity-gated in CI by `oracle/gen_ffi_parity_test
 ## Scout
 
 Analysis + corpus answer: [`docs/nts-discussion-839-scout.md`](../../docs/nts-discussion-839-scout.md).
+
+## JTS #90 ScaledNoder mode
+
+Replays the scale=0 / scale=1 control-flow question from
+[locationtech/jts#90](https://github.com/locationtech/jts/pull/90) against NTS
+2.6 `ScaledNoder` + `SnapRoundingNoder` (no Rocq oracle required).
+
+```powershell
+dotnet run --project tests/Discussion839Mre -c Release -- --jts90
+# alias:
+dotnet run --project tests/Discussion839Mre -c Release -- --scaled-noder
+# keep-green: expect exit code 0 (SRN masks mukoki + scale=0 footgun observed)
+```
+
+Write-up: [`docs/jts-90-scalednoder-lane-2026-08.md`](../../docs/jts-90-scalednoder-lane-2026-08.md).  
+Optional PR comment draft: [`jts-90-comment.md`](jts-90-comment.md).

@@ -19,6 +19,8 @@ using System.Text;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Algorithm.Locate;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Noding;
+using NetTopologySuite.Noding.Snapround;
 using NetTopologySuite.Triangulate;
 
 static class Program
@@ -57,6 +59,13 @@ static class Program
     {
         CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
         CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
+        // JTS#90 ScaledNoder scale=0/1 policy scout (no oracle required).
+        if (args.Contains("--jts90", StringComparer.OrdinalIgnoreCase)
+            || args.Contains("--scaled-noder", StringComparer.OrdinalIgnoreCase))
+        {
+            return RunJts90ScaledNoderMre();
+        }
 
         bool useScaled = !args.Contains("--no-scale", StringComparer.OrdinalIgnoreCase);
         double tolerance = args.Contains("--tol0", StringComparer.OrdinalIgnoreCase) ? 0.0 : 0.1;
@@ -272,6 +281,213 @@ static class Program
 
         return 0;
     }
+
+    /// <summary>
+    /// JTS PR #90 / mukoki OpenJUMP beanshell: ScaledNoder(scale=1) vs scale≠1
+    /// rounds input vertices inconsistently (NTS port of the same control flow).
+    /// </summary>
+    private static int RunJts90ScaledNoderMre()
+    {
+        Console.WriteLine("=== JTS#90 ScaledNoder MRE (NTS port of master control flow) ===");
+        Console.WriteLine($"NTS: {typeof(Geometry).Assembly.GetName().Version}");
+        Console.WriteLine("Input: mukoki lines from locationtech/jts#90 comments");
+        Console.WriteLine("  L1 = LINESTRING(0 0, 20.11111 30.11111)");
+        Console.WriteLine("  L2 = LINESTRING(20.11111 0, 10.11111 30.11111)");
+        // MCIndexSnapRounder is obsolete and crashes under NTS 2.6 HPRtree;
+        // SnapRoundingNoder is the production successor (BufferOp fixed-precision path).
+        Console.WriteLine("Inner noder: SnapRoundingNoder(PrecisionModel(1.0))");
+        Console.WriteLine("(mukoki used MCIndexSnapRounder; same ScaledNoder scale skip applies)");
+        Console.WriteLine();
+
+        var l1 = new Coordinate[] { new(0, 0), new(20.11111, 30.11111) };
+        var l2 = new Coordinate[] { new(20.11111, 0), new(10.11111, 30.11111) };
+
+        // Policy mirrors of ScaledNoder ctor:
+        //   master / NTS 2.6: isScaled = (scale != 1.0)   // skip at scale=1
+        //   PR #90:           isScaled = (scale != 0.0)   // skip only at scale=0
+        Console.WriteLine("Policy table (would scale inputs?):");
+        Console.WriteLine("  scale | master/NTS | PR#90");
+        foreach (double s in new[] { 0.0, 1.0, 100.0 })
+        {
+            bool master = s != 1.0;
+            bool pr90 = s != 0.0;
+            Console.WriteLine($"  {s,5:0.#} | {master,10} | {pr90}");
+        }
+        Console.WriteLine();
+
+        // Footgun: master treats scale=0 as "scaled" → Math.Round(x*0)=0 collapse.
+        Console.WriteLine("--- scale=0 footgun (master path would Scale) ---");
+        var collapsed = ScaleCoords(l1, 0.0);
+        Console.WriteLine($"  scale(L1, 0) → {FmtCoords(collapsed)}  (all finite → origin)");
+        Console.WriteLine();
+
+        double[] scales = { 1.0, 100.0 };
+        var results = new Dictionary<double, IList<ISegmentString>>();
+
+        foreach (double scale in scales)
+        {
+            var noder = new ScaledNoder(
+                new SnapRoundingNoder(new PrecisionModel(1.0)),
+                scale);
+            var input = new List<ISegmentString>
+            {
+                new NodedSegmentString((Coordinate[])l1.Clone(), null!),
+                new NodedSegmentString((Coordinate[])l2.Clone(), null!),
+            };
+            noder.ComputeNodes(input);
+            var noded = noder.GetNodedSubstrings();
+            results[scale] = noded;
+
+            Console.WriteLine($"--- ScaledNoder(scale={scale}) IsIntegerPrecision={noder.IsIntegerPrecision} ---");
+            PrintNoded(noded);
+            Console.WriteLine($"  vertex grid membership (all coords on 1/scale lattice?): " +
+                              $"{AllOnGrid(noded, scale)}");
+            Console.WriteLine();
+        }
+
+        // Compare endpoint retention: scale=1 keeps full-precision inputs; scale=100 does not.
+        var ends1 = CollectEndpoints(results[1.0]);
+        var ends100 = CollectEndpoints(results[100.0]);
+
+        // After rescale, scale=100 coords live on 0.01 grid; scale=1 mixed.
+        bool scale1InputsRounded = !ends1.Any(c =>
+            ApproxEq(c.X, 20.11111) || ApproxEq(c.Y, 30.11111) || ApproxEq(c.X, 10.11111));
+        bool scale100InputsRounded = !ends100.Any(c =>
+            ApproxEq(c.X, 20.11111) || ApproxEq(c.Y, 30.11111) || ApproxEq(c.X, 10.11111));
+
+        bool grid1 = AllOnGrid(results[1.0], 1.0);
+        bool grid100 = AllOnGrid(results[100.0], 100.0);
+
+        Console.WriteLine("=== INVARIANT CHECKS (NTS 2.6 + SnapRoundingNoder) ===");
+        Console.WriteLine($"  scale=1 keeps raw non-integer input verts after noding: {!scale1InputsRounded}");
+        Console.WriteLine($"  scale=100 rounds input vertices to 0.01 grid: {scale100InputsRounded}");
+        Console.WriteLine($"  scale=1 all vertices integer-grid: {grid1}");
+        Console.WriteLine($"  scale=100 all vertices 0.01-grid: {grid100}");
+
+        // Simulated PR#90 path for scale=1: force a priori Scale even when scale==1.
+        Console.WriteLine();
+        Console.WriteLine("--- simulated PR#90 a priori scale=1 (round then SRN) ---");
+        var forced = new List<ISegmentString>
+        {
+            new NodedSegmentString(ScaleCoords(l1, 1.0), null!),
+            new NodedSegmentString(ScaleCoords(l2, 1.0), null!),
+        };
+        var inner = new SnapRoundingNoder(new PrecisionModel(1.0));
+        inner.ComputeNodes(forced);
+        var forcedOut = inner.GetNodedSubstrings();
+        Console.WriteLine("  noded:");
+        PrintNoded(forcedOut);
+        Console.WriteLine($"  all vertices integer-grid: {AllOnGrid(forcedOut, 1.0)}");
+        bool sameAsSkip = NodedEquals(results[1.0], forcedOut);
+        Console.WriteLine($"  bit-equal to ScaledNoder(scale=1) skip path: {sameAsSkip}");
+
+        // Historical MCIndexSnapRounder model (intersection-only int snap).
+        Console.WriteLine();
+        Console.WriteLine("--- historical model (MCIndexSnapRounder-style, intersection-only) ---");
+        var rawI = SegIntersection(l1[0], l1[1], l2[0], l2[1]);
+        var intI = new Coordinate(Math.Round(rawI.X), Math.Round(rawI.Y));
+        Console.WriteLine($"  raw intersection ≈ ({Fmt(rawI.X)}, {Fmt(rawI.Y)})");
+        Console.WriteLine($"  int-snapped node: ({Fmt(intI.X)}, {Fmt(intI.Y)})");
+        Console.WriteLine($"  master scale=1 skip: ends keep frac {Fmt(l1[1].X)},{Fmt(l1[1].Y)} + node int");
+        Console.WriteLine($"  master scale=100: ends on 0.01 + node on 0.01 (mukoki REPRO class)");
+
+        bool srnMasksMukoki = grid1 && scale1InputsRounded; // modern SRN snaps verts too
+        bool scale0Footgun = collapsed.Length == 1
+            && ApproxEq(collapsed[0].X, 0) && ApproxEq(collapsed[0].Y, 0);
+
+        Console.WriteLine();
+        Console.WriteLine("=== VERDICT ===");
+        Console.WriteLine(srnMasksMukoki
+            ? "  A) Mukoki mixed-precision (scale=1) is MASKED by SnapRoundingNoder (verts snapped)."
+            : "  A) Mukoki mixed-precision still visible under this noder.");
+        Console.WriteLine(scale0Footgun
+            ? "  B) scale=0 footgun LIVE: Math.Round(x*0) collapses finite coords to origin."
+            : "  B) scale=0 collapse not observed.");
+        Console.WriteLine(sameAsSkip
+            ? "  C) On this input, a priori scale=1 equals skip+SRN (no topology delta here)."
+            : "  C) A priori scale=1 DIFFERS from skip+SRN on this input.");
+        Console.WriteLine("  D) Corpus: wrapper policy / scale=0 safety; not SnapRoundingScale_b64 algebra.");
+        Console.WriteLine("See docs/jts-90-scalednoder-lane-2026-08.md");
+
+        // Exit 0 when the two live findings we care about are demonstrated.
+        return (srnMasksMukoki && scale0Footgun) ? 0 : 1;
+    }
+
+    private static Coordinate SegIntersection(Coordinate a, Coordinate b, Coordinate c, Coordinate d)
+    {
+        double x1 = a.X, y1 = a.Y, x2 = b.X, y2 = b.Y;
+        double x3 = c.X, y3 = c.Y, x4 = d.X, y4 = d.Y;
+        double den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        double t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+        return new Coordinate(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
+    }
+
+    private static bool NodedEquals(IList<ISegmentString> a, IList<ISegmentString> b)
+    {
+        if (a.Count != b.Count) return false;
+        for (int i = 0; i < a.Count; i++)
+        {
+            var ca = a[i].Coordinates;
+            var cb = b[i].Coordinates;
+            if (ca.Length != cb.Length) return false;
+            for (int j = 0; j < ca.Length; j++)
+            {
+                if (!ApproxEq(ca[j].X, cb[j].X) || !ApproxEq(ca[j].Y, cb[j].Y))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    private static Coordinate[] ScaleCoords(Coordinate[] pts, double scaleFactor)
+    {
+        var roundPts = new Coordinate[pts.Length];
+        for (int i = 0; i < pts.Length; i++)
+        {
+            roundPts[i] = new Coordinate(
+                Math.Round(pts[i].X * scaleFactor),
+                Math.Round(pts[i].Y * scaleFactor));
+        }
+        return CoordinateArrays.RemoveRepeatedPoints(roundPts);
+    }
+
+    private static void PrintNoded(IList<ISegmentString> noded)
+    {
+        int i = 0;
+        foreach (var ss in noded)
+        {
+            Console.WriteLine($"  [{i++}] {FmtCoords(ss.Coordinates)}");
+        }
+    }
+
+    private static string FmtCoords(Coordinate[] pts) =>
+        "LINESTRING (" + string.Join(", ", pts.Select(p => $"{Fmt(p.X)} {Fmt(p.Y)}")) + ")";
+
+    private static List<Coordinate> CollectEndpoints(IList<ISegmentString> noded)
+    {
+        var list = new List<Coordinate>();
+        foreach (var ss in noded)
+            foreach (var c in ss.Coordinates)
+                list.Add(c);
+        return list;
+    }
+
+    private static bool AllOnGrid(IList<ISegmentString> noded, double scale)
+    {
+        foreach (var ss in noded)
+        {
+            foreach (var c in ss.Coordinates)
+            {
+                double sx = c.X * scale;
+                double sy = c.Y * scale;
+                if (Math.Abs(sx - Math.Round(sx)) > 1e-9) return false;
+                if (Math.Abs(sy - Math.Round(sy)) > 1e-9) return false;
+            }
+        }
+        return true;
+    }
+
+    private static bool ApproxEq(double a, double b) => Math.Abs(a - b) <= 1e-9;
 
     private static void AddEdge(
         Dictionary<string, List<(Coordinate A, Coordinate B, Coordinate Opp, Polygon T)>> map,

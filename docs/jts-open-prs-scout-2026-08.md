@@ -7,7 +7,7 @@
 
 **Verdict (headline)**  
 Of 49 open PRs, **~12 are corpus-hot**, **~10 are watch**, and **~27 are out of proof scope** (CI, IO, docs, API cosmetics, stale refactors).  
-**Top pick stack (do first):** `#1212` + `#1094`/`#311` (mesh in-circle) → `#1093`/`#1197` (orientation filters) → `#90` (ScaledNoder) → `#1145` (PIP locator) → `#1084` (coverage edges).
+**Top pick stack (do first):** `#1212` + `#1094`/`#311` (mesh in-circle) → `#1093`/`#1197` (orientation filters) → `#1145` (PIP locator) → `#1084` (coverage edges). `#90` ScaledNoder **scoped YELLOW** (policy watch only).
 
 ---
 
@@ -39,7 +39,7 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
 | **3** | [#311](https://github.com/locationtech/jts/pull/311) | isInCircleAdapt sketch Java port | **#68** `mesh` | H | L | H | Shewchuk adaptive sketch; updated 2026-05. Superseded in spirit by #1094/#1212 but useful as **design history**. Corpus Stage D expansion work is the formal counterpart. |
 | **4** | [#1093](https://github.com/locationtech/jts/pull/1093) | Change Shewchuk Orientation filter to Ozaki et al. | **#66/#64** `precision`/`core` | H | M | H | Production `CGAlgorithmsDD` filter. **Lane GREEN 2026-08-05:** 45-vector three-way gate (master `1e-15` / Ozaki / corpus Shewchuk) vs `ORIENT_EXACT` — 0 CERTAIN conflicts; Ozaki tighter than master on 4 same-sign band cases. See [`jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md). |
 | **5** | [#1197](https://github.com/locationtech/jts/pull/1197) | Characterize DD orientation soundness (#1106) | **#66** `precision` | H | L | M | **Ours.** Test-only + `RocqRefRunner`. **Keep-green 2026-08-05 GREEN:** rebased onto master; corpus integer pins refreshed; local 22/22 + GHA `build-and-test` pass; merge ping posted ([comment](https://github.com/locationtech/jts/pull/1197#issuecomment-5186644725)). Awaiting maintainer review/merge. |
-| **6** | [#90](https://github.com/locationtech/jts/pull/90) | Fix ScaledNoder behaviour (draft) | **#66** `precision` | H | M | H | Scale=0 vs scale=1 noding inconsistency. Corpus: snap / noding / `GeometryPrecisionReducer` lane. Draft but high risk if scaled noding is wrong. |
+| **6** | [#90](https://github.com/locationtech/jts/pull/90) | Fix ScaledNoder behaviour (draft) | **#66** `precision` · **P1 policy** | H | L | M | **Lane YELLOW 2026-08-05 (not P0 theory):** mukoki scale=1 mixed-precision **masked** by modern `SnapRoundingNoder`; scale=0 `round(x*0)` footgun live; do **not** merge draft as written. No new snap claim. See [`jts-90-scalednoder-lane-2026-08.md`](jts-90-scalednoder-lane-2026-08.md). |
 | **7** | [#1145](https://github.com/locationtech/jts/pull/1145) | YStripesPointInAreaLocator | **#67** `relate` (+ JCT) | H | L–M | M | New PIP implementation. Corpus `point_in_ring` + gallery (`nts-oracle-gallery.md`) is the **regression oracle** — run hat/Spectre/vertex-graze/horizontal-edge vectors. |
 | **8** | [#1084](https://github.com/locationtech/jts/pull/1084) | CoverageEdgeExtractor | **#425** `coverage` | M–H | M | M | Unique edges from polygonal coverage. Corpus has `CoverageGapOverlapCleaner.v` / #425. Good **next coverage claim** after cleaner. |
 | **9** | [#1216](https://github.com/locationtech/jts/pull/1216) | Explicit stack in DouglasPeucker (#1127) | **#69** S-* | M | L | L–M | **Ours.** Stack overflow fix; behaviour-preserving. Corpus `Simplify.v` is structural only — **no new proof** needed; port to NTS when merged. |
@@ -82,7 +82,11 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
      `orientation_proof_vectors.txt` integer pins; local suite 22/22 + GHA
      `build-and-test` pass; merge-ping comment posted.  
 3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
-4. **ScaledNoder #90 (P1)** — Scope whether scale=0/1 bug maps to a named snap claim.  
+4. **ScaledNoder #90 (P1)** — **SCOPED 2026-08-05 YELLOW:**  
+   - MRE: `tests/Discussion839Mre` `--jts90` + [`jts-90-scalednoder-lane-2026-08.md`](jts-90-scalednoder-lane-2026-08.md).  
+   - Does **not** map to a missing `SnapRoundingScale_b64` claim (wrapper policy + scale=0 safety).  
+   - Recommend **narrow fix only** (scale=0 skip / throw); do not invert scale=1 under SRN.  
+   - Drop from P0 theory budget; keep watch if draft is revived.  
 5. **Coverage #1084 (P1)** — Spec sketch only until #425 cleaner is stable.
 
 ---
@@ -146,7 +150,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 | 221 | PM change method | bjornharrtell | P2 | L | L | L | precision | refactor PM |
 | 217 | Static ops / null geom | bjornharrtell | P2 | L | M | L | — | JSTS transpilation refactor |
 | 200 | Move ops into operation classes | bjornharrtell | P2 | L | H | L | — | large structural; JSTS |
-| **90** | **ScaledNoder (draft)** | jnh5y | **P0** | H | M | H | **precision** | scale edge case |
+| **90** | **ScaledNoder (draft)** | jnh5y | **P1** | H | L | M | **precision** | **P1 policy watch** (not P0); YELLOW; scale=0 only |
 | 83 | RadialDistanceByAngleSimplifier lab | FObermaier | P2 | M | M | L | S-* | lab module |
 
 ---
@@ -156,7 +160,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 | Epic | `topic:` | Open JTS PRs that matter | Corpus readiness |
 |---|---|---|---|
 | **#68** mesh | `mesh` | **1212, 1094, 311** | Strong: empty-circle, flip, degenerate pins, FFI in-circle |
-| **#66** precision | `precision` | **1093, 1197, 90, 279, 715** | Strong: orient exact/filtered, snap, OverlayNG conditional |
+| **#66** precision | `precision` | **1093, 1197, 90, 279, 715** | Strong: orient exact/filtered, snap, OverlayNG conditional; #90 wrapper-only YELLOW |
 | **#67** relate / PIP | `relate` | **1145, 346, 499?, 1215** | Strong PIP gallery + DE-9IM; locator is consumer not new math |
 | **#64/#65** core/buffer | `core`/`buffer` | 1196 densify; buffer PRs thin in open set | Densify DSF partial; buffer mostly issues not PRs |
 | **#423** metric | `metric` | **1140, 926, 930** | Hausdorff discrete banked; percentile optional |
@@ -186,6 +190,7 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 |---|---|---|
 | **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged. History: [`jts-311-incircle-lane-2026-08.md`](jts-311-incircle-lane-2026-08.md). FFI scout + review: [`jts-1094-incircle-lane-2026-08.md`](jts-1094-incircle-lane-2026-08.md). Tip differential: [`jts-1212-incircle-lane-2026-08.md`](jts-1212-incircle-lane-2026-08.md) |
 | **Orientation filters** | #1093 (Ozaki production), #1197 (DD limits tests), #1189 (isCCW test INVALID) | **#1093 lane GREEN** ([jts-1093-orient-lane-2026-08.md](jts-1093-orient-lane-2026-08.md)); keep #1197; mine #1189 for vectors only |
+| **ScaledNoder policy** | #90 (draft) | **YELLOW** ([jts-90-scalednoder-lane-2026-08.md](jts-90-scalednoder-lane-2026-08.md)): SRN masks mukoki; scale=0 only; no algebra claim |
 | **DistanceOp / LineSegment** | #926, #930 | One review pass if either moves; low proof cost |
 | **CI matrix** | #638, #646 | Ignore unless JTS maintainers revive |
 
@@ -196,14 +201,14 @@ Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
 ```
         low cost ──────────────── high cost
 high    1197 1216 1217            1093 (Ozaki prove-out)
-risk    1212 1094 311             90 (ScaledNoder full)
+risk    1212 1094 311
         1145 (gallery)
-med     1140 926 930 968          1084 1196 346 478
+med     1140 926 930 968 90       1084 1196 346 478
 low     1215 1220 …               200 836
 ```
 
-**P0 (engage this month):** 1212/1094/311 · 1093 · 1197 · 90 · 1145  
-**P1 (queue):** 1084 · 1140 · 1216 · 1217 · 968 · 279 · 1196 · 346 · 926/930  
+**P0 (engage this month):** 1212/1094/311 · 1093 · 1197 · 1145  
+**P1 (queue):** 90 (policy watch) · 1084 · 1140 · 1216 · 1217 · 968 · 279 · 1196 · 346 · 926/930  
 **P2 (park):** the rest (~27)
 
 ---
@@ -227,12 +232,12 @@ Do **not** open multi-session theory work for P2 PRs.
 | Bucket | Count |
 |---|---|
 | Open PRs inventoried | **49** |
-| P0 | **7** (#1212, #1094, #311, #1093, #1197, #90, #1145) — in-circle cluster counted as one product lane |
-| P1 | **~12** |
+| P0 | **6** (#1212, #1094, #311, #1093, #1197, #1145) — in-circle cluster counted as one product lane; #90 demoted after scope |
+| P1 | **~13** (includes #90 policy watch) |
 | P2 | **~30** |
 | Authored by grootstebozewolf | 4 (#1197, #1215, #1216, #1217) |
 
-(If counting in-circle trio as three P0 rows: P0 = 7 distinct PR numbers as in §1.)
+(In-circle trio counted as three P0 rows still yields **P0 = 6** distinct PR numbers in §1 after #90 demotion to P1 policy watch.)
 
 ---
 
