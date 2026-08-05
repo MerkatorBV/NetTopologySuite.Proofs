@@ -22,7 +22,7 @@ process — not new ABI symbols.
 | **3** | `make -C oracle ffi-parity` | **YELLOW** — 3 ORIENT_EXACT* cases segfault on extreme coords (see §3) |
 | **4** | Orientation differential scout for [jts#1093](https://github.com/locationtech/jts/pull/1093) | **GREEN** — 45 vectors; see [`jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md) |
 | **5** | Retire / demote `scout_incircle_*` once full FFI is the default path | Pending CI green on parity |
-| **6** | Optional: post numbers on jts#1093 / keep #1197 green | Draft: `tests/Discussion839Mre/jts-1093-comment.md` |
+| **6** | Optional: post numbers on jts#1093 / keep #1197 green | #1197 keep-green **done** 2026-08-05 (rebase + vectors + [merge ping](https://github.com/locationtech/jts/pull/1197#issuecomment-5186644725)); #1093 draft: `tests/Discussion839Mre/jts-1093-comment.md` |
 
 ---
 
