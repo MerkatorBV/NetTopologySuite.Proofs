@@ -38,7 +38,7 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
 | **2** | [#1094](https://github.com/locationtech/jts/pull/1094) | Make isInCircleRobust robust | **#68** `mesh` | H | L | H | Older sibling of #1212 on the same class. Same gate; prefer whichever is current tip — treat as **one lane**. |
 | **3** | [#311](https://github.com/locationtech/jts/pull/311) | isInCircleAdapt sketch Java port | **#68** `mesh` | H | L | H | Shewchuk adaptive sketch; updated 2026-05. Superseded in spirit by #1094/#1212 but useful as **design history**. Corpus Stage D expansion work is the formal counterpart. |
 | **4** | [#1093](https://github.com/locationtech/jts/pull/1093) | Change Shewchuk Orientation filter to Ozaki et al. | **#66/#64** `precision`/`core` | H | M | H | Production `CGAlgorithmsDD` filter. **Lane GREEN 2026-08-05:** 45-vector three-way gate (master `1e-15` / Ozaki / corpus Shewchuk) vs `ORIENT_EXACT` — 0 CERTAIN conflicts; Ozaki tighter than master on 4 same-sign band cases. See [`jts-1093-orient-lane-2026-08.md`](jts-1093-orient-lane-2026-08.md). |
-| **5** | [#1197](https://github.com/locationtech/jts/pull/1197) | Characterize DD orientation soundness (#1106) | **#66** `precision` | H | L | M | **Ours.** Test-only characterization + `RocqRefRunner`. Aligns with `docs/verified-claims.md` orient rows and oracle vectors. **Push merge / keep green** — low cost, high signalling. |
+| **5** | [#1197](https://github.com/locationtech/jts/pull/1197) | Characterize DD orientation soundness (#1106) | **#66** `precision` | H | L | M | **Ours.** Test-only + `RocqRefRunner`. **Keep-green 2026-08-05 GREEN:** rebased onto master; corpus integer pins refreshed; local 22/22 + GHA `build-and-test` pass; merge ping posted ([comment](https://github.com/locationtech/jts/pull/1197#issuecomment-5186644725)). Awaiting maintainer review/merge. |
 | **6** | [#90](https://github.com/locationtech/jts/pull/90) | Fix ScaledNoder behaviour (draft) | **#66** `precision` | H | M | H | Scale=0 vs scale=1 noding inconsistency. Corpus: snap / noding / `GeometryPrecisionReducer` lane. Draft but high risk if scaled noding is wrong. |
 | **7** | [#1145](https://github.com/locationtech/jts/pull/1145) | YStripesPointInAreaLocator | **#67** `relate` (+ JCT) | H | L–M | M | New PIP implementation. Corpus `point_in_ring` + gallery (`nts-oracle-gallery.md`) is the **regression oracle** — run hat/Spectre/vertex-graze/horizontal-edge vectors. |
 | **8** | [#1084](https://github.com/locationtech/jts/pull/1084) | CoverageEdgeExtractor | **#425** `coverage` | M–H | M | M | Unique edges from polygonal coverage. Corpus has `CoverageGapOverlapCleaner.v` / #425. Good **next coverage claim** after cleaner. |
@@ -76,7 +76,11 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
    - Gate: 0 CERTAIN conflicts; Ozaki CERTAIN while master UNCERTAIN on **4**
      same-sign band vectors; Ozaki ↔ corpus Shewchuk certainty splits **0**.  
    - Note: `ORIENT_EXACT` **FFI** still has a segfault class on extreme coords
-     (parity YELLOW); use `oracle_bin` for exact GT. Keep #1197 green.  
+     (parity YELLOW); use `oracle_bin` for exact GT.  
+   - **#1197 keep-green (same day) GREEN:** rebased
+     `feature/orientation-robustness-tests` onto `master`; refreshed
+     `orientation_proof_vectors.txt` integer pins; local suite 22/22 + GHA
+     `build-and-test` pass; merge-ping comment posted.  
 3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
 4. **ScaledNoder #90 (P1)** — Scope whether scale=0/1 bug maps to a named snap claim.  
 5. **Coverage #1084 (P1)** — Spec sketch only until #425 cleaner is stable.

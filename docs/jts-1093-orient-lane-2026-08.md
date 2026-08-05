@@ -199,7 +199,7 @@ issue; Ozaki/JTS use non-strict `>=` as in the Java sources.
 | Expand vector bank + three-way gate | **This session GREEN** |
 | Draft PR comment with numbers | `tests/Discussion839Mre/jts-1093-comment.md` |
 | Post comment on jts#1093 | Human / optional |
-| Keep #1197 green | Ongoing |
+| Keep #1197 green | **GREEN 2026-08-05** — rebase + vectors + GHA pass + merge ping ([#1197 comment](https://github.com/locationtech/jts/pull/1197#issuecomment-5186644725)); await maintainer review |
 | ORIENT_EXACT FFI segfault class | Separate (ffi rungs §3) |
 
 **AI assistance**: Grok (grok-4.5), human-directed.  
