@@ -37,7 +37,11 @@ FFI_PROBE   := ffi_probe
 FFI_CFLAGS  := -O2 -fPIC -I$(OCAML_WHERE) -I.
 FFI_LDLIBS  := -L$(OCAML_WHERE) -lasmrun_pic -lm -ldl -lpthread
 
-.PHONY: all clean ffi ffi-parity arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests
+# Mesh scout lane: in-circle-only FFI (does not need full nts_ffi.ml extraction).
+SCOUT_IC_LIB   := libscout_incircle.$(FFI_SOEXT)
+SCOUT_IC_PROBE := scout_incircle_probe
+
+.PHONY: all clean ffi ffi-parity scout-incircle-ffi jts1094-scout arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests
 
 all: $(TARGET)
 
@@ -223,5 +227,32 @@ $(FFI_PROBE): ffi_probe.c nts_ffi.h $(FFI_LIB)
 ffi-parity: $(TARGET) $(FFI_PROBE)
 	cd .. && python3 oracle/gen_ffi_parity_tests.py
 
+# ---- Mesh scout: in-circle-only FFI (JTS #1094 / #1212 lane) ---------------
+# Builds when full `make ffi` cannot (stale extracted.ml missing e.g.
+# b64_orient2d_exact).  Same b64_inCircle symbol as production nts_rocq_in_circle.
+scout_incircle_ffi.cmx: scout_incircle_ffi.ml extracted.cmi extracted.cmx
+	$(OCAMLOPT) -c scout_incircle_ffi.ml
+
+scout_incircle_ml.o: extracted.cmx scout_incircle_ffi.cmx
+	$(OCAMLOPT) -output-obj extracted.cmx scout_incircle_ffi.cmx -o scout_incircle_ml.o
+
+scout_incircle_stubs.o: scout_incircle_stubs.c nts_ffi.h
+	$(CC) $(FFI_CFLAGS) -c scout_incircle_stubs.c -o scout_incircle_stubs.o
+
+$(SCOUT_IC_LIB): scout_incircle_ml.o scout_incircle_stubs.o
+	$(CC) -shared -o $@ scout_incircle_ml.o scout_incircle_stubs.o $(FFI_LDLIBS)
+
+$(SCOUT_IC_PROBE): scout_incircle_probe.c nts_ffi.h $(SCOUT_IC_LIB)
+	$(CC) -O2 -I. scout_incircle_probe.c -o $@ -L. -lscout_incircle -Wl,-rpath,'$$ORIGIN'
+
+scout-incircle-ffi: $(SCOUT_IC_LIB) $(SCOUT_IC_PROBE)
+
+# Differential gate for JTS#1094 vs nts_rocq_in_circle (scout FFI).
+jts1094-scout: scout-incircle-ffi $(TARGET)
+	cd .. && python3 oracle/gen_jts1094_incircle_scout.py \
+	  --oracle oracle/oracle_bin \
+	  --ffi-probe oracle/scout_incircle_probe
+
 clean:
-	rm -f *.cmi *.cmo *.cmx *.o $(TARGET) $(FFI_LIB) $(FFI_PROBE)
+	rm -f *.cmi *.cmo *.cmx *.o $(TARGET) $(FFI_LIB) $(FFI_PROBE) \
+	  $(SCOUT_IC_LIB) $(SCOUT_IC_PROBE) scout_incircle_ml.o scout_incircle_stubs.o

@@ -26,6 +26,12 @@ libntsrocq.dylib
 libntsrocq.dll
 ffi_probe
 
+# Mesh scout in-circle-only FFI (JTS #1094 / #1212 lane)
+libscout_incircle.so
+libscout_incircle.dylib
+libscout_incircle.dll
+scout_incircle_probe
+
 # Python bytecode cache
 __pycache__/
 *.pyc
