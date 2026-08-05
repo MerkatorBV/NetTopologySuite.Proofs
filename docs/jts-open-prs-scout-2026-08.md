@@ -65,7 +65,13 @@ Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
      + [`docs/jts-311-incircle-lane-2026-08.md`](jts-311-incircle-lane-2026-08.md).  
      Stage A sketch + DDFast lineage; **ε = `ulp(1.0)` = \(2^{-52}\)** (looser than
      Shewchuk \(2^{-53}\)); name is not full `incircleadapt` (#1094). Product tip stays **#1212**.  
-2. **Orientation lane (P0)** — Differential plan for #1093 (Ozaki) vs `b64_orient_sign_filtered` / exact escalation; keep #1197 green.  
+2. **Orientation lane (P0)** — **STARTED 2026-08-05 (FFI rungs):**  
+   Full `libntsrocq` rebuild path after re-extract (`docs/ffi-rungs-2026-08.md`,
+   `scripts/rebuild_oracle_ffi.sh`).  
+   Differential scout: `oracle/gen_jts1093_orient_scout.py` (Ozaki mirror vs
+   Shewchuk Stage A vs `ORIENT_EXACT`).  
+   Note: `ORIENT_EXACT` **FFI** still has a segfault class on extreme coords
+   (parity YELLOW); use `oracle_bin` for exact GT. Keep #1197 green.  
 3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
 4. **ScaledNoder #90 (P1)** — Scope whether scale=0/1 bug maps to a named snap claim.  
 5. **Coverage #1084 (P1)** — Spec sketch only until #425 cleaner is stable.

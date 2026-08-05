@@ -20,6 +20,10 @@
 #   make -C oracle ffi          # builds libntsrocq.so + the ffi_probe driver
 #   make -C oracle ffi-parity   # gates FFI == oracle_bin, bit for bit
 #
+# If `make ffi` fails with Unbound value b64_orient2d_exact, re-extract:
+#   ./scripts/rebuild_oracle_ffi.sh [--parity]
+#   (see docs/ffi-rungs-2026-08.md)
+#
 # =============================================================================
 
 OCAMLOPT := ocamlfind ocamlopt
@@ -41,7 +45,7 @@ FFI_LDLIBS  := -L$(OCAML_WHERE) -lasmrun_pic -lm -ldl -lpthread
 SCOUT_IC_LIB   := libscout_incircle.$(FFI_SOEXT)
 SCOUT_IC_PROBE := scout_incircle_probe
 
-.PHONY: all clean ffi ffi-parity scout-incircle-ffi jts1094-scout arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests
+.PHONY: all clean ffi ffi-parity jts1093-orient-scout scout-incircle-ffi jts1094-scout arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests
 
 all: $(TARGET)
 
@@ -226,6 +230,11 @@ $(FFI_PROBE): ffi_probe.c nts_ffi.h $(FFI_LIB)
 # Gate: every FFI entry point must agree with oracle_bin bit for bit.
 ffi-parity: $(TARGET) $(FFI_PROBE)
 	cd .. && python3 oracle/gen_ffi_parity_tests.py
+
+# Orientation lane (jts#1093): Ozaki vs Shewchuk Stage A vs ORIENT_EXACT.
+# Does not require libntsrocq; optional FFI_PROBE for filtered parity spot-check.
+jts1093-orient-scout: $(TARGET)
+	cd .. && python3 oracle/gen_jts1093_orient_scout.py
 
 # ---- Mesh scout: in-circle-only FFI (JTS #1094 / #1212 lane) ---------------
 # Builds when full `make ffi` cannot (stale extracted.ml missing e.g.
