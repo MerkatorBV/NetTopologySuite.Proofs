@@ -1,6 +1,7 @@
 # JTS #1145 YStripes PIP gallery differential (2026-08-05)
 # Source: docs/nts-oracle-gallery.md + C# port of micycle1/jts ystripes tip
 # Harness: tests/Discussion839Mre --jts1145
+# claimId: none — ADR-0004 skip; harness-only differential, not a fresh mutation surface
 # GT = geometric / OGC Location; parity column notes naive ray-parity where it differs
 # status: all PASS (YStripes == Indexed == Simple == GT)
 #
