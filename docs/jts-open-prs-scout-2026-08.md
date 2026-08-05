@@ -1,0 +1,231 @@
+# Scout — all open [locationtech/jts](https://github.com/locationtech/jts) PRs vs NetTopologySuite.Proofs
+
+**Date**: 2026-08-05.  
+**topic:** `docs` (routing); primary epics touched below as `core` / `mesh` / `precision` / `relate` / `buffer` / `metric` / `coverage` / `hull`.  
+**Scope**: Inventory of **all 49** open PRs on `locationtech/jts` (fetched 2026-08-05 via GitHub API). Map each against the corpus (`TRIAGE_NTS_JTS_ISSUES.md`, `#64–#69`, `#423`/`#425`/`#410`) and rank by **risk / cost of corpus engagement**.  
+**Question**: Which open JTS PRs should this proofs corpus prioritise next, and which can stay park?
+
+**Verdict (headline)**  
+Of 49 open PRs, **~12 are corpus-hot**, **~10 are watch**, and **~27 are out of proof scope** (CI, IO, docs, API cosmetics, stale refactors).  
+**Top pick stack (do first):** `#1212` + `#1094`/`#311` (mesh in-circle) → `#1093`/`#1197` (orientation filters) → `#90` (ScaledNoder) → `#1145` (PIP locator) → `#1084` (coverage edges).
+
+---
+
+## §0 — Scoring rubric
+
+| Axis | Meaning |
+|---|---|
+| **Relevance** | How hard the PR lands on a corpus epic / oracle surface |
+| **Cost** | Effort for *this* repo to engage (pin vectors, claim, differential gate, comment) — not JTS merge cost |
+| **Risk** | Downstream soundness risk if JTS merges without a corpus gate |
+| **Score** | `priority = f(relevance↑, risk↑, cost↓)` — **P0** engage, **P1** watch, **P2** park |
+
+| Relevance | Cost | Risk |
+|---|---|---|
+| **H** touches orient / in-circle / DT / snap / overlay / relate / buffer / PIP / Hausdorff / coverage | **L** existing Qed/oracle; pin or comment | **H** production predicate or mesh legality |
+| **M** densify, distance, polygonize, simplify structure | **M** new claim or small theory | **M** quality / topology-sensitive |
+| **L** API, IO, CI, docs, generics, Z plumbing | **H** greenfield / thesis | **L** no soundness surface |
+
+---
+
+## §1 — Priority picks (engage)
+
+Ordered by **risk÷cost** for the proofs corpus (not JTS merge politics).
+
+| Rank | PR | Title | Epic / topic | Rel | Cost | Risk | Why pick |
+|---|---|---|---|---|---|---|---|
+| **1** | [#1212](https://github.com/locationtech/jts/pull/1212) | Improve triangulation robustness | **#68** `mesh` | H | L–M | H | `TrianglePredicate.isInCircleRobust` Shewchuk-style filter + `Vertex.isCCW` → `Orientation.index`. Corpus has `b64_inCircle` / `DelaunayLocallyDelaunay` / empty-circle pins — can **diff-test** the new filter against `INCIRCLE_SIGN` / `nts_rocq_in_circle`. Direct NTS port path. |
+| **2** | [#1094](https://github.com/locationtech/jts/pull/1094) | Make isInCircleRobust robust | **#68** `mesh` | H | L | H | Older sibling of #1212 on the same class. Same gate; prefer whichever is current tip — treat as **one lane**. |
+| **3** | [#311](https://github.com/locationtech/jts/pull/311) | isInCircleAdapt sketch Java port | **#68** `mesh` | H | L | H | Shewchuk adaptive sketch; updated 2026-05. Superseded in spirit by #1094/#1212 but useful as **design history**. Corpus Stage D expansion work is the formal counterpart. |
+| **4** | [#1093](https://github.com/locationtech/jts/pull/1093) | Change Shewchuk Orientation filter to Ozaki et al. | **#66/#64** `precision`/`core` | H | M | H | Changes production `CGAlgorithmsDD` orientation filter. Corpus ground truth: `Orient_b64_exact*` / `nts_rocq_orient_sign_exact`. **Must** differential-test before blessing; Ozaki vs Shewchuk Stage A is a real soundness product decision. |
+| **5** | [#1197](https://github.com/locationtech/jts/pull/1197) | Characterize DD orientation soundness (#1106) | **#66** `precision` | H | L | M | **Ours.** Test-only characterization + `RocqRefRunner`. Aligns with `docs/verified-claims.md` orient rows and oracle vectors. **Push merge / keep green** — low cost, high signalling. |
+| **6** | [#90](https://github.com/locationtech/jts/pull/90) | Fix ScaledNoder behaviour (draft) | **#66** `precision` | H | M | H | Scale=0 vs scale=1 noding inconsistency. Corpus: snap / noding / `GeometryPrecisionReducer` lane. Draft but high risk if scaled noding is wrong. |
+| **7** | [#1145](https://github.com/locationtech/jts/pull/1145) | YStripesPointInAreaLocator | **#67** `relate` (+ JCT) | H | L–M | M | New PIP implementation. Corpus `point_in_ring` + gallery (`nts-oracle-gallery.md`) is the **regression oracle** — run hat/Spectre/vertex-graze/horizontal-edge vectors. |
+| **8** | [#1084](https://github.com/locationtech/jts/pull/1084) | CoverageEdgeExtractor | **#425** `coverage` | M–H | M | M | Unique edges from polygonal coverage. Corpus has `CoverageGapOverlapCleaner.v` / #425. Good **next coverage claim** after cleaner. |
+| **9** | [#1216](https://github.com/locationtech/jts/pull/1216) | Explicit stack in DouglasPeucker (#1127) | **#69** S-* | M | L | L–M | **Ours.** Stack overflow fix; behaviour-preserving. Corpus `Simplify.v` is structural only — **no new proof** needed; port to NTS when merged. |
+| **10** | [#1140](https://github.com/locationtech/jts/pull/1140) | Hausdorff distance percentile | **#423** `metric` | M | M | L–M | Extends discrete Hausdorff. Corpus `HausdorffDiscrete.v` / Claim423a pins directed max-min — can pin percentile semantics or mark out-of-scope. |
+| **11** | [#1217](https://github.com/locationtech/jts/pull/1217) | MinimumAreaRectangle convex-hint (#1149) | **#hull** / #69 | M | L | L | **Ours.** API only. Adjacent to MBT (`MinimumBoundingTriangle.v` / Claim424a) but **no proof obligation**. |
+| **12** | [#968](https://github.com/locationtech/jts/pull/968) | Polygonizer infinite loop (#874) | **#66/#69** PLG | M | M | M | Infinite loop fix in polygonizer. Corpus ring-extract / Euler is linear overlay PLG; still a **topology-engine** watch. |
+
+### Recommended immediate work sequence (this repo)
+
+1. **Mesh in-circle lane (P0)** — **LANDED 2026-08-05 (session 1 GREEN):**  
+   `oracle/gen_jts1212_incircle_vectors.py` + `oracle/jts1212_incircle_vectors.txt`  
+   + outcome [`docs/jts-1212-incircle-lane-2026-08.md`](jts-1212-incircle-lane-2026-08.md).  
+   29 vectors; all EXPECTED pins match `INCIRCLE_SIGN`; Stage A CERTAIN never
+   disagrees with oracle; GEOS955 subset forces Stage A UNCERTAIN while oracle
+   POS (DD path necessary). Optional follow-ups: CI smoke, comment on #1212.
+2. **Orientation lane (P0)** — Differential plan for #1093 (Ozaki) vs `b64_orient_sign_filtered` / exact escalation; keep #1197 green.  
+3. **PIP gallery on #1145 (P0/P1)** — Reuse `docs/nts-oracle-gallery.md` WKT as Java tests / differential.  
+4. **ScaledNoder #90 (P1)** — Scope whether scale=0/1 bug maps to a named snap claim.  
+5. **Coverage #1084 (P1)** — Spec sketch only until #425 cleaner is stable.
+
+---
+
+## §2 — Full inventory (all 49)
+
+Columns: **Pri** = P0/P1/P2 · **Rel/Cost/Risk** · **Epic**.
+
+### 2.1 Hot / recent geometric (2024–2026)
+
+| PR | Title | Author | Pri | Rel | Cost | Risk | Epic | Corpus notes |
+|---|---|---|---|---|---|---|---|---|
+| 1220 | Add Geometry.getCoordinateDimension | mdedetrich | P2 | L | L | L | — | API dimension helper; no soundness |
+| 1218 | Update README.md (Kotlin port link) | mipastgt | P2 | L | L | L | — | docs |
+| 1217 | MinimumAreaRectangle convex-hint | grootstebozewolf | P1 | M | L | L | hull | Ours; API only |
+| 1216 | DouglasPeucker explicit stack | grootstebozewolf | P1 | M | L | L–M | core/S-* | Ours; port when merged |
+| 1215 | RelatePointLocator Android ART array | grootstebozewolf | P2 | L | L | L | relate | Runtime/ART; no math |
+| 1214 | setRandom on RandomPointsBuilder | woogi-kim | P2 | L | L | L | — | test util |
+| **1212** | **Improve triangulation robustness** | micycle1 | **P0** | H | L–M | H | **mesh** | In-circle filter + orient |
+| **1197** | **DD orientation characterization (#1106)** | grootstebozewolf | **P0** | H | L | M | **precision** | Ours; Rocq vectors |
+| 1196 | Densifier SegmentInterpolator | smithkm | P1 | M | M | L–M | core/DSF | Densify extension; chord/sagitta lane adjacent |
+| 1189 | WIP Orientation isCCW GEOS test | strk | P1 | H | L | M | precision | `status-INVALID`; still a useful negative test seed |
+| 1170 | Generics on geom.util extractors | micycle1 | P2 | L | L | L | — | API typing |
+| 1164 | GeoJsonWriter create() for subclasses | krizleebear | P2 | L | L | L | — | IO |
+| **1145** | **YStripesPointInAreaLocator** | micycle1 | **P0** | H | L–M | M | **relate**/JCT | New PIP; gallery |
+| **1140** | **Hausdorff distance percentile** | ikgh9 | **P1** | M | M | L–M | **metric** | Extends HausdorffDiscrete |
+| 1137 | Gh pages to docs | jodygarnett | P2 | L | L | L | — | docs |
+| 1135 | HilbertEncoder.sort() | micycle1 | P2 | L | L | L | — | spatial index util |
+| **1094** | **Make isInCircleRobust robust** | tinko92 | **P0** | H | L | H | **mesh** | Same lane as #1212 |
+| **1093** | **Ozaki orientation filter** | tinko92 | **P0** | H | M | H | **precision** | Production orient filter swap |
+| **1084** | **CoverageEdgeExtractor** | nstrahl | **P1** | M–H | M | M | **coverage** | #425 adjacent |
+| 1014 | Missing @Override annotations | msbarry | P2 | L | L | L | — | app/TestBuilder |
+| 994 | NPE in Point | arthurscchan | P2 | L | L | L | — | null guard |
+| **968** | **Polygonizer infinite loop** | mukoki | **P1** | M | M | M | PLG | Topology engine bugfix |
+
+### 2.2 Mid-age geometric / plumbing (2021–2023)
+
+| PR | Title | Author | Pri | Rel | Cost | Risk | Epic | Corpus notes |
+|---|---|---|---|---|---|---|---|---|
+| 942 | HeaderDemo sample_java_header | FObermaier | P2 | L | L | L | — | license sample |
+| 941 | WKTReader silent dim addition | chenhh021 | P2 | L | L | L | — | IO/WKT |
+| 930 | DistanceOp skip redundant calc | RichMacDonald | P1 | M | L | L–M | metric | Perf; same DistanceOp surface as 926 |
+| 926 | LineSegment orthogonal point | RichMacDonald | P1 | M | L–M | L | metric | Segment geometry; `Segment.v` adjacent |
+| 836 | CatmullRomSpline | wulfsberg | P2 | L–M | H | L | core? | New curve type; greenfield vs arc/clothoid focus |
+| 806 | Polygon.getNumInteriorRing binary compat | i23098 | P2 | L | L | L | — | binary compat |
+| 797 | STRtree value generics | halset | P2 | L | L | L | — | index API |
+| 715 | Opt-out Z interpolation (OverlayNG) | bjornharrtell | P1 | M | M | M | precision | OverlayNG elevation; Z not in R² corpus |
+| 672 | PackedCoordinateSequence arrays | bjornharrtell | P2 | L | L | L | — | storage |
+| 658 | Z handling LineSegment/Densifier | mukoki | P2 | L | M | L | — | Z dimension |
+| 646 / 638 | CI Java matrix | carldea | P2 | L | L | L | — | CI (likely stale) |
+| 499 | RFC ISO compliance tests | jagill | P1 | M | M | L | relate | Spec tests; useful corpus vectors if revived |
+| 478 | Gaussian smooth + densifier | jgaffuri | P2 | M | H | L | S-*/DSF | New algorithms; high cost |
+| 460 | mvn site javadoc | jodygarnett | P2 | L | L | L | — | build |
+| 346 | Zero-length LineString relate | mukoki | P1 | M–H | M | M | **relate** | Dimension/relate edge cases; DE-9IM adjacent |
+| 343 | OraReader empty sdo_geometry | nocny-x | P2 | L | L | L | — | Oracle IO |
+| 319 | DepthSegment test input | FObermaier | P2 | L | L | L | buffer | test hygiene only |
+| **311** | **isInCircleAdapt sketch** | Komzpa | **P0** | H | L | H | **mesh** | Adaptive in-circle (see §1) |
+| 283 | TWKB parsing | atallahhezbor | P2 | L | L | L | — | IO |
+| **279** | **CommonBits mantissa #253** | taromurao | **P1** | M | M | M | precision | Precision reduction numerics |
+| 233 | Release assembly | jodygarnett | P2 | L | L | L | — | release packaging |
+| 221 | PM change method | bjornharrtell | P2 | L | L | L | precision | refactor PM |
+| 217 | Static ops / null geom | bjornharrtell | P2 | L | M | L | — | JSTS transpilation refactor |
+| 200 | Move ops into operation classes | bjornharrtell | P2 | L | H | L | — | large structural; JSTS |
+| **90** | **ScaledNoder (draft)** | jnh5y | **P0** | H | M | H | **precision** | scale edge case |
+| 83 | RadialDistanceByAngleSimplifier lab | FObermaier | P2 | M | M | L | S-* | lab module |
+
+---
+
+## §3 — Heatmap by corpus epic
+
+| Epic | `topic:` | Open JTS PRs that matter | Corpus readiness |
+|---|---|---|---|
+| **#68** mesh | `mesh` | **1212, 1094, 311** | Strong: empty-circle, flip, degenerate pins, FFI in-circle |
+| **#66** precision | `precision` | **1093, 1197, 90, 279, 715** | Strong: orient exact/filtered, snap, OverlayNG conditional |
+| **#67** relate / PIP | `relate` | **1145, 346, 499?, 1215** | Strong PIP gallery + DE-9IM; locator is consumer not new math |
+| **#64/#65** core/buffer | `core`/`buffer` | 1196 densify; buffer PRs thin in open set | Densify DSF partial; buffer mostly issues not PRs |
+| **#423** metric | `metric` | **1140, 926, 930** | Hausdorff discrete banked; percentile optional |
+| **#425** coverage | `coverage` | **1084** | Cleaner landed; edge extractor next |
+| **hull** | `hull` | **1217** (API), MBT already local | MBT theory present; MAR API free |
+| **PLG** | precision/core | **968** | Euler/ring extract discharged; infinite-loop is engine bug |
+| — out of scope | — | ~27 PRs | CI/IO/docs/API/Z/generics/JSTS |
+
+---
+
+## §4 — Explicit non-picks (do not spend proof budget)
+
+- **CI / build / release**: 638, 646, 460, 233  
+- **Docs / README / web**: 1218, 1137  
+- **IO only**: 1164, 941, 343, 283  
+- **API / generics / ART / binary compat**: 1220, 1215, 1170, 797, 806, 994, 1014  
+- **Z-dimension / storage**: 658, 672, 715 (watch only for OverlayNG Z)  
+- **Large stale structural (JSTS)**: 200, 217, 221  
+- **Greenfield curves outside focus**: 836 Catmull-Rom, 478 Gaussian (unless product pull)  
+- **Lab simplify**: 83  
+
+---
+
+## §5 — Conflict / supersession map
+
+| Cluster | Members | Action |
+|---|---|---|
+| **In-circle robustness** | #311 → #1094 → **#1212** | Treat **#1212 as tip**; archive others as predecessors once merged |
+| **Orientation filters** | #1093 (Ozaki production), #1197 (DD limits tests), #1189 (isCCW test INVALID) | Gate #1093 against corpus exact; keep #1197; mine #1189 for vectors only |
+| **DistanceOp / LineSegment** | #926, #930 | One review pass if either moves; low proof cost |
+| **CI matrix** | #638, #646 | Ignore unless JTS maintainers revive |
+
+---
+
+## §6 — Risk×cost matrix (hot set only)
+
+```
+        low cost ──────────────── high cost
+high    1197 1216 1217            1093 (Ozaki prove-out)
+risk    1212 1094 311             90 (ScaledNoder full)
+        1145 (gallery)
+med     1140 926 930 968          1084 1196 346 478
+low     1215 1220 …               200 836
+```
+
+**P0 (engage this month):** 1212/1094/311 · 1093 · 1197 · 90 · 1145  
+**P1 (queue):** 1084 · 1140 · 1216 · 1217 · 968 · 279 · 1196 · 346 · 926/930  
+**P2 (park):** the rest (~27)
+
+---
+
+## §7 — What “engage” means for a pick
+
+| Action | When |
+|---|---|
+| **Differential pin** | Predicate already in corpus (in-circle, orient) — feed PR test coords to `oracle_bin` / FFI |
+| **Gallery expansion** | New PIP (#1145) — add WKT cases to `nts-oracle-gallery` if RED vectors appear |
+| **Claim registration** | New algorithmic claim with Qed path (percentile Hausdorff, coverage edges) |
+| **Comment on JTS PR** | Only with numbers (sign mismatches, pin tables); avoid pure opinion |
+| **NTS port watch** | Behaviour-preserving fixes (#1216) after JTS merge |
+
+Do **not** open multi-session theory work for P2 PRs.
+
+---
+
+## §8 — Count check
+
+| Bucket | Count |
+|---|---|
+| Open PRs inventoried | **49** |
+| P0 | **7** (#1212, #1094, #311, #1093, #1197, #90, #1145) — in-circle cluster counted as one product lane |
+| P1 | **~12** |
+| P2 | **~30** |
+| Authored by grootstebozewolf | 4 (#1197, #1215, #1216, #1217) |
+
+(If counting in-circle trio as three P0 rows: P0 = 7 distinct PR numbers as in §1.)
+
+---
+
+## §9 — Suggested one-liner picks for Joost / BDFL
+
+1. **Bet the mesh lane on #1212** (with #1094/#311 as history) — highest corpus leverage per hour.  
+2. **Gate any orientation filter change (#1093) on exact orient** — never merge on vibes.  
+3. **Use the PIP gallery as free CI for #1145**.  
+4. **Ignore ~55% of the open queue** (CI/IO/docs/API) for proof planning.  
+5. **Keep our four PRs** green; only #1197 and #1216 need corpus-adjacent attention.
+
+---
+
+## §10 — Sources
+
+- GitHub API: `GET /repos/locationtech/jts/pulls?state=open` (49 results, 2026-08-05)  
+- Per-PR file lists via `GET .../pulls/{n}/files`  
+- Corpus: `TRIAGE_NTS_JTS_ISSUES.md`, `docs/verified-claims.md`, `#64–#69`, `#423`, `#425`, Delaunay/orient/PIP theories  
+
+**AI assistance**: Grok (grok-4.5), human-directed.  
+**License**: project documentation (BSD-3-Clause corpus).
