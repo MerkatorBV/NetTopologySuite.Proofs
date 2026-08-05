@@ -1,0 +1,16 @@
+# JTS #1093 Ozaki orientation filter scout
+# topic: precision  epic: #66
+# OZAKI_K = 3.3306690621773724e-16
+# CCWERRBOUND_A (Shewchuk) = 3.3306690738754716e-16
+# Columns: name EXACT OZAKI_SIGN/CERT SHEW_SIGN/CERT FFI_FILT note
+#
+pin_ccw_unit	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# area +1/2
+pin_cw_unit	EXACT=NEG	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# area -1/2
+pin_collinear_x	EXACT=ZERO	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# on segment
+pin_collinear_diag	EXACT=ZERO	OZAKI=ZERO/UNC	SHEW=ZERO/UNC	FFI_FILT=ZERO	# diagonal
+near_collinear_1e-8	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# slightly above segment
+near_collinear_1e-12	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# may be filter-uncertain
+large_ccw	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# homothetic CCW
+jts_style_near_col	EXACT=NEG	OZAKI=NEG/CERT	SHEW=NEG/CERT	FFI_FILT=NEG	# near-collinear geographic-scale sample
+int_tri	EXACT=POS	OZAKI=POS/CERT	SHEW=POS/CERT	FFI_FILT=POS	# 3-4-5 area
+int_vertex	EXACT=ZERO	OZAKI=ZERO/CERT	SHEW=ZERO/CERT	FFI_FILT=ZERO	# q = a

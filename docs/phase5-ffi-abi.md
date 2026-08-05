@@ -13,6 +13,21 @@ Companion sources:
 
 ---
 
+## 0. Rebuild / freshness (2026-08)
+
+`oracle/extracted.ml` is **gitignored**. A stale extract (missing
+`b64_orient2d_exact`) breaks `make -C oracle ffi` while still allowing the
+mesh scout library (`scout_incircle_*`). Refresh with:
+
+```bash
+./scripts/rebuild_oracle_ffi.sh --parity
+```
+
+Rung status, parity YELLOW on exact-orient extremes, and the orientation
+lane scout: [`docs/ffi-rungs-2026-08.md`](ffi-rungs-2026-08.md).
+
+---
+
 ## 1. Where Phase 5 actually stood
 
 The roadmap row read "pending Phase 1+ / 0%", which had gone stale in one

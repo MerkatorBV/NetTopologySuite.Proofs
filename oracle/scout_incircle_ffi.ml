@@ -5,8 +5,9 @@
 
    Registers only `b64_inCircle` (the same extracted symbol that
    `oracle_bin` INCIRCLE_SIGN and production `nts_rocq_in_circle` use).
-   Full `nts_ffi.ml` currently needs a fresher extraction (e.g.
-   `b64_orient2d_exact`); this scout library does not.
+   Prefer full `libntsrocq` after `./scripts/rebuild_oracle_ffi.sh`
+   (docs/ffi-rungs-2026-08.md). This scout remains a thin fallback when
+   extract is stale (missing e.g. `b64_orient2d_exact`).
 
    Bit-identity with oracle_bin is the same construction as Phase 5:
    one extracted symbol, two call paths (subprocess protocol vs C ABI).
