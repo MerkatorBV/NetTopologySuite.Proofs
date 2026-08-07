@@ -23,6 +23,12 @@
 /Makefile.gen.conf
 *.d
 
+# .NET build artefacts (tools/* console apps, test harnesses)
+bin/
+obj/
+*.user
+*.suo
+
 # Python
 __pycache__/
 *.pyc
