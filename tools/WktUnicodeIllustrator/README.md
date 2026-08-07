@@ -15,6 +15,10 @@ Override with `-p:NtsProject=...`. Falls back to NuGet 2.6 (lines only) with a b
 
 Curves are **linearized** for draw + overlay (playground curve ops); labels keep native curve WKT.
 
+**Structure glyphs:** after occupancy paint, each cell is remapped from its 8-neighbour
+connectivity to box-drawing / diagonal Unicode (`─│┌┐└┘├┤┬┴┼╭╮╰╯╱╲╳●`) — a lightweight
+structure-based pass inspired by Xu–Zhang–Wong *Structure-based ASCII Art*, not tone dithering.
+
 ## Run
 
 ```powershell

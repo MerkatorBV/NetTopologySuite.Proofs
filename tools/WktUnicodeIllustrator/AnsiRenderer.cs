@@ -79,7 +79,8 @@ internal static class AnsiRenderer
         if (showResult && cell.Layers.HasFlag(Layer.Result))
         {
             char r = cell.GlyphResult;
-            if (r is '─' or '│' or '╱' or '╲' or '\0' or ' ') return '●';
+            // Point results stay ●; linear result pieces keep structure glyphs.
+            if (r is '\0' or ' ' or '·') return '●';
             return r;
         }
 

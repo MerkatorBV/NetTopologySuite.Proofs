@@ -88,6 +88,10 @@ public static class CaseIllustrator
         if (result is { IsEmpty: false })
             Rasterizer.DrawGeometry(canvas, map, result, Layer.Result);
 
+        // Structure-based pass: match local stroke connectivity to box/diagonal
+        // glyphs (Xu–Zhang–Wong structure ASCII art idea, fixed glyph palette).
+        StructureGlyph.Assign(canvas);
+
         var sb = new StringBuilder();
         sb.AppendLine("WKT Unicode illustrator — line / curve cases");
         sb.AppendLine($"  A ({Describe(a)}): {a.AsText()}");

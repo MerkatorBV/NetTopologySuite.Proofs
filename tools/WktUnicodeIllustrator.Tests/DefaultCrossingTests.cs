@@ -90,11 +90,45 @@ public class DefaultCrossingTests
         Assert.Contains("— inputs", r.Text);
         Assert.Contains("— after operation", r.Text);
         Assert.Contains('┌', r.Text);
-        // Densified arcs should paint more than a 3-point chord triangle.
-        int stroke = r.Text.Count(ch => ch is '─' or '│' or '╱' or '╲' or '╳' or '●');
-        Assert.True(stroke >= 20, $"expected dense arc strokes, got {stroke}");
+        // Structure pass + densified arcs: box-drawing and/or diagonals, not sparse chords.
+        int stroke = r.Text.Count(ch =>
+            ch is '─' or '│' or '╱' or '╲' or '╳' or '●'
+                or '┌' or '┐' or '└' or '┘' or '├' or '┤' or '┬' or '┴' or '┼'
+                or '╭' or '╮' or '╰' or '╯');
+        Assert.True(stroke >= 20, $"expected dense structure strokes, got {stroke}");
         Assert.False(r.ResultIsEmpty);
         Assert.False(string.IsNullOrWhiteSpace(r.ResultWkt));
+    }
+
+    [Fact]
+    public void Structure_glyphs_use_box_drawing_on_axis_aligned_cross()
+    {
+        var r = CaseIllustrator.Render(
+            wktA: "LINESTRING (0 0, 4 0)",
+            wktB: "LINESTRING (2 -2, 2 2)",
+            useColor: false);
+
+        Assert.Equal(0, r.ExitCode);
+        // Horizontal + vertical arms after structure assignment.
+        Assert.Contains('─', r.Text);
+        Assert.Contains('│', r.Text);
+        // Crossing / result marks.
+        Assert.True(r.Text.Contains('╳') || r.Text.Contains('┼') || r.Text.Contains('●'));
+    }
+
+    [Fact]
+    public void StructureGlyph_corner_masks_map_to_box_corners()
+    {
+        // Pure unit tests of the structure → character table (no geometry).
+        Assert.Equal('└', StructureGlyph.ChooseFromMask(1 | 2));      // N|E
+        Assert.Equal('┘', StructureGlyph.ChooseFromMask(1 | 8));      // N|W
+        Assert.Equal('┌', StructureGlyph.ChooseFromMask(4 | 2));      // S|E
+        Assert.Equal('┐', StructureGlyph.ChooseFromMask(4 | 8));      // S|W
+        Assert.Equal('─', StructureGlyph.ChooseFromMask(2 | 8));      // E|W
+        Assert.Equal('│', StructureGlyph.ChooseFromMask(1 | 4));      // N|S
+        Assert.Equal('┼', StructureGlyph.ChooseFromMask(1 | 2 | 4 | 8));
+        Assert.Equal('╱', StructureGlyph.ChooseFromMask(128 | 32));   // NW|SE
+        Assert.Equal('╲', StructureGlyph.ChooseFromMask(16 | 64));    // NE|SW
     }
 
     [Fact]

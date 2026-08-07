@@ -11,6 +11,10 @@
     <NtsProject Condition="'$(NtsProject)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\NetTopologySuite\src\NetTopologySuite\NetTopologySuite.csproj'))</NtsProject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="WktUnicodeIllustrator.Tests" />
+  </ItemGroup>
+
   <ItemGroup Condition="Exists('$(NtsProject)')">
     <ProjectReference Include="$(NtsProject)" />
   </ItemGroup>
