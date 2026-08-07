@@ -34,9 +34,17 @@ internal static class Program
         bool useColor = opts.ForceColor
             || (opts.Color && !Console.IsOutputRedirected);
 
+        string? wktA = opts.WktA;
+        string? wktB = opts.WktB;
+        if (opts.DemoCurve)
+        {
+            wktA ??= CaseIllustrator.DefaultCurveA;
+            wktB ??= CaseIllustrator.DefaultCurveB;
+        }
+
         var result = CaseIllustrator.Render(
-            wktA: opts.WktA,
-            wktB: opts.WktB,
+            wktA: wktA,
+            wktB: wktB,
             operation: opts.Operation,
             width: opts.Width,
             height: opts.Height,
@@ -66,6 +74,7 @@ internal static class Program
             Options:
               --op <name>      intersection | union | difference | symdifference | none
                                aliases: cross, x → intersection (default: intersection)
+              --demo curve     built-in CIRCULARSTRING × CIRCULARSTRING crossing
               --width N        grid width  (default: 41)
               --height N       grid height (default: 21)
               --no-color       plain Unicode, no ANSI escapes
@@ -76,17 +85,21 @@ internal static class Program
               A = blue, B = red, operation result = green
               pixels that are both A and B (before result paint) = magenta
 
-            Default MVP (simple line–line crossing):
+            Requires the local curve-aware NetTopologySuite clone (sibling repo) for
+            CIRCULARSTRING / COMPOUNDCURVE / CURVEPOLYGON WKT. Curves are linearized
+            for draw + overlay (playground curve ops); labels keep native curve WKT.
+
+            Default (line–line crossing):
               A = LINESTRING (0 0, 10 10)
               B = LINESTRING (0 10, 10 0)
               op = intersection  →  POINT (5 5) in green
 
             Examples:
               dotnet run --project tools/WktUnicodeIllustrator
-              dotnet run --project tools/WktUnicodeIllustrator -- --no-color
+              dotnet run --project tools/WktUnicodeIllustrator -- --demo curve
+              dotnet run --project tools/WktUnicodeIllustrator -- --no-color ^
+                "CIRCULARSTRING (0 0, 5 8, 10 0)" "LINESTRING (0 5, 10 5)"
               dotnet run --project tools/WktUnicodeIllustrator -- --force-color
-              dotnet run --project tools/WktUnicodeIllustrator -- ^
-                "LINESTRING (0 0, 4 0)" "LINESTRING (2 -2, 2 2)"
             """);
     }
 
@@ -99,13 +112,14 @@ internal static class Program
         public int Height { get; init; } = 21;
         public bool Color { get; init; } = true;
         public bool ForceColor { get; init; }
+        public bool DemoCurve { get; init; }
         public bool Help { get; init; }
 
         public static Options Parse(string[] args)
         {
             string? a = null, b = null, op = "intersection";
             int w = 41, h = 21;
-            bool color = true, forceColor = false, help = false;
+            bool color = true, forceColor = false, help = false, demoCurve = false;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -122,6 +136,20 @@ internal static class Program
                     case "--force-color" or "--color":
                         forceColor = true;
                         color = true;
+                        break;
+                    case "--demo" when i + 1 < args.Length:
+                        {
+                            string which = args[++i];
+                            if (which.Equals("curve", StringComparison.OrdinalIgnoreCase)
+                                || which.Equals("curves", StringComparison.OrdinalIgnoreCase)
+                                || which.Equals("arc", StringComparison.OrdinalIgnoreCase))
+                                demoCurve = true;
+                            else
+                                throw new ArgumentException($"Unknown demo '{which}' (try: curve).");
+                            break;
+                        }
+                    case "--curve" or "--curves":
+                        demoCurve = true;
                         break;
                     case "--op" when i + 1 < args.Length:
                         op = args[++i];
@@ -151,6 +179,7 @@ internal static class Program
                 Height = h,
                 Color = color,
                 ForceColor = forceColor,
+                DemoCurve = demoCurve,
                 Help = help,
             };
         }

@@ -74,6 +74,45 @@ public class DefaultCrossingTests
         Assert.Equal(Normalize(a), Normalize(b));
     }
 
+    [Fact]
+    public void CircularString_pair_parses_via_local_NTS_and_draws_curved_strokes()
+    {
+        var r = CaseIllustrator.Render(
+            wktA: CaseIllustrator.DefaultCurveA,
+            wktB: CaseIllustrator.DefaultCurveB,
+            useColor: false);
+
+        Assert.Equal(0, r.ExitCode);
+        Assert.Null(r.Error);
+        Assert.Contains("CIRCULARSTRING", r.Text);
+        Assert.Contains("CircularString", r.Text);
+        Assert.Contains("linearized curves", r.Text);
+        Assert.Contains("— inputs", r.Text);
+        Assert.Contains("— after operation", r.Text);
+        Assert.Contains('┌', r.Text);
+        // Densified arcs should paint more than a 3-point chord triangle.
+        int stroke = r.Text.Count(ch => ch is '─' or '│' or '╱' or '╲' or '╳' or '●');
+        Assert.True(stroke >= 20, $"expected dense arc strokes, got {stroke}");
+        Assert.False(r.ResultIsEmpty);
+        Assert.False(string.IsNullOrWhiteSpace(r.ResultWkt));
+    }
+
+    [Fact]
+    public void CircularString_crosses_horizontal_line()
+    {
+        // Chord of the densified upper arc is crossed by y = 5 (same mid-height as --demo curve).
+        var r = CaseIllustrator.Render(
+            wktA: "CIRCULARSTRING (0 0, 5 8, 10 0)",
+            wktB: "LINESTRING (0 5, 10 5)",
+            useColor: false);
+
+        Assert.Equal(0, r.ExitCode);
+        Assert.Contains("CIRCULARSTRING", r.Text);
+        Assert.Contains("LINESTRING", r.Text);
+        Assert.False(r.ResultIsEmpty);
+        Assert.Contains('●', r.Text);
+    }
+
     private static string Normalize(string s) =>
         string.Join('\n', s.Replace("\r\n", "\n").Split('\n').Select(l => l.TrimEnd()));
 }

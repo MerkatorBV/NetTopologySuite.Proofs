@@ -1,6 +1,6 @@
 # WktUnicodeIllustrator
 
-ANSI-coloured **Unicode sketches** of spatial cases from WKT.
+ANSI-coloured **Unicode sketches** of spatial cases from WKT — lines **and** SQL/MM curves.
 
 | Layer | Colour | Meaning |
 |-------|--------|---------|
@@ -9,7 +9,11 @@ ANSI-coloured **Unicode sketches** of spatial cases from WKT.
 | **result** | green | operation output (default: intersection) |
 | A∩B pixel | magenta | grid cell touched by both inputs (before result paint) |
 
-MVP target: **simple line–line crossing** — two `LINESTRING`s, intersection drawn as a green point.
+**NTS dependency:** prefers a **project reference** to the sibling curve-aware clone  
+`../NetTopologySuite` (`CIRCULARSTRING` / `COMPOUNDCURVE` / `CURVEPOLYGON` in `WKTReader`).  
+Override with `-p:NtsProject=...`. Falls back to NuGet 2.6 (lines only) with a build warning.
+
+Curves are **linearized** for draw + overlay (playground curve ops); labels keep native curve WKT.
 
 ## Run
 
@@ -30,6 +34,11 @@ dotnet run --project tools/WktUnicodeIllustrator -- --no-color
 
 # Force ANSI even when stdout is redirected (pipes / capture files)
 dotnet run --project tools/WktUnicodeIllustrator -- --force-color
+
+# Curves (requires local NTS clone with CircularString WKT)
+dotnet run --project tools/WktUnicodeIllustrator -- --demo curve --no-color
+dotnet run --project tools/WktUnicodeIllustrator -- --no-color `
+  "CIRCULARSTRING (0 0, 5 8, 10 0)" "LINESTRING (0 4, 10 4)"
 
 # Automated checks (same CaseIllustrator path as the CLI)
 dotnet test tools/WktUnicodeIllustrator.Tests -c Release
@@ -55,12 +64,10 @@ Polygons and other types stroke their boundary as a fallback; richer fills are o
 tools/WktUnicodeIllustrator/
   Program.cs                 CLI (parses args, prints CaseIllustrator output)
   CaseIllustrator.cs         pure WKT → framed Unicode report (CLI + tests)
-  Canvas.cs                  layered character grid
-  WorldToGrid.cs             envelope → col/row
-  Rasterizer.cs              geometry → glyphs
-  AnsiRenderer.cs            ANSI colour + frame
-  WktUnicodeIllustrator.csproj
+  GeometryCurves.cs          NTS curve parse + densify for draw/ops
+  Canvas.cs / WorldToGrid.cs / Rasterizer.cs / AnsiRenderer.cs
+  WktUnicodeIllustrator.csproj   → ProjectReference local NetTopologySuite
   README.md
 tools/WktUnicodeIllustrator.Tests/
-  DefaultCrossingTests.cs    structural asserts on the shipped path
+  DefaultCrossingTests.cs    line + CircularString structural asserts
 ```

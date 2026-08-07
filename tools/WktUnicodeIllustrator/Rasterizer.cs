@@ -4,7 +4,7 @@ namespace WktUnicodeIllustrator;
 
 /// <summary>
 /// Rasterizes NTS linework onto a <see cref="Canvas"/> with Unicode direction glyphs.
-/// MVP scope: <see cref="LineString"/> / <see cref="MultiLineString"/> only.
+/// Callers should <see cref="GeometryCurves.Linearize"/> curves first so arcs become dense polylines.
 /// </summary>
 internal static class Rasterizer
 {
@@ -19,6 +19,11 @@ internal static class Rasterizer
                 for (int i = 0; i < mls.NumGeometries; i++)
                     DrawLineString(canvas, map, (LineString)mls.GetGeometryN(i), layer);
                 break;
+            case Polygon poly:
+                DrawLineString(canvas, map, poly.ExteriorRing, layer);
+                for (int i = 0; i < poly.NumInteriorRings; i++)
+                    DrawLineString(canvas, map, poly.GetInteriorRingN(i), layer);
+                break;
             case Point p:
                 var (c, r) = map.Project(p.Coordinate);
                 canvas.Paint(c, r, layer, '●');
@@ -28,7 +33,7 @@ internal static class Rasterizer
                     DrawGeometry(canvas, map, gc.GetGeometryN(i), layer);
                 break;
             default:
-                // MVP fallback: stroke the exterior ring / edges if present.
+                // Stroke boundary / edges when present (MultiPolygon, etc.).
                 if (g.Boundary is { IsEmpty: false } b)
                     DrawGeometry(canvas, map, b, layer);
                 break;

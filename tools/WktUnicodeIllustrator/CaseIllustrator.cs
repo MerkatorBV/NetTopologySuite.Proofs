@@ -1,17 +1,20 @@
 using System.Text;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.IO;
 
 namespace WktUnicodeIllustrator;
 
 /// <summary>
-/// Pure entry for the line–line (and general WKT pair) Unicode case sketch.
+/// Pure entry for WKT pair Unicode case sketches (lines and SQL/MM curves).
 /// Used by the CLI and by automated checks — same code path both ways.
 /// </summary>
 public static class CaseIllustrator
 {
     public const string DefaultA = "LINESTRING (0 0, 10 10)";
     public const string DefaultB = "LINESTRING (0 10, 10 0)";
+
+    /// <summary>Two arcs crossing near the middle of the square (curve demo).</summary>
+    public const string DefaultCurveA = "CIRCULARSTRING (0 0, 5 8, 10 0)";
+    public const string DefaultCurveB = "CIRCULARSTRING (0 10, 5 2, 10 10)";
 
     public static IllustratorResult Render(
         string? wktA = null,
@@ -24,12 +27,11 @@ public static class CaseIllustrator
         wktA ??= DefaultA;
         wktB ??= DefaultB;
 
-        var reader = new WKTReader { IsOldNtsCoordinateSyntaxAllowed = false };
         Geometry a, b;
         try
         {
-            a = reader.Read(wktA);
-            b = reader.Read(wktB);
+            a = GeometryCurves.Parse(wktA);
+            b = GeometryCurves.Parse(wktB);
         }
         catch (Exception ex)
         {
@@ -39,8 +41,12 @@ public static class CaseIllustrator
         if (a.IsEmpty || b.IsEmpty)
             return IllustratorResult.Fail(2, "A and B must be non-empty geometries.");
 
-        var env = a.EnvelopeInternal.Copy();
-        env.ExpandToInclude(b.EnvelopeInternal);
+        // Curve overlay is playground: densify for ops + draw while keeping native types for labels/WKT.
+        Geometry aDraw = GeometryCurves.Linearize(a);
+        Geometry bDraw = GeometryCurves.Linearize(b);
+
+        var env = aDraw.EnvelopeInternal.Copy();
+        env.ExpandToInclude(bDraw.EnvelopeInternal);
 
         Geometry? result;
         string opName = operation;
@@ -48,15 +54,17 @@ public static class CaseIllustrator
         {
             result = operation.ToLowerInvariant() switch
             {
-                "intersection" or "cross" or "x" => a.Intersection(b),
-                "union" => a.Union(b),
-                "difference" => a.Difference(b),
-                "symdifference" or "xor" => a.SymmetricDifference(b),
+                "intersection" or "cross" or "x" => aDraw.Intersection(bDraw),
+                "union" => aDraw.Union(bDraw),
+                "difference" => aDraw.Difference(bDraw),
+                "symdifference" or "xor" => aDraw.SymmetricDifference(bDraw),
                 "none" => null,
-                _ => a.Intersection(b),
+                _ => aDraw.Intersection(bDraw),
             };
             if (operation is "cross" or "x")
-                opName = "intersection (line-line cross)";
+                opName = "intersection";
+            if (GeometryCurves.IsCurve(a) || GeometryCurves.IsCurve(b))
+                opName += " (linearized curves)";
         }
         catch (Exception ex)
         {
@@ -75,13 +83,13 @@ public static class CaseIllustrator
         var map = new WorldToGrid(env, width, height);
         var canvas = new Canvas(width, height);
 
-        Rasterizer.DrawGeometry(canvas, map, a, Layer.A);
-        Rasterizer.DrawGeometry(canvas, map, b, Layer.B);
+        Rasterizer.DrawGeometry(canvas, map, aDraw, Layer.A);
+        Rasterizer.DrawGeometry(canvas, map, bDraw, Layer.B);
         if (result is { IsEmpty: false })
             Rasterizer.DrawGeometry(canvas, map, result, Layer.Result);
 
         var sb = new StringBuilder();
-        sb.AppendLine("WKT Unicode illustrator — MVP (line–line cross)");
+        sb.AppendLine("WKT Unicode illustrator — line / curve cases");
         sb.AppendLine($"  A ({Describe(a)}): {a.AsText()}");
         sb.AppendLine($"  B ({Describe(b)}): {b.AsText()}");
         sb.AppendLine($"  op: {opName}");
@@ -122,7 +130,7 @@ public static class CaseIllustrator
             MultiLineString => "MultiLineString",
             Polygon => "Polygon",
             MultiPoint => "MultiPoint",
-            GeometryCollection => "GeometryCollection",
+            GeometryCollection => g.GeometryType,
             _ => g.GeometryType,
         };
 }
