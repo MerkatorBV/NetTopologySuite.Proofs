@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>WktUnicodeIllustrator</RootNamespace>
+    <!-- Sibling clone: .../grootstebozewolf/NetTopologySuite (curve-aware WKT + types).
+         Override: dotnet build -p:NtsProject=C:\path\to\NetTopologySuite.csproj -->
+    <NtsProject Condition="'$(NtsProject)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\NetTopologySuite\src\NetTopologySuite\NetTopologySuite.csproj'))</NtsProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WktUnicodeIllustrator.Tests" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('$(NtsProject)')">
+    <ProjectReference Include="$(NtsProject)" />
+  </ItemGroup>
+
+  <!-- Fallback for hosts without the local curve-aware clone: NuGet 2.6 (LINESTRING only). -->
+  <ItemGroup Condition="!Exists('$(NtsProject)')">
+    <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+  </ItemGroup>
+
+  <Target Name="WarnIfNuGetNts" BeforeTargets="Build" Condition="!Exists('$(NtsProject)')">
+    <Warning Text="Local curve-aware NTS not found at '$(NtsProject)'. Using NuGet 2.6.0 (no CIRCULARSTRING). Clone NetTopologySuite next to this repo or pass -p:NtsProject=..." />
+  </Target>
+
+</Project>
