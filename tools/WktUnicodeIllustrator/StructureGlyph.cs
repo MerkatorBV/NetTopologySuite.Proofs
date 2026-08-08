@@ -33,6 +33,10 @@ internal static class StructureGlyph
                     cell.GlyphA = Choose(canvas, x, y, Layer.A);
                 if (cell.Layers.HasFlag(Layer.B))
                     cell.GlyphB = Choose(canvas, x, y, Layer.B);
+                if (cell.Layers.HasFlag(Layer.OvershootA))
+                    cell.GlyphOvershootA = Choose(canvas, x, y, Layer.OvershootA);
+                if (cell.Layers.HasFlag(Layer.OvershootB))
+                    cell.GlyphOvershootB = Choose(canvas, x, y, Layer.OvershootB);
                 if (cell.Layers.HasFlag(Layer.Result))
                     cell.GlyphResult = ChooseResult(canvas, x, y);
             }

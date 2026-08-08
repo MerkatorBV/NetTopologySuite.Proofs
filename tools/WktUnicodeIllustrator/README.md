@@ -8,6 +8,8 @@ ANSI-coloured **Unicode sketches** of spatial cases from WKT — lines **and** S
 | **B** | red | second input geometry |
 | **result** | green | operation output (default: intersection) |
 | A∩B pixel | magenta | grid cell touched by both inputs (before result paint) |
+| **A-overshoot** | maroon | self-overlap on A (e.g. CIRCULARSTRING that retraces itself) |
+| **B-overshoot** | navy | self-overlap on B |
 
 **NTS dependency:** prefers a **project reference** to the sibling curve-aware clone  
 `../NetTopologySuite` (`CIRCULARSTRING` / `COMPOUNDCURVE` / `CURVEPOLYGON` in `WKTReader`).  
@@ -43,6 +45,12 @@ dotnet run --project tools/WktUnicodeIllustrator -- --force-color
 dotnet run --project tools/WktUnicodeIllustrator -- --demo curve --no-color
 dotnet run --project tools/WktUnicodeIllustrator -- --no-color `
   "CIRCULARSTRING (0 0, 5 8, 10 0)" "LINESTRING (0 4, 10 4)"
+
+# Self-overlapping circular strings (overshoot = maroon A / navy B)
+dotnet run --project tools/WktUnicodeIllustrator -- --demo overshoot
+dotnet run --project tools/WktUnicodeIllustrator -- --demo overshoot --force-color
+# disable overshoot paint:
+dotnet run --project tools/WktUnicodeIllustrator -- --demo overshoot --no-overshoot
 
 # Automated checks (same CaseIllustrator path as the CLI)
 dotnet test tools/WktUnicodeIllustrator.Tests -c Release

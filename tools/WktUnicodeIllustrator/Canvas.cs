@@ -41,10 +41,24 @@ internal sealed class Canvas
             case Layer.Result:
                 c.GlyphResult = glyph is '\0' or ' ' ? '●' : glyph;
                 break;
+            case Layer.OvershootA:
+                if (c.GlyphOvershootA is '\0' or ' ') c.GlyphOvershootA = glyph;
+                break;
+            case Layer.OvershootB:
+                if (c.GlyphOvershootB is '\0' or ' ') c.GlyphOvershootB = glyph;
+                break;
         }
-        // Composite display glyph: result wins, else first input stroke.
+        RefreshComposite(c);
+    }
+
+    private static void RefreshComposite(Cell c)
+    {
         if (c.GlyphResult is not ('\0' or ' '))
             c.Glyph = c.GlyphResult;
+        else if (c.GlyphOvershootA is not ('\0' or ' '))
+            c.Glyph = c.GlyphOvershootA;
+        else if (c.GlyphOvershootB is not ('\0' or ' '))
+            c.Glyph = c.GlyphOvershootB;
         else if (c.GlyphA is not ('\0' or ' '))
             c.Glyph = c.GlyphA;
         else
@@ -66,6 +80,10 @@ internal enum Layer
     A = 1,
     B = 2,
     Result = 4,
+    /// <summary>Self-overlap / overshoot on geometry A (maroon).</summary>
+    OvershootA = 8,
+    /// <summary>Self-overlap / overshoot on geometry B (navy).</summary>
+    OvershootB = 16,
 }
 
 internal sealed class Cell
@@ -76,4 +94,6 @@ internal sealed class Cell
     public char GlyphA;
     public char GlyphB;
     public char GlyphResult;
+    public char GlyphOvershootA;
+    public char GlyphOvershootB;
 }

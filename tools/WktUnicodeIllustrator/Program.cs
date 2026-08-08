@@ -3,9 +3,8 @@ using System.Text;
 namespace WktUnicodeIllustrator;
 
 /// <summary>
-/// MVP CLI: illustrate two WKT geometries (A blue, B red) as ANSI-coloured Unicode art,
-/// then overlay an operation result in green. First case: simple line–line crossing
-/// with the intersection point as the green result.
+/// CLI: illustrate two WKT geometries (A blue, B red) as ANSI-coloured Unicode art,
+/// overshoot/self-overlap in maroon/navy, operation result in green.
 /// </summary>
 internal static class Program
 {
@@ -30,13 +29,17 @@ internal static class Program
             return 0;
         }
 
-        // Default: color on interactive TTYs; off when redirected (unless --force-color).
         bool useColor = opts.ForceColor
             || (opts.Color && !Console.IsOutputRedirected);
 
         string? wktA = opts.WktA;
         string? wktB = opts.WktB;
-        if (opts.DemoCurve)
+        if (opts.DemoOvershoot)
+        {
+            wktA ??= CaseIllustrator.DefaultOvershootA;
+            wktB ??= CaseIllustrator.DefaultOvershootB;
+        }
+        else if (opts.DemoCurve)
         {
             wktA ??= CaseIllustrator.DefaultCurveA;
             wktB ??= CaseIllustrator.DefaultCurveB;
@@ -48,7 +51,8 @@ internal static class Program
             operation: opts.Operation,
             width: opts.Width,
             height: opts.Height,
-            useColor: useColor);
+            useColor: useColor,
+            showOvershoot: opts.ShowOvershoot);
 
         if (result.ExitCode != 0)
         {
@@ -72,34 +76,30 @@ internal static class Program
               WKT_A, WKT_B   Geometries in OGC WKT (default: crossing diagonals)
 
             Options:
-              --op <name>      intersection | union | difference | symdifference | none
-                               aliases: cross, x → intersection (default: intersection)
-              --demo curve     built-in CIRCULARSTRING × CIRCULARSTRING crossing
-              --width N        grid width  (default: 41)
-              --height N       grid height (default: 21)
-              --no-color       plain Unicode, no ANSI escapes
-              --force-color    emit ANSI even when stdout is redirected
-              -h, --help       this help
+              --op <name>        intersection | union | difference | symdifference | none
+              --demo curve       CIRCULARSTRING × CIRCULARSTRING crossing
+              --demo overshoot   self-overlapping CIRCULARSTRINGs (retrace arcs)
+              --no-overshoot     skip maroon/navy self-overlap layers
+              --width N          grid width  (default: 41)
+              --height N         grid height (default: 21)
+              --no-color         plain Unicode, no ANSI escapes
+              --force-color      emit ANSI even when stdout is redirected
+              -h, --help         this help
 
             Colours:
-              A = blue, B = red, operation result = green
-              pixels that are both A and B (before result paint) = magenta
+              A = blue, B = red, result = green, A∩B = magenta
+              A-overshoot (self-overlap) = maroon
+              B-overshoot (self-overlap) = navy
 
-            Requires the local curve-aware NetTopologySuite clone (sibling repo) for
-            CIRCULARSTRING / COMPOUNDCURVE / CURVEPOLYGON WKT. Curves are linearized
-            for draw + overlay (playground curve ops); labels keep native curve WKT.
+            Overshoot: non-adjacent edge intersections after linearization — e.g. a
+            CIRCULARSTRING whose second arc reverses the first (same mid control).
 
-            Default (line–line crossing):
-              A = LINESTRING (0 0, 10 10)
-              B = LINESTRING (0 10, 10 0)
-              op = intersection  →  POINT (5 5) in green
+            Requires the local curve-aware NetTopologySuite clone for CIRCULARSTRING.
 
             Examples:
-              dotnet run --project tools/WktUnicodeIllustrator
+              dotnet run --project tools/WktUnicodeIllustrator -- --demo overshoot
               dotnet run --project tools/WktUnicodeIllustrator -- --demo curve
-              dotnet run --project tools/WktUnicodeIllustrator -- --no-color ^
-                "CIRCULARSTRING (0 0, 5 8, 10 0)" "LINESTRING (0 5, 10 5)"
-              dotnet run --project tools/WktUnicodeIllustrator -- --force-color
+              dotnet run --project tools/WktUnicodeIllustrator -- --force-color --demo overshoot
             """);
     }
 
@@ -113,13 +113,16 @@ internal static class Program
         public bool Color { get; init; } = true;
         public bool ForceColor { get; init; }
         public bool DemoCurve { get; init; }
+        public bool DemoOvershoot { get; init; }
+        public bool ShowOvershoot { get; init; } = true;
         public bool Help { get; init; }
 
         public static Options Parse(string[] args)
         {
             string? a = null, b = null, op = "intersection";
             int w = 41, h = 21;
-            bool color = true, forceColor = false, help = false, demoCurve = false;
+            bool color = true, forceColor = false, help = false;
+            bool demoCurve = false, demoOvershoot = false, showOvershoot = true;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -137,6 +140,9 @@ internal static class Program
                         forceColor = true;
                         color = true;
                         break;
+                    case "--no-overshoot":
+                        showOvershoot = false;
+                        break;
                     case "--demo" when i + 1 < args.Length:
                         {
                             string which = args[++i];
@@ -144,12 +150,19 @@ internal static class Program
                                 || which.Equals("curves", StringComparison.OrdinalIgnoreCase)
                                 || which.Equals("arc", StringComparison.OrdinalIgnoreCase))
                                 demoCurve = true;
+                            else if (which.Equals("overshoot", StringComparison.OrdinalIgnoreCase)
+                                     || which.Equals("self", StringComparison.OrdinalIgnoreCase)
+                                     || which.Equals("overlap", StringComparison.OrdinalIgnoreCase))
+                                demoOvershoot = true;
                             else
-                                throw new ArgumentException($"Unknown demo '{which}' (try: curve).");
+                                throw new ArgumentException($"Unknown demo '{which}' (try: curve | overshoot).");
                             break;
                         }
                     case "--curve" or "--curves":
                         demoCurve = true;
+                        break;
+                    case "--overshoot":
+                        demoOvershoot = true;
                         break;
                     case "--op" when i + 1 < args.Length:
                         op = args[++i];
@@ -180,6 +193,8 @@ internal static class Program
                 Color = color,
                 ForceColor = forceColor,
                 DemoCurve = demoCurve,
+                DemoOvershoot = demoOvershoot,
+                ShowOvershoot = showOvershoot,
                 Help = help,
             };
         }

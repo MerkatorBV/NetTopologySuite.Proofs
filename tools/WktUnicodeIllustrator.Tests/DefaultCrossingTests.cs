@@ -117,6 +117,56 @@ public class DefaultCrossingTests
     }
 
     [Fact]
+    public void CircularString_self_retrace_reports_overshoot_layers()
+    {
+        var r = CaseIllustrator.Render(
+            wktA: CaseIllustrator.DefaultOvershootA,
+            wktB: CaseIllustrator.DefaultOvershootB,
+            useColor: false,
+            showOvershoot: true);
+
+        Assert.Equal(0, r.ExitCode);
+        Assert.Contains("CIRCULARSTRING", r.Text);
+        Assert.NotNull(r.OvershootAWkt);
+        Assert.NotNull(r.OvershootBWkt);
+        Assert.Contains("A-overshoot (maroon)", r.Text);
+        Assert.Contains("B-overshoot (navy)", r.Text);
+        // Overshoot geometry should be non-empty self-overlap of the retrace arcs.
+        Assert.DoesNotContain("A-overshoot (maroon): (none)", r.Text);
+        Assert.DoesNotContain("B-overshoot (navy): (none)", r.Text);
+    }
+
+    [Fact]
+    public void Simple_line_has_no_overshoot()
+    {
+        var r = CaseIllustrator.Render(
+            wktA: CaseIllustrator.DefaultA,
+            wktB: CaseIllustrator.DefaultB,
+            useColor: false,
+            showOvershoot: true);
+
+        Assert.Equal(0, r.ExitCode);
+        Assert.Null(r.OvershootAWkt);
+        Assert.Null(r.OvershootBWkt);
+        Assert.Contains("A-overshoot (maroon): (none)", r.Text);
+    }
+
+    [Fact]
+    public void Color_mode_includes_maroon_and_navy_when_overshoot_present()
+    {
+        var r = CaseIllustrator.Render(
+            wktA: CaseIllustrator.DefaultOvershootA,
+            wktB: CaseIllustrator.DefaultOvershootB,
+            useColor: true,
+            showOvershoot: true);
+
+        Assert.Equal(0, r.ExitCode);
+        // True-color SGR for maroon / navy (see AnsiRenderer).
+        Assert.Contains("\x1b[38;2;128;0;0m", r.Text); // maroon A-overshoot
+        Assert.Contains("\x1b[38;2;0;0;128m", r.Text);   // navy B-overshoot
+    }
+
+    [Fact]
     public void StructureGlyph_corner_masks_map_to_box_corners()
     {
         // Pure unit tests of the structure → character table (no geometry).
