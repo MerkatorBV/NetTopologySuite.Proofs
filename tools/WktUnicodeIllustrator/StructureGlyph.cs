@@ -87,12 +87,15 @@ internal static class StructureGlyph
         int dCount = Pop4(diag >> 4);
 
         // Pure diagonal strokes (curve chords often land here).
+        // Screen Y grows downward. Unicode:
+        //   ╱ = upper-right ↔ lower-left  → NE–SW neighbours
+        //   ╲ = upper-left  ↔ lower-right → NW–SE neighbours
         if (oCount == 0 && dCount > 0)
         {
             bool nesw = (diag & (NE | SW)) != 0;
             bool nwse = (diag & (NW | SE)) != 0;
-            if (nesw && !nwse) return '╲';
-            if (nwse && !nesw) return '╱';
+            if (nesw && !nwse) return '╱';
+            if (nwse && !nesw) return '╲';
             if (nesw && nwse) return '╳';
             return '·';
         }

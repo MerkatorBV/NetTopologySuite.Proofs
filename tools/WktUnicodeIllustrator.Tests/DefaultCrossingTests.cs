@@ -127,8 +127,8 @@ public class DefaultCrossingTests
         Assert.Equal('─', StructureGlyph.ChooseFromMask(2 | 8));      // E|W
         Assert.Equal('│', StructureGlyph.ChooseFromMask(1 | 4));      // N|S
         Assert.Equal('┼', StructureGlyph.ChooseFromMask(1 | 2 | 4 | 8));
-        Assert.Equal('╱', StructureGlyph.ChooseFromMask(128 | 32));   // NW|SE
-        Assert.Equal('╲', StructureGlyph.ChooseFromMask(16 | 64));    // NE|SW
+        Assert.Equal('╲', StructureGlyph.ChooseFromMask(128 | 32));   // NW|SE → ╲
+        Assert.Equal('╱', StructureGlyph.ChooseFromMask(16 | 64));    // NE|SW → ╱
     }
 
     [Fact]
