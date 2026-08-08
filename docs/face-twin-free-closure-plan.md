@@ -21,7 +21,7 @@ chain downward from the headline:
 | ← `extract_faces_valid_sep` | `theories/FaceOrbitSep.v:174` | **Qed** |
 | ← `face_twin_free_of_sep` | `theories/FaceOrbitSep.v:154` | **Qed** |
 | ← `extract_faces_valid_twin_aware` | `theories/FaceTwinAware.v:292` | **Qed** |
-| `twins_in_different_faces` ← `H_bridge_well_noded` / `edge_2_connected_twins_sep` | `theories/EdgeFaceBridge.v:1484` / `:1465` | **Qed** |
+| `twins_in_different_faces` ← `H_bridge_well_noded` / `edge_2_connected_twins_sep` | `theories/EdgeFaceBridgeCapstone.v:191` / `:172` (umbrella `EdgeFaceBridge.v`) | **Qed** |
 | `H_bridge_premise` ← `H_bridge_premise_from_euler` | `theories/HBridgeEuler.v:42` | **Qed** |
 | face delta `num_faces (E_minus E e) = num_faces E + 1` ← `num_faces_E_minus_splice` | `theories/NumFacesSplice.v:43` | **Qed** |
 | Euler→disconnect ← `H_bridge_core_conclusion_from_euler` | `theories/EulerBridge.v:133` | **Qed** |
@@ -127,7 +127,8 @@ instances (H5/H6), it is an irreducible topological precondition and stays
 carried.
 
 **What landed (the valuable contribution):** the rotation-system bridge
-characterisation now has **both** directions in `theories/EdgeFaceBridge.v` §4b:
+characterisation now has **both** directions in `theories/EdgeFaceBridgeCapstone.v` §4b
+(re-exported by the `EdgeFaceBridge.v` umbrella):
 - FORWARD (pre-existing) `edge_2_connected_twins_sep` — `edge_2_connected ⟹
   twins_in_different_faces`, the genus-0 side, modulo the planar
   `H_bridge_premise`.
@@ -166,7 +167,8 @@ face) is deferred (`EulerWitness.v` §4): its degree-2 fans need concrete angula
 `lra` and a bespoke 3-cycle orbit chain. Route B (discharge the general identity
 from geometric planarity) remains a separate long-horizon project.
 
-This is a **genus-0** fact. As documented in `EdgeFaceBridge.v:1340`,
+This is a **genus-0** fact. As documented on the Capstone `H_bridge_premise`
+block (`EdgeFaceBridgeCapstone.v`, formerly the monolith's planar-bridge seam),
 per-vertex `fan_ok` constrains only the *local* angular order at each vertex;
 it does **not** pin the genus. A non-planar rotation system can satisfy every
 local condition yet violate `V + F = E + 2·C`. So H5/H6 require a genuine

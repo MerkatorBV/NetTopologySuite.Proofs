@@ -954,8 +954,13 @@ theories/EulerSameFaceStep.v
 # peeling with E-3a's same-face dispatch step.  No Admitteds.
 theories/EulerUnconditional.v
 # extract_rings_valid R5, H_bridge rung: dart↔edge incidence + same_face↔dart_walk
-# linkage toward edge_2_connected => twins_in_different_faces (§3 open).
-# No Admitteds.
+# linkage toward edge_2_connected => twins_in_different_faces.  Split (2026-08)
+# into four layered modules (original §-numbers preserved);
+# EdgeFaceBridge.v is the re-export umbrella.  No Admitteds.
+theories/EdgeFaceBridgeIncidence.v
+theories/EdgeFaceBridgeTwinPath.v
+theories/EdgeFaceBridgeBarrier.v
+theories/EdgeFaceBridgeCapstone.v
 theories/EdgeFaceBridge.v
 
 # extract_rings_valid R5 / general assembler, slice 3e: orientation
