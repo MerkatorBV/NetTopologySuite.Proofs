@@ -228,6 +228,8 @@ jobs:
             > oracle/winding_number_tests.txt
           ORACLE_BIN=oracle/oracle_bin python3 oracle/gen_disc_overlay_tests.py \
             > oracle/disc_overlay_tests.txt
+          ORACLE_BIN=oracle/oracle_bin python3 oracle/gen_lec_circle_tests.py \
+            > oracle/lec_circle_tests.txt
 
       - name: Upload oracle_bin artifact (90-day retention)
         uses: actions/upload-artifact@v4

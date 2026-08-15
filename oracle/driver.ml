@@ -1739,6 +1739,78 @@ let run_disc_overlay () =
         Printf.printf " AREA %h\n" area
       end
 
+(* ----- LEC_CIRCLE (LargestEmptyCircle closed form on a circle obstacle).
+   ---------------------------------------------------------------------------
+   The LEC laser for the single-circle-obstacle cell, proven in
+   theories/LECChordGap.v (lec_chord_hypothesis_refuted): the largest empty
+   disk of the radius-r circle about O, with centre constrained to the disk
+   it bounds, is EXACTLY (O, r) -- a closed form, no densification and no
+   search.  The chord path (densify at n chords, then LEC) instead answers
+   r*cos(pi/n) -- the inscribed-polygon apothem -- an underestimate at every
+   finite n; the n = 4 instance is the Qed pin (chorded answer sqrt 2 at
+   r = 2, i.e. 2*cos(pi/4)).  This mode emits BOTH so a perf gate can check
+   its densify-then-LEC result against the exact target and the predicted
+   chorded value at its tolerance.
+
+   INTERFACE-BOUNDARY float: the closed form itself is an EXACT echo of the
+   circle (centre + radius as given; for a CIRCULARSTRING the centre/radius^2
+   come EXACT from circumcentre_q and only the final radius sqrt rounds);
+   the chorded prediction carries cos (no Coq-extractable form, same category
+   as ARC_LENGTH's r*theta).  Proof companion: theories/LECChordGap.v.
+
+   Input:  line 2 = the circle -- "cx cy r", or a 5-point CIRCULARSTRING ring
+                    ("CS x1 y1 ... x5 y5" | bare 10-token form; centre and
+                    radius^2 via circumcentre_q of the first three points)
+           line 3 = n (chord count for the densified comparison; n >= 2)
+   Output: "LEC <cx> <cy> <r> CHORDED <n> <r*cos(pi/n)>" (hex floats);
+           "DEGENERATE" (r <= 0 or collinear CIRCULARSTRING); "NAN". *)
+let run_lec_circle () =
+  let tokens line =
+    List.filter (fun s -> s <> "")
+      (String.split_on_char ' '
+         (String.map (fun c -> if c = '\t' then ' ' else c)
+            (String.trim line))) in
+  (* One circle: centre+radius, or a 5-point CIRCULARSTRING -> (ox,oy,r) with
+     ox,oy exact Q and r a float (exact for the direct form; one sqrt past the
+     exact circumcentre_q radius^2 for the ring form). *)
+  let parse_circle line =
+    let tok = tokens line in
+    let fl s = float_of_string s in
+    match tok with
+    | [sx; sy; sr] ->
+        let x = fl sx and y = fl sy and r = fl sr in
+        if not (finite_float x && finite_float y && finite_float r) then `Nan
+        else if r <= 0.0 then `Degen
+        else `Ok (x, y, r)
+    | "CS" :: x1 :: y1 :: x2 :: y2 :: x3 :: y3 :: x4 :: y4 :: x5 :: y5 :: _
+    | x1 :: y1 :: x2 :: y2 :: x3 :: y3 :: x4 :: y4 :: x5 :: y5 :: _ ->
+        let pts = List.map (fun (a, b) -> fl a, fl b)
+            [x1, y1; x2, y2; x3, y3; x4, y4; x5, y5] in
+        if not (List.for_all (fun (x, y) -> finite_float x && finite_float y) pts)
+        then `Nan
+        else begin
+          match circumcentre_q (qf (fl x1), qf (fl y1))
+                               (qf (fl x2), qf (fl y2))
+                               (qf (fl x3), qf (fl y3)) with
+          | None -> `Degen
+          | Some (ox, oy, rsq) ->
+              if qle rsq q0 then `Degen
+              else `Ok (Q.to_float ox, Q.to_float oy, sqrt (Q.to_float rsq))
+        end
+    | _ -> `Degen in
+  let c = parse_circle (input_line stdin) in
+  let n = int_of_string (String.trim (input_line stdin)) in
+  match c with
+  | `Nan -> print_endline "NAN"
+  | `Degen -> print_endline "DEGENERATE"
+  | `Ok (cx, cy, r) ->
+      if n < 2 then print_endline "DEGENERATE"
+      else begin
+        let pi = acos (-1.0) in
+        let chorded = r *. cos (pi /. float_of_int n) in
+        Printf.printf "LEC %h %h %h CHORDED %d %h\n" cx cy r n chorded
+      end
+
 (* ----- ARC_SEGMENT_XY (issue #224 W1 / N-AL): arc-SEGMENT intersection coords.
    ---------------------------------------------------------------------------
    Intersection POINTS of a circular arc with a line SEGMENT, enumerated -- the
@@ -4211,6 +4283,7 @@ let () =
        | "ARC_DISTANCE"             -> run_arc_distance ()
        | "ARC_ARC_XY"               -> run_arc_arc_xy ()
        | "DISC_OVERLAY"             -> run_disc_overlay ()
+       | "LEC_CIRCLE"               -> run_lec_circle ()
        | "ARC_SEGMENT_XY"           -> run_arc_segment_xy ()
        | "ARC_ARC_DISTANCE"         -> run_arc_arc_distance ()
        | "ARC_SEGMENT_DISTANCE"     -> run_arc_segment_distance ()
