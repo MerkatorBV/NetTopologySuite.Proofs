@@ -2241,6 +2241,18 @@ theories/CellRadiusBound.v
 # cos(pi/4); runtime half stays engine-side.  Full-only: imports
 # LargestEmptyCircle.v and PlaneConnected.v (seg).
 theories/LECChordGap.v
+# The typed obstacle-distance metric for LEC (the chord path's replacement):
+# filled-disc max(0, |P-c| - r) and full-circle-ring ||P-c| - r| are the
+# EXACT set distances (reverse-triangle lower bound + radial-projection
+# attainment), emptiness against an infinite obstacle collapses to one
+# comparison (empty_disk_disc_iff / empty_disk_ring_iff), collections
+# flatten by min (empty_disk_union_iff), clamping commutes with min
+# (min_disc_dist_weighted -- the Apollonius reduction).  Rational 3-4-5
+# two-disc witness: LEC over [-4,4]x[-3,3] is ((0,3), 2), maximisers
+# exactly (0,+-3); corner-sampling and interior-maximiser hypotheses
+# REFUTED (docs/lec-optimal-path.md).  Full-only: imports
+# LargestEmptyCircle.v and Disk.v.
+theories/LECObstacleDistance.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed
 # Phase-3 ring (chord_approx_ring_closed), lifting to to_geometry outer/hole

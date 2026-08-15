@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+# =============================================================================
+# oracle/gen_obstacle_distance_tests.py
+# -----------------------------------------------------------------------------
+# Adversarial tests for OBSTACLE_DISTANCE (RocqRefRunner), the typed
+# per-component obstacle clearance of the LEC laser -- proof companion
+# theories/LECObstacleDistance.v (obstacle_distance_headline:
+# empty_disk_disc_iff / empty_disk_ring_iff / empty_disk_union_iff /
+# min_disc_dist_weighted / lec_two_discs / corner_clearance_zero /
+# centre_clearance_one).
+#
+# PROVEN invariants the oracle MUST satisfy (a violation '!!' is a real bug
+# and fails CI, mirroring oracle/gen_lec_circle_tests.py):
+#   I1 PINS      the 3-4-5 witness cell (discs r=3 at (+-4,0)) is bit-exact:
+#                clearance 2.0 at (0,+-3) [lec_two_discs, equidistant],
+#                1.0 at the rect centre, 0.0 at all four rect corners
+#                [corner_sampling_hypothesis_refuted's pins]
+#   I2 WEIGHTED  DISC-only clearance == max(0, min_i (|P-c_i| - r_i)),
+#                bit-exact vs the generator mirror (min_disc_dist_weighted:
+#                the Apollonius reduction), clamp binding included
+#   I3 SHELL     filled disc vs full-circle ring at the same (c, r):
+#                interior -> DISC 0.0 while RING r-d > 0; on-circle
+#                (3-4-5 rational point) -> both 0.0; exterior -> equal
+#   I4 FLATTEN   permutation / duplication of the component list leaves the
+#                output line identical; singleton == the row value
+#                (empty_disk_union_iff)
+#   I5 GRID      clearance <= 2.0 across the 0.5-grid of the witness
+#                rectangle, == 2.0 exactly at (0,+-3) only, and every grid
+#                value bit-matches the generator mirror (lec_two_discs +
+#                lec_two_discs_maximisers)
+#   I6 VERDICTS  k < 1 / r < 0 / unknown tag -> DEGENERATE; any non-finite
+#                input -> NAN; NAN wins over DEGENERATE
+# =============================================================================
+
+import math
+import os
+import subprocess
+import sys
+
+BIN = os.environ.get("ORACLE_BIN", "oracle/oracle_bin")
+
+failures = 0
+
+
+def emit(s=""):
+    print(s)
+
+
+def run(query_line, comps):
+    stdin = "OBSTACLE_DISTANCE\n" + query_line + "\n" + str(len(comps)) + "\n"
+    stdin += "".join(c + "\n" for c in comps)
+    out = subprocess.run([BIN], input=stdin, capture_output=True, text=True)
+    if out.returncode != 0:
+        return f"<exit {out.returncode}: {out.stderr.strip()}>"
+    return out.stdout.strip()
+
+
+def parse(line):
+    # "DIST <d> N <k>" -> (d, k) or None
+    tok = line.split()
+    if len(tok) == 4 and tok[0] == "DIST" and tok[2] == "N":
+        return (float.fromhex(tok[1]), int(tok[3]))
+    return None
+
+
+# --- the generator mirror: SAME float ops as driver.ml / the engine rows ---
+
+def row(comp, qx, qy):
+    tag = comp[0]
+    x, y = comp[1], comp[2]
+    d = math.sqrt((qx - x) * (qx - x) + (qy - y) * (qy - y))
+    if tag == "POINT":
+        return d
+    r = comp[3]
+    e = d - r
+    if tag == "DISC":
+        return 0.0 if e <= 0.0 else e
+    if tag == "RING":
+        return -e if e < 0.0 else e
+    raise ValueError(tag)
+
+
+def mirror(comps, qx, qy):
+    ds = [row(c, qx, qy) for c in comps]
+    m = ds[0]
+    for d in ds[1:]:
+        if d < m:
+            m = d
+    return m
+
+
+def fmt(comp):
+    return " ".join(str(t) for t in comp)
+
+
+def assess(name, qx, qy, comps, expect_verdict=None, pin=None,
+           mirror_check=False):
+    global failures
+    line = run(f"{qx} {qy}", [fmt(c) for c in comps])
+    tags = []
+    p = parse(line)
+    if expect_verdict is not None:
+        if line != expect_verdict:
+            tags.append(f"!! I6_VERDICT got={line!r} want={expect_verdict}")
+    else:
+        if p is None:
+            tags.append(f"!! I6_SHAPE got={line!r}")
+        else:
+            d, k = p
+            if k != len(comps):
+                tags.append(f"!! I6_COUNT got={k} want={len(comps)}")
+            if pin is not None and d.hex() != pin.hex():
+                tags.append(f"!! I1_PIN got={d.hex()} want={pin.hex()}")
+            if mirror_check:
+                m = mirror(comps, qx, qy)
+                if d.hex() != m.hex():
+                    tags.append(f"!! I2_MIRROR got={d.hex()} want={m.hex()}")
+    status = "   ok" if not tags else "  " + " ".join(tags)
+    emit(f"  [{name}] -> '{line}'{status}")
+    if tags:
+        failures += 1
+    return p
+
+
+TWO_DISCS = [("DISC", -4, 0, 3), ("DISC", 4, 0, 3)]
+
+emit("# Adversarial tests for OBSTACLE_DISTANCE (RocqRefRunner) vs Qed")
+emit("# invariants in theories/LECObstacleDistance.v")
+emit("# (obstacle_distance_headline, lec_two_discs, min_disc_dist_weighted,")
+emit("# corner_clearance_zero, centre_clearance_one).  '!!' lines are")
+emit("# PROVEN-invariant violations (CI-failing).")
+emit("# I1 3-4-5 pins  I2 weighted mirror  I3 disc-vs-ring  I4 flatten")
+emit("# I5 witness grid  I6 verdicts")
+emit()
+
+emit("## A. Locked fixture: the 3-4-5 witness cell (discs r=3 at (+-4,0)).")
+assess("LEC centre (0,3) -> 2", 0, 3, TWO_DISCS, pin=2.0, mirror_check=True)
+assess("mirror maximiser (0,-3) -> 2", 0, -3, TWO_DISCS, pin=2.0,
+       mirror_check=True)
+assess("rect centre (0,0) -> 1", 0, 0, TWO_DISCS, pin=1.0, mirror_check=True)
+for (cx, cy) in ((-4, -3), (-4, 3), (4, -3), (4, 3)):
+    assess(f"rect corner ({cx},{cy}) -> 0", cx, cy, TWO_DISCS, pin=0.0,
+           mirror_check=True)
+emit()
+
+emit("## B. Weighted (Apollonius) mirror: DISC min == clamped weighted min.")
+for (qx, qy) in ((1, 2), (-2.5, 1.25), (0, 3), (3.5, -0.5), (0.125, -2.875)):
+    assess(f"weighted at ({qx},{qy})", qx, qy, TWO_DISCS, mirror_check=True)
+assess("clamp binds inside a disc", 4, 0.5, TWO_DISCS, pin=0.0,
+       mirror_check=True)
+assess("clamp binds in disc overlap", 0, 0,
+       [("DISC", -1, 0, 2), ("DISC", 1, 0, 2)], pin=0.0, mirror_check=True)
+emit()
+
+emit("## C. Filled disc vs full-circle ring (the two typed curved rows).")
+assess("disc: interior -> 0", 4, 1, [("DISC", 4, 0, 3)], pin=0.0)
+assess("ring: same interior -> r-d", 4, 1, [("RING", 4, 0, 3)], pin=2.0,
+       mirror_check=True)
+assess("disc: on-circle point (7,0)", 7, 0, [("DISC", 4, 0, 3)], pin=0.0,
+       mirror_check=True)
+assess("ring: on-circle point (7,0)", 7, 0, [("RING", 4, 0, 3)], pin=0.0,
+       mirror_check=True)
+assess("disc: exterior", 10, 0, [("DISC", 4, 0, 3)], pin=3.0,
+       mirror_check=True)
+assess("ring: exterior equals disc", 10, 0, [("RING", 4, 0, 3)], pin=3.0,
+       mirror_check=True)
+assess("ring: centre -> r", 4, 0, [("RING", 4, 0, 3)], pin=3.0,
+       mirror_check=True)
+emit()
+
+emit("## D. Flatten: permutation / duplication / singleton / mixed rows.")
+base = assess("mixed POINT+DISC+RING", 1, 1,
+              [("POINT", 0, 3), ("DISC", 4, 0, 3), ("RING", -4, 0, 3)],
+              mirror_check=True)
+perm = assess("permuted list, same output", 1, 1,
+              [("RING", -4, 0, 3), ("POINT", 0, 3), ("DISC", 4, 0, 3)],
+              mirror_check=True)
+if base is not None and perm is not None and base[0].hex() != perm[0].hex():
+    emit("  !! I4_PERM mismatch")
+    failures += 1
+else:
+    emit("  [permutation == original]   ok")
+dup = assess("duplicated component, same min", 1, 1,
+             [("DISC", 4, 0, 3), ("DISC", 4, 0, 3), ("POINT", 0, 3),
+              ("RING", -4, 0, 3)], mirror_check=True)
+if base is not None and dup is not None and base[0].hex() != dup[0].hex():
+    emit("  !! I4_DUP mismatch")
+    failures += 1
+else:
+    emit("  [duplication == original]   ok")
+assess("singleton POINT is euclid", -3, 4, [("POINT", 0, 0)], pin=5.0,
+       mirror_check=True)
+emit()
+
+emit("## E. Witness-rectangle grid: clearance <= 2, equality only at (0,+-3).")
+grid_bad = 0
+qy = -3.0
+while qy <= 3.0:
+    qx = -4.0
+    while qx <= 4.0:
+        m = mirror(TWO_DISCS, qx, qy)
+        line = run(f"{qx} {qy}", [fmt(c) for c in TWO_DISCS])
+        p = parse(line)
+        if p is None or p[0].hex() != m.hex():
+            emit(f"  !! I5_GRID_MIRROR at ({qx},{qy}) got={line!r}"
+                 f" want={m.hex()}")
+            grid_bad += 1
+        elif p[0] > 2.0:
+            emit(f"  !! I5_GRID_BOUND at ({qx},{qy}) d={p[0].hex()} > 2")
+            grid_bad += 1
+        elif p[0] == 2.0 and not (qx == 0.0 and abs(qy) == 3.0):
+            emit(f"  !! I5_GRID_MAXIMISER at ({qx},{qy}) unexpected d=2")
+            grid_bad += 1
+        qx += 0.5
+    qy += 0.5
+if grid_bad:
+    failures += grid_bad
+else:
+    emit("  [17x13 grid: mirror-exact, bounded by 2, maximisers (0,+-3)]   ok")
+emit()
+
+emit("## F. Verdicts.")
+assess("k=0 DEGENERATE (empty list)", 0, 0, [], expect_verdict="DEGENERATE")
+assess("negative radius DEGENERATE", 0, 0, [("DISC", 1, 1, -3)],
+       expect_verdict="DEGENERATE")
+assess("unknown tag DEGENERATE", 0, 0, [("BLOB", 1, 1, 1)],
+       expect_verdict="DEGENERATE")
+assess("wrong arity DEGENERATE", 0, 0, [("DISC", 1, 1)],
+       expect_verdict="DEGENERATE")
+assess("nan query NAN", float("nan"), 0, [("DISC", 1, 1, 1)],
+       expect_verdict="NAN")
+assess("nan component NAN", 0, 0, [("RING", float("nan"), 1, 1)],
+       expect_verdict="NAN")
+assess("NAN wins over DEGENERATE", 0, 0,
+       [("DISC", 1, 1, -3), ("POINT", float("nan"), 0)],
+       expect_verdict="NAN")
+assess("r=0 disc is a point (allowed)", 3, 4, [("DISC", 0, 0, 0)], pin=5.0,
+       mirror_check=True)
+emit()
+
+if failures:
+    emit(f"# {failures} PROVEN-invariant violation(s) -- RocqRefRunner bug.")
+    sys.exit(1)
+emit("# All proven invariants (I1-I6) hold across the suite.")
