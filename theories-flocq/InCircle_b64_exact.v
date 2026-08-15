@@ -33,6 +33,9 @@
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
      Assisted-by: Claude
+   topic: binary64
+   claimId: 64-d
+   witness: perron-sliver
    ========================================================================== *)
 
 From Stdlib Require Import Reals ZArith Lia Lra.
@@ -1144,3 +1147,58 @@ Print Assumptions perron_sliver_inputs_int_safe.
 Print Assumptions perron_inCircle_det_pos.
 Print Assumptions perron_inCircle_bit_exact_P.
 Print Assumptions perron_inCircle_sign_sound.
+Print Assumptions inCircle_R_BP_eq_inCircle_BP2P.
+Print Assumptions Zfold_min8_le1.
+Print Assumptions Zfold_min8_le2.
+Print Assumptions Zfold_min8_le3.
+Print Assumptions Zfold_min8_le4.
+Print Assumptions Zfold_min8_le5.
+Print Assumptions Zfold_min8_le6.
+Print Assumptions Zfold_min8_le7.
+Print Assumptions Zfold_min8_le8.
+Print Assumptions IZR_mul_diff.
+Print Assumptions IZR_mul_sq.
+Print Assumptions IZR_sq_sum.
+Print Assumptions IZR_coord_sq_pair.
+Print Assumptions b64_shift_diff.
+Print Assumptions bpow_quartic_pos.
+Print Assumptions inCircle_Zdet_distrib.
+Print Assumptions inCircle_shift_quartic_IZR_pack.
+Print Assumptions inCircle_shift_quartic_homog.
+Print Assumptions IZR_na_cross_pack.
+Print Assumptions inCircle_det_IZR_pack.
+Print Assumptions arc_diff_bound_2p12.
+Print Assumptions arc_sq_bound_2p24.
+Print Assumptions arc_sum_sq_bound_2p25.
+Print Assumptions arc_product_bound_2p24.
+Print Assumptions arc_product_bound_2p37.
+Print Assumptions arc_product_bound_2p50_12_38.
+Print Assumptions arc_diff_bound_2p25.
+Print Assumptions arc_row3_diff_bound_2p38.
+Print Assumptions arc_row4_bound_2p50.
+Print Assumptions arc_outer_diff_bound_2p51.
+Print Assumptions arc_final_sum_bound_2p52.
+Print Assumptions le_2pN_le_2pprec.
+Print Assumptions le_2p12_le_2pprec.
+Print Assumptions le_2p24_le_2pprec.
+Print Assumptions le_2p25_le_2pprec.
+Print Assumptions le_2p37_le_2pprec.
+Print Assumptions le_2p38_le_2pprec.
+Print Assumptions le_2p50_le_2pprec.
+Print Assumptions le_2p51_le_2pprec.
+Print Assumptions le_2p52_le_2pprec.
+Print Assumptions inCircle_int_witness.
+Print Assumptions b64_inCircle_exact_and_finite_for_small_int.
+Print Assumptions b64_inCircle_finite_for_small_int.
+Print Assumptions b64Z_R.
+Print Assumptions b64Z_arc_coord_int_safe.
+Print Assumptions perron_chord_Q_inputs_int_safe.
+Print Assumptions b64Z_R_small.
+Print Assumptions perron_b64Z_witnesses.
+Print Assumptions perron_b64Z_witnesses_Q.
+Print Assumptions inCircle_R_BP_Z_pack.
+Print Assumptions perron_inCircle_Zdet_P.
+Print Assumptions perron_inCircle_Zdet_Q.
+Print Assumptions perron_inCircle_det_neg.
+Print Assumptions perron_chord_opposite_signs.
+Print Assumptions perron_inCircle_bit_exact_Q.

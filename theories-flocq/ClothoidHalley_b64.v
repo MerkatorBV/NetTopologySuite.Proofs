@@ -720,3 +720,33 @@ Print Assumptions b64_clothoid_halley_denom_round.
 Print Assumptions b64_clothoid_halley_step_round.
 Print Assumptions b64_degenerate_halley_fixed_at_root.
 Print Assumptions b64_clothoid_halley_filtered_corpus_le_four.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions clothoid_double_r2_bound_2p26.
+Print Assumptions clothoid_eight_L_qrpt_bound_2p40.
+Print Assumptions clothoid_rt_sq_minus_ps2_bound_2p26.
+Print Assumptions clothoid_fpp_term3_bound_2p51.
+Print Assumptions clothoid_fpp_sum12_bound_2p41.
+Print Assumptions clothoid_fpp_sum_bound_2p52.
+Print Assumptions clothoid_IZR_sum_minus.
+Print Assumptions clothoid_residual_second_prime_R_IZR.
+Print Assumptions b64Z_eight_R.
+Print Assumptions clothoid_eight_bound_2p15.
+Print Assumptions le_2p15_le_2pprec.
+Print Assumptions le_2p40_le_2pprec.
+Print Assumptions le_2p41_le_2pprec.
+Print Assumptions b64_clothoid_halley_l_update_converged.
+Print Assumptions b64_clothoid_halley_fuel_zero.
+Print Assumptions b64_clothoid_halley_fuel_succ.
+Print Assumptions b64_max_B2R.
+Print Assumptions b64_abs_finite.
+Print Assumptions b64_clothoid_tol_scale_B2R.
+Print Assumptions b64_clothoid_converged_bool_true_of_R.
+Print Assumptions b64_degenerate_residual_at_chord_B2R.
+Print Assumptions b64_degenerate_residual_at_chord_finite.
+Print Assumptions b64_abs_B2R_zero.
+Print Assumptions b64_clothoid_converged_bool_true_of_zero_residual.
+Print Assumptions b64_degenerate_residual_zero_at_chord.
+Print Assumptions b64_clothoid_halley_filtered_corpus_le_max.

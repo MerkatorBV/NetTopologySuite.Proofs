@@ -538,3 +538,13 @@ Print Assumptions sign_of_expansion_neg_head.
 (* Realistic effort: 1-2 days with the proof-engineering tax.  This is the  *)
 (* GENUINELY NOVEL part of Stage D -- no Pff helper, all our own proof.   *)
 (* -------------------------------------------------------------------------- *)
+Print Assumptions expansion_R_nil.
+Print Assumptions expansion_finite_cons.
+Print Assumptions sign_of_expansion_nil.
+Print Assumptions sign_of_expansion_correct_nil.
+Print Assumptions binary64_below_emin_is_zero.
+Print Assumptions sign_of_expansion_correct_singleton.
+Print Assumptions nonoverlap_zero_tail.
+Print Assumptions expansion_tail_bounded.
+Print Assumptions sign_of_expansion_correct_pair.
+Print Assumptions sign_of_expansion_correct.

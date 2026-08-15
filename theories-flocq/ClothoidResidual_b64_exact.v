@@ -405,3 +405,22 @@ Print Assumptions b64_clothoid_r2_exact.
 Print Assumptions b64_clothoid_residual_exact.
 Print Assumptions b64_clothoid_residual_prime_exact.
 Print Assumptions b64_clothoid_residual_unit_moments.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions clothoid_sq_bound_2p24.
+Print Assumptions clothoid_double_bound_2p13.
+Print Assumptions clothoid_double_sq_bound_2p25.
+Print Assumptions clothoid_product_bound_2p38.
+Print Assumptions clothoid_product_bound_2p49.
+Print Assumptions clothoid_residual_diff_bound_2p50.
+Print Assumptions clothoid_residual_diff_bound_2p50_scalar.
+Print Assumptions clothoid_prime_sum_bound_2p51.
+Print Assumptions le_2p49_le_2pprec.
+Print Assumptions le_2p13_le_2pprec.
+Print Assumptions clothoid_residual_prime_R_IZR.
+Print Assumptions clothoid_residual_R_IZR.
+Print Assumptions clothoid_scalar_int_safe_b64Z.
+Print Assumptions b64Z_two_R.
+Print Assumptions b64_clothoid_r2_one_zero.

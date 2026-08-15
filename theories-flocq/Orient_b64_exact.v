@@ -1243,3 +1243,28 @@ Print Assumptions b64_orient2d_detsum_tiny_bound.
 Print Assumptions b64_stage_a_bound_tiny_bound.
 Print Assumptions cross_R_BP_tiny_int.
 Print Assumptions b64_orient_sign_filtered_tiny_regime_decisive.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions bpow_radix2_eq_IZR_pow.
+Print Assumptions b64_round_IZR_abs_lt_bpow_emax.
+Print Assumptions binary_normalize_b64_bounded_and_finite.
+Print Assumptions b64_three_bnd_fin.
+Print Assumptions b64_sixteen_bnd_fin.
+Print Assumptions b64_eps_bnd_fin.
+Print Assumptions b64_mult_bounded_chain.
+Print Assumptions b64_plus_bounded_chain.
+Print Assumptions b64_minus_bounded_chain.
+Print Assumptions coord_tiny_int_safe_bpow22.
+Print Assumptions coord_tiny_int_safe_finite.
+Print Assumptions b64_abs_bounded.
+Print Assumptions orient2d_inputs_int_safe_imp_inputs_safe.
+Print Assumptions diff_bound_2p26.
+Print Assumptions prod_bound_2p52.
+Print Assumptions outer_bound_2p53.
+Print Assumptions le_2p52_le_2pprec.
+Print Assumptions le_2p53_le_2pprec.
+Print Assumptions le_2p26_le_2pprec.
+Print Assumptions orient2d_inputs_int_safe_cycl.
+Print Assumptions orient2d_inputs_int_safe_cycl2.

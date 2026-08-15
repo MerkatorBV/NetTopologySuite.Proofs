@@ -176,3 +176,15 @@ Proof. split; [exact traceB_pathB_snd_zero | exact traceB_output_before_len]. Qe
 
 Print Assumptions traceA_pathB_snd_zero.
 Print Assumptions pathB_fires_with_nonempty_output.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions traceA_output_rev_nil.
+Print Assumptions traceB_pathB_snd_zero.
+Print Assumptions traceB_carry_before_B2R.
+Print Assumptions traceB_output_before_len.
+Print Assumptions traceB_carry_after_B2R.
+Print Assumptions traceC_pathB_snd_zero.
+Print Assumptions traceC_carry_after_B2R.
+Print Assumptions traceC_output_before_len.

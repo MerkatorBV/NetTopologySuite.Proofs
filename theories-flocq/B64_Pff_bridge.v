@@ -832,3 +832,6 @@ Print Assumptions b64_DekkerPair_sum_correct.
 (* ≤16-component expansion, sign extracted by inspecting the leading        *)
 (* non-zero component.  See `docs/stage-d-feasibility.md` for the scaffold. *)
 (* -------------------------------------------------------------------------- *)
+Print Assumptions b64_precisionNotZero.
+Print Assumptions b64_emin_neg.
+Print Assumptions round_b64_minus_swap.

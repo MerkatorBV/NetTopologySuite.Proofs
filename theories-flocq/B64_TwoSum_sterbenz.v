@@ -314,3 +314,9 @@ Print Assumptions b64_format_sterbenz_pos_neg.
 Print Assumptions b64_TwoSum_sterbenz_exact_neg.
 Print Assumptions not_half_ulp_separated_implies_sterbenz.
 Print Assumptions pathC_carry_next_gap_false_similar_magnitude.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64_round_0.
+Print Assumptions not_half_ulp_separated_implies_sterbenz_neg_carry.

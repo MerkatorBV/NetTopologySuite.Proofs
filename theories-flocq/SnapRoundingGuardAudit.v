@@ -111,3 +111,10 @@ Qed.
 
 Print Assumptions snap_can_introduce_horizontal_alignment.
 Print Assumptions snap_can_introduce_horizontal_dart.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions B2R_wy0.
+Print Assumptions wy_distinct_pre_snap.
+Print Assumptions wy_snap_coord_collapse.

@@ -77,6 +77,9 @@
    No `Admitted` anywhere; the file is Qed-clean.
 
    Corpus invariant preserved: no Admitted / Axiom / Parameter.
+   topic: binary64
+   claimId: 66-c1
+   witness: grid-unit
    ============================================================================ *)
 
 From Stdlib Require Import Bool.
@@ -1816,3 +1819,78 @@ Qed.
 
    No `Admitted` / `Axiom` / `Parameter` anywhere in this file.
    ---------------------------------------------------------------------------- *)
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64_snap_on_grid.
+Print Assumptions b64_passes_through_collapses_on_grid.
+Print Assumptions b64_passes_through_compute_collapses_on_grid.
+Print Assumptions b64_passes_through_grid_exact_iff_touch.
+Print Assumptions coord_int_safe_snap_id.
+Print Assumptions bpoint_int_safe_on_grid.
+Print Assumptions b64_passes_through_grid_exact_iff_touch_int.
+Print Assumptions b64_eqb_true_iff_B2R.
+Print Assumptions b64_le_eq_Rle_bool.
+Print Assumptions slab_guard_bridge.
+Print Assumptions generic_format_half_prec.
+Print Assumptions b64_minus_half_exact.
+Print Assumptions is_finite_b64_max.
+Print Assumptions is_finite_b64_min.
+Print Assumptions b64_max_B2R.
+Print Assumptions b64_min_B2R.
+Print Assumptions b64_div_round_half_over_int.
+Print Assumptions grid_numerator_facts.
+Print Assumptions b64_lb_tlo_eq_rounded_quotients_grid.
+Print Assumptions b64_lb_thi_eq_rounded_quotients_grid.
+Print Assumptions B2R_b64_zero.
+Print Assumptions is_finite_b64_zero.
+Print Assumptions b64_round_1.
+Print Assumptions round_Rmin.
+Print Assumptions round_Rmax.
+Print Assumptions round_clip_max0.
+Print Assumptions round_clip_min1.
+Print Assumptions b64_div_edge_grid_finite.
+Print Assumptions b64_lb_tlo_finite_grid.
+Print Assumptions b64_lb_thi_finite_grid.
+Print Assumptions b64_lb_tlo_eq_round_exact_grid.
+Print Assumptions b64_lb_thi_eq_round_exact_grid.
+Print Assumptions b64_tmin_eq_round_exact_grid.
+Print Assumptions b64_tmax_eq_round_exact_grid.
+Print Assumptions slab_closed_grid_eq.
+Print Assumptions b64_liang_barsky_touches_complete_on_grid.
+Print Assumptions b64_passes_through_complete_on_grid.
+Print Assumptions b64_liang_barsky_grid_exact_cond.
+Print Assumptions b64_passes_through_grid_exact_cond.
+Print Assumptions b64_passes_through_sound_on_grid_cond.
+Print Assumptions round_diff_le_of_round_le.
+Print Assumptions round_reflects_le_of_sep.
+Print Assumptions clip_separated_reflects.
+Print Assumptions b64_passes_through_grid_exact_sep.
+Print Assumptions b64_passes_through_sound_on_grid_sep.
+Print Assumptions IZR_abs_ge_1.
+Print Assumptions rational_gap.
+Print Assumptions grid_quotient_ratio.
+Print Assumptions b64_ulp_round_le_bpow.
+Print Assumptions b64_ulp_round_le_unit.
+Print Assumptions grid_ratio_gap_exceeds_ulp_band.
+Print Assumptions b64_ulp_round_le_rel.
+Print Assumptions grid_ratio_gap_exceeds_ulp_band_rel.
+Print Assumptions zero_vs_ratio_gap_exceeds_ulp_band.
+Print Assumptions gridbound_0.
+Print Assumptions gridbound_1.
+Print Assumptions gridbound_Rmax.
+Print Assumptions gridbound_Rmin.
+Print Assumptions gap_beats_band_of_gridbound.
+Print Assumptions bpow_neg24_eq.
+Print Assumptions ratio_abs_ge_bpow_neg24.
+Print Assumptions gridbound_half_quotient.
+Print Assumptions coord_int_tight_safe.
+Print Assumptions bpoint_int_tight_safe.
+Print Assumptions gridbound_tlo.
+Print Assumptions gridbound_thi.
+Print Assumptions gridbound_tmin_exact.
+Print Assumptions gridbound_tmax_exact.
+Print Assumptions clip_separated_tight.
+Print Assumptions b64_passes_through_sound_on_grid.
+Print Assumptions b64_passes_through_grid_exact.

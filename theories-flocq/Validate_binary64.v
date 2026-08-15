@@ -498,3 +498,9 @@ Require Extraction.
 Extraction Language OCaml.
 
 Recursive Extraction greedy_simplify_binary64 greedy_simplify_perp_b64.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions prec_gt_0_b64.
+Print Assumptions prec_lt_emax_b64.

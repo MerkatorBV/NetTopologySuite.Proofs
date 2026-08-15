@@ -166,3 +166,18 @@ Proof.
 Qed.
 
 Print Assumptions b64_passes_through_halfopen_compute_unsound.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions compute_ho_true.
+Print Assumptions val_vP0x.
+Print Assumptions val_vP1x.
+Print Assumptions izr_div_neg.
+Print Assumptions frac_lt_gen.
+Print Assumptions xa_val_v.
+Print Assumptions xb_val_v.
+Print Assumptions x1_ne_x0_v.
+Print Assumptions key_lt_v.
+Print Assumptions touch_closed_false_v.
+Print Assumptions touch_ho_false_v.

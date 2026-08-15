@@ -104,3 +104,11 @@ Qed.
 
 Print Assumptions b64_passes_through_compute_asymmetric.
 Print Assumptions b64_passes_through_halfopen_compute_asymmetric.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions closed_fwd_true.
+Print Assumptions closed_rev_false.
+Print Assumptions halfopen_fwd_true.
+Print Assumptions halfopen_rev_false.

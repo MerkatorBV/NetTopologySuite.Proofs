@@ -228,3 +228,16 @@ Qed.
 
 Print Assumptions hobby_lemma_4_3_no_proper_counterexample.
 Print Assumptions hobby_lemma_4_3_no_proper_is_false.
+Print Assumptions snap_round_coord_1_nearest.
+Print Assumptions snap_0.
+Print Assumptions snap_3.
+Print Assumptions snap_7.
+Print Assumptions snap_10.
+Print Assumptions snap_07.
+Print Assumptions snap_13.
+Print Assumptions snap_A0.
+Print Assumptions snap_A1.
+Print Assumptions snap_B0.
+Print Assumptions snap_B1.
+Print Assumptions originals_no_proper.
+Print Assumptions snapped_proper.

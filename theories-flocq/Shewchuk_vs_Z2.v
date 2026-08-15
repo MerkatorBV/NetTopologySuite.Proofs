@@ -173,3 +173,4 @@ Qed.
 
 Print Assumptions shewchuk_stage_d_agrees_with_exact_intdet.
 Print Assumptions shewchuk_vs_z2_tiny_headline.
+Print Assumptions int_safe_all_finite.
