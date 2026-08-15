@@ -2214,10 +2214,10 @@ theories/MaximumInscribedCircle.v
 # max_inscribed_disk, with the domain-constrained maximiser — and the
 # rational instance Qed: the LEC of the four side midpoints of [0,1]² over
 # the unit square IS the MIC witness circle (centre (1/2,1/2), radius 1/2;
-# lec_side_midpoints, duality packaged as mic_lec_duality).  Three-axiom.
-# No Admitted.  Cell subdivision, tolerance loop, and geometry obstacles
-# remain out of scope.  Full-only: imports MaximumInscribedCircle.v
-# (InDisk.v lineage).
+# lec_side_midpoints, duality packaged as mic_lec_duality).  Three-axiom
+# base; Qed-closed throughout.  Cell subdivision, tolerance loop, and
+# geometry obstacles remain out of scope.  Full-only: imports
+# MaximumInscribedCircle.v (InDisk.v lineage).
 theories/LargestEmptyCircle.v
 # Board #9004 subtask 9004-d — GREEN: the per-cell achievable-radius bound
 # that justifies Polycenter's / JTS Cell pruning (getMaxDistance = centre
@@ -2225,9 +2225,9 @@ theories/LargestEmptyCircle.v
 # cell_achievable_radius_bound Qed (two triangle steps + cell_circumradius:
 # dist_sq <= 2h²); centre-shift Lipschitz lemmas and radius monotonicity on
 # BOTH duals (empty/inscribed); per-cell corollaries cell_*_disk_at_centre.
-# Mirrored in eval/Claim9004d.v (WITNESS 9004-d).  Three-axiom.  No
-# Admitted.  Subdivision recursion and tolerance loop remain out of scope.
-# Full-only: imports LargestEmptyCircle.v.
+# Mirrored in eval/Claim9004d.v (WITNESS 9004-d).  Three-axiom base;
+# Qed-closed throughout.  Subdivision recursion and tolerance loop remain
+# out of scope.  Full-only: imports LargestEmptyCircle.v.
 theories/CellRadiusBound.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed
