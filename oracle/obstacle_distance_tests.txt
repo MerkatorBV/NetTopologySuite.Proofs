@@ -1,0 +1,57 @@
+# Adversarial tests for OBSTACLE_DISTANCE (RocqRefRunner) vs Qed
+# invariants in theories/LECObstacleDistance.v
+# (obstacle_distance_headline, lec_two_discs, min_disc_dist_weighted,
+# corner_clearance_zero, centre_clearance_one).  '!!' lines are
+# PROVEN-invariant violations (CI-failing).
+# I1 3-4-5 pins  I2 weighted mirror  I3 disc-vs-ring  I4 flatten
+# I5 witness grid  I6 verdicts
+
+## A. Locked fixture: the 3-4-5 witness cell (discs r=3 at (+-4,0)).
+  [LEC centre (0,3) -> 2] -> 'DIST 0x1p+1 N 2'   ok
+  [mirror maximiser (0,-3) -> 2] -> 'DIST 0x1p+1 N 2'   ok
+  [rect centre (0,0) -> 1] -> 'DIST 0x1p+0 N 2'   ok
+  [rect corner (-4,-3) -> 0] -> 'DIST 0x0p+0 N 2'   ok
+  [rect corner (-4,3) -> 0] -> 'DIST 0x0p+0 N 2'   ok
+  [rect corner (4,-3) -> 0] -> 'DIST 0x0p+0 N 2'   ok
+  [rect corner (4,3) -> 0] -> 'DIST 0x0p+0 N 2'   ok
+
+## B. Weighted (Apollonius) mirror: DISC min == clamped weighted min.
+  [weighted at (1,2)] -> 'DIST 0x1.360ad118567ccp-1 N 2'   ok
+  [weighted at (-2.5,1.25)] -> 'DIST 0x0p+0 N 2'   ok
+  [weighted at (0,3)] -> 'DIST 0x1p+1 N 2'   ok
+  [weighted at (3.5,-0.5)] -> 'DIST 0x0p+0 N 2'   ok
+  [weighted at (0.125,-2.875)] -> 'DIST 0x1.d33771ccca408p+0 N 2'   ok
+  [clamp binds inside a disc] -> 'DIST 0x0p+0 N 2'   ok
+  [clamp binds in disc overlap] -> 'DIST 0x0p+0 N 2'   ok
+
+## C. Filled disc vs full-circle ring (the two typed curved rows).
+  [disc: interior -> 0] -> 'DIST 0x0p+0 N 1'   ok
+  [ring: same interior -> r-d] -> 'DIST 0x1p+1 N 1'   ok
+  [disc: on-circle point (7,0)] -> 'DIST 0x0p+0 N 1'   ok
+  [ring: on-circle point (7,0)] -> 'DIST 0x0p+0 N 1'   ok
+  [disc: exterior] -> 'DIST 0x1.8p+1 N 1'   ok
+  [ring: exterior equals disc] -> 'DIST 0x1.8p+1 N 1'   ok
+  [ring: centre -> r] -> 'DIST 0x1.8p+1 N 1'   ok
+
+## D. Flatten: permutation / duplication / singleton / mixed rows.
+  [mixed POINT+DISC+RING] -> 'DIST 0x1.4c583ada5b53p-3 N 3'   ok
+  [permuted list, same output] -> 'DIST 0x1.4c583ada5b53p-3 N 3'   ok
+  [permutation == original]   ok
+  [duplicated component, same min] -> 'DIST 0x1.4c583ada5b53p-3 N 4'   ok
+  [duplication == original]   ok
+  [singleton POINT is euclid] -> 'DIST 0x1.4p+2 N 1'   ok
+
+## E. Witness-rectangle grid: clearance <= 2, equality only at (0,+-3).
+  [17x13 grid: mirror-exact, bounded by 2, maximisers (0,+-3)]   ok
+
+## F. Verdicts.
+  [k=0 DEGENERATE (empty list)] -> 'DEGENERATE'   ok
+  [negative radius DEGENERATE] -> 'DEGENERATE'   ok
+  [unknown tag DEGENERATE] -> 'DEGENERATE'   ok
+  [wrong arity DEGENERATE] -> 'DEGENERATE'   ok
+  [nan query NAN] -> 'NAN'   ok
+  [nan component NAN] -> 'NAN'   ok
+  [NAN wins over DEGENERATE] -> 'NAN'   ok
+  [r=0 disc is a point (allowed)] -> 'DIST 0x1.4p+2 N 1'   ok
+
+# All proven invariants (I1-I6) hold across the suite.

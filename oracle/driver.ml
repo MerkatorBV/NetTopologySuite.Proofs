@@ -1811,6 +1811,88 @@ let run_lec_circle () =
         Printf.printf "LEC %h %h %h CHORDED %d %h\n" cx cy r n chorded
       end
 
+(* ----- OBSTACLE_DISTANCE (LargestEmptyCircle typed obstacle clearance).
+   ---------------------------------------------------------------------------
+   The typed per-component obstacle metric of the LEC laser, proven exact in
+   theories/LECObstacleDistance.v (obstacle_distance_headline): the clearance
+   of a query point against a typed obstacle collection is the MIN over the
+   components of
+     POINT cx cy   ->  |P - c|              (plain euclid)
+     DISC  cx cy r ->  max(0, |P - c| - r)  (filled CurvePolygon disc;
+                                             empty_disk_disc_iff -- lower
+                                             bound AND attained)
+     RING  cx cy r ->  ||P - c| - r|        (full-circle CircularString ring;
+                                             empty_disk_ring_iff)
+   Flatten row: emptiness of a union is emptiness of each part
+   (empty_disk_union_iff / empty_disk_two_discs_iff), and the min of clamped
+   disc rows equals the CLAMPED additively-weighted min over the centres
+   (min_disc_dist_weighted -- the Apollonius reduction).
+
+   INTERFACE-BOUNDARY float: each row carries one sqrt (irrational distance,
+   same category as ARC_DISTANCE); the composite float IS the JTS/NTS
+   ObstacleDistance interface value the LEC perf gate compares against.
+   Proof companion: theories/LECObstacleDistance.v.
+
+   Input:  line 2 = the query point -- "px py"
+           line 3 = k (component count; k >= 1)
+           lines 4..3+k = one component each --
+                          "POINT x y" | "DISC x y r" | "RING x y r"
+   Output: "DIST <min> N <k>" (hex float);
+           "NAN" (any non-finite input; NAN wins over DEGENERATE);
+           "DEGENERATE" (k < 1, r < 0, wrong arity, or an unknown tag). *)
+let run_obstacle_distance () =
+  let tokens line =
+    List.filter (fun s -> s <> "")
+      (String.split_on_char ' '
+         (String.map (fun c -> if c = '\t' then ' ' else c)
+            (String.trim line))) in
+  let p = parse_point (input_line stdin) in
+  let k = int_of_string (String.trim (input_line stdin)) in
+  let comps =
+    if k < 1 then []
+    else List.init k (fun _ -> tokens (input_line stdin)) in
+  let parse_comp tok =
+    let fl s = float_of_string s in
+    match tok with
+    | ["POINT"; sx; sy] ->
+        let x = fl sx and y = fl sy in
+        if finite_float x && finite_float y then `Point (x, y) else `Nan
+    | ["DISC"; sx; sy; sr] ->
+        let x = fl sx and y = fl sy and r = fl sr in
+        if not (finite_float x && finite_float y && finite_float r) then `Nan
+        else if r < 0.0 then `Degen
+        else `Disc (x, y, r)
+    | ["RING"; sx; sy; sr] ->
+        let x = fl sx and y = fl sy and r = fl sr in
+        if not (finite_float x && finite_float y && finite_float r) then `Nan
+        else if r < 0.0 then `Degen
+        else `Ring (x, y, r)
+    | _ -> `Degen in
+  let dist_to comp =
+    let euclid x y =
+      sqrt ((p.bx -. x) *. (p.bx -. x) +. (p.by_ -. y) *. (p.by_ -. y)) in
+    match comp with
+    | `Point (x, y) -> euclid x y
+    | `Disc (x, y, r) ->
+        let e = euclid x y -. r in
+        if e <= 0.0 then 0.0 else e
+    | `Ring (x, y, r) ->
+        let e = euclid x y -. r in
+        if e < 0.0 then -. e else e
+    | `Nan | `Degen -> nan in
+  let parsed = List.map parse_comp comps in
+  if not (finite_bpoint p) || List.exists (fun c -> c = `Nan) parsed
+  then print_endline "NAN"
+  else if k < 1 || List.exists (fun c -> c = `Degen) parsed
+  then print_endline "DEGENERATE"
+  else begin
+    let ds = List.map dist_to parsed in
+    let dmin =
+      List.fold_left (fun a d -> if d < a then d else a)
+        (List.hd ds) (List.tl ds) in
+    Printf.printf "DIST %h N %d\n" dmin k
+  end
+
 (* ----- ARC_SEGMENT_XY (issue #224 W1 / N-AL): arc-SEGMENT intersection coords.
    ---------------------------------------------------------------------------
    Intersection POINTS of a circular arc with a line SEGMENT, enumerated -- the
@@ -4284,6 +4366,7 @@ let () =
        | "ARC_ARC_XY"               -> run_arc_arc_xy ()
        | "DISC_OVERLAY"             -> run_disc_overlay ()
        | "LEC_CIRCLE"               -> run_lec_circle ()
+       | "OBSTACLE_DISTANCE"        -> run_obstacle_distance ()
        | "ARC_SEGMENT_XY"           -> run_arc_segment_xy ()
        | "ARC_ARC_DISTANCE"         -> run_arc_arc_distance ()
        | "ARC_SEGMENT_DISTANCE"     -> run_arc_segment_distance ()

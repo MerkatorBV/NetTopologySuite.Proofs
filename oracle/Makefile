@@ -45,7 +45,7 @@ FFI_LDLIBS  := -L$(OCAML_WHERE) -lasmrun_pic -lm -ldl -lpthread
 SCOUT_IC_LIB   := libscout_incircle.$(FFI_SOEXT)
 SCOUT_IC_PROBE := scout_incircle_probe
 
-.PHONY: all clean ffi ffi-parity jts1093-orient-scout scout-incircle-ffi jts1094-scout arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests disc-overlay-tests lec-circle-tests
+.PHONY: all clean ffi ffi-parity jts1093-orient-scout scout-incircle-ffi jts1094-scout arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests disc-overlay-tests lec-circle-tests obstacle-distance-tests
 
 all: $(TARGET)
 
@@ -69,6 +69,14 @@ disc-overlay-tests: $(TARGET)
 # exit on any violation.
 lec-circle-tests: $(TARGET)
 	cd .. && python3 oracle/gen_lec_circle_tests.py
+
+# Adversarial OBSTACLE_DISTANCE suite (LEC typed obstacle clearance): gates
+# the Qed-proven invariants of theories/LECObstacleDistance.v (I1 3-4-5
+# witness pins, I2 clamped-weighted-min mirror, I3 filled-disc vs ring,
+# I4 flatten/permutation, I5 witness-rectangle grid bound + maximisers,
+# I6 degenerate/NaN verdicts).  Nonzero exit on any violation.
+obstacle-distance-tests: $(TARGET)
+	cd .. && python3 oracle/gen_obstacle_distance_tests.py
 
 # Adversarial ARC_SEGMENT_XY suite (issue #224 W1 / N-AL): gates the proven
 # invariants (I1 on-circle, I2 on-segment t in [0,1], I3 seg-reversal,
