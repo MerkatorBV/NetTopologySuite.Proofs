@@ -2219,6 +2219,16 @@ theories/MaximumInscribedCircle.v
 # remain out of scope.  Full-only: imports MaximumInscribedCircle.v
 # (InDisk.v lineage).
 theories/LargestEmptyCircle.v
+# Board #9004 subtask 9004-d — RED (unproved claim surface): the per-cell
+# achievable-radius bound that justifies Polycenter's / JTS Cell pruning
+# (getMaxDistance = centre clearance + h·√2 circumradius).  Adds in_cell
+# (axis-aligned square cell) and states cell_achievable_radius_bound: an
+# empty radius achievable anywhere in the cell is <= dist(centre, obstacle)
+# + sqrt 2 * h, for every obstacle.  Headline deliberately UNPROVED: `rocq
+# c` fails at Qed with "Attempt to save an incomplete proof".  No Admitted,
+# no `admit` tactic, no Axiom / Parameter.  Subdivision recursion and
+# tolerance loop are out of scope.  Full-only: imports LargestEmptyCircle.v.
+theories/CellRadiusBound.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed
 # Phase-3 ring (chord_approx_ring_closed), lifting to to_geometry outer/hole
