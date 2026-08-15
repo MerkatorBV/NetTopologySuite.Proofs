@@ -2197,17 +2197,15 @@ theories/InDisk.v
 # centre; wrong-angle + exterior rejected).  4-axiom (atan2 lineage via
 # InArc / AngleBetween; see audit-exceptions).  No Admitted.
 theories/InSector.v
-# Board #9004 subtask 9004-a — RED (unproved claim surface, no PR): the
-# maximum-inscribed-circle home for epic #813's MIC lane, so the Polycenter
-# cite (Zhai et al. 2026, doi:10.1080/13658816.2025.2514056) has a module to
-# land on.  Adds Region / inscribed_disk / max_inscribed_disk over the
-# existing InDisk membership brick — the maximality quantifier is the new
-# content (9004-b: InDisk is membership, not a maximiser) — plus the rational
-# unit-square instance (9004-c): MIC of [0,1]² is centre (1/2,1/2), radius
-# 1/2.  The headline mic_unit_square is deliberately UNPROVED: `rocq c` fails
-# at Qed with "Attempt to save an incomplete proof".  No Admitted, no `admit`
-# tactic, no Axiom / Parameter, so scripts/check_admitted.sh stays green.  Cell
-# subdivision and the radius bound (9004-d) are out of scope.  Full-only:
+# Board #9004 — GREEN: the maximum-inscribed-circle home for epic #813's MIC
+# lane, hosting the Polycenter cite (Zhai et al. 2026,
+# doi:10.1080/13658816.2025.2514056).  Region / inscribed_disk /
+# max_inscribed_disk over the existing InDisk membership brick — the
+# maximality quantifier is the new content (9004-b: InDisk is membership,
+# not a maximiser) — with the rational unit-square instance Qed (9004-c):
+# MIC of [0,1]² is centre (1/2,1/2), radius 1/2 (mic_unit_square; mirrored
+# in eval/Claim9004c.v, WITNESS 9004-c).  Three-axiom.  No Admitted.  Cell
+# subdivision and the radius bound (9004-d) remain out of scope.  Full-only:
 # depends on InDisk.v, which the Stdlib-only host layer does not carry.
 theories/MaximumInscribedCircle.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid

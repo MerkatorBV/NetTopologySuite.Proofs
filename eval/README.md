@@ -21,6 +21,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `423-b` | `metric` | [`Claim423b.v`](Claim423b.v) | `discrete_frechet_min_coupling` |
 | `424-a` | `hull` | [`Claim424a.v`](Claim424a.v) | `minimum_bounding_triangle_exists` |
 | `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
+| `9004-c` | `construct` | [`Claim9004c.v`](Claim9004c.v) | `mic_unit_square` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
@@ -104,11 +105,21 @@ candidate T₀ = △(0,0)(2,0)(0,2)): `theories/MinimumBoundingTriangle.v`
 (same WITNESS tag). Universal ∀-finite-P existence and unrestricted
 area lower bound deferred.
 
+Production home for 9004-c (Green/Qed: the disk centre (1/2,1/2), radius
+1/2 is a maximum inscribed disk of [0,1]² — containment plus the
+maximiser over ALL centres and radii, via the horizontal probe points
+(ox' ± r', oy')): `theories/MaximumInscribedCircle.v` (same WITNESS tag;
+board #9004 / epic #813, Zhai et al. 2026 "Polycenter"). The unit here
+carries the self-contained proof, the four side-midpoint on-circle pins,
+and the two mismatch probes (same radius off-centre escapes the left
+wall; radius 3/5 has no admissible centre). Polycenter cell subdivision
+and the achievable-radius bound (9004-d) deferred.
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v
+#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v | eval/Claim9004c.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim65b.v
@@ -123,4 +134,5 @@ rocq compile eval/Claim423a.v
 rocq compile eval/Claim423b.v
 rocq compile eval/Claim424a.v
 rocq compile eval/Claim425a.v
+rocq compile eval/Claim9004c.v
 ```
