@@ -4,12 +4,27 @@
    Hobby (1999) Theorem 4.1 -- the headline correctness statement of snap
    rounding -- placed in the same epistemic position as Shewchuk Theorem 13
    in this corpus: definitions and the conditional theorem are Qed-closed;
-   the two supporting lemmas (4.2 monotone-coordinate, 4.3 piecewise-linear
-   ordering) are Admitted with registered deferred-proof entries.
+   of the two supporting lemmas, 4.2 (monotone-coordinate) is Qed-closed,
+   while 4.3 (piecewise-linear ordering) is `Abort`ed -- its
+   no-proper-crossing half is FALSE as stated, refuted in
+   HobbyCounterexample_b64.v, and only its shared-endpoint half carries a
+   Qed.  Nothing in this file is left as an `Admitted` hole.
 
    Paper: J. D. Hobby, "Practical segment intersection with finite precision
    output," Computational Geometry: Theory and Applications 13(4):199-214,
-   1999.  Section 4.
+   1999 (doi:10.1016/S0925-7721(99)00021-8).  Section 4.
+
+   Paper vs file.  Hobby CLAIMS an algorithm with a modest performance
+   penalty: send every vertex and every intersection to a nearby hot pixel,
+   then replace each segment by the polygonal chain through the hot pixels it
+   meets, so that all intersections become explicit grid points and no new
+   crossings appear outside the hot-pixel rule (validated on map-database
+   compression data).  This file mechanises the STATEMENT of the §4 guarantee
+   over the corpus's own `snap_round` -- not Hobby's implementation, not his
+   timings, and not the surrounding Bentley-Ottmann / Chazelle-Edelsbrunner
+   complexity story.  Nothing here ports the algorithm or reproduces the
+   compression experiment; the §4 support lemmas are tracked below, each at
+   its own state.
 
    See docs/hobby-theorem-proof-structure.md for the proof structure mapped
    to Coq obligations, the gap analysis (§6), and the resumption
@@ -24,8 +39,11 @@
    Audit footprint.  Like the other snap-rounding files (HotPixel_b64.v,
    SnapRounding_b64.v, TopologicalCorrectness_b64.v), `snap_round`'s closure
    pulls `Classical_Prop.classic` through Flocq's `round` / `round_mode`.
-   This file is listed in docs/audit-exceptions.txt for that lineage.  Two
-   Admitteds, both registered in docs/admitted-deferred-proofs.txt.
+   This file is listed in docs/audit-exceptions.txt for that lineage.  No
+   deferred holes remain: docs/admitted-deferred-proofs.txt now carries both
+   former entries as dispositions -- `hobby_lemma_4_2` CLOSED (Qed), and
+   `hobby_lemma_4_3_no_proper` moved to docs/admitted-counterexamples.txt as
+   FALSE as stated.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)

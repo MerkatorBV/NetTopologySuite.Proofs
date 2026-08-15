@@ -161,6 +161,11 @@ engagement-level syntheses.
      goals).
   6. The four registries + run `scripts/audit_axioms.sh /tmp/full-build.log`
      (for trust-chain / axiom footprint audits).
+  7. [`library-footnotes.md`](library-footnotes.md) — the operator paper
+     library mapped against the corpus: which papers have an honest
+     descendant (header cite + DOI + paper-CLAIMS vs file-PROVES), which
+     have no module to sit under yet and their suggested future home, and
+     the misnomers recorded but deliberately not rewritten in-tree.
 
 **Take away.** Two patterns to watch: the **conditional headline**
 (Qed-closed theorem under named thesis-shaped hypotheses) and the
