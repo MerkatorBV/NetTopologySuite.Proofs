@@ -2593,7 +2593,16 @@ theories/RelateNGBoundaryGraph.v
 # Depends on Distance + Overlay + Segment + DE9IM.
 # 3-axiom classical-reals base.  No Admitted.
 theories/RelateNGMatrixEqual.v
-# S13: RelateNG pipeline (strata, relate, dim, MOD2+area integration)
+# S13: RelateNG pipeline (strata, relate, dim, MOD2+area integration).
+# Split (2026-08) into six layered modules + re-export umbrella; the
+# meso-audit B6 untangle (rect vs triangle lanes) is executed by the Core
+# layout.  Register the six modules before the umbrella.
+theories/RelateNGCore.v
+theories/RelateNGContains.v
+theories/RelateNGTouch.v
+theories/RelateNGTouchRED.v
+theories/RelateNGTouchCells.v
+theories/RelateNGRect.v
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
 theories/RelatePrepared.v
