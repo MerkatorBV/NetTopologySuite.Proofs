@@ -1,0 +1,27 @@
+# Adversarial tests for LEC_CIRCLE (RocqRefRunner) vs Qed invariants
+# in theories/LECChordGap.v (lec_chord_hypothesis_refuted,
+# lec_circle_closed_form, lec_chorded_answer).  '!!' lines are
+# PROVEN-invariant violations (CI-failing).
+# I1 echo  I2 locked sqrt2 pin  I3 under+monotone  I4 CS==direct  I5 verdicts
+
+## A. Locked fixture: circle (0,0) r=2, the LECChordGap witness cell.
+  [locked direct n=4] -> 'LEC 0x0p+0 0x0p+0 0x1p+1 CHORDED 4 0x1.6a09e667f3bcdp+0'   ok
+  [locked CIRCULARSTRING n=4] -> 'LEC 0x0p+0 0x0p+0 0x1p+1 CHORDED 4 0x1.6a09e667f3bcdp+0'   ok
+  [locked CS == direct]   ok
+
+## B. Underestimate + monotone convergence (circle (3,-1) r=5).
+  [r=5 n=3] -> 'LEC 0x1.8p+1 -0x1p+0 0x1.4p+2 CHORDED 3 0x1.4000000000001p+1'   ok
+  [r=5 n=4] -> 'LEC 0x1.8p+1 -0x1p+0 0x1.4p+2 CHORDED 4 0x1.c48c6001f0acp+1'   ok
+  [r=5 n=6] -> 'LEC 0x1.8p+1 -0x1p+0 0x1.4p+2 CHORDED 6 0x1.1520cd1372febp+2'   ok
+  [r=5 n=12] -> 'LEC 0x1.8p+1 -0x1p+0 0x1.4p+2 CHORDED 12 0x1.3518a4c8d776dp+2'   ok
+  [r=5 n=96] -> 'LEC 0x1.8p+1 -0x1p+0 0x1.4p+2 CHORDED 96 0x1.3fd42395e6c25p+2'   ok
+  [r=5 n=1024] -> 'LEC 0x1.8p+1 -0x1p+0 0x1.4p+2 CHORDED 1024 0x1.3fff9d4dd5221p+2'   ok
+
+## C. Degenerate / NaN / bad n.
+  [r=0 DEGENERATE] -> 'DEGENERATE'   ok
+  [negative r DEGENERATE] -> 'DEGENERATE'   ok
+  [collinear CS DEGENERATE] -> 'DEGENERATE'   ok
+  [NaN NAN] -> 'NAN'   ok
+  [n=1 DEGENERATE] -> 'DEGENERATE'   ok
+
+# All proven invariants (I1-I5) hold across the suite.
