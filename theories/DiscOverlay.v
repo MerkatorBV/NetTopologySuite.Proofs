@@ -137,7 +137,23 @@ Proof. intros. unfold crescents, crescent. tauto. Qed.
 (* CAP ∪ XOR = CUP  and  CAP ∪ SUB = A, as point-sets. *)
 Lemma lens_or_crescents_iff_blob :
   forall A B p, lens A B p \/ crescents A B p <-> blob A B p.
-Proof. intros. unfold lens, crescents, crescent, blob. tauto. Qed.
+Proof.
+  intros A B p. unfold lens, crescents, crescent, blob, in_disk.
+  split.
+  - intros [[HA _] | [[HA _] | [HB _]]].
+    + left. exact HA.
+    + left. exact HA.
+    + right. exact HB.
+  - intros [HA | HB].
+    + destruct (Rle_dec (dist_sq (dcentre B) p) (dradius B * dradius B))
+        as [HinB | HoutB].
+      * left. split; [exact HA | exact HinB].
+      * right. left. split; [exact HA | exact HoutB].
+    + destruct (Rle_dec (dist_sq (dcentre A) p) (dradius A * dradius A))
+        as [HinA | HoutA].
+      * left. split; [exact HinA | exact HB].
+      * right. right. split; [exact HB | exact HoutA].
+Qed.
 
 Lemma lens_or_crescent_iff_A :
   forall A B p, lens A B p \/ crescent A B p <-> in_disk A p.
@@ -405,12 +421,12 @@ Proof.
     + exists locked_O1.
       destruct locked_O1_in_A_not_B as [HA HB].
       split; [exact HA|].
-      unfold overlayng_cap, lens. tauto.
+      unfold overlayng_cap, lens. intros [_ HinB]. exact (HB HinB).
     + split.
       * exists locked_O2.
         destruct locked_O2_in_B_not_A as [HB HA].
         split; [exact HB|].
-        unfold overlayng_cap, lens. tauto.
+        unfold overlayng_cap, lens. intros [HinA _]. exact (HA HinA).
       * exists (mkPoint 100 0).
         unfold overlayng_cup. exact locked_far_outside.
 Qed.
