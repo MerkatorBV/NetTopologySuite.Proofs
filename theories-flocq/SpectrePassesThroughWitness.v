@@ -21,6 +21,9 @@
         `b64_passes_through_grid_exact_cond` on the Spectre edge.
 
    Regression anchor, not a pipeline face.  No Admitted / Axiom / Parameter.
+   topic: binary64
+   claimId: 66-c1
+   witness: spectre-edge
    ========================================================================== *)
 
 From Stdlib Require Import Reals ZArith Lia Lra.
@@ -146,3 +149,17 @@ Proof.
   rewrite <- (spectre_edge_grid_exact_cond Href).
   exact spectre_edge_passes_thru.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64Z_B2R_finite.
+Print Assumptions b64Z_coord_int_safe.
+Print Assumptions sP0_safe.
+Print Assumptions sP1_safe.
+Print Assumptions sCthru_safe.
+Print Assumptions sCmiss_safe.
+Print Assumptions spectre_edge_passes_thru.
+Print Assumptions spectre_edge_misses.
+Print Assumptions spectre_edge_grid_exact_cond.
+Print Assumptions spectre_edge_spec_passes_thru.

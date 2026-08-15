@@ -81,3 +81,10 @@ Proof.
 Qed.
 
 Print Assumptions b64_passes_through_hot_pixel_halfopen_compute_implies_closed.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64_lt_implies_le.
+Print Assumptions b64_lb_inslab_halfopen_implies_closed.
+Print Assumptions b64_liang_barsky_touches_halfopen_compute_implies_closed.

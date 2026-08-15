@@ -193,3 +193,5 @@ Qed.
 Print Assumptions b64_orient_sign_stage_d_safe_sound_when_filter_indefinite.
 Print Assumptions b64_orient_sign_stage_d_safe_sound.
 Print Assumptions stage_d_safe_recovers_under_underflow.
+Print Assumptions orient2d_inputs_int_safe_all_finite.
+Print Assumptions b64_orient_sign_stage_d_safe_never_indefinite.

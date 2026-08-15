@@ -826,3 +826,27 @@ Qed.
 
 Print Assumptions b64_grow_expansion_correct.
 Print Assumptions b64_grow_expansion_nonoverlap_pathA.
+Print Assumptions expansion_R_app.
+Print Assumptions expansion_R_rev.
+Print Assumptions b64_TwoSum_fst.
+Print Assumptions b64_grow_expansion_aux_correct.
+Print Assumptions b64_grow_expansion_nonoverlap.
+Print Assumptions b64_bpow_minus_53_eq_4.
+Print Assumptions b64_bpow_minus_54_eq_2.
+Print Assumptions counterex_loose_precondition_holds.
+Print Assumptions counterex_below_midpoint.
+Print Assumptions counterex_gap_magnitude.
+Print Assumptions round_eq_pathA_positive.
+Print Assumptions round_eq_pathA_negative.
+Print Assumptions round_eq_pathA_zero.
+Print Assumptions round_eq_under_strict_dominance.
+Print Assumptions b64_plus_under_pathA_dominance.
+Print Assumptions b64_plus_under_strict_dominance.
+Print Assumptions b64_grow_expansion_nonoverlap_dominated.
+Print Assumptions b64_TwoSum_pathA_exact_step.
+Print Assumptions cascade_pathA_dominates_aux_B2R_compat.
+Print Assumptions b64_grow_expansion_aux_pathA_matches.
+Print Assumptions nonoverlap_strict_B2R_compat.
+Print Assumptions nonoverlap_strict_snoc.
+Print Assumptions strict_succ_pathA_R_implies_strict_succ_b64.
+Print Assumptions cascade_pathA_dominates_implies_nonoverlap.

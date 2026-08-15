@@ -144,3 +144,9 @@ Qed.
 
 Print Assumptions b64_orient2d_expansion_int_nonoverlap_coords.
 Print Assumptions b64_orient2d_expansion_int_sign_correct_coords.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions cross_budget_of_diff_bounds.
+Print Assumptions coord_diff_int_exact.

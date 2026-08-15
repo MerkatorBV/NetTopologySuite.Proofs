@@ -140,3 +140,7 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions stage_a_filter_unsound_under_underflow.
+Print Assumptions uWitness_all_finite.
+Print Assumptions uWitness_filter_says_zero.
+Print Assumptions uWitness_exact_says_pos.
+Print Assumptions uWitness_true_cross_pos.

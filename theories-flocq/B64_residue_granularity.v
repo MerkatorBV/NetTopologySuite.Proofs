@@ -223,3 +223,15 @@ Qed.
 
 Print Assumptions residue_ge_half_ulp.
 Print Assumptions pathB_cancel_strict_succ_head.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions bpow_radix2_1.
+Print Assumptions bpow_pred2.
+Print Assumptions scale_down_to_exp.
+Print Assumptions nonzero_mult_bpow_ge.
+Print Assumptions b64_format_eq_mant_bpow.
+Print Assumptions b64_ulp_eq_bpow_cexp.
+Print Assumptions strict_succ_b64_half_ulp_bpow.
+Print Assumptions b64_cexp_ge_from_mag_lb.

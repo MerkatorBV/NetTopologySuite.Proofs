@@ -368,3 +368,11 @@ Proof. repeat split; discriminate. Qed.
 Print Assumptions b64_orient_sign_naive_total.
 Print Assumptions b64_orient_sign_naive_non_nan_iff_compare_some.
 Print Assumptions b64_orient_sign_filtered_total.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions orient_sign_eq_dec.
+Print Assumptions orient_sign_distinct.
+Print Assumptions orient_sign_robust_eq_dec.
+Print Assumptions orient_sign_robust_distinct.

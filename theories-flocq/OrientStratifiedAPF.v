@@ -487,3 +487,15 @@ Print Assumptions apf_run_sound_int.
 Print Assumptions apf_decode_neg.
 Print Assumptions apf_witness_neg_involutive.
 Print Assumptions b64_orient_apf_antisym_int.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64_orient_apf_unfold.
+Print Assumptions b64_orient_apf_never_nan.
+Print Assumptions b64_orient_apf_never_uncertain.
+Print Assumptions sign_robust_neg_involutive.
+Print Assumptions expansion_sign_neg_involutive.
+Print Assumptions apf_stratum_of_neg.
+Print Assumptions cross_R_BP_swap01.
+Print Assumptions orient2d_inputs_int_safe_swap01.

@@ -313,10 +313,11 @@ theories-flocq/PassesThrough_b64_spec_symmetric.v
 # (|n| <= 2^22, Slice 18).  Imports HotPixel_b64 / SnapRounding_b64 /
 # PassesThrough_b64_compute, whose binary64 layer pulls
 # `Classical_Prop.classic` transitively.  No Admitteds; Qed-closed.
-# KNOWN GAP: the file currently has ZERO in-file `Print Assumptions`
-# footers, so this exemption covers no PA blocks today -- backfill queued
-# (B1 in docs/audit-meso-sample-2026-08.md); slices 12-13 are 3-axiom
-# [exact] and a candidate to leave this list after extraction (B4).
+# KNOWN GAP (closed 2026-08-15, B1): in-file `Print Assumptions`
+# footers now cover every Theorem/Lemma/Corollary/Proposition/Fact in
+# this file (was ZERO). Exemption now actually covers PA blocks.
+# Slices 12-13 remain 3-axiom [exact] and a candidate to leave this
+# list after extraction (B4).
 theories-flocq/PassesThrough_b64_grid_exact.v
 
 # Category C (GREEN witness, same lineage): a witness test of the C1 grid

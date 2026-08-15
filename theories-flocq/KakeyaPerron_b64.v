@@ -174,3 +174,12 @@ Print Assumptions perron_b64_inputs_int_safe.
 Print Assumptions perron_tri_b64_orient_exact.
 Print Assumptions perron_tri_b64_cross_positive.
 Print Assumptions perron_b64_apex_unsafe_at_25.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions pow2_nat_Z.
+Print Assumptions pow2_le_2p25.
+Print Assumptions absle_nonneg.
+Print Assumptions two_pow_succ_nat.
+Print Assumptions perron_tri_b64_cross_pos.

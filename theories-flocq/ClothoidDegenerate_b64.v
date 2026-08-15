@@ -191,3 +191,9 @@ Qed.
 Print Assumptions b64_degenerate_residual_exact.
 Print Assumptions b64_degenerate_root_exact.
 Print Assumptions b64_degenerate_sign_trichotomy.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions square_int_window.
+Print Assumptions square_diff_int_window.

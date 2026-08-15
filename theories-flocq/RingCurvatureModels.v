@@ -363,3 +363,4 @@ Print Assumptions extract_rings_valid_hyperbolic.
 Print Assumptions extract_rings_valid_spherical_hemisphere.
 Print Assumptions extract_rings_valid_hyperbolic_of_guards.
 Print Assumptions extract_rings_valid_spherical_hemisphere_of_guards.
+Print Assumptions vcross_zero_preserved_pos_det.

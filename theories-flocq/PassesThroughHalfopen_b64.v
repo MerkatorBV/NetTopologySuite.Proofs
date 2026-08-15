@@ -530,3 +530,8 @@ Qed.
 Print Assumptions b64_passes_through_hot_pixel_halfopen_sound.
 Print Assumptions b64_passes_through_hot_pixel_halfopen_complete.
 Print Assumptions b64_passes_through_hot_pixel_halfopen_implies_closed.
+Print Assumptions lb_inslab_halfopen_implies_lb_inslab.
+Print Assumptions lb_axis_sound_strict_interior.
+Print Assumptions b64_liang_barsky_touches_halfopen_implies_closed.
+Print Assumptions b64_liang_barsky_touches_halfopen_sound.
+Print Assumptions b64_liang_barsky_touches_halfopen_complete.

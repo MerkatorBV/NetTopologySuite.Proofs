@@ -315,3 +315,6 @@ Print Assumptions fully_intersected_darts_of_not_pairwise.
 Print Assumptions fully_intersected_not_pairwise_collinear.
 Print Assumptions extract_rings_valid_faces_named.
 Print Assumptions extract_rings_valid_faces_holes_named.
+Print Assumptions sip_overlay_iff_hobby.
+Print Assumptions collinear_overlap_properly_crosses.
+Print Assumptions pairwise_darts_of_forces_degenerate.

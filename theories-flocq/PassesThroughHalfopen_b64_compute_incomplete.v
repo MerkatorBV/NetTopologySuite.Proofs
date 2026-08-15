@@ -152,3 +152,24 @@ Proof.
 Qed.
 
 Print Assumptions b64_passes_through_halfopen_compute_incomplete.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions compute_false.
+Print Assumptions val_uP0x.
+Print Assumptions val_uP1x.
+Print Assumptions val_uP0y.
+Print Assumptions val_uP1y.
+Print Assumptions val_uCx.
+Print Assumptions val_uCy.
+Print Assumptions b54_pos.
+Print Assumptions b54_le1.
+Print Assumptions snap_round_coord_IZR.
+Print Assumptions snap_uP0y.
+Print Assumptions snap_uP1y.
+Print Assumptions snap_x0.
+Print Assumptions snap_x1.
+Print Assumptions snap_y0.
+Print Assumptions snap_y1.
+Print Assumptions spec_true.

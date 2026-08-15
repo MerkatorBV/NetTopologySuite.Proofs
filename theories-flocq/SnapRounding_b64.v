@@ -274,3 +274,11 @@ Qed.
 Print Assumptions snap_round_preserves_passes_through.
 Print Assumptions b64_snap_round_preserves_passes_through.
 Print Assumptions b64_snap_round_segment_correct.
+Print Assumptions snap_round_coord_idem.
+Print Assumptions snap_round_idempotent.
+Print Assumptions b64_snap_coord_B2R_idem.
+Print Assumptions is_finite_not_nan.
+Print Assumptions b64_snap_coord_idem_finite.
+Print Assumptions b64_snap_idempotent_finite.
+Print Assumptions b64_liang_barsky_touches_B2R_congr.
+Print Assumptions b64_liang_barsky_touches_snap_idem.

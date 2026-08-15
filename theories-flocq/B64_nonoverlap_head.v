@@ -203,3 +203,12 @@ Qed.
 Print Assumptions nonoverlap_shewchuk_cons_zero.
 Print Assumptions nonoverlap_shewchuk_head_replace.
 Print Assumptions nonoverlap_output_first_strict_succ.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions compress_cons_zero.
+Print Assumptions compress_app_zero.
+Print Assumptions compress_head_app_zero.
+Print Assumptions nonoverlap_shewchuk_tail_app_zero.
+Print Assumptions compress_head_nonzero.

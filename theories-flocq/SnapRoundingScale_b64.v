@@ -438,3 +438,7 @@ Print Assumptions b64_hot_pixel_radius_pow2_exact.
 Print Assumptions b64_minus_radius_int_exact.
 Print Assumptions b64_plus_radius_int_exact.
 Print Assumptions b64_in_hot_pixel_sound_pow2.
+Print Assumptions snap_round_coord_idem_scale.
+Print Assumptions snap_round_idempotent_scale.
+Print Assumptions int_radius_sum_lt_emax.
+Print Assumptions boundary_mantissa_small.

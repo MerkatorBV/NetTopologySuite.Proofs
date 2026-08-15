@@ -123,3 +123,13 @@ Proof.
 Qed.
 
 Print Assumptions b64_passes_through_hot_pixel_symmetric.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions Rle_bool_flip.
+Print Assumptions lb_inslab_sym.
+Print Assumptions lb_tlo_swap.
+Print Assumptions lb_thi_swap.
+Print Assumptions clip_flip.
+Print Assumptions b64_liang_barsky_touches_sym.
