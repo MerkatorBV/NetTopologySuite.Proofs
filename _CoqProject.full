@@ -3241,6 +3241,21 @@ theories-flocq/PassesThrough_b64_spec_symmetric.v
 # grid-exactness (compute = spec) reduces to the single Liang-Barsky touch.
 # Qed-closed reduction; the rounded-vs-exact touch core is the open multi-session
 # step (stated in-file as a comment, NOT an axiom).
+# Split (2026-08-15) into five layered modules + Require Export umbrella:
+# core = slices 1-5 (on-grid reduction, fixed-point grid, slab guards,
+# coordinate exactness, max/min bridge); bounds = slices 6-8 (division
+# bridge, correctly-rounded t-bounds, clipped bounds); complete = slices
+# 9-11 (on-grid completeness, conditional headline, rounding reflection);
+# gap_kernel = slices 12-13 (pure-R rational-gap + ulp upper bound --
+# meso-audit B4: 3-axiom, deliberately OFF audit-exceptions.txt);
+# separation = slices 14-18 (gap-beats-band, gridbound, the unconditional
+# tight-grid headline).  The umbrella re-exports all five, so the two
+# reverse dependencies import unchanged.
+theories-flocq/PassesThrough_b64_grid_core.v
+theories-flocq/PassesThrough_b64_grid_bounds.v
+theories-flocq/PassesThrough_b64_grid_complete.v
+theories-flocq/PassesThrough_b64_grid_gap_kernel.v
+theories-flocq/PassesThrough_b64_grid_separation.v
 theories-flocq/PassesThrough_b64_grid_exact.v
 # Computational (extractable) binary64 in-circle determinant.  Oracle compute
 # path for INCIRCLE_SIGN (and the ARC_* incircle sign-products); inCircle_R is
