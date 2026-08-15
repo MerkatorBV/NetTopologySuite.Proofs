@@ -2687,6 +2687,18 @@ theories/ArcSegmentDistance.v
 theories/ArcSinglePeak.v
 theories/ArcPointDistance.v
 
+# The LEC ARC row (ledger rung "point-to-arc spec" closed + failed path F4).
+# Glues ArcPointDistance's case lemmas into the TOTAL closed form arc_dist
+# (centre / radial-in-span / endpoint fallback) and proves it exact with no
+# case hypotheses (arc_dist_exact); collapses arc_span_contains to the single
+# chord-sign gate on the circle (arc_span_contains_iff_sign, via the
+# divisionless circle-meets-chord-line-only-at-endpoints lemma); exports the
+# empty_disk_arc_iff LEC-table row (imports LargestEmptyCircle.v — full-only,
+# like LECObstacleDistance.v); and REFUTES gating the sector on the query
+# point instead of its radial foot (query_side_sector_hypothesis_refuted,
+# rational 3-4-5 witness; oracle ARC_DISTANCE §C pins it bit-exact).
+theories/LECArcRow.v
+
 # Issue #65 curve-aware buffer, rung 2: the SQL/MM three-point bridge.
 # radial_offset (homothety about the center, pure rational arithmetic,
 # no trig) carries ArcOffset's parallel-curve property into coordinate

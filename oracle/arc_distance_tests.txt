@@ -132,4 +132,18 @@
   [center39] -> '0x1.1137dd4390dp+2'   ok
   [outside39] -> '0x1.c0fb010ff22a8p+5'   ok
 
-# All invariants (I1 radial, I2 endpoint, I3 degen, I4 center, I5 nonneg) hold.
+## C. Chord-sign gate trap (F4, LECArcRow.v query_side_sector_hypothesis_refuted).
+# Witness arc (3,4)-(0,5),(-3,4) on the r=5 circle about the origin.
+# The ANGULAR gate may test P directly (angle(P) == angle(foot): rays are
+# angle-invariant); a CHORD-SIGN gate must test the radial FOOT -- the
+# span<->sign equivalence (LECArcRow.arc_span_contains_iff_sign) holds ON
+# THE CIRCLE only.  At P=(16,12) the naive chord-sign-on-P gate passes
+# (product 288 > 0) and would report |20-5| = 15; the Qed truth is the
+# endpoint fallback sqrt 233 > 15.2 (foot (4,3) has product -36 < 0).
+# These pins are the tripwire for any future atan2 -> chord-sign refactor.
+  [F4 trap query (16,12) -> sqrt 233, not 15] -> '0x1.e87573f6c42c5p+3'   ok
+  [F4 boundary foot=A query (6,8) -> 5] -> '0x1.4p+2'   ok
+  [F4 antipode query (0,-5) -> sqrt 90, not 0] -> '0x1.2f9422c23c47ep+3'   ok
+
+# All invariants (I1 radial, I2 endpoint, I3 degen, I4 center, I5 nonneg,
+# F4 foot-gate pins) hold.

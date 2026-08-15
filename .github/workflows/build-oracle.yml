@@ -232,6 +232,8 @@ jobs:
             > oracle/lec_circle_tests.txt
           ORACLE_BIN=oracle/oracle_bin python3 oracle/gen_obstacle_distance_tests.py \
             > oracle/obstacle_distance_tests.txt
+          ORACLE_BIN=oracle/oracle_bin python3 oracle/gen_arc_distance_tests.py \
+            > oracle/arc_distance_tests.txt
 
       - name: Upload oracle_bin artifact (90-day retention)
         uses: actions/upload-artifact@v4

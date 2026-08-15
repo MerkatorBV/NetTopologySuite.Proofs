@@ -181,7 +181,56 @@ for i in range(40):
     assess(f"outside{i}", (a,b,c), (cx + 10*r, cy + 10*r))
 
 emit()
+emit("## C. Chord-sign gate trap (F4, LECArcRow.v query_side_sector_hypothesis_refuted).")
+emit("# Witness arc (3,4)-(0,5),(-3,4) on the r=5 circle about the origin.")
+emit("# The ANGULAR gate may test P directly (angle(P) == angle(foot): rays are")
+emit("# angle-invariant); a CHORD-SIGN gate must test the radial FOOT -- the")
+emit("# span<->sign equivalence (LECArcRow.arc_span_contains_iff_sign) holds ON")
+emit("# THE CIRCLE only.  At P=(16,12) the naive chord-sign-on-P gate passes")
+emit("# (product 288 > 0) and would report |20-5| = 15; the Qed truth is the")
+emit("# endpoint fallback sqrt 233 > 15.2 (foot (4,3) has product -36 < 0).")
+emit("# These pins are the tripwire for any future atan2 -> chord-sign refactor.")
+
+F4_ARC = ((3, 4), (0, 5), (-3, 4))
+
+
+def assess_pin(name, arc, p, pin=None, floor=None):
+    global violations
+    line = run(arc, p)
+    kind, dist = parse(line)
+    tags = []
+    if kind != "DIST":
+        violations += 1
+        tags.append(f"!! F4_SHAPE got={line!r}")
+    else:
+        if pin is not None and dist.hex() != pin.hex():
+            violations += 1
+            tags.append(f"!! F4_PIN got={dist.hex()} want={pin.hex()}")
+        if floor is not None and not (dist > floor):
+            violations += 1
+            tags.append(f"!! F4_FLOOR dist={dist!r} <= {floor!r}")
+    emit(f"  [{name}] -> {line!r}   {' '.join(tags) if tags else 'ok'}")
+
+
+# the F4 witness: endpoint fallback sqrt 233; a chord-sign-on-P gate emits 15.0
+assess_pin("F4 trap query (16,12) -> sqrt 233, not 15",
+           F4_ARC, (16, 12),
+           pin=math.sqrt((16.0 - 3.0) * (16.0 - 3.0)
+                         + (12.0 - 4.0) * (12.0 - 4.0)),
+           floor=15.2)
+# boundary: foot exactly at endpoint A -- radial and fallback branches agree
+assess_pin("F4 boundary foot=A query (6,8) -> 5", F4_ARC, (6, 8), pin=5.0)
+# antipodal-side probe: foot is ON the circle but out of sweep; a gate that
+# accepted it would claim clearance |5-5| = 0
+assess_pin("F4 antipode query (0,-5) -> sqrt 90, not 0",
+           F4_ARC, (0, -5),
+           pin=math.sqrt((0.0 - 3.0) * (0.0 - 3.0)
+                         + (-5.0 - 4.0) * (-5.0 - 4.0)),
+           floor=9.0)
+
+emit()
 if violations:
     emit(f"::error::ARC_DISTANCE violated {violations} invariant(s).")
     sys.exit(1)
-emit("# All invariants (I1 radial, I2 endpoint, I3 degen, I4 center, I5 nonneg) hold.")
+emit("# All invariants (I1 radial, I2 endpoint, I3 degen, I4 center, I5 nonneg,")
+emit("# F4 foot-gate pins) hold.")
