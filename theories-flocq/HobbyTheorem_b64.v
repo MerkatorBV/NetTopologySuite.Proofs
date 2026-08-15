@@ -460,6 +460,4 @@ Qed.
 
 Print Assumptions hobby_theorem_4_1_conditional.
 Print Assumptions hobby_lemma_4_2.
-Print Assumptions hobby_lemma_4_3_no_proper.
 Print Assumptions hobby_lemma_4_3_shared_endpoint.
-Print Assumptions hobby_lemma_4_3.

@@ -2287,9 +2287,7 @@ Print Assumptions untag_sort_by_abs_tagged.
 Print Assumptions untag_tag_list.
 Print Assumptions untag_tagged_merge.
 Print Assumptions B2R_b64_zero.
-Print Assumptions cascade_step_preserves_invariant.
 Print Assumptions eps_b64_pos.
 Print Assumptions eps_b64_le_quarter.
 Print Assumptions eps_b64_eq_bpow.
-Print Assumptions fast_expansion_sum_nonoverlap_shewchuk_route1_attempt.
 Print Assumptions list_abs_b2r_sum_insert_by_abs.
