@@ -22,6 +22,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `424-a` | `hull` | [`Claim424a.v`](Claim424a.v) | `minimum_bounding_triangle_exists` |
 | `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
 | `9004-c` | `construct` | [`Claim9004c.v`](Claim9004c.v) | `mic_unit_square` |
+| `9004-d` | `construct` | [`Claim9004d.v`](Claim9004d.v) | `cell_achievable_radius_bound` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
@@ -115,11 +116,24 @@ and the two mismatch probes (same radius off-centre escapes the left
 wall; radius 3/5 has no admissible centre). Polycenter cell subdivision
 and the achievable-radius bound (9004-d) deferred.
 
+Production home for 9004-d (Green/Qed: the cell pruning bound behind
+Polycenter / JTS Cell.getMaxDistance — an empty radius achievable at any
+point of a square cell of centre c, half-side h is at most
+dist(c, X) + √2·h for every obstacle X; two triangle steps plus the cell
+circumradius dist_sq ≤ 2h²): `theories/CellRadiusBound.v` (same WITNESS
+tag; also carries the centre-shift Lipschitz lemmas, radius
+monotonicity, and per-cell corollaries on both the empty and inscribed
+duals). The unit here is fully self-contained (local Lagrange-identity
+triangle inequality) with the corner circumradius-equality pin, the
+3 ≤ 2 + √2 slack pin, and the mismatch probe refuting the slack-free
+misreading (empty radius 3 at (−1,0) beats centre clearance 2).
+Subdivision recursion and tolerance loop deferred.
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v | eval/Claim9004c.v
+#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v | eval/Claim9004c.v | eval/Claim9004d.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim65b.v
@@ -135,4 +149,5 @@ rocq compile eval/Claim423b.v
 rocq compile eval/Claim424a.v
 rocq compile eval/Claim425a.v
 rocq compile eval/Claim9004c.v
+rocq compile eval/Claim9004d.v
 ```

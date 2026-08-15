@@ -1062,3 +1062,14 @@ topic: construct · claimId: none (board card pending) · witness: side-midpoint
 |---|---|---|
 | `LargestEmptyCircle.v : lec_side_midpoints` | **LEC headline.** Centre (1/2,1/2), radius 1/2 is a LARGEST empty disk of the four side midpoints with centre constrained to [0,1]²: empty (each midpoint at squared distance exactly 1/4) and maximal (in the centre's quadrant the two adjacent midpoints give dist²₁ + dist²₂ ≤ 1/2, so 2r′² ≤ 1/2). Rational; sqrt-free beyond the Distance.v bridges `[exact]` | 3 |
 | `LargestEmptyCircle.v : mic_lec_duality` (+ `lec_side_midpoints_empty`, `lec_side_midpoints_radius_maximal`, `empty_disk_sq_bound`, `dist_ge_of_dist_sq_ge`) | **The duality:** one rational circle is simultaneously the maximum disk inscribed in the unit square (#9004) and the largest disk empty of the square's side midpoints — the midpoints are exactly the inscribed disk's touch points `[exact]` | 3 |
+
+## Cell pruning bound — Polycenter / JTS Cell.getMaxDistance soundness (`CellRadiusBound.v`, board #9004 / 9004-d, epic #813) <!-- feat:construct geom:cp -->
+
+The per-cell achievable-radius bound that justifies the branch-and-bound subdivision shared by Polycenter and JTS `MaximumInscribedCircle` / `LargestEmptyCircle`, plus the centre-shift machinery on both duals. Mirrored self-contained in [`eval/Claim9004d.v`](../eval/Claim9004d.v) (WITNESS 9004-d; local Lagrange-identity triangle inequality, corner circumradius-equality pin, slack-free-misreading probe).
+topic: construct · claimId: 9004-d · witness: cell-slack — obstacle (2,0), cell centre (0,0), half-side 1, probe (−1,0): empty radius 3 beats centre clearance 2, so the √2·h slack is not droppable.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CellRadiusBound.v : cell_achievable_radius_bound` | **9004-d headline.** In a square cell (centre c, half-side h), an empty radius achievable at ANY cell point is ≤ dist(c, X) + √2·h for every obstacle X — the JTS `Cell.getMaxDistance` pruning bound. Two triangle steps + `cell_circumradius` (`dist_sq ≤ 2h²` in the cell) `[exact]` | 3 |
+| `CellRadiusBound.v : empty_disk_centre_shift` (+ `inscribed_disk_centre_shift`, `empty_disk_radius_mono`, `inscribed_disk_radius_mono`) | Centre-shift Lipschitz lemmas on BOTH duals: moving a disk's centre by d costs at most d of radius, for emptiness and inscribedness alike; radius monotonicity companions `[exact]` | 3 |
+| `CellRadiusBound.v : cell_empty_disk_at_centre` (+ `cell_inscribed_disk_at_centre`) | The per-cell corollaries a subdivision step consumes: whatever radius a cell point achieves, the cell centre achieves minus √2·h — on the empty (LEC) and inscribed (MIC) sides `[exact]` | 3 |
