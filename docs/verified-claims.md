@@ -1042,3 +1042,13 @@ topic: foundations · claimId: none · witness: none (no minted micro-claim). Fa
 | `DiscreteShBridge.v : stable_bool_field_constant` | Γ(Δ2) = 2 field form: a pointwise-Boolean classification of the plane with both classes perturbation-stable (open) is constant `[exact]` | 3 |
 | `DiscreteShBridge.v : stalk_imp_strict` (+ `stalk_sound_and`, `stalk_sound_or`, `stalk_sound_join`, `stalk_lax_imp`, `stalk_lax_not`, `oincl_pointwise`) | **Spatial soundness, sharp:** pointwise evaluation is exact on `⊤ ⊥ ∧ ∨ ⋁`, sound-but-lax on `⇒ ¬`, and the laxity is strict (a pointwise implication the topos rejects, at the origin of the punctured plane — the row's real content); entailment is pointwise by construction in the subterminal encoding (`oincl_pointwise`, definitional) `[exact]` | 3 |
 | `DiscreteShBridge.v : strict_halfplane_open` (+ `dx_le_dist`, `open_disk_open`, `open_disk_incl_in_disk`) | NTS instantiation: strict half-planes and open disks (strict `in_disk`) are truth values of Sh(ℝ²); their closures are not `[exact]` | 3 |
+
+## MIC — maximum inscribed circle of the unit square (`MaximumInscribedCircle.v`, board #9004 / epic #813) <!-- feat:construct geom:cp -->
+
+The 9004-a surface (`Region` / `inscribed_disk` / `max_inscribed_disk` — containment *plus* the maximiser, which no other corpus definition states) and its rational unit-square witness. Hosts the Polycenter cite (Zhai et al. 2026, doi:10.1080/13658816.2025.2514056). Mirrored self-contained in [`eval/Claim9004c.v`](../eval/Claim9004c.v) with the side-midpoint on-circle pins and two mismatch probes (WITNESS 9004-c).
+topic: construct · claimId: 9004-c · witness: unit-square — centre (1/2,1/2), radius 1/2; probes: same radius off-centre escapes the left wall, radius 3/5 admits no centre.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `MaximumInscribedCircle.v : mic_unit_square` | **9004-c headline.** The closed disk centre (1/2,1/2), radius 1/2 is a MAXIMUM inscribed disk of [0,1]²: contained (every point within 1/2 of the centre has both coordinates in [0,1]) and maximal (any inscribed (O′,r′) contains the probes (ox′ ± r′, oy′), forcing 2r′ ≤ 1). Rational throughout; sqrt-free beyond `dist_le_iff_dist_sq_le` `[exact]` | 3 |
+| `MaximumInscribedCircle.v : mic_unit_square_inscribed` (+ `mic_unit_square_radius_maximal`) | The two projections exported for consumers: the witness disk is inscribed; no inscribed disk of the unit square beats radius 1/2 — the maximiser 9004-b observed `InDisk`/`Disk.in_disk` do not supply `[exact]` | 3 |
