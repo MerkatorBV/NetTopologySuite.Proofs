@@ -1,0 +1,125 @@
+# OverlayNGCurve Phase 0 — ops mnemonics and the exact-cell kernel (2026-08-15)
+
+topic: overlay
+claimId: none
+witness: self-ops
+mutation-seed: none
+
+(ADR-0004 mint, explicit: this is a lane opener with no board card yet, so
+no oracle-facing micro-kernel claim is minted — `claimId: none`, no
+`eval/` mirror. The documentation-level falsifier seed is `self-ops`: the
+G3/G4 self-cancellations `A ∖ A = ∅`, `A Δ A = ∅`, whose mutation into
+G1/G2 keep-laws the crossing probes would catch. When a board card id is
+assigned, the rename + `eval/ClaimNNN.v` mirror follow in one pass, as for
+the LEC opener.)
+
+**lane:** overlay · curve-aware overlay algebra
+**Module**: [`theories/OverlayNGCurve.v`](../theories/OverlayNGCurve.v)
+**Verdict**: **GREEN** — the headline and all eight block lemmas are
+Qed-closed; the headline is **axiom-free** (Print Assumptions: closed under
+the global context). Pins and probes carry a classical-reals footprint
+inside the three-axiom allowlist. No `Admitted`, no new axioms.
+
+**Name gate NTSC0001**: the lane name is `OverlayNGCurve` — never
+"OverlayNGCurved".
+
+## The four ops
+
+| Sticky | Symbol | Method | Phrase | Corpus op | Self-op |
+|--------|--------|--------|--------|-----------|---------|
+| **CAP** | ∩ | `intersection` | Common Area of Partners — only where both stand | `oand` (HeytingOpens) | G1 · A ∩ A → A |
+| **CUP** | ∪ | `union` | Cover Under Partners — either side fills the cup | `oor` (HeytingOpens) | G2 · A ∪ A → A |
+| **SUB** | ∖ | `difference` | Subtract B's shadow — erase the second from the first | `odiff` (new) | G3 · A ∖ A → ∅ |
+| **XOR** | Δ | `symDifference` | eXclusive OR — keep only what isn't shared | `osym` (new) | G4 · A Δ A → ∅ |
+
+The ops live on the `OSet` carrier of `HeytingOpens.v` — the frame of
+truth values Ω = O(ℝ²) of the bridge lane — so the overlay algebra and the
+spatial-topos lane share one set theory, stated against `osame`/`oincl`
+throughout. Memory palace: *CAP/CUP keep me · SUB/XOR empty me · the empty
+partner (G5) is the fifth guard.*
+
+## Phase 0 suite → what the corpus proves
+
+| Item | Phrase | Status here |
+|------|--------|-------------|
+| **G1** · CAP self | I meet myself → me | `g1_cap_self`, Qed |
+| **G2** · CUP self | Double pour → same cup | `g2_cup_self`, Qed |
+| **G3** · SUB self | Erase myself → empty | `g3_sub_self`, Qed |
+| **G4** · XOR self | Mirror cancel → empty | `g4_xor_self`, Qed (axiom-free) |
+| **G5** · Empty partner | Nothing in the room | `g5_empty_partner`, Qed (all five laws) |
+| **V1** · Wound check | No scrambled shell | engine-side: needs a curve representation layer |
+| **V2** · Hole nest | Holes live inside | engine-side: same reason |
+| **V3** · Type gate | Curve path for Curve* | engine-side: dispatch policy, not point-set content |
+| **R1** · Keep the arc | Retention when representable | engine-side: CurvePolygon representation policy |
+| **R2** · Honest approx | Flag when densified | engine-side: result metadata policy |
+| **F1** · Fast before fat | Short-circuit before densify | **soundness kernel proved**: the exact cells collapse (headline) |
+
+Instance-level G1 ("same instance / equalsExact") is finer than pointwise
+equality and stays engine-side too; what the corpus proves is the
+point-set collapse, which is what makes returning the input *correct*.
+
+## Exactness matrix — the provable frontier
+
+Matrix as measured at tip f90dfb42 (approx values are densified vertex
+counts, engine measurements):
+
+| case | CAP ∩ | CUP ∪ | SUB ∖ | XOR Δ |
+|------|-------|-------|-------|-------|
+| self | exact | exact | exact-∅ | exact-∅ |
+| empty partner | exact-∅ | exact | exact | exact |
+| disjoint | exact-∅ | exact | exact | exact |
+| covers | exact | exact | approx 3146 | approx 3146 |
+| coveredBy | exact | exact | exact-∅ | approx 3146 |
+| crossing | approx 801 | approx 2349 | approx 1575 | approx 3150 |
+
+Exact share: CAP 7/8 · CUP 7/8 · SUB 6/8 · XOR 5/8.
+
+The kernel this lane proves (`overlayng_curve_phase0_exact_cells`): **a
+cell is exact precisely when the point-set result collapses to a closed
+form over the inputs** — one of A, B, A ∪ B, or ∅:
+
+- **self row** — G1–G4;
+- **empty partner row** — G5 (A ∩ ∅ = ∅ · A ∪ ∅ = A · A ∖ ∅ = A ·
+  ∅ ∖ A = ∅ · A Δ ∅ = A);
+- **disjoint row** — A ∩ B = ∅ · A ∖ B = A · B ∖ A = B · and the
+  identity that makes disjoint-XOR exact: **A Δ B = A ∪ B**
+  (`disjoint_row_exact`);
+- **covers row** (B ⊆ A) — A ∩ B = B · A ∪ B = A (`covers_row_exact`);
+- **coveredBy row** (A ⊆ B) — A ∩ B = A · A ∪ B = B · A ∖ B = ∅
+  (`coveredby_row_exact`).
+
+That is the F1 soundness argument: in every exact cell the result is
+representable by the inputs as given, so the algebra may short-circuit
+**before** `CurveOps.linearise` — no arc is ever densified to compute an
+answer that was already in hand.
+
+The approx cells are exactly where the collapse **fails**, and the module
+witnesses the failure on rational squares (crossing pair [0,2]² × [1,3]²,
+covers pair [0,3]² ⊇ [1,2]²):
+
+- crossing CAP is not ∅, CUP is not A, SUB is not A, XOR is not CUP
+  (`probe_crossing_cap_not_empty`, `probe_crossing_cup_not_left`,
+  `probe_crossing_sub_not_left`, `probe_crossing_xor_not_cup`);
+- covers-SUB is neither ∅ nor the outer square — the rim is a genuinely
+  new region (`probe_covers_sub_not_empty`, `probe_covers_sub_not_outer`),
+  which is why covers-SUB reads approx while covers-CAP/CUP read exact.
+
+So the exact/approx frontier drawn by the headline is tight: every exact
+cell collapses, and no probed approx cell does.
+
+## Exact rows instantiated (teaching corollaries)
+
+On the pinned pairs (`pin_disjoint_squares`, `pin_covers_squares`):
+`cap_disjoint_squares_empty`, `xor_disjoint_squares_is_cup`,
+`cap_covers_squares_is_inner`, `cup_covers_squares_is_outer`.
+
+## Deliberately out of scope on this rung
+
+- V1–V3 validity gates and R1/R2 retention/flagging policy (need a curve
+  representation layer the corpus does not define);
+- instance-level `equalsExact` (finer than pointwise equality);
+- the measured densification counts (801/1575/2349/3146/3150 — engine
+  measurements at tip f90dfb42, recorded above verbatim);
+- Phase 1+: noding-side correctness (that is the existing
+  `OverlayGraph.v` / `OverlayContactSound.v` lane, downstream of this
+  algebra).

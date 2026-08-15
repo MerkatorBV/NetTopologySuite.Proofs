@@ -21,6 +21,8 @@
 /Makefile.full.conf
 /Makefile.gen
 /Makefile.gen.conf
+/Makefile.gen.full
+/Makefile.gen.full.conf
 *.d
 
 # .NET build artefacts (tools/* console apps, test harnesses)

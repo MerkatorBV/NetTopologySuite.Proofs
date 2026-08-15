@@ -68,3 +68,10 @@ theories/PlaneConnected.v
 # lax-with-witness on implication/negation; strict half-plane/disk predicates
 # land in Omega, their closures do not.
 theories/DiscreteShBridge.v
+# --- OverlayNGCurve Phase 0 (overlay-algebra lane) -------------------------
+# The four ops CAP/CUP/SUB/XOR as point-set algebra on the HeytingOpens
+# carrier: G1-G5 self/empty laws plus the disjoint/covers/coveredBy exact
+# rows of the exactness matrix (headline is axiom-free), rational square
+# pins, and the crossing/covers mismatch probes that keep the exact/approx
+# frontier tight.  Name gate NTSC0001.  See docs/overlayng-curve-phase0.md.
+theories/OverlayNGCurve.v
