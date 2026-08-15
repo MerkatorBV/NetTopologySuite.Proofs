@@ -2445,6 +2445,12 @@ theories/ArcArcCircles.v
 # (0,0)/(7,0) r=5, nodes (7/2, ±√(51/4)).  3-axiom.  No Admitted.  Never
 # OverlayNGCurved (NTSC0001).
 theories/DiscOverlay.v
+# General circular noding rung 1: splitting an arc at an N-AA node is sound,
+# witness-scoped on the DISC_OVERLAY locked fixture — child cut-chord side
+# tests = px-trichotomy at the node (chord-sign form, no atan2), cover and
+# disjointness corollaries, node-on-circle / seam pins, off-span and
+# off-circle mismatch probes.  3-axiom.  Qed-closed throughout.
+theories/ArcSplitAtNode.v
 # Issue #64 ask #5b / N-AA: promotes ArcArcCircles.arc_arc_circles_intersect
 # (both-circles existence) to the full arc_arc_intersects predicate (both
 # circles AND both spans), bundling the atan2-dependent span facts as one

@@ -34,7 +34,7 @@ JTS R1.5 (`CircularDiscOverlay`, hooked in `OverlayNGCurve` after R1 / before R2
 |----------|------|--------|
 | High | Adversarial + BigDecimal/ROCQ_REF_BIN harness | 1 day. Across all accepted modes. Close RGR gaps. |
 | High | **ARC_BUFFER_FULL** (multi-arc, negative, self-intersect) | 3 days. Use BUF-S + N-SS. |
-| High | General circular noding + arrangement | Unparked. Split arcs at N-AA/N-AL nodes, face labels, then general CAP·CUP·SUB·XOR. JTS next laser after two-disc (disc vs polygon, CompoundCurve shells, lineal arc vs line, on-arc-vertex TopologyException). |
+| High | General circular noding + arrangement | Unparked. Split arcs at N-AA/N-AL nodes, face labels, then general CAP·CUP·SUB·XOR. JTS next laser after two-disc (disc vs polygon, CompoundCurve shells, lineal arc vs line, on-arc-vertex TopologyException). **Rung 1 landed**: `theories/ArcSplitAtNode.v` — split-at-node partition on the DISC_OVERLAY locked fixture (cover / disjoint / seam, chord-sign form, 3-axiom). Next rungs: general configuration, child mids, N-AL twin, faces. |
 | Medium | ARC_SIMPLIFY + ARC_SNAP | 2 days. Post-noding. |
 | Medium | Full CURVE_RELATE/DE9IM (holes, Multi, mixed) | 3 days. Extend matrix. |
 | Parked | Shewchuk port | After seams stable. |
