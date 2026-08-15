@@ -23,6 +23,7 @@ matching can bind the formal lemma to the claim id without loading the full
 | `425-a` | `coverage` | [`Claim425a.v`](Claim425a.v) | `coverage_gap_overlap_cleaner_valid` |
 | `9004-c` | `construct` | [`Claim9004c.v`](Claim9004c.v) | `mic_unit_square` |
 | `9004-d` | `construct` | [`Claim9004d.v`](Claim9004d.v) | `cell_achievable_radius_bound` |
+| `9005-a` | `teaching` | [`Claim9005a.v`](Claim9005a.v) | `pia_triangle_three_touch` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
@@ -129,11 +130,27 @@ triangle inequality) with the corner circumradius-equality pin, the
 misreading (empty radius 3 at (−1,0) beats centre clearance 2).
 Subdivision recursion and tolerance loop deferred.
 
+**9005-a has NO production home, by design** (Green/Qed, teaching-only):
+the board card's paper (Garcia-Castellanos & Lombardo 2007, poles of
+inaccessibility) is SPHERICAL, and plane MIC/LEC ≠ spherical PIA — a
+`theories/` cite would be false ancestry (see
+`docs/library-footnotes.md`). The unit teaches the paper's DEFINITIONAL
+signature planarly: the PIA of the three-point shoreline A=(0,0),
+B=(4,0), C=(0,4) over the closed triangle is the hypotenuse midpoint
+(2,2) with clearance √8, equidistant (squared distance exactly 8) from
+ALL THREE shoreline points — the exactly-three-closest-points signature.
+Maximality is the rational nearest-vertex case split. Pins: the three
+equidistance equalities; probes: the centroid cannot support the PIA
+radius (clearance² 32/9 at A — PIA ≠ mass centre), and the hypotenuse
+drift (3,1) drops clearance² to 2. Production twins named after
+`theories/LargestEmptyCircle.v`; the spherical gap stays open on the
+board.
+
 ## Re-run
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v | eval/Claim9004c.v | eval/Claim9004d.v
+#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v | eval/Claim9004c.v | eval/Claim9004d.v | eval/Claim9005a.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim65b.v
@@ -150,4 +167,5 @@ rocq compile eval/Claim424a.v
 rocq compile eval/Claim425a.v
 rocq compile eval/Claim9004c.v
 rocq compile eval/Claim9004d.v
+rocq compile eval/Claim9005a.v
 ```
