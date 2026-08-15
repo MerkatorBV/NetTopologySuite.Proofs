@@ -159,9 +159,3 @@ Qed.
 
 Print Assumptions cross_mult_step.
 Print Assumptions rat_le_iff.
-
-(* -------------------------------------------------------------------------- *)
-(* Audit footprint.                                                           *)
-(* -------------------------------------------------------------------------- *)
-Print Assumptions Rdiv_le_iff_pos_denoms.
-Print Assumptions Rdiv_eq_mul_sq.

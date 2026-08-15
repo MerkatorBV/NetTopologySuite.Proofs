@@ -26,9 +26,6 @@
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
      Assisted-by: Claude
-   topic: mesh
-   claimId: 68-a
-   witness: empty-circle
    ========================================================================== *)
 
 From Stdlib Require Import Reals ZArith.
@@ -80,9 +77,3 @@ Proof.
   unfold in_circle_test.
   apply (inCircle_R_BP2P_sign_char A B C P Hfin).
 Qed.
-
-(* -------------------------------------------------------------------------- *)
-(* Audit footprint.                                                           *)
-(* -------------------------------------------------------------------------- *)
-Print Assumptions inCircle_R_BP2P_sign_char.
-Print Assumptions in_circle_test_iff_b64_inCircle_exact_pos.

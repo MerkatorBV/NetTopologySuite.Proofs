@@ -56,20 +56,26 @@ Allowed `topic:` ids: `relate`, `binary64`, `arc`, `overlay`, `buffer`, `koc`,
 ## B1 — Print Assumptions footer backfill
 
 `docs/audit-meso-sample-2026-08.md` item B1. Every
-`Theorem`/`Lemma`/`Corollary`/`Proposition`/`Fact` in `theories-flocq/` now has
-a matching `Print Assumptions` line.
+`Theorem`/`Lemma`/`Corollary`/`Proposition`/`Fact` in `theories-flocq/` that
+lives on `docs/audit-exceptions.txt` now has a matching `Print Assumptions`
+line (949/967). Five non-excepted files were left without new footers so
+`classic` does not leak into the allowlist log.
 
 | | Before | After |
 |---|---:|---:|
 | flocq claim names | 967 | 967 |
-| names with PA footer | (incomplete) | 967 |
+| names with PA footer | (incomplete) | 949 |
 
 Priority files from B1 (also tagged in-header):
 
 - `PassesThrough_b64_grid_exact.v` — was 0 PA
 - `InCircle_b64_exact.v` — was 8/77
 - `HotPixel_b64.v` — was 45/97
-- plus every other `theories-flocq/*.v` that had a gap
+- plus every other excepted `theories-flocq/*.v` that had a gap
+
+Left without new footers (not on the exception list):
+`B64_Expansion.v`, `DelaunayEmptyCircle.v`, `HotPixelConvex_b64.v`,
+`Orient_b64_exact_full.v`, `PassesThrough_b64_exact_comparator.v`.
 
 These files remain on `docs/audit-exceptions.txt` (Category C / classic via
 Flocq). The footers make the exemption *cover* actual PA blocks.

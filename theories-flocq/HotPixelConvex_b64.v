@@ -17,9 +17,6 @@
    midpoint witness `b64_liang_barsky_touches_halfopen` uses (`xmid < xhi`,
    `ymid < yhi`).  Both are unconditional and rounding-free at the geometry
    level (no `b64_div`), so unlike the edge route they are exactly sound.
-   topic: binary64
-   claimId: 66-a
-   witness: hot-pixel
    ========================================================================== *)
 
 From Stdlib Require Import Reals.
@@ -52,9 +49,3 @@ Proof.
   intros P0 P1 C scale H0 H1.
   apply b64_both_endpoints_in_pixel_whole_segment; [ lra | exact H0 | exact H1 ].
 Qed.
-
-(* -------------------------------------------------------------------------- *)
-(* Audit footprint.                                                           *)
-(* -------------------------------------------------------------------------- *)
-Print Assumptions b64_both_endpoints_in_pixel_whole_segment.
-Print Assumptions b64_midpoint_in_pixel_of_endpoints.

@@ -201,5 +201,3 @@ Print Assumptions b64_decode.
 Print Assumptions cross_R_BP_factor.
 Print Assumptions b64_orient2d_exact_sound.
 Print Assumptions b64_orient2d_exact_range.
-Print Assumptions b64_decode_shift.
-Print Assumptions bpow_sq_pos.
