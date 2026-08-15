@@ -78,11 +78,16 @@ No theorem was added, changed, or removed for this pass. No `Admitted`,
 `Axiom`, `Parameter`, or `Classical_Prop` was introduced. The three edits are
 header comments only.
 
-**Observed, not fixed.** `theories-flocq/HobbyTheorem_b64.v`'s header still
-states that its two §4 support lemmas "are Admitted with registered
-deferred-proof entries". As the file now stands, `hobby_lemma_4_2` is `Qed`,
-`hobby_lemma_4_3_no_proper` and `hobby_lemma_4_3` are `Abort`ed (deliberately —
-the bare statement is false, per the counterexample registry), and there is no
-`Admitted.` anywhere in `theories/` or `theories-flocq/`. That is stale prose
-predating this pass, and correcting an audit claim is not a footnote edit; left
-for whoever owns the registry narrative.
+**Stale audit narrative — corrected in this pass.**
+`theories-flocq/HobbyTheorem_b64.v`'s header claimed that its two §4 support
+lemmas "are Admitted with registered deferred-proof entries", and that the file
+carried "Two Admitteds". Neither is true of the file as it stands:
+`hobby_lemma_4_2` is `Qed`, `hobby_lemma_4_3_no_proper` and `hobby_lemma_4_3`
+are `Abort`ed (deliberately — the bare statement is false, per the
+counterexample registry), `hobby_lemma_4_3_shared_endpoint` is `Qed`, and no
+`Admitted` tactic survives anywhere in `theories/` or `theories-flocq/`.
+`docs/admitted-deferred-proofs.txt` already records both former entries as
+dispositions (4.2 CLOSED by Qed; 4.3-no-proper moved to
+`docs/admitted-counterexamples.txt` as FALSE as stated), so the header was the
+last place still asserting the old state. Both header sentences now match the
+registry.
