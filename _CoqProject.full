@@ -2234,6 +2234,13 @@ theories/LargestEmptyCircle.v
 # Qed-closed throughout.  Subdivision recursion and tolerance loop remain
 # out of scope.  Full-only: imports LargestEmptyCircle.v.
 theories/CellRadiusBound.v
+# LEC chord-path hypothesis, DISPROVED on the circle cell: the exact LEC of
+# the radius-2 circle obstacle over its disk is the closed form (centre, 2)
+# (radial-projection maximality), while densify-then-LEC at the 4-chord
+# tolerance answers (centre, sqrt 2) exactly — underestimate factor
+# cos(pi/4); runtime half stays engine-side.  Full-only: imports
+# LargestEmptyCircle.v and PlaneConnected.v (seg).
+theories/LECChordGap.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed
 # Phase-3 ring (chord_approx_ring_closed), lifting to to_geometry outer/hole
