@@ -2,8 +2,9 @@
 
 **Lane**: LargestEmptyCircle (construct) · **updated**: 15 Aug 2026 ·
 **modules**: `theories/LECChordGap.v`, `theories/LECObstacleDistance.v`,
-`theories/LargestEmptyCircle.v`, `theories/CellRadiusBound.v` ·
-**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE`
+`theories/LECArcRow.v`, `theories/LargestEmptyCircle.v`,
+`theories/CellRadiusBound.v` ·
+**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE`, `ARC_DISTANCE` (§C pins)
 
 This lane runs prove-or-disprove: each engine-side hypothesis about how the
 largest empty circle can be computed FASTER is either Qed-proven or refuted
@@ -92,6 +93,33 @@ gate's 15% slack) stays engine-side by design.
   bisector × boundary crossing — the middle class, the one H-INTERIOR
   drops.
 
+### F4 — "gate the sector on the query point" (REFUTED · `LECArcRow.v`)
+
+- **Hypothesis** (H-QUERYGATE): "the chord-sign sector gate may test the
+  query point P itself instead of its radial foot" — one projection
+  cheaper, and seemingly safe because the atan2 gate does exactly that
+  (angle(P) = angle(foot): rays through the centre are angle-invariant).
+- **Verdict**: `query_side_sector_hypothesis_refuted`.  On the minor arc
+  (3,4)–(0,5)–(−3,4) of the r=5 circle about the origin, the query
+  P = (16,12) and the arc mid lie on the SAME side of the chord y = 4
+  (sign product 288 > 0), so the naive gate admits the radial branch and
+  prices the window at |20 − 5| = 15.  But the radial foot (4,3) lies on
+  the OTHER side (product −36 < 0): the Qed clearance is the endpoint
+  fallback √233 > 15.2.  The naive row UNDERSTATES the obstacle
+  distance, so an LEC built on it rejects radii in (15, √233] that are
+  actually empty — the certified circle silently shrinks below the true
+  optimum, an exactness failure no perf gate can see.
+- **Why it fails structurally**: the span⇔sign equivalence
+  (`arc_span_contains_iff_sign`) is a theorem ON THE CIRCLE: the chord
+  line separates the circle's two arcs, but it does not sort the plane
+  by which arc a ray hits.  A query can cross the chord line while its
+  foot does not.
+- **Guide**: gates and metrics live on different domains.  Angular gates
+  are ray-invariant (may take P); algebraic sign gates are circle-bound
+  (must take the foot).  The certified total form (`arc_dist`) projects
+  first — and the `ARC_DISTANCE` §C pins now trip any atan2 → chord-sign
+  refactor that forgets to.
+
 ## What is Qed today (the verified bridge under the engine's table)
 
 - **Filled-disc row exact**: `empty_disk_disc_iff` — emptiness of the
@@ -112,25 +140,34 @@ gate's 15% slack) stays engine-side by design.
   characterised exactly.  The oracle mode `OBSTACLE_DISTANCE` gates the
   pins bit-exact (clearance 2 at (0,±3), 1 at the centre, 0 at the four
   corners).
+- **Point-to-arc row exact, TOTAL** (`LECArcRow.v`, closes the former
+  rung 1): `arc_dist_exact` / `empty_disk_arc_iff` — the engine's
+  CircularString per-window row.  The banked analytic core
+  (`ArcPointDistance.v` radial/fallback/centre cases over
+  `ArcSinglePeak.v`'s single-peak dot bound, Qed 2026-07-01) is glued
+  into ONE unconditional closed form: centre → r (nearer endpoint);
+  foot passes the chord-sign gate → |d − r|; else → nearer endpoint.
+  New glue: the circumcircle meets its chord LINE only at the chord
+  endpoints (`on_circle_side_zero_is_endpoint`, divisionless
+  q·(q − m) = 0 collapse), so the span predicate IS one sign test
+  (`arc_span_contains_iff_sign`) — decidable and atan2-free.  With
+  `empty_disk_union_iff` this prices every CompoundCurve window.
 
 ## Open rungs (in likelihood order)
 
-1. **Point-to-arc row**: the engine measures CircularStrings per
-   3-control window (radial-foot distance when the foot's angle is in the
-   arc sweep, else endpoint min).  The oracle has `ARC_DISTANCE`; the
-   Qed spec (sector case split without atan2 — chord-sign forms as in
-   `ArcSplitAtNode.v`) is the next metric rung.
-2. **CompoundCurve / n-ary flatten**: fold `empty_disk_union_iff` over a
+The point-to-arc rung closed 15 Aug 2026 (`LECArcRow.v`, F4 above).
+
+1. **CompoundCurve / n-ary flatten**: fold `empty_disk_union_iff` over a
    member list (finite indexed union), giving the engine's
    `getNumMembers`/`getMemberN` min a corpus twin.
-3. **Segment/facet row**: the clamped-projection closed form for
+2. **Segment/facet row**: the clamped-projection closed form for
    LineString facets — the last straight-edge metric without a spec.
-4. **Candidate completeness** (the big one): every maximiser of the
+3. **Candidate completeness** (the big one): every maximiser of the
    weighted min-distance over a convex domain is a weighted-Voronoi
    vertex, an edge × boundary crossing, or a boundary vertex — the
    theorem an O(n log n) LEC needs to be TRUSTED, in the corpus's
    witness-scoped style first (three discs, one Apollonius vertex).
-5. **Runtime half**: stays engine-side (perf gate); the corpus only ever
+4. **Runtime half**: stays engine-side (perf gate); the corpus only ever
    adjudicates exactness.
 
 ## Relation to the engine lane
@@ -140,5 +177,8 @@ keeps uncertified LEC on the branch-and-bound grid and swaps the clearance
 callback for the typed metric — the F2 guide says that grid's bound is
 right, the F1/F3 guides say where the next speed rung lives: certified
 closed forms per cell class, then candidate enumeration on the Apollonius
-side once rung 4 lands.  The locked `OBSTACLE_DISTANCE` vectors are the
-differential handshake between the two sides.
+side once the completeness rung lands.  The CircularString row is now
+certified end-to-end: the engine's per-window metric has a Qed total twin
+(`arc_dist`), the F4 guide fixes its gate discipline (project before any
+chord-sign test), and the locked `OBSTACLE_DISTANCE` + `ARC_DISTANCE` §C
+vectors are the differential handshake between the two sides.

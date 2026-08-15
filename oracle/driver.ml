@@ -1278,9 +1278,14 @@ let run_arc_area_centroid () =
    circular ARC.
    Proof companion: theories/ArcDistance.v (circle core) + theories/ArcPointDistance.v
    (full D-PT: radial_lower, attains_radial, foot_on_arc_when_span, centre_is_r — Qed
-   2026-06-21; fallback_ends_lower — deferred stub) using arc_orient / inCircle_R /
-   arc_span_contains (directedSweep). inCircle_R_zero_implies_equidistant (ArcArcCircles §1c)
-   is the key bridge: on_arc X => dist O X = r, enabling point_circle_dist_lower.
+   2026-06-21; fallback_ends_lower — Qed 2026-07-01 via ArcSinglePeak) using arc_orient /
+   inCircle_R / arc_span_contains (directedSweep). inCircle_R_zero_implies_equidistant
+   (ArcArcCircles §1c) is the key bridge: on_arc X => dist O X = r, enabling
+   point_circle_dist_lower.  theories/LECArcRow.v glues the cases into the TOTAL
+   closed form arc_dist (exactness `arc_dist_exact`, LEC row `empty_disk_arc_iff`)
+   and pins the gate discipline: the atan2 test below may take P directly (rays are
+   angle-invariant), but a chord-SIGN gate must take the radial foot — testing P is
+   REFUTED (query_side_sector_hypothesis_refuted, gen_arc_distance_tests.py §C).
    ---------------------------------------------------------------------------
    The nearest point on the FULL circle to P is the radial foot O + r*(P-O)/|P-O|,
    at distance ||P-O| - r|.  If that foot lies on the arc A->B->C the answer is
