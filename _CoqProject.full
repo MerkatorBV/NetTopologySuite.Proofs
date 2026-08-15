@@ -2434,6 +2434,12 @@ theories/ArcArcSound.v
 # P+ = M+h·perp(u) on both circles (ring+lra).  3-axiom.  Deferred:
 # arc_span_contains (atan2), arc_arc_intersects (full predicate), b64 layer.
 theories/ArcArcCircles.v
+# DISC_OVERLAY (OV-DISC / OverlayNGCurve two-disc closed form): CAP/CUP/SUB/XOR
+# of two full discs as lens/blob/crescent/crescents.  Reuses the ArcArcCircles
+# radical-axis kernel (same formula as ARC_ARC_XY); locked fixture centres
+# (0,0)/(7,0) r=5, nodes (7/2, ±√(51/4)).  3-axiom.  No Admitted.  Never
+# OverlayNGCurved (NTSC0001).
+theories/DiscOverlay.v
 # Issue #64 ask #5b / N-AA: promotes ArcArcCircles.arc_arc_circles_intersect
 # (both-circles existence) to the full arc_arc_intersects predicate (both
 # circles AND both spans), bundling the atan2-dependent span facts as one

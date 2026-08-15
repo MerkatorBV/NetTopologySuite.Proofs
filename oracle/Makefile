@@ -45,7 +45,7 @@ FFI_LDLIBS  := -L$(OCAML_WHERE) -lasmrun_pic -lm -ldl -lpthread
 SCOUT_IC_LIB   := libscout_incircle.$(FFI_SOEXT)
 SCOUT_IC_PROBE := scout_incircle_probe
 
-.PHONY: all clean ffi ffi-parity jts1093-orient-scout scout-incircle-ffi jts1094-scout arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests
+.PHONY: all clean ffi ffi-parity jts1093-orient-scout scout-incircle-ffi jts1094-scout arc-arc-tests arc-segment-tests arc-arc-distance-tests arc-segment-distance-tests ring-simple-tests cp-ring-simple-tests cp-boundary-simplify-tests cp-boundary-simplify-test arc-offset-tests point-in-curve-ring-tests ring-orientation-tests holes-disjoint-tests curve-relate-matrix-tests buffer-region-tests arc-centroid-tests arc-area-centroid-tests arc-distance-tests arc-area-tests arc-buffer-simple-tests arc-simplify-decision-tests arc-offset-filtered-tests curve-adversarial-hunt elliptic-hunt bezier-hunt winding-number-tests disc-overlay-tests
 
 all: $(TARGET)
 
@@ -54,6 +54,13 @@ all: $(TARGET)
 # I3 symmetry, I4 reversal-stable).  Nonzero exit on any violation.
 arc-arc-tests: $(TARGET)
 	cd .. && python3 oracle/gen_arc_arc_tests.py
+
+# Adversarial DISC_OVERLAY suite (OV-DISC / OverlayNGCurve two-disc): gates
+# the Qed-proven invariants (I1 nodes on both circles, I2 locked fixture
+# (3.5, ±√12.75), I3 CAP+XOR=CUP, I4 CAP+SUB=π r1², I5 disjoint areas,
+# I6 CAP/CUP/XOR symmetry, I7 coincident-reject).  Nonzero exit on violation.
+disc-overlay-tests: $(TARGET)
+	cd .. && python3 oracle/gen_disc_overlay_tests.py
 
 # Adversarial ARC_SEGMENT_XY suite (issue #224 W1 / N-AL): gates the proven
 # invariants (I1 on-circle, I2 on-segment t in [0,1], I3 seg-reversal,

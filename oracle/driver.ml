@@ -1545,6 +1545,198 @@ let run_arc_arc_xy () =
           end
         end
 
+(* ----- DISC_OVERLAY (OV-DISC / OverlayNGCurve two-disc closed form).
+   ---------------------------------------------------------------------------
+   Exact two-disc overlay of FULL circular discs (not general circular noding).
+   Twin of JTS `CircularDiscOverlay` (draft PR #8, R1.5 in OverlayNGCurve —
+   NTSC0001: never OverlayNGCurved).  Crossing CAP/CUP/SUB/XOR is the closed
+   form lens / blob / crescent / both crescents.
+
+   Radical-axis nodes reuse the SAME formula as ARC_ARC_XY /
+   CircularArcDensifier.intersectCircles / ArcArcCircles.two_circles_radical_point
+   (do not invent a second radical-axis):
+
+     d = |C2−C1|, reject if d>r1+r2 or d<|r1−r2| or d==0,
+     a = (r1²−r2²+d²)/(2d), h² = r1²−a², M = C1+a·û, P± = M±h·û⊥.
+
+   Centres / radii² / the four-factor discriminant are EXACT Q (circumcentre_q
+   when the disc is a 5-point CIRCULARSTRING; Q.of_float of the given centre+
+   radius otherwise).  Only the emitted node coordinates (sqrt h²) and the
+   closed-form area (acos + sqrt) round — INTERFACE-BOUNDARY float, same split
+   as ARC_ARC_XY.  Proof companion: theories/DiscOverlay.v
+   (radical_nodes_in_lens, locked_disc_nodes, lens/blob/crescent point-sets).
+
+   Input:
+     line 2:  op in {CAP,CUP,SUB,XOR} (aliases INTERSECTION/UNION/DIFFERENCE/SYMDIFF)
+     line 3:  disc A
+     line 4:  disc B
+   Each disc is one of:
+     "cx cy r"                                      — centre + radius
+     "CS x1 y1 x2 y2 x3 y3 x4 y4 x5 y5"             — 5-point CIRCULARSTRING ring
+     "x1 y1 x2 y2 x3 y3 x4 y4 x5 y5"                — same, bare 10-token form
+   CIRCULARSTRING centre/radius² via circumcentre_q of the first three points.
+
+   Output (one line, pin-able hex floats):
+     "<config> <kind> NODES <n> [x y ...] AREA <hex>"
+     config = CROSSING | EXT_TANGENT | INT_TANGENT | DISJOINT | NESTED
+     kind   = LENS | BLOB | CRESCENT | CRESCENTS | EMPTY | DISC
+     or "COINCIDENT" (identical discs, reject) / "DEGENERATE" / "NAN"
+
+   Locked fixture: centres (0,0) and (7,0), r=5 → CROSSING nodes
+   (3.5, ±√12.75) = (0x1.cp+1, ±sqrt(0x1.98p+3)).
+
+   Area: general two-disc lens
+     r1² acos((d²+r1²−r2²)/(2 d r1)) + r2² acos((d²+r2²−r1²)/(2 d r2))
+     − 0.5 √((-d+r1+r2)(d+r1−r2)(d−r1+r2)(d+r1+r2))
+   which specialises at equal-r to
+     2 r² acos(d/(2r)) − 0.5 d √(4r²−d²).
+   CAP=lens, CUP=π(r1²+r2²)−lens, SUB=π r1²−CAP, XOR=CUP−CAP
+   (nested/disjoint/tangent degenerate the lens to 0 or the smaller disc). *)
+let run_disc_overlay () =
+  let tokens line =
+    List.filter (fun s -> s <> "")
+      (String.split_on_char ' '
+         (String.map (fun c -> if c = '\t' then ' ' else c)
+            (String.trim line))) in
+  let parse_op raw =
+    match String.uppercase_ascii (String.trim raw) with
+    | "CAP" | "INTERSECTION" | "INTERSECT" -> `Cap
+    | "CUP" | "UNION" -> `Cup
+    | "SUB" | "DIFFERENCE" | "DIFF" -> `Sub
+    | "XOR" | "SYMDIFF" | "SYMMETRIC_DIFFERENCE" -> `Xor
+    | _ -> `Bad in
+  (* One disc: centre+radius, or a 5-point CIRCULARSTRING → (ox,oy,rsq) in Q. *)
+  let parse_disc line =
+    let tok = tokens line in
+    let fl s = float_of_string s in
+    match tok with
+    | [sx; sy; sr] ->
+        let x = fl sx and y = fl sy and r = fl sr in
+        if not (finite_float x && finite_float y && finite_float r) then `Nan
+        else if r <= 0.0 then `Degen
+        else
+          let qx = qf x and qy = qf y and qr = qf r in
+          `Ok (qx, qy, Q.mul qr qr)
+    | "CS" :: x1 :: y1 :: x2 :: y2 :: x3 :: y3 :: x4 :: y4 :: x5 :: y5 :: _
+    | x1 :: y1 :: x2 :: y2 :: x3 :: y3 :: x4 :: y4 :: x5 :: y5 :: _ ->
+        let pts = List.map (fun (a, b) -> fl a, fl b)
+            [x1, y1; x2, y2; x3, y3; x4, y4; x5, y5] in
+        if not (List.for_all (fun (x, y) -> finite_float x && finite_float y) pts)
+        then `Nan
+        else begin
+          match circumcentre_q (qf (fl x1), qf (fl y1))
+                               (qf (fl x2), qf (fl y2))
+                               (qf (fl x3), qf (fl y3)) with
+          | None -> `Degen
+          | Some (ox, oy, rsq) ->
+              if qle rsq q0 then `Degen else `Ok (ox, oy, rsq)
+        end
+    | _ -> `Degen in
+  let op = parse_op (input_line stdin) in
+  let dA = parse_disc (input_line stdin) in
+  let dB = parse_disc (input_line stdin) in
+  if op = `Bad then print_endline "NAN"
+  else match dA, dB with
+  | `Nan, _ | _, `Nan -> print_endline "NAN"
+  | `Degen, _ | _, `Degen -> print_endline "DEGENERATE"
+  | `Ok (o1x, o1y, r1sq), `Ok (o2x, o2y, r2sq) ->
+      let dq = Q.add (Q.mul (Q.sub o2x o1x) (Q.sub o2x o1x))
+                     (Q.mul (Q.sub o2y o1y) (Q.sub o2y o1y)) in
+      if qeq dq q0 then begin
+        if qeq r1sq r2sq then print_endline "COINCIDENT"
+        else begin
+          (* concentric, distinct radii: nested.  Larger disc covers. *)
+          let a_covers = qlt r2sq r1sq in
+          let pi = acos (-1.0) in
+          let a1 = pi *. Q.to_float r1sq and a2 = pi *. Q.to_float r2sq in
+          let area, kind = match op with
+            | `Cap -> (if a_covers then a2 else a1), "DISC"
+            | `Cup -> (if a_covers then a1 else a2), "DISC"
+            | `Sub -> (if a_covers then a1 -. a2 else 0.0),
+                      (if a_covers then "CRESCENT" else "EMPTY")
+            | `Xor -> abs_float (a1 -. a2), "CRESCENTS"
+            | `Bad -> 0.0, "EMPTY" in
+          Printf.printf "NESTED %s NODES 0 AREA %h\n" kind area
+        end
+      end else begin
+        (* Four-factor discriminant, exact Q: same Hnum_pos as
+           two_circles_radical_point.  disc > 0 crossing, = 0 tangent,
+           < 0 disjoint-or-nested.  Nested vs disjoint by d² ≶ r1²+r2². *)
+        let sumsq = Q.add r1sq r2sq in
+        let diff = Q.sub (Q.add dq r1sq) r2sq in          (* d² + r1² − r2² *)
+        let discq = Q.sub (Q.mul (Q.mul (Q.of_int 4) dq) r1sq) (Q.mul diff diff) in
+        let nested_side = qlt dq sumsq in
+        let config, n_expect =
+          if qlt q0 discq then "CROSSING", 2
+          else if qeq discq q0 then
+            (if nested_side then "INT_TANGENT" else "EXT_TANGENT"), 1
+          else if nested_side then "NESTED", 0
+          else "DISJOINT", 0 in
+        let o1xf = Q.to_float o1x and o1yf = Q.to_float o1y in
+        let o2xf = Q.to_float o2x and o2yf = Q.to_float o2y in
+        let r1f = Q.to_float r1sq and r2f = Q.to_float r2sq in
+        let d2 = Q.to_float dq in
+        let d = sqrt d2 in
+        let r1 = sqrt r1f and r2 = sqrt r2f in
+        let pi = acos (-1.0) in
+        let acos_clip x =
+          acos (if x > 1.0 then 1.0 else if x < -1.0 then -1.0 else x) in
+        (* General two-disc lens; 0 when the circles do not properly cross. *)
+        let lens =
+          if config = "CROSSING" || config = "INT_TANGENT" then
+            let c1 = (d2 +. r1f -. r2f) /. (2.0 *. d *. r1) in
+            let c2 = (d2 +. r2f -. r1f) /. (2.0 *. d *. r2) in
+            let four = (-. d +. r1 +. r2) *. (d +. r1 -. r2)
+                       *. (d -. r1 +. r2) *. (d +. r1 +. r2) in
+            r1f *. acos_clip c1 +. r2f *. acos_clip c2
+            -. 0.5 *. sqrt (if four < 0.0 then 0.0 else four)
+          else 0.0 in
+        (* INT_TANGENT: the algebraic lens formula yields the smaller disc
+           (the covered disc is the intersection). *)
+        let a1 = pi *. r1f and a2 = pi *. r2f in
+        let a_covers = r1f >= r2f in
+        let cap =
+          match config with
+          | "CROSSING" -> lens
+          | "INT_TANGENT" | "NESTED" -> if a_covers then a2 else a1
+          | _ -> 0.0 in
+        let cup =
+          match config with
+          | "CROSSING" -> a1 +. a2 -. lens
+          | "INT_TANGENT" | "NESTED" -> if a_covers then a1 else a2
+          | _ -> a1 +. a2 in
+        let sub = a1 -. cap in
+        let xor = cup -. cap in
+        let area = match op with
+          | `Cap -> cap | `Cup -> cup | `Sub -> sub | `Xor -> xor | `Bad -> 0.0 in
+        let kind =
+          match op, config with
+          | `Cap, "CROSSING" -> "LENS"
+          | `Cap, ("INT_TANGENT" | "NESTED") -> "DISC"
+          | `Cap, _ -> "EMPTY"
+          | `Cup, ("INT_TANGENT" | "NESTED") -> "DISC"
+          | `Cup, _ -> "BLOB"
+          | `Sub, _ -> if area = 0.0 then "EMPTY" else "CRESCENT"
+          | `Xor, _ -> if area = 0.0 then "EMPTY" else "CRESCENTS"
+          | `Bad, _ -> "EMPTY" in
+        (* Nodes: SAME radical-axis as ARC_ARC_XY (M ± h perp(u)). *)
+        let nodes =
+          if n_expect = 0 then []
+          else begin
+            let a = (d2 +. r1f -. r2f) /. (2.0 *. d) in
+            let h2 = r1f -. a *. a in
+            let h = sqrt (if h2 < 0.0 then 0.0 else h2) in
+            let ux = (o2xf -. o1xf) /. d and uy = (o2yf -. o1yf) /. d in
+            let mx = o1xf +. a *. ux and my = o1yf +. a *. uy in
+            let p_plus  = (mx -. h *. uy, my +. h *. ux) in
+            let p_minus = (mx +. h *. uy, my -. h *. ux) in
+            if n_expect = 1 || h = 0.0 then [p_plus] else [p_plus; p_minus]
+          end in
+        Printf.printf "%s %s NODES %d" config kind (List.length nodes);
+        List.iter (fun (x, y) -> Printf.printf " %h %h" x y) nodes;
+        Printf.printf " AREA %h\n" area
+      end
+
 (* ----- ARC_SEGMENT_XY (issue #224 W1 / N-AL): arc-SEGMENT intersection coords.
    ---------------------------------------------------------------------------
    Intersection POINTS of a circular arc with a line SEGMENT, enumerated -- the
@@ -4016,6 +4208,7 @@ let () =
        | "ARC_AREA_CENTROID"        -> run_arc_area_centroid ()
        | "ARC_DISTANCE"             -> run_arc_distance ()
        | "ARC_ARC_XY"               -> run_arc_arc_xy ()
+       | "DISC_OVERLAY"             -> run_disc_overlay ()
        | "ARC_SEGMENT_XY"           -> run_arc_segment_xy ()
        | "ARC_ARC_DISTANCE"         -> run_arc_arc_distance ()
        | "ARC_SEGMENT_DISTANCE"     -> run_arc_segment_distance ()
