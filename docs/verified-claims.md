@@ -1024,7 +1024,7 @@ Unconditional exact-reals — the most directly citable rows.
 ## Discrete → Sh(ℝ²) bridge — spatial-topos foundations (`HeytingOpens.v`, `PlaneConnected.v`, `DiscreteShBridge.v`) <!-- feat:foundations geom:cs,cp -->
 
 Subterminal fragment of the sheaf topos on the plane: opens of ℝ² as the truth-value algebra Ω, the Boolean bridge into it, and the soundness of pointwise (classical) evaluation. See [`discrete-sh-r2-bridge.md`](discrete-sh-r2-bridge.md).
-topic: foundations · claimId: none · witness: punct — the punctured plane (EM fails at its origin stalk: `HeytingOpens.v : heyting_em_fails`, `DiscreteShBridge.v : punct_stalk_not_boolean`); non-strict falsifier `HeytingOpens.v : closed_halfplane_not_open`.
+topic: foundations · claimId: none · witness: none (no minted micro-claim). Falsifier seed for readers: punct — the punctured plane (EM fails at its origin stalk: `HeytingOpens.v : heyting_em_fails`, `DiscreteShBridge.v : punct_stalk_not_boolean`); non-strict falsifier `HeytingOpens.v : closed_halfplane_not_open`.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -1040,5 +1040,5 @@ topic: foundations · claimId: none · witness: punct — the punctured plane (E
 | `DiscreteShBridge.v : stalk_bridge_id` (+ `bridge_global_sections`) | Evaluation at any point retracts the bridge (Γ∘Δ = id on 2): classical truth recovered fibrewise — the well-adapted spatial-soundness condition `[exact]` | 3 |
 | `DiscreteShBridge.v : stalks_boolean_iff_discrete` (+ `discrete_iff_complemented`, `complemented_is_discrete`, `bridge_complemented`) | **Boolean core of Ω = discrete image:** an open has Boolean stalks everywhere ⟺ it is complemented ⟺ it is `⊤` or `⊥` — via connectedness of the plane `[exact]` | 3 |
 | `DiscreteShBridge.v : stable_bool_field_constant` | Γ(Δ2) = 2 field form: a pointwise-Boolean classification of the plane with both classes perturbation-stable (open) is constant `[exact]` | 3 |
-| `DiscreteShBridge.v : stalk_imp_strict` (+ `stalk_sound_and`, `stalk_sound_or`, `stalk_sound_join`, `stalk_lax_imp`, `stalk_lax_not`, `oincl_pointwise`) | **Spatial soundness, sharp:** pointwise evaluation is exact on `⊤ ⊥ ∧ ∨ ⋁`, sound-but-lax on `⇒ ¬`, and the laxity is strict (a pointwise implication the topos rejects, at the origin of the punctured plane); entailment is pointwise (enough points) `[exact]` | 3 |
+| `DiscreteShBridge.v : stalk_imp_strict` (+ `stalk_sound_and`, `stalk_sound_or`, `stalk_sound_join`, `stalk_lax_imp`, `stalk_lax_not`, `oincl_pointwise`) | **Spatial soundness, sharp:** pointwise evaluation is exact on `⊤ ⊥ ∧ ∨ ⋁`, sound-but-lax on `⇒ ¬`, and the laxity is strict (a pointwise implication the topos rejects, at the origin of the punctured plane — the row's real content); entailment is pointwise by construction in the subterminal encoding (`oincl_pointwise`, definitional) `[exact]` | 3 |
 | `DiscreteShBridge.v : strict_halfplane_open` (+ `dx_le_dist`, `open_disk_open`, `open_disk_incl_in_disk`) | NTS instantiation: strict half-planes and open disks (strict `in_disk`) are truth values of Sh(ℝ²); their closures are not `[exact]` | 3 |

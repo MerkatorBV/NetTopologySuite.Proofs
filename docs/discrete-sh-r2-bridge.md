@@ -2,14 +2,16 @@
 
 topic: foundations
 claimId: none
-witness: punct
+witness: none
+mutation-seed: none
 
 (ADR-0004 mint, explicit: this is a foundation lane — no oracle-facing
 micro-kernel claim is minted, so the mutation/vacuity probe is intentionally
-skipped, hence `claimId: none`. The micro falsifier seed is `punct`, the
-punctured plane: EM fails at its origin stalk (`heyting_em_fails`,
-`punct_stalk_not_boolean`), with the non-open closed half-plane
-(`closed_halfplane_not_open`) as the non-strict-predicate falsifier.)
+skipped, hence `claimId: none` / `witness: none`. For readers, the
+documentation-level falsifier seed is `punct`, the punctured plane: EM fails
+at its origin stalk (`heyting_em_fails`, `punct_stalk_not_boolean`), with the
+non-open closed half-plane (`closed_halfplane_not_open`) as the
+non-strict-predicate falsifier.)
 
 **lane:** foundations · spatial-topos
 **Modules**: [`theories/HeytingOpens.v`](../theories/HeytingOpens.v) ·
