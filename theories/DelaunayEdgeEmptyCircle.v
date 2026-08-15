@@ -40,6 +40,31 @@
    Every headline ends in `Qed` (no Abort, no Admitted).  3-axiom classical
    reals (Distance / Orientation / Triangle).  No atan2 / classic lineage.
 
+   ----------------------------------------------------------------------------
+   Ancestry.  The empty-circle criterion characterised here is the Delaunay
+   side of the Voronoi dual built by
+
+     S. Fortune, "A Sweepline Algorithm for Voronoi Diagrams",
+     Algorithmica 2:153-174, 1987 (doi:10.1007/BF01840357),
+
+   the O(n log n)-time / O(n)-space engine the JTS/NTS Delaunay + Voronoi
+   lane (#68) descends from: a Voronoi vertex is exactly the centre of a
+   circle through three sites with no site strictly inside, and its dual
+   Delaunay edge is the AB of the biconditional below.
+
+   Fortune CLAIMS an ALGORITHM: a geometric transform z |-> (z_x, z_y + d(z))
+   that maps each cell so its lowest point is its own site, letting a sweepline
+   process a site when the line reaches it; the beach line is then maintained
+   through site events and circle events, for point sites, line-segment sites,
+   and additively weighted point sites alike, with no general-position
+   assumption (correctness assuming exact arithmetic).  This file proves none
+   of that.  It fixes the empty-circle PREDICATE side of the correspondence
+   under the weak triangulation skeleton described above -- no sweep, no beach
+   line, no event queue, and no construction of a diagram; global DT existence
+   and the Voronoi dual itself stay out of scope (cf. the scope note in
+   DelaunayLocallyDelaunay.v).
+   The floating-point half is Shewchuk's, not Fortune's, and is cited below.
+
    Refs: issue #68 (TRI-DT / empty-circle lineage), Shewchuk 1997
    `incircle`, Guibas–Stolfi Delaunay edge characterisation.
    Author: NetTopologySuite.Proofs contributors

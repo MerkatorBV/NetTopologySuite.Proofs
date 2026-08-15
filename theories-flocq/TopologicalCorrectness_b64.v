@@ -61,6 +61,33 @@
    does not address.  Recorded here, not stubbed: there is no Admitted for it.
 
    ----------------------------------------------------------------------------
+   Ancestry.  `no_spurious_intersections` -- the half of the milestone-4
+   statement Shape B does NOT address -- is not a corpus coinage.  It is
+   failure mode (1) of
+
+     D. H. Greene and F. F. Yao, "Finite-Resolution Computational Geometry",
+     27th Annual Symposium on Foundations of Computer Science (FOCS), IEEE,
+     1986, 143-152 (doi:10.1109/SFCS.1986.19),
+
+   the paper that catalogued what breaks when a geometry designed over R is
+   moved onto a finite grid and the results are snapped naively: spurious
+   intersections, their iteration, displaced intersections, line drift
+   proportional to the number of crossings, and topological inversion.  Hobby
+   1999 -- the algorithm `snap_round` implements -- is the practical answer to
+   that catalogue; Greene-Yao is where the criterion comes from.
+
+   Greene-Yao CLAIM an interface (segment envelopes E(l), hooks, redrawing,
+   placed by a plane sweep with a continued-fraction perturbation) under which
+   a continuous algorithm transfers to Z^2 with stated invariants -- order does
+   not invert, lines stay inside their envelope, drift stays bounded -- while
+   conceding that topology cannot be preserved exactly (disjoint objects may
+   collapse).  This file proves none of that.  What it establishes is the
+   narrow positive kernel in the opposite direction: a hot pixel two segments
+   share is still shared after snapping, i.e. "no meeting is LOST".  The
+   Greene-Yao direction -- "no meeting is INVENTED" -- is gap (iii) above and
+   remains open; nothing here bounds drift or envelopes either.
+
+   ----------------------------------------------------------------------------
    Audit footprint.  Like SnapRounding_b64.v and HotPixel_b64.v, every theorem
    here references `snap_round` / `b64_snap` whose closure pulls
    `Classical_Prop.classic` via Flocq's `round` / `round_mode`; this file is

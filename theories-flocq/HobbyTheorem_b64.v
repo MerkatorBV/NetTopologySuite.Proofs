@@ -9,7 +9,19 @@
 
    Paper: J. D. Hobby, "Practical segment intersection with finite precision
    output," Computational Geometry: Theory and Applications 13(4):199-214,
-   1999.  Section 4.
+   1999 (doi:10.1016/S0925-7721(99)00021-8).  Section 4.
+
+   Paper vs file.  Hobby CLAIMS an algorithm with a modest performance
+   penalty: send every vertex and every intersection to a nearby hot pixel,
+   then replace each segment by the polygonal chain through the hot pixels it
+   meets, so that all intersections become explicit grid points and no new
+   crossings appear outside the hot-pixel rule (validated on map-database
+   compression data).  This file mechanises the STATEMENT of the §4 guarantee
+   over the corpus's own `snap_round` -- not Hobby's implementation, not his
+   timings, and not the surrounding Bentley-Ottmann / Chazelle-Edelsbrunner
+   complexity story.  Nothing here ports the algorithm or reproduces the
+   compression experiment; the §4 support lemmas are tracked below, each at
+   its own state.
 
    See docs/hobby-theorem-proof-structure.md for the proof structure mapped
    to Coq obligations, the gap analysis (§6), and the resumption
