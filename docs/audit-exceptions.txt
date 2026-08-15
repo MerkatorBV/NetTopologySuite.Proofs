@@ -308,17 +308,24 @@ theories-flocq/PassesThrough_b64_spec_symmetric.v
 # Category C (same lineage): issue #66 C1 grid-exactness layer
 # (docs/snap-rounding-rgr-pivot.md).  Began as the GREEN reduction (on the
 # unit grid the snap-consistency conjunct of passes-through is vacuous,
-# reducing compute=spec to a single Liang-Barsky touch); now 18 slices deep,
+# reducing compute=spec to a single Liang-Barsky touch); 18 slices deep,
 # closing C1 on-grid soundness UNCONDITIONALLY on the tight integer grid
 # (|n| <= 2^22, Slice 18).  Imports HotPixel_b64 / SnapRounding_b64 /
 # PassesThrough_b64_compute, whose binary64 layer pulls
 # `Classical_Prop.classic` transitively.  No Admitteds; Qed-closed.
-# KNOWN GAP (closed 2026-08-15, B1): in-file `Print Assumptions`
-# footers now cover every Theorem/Lemma/Corollary/Proposition/Fact in
-# this file (was ZERO). Exemption now actually covers PA blocks.
-# Slices 12-13 remain 3-axiom [exact] and a candidate to leave this
-# list after extraction (B4).
-theories-flocq/PassesThrough_b64_grid_exact.v
+# PA footers per theorem since B1 (2026-08-15).
+# SPLIT (2026-08-15, B4 executed with user/BDFL direction): the former
+# monolith PassesThrough_b64_grid_exact.v is now five layered modules;
+# the four below inherit this exemption (same classic lineage).  Slices
+# 12-13 were extracted to PassesThrough_b64_grid_gap_kernel.v, which is
+# 3-axiom [exact] (verified: no classic in its PA output) and therefore
+# deliberately NOT on this list — the first PassesThrough-lineage module
+# to leave it.  The umbrella PassesThrough_b64_grid_exact.v is a pure
+# Require Export shell with no PA output of its own — also not listed.
+theories-flocq/PassesThrough_b64_grid_core.v
+theories-flocq/PassesThrough_b64_grid_bounds.v
+theories-flocq/PassesThrough_b64_grid_complete.v
+theories-flocq/PassesThrough_b64_grid_separation.v
 
 # Category C (GREEN witness, same lineage): a witness test of the C1 grid
 # machinery on a 2x-scaled SPECTRE monotile edge (companion to
