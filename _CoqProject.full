@@ -116,6 +116,13 @@ theories/Parallel.v
 theories/Centroid.v
 theories/Polynomial.v
 theories/Linearise.v
+# Discrete -> Sh(R^2) bridge lane (see docs/discrete-sh-r2-bridge.md):
+# frame of opens as Omega (Heyting, not Boolean), connectedness of R^2,
+# bool -> Omega logical embedding with Boolean stalks + spatial soundness.
+# Pure-R, three-axiom.  No Admitted.
+theories/HeytingOpens.v
+theories/PlaneConnected.v
+theories/DiscreteShBridge.v
 theories/Simplify.v
 theories/Tin.v
 theories/Validate.v

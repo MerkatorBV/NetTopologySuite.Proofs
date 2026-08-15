@@ -529,4 +529,3 @@ Print Assumptions expansion_R_insert_by_abs.
 Print Assumptions sorted_asc_tail.
 Print Assumptions sorted_asc_cons_head.
 Print Assumptions insert_by_abs_sorted.
-Print Assumptions fast_expansion_sum_nonoverlap_shewchuk.

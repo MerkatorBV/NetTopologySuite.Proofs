@@ -55,3 +55,16 @@ theories/BufferBridgeRound.v
 theories/DE9IM.v
 # Issue #67 S2: line-line DE-9IM soundness (host lane; pulls Intersect.v).
 theories/RelateLineLine.v
+# --- Discrete -> Sh(R^2) bridge (spatial-topos lane) ----------------------
+# Frame of metric opens of the plane as Omega of Sh(R^2): Heyting adjunction,
+# frame law, EM/double-negation counterexamples (punctured plane), infinitary
+# meet failure.  Pure-R, three-axiom.  See docs/discrete-sh-r2-bridge.md.
+theories/HeytingOpens.v
+# Connectedness of R^2 (segment-lub walk): open disjoint covers are trivial.
+theories/PlaneConnected.v
+# The bridge itself: bool -> Omega is a logical embedding, stalks of bridged
+# values stay Boolean, Boolean core of Omega = discrete image (via
+# connectedness), pointwise semantics exact on the geometric fragment and
+# lax-with-witness on implication/negation; strict half-plane/disk predicates
+# land in Omega, their closures do not.
+theories/DiscreteShBridge.v

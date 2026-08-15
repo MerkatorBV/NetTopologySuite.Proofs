@@ -701,4 +701,3 @@ Print Assumptions cascade_step_pathB_twosum_exact.
 Print Assumptions cascade_step_pathB_preserves_output_zero_residue.
 Print Assumptions cascade_step_pathB_preserves_output_nil_compress.
 Print Assumptions cascade_step_pathB_preserves_handover_next_pathB.
-Print Assumptions cascade_pathAB_chain_from_nonoverlap.
