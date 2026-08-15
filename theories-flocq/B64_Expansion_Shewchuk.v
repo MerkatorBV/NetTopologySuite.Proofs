@@ -162,3 +162,5 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions sign_of_expansion_correct_shewchuk.
+Print Assumptions expansion_R_compress.
+Print Assumptions sign_of_expansion_compress.

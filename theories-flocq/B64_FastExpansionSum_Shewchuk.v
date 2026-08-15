@@ -525,3 +525,8 @@ Print Assumptions b64_TwoSum_step_dominates_same_sign.
 Print Assumptions b64_TwoSum_step_dominates_q_zero.
 Print Assumptions b64_TwoSum_step_dominates_strict_pos.
 Print Assumptions b64_TwoSum_step_dominates_strict_neg.
+Print Assumptions expansion_R_insert_by_abs.
+Print Assumptions sorted_asc_tail.
+Print Assumptions sorted_asc_cons_head.
+Print Assumptions insert_by_abs_sorted.
+Print Assumptions fast_expansion_sum_nonoverlap_shewchuk.

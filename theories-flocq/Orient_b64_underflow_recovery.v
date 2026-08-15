@@ -170,3 +170,6 @@ Qed.
 
 Print Assumptions b64_orient_sign_intexact_sound.
 Print Assumptions underflow_recovery_contrast.
+Print Assumptions stage_d_does_not_recover_under_underflow.
+Print Assumptions b64_orient_sign_intexact_never_indefinite.
+Print Assumptions intexact_recovers_under_underflow.

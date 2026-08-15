@@ -48,6 +48,9 @@
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
      Assisted-by: Claude (Opus-4.7)
+   topic: binary64
+   claimId: 66-a
+   witness: hot-pixel
    ========================================================================== *)
 
 From Stdlib Require Import Reals.
@@ -2595,3 +2598,18 @@ Print Assumptions b64_passes_through_sound.
 (*    (the `2 * scale` step is exact when scale's significand fits) plus    *)
 (*    a Flocq reciprocal-of-power-of-two lemma.                             *)
 (* -------------------------------------------------------------------------- *)
+Print Assumptions in_hot_pixel_unfold.
+Print Assumptions b64_round_F2R_in_format.
+Print Assumptions B2R_and_finite_b64_one.
+Print Assumptions B2R_b64_one.
+Print Assumptions is_finite_b64_one.
+Print Assumptions B2R_and_finite_b64_two.
+Print Assumptions B2R_b64_two.
+Print Assumptions is_finite_b64_two.
+Print Assumptions B2R_and_finite_b64_half.
+Print Assumptions B2R_b64_half.
+Print Assumptions is_finite_b64_half.
+Print Assumptions generic_format_F2R_27bit_exp_neg1.
+Print Assumptions Rlt_bool_elim.
+Print Assumptions Rle_bool_elim.
+Print Assumptions round_FIX0_IZR.

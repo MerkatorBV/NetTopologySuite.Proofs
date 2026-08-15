@@ -644,3 +644,19 @@ Print Assumptions b64_plus_abs_error.
 Print Assumptions b64_minus_abs_error.
 Print Assumptions b64_mult_abs_error.
 Print Assumptions b64_div_abs_error.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64_div_correct.
+Print Assumptions b64_round_0.
+Print Assumptions b64_minus_self_finite.
+Print Assumptions b64_minus_zeros_R.
+Print Assumptions b64_mult_zero_l_finite.
+Print Assumptions b64_mult_zero_r_finite.
+Print Assumptions bpow_succ_radix2.
+Print Assumptions b64_safe_coord_bound_pos.
+Print Assumptions generic_format_bpow_b64.
+Print Assumptions b64_round_abs_le_bpow.
+Print Assumptions b64_minus_bounded_R.
+Print Assumptions b64_safe_minus_of_products_bounded.

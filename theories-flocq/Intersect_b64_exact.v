@@ -2862,3 +2862,27 @@ Print Assumptions b64_intersect_point_y_forward_error_vs_intersect_y_R_tight.
 (*    with `K(|d|) = bpow 82 + bpow 133 / |d|` and `eps = bpow(-prec)`.       *)
 (*    Equivalent to the current bound; algebraic restatement only.            *)
 (* -------------------------------------------------------------------------- *)
+Print Assumptions intersect_x_R_eq_strict_point.
+Print Assumptions intersect_y_R_eq_strict_point.
+Print Assumptions b64_intersect_qp0_finite.
+Print Assumptions b64_intersect_qp1_finite.
+Print Assumptions Rabs_minus_le_add.
+Print Assumptions b64_intersect_den_B2R_abs_ge_1.
+Print Assumptions b64_intersect_den_B2R_abs_le_bpow_54.
+Print Assumptions b64_intersect_s_R_round.
+Print Assumptions b64_intersect_s_abs_le_bpow_53.
+Print Assumptions b64_intersect_dx_abs_le_bpow_26.
+Print Assumptions b64_intersect_dy_abs_le_bpow_26.
+Print Assumptions b64_intersect_mult_x_safe.
+Print Assumptions b64_intersect_mult_y_safe.
+Print Assumptions b64_intersect_mult_x_abs_le_bpow_80.
+Print Assumptions b64_intersect_mult_y_abs_le_bpow_80.
+Print Assumptions coord_int_safe_abs_le_bpow_25.
+Print Assumptions b64_intersect_plus_x_safe.
+Print Assumptions b64_intersect_plus_y_safe.
+Print Assumptions b64_intersect_point_x_round_chain.
+Print Assumptions b64_intersect_point_y_round_chain.
+Print Assumptions b64_intersect_point_x_finite.
+Print Assumptions b64_intersect_point_y_finite.
+Print Assumptions b64_intersect_point_x_abs_le_bpow_81.
+Print Assumptions b64_intersect_point_y_abs_le_bpow_81.

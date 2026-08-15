@@ -183,3 +183,16 @@ Qed.
 Print Assumptions nonoverlap_shewchuk_256_1_false.
 Print Assumptions e_nonoverlap.
 Print Assumptions inputs_sum_eq.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions IZR_mant_bpow.
+Print Assumptions bpow1eq2.
+Print Assumptions bpow_dbl.
+Print Assumptions b1_R.
+Print Assumptions b256_R.
+Print Assumptions b2p60_R.
+Print Assumptions strict_succ_b64_256_1_false.
+Print Assumptions f_nonoverlap.
+Print Assumptions bneg_R.

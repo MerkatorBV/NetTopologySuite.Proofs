@@ -211,3 +211,4 @@ Print Assumptions b64_error_le_half_ulp_round.
 Print Assumptions b64_round_generic.
 Print Assumptions b64_round_minus_swap.
 Print Assumptions b64_round_eq_R_eq.
+Print Assumptions b64_round_error_bounded_by_ulp.

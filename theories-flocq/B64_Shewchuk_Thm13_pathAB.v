@@ -693,3 +693,12 @@ Print Assumptions cascade_invariant_AB_empty.
 Print Assumptions cascade_pathAB_chain_two_singletons_mixed_sign.
 Print Assumptions cascade_pathAB_chain_from_nonoverlap_entails_headline.
 Print Assumptions fast_expansion_sum_nonoverlap_shewchuk_pathAB_conditional.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions cascade_step_pathB_twosum_exact.
+Print Assumptions cascade_step_pathB_preserves_output_zero_residue.
+Print Assumptions cascade_step_pathB_preserves_output_nil_compress.
+Print Assumptions cascade_step_pathB_preserves_handover_next_pathB.
+Print Assumptions cascade_pathAB_chain_from_nonoverlap.

@@ -227,3 +227,6 @@ Qed.
 
 Print Assumptions b64_div_pow2_exact.
 Print Assumptions b64_mult_pow2_exact.
+Print Assumptions div_bpow_eq_mult_bpow_neg.
+Print Assumptions generic_format_F2R_le_pow_prec.
+Print Assumptions generic_format_IZR_mult_bpow_neg.

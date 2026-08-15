@@ -130,3 +130,8 @@ Qed.
 
 Print Assumptions b64_Dekker_exact_of_format.
 Print Assumptions b64_Dekker_int_exact.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64_Dekker_fst.

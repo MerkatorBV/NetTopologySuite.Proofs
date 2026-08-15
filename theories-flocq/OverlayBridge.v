@@ -674,3 +674,8 @@ Print Assumptions extract_rings_valid_sep.
 Print Assumptions valid_geometry_extract_sep.
 Print Assumptions extract_rings_valid_holes.
 Print Assumptions valid_geometry_extract.
+Print Assumptions in_left_iff_in_A.
+Print Assumptions in_right_iff_in_B.
+Print Assumptions in_right_false_iff_not_true.
+Print Assumptions NoDup_result_edges_noded.
+Print Assumptions extract_rings_valid_holes_sep.

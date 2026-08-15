@@ -155,3 +155,9 @@ Qed.
 Print Assumptions kakeya_inputs_int_safe.
 Print Assumptions kakeya_cross_zero.
 Print Assumptions kakeya_orient2d_sign_zero.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+Print Assumptions b64Z_R.
+Print Assumptions b64Z_coord_int_safe.

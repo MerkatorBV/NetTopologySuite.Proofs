@@ -326,3 +326,15 @@ Qed.
 
 Print Assumptions fully_intersected_snap_of_nodable.
 Print Assumptions buffer_offset_nodable.
+Print Assumptions snap_round_coord_tolerance.
+Print Assumptions snap_round_x_tol.
+Print Assumptions snap_round_y_tol.
+Print Assumptions snap_x_bounds.
+Print Assumptions snap_y_bounds.
+Print Assumptions sip_comm.
+Print Assumptions x_left_of_snap_no_proper.
+Print Assumptions y_below_of_snap_no_proper.
+Print Assumptions separated_snap_no_proper.
+Print Assumptions offset_normal_vx_sq_le_1.
+Print Assumptions offset_point_x_shift.
+Print Assumptions offset_seg_x_left_of.
