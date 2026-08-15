@@ -1705,8 +1705,9 @@ let run_disc_overlay () =
           | "CROSSING" -> a1 +. a2 -. lens
           | "INT_TANGENT" | "NESTED" -> if a_covers then a1 else a2
           | _ -> a1 +. a2 in
-        let sub = a1 -. cap in
-        let xor = cup -. cap in
+        let clamp_eps x = if x < 0.0 && x > -1e-12 then 0.0 else x in
+        let sub = clamp_eps (a1 -. cap) in
+        let xor = clamp_eps (cup -. cap) in
         let area = match op with
           | `Cap -> cap | `Cup -> cup | `Sub -> sub | `Xor -> xor | `Bad -> 0.0 in
         let kind =
@@ -1716,6 +1717,7 @@ let run_disc_overlay () =
           | `Cap, _ -> "EMPTY"
           | `Cup, ("INT_TANGENT" | "NESTED") -> "DISC"
           | `Cup, _ -> "BLOB"
+          | `Sub, "DISJOINT" -> if area = 0.0 then "EMPTY" else "DISC"
           | `Sub, _ -> if area = 0.0 then "EMPTY" else "CRESCENT"
           | `Xor, _ -> if area = 0.0 then "EMPTY" else "CRESCENTS"
           | `Bad, _ -> "EMPTY" in

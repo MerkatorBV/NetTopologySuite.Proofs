@@ -3,7 +3,7 @@
    ----------------------------------------------------------------------------
    DISC_OVERLAY oracle mode — two-disc OverlayNGCurve closed form (OV-DISC).
 
-   JTS draft PR #8 (`cursor/curve-perf-gate-45a0`, head `f58d56a3`) landed
+   JTS draft PR #8 (`cursor/curve-perf-gate-45a0`, head `4bc8195d`) landed
    exact two-disc overlay as package-private `CircularDiscOverlay` (R1.5 in
    OverlayNGCurve).  Crossing CAP/CUP/SUB/XOR of two circular discs is a
    closed form (lens / blob / crescent / both crescents).  This file is the
@@ -281,8 +281,9 @@ Lemma locked_node_plus_coords :
   py (radical_point_plus locked_O1 locked_O2 locked_r locked_r)
     = radical_axis_h locked_O1 locked_O2 locked_r locked_r.
 Proof.
-  unfold radical_point_plus, locked_O1. cbn [px py].
+  unfold radical_point_plus. cbn [px py].
   rewrite locked_radical_a, locked_radical_ux, locked_radical_uy.
+  unfold locked_O1. cbn [px py].
   split; ring.
 Qed.
 
@@ -291,8 +292,9 @@ Lemma locked_node_minus_coords :
   py (radical_point_minus locked_O1 locked_O2 locked_r locked_r)
     = - radical_axis_h locked_O1 locked_O2 locked_r locked_r.
 Proof.
-  unfold radical_point_minus, locked_O1. cbn [px py].
+  unfold radical_point_minus. cbn [px py].
   rewrite locked_radical_a, locked_radical_ux, locked_radical_uy.
+  unfold locked_O1. cbn [px py].
   split; ring.
 Qed.
 
@@ -309,11 +311,7 @@ Lemma locked_h_pos :
   0 < radical_axis_h locked_O1 locked_O2 locked_r locked_r.
 Proof.
   unfold radical_axis_h. rewrite locked_h2.
-  assert (Hsq : sqrt (51 / 4) * sqrt (51 / 4) = 51 / 4).
-  { apply sqrt_sqrt. lra. }
-  destruct (Rle_or_lt (sqrt (51 / 4)) 0) as [Hle | Hlt].
-  - exfalso. nra.
-  - exact Hlt.
+  apply sqrt_lt_R0. lra.
 Qed.
 
 (* Headline: the locked pair's radical nodes are (3.5, ±√12.75).

@@ -23,7 +23,7 @@
 ## D. Disjoint (d > r1+r2).
   [disjoint d=20 CAP] CAP -> 'DISJOINT EMPTY NODES 0 AREA 0x0p+0' expect=DISJOINT EMPTY   ok
   [disjoint d=20 CUP] CUP -> 'DISJOINT BLOB NODES 0 AREA 0x1.3a28c59d5433bp+7' expect=DISJOINT BLOB   ok
-  [disjoint d=20 SUB] SUB -> 'DISJOINT CRESCENT NODES 0 AREA 0x1.3a28c59d5433bp+6'   ok
+  [disjoint d=20 SUB] SUB -> 'DISJOINT DISC NODES 0 AREA 0x1.3a28c59d5433bp+6'   ok
   [disjoint d=20 XOR] XOR -> 'DISJOINT CRESCENTS NODES 0 AREA 0x1.3a28c59d5433bp+7'   ok
 
 ## E. External / internal tangent.

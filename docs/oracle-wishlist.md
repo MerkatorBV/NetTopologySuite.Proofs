@@ -3,7 +3,7 @@
 **Milestone**: JTS two-disc overlay is exact; oracle mode **`DISC_OVERLAY`** is the Rocq twin (this accept).
 
 **TAGs shipped**: D-PT, C-LIN, D-AA, OFF, C-AREA, composites, D-CURVE, BUF-S, N-SS, R-CURVE (10+ vertical slices, all green with oracle matches).
-**Product accept**: **OV-DISC** (JTS) — two-disc CAP·CUP·SUB·XOR exact on JTS PR #8 `f58d56a3`.
+**Product accept**: **OV-DISC** (JTS) — two-disc CAP·CUP·SUB·XOR exact on JTS PR #8 `4bc8195d`.
 **Oracle accept**: **`DISC_OVERLAY`** — protocol keyword → `theories/DiscOverlay.v` → RocqRefRunner mode → `oracle/gen_disc_overlay_tests.py`. Locked nodes `(3.5, ±√12.75)`.
 
 Phase-0 (`feat/overlayng-phase0-red`) already proved crossing cells never collapse algebraically to A/B/A∪B/∅. `DISC_OVERLAY` is the per-shape closed form for the disc-disc crossing cell, not a shortcut around that theorem.
@@ -16,7 +16,7 @@ Phase-0 (`feat/overlayng-phase0-red`) already proved crossing cells never collap
 - **Offset/Buffer** (OFF + BUF-S): Leaf + single-arc CurvePolygon ✅
 - **Intersections/Noding** (N-AA/N-AL + N-SS basic split): Sub-arc exact ✅
 - **Relate/Predicates** (R-CURVE): Intersects/Contains/Relate wiring ✅
-- **OV-DISC** (JTS product, 15 Aug 2026): two-disc CAP·CUP·SUB·XOR exact on JTS PR #8 `f58d56a3`. https://github.com/grootstebozewolf/jts/pull/8
+- **OV-DISC** (JTS product, 15 Aug 2026): two-disc CAP·CUP·SUB·XOR exact on JTS PR #8 `4bc8195d`. https://github.com/grootstebozewolf/jts/pull/8
 - **DISC_OVERLAY** (oracle, this accept): two-disc CAP/CUP/SUB/XOR as lens/blob/crescent/crescents. Lemma `theories/DiscOverlay.v` (`radical_nodes_in_lens`, `locked_disc_nodes`, Qed, 3-axiom, no new axioms). Driver `DISC_OVERLAY` reuses the `ARC_ARC_XY` radical-axis (not a second kernel). Input: two discs (centre+radius or 5-point CIRCULARSTRING) + op in {CAP,CUP,SUB,XOR}. Output: config, kind, nodes, closed-form area. Locked pin: centres `(0,0)`/`(7,0)` r=5 → nodes `(3.5, ±√12.75)`. Generator `oracle/gen_disc_overlay_tests.py` (I1–I7).
 
 All with tests (4/4–20/20), code refs, oracle matches, and minimal changes.
