@@ -91,3 +91,14 @@ dispositions (4.2 CLOSED by Qed; 4.3-no-proper moved to
 `docs/admitted-counterexamples.txt` as FALSE as stated), so the header was the
 last place still asserting the old state. Both header sentences now match the
 registry.
+
+**Recorded, not rewritten.** `docs/hobby-theorem-proof-structure.md` still
+carries the same superseded narrative in three places — the §-header status
+line ("two supporting lemmas Admitted with registered deferred-proof entries"),
+the §4 bullet calling `hobby_lemma_4_3_no_proper` "Admitted", and §6 "The
+precise gap" tabulating "Two Admitteds". It also states `hobby_lemma_4_3` is
+"Qed-closed by composition", where the file `Abort`s it because the composition
+needs the refuted half. That is a status-document rewrite, not a footnote edit,
+and it is deliberately out of scope for this literature pass — recorded here in
+the same spirit as the misnomers above, for whoever owns the registry
+narrative.
