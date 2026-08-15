@@ -123,6 +123,11 @@ theories/Linearise.v
 theories/HeytingOpens.v
 theories/PlaneConnected.v
 theories/DiscreteShBridge.v
+# OverlayNGCurve Phase 0 (name gate NTSC0001): CAP/CUP/SUB/XOR point-set
+# algebra on the HeytingOpens carrier — G1-G5 self/empty laws plus the
+# disjoint/covers/coveredBy exact rows (axiom-free headline), rational
+# square pins, crossing/covers mismatch probes.  Qed-closed throughout.
+theories/OverlayNGCurve.v
 theories/Simplify.v
 theories/Tin.v
 theories/Validate.v
