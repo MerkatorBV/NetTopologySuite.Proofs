@@ -1024,6 +1024,7 @@ Unconditional exact-reals — the most directly citable rows.
 ## Discrete → Sh(ℝ²) bridge — spatial-topos foundations (`HeytingOpens.v`, `PlaneConnected.v`, `DiscreteShBridge.v`) <!-- feat:foundations geom:cs,cp -->
 
 Subterminal fragment of the sheaf topos on the plane: opens of ℝ² as the truth-value algebra Ω, the Boolean bridge into it, and the soundness of pointwise (classical) evaluation. See [`discrete-sh-r2-bridge.md`](discrete-sh-r2-bridge.md).
+topic: foundations · claimId: none · witness: punct — the punctured plane (EM fails at its origin stalk: `HeytingOpens.v : heyting_em_fails`, `DiscreteShBridge.v : punct_stalk_not_boolean`); non-strict falsifier `HeytingOpens.v : closed_halfplane_not_open`.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|

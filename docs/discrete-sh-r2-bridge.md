@@ -1,6 +1,17 @@
 # Discrete → Sh(ℝ²) bridge — Boolean stalks, Heyting globe (2026-08-13)
 
-**topic:** foundations · spatial-topos lane
+topic: foundations
+claimId: none
+witness: punct
+
+(ADR-0004 mint, explicit: this is a foundation lane — no oracle-facing
+micro-kernel claim is minted, so the mutation/vacuity probe is intentionally
+skipped, hence `claimId: none`. The micro falsifier seed is `punct`, the
+punctured plane: EM fails at its origin stalk (`heyting_em_fails`,
+`punct_stalk_not_boolean`), with the non-open closed half-plane
+(`closed_halfplane_not_open`) as the non-strict-predicate falsifier.)
+
+**lane:** foundations · spatial-topos
 **Modules**: [`theories/HeytingOpens.v`](../theories/HeytingOpens.v) ·
 [`theories/PlaneConnected.v`](../theories/PlaneConnected.v) ·
 [`theories/DiscreteShBridge.v`](../theories/DiscreteShBridge.v)
