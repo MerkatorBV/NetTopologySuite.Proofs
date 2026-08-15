@@ -2208,17 +2208,16 @@ theories/InSector.v
 # subdivision and the radius bound (9004-d) remain out of scope.  Full-only:
 # depends on InDisk.v, which the Stdlib-only host layer does not carry.
 theories/MaximumInscribedCircle.v
-# LEC lane opener — RED (unproved claim surface, board card pending): the
-# LargestEmptyCircle sibling of #9004 (JTS algorithm.construct twin).  Adds
-# empty_disk / largest_empty_disk — the obstacle-avoiding dual of
-# inscribed_disk / max_inscribed_disk, with the domain-constrained maximiser
-# — plus the rational instance: the LEC of the four side midpoints of [0,1]²
-# over the unit square IS the MIC witness circle (centre (1/2,1/2), radius
-# 1/2).  The headline lec_side_midpoints is deliberately UNPROVED: `rocq c`
-# fails at Qed with "Attempt to save an incomplete proof".  No Admitted, no
-# `admit` tactic, no Axiom / Parameter.  Cell subdivision, tolerance loop,
-# and geometry obstacles are out of scope.  Full-only: imports
-# MaximumInscribedCircle.v (InDisk.v lineage).
+# LEC lane opener — GREEN (board card pending): the LargestEmptyCircle
+# sibling of #9004 (JTS algorithm.construct twin).  empty_disk /
+# largest_empty_disk — the obstacle-avoiding dual of inscribed_disk /
+# max_inscribed_disk, with the domain-constrained maximiser — and the
+# rational instance Qed: the LEC of the four side midpoints of [0,1]² over
+# the unit square IS the MIC witness circle (centre (1/2,1/2), radius 1/2;
+# lec_side_midpoints, duality packaged as mic_lec_duality).  Three-axiom.
+# No Admitted.  Cell subdivision, tolerance loop, and geometry obstacles
+# remain out of scope.  Full-only: imports MaximumInscribedCircle.v
+# (InDisk.v lineage).
 theories/LargestEmptyCircle.v
 # Structural faithfulness of the curve->Phase3 linearisation bridge: a valid
 # (closed) CIRCULARSTRING/COMPOUNDCURVE ring chord-approximates to a ring_closed

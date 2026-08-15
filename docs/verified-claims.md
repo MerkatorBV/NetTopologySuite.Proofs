@@ -1052,3 +1052,13 @@ topic: construct · claimId: 9004-c · witness: unit-square — centre (1/2,1/2)
 |---|---|---|
 | `MaximumInscribedCircle.v : mic_unit_square` | **9004-c headline.** The closed disk centre (1/2,1/2), radius 1/2 is a MAXIMUM inscribed disk of [0,1]²: contained (every point within 1/2 of the centre has both coordinates in [0,1]) and maximal (any inscribed (O′,r′) contains the probes (ox′ ± r′, oy′), forcing 2r′ ≤ 1). Rational throughout; sqrt-free beyond `dist_le_iff_dist_sq_le` `[exact]` | 3 |
 | `MaximumInscribedCircle.v : mic_unit_square_inscribed` (+ `mic_unit_square_radius_maximal`) | The two projections exported for consumers: the witness disk is inscribed; no inscribed disk of the unit square beats radius 1/2 — the maximiser 9004-b observed `InDisk`/`Disk.in_disk` do not supply `[exact]` | 3 |
+
+## LEC — largest empty circle over the side midpoints (`LargestEmptyCircle.v`, board card pending / epic #813) <!-- feat:construct geom:cp -->
+
+The LEC surface (`empty_disk` / `largest_empty_disk` — the obstacle-avoiding dual of 9004-a's `inscribed_disk` / `max_inscribed_disk`, with the domain-constrained maximiser) and its rational witness. JTS/NTS twin: `algorithm.construct.LargestEmptyCircle`. No eval mirror is minted until the board assigns the card id (no invented ancestry).
+topic: construct · claimId: none (board card pending) · witness: side-midpoints — the four side midpoints of [0,1]² as obstacles; the LEC over the unit square is the MIC witness circle itself.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `LargestEmptyCircle.v : lec_side_midpoints` | **LEC headline.** Centre (1/2,1/2), radius 1/2 is a LARGEST empty disk of the four side midpoints with centre constrained to [0,1]²: empty (each midpoint at squared distance exactly 1/4) and maximal (in the centre's quadrant the two adjacent midpoints give dist²₁ + dist²₂ ≤ 1/2, so 2r′² ≤ 1/2). Rational; sqrt-free beyond the Distance.v bridges `[exact]` | 3 |
+| `LargestEmptyCircle.v : mic_lec_duality` (+ `lec_side_midpoints_empty`, `lec_side_midpoints_radius_maximal`, `empty_disk_sq_bound`, `dist_ge_of_dist_sq_ge`) | **The duality:** one rational circle is simultaneously the maximum disk inscribed in the unit square (#9004) and the largest disk empty of the square's side midpoints — the midpoints are exactly the inscribed disk's touch points `[exact]` | 3 |
