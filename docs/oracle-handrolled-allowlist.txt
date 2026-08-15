@@ -159,6 +159,21 @@ chord_chord_pts
 # deferred #5b frontier (theories/ArcArcSound.v has the slice).
 run_arc_arc_xy
 
+# --- DISC_OVERLAY (OV-DISC / OverlayNGCurve two-disc closed form) ------------
+# Mode DISC_OVERLAY emits the two radical-axis nodes and the closed-form area
+# of CAP/CUP/SUB/XOR of two FULL circular discs (lens / blob / crescent /
+# both crescents).  Nodes carry an irrational sqrt(h²) and the area carries
+# acos + sqrt (no Coq-extractable form, same INTERFACE-BOUNDARY as ARC_ARC_XY
+# / ARC_AREA).  Centres / radii² / the four-factor discriminant are EXACT Q
+# (circumcentre_q for a 5-point CIRCULARSTRING, Q.of_float of the given
+# centre+radius otherwise), so only the final sqrt/acos and emitted
+# coordinates round.  SAME radical-axis formula as ARC_ARC_XY /
+# CircularArcDensifier.intersectCircles / ArcArcCircles.two_circles_radical_point
+# — not a second kernel.  The JTS CircularDiscOverlay (OverlayNGCurve R1.5)
+# interface value; point-set + locked-fixture characterization in
+# theories/DiscOverlay.v (radical_nodes_in_lens, locked_disc_nodes).
+run_disc_overlay
+
 # --- ARC_SEGMENT_XY (N-AL, issue #224 W1) -----------------------------------
 # Mode ARC_SEGMENT_XY emits the intersection POINTS of a circular arc with a
 # line SEGMENT (the segment analogue of ARC_ARC_XY; replaces the single-point

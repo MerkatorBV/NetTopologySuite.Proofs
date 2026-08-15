@@ -1,0 +1,47 @@
+# Adversarial tests for DISC_OVERLAY (RocqRefRunner) vs Qed invariants
+# in theories/DiscOverlay.v (radical_nodes_in_lens, locked_disc_nodes,
+# lens_or_crescents_iff_blob).  '!!' lines are PROVEN-invariant
+# violations (CI-failing).
+# I1 on-both-circles  I2 locked (3.5, ±√12.75)  I3 CAP+XOR=CUP
+# I4 CAP+SUB=π r1²   I5 disjoint areas  I6 symmetry  I7 coincident
+
+## A. Locked fixture CIRCLE_5 ∩ CIRCLE_CROSSING  (0,0)r=5 vs (7,0)r=5.
+  [locked CAP centre+radius] CAP -> 'CROSSING LENS NODES 2 0x1.cp+1 0x1.c90d29d2d43cep+1 0x1.cp+1 -0x1.c90d29d2d43cep+1 AREA 0x1.d8cc532f48abcp+3' expect=CROSSING nodes (3.5, ±√12.75)   ok
+  [locked CUP centre+radius] CUP -> 'CROSSING BLOB NODES 2 0x1.cp+1 0x1.c90d29d2d43cep+1 0x1.cp+1 -0x1.c90d29d2d43cep+1 AREA 0x1.1c9c006a5fa8fp+7'   ok
+  [locked SUB centre+radius] SUB -> 'CROSSING CRESCENT NODES 2 0x1.cp+1 0x1.c90d29d2d43cep+1 0x1.cp+1 -0x1.c90d29d2d43cep+1 AREA 0x1.fe1e766ed63c7p+5'   ok
+  [locked XOR centre+radius] XOR -> 'CROSSING CRESCENTS NODES 2 0x1.cp+1 0x1.c90d29d2d43cep+1 0x1.cp+1 -0x1.c90d29d2d43cep+1 AREA 0x1.fe1e766ed63c6p+6'   ok
+  [locked CAP CIRCULARSTRING] CAP -> 'CROSSING LENS NODES 2 0x1.cp+1 0x1.c90d29d2d43cep+1 0x1.cp+1 -0x1.c90d29d2d43cep+1 AREA 0x1.d8cc532f48abcp+3' expect=CROSSING nodes (3.5, ±√12.75)   ok
+
+## B. Equal-r crossing (not the locked pair).
+  [equal-r d=8 CAP] CAP -> 'CROSSING LENS NODES 2 0x1p+2 0x1.8p+1 0x1p+2 -0x1.8p+1 AREA 0x1.059a0ddd8b07cp+3' expect=CROSSING LENS   ok
+  [equal-r d=8 CUP] CUP -> 'CROSSING BLOB NODES 2 0x1p+2 0x1.8p+1 0x1p+2 -0x1.8p+1 AREA 0x1.29cf24bf7b833p+7'   ok
+
+## C. Unequal-r crossing.
+  [unequal 5-vs-3 d=6 CAP] CAP -> 'CROSSING LENS NODES 2 0x1.1555555555555p+2 0x1.3f49c0b9ad4ddp+1 0x1.1555555555555p+2 -0x1.3f49c0b9ad4ddp+1 AREA 0x1.bb5615be171e6p+2' expect=CROSSING LENS   ok
+  [unequal 5-vs-3 d=6 SUB] SUB -> 'CROSSING CRESCENT NODES 2 0x1.1555555555555p+2 0x1.3f49c0b9ad4ddp+1 0x1.1555555555555p+2 -0x1.3f49c0b9ad4ddp+1 AREA 0x1.1e73644172c1dp+6'   ok
+
+## D. Disjoint (d > r1+r2).
+  [disjoint d=20 CAP] CAP -> 'DISJOINT EMPTY NODES 0 AREA 0x0p+0' expect=DISJOINT EMPTY   ok
+  [disjoint d=20 CUP] CUP -> 'DISJOINT BLOB NODES 0 AREA 0x1.3a28c59d5433bp+7' expect=DISJOINT BLOB   ok
+  [disjoint d=20 SUB] SUB -> 'DISJOINT DISC NODES 0 AREA 0x1.3a28c59d5433bp+6'   ok
+  [disjoint d=20 XOR] XOR -> 'DISJOINT CRESCENTS NODES 0 AREA 0x1.3a28c59d5433bp+7'   ok
+
+## E. External / internal tangent.
+  [ext-tangent d=10 CAP] CAP -> 'EXT_TANGENT EMPTY NODES 1 0x1.4p+2 0x0p+0 AREA 0x0p+0' expect=EXT_TANGENT   ok
+  [int-tangent d=2 CAP] CAP -> 'INT_TANGENT DISC NODES 1 0x1.4p+2 0x0p+0 AREA 0x1.c463abeccb2bbp+4' expect=INT_TANGENT   ok
+
+## F. Nested / covers (d < |r1−r2|) and concentric.
+  [nested A-covers-B CAP] CAP -> 'NESTED DISC NODES 0 AREA 0x1.921fb54442d18p+3' expect=NESTED DISC   ok
+  [nested A-covers-B SUB] SUB -> 'NESTED CRESCENT NODES 0 AREA 0x1.07e4cef4cbd98p+6' expect=NESTED CRESCENT   ok
+  [nested B-covers-A SUB] SUB -> 'NESTED EMPTY NODES 0 AREA 0x0p+0' expect=NESTED EMPTY   ok
+  [concentric distinct CAP] CAP -> 'NESTED DISC NODES 0 AREA 0x1.c463abeccb2bbp+4' expect=NESTED DISC   ok
+
+## G. Coincident reject.
+  [coincident centre+radius] CAP -> 'COINCIDENT' expect=COINCIDENT   ok
+  [coincident CIRCULARSTRING] CUP -> 'COINCIDENT' expect=COINCIDENT   ok
+
+## H. Degenerate / NaN.
+  [r=0 DEGENERATE] CAP -> 'DEGENERATE' expect=DEGENERATE   ok
+  [collinear CS DEGENERATE] CAP -> 'DEGENERATE' expect=DEGENERATE   ok
+
+# All proven invariants (I1-I7) hold across the suite.
