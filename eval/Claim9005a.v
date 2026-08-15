@@ -47,6 +47,7 @@
    ========================================================================== *)
 
 (* WITNESS {"claimId":"9005-a","topic":"teaching","lemma":"pia_triangle_three_touch","title":"Planar PIA teaching instance: LEC centre of a 3-point shoreline touches exactly three closest points"} *)
+(* ADR-0001: self-contained smoke *)
 
 From Stdlib Require Import Reals Lra.
 Local Open Scope R_scope.
