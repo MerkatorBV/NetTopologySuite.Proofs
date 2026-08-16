@@ -46,14 +46,53 @@
 
 ---
 
+## The missing row: TOUCH (T) — one kiss, no shared flesh
+
+The case matrix (self · empty · disjoint · covers · coveredBy · crossing)
+is **not candidate complete**: two externally tangent discs fit no row —
+not disjoint (they share the kiss point), neither covers, and `crossing`
+demands STRICT |r1 − r2| < d < r1 + r2, which fails at d = r1 + r2.
+Refuted Qed: `OverlayTouchRow.phase0_relation_complete_hypothesis_refuted`
+(witness: unit discs at (0,0) and (2,0), kiss (1,0)).
+
+**T-ext** · External tangency — d = r1 + r2 — the DIMENSION COLLAPSE row:
+
+| Op | Value at the kiss | Qed |
+|----|-------------------|-----|
+| **CAP** ∩ | exactly the SINGLETON {kiss} — a 2-D ∩ 2-D collapsing to dimension 0; regularized CAP is ∅ (interiors never meet); R1 retention is unmeetable — a point is no CurvePolygon | `ext_cap_singleton` · `ext_cap_interiors_empty` |
+| **CUP** ∪ | exact as a set, but the shell SELF-TOUCHES at the kiss — V1 wound-check territory | `ext_kiss_on_both_circles` |
+| **SUB** ∖ | the full disc minus ONE point — exact-minus-kiss | `ext_sub_off_by_point` |
+| **XOR** Δ | the blob minus ONE point — exact-minus-kiss | `ext_xor_off_by_point` |
+
+**T-int** · Internal tangency — d = |r1 − r2| > 0 — NOT a completeness gap
+(the covers/coveredBy row fires: `int_covers`) but an ANSWER degeneracy:
+the SUB annulus PINCHES where inner and outer boundaries meet
+(`int_kiss_pinch`), and the closed-region crescent misses its own pinch
+point (`int_kiss_not_in_crescent`) — V1 again.
+
+**Repaired completeness** (Qed, the hypothesized-complete algorithm): add
+ONE relation row — TOUCH := nonempty ∩ with disjoint interiors — and the
+matrix decides every positive-disc pair:
+
+> `phase0_relation A B ∨ disks_touch A B` —
+> `OverlayTouchRow.disc_relations_complete_with_touch`, by trichotomy of
+> d against |r1 − r2| and r1 + r2; the kiss witness is the radial point
+> c1 + (r1/d)(c2 − c1).  External tangency IS the touch row; internal
+> tangency lands in covers.
+
+Oracle: `DISC_OVERLAY` classified `EXT_TANGENT` / `INT_TANGENT` by exact-Q
+discriminant = 0 before the R-side had a spec (generator family E) — this
+module supplies the spec the driver was already honouring.
+
 ## Memory palace
 
 1. **CAP** ∩ — Common Area of Partners  
 2. **CUP** ∪ — Cover Under Partners  
 3. **SUB** ∖ — Subtract the second  
-4. **XOR** Δ — eXclusive OR (not shared)
+4. **XOR** Δ — eXclusive OR (not shared)  
+5. **TOUCH** T — one kiss, no shared flesh
 
-**Self:** CAP/CUP keep me · SUB/XOR empty me · **Empty partner (G5)** is the fifth guard.
+**Self:** CAP/CUP keep me · SUB/XOR empty me · **Empty partner (G5)** is the fifth guard · **One kiss (T)** collapses CAP to a point.
 
 ---
 
