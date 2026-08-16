@@ -9,7 +9,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** Use NetTopologySuite; want to know which geometric primitives are formally proved.
 
-**OPEN** [`phase0-completion.md`](phase0-completion.md) → `phase1-completion.md` → `phase2-hotpixel-progress.md`.
+**OPEN** [`phase0-completion.md`](phase0-completion.md) → `phase1-completion.md` → `phase2-hotpixel-progress.md` → [`audit-phase3-overlay.md`](audit-phase3-overlay.md) → [`audit-phase4-curves.md`](audit-phase4-curves.md).
 
 **TIME** 30 min.
 
@@ -17,7 +17,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 🏗️ **BIM Bea**
 
-**YOU** Model as-built geometry; care about arcs / CIRCULARSTRING.
+**YOU** Model as-built geometry; care about arcs / CIRCULARSTRING and COMPOUNDCURVE (SQL/MM ISO/IEC 13249-3). NTS `Flatten()` linearizes those curves to chords before overlay — Flatten is not the curve.
 
 **OPEN** [`audit-phase4-curves.md`](audit-phase4-curves.md).
 
@@ -107,7 +107,7 @@ help+dispatch only.
 
 **OPEN** The full README + every section of [`READING-GUIDE.md`](READING-GUIDE.md) + the entire `docs/history/` tree (you are expected to understand the shape of the whole corpus and why each artifact is where it is).
 
-**POWER** Final authority on scope, what constitutes "useful for an actor", tie-breakers in pruning decisions, and whether a marginal file stays at top level or gets archived. You can promote files back from history/.
+**POWER** BDFL on the corpus: what constitutes "useful for an actor", tie-breakers in pruning, and whether a marginal file stays at top level or is archived. You can promote files back from history/. Jeroen is the product owner of scope and priority. Joost does not own the JTS curve backlog or PI priority.
 
 **NEXT** Everything. You are the one person who is assumed to have (or be able to form) the complete picture.
 
