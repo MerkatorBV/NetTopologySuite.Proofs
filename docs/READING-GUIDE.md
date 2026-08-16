@@ -416,15 +416,16 @@ doubles).
 
 ## 🧠 Joost the BDFL (Joost mag het weten)
 
-**Role.** The benevolent dictator for life and ultimate authority on the project. "Joost mag het weten" is the Dutch proverb ("only Joost knows" / "Joost may know it all"). He is assumed to have (or be able to quickly form) the complete picture of the corpus, its history, its gaps, and its long-term direction.
+**Role.** The benevolent dictator for life of the corpus — not the product owner. "Joost mag het weten" is the Dutch proverb ("only Joost knows" / "Joost may know it all"). He is assumed to have (or be able to quickly form) the complete picture of the corpus, its history, its gaps, and its long-term shape. Jeroen is the product owner of scope and priority.
 
 **Start at.** The full [`README.md`](../README.md) (including all status and the embedded catalogue), the complete [`READING-GUIDE.md`](READING-GUIDE.md), every major retro and proof-structure document, the entire [`docs/history/`](history/) tree (especially [`sessions/`](history/sessions/)), the strategy and seam-map documents, and the CI/oracle credibility material. You are the one actor whose path legitimately exercises the archive.
 
-**Special power.** Final say on:
+**Special power.** BDFL final say on:
 - Whether a marginal file stays at top level or moves to history/.
-- Scope and priority of new engagements.
 - Tie-breakers when the strict "useful for one of the other defined actors" rule is in conflict with institutional memory or future utility.
-- Architecture and "what the project is" questions.
+- Architecture and "what the project is" questions (corpus identity, not PI priority).
+
+Jeroen owns product scope and priority. Joost does not own the JTS curve backlog or PI priority.
 
 In pruning work, Joost is the explicit exception to the actor filter and the person who reviews the stop-condition batch results.
 
@@ -446,7 +447,7 @@ In pruning work, Joost is the explicit exception to the actor filter and the per
 | Consumer Connie / NTS-Upstream Norm | Oracle binary user or NTS upstream contributor | [`oracle/driver.ml`](../oracle/driver.ml) header + phase completions | 15-60 min |
 | Joost the BDFL      | Benevolent dictator for life (Joost mag het weten) | Full README + READING-GUIDE + entire history/ tree | as needed |
 
-(Note: several roles were collapsed for overlap after the initial 17-card list (Pete into Nate/Ray; CI Cara and Risk-Officer Rico into Quality Gatekeeper; Connie/Norm grouped) — see the cards above for the current grouping.)
+(Note: several roles were collapsed for overlap after the initial 17-card list (17→10): Pat/Sara, Max/Ruby, Auditor into Scholar, CI/Risk into Quality, Pete into Nate/Ray. Folded roles stay named on surviving cards. Consumer Connie and NTS-Upstream Norm remain separate cards.)
 
 ---
 
