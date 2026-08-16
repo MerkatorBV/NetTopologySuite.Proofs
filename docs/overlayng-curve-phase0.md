@@ -154,3 +154,23 @@ Oracle alignment: `DISC_OVERLAY` already classifies `EXT_TANGENT` /
 `INT_TANGENT` via the exact-Q discriminant (generator family E) — the
 driver was ahead of the theory; this module supplies the missing R-side
 spec. No driver/generator change was needed for this rung.
+
+## The TOUCH pair's DE-9IM (2026-08-16): FF2F01212, cell-sound
+
+**Module**: [`theories/RelateTouchDiscs.v`](../theories/RelateTouchDiscs.v)
+· **Verdict**: **GREEN** (Qed; two Reals axioms on the geometry lemmas,
+the matrix lemmas closed under the global context).
+
+The same witness pair carried into the relate lane (issue #67): its
+DE-9IM matrix is the canonical area/area touches string **FF2F01212**,
+and — unlike the lane's hand-specified constant witnesses
+(`RelateAreaArea.v`) — every cell is backed by a point-set fact
+(`touch_discs_de9im_sound`): the four F-cells are proven empty (the
+triangle squeeze at the kiss), BB = 0 is the EXACT singleton {kiss}
+(two-line reuse of `ext_cap_singleton`), the three 2-cells each contain
+a metric ball, and the two 1-cells are nonempty and ball-free
+(`circle_subset_no_ball`, a radial-scale perturbation — dimension ≤ 1;
+exact curve-dimension semantics deferred, matching the relate capstone's
+own scope). The matrix satisfies OGC `touches` via `pat_touches_1`
+(BI = F, BB nonempty). All statements live in the squared metric — no
+square roots anywhere in the module.
