@@ -234,7 +234,7 @@ In rough order of payoff vs. cost:
 3. **Phase 2 onward** — snap rounding noder (Hobby 1999 +
    Halperin-Packer 2002), planar overlay, etc.  See the
    Phase 0–7 chokepoint table in
-   [`README.md`](../README.md).  Phase 2 builds on Phase 0's
+   [`READING-GUIDE.md`](READING-GUIDE.md#phase-07-the-nts-topological-chokepoint).  Phase 2 builds on Phase 0's
    predicate (overlay needs robust orientation) but does NOT
    depend on closing (1) or (2) — Phase 2 can land using the
    integer-regime soundness alone, just as Phase 1 did.
