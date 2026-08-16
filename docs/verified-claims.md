@@ -126,7 +126,7 @@ window.
 | `Intersect.v : collinear_share_iff_1d_overlap` | **Collinear case (new):** sharing a point ⇔ 1-D extents overlap `[exact]` | 3 |
 | `Segment.v : between_of_on_line_and_coord_range` | Collinear + coord-range bounds ⇒ point lies on the segment `[exact]` | 3 |
 | `Intersect_b64.v : b64_intersect_sign_filtered_sound_small_int` | 5-valued predicate's None/Point verdicts sound on integer coords `[int-b64]` | 4 |
-| `Intersect_b64_exact.v : b64_intersect_point_{x,y}` | Intersection coords carry a Qed forward-error bound (K·ε) `[int-b64]` | 4 |
+| `Intersect_b64_exact_forward_error.v : b64_intersect_point_{x_forward_error,y_forward_error}` | Intersection coords carry a Qed forward-error bound (K·ε; projections + prefix exactness in `Intersect_b64_exact_core.v`, nested-round identity in `Intersect_b64_exact_round_chain.v`) `[int-b64]` | 4 |
 
 `[oracle]` `SignFiltered` bit-exact on 187/187 differential cases.
 **Open:** float coordinate computation (needs `b64_div` + error analysis).
