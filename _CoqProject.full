@@ -3344,8 +3344,10 @@ theories-flocq/PassesThrough_b64_spec_symmetric.v
 # coordinate exactness, max/min bridge); bounds = slices 6-8 (division
 # bridge, correctly-rounded t-bounds, clipped bounds); complete = slices
 # 9-11 (on-grid completeness, conditional headline, rounding reflection);
-# gap_kernel = slices 12-13 (pure-R rational-gap + ulp upper bound --
-# meso-audit B4: 3-axiom, deliberately OFF audit-exceptions.txt);
+# gap_kernel = slices 12-13 (rational-gap + ulp upper bound -- B4's
+# off-list exit corrected 2026-08-16: the slice-13 ulp lemmas mention
+# b64_round in their statements and carry classic, so the file is
+# re-listed; slice-12 lemmas machine-verified clean);
 # separation = slices 14-18 (gap-beats-band, gridbound, the unconditional
 # tight-grid headline).  The umbrella re-exports all five, so the two
 # reverse dependencies import unchanged.

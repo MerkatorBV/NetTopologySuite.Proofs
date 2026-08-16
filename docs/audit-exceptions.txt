@@ -13,13 +13,15 @@
 #     immediately above the file line explaining what makes the file
 #     Category C / transitional and the planned resolution).
 #
-# Current state: 80 files are listed below -- 64 in `theories-flocq/` (the
+# Current state: 88 files are listed below -- 72 in `theories-flocq/` (the
 # initial bulk block for binary ops Bplus/Bminus/Bmult pulling
 # `Classical_Prop.classic` via Flocq, plus additional Category C for
 # snap-rounding, overlay, expansion-arithmetic, and Stage D as documented
 # per-file) and 16 in `theories/` (a distinct R-side lineage: Stdlib
 # `atan`/`Ratan` and `sin_lt_x` pull `Classical_Prop.classic`, documented
-# per-file below).  The Flocq contamination is a pre-existing condition the
+# per-file below).  Per-theorem categorisation of every listed file:
+# docs/category-c-distribution.md (2026-08-16 pass; 1002 theorems -- 362
+# co-located clean, 618 C1, 18 C2, 4 definition seeds).  The Flocq contamination is a pre-existing condition the
 # corpus inherited from Flocq's binary model; the parametric refactor clears
 # files one by one where possible.  Removal from this list is the per-file
 # completion criterion for the binary-op lineage.
@@ -329,12 +331,21 @@ theories-flocq/PassesThrough_b64_spec_symmetric.v
 # PA footers per theorem since B1 (2026-08-15).
 # SPLIT (2026-08-15, B4 executed with user/BDFL direction): the former
 # monolith PassesThrough_b64_grid_exact.v is now five layered modules;
-# the four below inherit this exemption (same classic lineage).  Slices
-# 12-13 were extracted to PassesThrough_b64_grid_gap_kernel.v, which is
-# 3-axiom [exact] (verified: no classic in its PA output) and therefore
-# deliberately NOT on this list — the first PassesThrough-lineage module
-# to leave it.  The umbrella PassesThrough_b64_grid_exact.v is a pure
-# Require Export shell with no PA output of its own — also not listed.
+# the five below inherit this exemption (same classic lineage).  The
+# umbrella PassesThrough_b64_grid_exact.v is a pure Require Export shell
+# with no PA output of its own — not listed.
+# CORRECTION (2026-08-16 categorisation pass): the B4 exit of
+# _grid_gap_kernel.v was premature.  The module had no Print Assumptions
+# footer of its own (its lemmas were printed only from the sibling
+# separation module), so the per-file audit never saw that the slice-13
+# ulp lemmas (b64_ulp_round_le_bpow / _unit) mention `b64_round` in their
+# STATEMENTS and carry `Classical_Prop.classic` (Category C1).  The
+# slice-12 rational-gap lemmas (IZR_abs_ge_1, rational_gap,
+# grid_quotient_ratio) are machine-verified classic-free.  The module now
+# prints its own leaves and is re-listed with its siblings; the clean
+# half can leave again only under a per-theorem registry (policy
+# Option 2).
+theories-flocq/PassesThrough_b64_grid_gap_kernel.v
 theories-flocq/PassesThrough_b64_grid_core.v
 theories-flocq/PassesThrough_b64_grid_bounds.v
 theories-flocq/PassesThrough_b64_grid_complete.v
