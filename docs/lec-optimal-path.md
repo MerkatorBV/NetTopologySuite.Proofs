@@ -318,25 +318,31 @@ flatten rung closed 16 Aug 2026 (`LECFlattenRow.v`, F5); the
 segment/facet rung closed 16 Aug 2026 (`LECSegmentRow.v`, F6).  Every
 per-component metric the engine's `ObstacleDistance` table computes now
 has a Qed exactness spec.  **Candidate completeness closed
-WITNESS-SCOPED 16 Aug 2026** (`LECCandidateVertex.v`, F7) and **GENERAL
-FOR POINT SITES 16 Aug 2026** (`LECCandidateComplete.v`, F8): every
-maximiser over arbitrary finite point-site sets is an interior Voronoi
-vertex, an edge bisector crossing, or a domain vertex — the theorem a
-trusted O(n log n) LEC needs, with F8 proving the interiority premise
-load-bearing.  What remains is the weighted variant:
+WITNESS-SCOPED 16 Aug 2026** (`LECCandidateVertex.v`, F7), **GENERAL
+FOR POINT SITES 16 Aug 2026** (`LECCandidateComplete.v`, F8), and
+**WEIGHTED (the Apollonius summit) 16 Aug 2026**
+(`LECCandidateWeighted.v`, F9): every maximiser over arbitrary finite
+point-site sets is an interior Voronoi vertex, an edge bisector
+crossing, or a domain vertex — the theorem a trusted O(n log n) LEC
+needs — and the same interior classification holds for the
+additively-weighted clearance min (dist(p, cᵢ) − rᵢ) that
+`min_disc_dist_weighted` reduces disc sites to.  The prediction below
+verified exactly: the kernel's shift expansion survived verbatim
+(per-site levels w + rᵢ), the sum-direction supplier did NOT — F9 pins
+a weighted tie (norms 1 vs 5, a 3-4-5 instance) where the F8 formula
+u₁+u₂ strictly WORSENS clearance for every t ∈ (0, 1/3) — and the
+weighted-bisector normal v = d₂·u₁ + d₁·u₂ replaced it, with one
+identity (|v|² = 2·d₁·d₂·N, ⟨v,uᵢ⟩ = dᵢ·N for N = d₁·d₂ + ⟨u₁,u₂⟩)
+running the whole generic/antipodal/impossible case split
+square-root-free.  What remains:
 
-1. **Candidate completeness, WEIGHTED** (the Apollonius summit): the
-   same classification for the additively-weighted clearance
-   min (dist(p, cᵢ) − rᵢ) that `min_disc_dist_weighted` reduces disc
-   sites to.  The improvement kernel's shift expansion survives
-   verbatim (per-site radius r + wᵢ), but the two-nearest supplier does
-   not: with UNEQUAL norms |u₁| ≠ |u₂| the sum direction's inner
-   product ⟨u₁+u₂, u₁⟩ = |u₁|² + ⟨u₁,u₂⟩ can go negative, so the
-   weighted-bisector normal must replace it.  New supplier, same
-   engine.
+1. **Edge-constrained weighted variant**: the weighted analogue of
+   `within_one_improvable_on_segment` (unique weighted-nearest site at
+   a point strictly inside a domain edge) — same sign-matched ±e
+   supplier expected.
 2. **Polygon assembly**: a concrete convex-polygon domain type packaging
    interior/edge/vertex into one disjunctive classification statement —
-   pure plumbing over the two kernels once a polygon type exists in the
+   pure plumbing over the kernels once a polygon type exists in the
    lane.
 3. **Runtime half**: stays engine-side (perf gate); the corpus only ever
    adjudicates exactness.

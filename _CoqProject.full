@@ -2753,6 +2753,7 @@ theories/LECFlattenRow.v
 # LECObstacleDistance.v, LargestEmptyCircle.v.
 theories/LECCandidateVertex.v
 theories/LECCandidateComplete.v
+theories/LECCandidateWeighted.v
 
 # Issue #65 curve-aware buffer, rung 2: the SQL/MM three-point bridge.
 # radial_offset (homothety about the center, pure rational arithmetic,
