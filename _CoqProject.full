@@ -2483,6 +2483,7 @@ theories/DiscOverlay.v
 # Supplies the R-side spec for DISC_OVERLAY's EXT_TANGENT/INT_TANGENT
 # configs (generator family E).  Full-only: imports DiscOverlay.v.
 theories/OverlayTouchRow.v
+theories/RelateTouchDiscs.v
 # General circular noding rung 1: splitting an arc at an N-AA node is sound,
 # witness-scoped on the DISC_OVERLAY locked fixture — child cut-chord side
 # tests = px-trichotomy at the node (chord-sign form, no atan2), cover and
