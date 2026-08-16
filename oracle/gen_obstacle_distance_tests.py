@@ -585,7 +585,29 @@ else:
     emit("  [equal weights: the F8 sum-direction works again]   ok")
 emit()
 
+emit("## L. Chord-necessity counterexample (MICChordNecessity.v, ledger F10):")
+emit("##    the exact ARC row and the chord SEG row answer DIFFERENTLY at the")
+emit("##    circumcentre -- 5 vs 3 on the integer 3-4-5 arc -- so a chord swap")
+emit("##    is structurally inexact while the cell certificate needs no chord.")
+# L1: the exact arc metric at the centre is the radius, bit-exact
+# (arc_dist_centre + mic345_radius: centre query hits the endpoint fold).
+ARC_L = ("ARC", 3, 4, 5, 0, 3, -4)
+al = assess("F10 arc (3,4)-(5,0)-(3,-4) at centre -> 5", 0, 0, [ARC_L],
+            pin=5.0, mirror_check=True)
+# L2: the arc's own chord answers 3 at the same query (foot (3,0)).
+SEG_L = ("SEG", 3, 4, 3, -4)
+sl = assess("F10 chord (3,4)-(3,-4) at centre -> 3", 0, 0, [SEG_L],
+            pin=3.0, mirror_check=True)
+# L3: the understatement itself (chord_of_arc_understates_at_centre).
+if al is not None and sl is not None and not (sl[0] < al[0] - 1e-12):
+    emit(f"  !! L_UNDERSTATE chord did not understate: {sl[0]!r}"
+         f" >= {al[0]!r}")
+    failures += 1
+else:
+    emit("  [the chord strictly understates the exact metric (F10)]   ok")
+emit()
+
 if failures:
     emit(f"# {failures} PROVEN-invariant violation(s) -- RocqRefRunner bug.")
     sys.exit(1)
-emit("# All proven invariants (I1-K4) hold across the suite.")
+emit("# All proven invariants (I1-L3) hold across the suite.")

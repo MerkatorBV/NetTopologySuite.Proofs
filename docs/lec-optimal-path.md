@@ -210,6 +210,70 @@ gate's 15% slack) stays engine-side by design.
   interior theorem.  An implementation may use the ≥ 3-nearest filter
   only where a 2-D ball fits inside the domain.
 
+### F9 — "the sum-direction supplier survives weighting" (REFUTED · `LECCandidateWeighted.v`)
+
+- **Hypothesis** (H-SUM-WEIGHTED): "F8's two-nearest supplier d = u₁+u₂
+  works for the additively-weighted clearance too — a tie is a tie" —
+  the reading under which the Apollonius rung would be a renaming pass.
+- **Verdict**: `f9_unweighted_supplier_refuted`.  At the weighted tie
+  p = (0,0), discs ((−1,0), ½) and ((4,−3), 9⁄2) — norms 1 vs 5,
+  clearance ½ — the sum direction u₁+u₂ = (−3,3) strictly WORSENS the
+  clearance for every t ∈ (0, 1/3) (`f9_sum_direction_worsens`: the
+  squared distance to c₁ along it is 1 − 6t + 18t² < 1).  No step bound
+  rescues it.
+- **Why it fails structurally**: with equal norms,
+  ⟨u₁+u₂, u₁⟩ = |u₁|² + ⟨u₁,u₂⟩ ≥ |u₁|² − |u₁||u₂| = 0; with UNEQUAL
+  norms the same bound reads |u₁|² − |u₁||u₂| < 0 — the sum direction
+  can point INTO the nearer site.  The tie is in the weighted values,
+  not the norms, and the supplier only ever saw the norms.
+- **Guide**: the repaired supplier is the weighted-bisector normal
+  v = d₂·u₁ + d₁·u₂ (square-root-free; ⟨v,uᵢ⟩ = dᵢ·N with
+  N = d₁d₂ + ⟨u₁,u₂⟩, one sign for the whole case split).  With equal
+  weights v = d·(u₁+u₂): F8 is the equal-weights slice
+  (`equal_weights_tie_unweighted`).
+
+### F10 — "MIC can only be made performant with chord approximation" (REFUTED · `MICChordNecessity.v`)
+
+- **Hypothesis** (H-CHORD): "the MIC branch-and-bound certificate — JTS
+  `Cell.getMaxDistance` soundness, the fact that makes grid pruning
+  correct — requires linearizing curved boundaries into chords."  (The
+  wall-clock half of "performant" stays engine-side per policy; the
+  corpus adjudicates the mathematical necessity claim.)
+- **Verdict**: counterexample, in both directions.  POSITIVE:
+  `mic_cell_bound_exact_arc` — the 9004-d cell bound instantiated at
+  the attaining point of the exact arc metric gives
+  r' ≤ arc_dist a c + √2·h with the closed-form callback and no chord
+  anywhere (same for segment facets, `mic_cell_bound_exact_seg`; the
+  1-Lipschitz certificates fall out of the same exactness pair).
+  NEGATIVE: chords are structurally inexact — EVERY chord of a circle
+  strictly understates the clearance at the centre
+  (`chord_strictly_understates`, parallelogram law: the midpoint sits
+  at squared depth r² − |AB|²/4), in particular the arc's own chord
+  (`chord_of_arc_understates_at_centre`).  The integer 3-4-5 instance
+  pins the gap: arc (3,4)→(5,0)→(3,−4) about (0,0), exact clearance 5,
+  chord clearance 3 (`mic345_chord_gap`).
+- **Why it fails structurally**: the certificate never consumed
+  linearity — it is two triangle steps over an abstract obstacle
+  region, and the only thing the metric must supply is exactness
+  (lower bound + attained), which the typed arc row proved.  Chord
+  refinement, by contrast, converges from below and reaches the arc
+  value at no finite resolution.
+- **Guide**: swap the clearance callback, keep the grid — exactly the
+  jts-curve engine posture (JTS PR #8).  The certified per-row metrics
+  make the swap sound; the chord path is a lower bound, usable only
+  as a pruning UNDERestimate, never as the answer.
+- **WAYPOINT (parked path, not a verdict)**: the O(n log n)
+  candidate-walk half for curved boundaries is NOT settled.  The F8/F9
+  improvement kernels fix their sites — the kernel hypothesis names a
+  per-site away-vector p − s with s constant — but an arc obstacle's
+  nearest point a*(p) moves with p, so the two-nearest supplier does
+  not instantiate as-stated.  The attempted reduction (freeze a*(p) as
+  a point site per step) fails in the kernel's tie case: the frozen
+  site's distance is only a lower bound off the foot, and strict
+  improvement needs the true arc distance.  Candidate completeness
+  over arc obstacles — bisectors of arcs are conic loci — is the next
+  genuine rung on this wall.
+
 ## What is Qed today (the verified bridge under the engine's table)
 
 - **Filled-disc row exact**: `empty_disk_disc_iff` — emptiness of the
