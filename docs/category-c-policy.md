@@ -239,11 +239,22 @@ Per the May 2026 discussion that scoped this document, four pieces
 of evidence would sharpen the policy choice:
 
 1. **Full A/B/C1/C2 distribution.** A classification pass on every
-   currently-tainted theorem (estimated 95 PA-audited entries across
-   12 files; 76 of those pull `classic`). The C1:C2 ratio determines
+   currently-tainted theorem. The C1:C2 ratio determines
    how much leverage tactical re-proof has versus structural refactor.
-   Not done. Sample-based estimation suggests C1 dominates, but the
-   sample size is small (one theorem inspected per file).
+   **DONE (2026-08-16)** — see `docs/category-c-distribution.md` (+
+   machine-readable `.tsv`). The corpus had grown well past the May
+   estimate: 1002 PA-audited theorems across the 88 exceptions-listed
+   files. Result: **362 A / 618 C1 / 18 C2 / 4 definition seeds — C1:C2
+   ≈ 34:1**, confirming the sample-based guess decisively. Tactical
+   re-proof can clean at most 18 theorems (five `theories/` arc files
+   are all-C2 and could leave the list that way); everything else is
+   co-located-clean or structurally inherent. Method: per-theorem PA
+   attribution from an `--output-sync=target` build, then
+   `ltac:(type of _)` statement probes to split type-level from
+   proof-level taint. The pass also found and fixed two no-footer audit
+   blind spots (see the distribution doc's §4). Category B
+   sub-classification within C1 remains a content judgment, not
+   attempted mechanically.
 
 2. **Representative C theorem from each file** with a paragraph on
    what each theorem documents (its operational content) and what a

@@ -1,19 +1,26 @@
 (* ============================================================================
    NetTopologySuite.Proofs.Flocq.PassesThrough_b64_grid_gap_kernel
    ----------------------------------------------------------------------------
-   SLICES 12-13: the pure-R gap kernel (meso-audit B4 extraction).
+   SLICES 12-13: the gap kernel (meso-audit B4 extraction).
 
    Slices 12-13, extracted per meso-audit B4 (user-directed 2026-08-15 --
    the explicit BDFL ack the docs/category-c-policy.md SS10 pause asks
    for): the rational-gap kernel (two distinct integer ratios differ by at
    least 1/(|da||db|); each grid Liang-Barsky t-bound is exactly such a
    ratio) and the ulp UPPER bound (|x| <= 2^e => ulp(round x) <=
-   2^(e+1-prec), unit instance 2^-52).  3-axiom [exact] throughout: the
-   proofs use Stdlib + Flocq generic rounding + the B64_bridge round/ulp
-   helpers only -- no HotPixel/SnapRounding/compute imports, no
-   Classical_Prop.classic anywhere in the assumption footprint.  This
-   module is therefore deliberately NOT on docs/audit-exceptions.txt --
-   the first PassesThrough-lineage module to LEAVE the list.
+   2^(e+1-prec), unit instance 2^-52).
+
+   CORRECTION (2026-08-16 categorisation pass): B4's "3-axiom [exact]
+   throughout, off audit-exceptions.txt" claim was WRONG for slice 13.
+   The ulp lemmas' statements mention `b64_round` (= Generic_fmt.round at
+   the binary64 format), whose closure carries `Classical_Prop.classic`
+   -- Category C1, type-level, per docs/category-c-policy.md SS3.  Only
+   the slice-12 rational-gap lemmas (IZR_abs_ge_1, rational_gap,
+   grid_quotient_ratio) are classic-free (machine-verified 2-axiom).
+   The miss happened because this module had no Print Assumptions footer
+   of its own; the audit footprint below closes that hole, and the file
+   is back on docs/audit-exceptions.txt until a per-theorem registry
+   (policy Option 2) lets the clean half stand alone.
 
    Split out of the former 1896-line PassesThrough_b64_grid_exact.v
    monolith (issue #66 C1; topic: binary64, claimId: 66-c1, witness:
@@ -147,3 +154,20 @@ Proof.
   - replace (bpow radix2 0) with 1%R by (simpl; lra). exact Hx.
 Qed.
 
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.  Added by the 2026-08-16 categorisation pass: this      *)
+(* module previously had NO Print Assumptions footer of its own (its         *)
+(* lemmas were printed only from the sibling separation module), which is    *)
+(* exactly why the meso-audit B4 exit missed that the slice-13 ulp lemmas    *)
+(* mention `b64_round` in their statements and therefore carry               *)
+(* `Classical_Prop.classic` (Category C1).  The slice-12 rational-gap        *)
+(* lemmas remain classic-free.  Every module prints its own leaves so the    *)
+(* per-file audit sees them.                                                  *)
+(* -------------------------------------------------------------------------- *)
+
+Print Assumptions IZR_abs_ge_1.
+Print Assumptions rational_gap.
+Print Assumptions grid_quotient_ratio.
+Print Assumptions b64_ulp_round_le_bpow.
+Print Assumptions b64_ulp_round_le_unit.

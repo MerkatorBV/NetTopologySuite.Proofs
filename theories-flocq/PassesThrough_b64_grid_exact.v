@@ -82,7 +82,9 @@
    SPLIT (2026-08-15): the 18 slices now live in five layered modules --
    PassesThrough_b64_grid_core (S1-5), _grid_bounds (S6-8),
    _grid_complete (S9-11), _grid_gap_kernel (S12-13; pure-R, off
-   audit-exceptions per meso-audit B4), _grid_separation (S14-18).
+   audit-exceptions per meso-audit B4; B4's exit corrected 2026-08-16 --
+   the slice-13 ulp lemmas are C1-tainted via b64_round in their
+   statements, so the module is re-listed), _grid_separation (S14-18).
    This file is the Require Export umbrella: every name is re-exported,
    so importers are unaffected.
    claimId: 66-c1

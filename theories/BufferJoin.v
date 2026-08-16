@@ -166,3 +166,19 @@ Proof.
   intros d ein eout. unfold arc_length.
   rewrite corner_arc_sweep_eq_turn. reflexivity.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.  Added by the 2026-08-16 categorisation pass: this      *)
+(* module previously had NO Print Assumptions footer, so the per-file audit *)
+(* had no blocks to check (the same no-footer blind spot found on           *)
+(* PassesThrough_b64_grid_gap_kernel.v).  Every module prints its own       *)
+(* leaves.                                                                   *)
+(* -------------------------------------------------------------------------- *)
+
+Print Assumptions vcross_vperp_vperp.
+Print Assumptions vdot_vperp_vperp.
+Print Assumptions corner_arc_sweep_eq_turn.
+Print Assumptions atan2_pos_scale.
+Print Assumptions angle_between_v_scale_l.
+Print Assumptions corner_arc_sweep_eq_turn_unit.
+Print Assumptions round_join_arc_length_eq_turn.
