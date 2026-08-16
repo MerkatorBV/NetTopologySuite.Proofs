@@ -123,3 +123,34 @@ On the pinned pairs (`pin_disjoint_squares`, `pin_covers_squares`):
 - Phase 1+: noding-side correctness (that is the existing
   `OverlayGraph.v` / `OverlayContactSound.v` lane, downstream of this
   algebra).
+
+## Candidate completeness (2026-08-16): REFUTED for the 5-relation matrix, repaired with the TOUCH row
+
+**Module**: [`theories/OverlayTouchRow.v`](../theories/OverlayTouchRow.v) ·
+**Verdict**: both halves **GREEN** (Qed, classical-reals trio only).
+
+The Phase 0 case matrix at region level (self · disjoint · covers ·
+coveredBy · properly-crossing, positive-radius discs) is **not** candidate
+complete: `phase0_relation_complete_hypothesis_refuted` exhibits the
+externally tangent pair — unit discs at (0,0)/(2,0) — that fits no row,
+because `discs_properly_intersect` is deliberately STRICT and tangency
+sits exactly on its boundary. The degenerate op values at the kiss are
+pinned Qed: CAP collapses to the singleton kiss point
+(`ext_cap_singleton`, dimension 0 from a 2-D ∩ 2-D query — the R1
+retention boundary case), SUB/XOR are exact-minus-one-point
+(`ext_sub_off_by_point` / `ext_xor_off_by_point`), CUP's shell
+self-touches (`ext_kiss_on_both_circles`, V1). Internal tangency is not a
+gap — covers fires (`int_covers`) — but its SUB annulus pinches
+(`int_kiss_pinch`, `int_kiss_not_in_crescent`).
+
+The repair is one new relation row, TOUCH := nonempty intersection with
+disjoint interiors, and the completeness theorem is generic:
+`disc_relations_complete_with_touch : phase0_relation A B ∨ disks_touch A B`
+for all positive discs (trichotomy on d vs |r1 − r2| and r1 + r2; radial
+kiss witness c1 + (r1/d)(c2 − c1)). External tangency is exactly the
+touch row; internal tangency lands in covers.
+
+Oracle alignment: `DISC_OVERLAY` already classifies `EXT_TANGENT` /
+`INT_TANGENT` via the exact-Q discriminant (generator family E) — the
+driver was ahead of the theory; this module supplies the missing R-side
+spec. No driver/generator change was needed for this rung.
