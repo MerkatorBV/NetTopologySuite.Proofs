@@ -14,15 +14,18 @@ Theorem fast_expansion_sum_nonoverlap_shewchuk :
     nonoverlap_shewchuk (fast_expansion_sum e f).
 ```
 
-**Status**: Admitted with deferred-proof registration in
-`docs/admitted-deferred-proofs.txt`.
+**Status**: Archived false-as-stated (RESOLVED-VIA-ABORT / Qed-closed
+disproof). The deferred-proof registry is empty; there is no live
+deferred entry.
 
 > ## ⚠️ FINDING (verified) — the Route-2 `cascade_pathA_chain` reduction is too strong; go back to square 1
 >
 > Do **not** try to prove `cascade_pathA_chain_from_nonoverlap` (discharging
 > the Route-2 conditional headline's hypothesis from `nonoverlap` inputs).
-> **It is false**, so it can never be discharged. The headline itself is
-> still true — the *reduction* is unsound.
+> **It is false**, so it can never be discharged. The Theorem 13 headline
+> `fast_expansion_sum_nonoverlap_shewchuk` is itself archived
+> false-as-stated (RESOLVED-VIA-ABORT / Qed-closed disproof); the
+> *reduction* is also unsound.
 >
 > - The conditional headline's hypothesis requires
 >   `cascade_invariant_handover (initial_cascade_state x prov) ((x2,_)::_)`
@@ -477,7 +480,8 @@ counterexample registry already characterises).
      induction, deriving the final state's invariant.
   7. Extract `nonoverlap_shewchuk (fast_expansion_sum e f)` from the
      final state's clause (a).
-  8. Remove the entry from `docs/admitted-deferred-proofs.txt`.
+  8. No deferred-registry update: the registry is empty and the
+     headline is archived false-as-stated.
 
 **Revised session count estimate**: 3-4 sessions.
   - Session 1: §6.1 + §6.2 + define clauses (~150 lines).

@@ -24,8 +24,8 @@ which geometric primitives have formal proofs.
   4. [`audit-phase3-overlay.md`](audit-phase3-overlay.md) § headers — polygon overlay correctness
      (Union/Intersection/Difference/SymDiff).
   5. [`audit-phase4-curves.md`](audit-phase4-curves.md) § headers — arc/curve overlay status
-     (SQL/MM CIRCULARSTRING; conditional headline lands, JCT gap
-     precisely characterised).
+     (SQL/MM CIRCULARSTRING; `arc_overlay_correct_chord_approx` is
+     unconditional Rung-1, JCT gap precisely characterised).
 
 For the citable index of every Qed-closed theorem (with axiom footprint
 and regime), see [`verified-claims.md`](verified-claims.md).
@@ -35,9 +35,10 @@ Shewchuk Theorem 13 deep-dives (research-grade), and the Hobby-lemma
 docs (cell-snap-rounding internals).
 
 **Take away.** The corpus has Qed-closed soundness for orient2d,
-intersection, snap-rounding's preservation invariant, and conditional
-headlines for polygon overlay and curve overlay. Gaps are precisely
-named, not handwaved.
+intersection, snap-rounding's preservation invariant, a conditional
+headline for polygon overlay (`overlay_ng_correct_conditional`), and
+unconditional Rung-1 curve overlay (`arc_overlay_correct_chord_approx`).
+Gaps are precisely named, not handwaved.
 
 ---
 
@@ -70,7 +71,7 @@ lane's open questions in [`clothoid-open-questions-triage.md`](clothoid-open-que
 
 **Skip.** Phase 0/1/2 unless you care about the underlying primitives.
 
-**Take away.** Arc-overlay correctness lands conditionally
+**Take away.** Arc-overlay correctness is unconditional Rung-1
 (`arc_overlay_correct_chord_approx`); the b64 in-circle layer now has
 Qed-closed sign + integer-regime value exactness ([`theories-flocq/InCircle_b64_exact.v`](../theories-flocq/InCircle_b64_exact.v),
 PR #146). Arc-line coordinates are Scope A only ([`theories-flocq/ArcLineIntersect_b64_exact.v`](../theories-flocq/ArcLineIntersect_b64_exact.v)
@@ -172,14 +173,15 @@ engagement-level syntheses.
 **deferred-proof registry** (Admitted with documented discharge
 plan). Both make load-bearing gaps precise.
 
-**Methodology meta-pattern.** Four current headlines instantiate
+**Methodology meta-pattern.** Two current headlines instantiate
 the conditional pattern (`hobby_theorem_4_1_conditional`,
-`overlay_ng_correct_conditional`, `arc_overlay_correct_chord_approx`,
-`point_in_ring_correct_jct`). Each is Qed-closed under 2-3 named
+`overlay_ng_correct_conditional`). Each is Qed-closed under named
 thesis-shaped hypotheses; the corpus's contribution is the
 structural composition plus the precise naming of the load-bearing
-gaps, not the discharge of those gaps. This pattern is the corpus's
-shipping discipline; cite as such.
+gaps, not the discharge of those gaps. `arc_overlay_correct_chord_approx`
+is unconditional Rung-1. `point_in_ring_correct_jct` is the vacuous
+stdlib shell, not a current conditional headline. This pattern is the
+corpus's shipping discipline; cite as such.
 
 **Tiers (when auditing).** Forbidden / counterexample / deferred-proof.
 
@@ -329,10 +331,12 @@ protocol reference).
 
 **Then:**
 
-  1. The [`oracle/driver.ml`](../oracle/driver.ml) file header — full protocol for all
-     modes (SIMPLIFY, ORIENT, INTERSECT, PASSES_THROUGH,
-     EDGE_IN_RESULT, INCIRCLE_SIGN, ARC_CHORD_CROSSES_CIRCLE,
-     ARC_PASSES_THROUGH_PIXEL).
+  1. The [`oracle/driver.ml`](../oracle/driver.ml) file header — protocol
+     reference for the documented modes (about 26). Dispatch is larger
+     (about 60). `HOLE_*` is help+dispatch only (not a header protocol
+     entry). `INCIRCLE_SIGN` / `ARC_CHORD_CROSSES_CIRCLE` are extracted
+     (MIGRATED), not HAND-ROLLED. `PASSES_THROUGH_*` dispatch is
+     `*_compute`, not the R-spec names.
   2. [`.github/workflows/build-oracle.yml`](../.github/workflows/build-oracle.yml) — how `oracle_bin` is
      built and published.
   3. The Phase 4 audit + recent `Arc*_b64.v` headers for the trust

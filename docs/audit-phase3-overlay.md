@@ -21,13 +21,12 @@ the inputs. That equality is the Phase 3 headline.
 > `docs/audit-phase3-milestone5.md` and the landed conditional headline.
 > Stale passages:
 >
-> - **Registry counts (§2).** "Deferred-proof registry (3 entries)"
->   (Shewchuk + `hobby_lemma_4_2` + `hobby_lemma_4_3`) and "Counterexample
->   registry (3 entries)" are both out of date. `hobby_lemma_4_2` is now
->   Qed-closed; the Shewchuk nonoverlap headline and `hobby_lemma_4_3_no_proper`
->   moved to the **counterexample** registry. The live state is **1 deferred**
->   (`extract_rings_valid`) and **6 counterexample** — see
->   `docs/admitted-deferred-proofs.txt` and `docs/admitted-counterexamples.txt`.
+> - **Registry counts (§2).** Live deferred-proof registry is empty;
+>   live counterexample registry is empty (historical rows commented /
+>   RESOLVED-VIA-ABORT). `scripts/check_admitted.sh` at this SHA reports
+>   0 total. Earlier counts ("Deferred-proof registry (3 entries)",
+>   "1 deferred (`extract_rings_valid`) and 6 counterexample") are
+>   historical.
 > - **Option A/B is settled (§4).** Milestone 5 landed Option A *exact-iff in
 >   conditional form* (`overlay_ng_correct_conditional`, Qed-closed) with
 >   Option B as a 2-line corollary — not the Option-B default recommended
@@ -56,8 +55,9 @@ NTS implements this in three stages (mirroring JTS's `OverlayNG`):
      non-crossing arrangement of snap-rounded line segments.  Phase 2
      formalised this for the snap-rounding noder; the topological
      correctness is captured by `fully_intersected (snap_round_segments
-     A)` via `hobby_theorem_4_1_conditional` (conditional on
-     `hobby_lemma_4_3`, currently a deferred-proof entry).
+     A)` via `hobby_theorem_4_1_conditional` (Qed under a named
+     per-pair preservation premise; `hobby_lemma_4_3_no_proper` is
+     false as stated, not a live deferred-proof entry).
 
   2. **Topology graph (Milestone 2 -- this session).**  Build a planar
      graph (`TopologyGraph`) whose vertices are the snap-rounded
@@ -102,8 +102,8 @@ the deferred dependencies sit at the entry to Link 1.
         fully_intersected (snap_round_segments A).
 
   Conditional: the second hypothesis is Hobby Lemma 4.3 in
-  hypothesis form.  Discharging it unconditionally requires closing
-  `hobby_lemma_4_3` (deferred-proof).
+  hypothesis form.  The no-proper half is false as stated
+  (Qed-closed refutation); there is no live deferred-proof entry.
 
 **Link 2 -- the topology graph is well-formed.**
 
@@ -434,7 +434,7 @@ trail:
 | `fully_intersected`                  | Phase 2           | reused        |
 | `snap_round_segments`                | Phase 2           | reused        |
 | `hobby_theorem_4_1_conditional`      | Phase 2           | reused (cond) |
-| `hobby_lemma_4_3`                    | Phase 2 deferred  | gates Link 1  |
+| `hobby_lemma_4_3_no_proper`          | false as stated   | Qed-closed refutation |
 | `TopologyGraph`                      | OverlayGraph.v M2 | this session  |
 | `valid_topology_graph`               | OverlayGraph.v M2 | this session  |
 | `build_graph`                        | future M3         | 2-3 sessions  |
@@ -447,7 +447,7 @@ trail:
   - **Build in Phase 3:** `TopologyGraph`, `build_graph`,
     `correct_labels`, `extract`.
   - **Thesis-shaped:** Link 4 (Milestone 5), 6-10 sessions.
-  - **Critical-path conditional blocker:** `hobby_lemma_4_3`
-    (currently deferred-proof; estimated 4-6 weeks per
-    `docs/hobby-theorem-proof-structure.md`) gates the
-    unconditional form of Link 1.
+  - **Critical-path conditional blocker:** the named per-pair
+    preservation premise of `hobby_theorem_4_1_conditional`. The
+    no-proper half is false as stated (Qed-closed refutation), not
+    a live deferred-proof entry.
