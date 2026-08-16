@@ -14,7 +14,7 @@ The [Reading Guide](docs/READING-GUIDE.md) and friendly [Help cards](docs/HELP.m
 
 See your role in [docs/HELP.md](docs/HELP.md) (or the full [docs/READING-GUIDE.md](docs/READING-GUIDE.md)):
 
-- **Newbie Nate** (first contribution): Start with `make help` and `docs/pythagoras-for-beginners.v`. Then `docs/development-environment.md` if you are installing a toolchain. If you have literally never used a proof assistant, open `docs/pythagoras-for-beginners.v` first and step through it. Then pick the smallest entry in `admitted-deferred-proofs.txt` whose discharge plan you understand. Or a "WHAT IS QED-CLOSED / WHAT REMAINS OPEN" item from one of the audit docs. First PRs are typically small lemmas that close part of a registered deferred proof.
+- **Newbie Nate** (first contribution): Start with `make help` and `docs/pythagoras-for-beginners.v`. If you have literally never used a proof assistant, open `docs/pythagoras-for-beginners.v` first and step through it. Then pick the smallest entry in `admitted-deferred-proofs.txt` whose discharge plan you understand. Or a "WHAT IS QED-CLOSED / WHAT REMAINS OPEN" item from one of the audit docs. First PRs are typically small lemmas that close part of a registered deferred proof.
 
 - **Tech-Lead Tess / Product-Owner Pat** (designing engagements, scoping): Work from the retros (`slice-a-retro.md`, `slice-a-piece-5b-retro.md`, `phase*-retro.md`, `stage-d-retro.md`), seam maps (`point-in-ring-seams-3-5-7-red.md` or `point-in-ring-jct-path.md`), and proof-structure docs (`hobby-theorem-proof-structure.md`, `shewchuk-theorem-13-proof-structure.md`). Use the "Red / Green / Refactor / Stopping conditions" template when proposing sessions. Two-route design and explicit "named hypotheses" for conditional headlines are the current methodology.
 
@@ -26,7 +26,7 @@ See your role in [docs/HELP.md](docs/HELP.md) (or the full [docs/READING-GUIDE.m
 
 - **Consumer Connie / NTS-Upstream Norm**: `oracle/driver.ml` header (the protocol) + the phase completion docs that map NTS algorithms to their verified mirrors. Bit-exact agreement claims are limited to the documented integer-safe regimes.
 
-- **Joost the BDFL (Joost mag het weten)**: You already know (or will quickly form) the complete picture. You have final say on scope, architecture, what stays at top-level `docs/` vs. `history/`, and any tie-breakers during pruning or design. Your path legitimately includes the entire archive.
+- **Joost the BDFL (Joost mag het weten)**: You already know (or will quickly form) the complete picture. BDFL on corpus honesty and pruning, not product owner. Jeroen is PO. Your path legitimately includes the entire archive.
 
 - **GIS Gus / BIM Bea / Newbie Nate (Plain Reader Pete)**: You probably don't need to contribute proofs directly. The phase completion and audit documents are written for you. If you have zero prior with proof assistants, start with `docs/pythagoras-for-beginners.v`. If you find a gap between a proof and real NTS/JTS behaviour, open an issue with a minimal reproducer.
 

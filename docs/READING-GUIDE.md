@@ -45,7 +45,9 @@ Gaps are precisely named, not handwaved.
 ## 🏗️ BIM Bea
 
 **Role.** Models as-built geometry; cares about CIRCULARSTRING /
-COMPOUNDCURVE / arc primitives.
+COMPOUNDCURVE / CURVEPOLYGON (SQL/MM ISO/IEC 13249-3). NTS `Flatten()`
+linearizes those curves to chords before overlay — Flatten is lossy
+and is not the curve.
 
 **Start at.** [`audit-phase4-curves.md`](audit-phase4-curves.md), then:
 
@@ -245,7 +247,7 @@ stating stopping conditions up front prevents scope creep mid-session.
 
 **Role.** First contribution to the corpus; or casual reader who picked up the repo from a link and wants the elevator pitch; or absolute beginner with zero prior exposure to proof assistants (Rocq/Coq).
 
-**Start at.** [`README.md`](../README.md) (first screen: `Qed.`, no live `Admitted`, three classical-reals axioms) or, for the long-form invariant, [The invariant](#the-invariant) below.
+**Start at.** `make help` + [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) (the 60-second / zero-prior path). The [`README.md`](../README.md) first screen is the elevator. Long-form invariant: [The invariant](#the-invariant) below.
 
 (If you have literally never seen a proof assistant before: open [`docs/pythagoras-for-beginners.v`](pythagoras-for-beginners.v) in an IDE (CoqIDE / VSCode + VSCoq) and step through it. It is deliberately self-contained, starts from `Record Point`, defines `dist_sq`, proves the 3-4-5 case first with `ring` then explicitly with asserts/rewrites for pedagogy, and pre-bunks "why spend so much compute on obvious geometry?": even Pythagoras is non-trivial once every algebraic step must be justified from the axioms; the load-bearing chokepoints like orientation/intersection/snap-rounding are what justify the engineering investment.)
 
@@ -437,8 +439,8 @@ In pruning work, Joost is the explicit exception to the actor filter and the per
 
 | Mnemonic | Role | First doc | Reading time |
 |---|---|---|---|
-| Newbie Nate (incl. Plain Reader Pete / Rocq Rookie Ray) | Casual reader / first contrib / zero-knowledge Coq on-ramp via pythagoras + sqrt3 example | [`README.md`](../README.md) (3 ¶) + [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) + [`sqrt3-irrational-for-beginners.v`](sqrt3-irrational-for-beginners.v) + dev-env | 1-10 min + examples |
-| GIS Gus             | GIS user                    | [`README.md`](../README.md) → `phase[0-2]-*.md`        | 30 min |
+| Newbie Nate (incl. Plain Reader Pete / Rocq Rookie Ray) | Casual reader / first contrib / zero-knowledge Coq on-ramp via pythagoras + sqrt3 example | `make help` + [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) + [`sqrt3-irrational-for-beginners.v`](sqrt3-irrational-for-beginners.v) | 1-10 min + examples |
+| GIS Gus             | GIS user                    | [`README.md`](../README.md) → `phase[0-2]-*.md` → [`audit-phase3-overlay.md`](audit-phase3-overlay.md) → [`audit-phase4-curves.md`](audit-phase4-curves.md) | 30 min |
 | BIM Bea             | BIM user                    | [`audit-phase4-curves.md`](audit-phase4-curves.md)               | 1 h |
 | Quality Gatekeeper (Max/Ruby) | Corpus maintainer + PR reviewer + CI/Risk | [`axiom-allowlist.txt`](axiom-allowlist.txt) + registries + [`ci.yml`](../.github/workflows/ci.yml) | 20 min |
 | Scholar Sam (incl. Auditor) | Formal-methods researcher + independent audit | [`slice-a-retro.md`](slice-a-retro.md) + registries + audit script | half day |
@@ -868,4 +870,4 @@ the BSD-3-Clause grant respects NTS's attribution requirements.
 
 See the full [CONTRIBUTING.md](../CONTRIBUTING.md) (and the actor-specific guidance in [docs/HELP.md](HELP.md) + [docs/READING-GUIDE.md](READING-GUIDE.md) + [docs/FOR-AI-AGENTS.md](FOR-AI-AGENTS.md) for agents).
 
-The short version: new theorems must end with `Qed.` (or `Defined.`), respect the three-axiom + registry discipline, carry proper headers, and follow the documented session workflow for anything non-trivial. Joost the BDFL has final say on scope and borderline decisions. Pick your role card and contribute accordingly.
+The short version: new theorems must end with `Qed.` (or `Defined.`), respect the three-axiom + registry discipline, carry proper headers, and follow the documented session workflow for anything non-trivial. Joost is BDFL on corpus honesty and pruning, not product owner. Jeroen is PO. Pick your role card and contribute accordingly.

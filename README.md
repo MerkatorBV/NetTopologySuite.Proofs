@@ -60,7 +60,8 @@ Generated status view; in-repo source of record only.
 
 Where this corpus talks about curves it names SQL/MM ISO/IEC 13249-3
 `CIRCULARSTRING` / `COMPOUNDCURVE` / `CURVEPOLYGON`. Linearisation is
-the named `chord_approx` (`Linearise`); it is not the curve.
+the named `chord_approx` (`Linearise`); NTS `Flatten()` to chords is
+lossy and is not the curve.
 
 ## Reproduction
 
@@ -79,7 +80,7 @@ corpus (511 registered modules) is the pinned container. Toolchain:
 - **Not** a substitute for unit tests. Tests still cover rounding, exceptions, performance, and the rest of the runtime.
 - **Not** complete. Coverage is the foundational layer plus early-to-mid chokepoint phases; gaps are named in the Reading Guide, not silent.
 
-**Shewchuk-13.** The corpus postcondition (half-ulp `strict_succ_b64`) is false as stated — [Proofs #482](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/482).
+**Shewchuk-13.** Corpus postcondition (half-ulp `strict_succ_b64`) — [Proofs #482](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/482).
 
 ## Doors
 

@@ -17,7 +17,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 🏗️ **BIM Bea**
 
-**YOU** Model as-built geometry; care about arcs / CIRCULARSTRING and COMPOUNDCURVE (SQL/MM ISO/IEC 13249-3). NTS `Flatten()` linearizes those curves to chords before overlay — Flatten is not the curve.
+**YOU** Model as-built geometry; care about CIRCULARSTRING / COMPOUNDCURVE / CURVEPOLYGON (SQL/MM ISO/IEC 13249-3). NTS `Flatten()` linearizes those curves to chords before overlay — Flatten is lossy and is not the curve.
 
 **OPEN** [`audit-phase4-curves.md`](audit-phase4-curves.md).
 
