@@ -75,4 +75,18 @@
   [nan ARC coord NAN] -> 'NAN'   ok
   [NAN wins over degenerate ARC] -> 'NAN'   ok
 
-# All proven invariants (I1-I7) hold across the suite.
+## H. SEG members (LECSegmentRow.v seg_dist exact; the F6 clamp trap).
+  [SEG interior foot at (2,3) -> 3] -> 'DIST 0x1.8p+1 N 1'   ok
+  [SEG endpoint clamp at (7,4) -> 5 (line foot would say 4)] -> 'DIST 0x1.4p+2 N 1'   ok
+  [SEG endpoint clamp at (-3,4) -> 5] -> 'DIST 0x1.4p+2 N 1'   ok
+  [zero-length SEG at (5,7) -> 5 (3-4-5)] -> 'DIST 0x1.4p+2 N 1'   ok
+  [POINT twin of zero-length SEG] -> 'DIST 0x1.4p+2 N 1'   ok
+  [zero-length SEG == POINT row]   ok
+  [mixed quint SEG+ARC+DISC+RING+POINT] -> 'DIST 0x1.4c583ada5b53p-3 N 5'   ok
+  [permuted quint, same output] -> 'DIST 0x1.4c583ada5b53p-3 N 5'   ok
+  [quint permutation == original]   ok
+  [mixed: SEG wins at (2,0.25) -> 1/4] -> 'DIST 0x1p-2 N 3'   ok
+  [wrong SEG arity DEGENERATE] -> 'DEGENERATE'   ok
+  [nan SEG coord NAN] -> 'NAN'   ok
+
+# All proven invariants (I1-I8) hold across the suite.

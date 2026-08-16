@@ -37,6 +37,13 @@
 #                query; mixed lists min-fold across all four typed rows
 #                bit-exactly (LECArcRow.arc_dist_exact + LECFlattenRow.v
 #                empty_disk_flatten_iff); collinear controls -> DEGENERATE
+#   I8 SEG       the SEG member row is the clamped projection
+#                (LECSegmentRow.seg_dist, proven the exact facet distance):
+#                interior-foot and endpoint-clamp pins bit-exact; the
+#                UNCLAMPED line foot understates beyond an endpoint
+#                (ledger F6 -- the 3-4-5 witness pins 5, the foot says 4);
+#                a zero-length facet collapses to the POINT row bit-exactly
+#                (seg_dist_degenerate), NOT DEGENERATE
 # =============================================================================
 
 import math
@@ -123,6 +130,18 @@ def row(comp, qx, qy):
             if radial < cand:
                 cand = radial
         return cand
+    if tag == "SEG":
+        ax, ay, bx, by = comp[1:]
+        dx = bx - ax
+        dy = by - ay
+        l2 = dx * dx + dy * dy
+        if l2 == 0.0:
+            return math.sqrt((qx - ax) * (qx - ax) + (qy - ay) * (qy - ay))
+        t = ((qx - ax) * dx + (qy - ay) * dy) / l2
+        tc = 0.0 if t < 0.0 else (1.0 if t > 1.0 else t)
+        fx = ax + tc * dx
+        fy = ay + tc * dy
+        return math.sqrt((qx - fx) * (qx - fx) + (qy - fy) * (qy - fy))
     x, y = comp[1], comp[2]
     d = math.sqrt((qx - x) * (qx - x) + (qy - y) * (qy - y))
     if tag == "POINT":
@@ -360,7 +379,54 @@ assess("NAN wins over degenerate ARC", 0, 0,
        expect_verdict="NAN")
 emit()
 
+emit("## H. SEG members (LECSegmentRow.v seg_dist exact; the F6 clamp trap).")
+SEG40 = ("SEG", 0, 0, 4, 0)
+# interior foot: (2,3) projects to (2,0), distance exactly 3
+assess("SEG interior foot at (2,3) -> 3", 2, 3, [SEG40], pin=3.0,
+       mirror_check=True)
+# THE F6 WITNESS: (7,4) has line foot (7,0) at distance 4, but the segment's
+# nearest point is the ENDPOINT (4,0) at distance 5 -- the pin refutes the
+# unclamped-foot hypothesis in float exactly as the theorem does in R
+assess("SEG endpoint clamp at (7,4) -> 5 (line foot would say 4)", 7, 4,
+       [SEG40], pin=5.0, mirror_check=True)
+assess("SEG endpoint clamp at (-3,4) -> 5", -3, 4, [SEG40], pin=5.0,
+       mirror_check=True)
+# zero-length facet collapses to the POINT row (seg_dist_degenerate):
+# same value, bit-exact, and NOT a DEGENERATE verdict
+hseg = assess("zero-length SEG at (5,7) -> 5 (3-4-5)", 5, 7,
+              [("SEG", 2, 3, 2, 3)], pin=5.0, mirror_check=True)
+hpt = assess("POINT twin of zero-length SEG", 5, 7, [("POINT", 2, 3)],
+             pin=5.0, mirror_check=True)
+if hseg is not None and hpt is not None and hseg[0].hex() != hpt[0].hex():
+    emit("  !! I8_COLLAPSE zero-length SEG != POINT")
+    failures += 1
+else:
+    emit("  [zero-length SEG == POINT row]   ok")
+# the full 5-row typed table min-folded (I4 pattern, all five types)
+hbase = assess("mixed quint SEG+ARC+DISC+RING+POINT", 1, 1,
+               [SEG40, F4ARC, ("DISC", 4, 0, 3), ("RING", -4, 0, 3),
+                ("POINT", 0, 3)], mirror_check=True)
+hperm = assess("permuted quint, same output", 1, 1,
+               [("POINT", 0, 3), F4ARC, ("RING", -4, 0, 3), SEG40,
+                ("DISC", 4, 0, 3)], mirror_check=True)
+if hbase is not None and hperm is not None \
+        and hbase[0].hex() != hperm[0].hex():
+    emit("  !! I8_PERM mismatch")
+    failures += 1
+else:
+    emit("  [quint permutation == original]   ok")
+# segment row winning the fold: query hugs the facet
+assess("mixed: SEG wins at (2,0.25) -> 1/4", 2, 0.25,
+       [SEG40, ("DISC", 4, 3, 1), ("POINT", 0, 3)], pin=0.25,
+       mirror_check=True)
+# verdicts
+assess("wrong SEG arity DEGENERATE", 0, 0, [("SEG", 1, 2, 3)],
+       expect_verdict="DEGENERATE")
+assess("nan SEG coord NAN", 0, 0, [("SEG", float("nan"), 0, 4, 0)],
+       expect_verdict="NAN")
+emit()
+
 if failures:
     emit(f"# {failures} PROVEN-invariant violation(s) -- RocqRefRunner bug.")
     sys.exit(1)
-emit("# All proven invariants (I1-I7) hold across the suite.")
+emit("# All proven invariants (I1-I8) hold across the suite.")

@@ -1835,6 +1835,15 @@ let run_lec_circle () =
                                              nearer chord endpoint;
                                              LECArcRow.arc_dist_exact /
                                              empty_disk_arc_iff)
+     SEG ax ay bx by  -> point-to-segment   (LineString facet: project onto
+                                             AB, CLAMP t into [0,1], one
+                                             division + one sqrt; A = B
+                                             collapses to the POINT row, NOT
+                                             DEGENERATE (seg_dist_degenerate);
+                                             LECSegmentRow.seg_dist exact via
+                                             empty_disk_seg_iff -- the
+                                             UNCLAMPED line foot is a refuted
+                                             path, ledger F6)
    Flatten row: emptiness of a union is emptiness of each part
    (empty_disk_union_iff, n-ary empty_disk_list_iff), the min-fold of the
    typed rows over a NONEMPTY member list is the exact collection clearance
@@ -1850,13 +1859,14 @@ let run_lec_circle () =
    centre; the composite float IS the JTS/NTS ObstacleDistance interface
    value the LEC perf gate compares against.  Proof companions:
    theories/LECObstacleDistance.v, theories/LECArcRow.v,
-   theories/LECFlattenRow.v.
+   theories/LECSegmentRow.v, theories/LECFlattenRow.v.
 
    Input:  line 2 = the query point -- "px py"
            line 3 = k (component count; k >= 1)
            lines 4..3+k = one component each --
                           "POINT x y" | "DISC x y r" | "RING x y r"
                           | "ARC ax ay mx my ex ey" (start, mid, end)
+                          | "SEG ax ay bx by" (facet endpoints)
    Output: "DIST <min> N <k>" (hex float);
            "NAN" (any non-finite input; NAN wins over DEGENERATE);
            "DEGENERATE" (k < 1, r < 0, collinear ARC controls, wrong arity,
@@ -1903,6 +1913,11 @@ let run_obstacle_distance () =
                     { bx = ex; by_ = ey },
                     Q.to_float ox, Q.to_float oy, sqrt (Q.to_float r2))
         end
+    | ["SEG"; sax; say; sbx; sby] ->
+        let ax = fl sax and ay = fl say and bx2 = fl sbx and by2 = fl sby in
+        if finite_float ax && finite_float ay
+           && finite_float bx2 && finite_float by2
+        then `Seg (ax, ay, bx2, by2) else `Nan
     | _ -> `Degen in
   let dist_to comp =
     let euclid x y =
@@ -1929,6 +1944,17 @@ let run_obstacle_distance () =
           end
         end;
         !cand
+    | `Seg (ax, ay, bx2, by2) ->
+        (* the LECSegmentRow kernel: project onto AB, clamp t into [0,1];
+           a zero-length facet collapses to the POINT row *)
+        let dx = bx2 -. ax and dy = by2 -. ay in
+        let l2 = dx *. dx +. dy *. dy in
+        if l2 = 0.0 then euclid ax ay
+        else begin
+          let t = ((p.bx -. ax) *. dx +. (p.by_ -. ay) *. dy) /. l2 in
+          let tc = if t < 0.0 then 0.0 else if t > 1.0 then 1.0 else t in
+          euclid (ax +. tc *. dx) (ay +. tc *. dy)
+        end
     | `Nan | `Degen -> nan in
   let parsed = List.map parse_comp comps in
   if not (finite_bpoint p) || List.exists (fun c -> c = `Nan) parsed

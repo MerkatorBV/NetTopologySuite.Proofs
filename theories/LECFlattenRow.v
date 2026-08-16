@@ -19,10 +19,11 @@
         is closed under union with value Rmin; `exact_clearance_fold`
         folds it over a NONEMPTY member list.
      3. The typed table (`typed_obstacle`: point / filled disc /
-        full-circle ring / circular arc) — each row's closed form is an
-        exact clearance (`typed_row_exact`, reusing LECObstacleDistance's
-        disc/ring rows and LECArcRow's arc row), so the min-fold of typed
-        rows is EXACTLY the collection's emptiness threshold
+        full-circle ring / circular arc / line segment) — each row's
+        closed form is an exact clearance (`typed_row_exact`, reusing
+        LECObstacleDistance's disc/ring rows, LECArcRow's arc row, and
+        LECSegmentRow's clamped-projection facet row), so the min-fold of
+        typed rows is EXACTLY the collection's emptiness threshold
         (`empty_disk_flatten_iff`).  This is the engine's whole
         `ObstacleDistance` per-component table plus flatten, as one Qed
         statement over a nonempty typed member list.
@@ -46,7 +47,7 @@ From Stdlib Require Import Reals Lra List.
 Import ListNotations.
 From NTS.Proofs Require Import Distance CurveGeometry MaximumInscribedCircle
   LargestEmptyCircle LECObstacleDistance CurveRingSimple ArcPointDistance
-  LECArcRow.
+  LECArcRow LECSegmentRow.
 
 Local Open Scope R_scope.
 
@@ -169,12 +170,14 @@ Qed.
 
 (** One typed member of a collection obstacle — the engine's per-component
     table: Point/MultiPoint, filled disc (CurvePolygon), full-circle ring
-    (closed CircularString), circular arc (CircularString window). *)
+    (closed CircularString), circular arc (CircularString window), line
+    segment (LineString facet). *)
 Inductive typed_obstacle : Type :=
   | TPoint (q : Point)
   | TDisc  (c : Point) (r : R)
   | TRing  (c : Point) (r : R)
-  | TArc   (a : CircularArc).
+  | TArc   (a : CircularArc)
+  | TSeg   (a b : Point).
 
 Definition typed_region (t : typed_obstacle) : Region :=
   match t with
@@ -182,24 +185,30 @@ Definition typed_region (t : typed_obstacle) : Region :=
   | TDisc c r => disc_obstacle c r
   | TRing c r => ring_obstacle c r
   | TArc a    => on_arc a
+  | TSeg a b  => on_seg a b
   end.
 
-(** The closed-form row values — euclid, max(0, d − r), abs(d − r), and
-    LECArcRow's total point-to-arc form. *)
+(** The closed-form row values — euclid, max(0, d − r), abs(d − r),
+    LECArcRow's total point-to-arc form, and LECSegmentRow's total
+    clamped-projection facet form. *)
 Definition typed_dist (t : typed_obstacle) (O : Point) : R :=
   match t with
   | TPoint q  => dist O q
   | TDisc c r => disc_dist c r O
   | TRing c r => ring_dist c r O
   | TArc a    => arc_dist a O
+  | TSeg a b  => seg_dist a b O
   end.
 
+(** The segment row is TOTAL (A = B collapses to the point row), so like
+    the point row it needs no validity side condition. *)
 Definition typed_valid (t : typed_obstacle) : Prop :=
   match t with
   | TPoint _  => True
   | TDisc _ r => 0 <= r
   | TRing _ r => 0 <= r
   | TArc a    => valid_arc a
+  | TSeg _ _  => True
   end.
 
 (** Every typed row is an exact clearance. *)
@@ -208,7 +217,7 @@ Lemma typed_row_exact :
     typed_valid t -> exact_clearance (typed_region t) O (typed_dist t O).
 Proof.
   intros t O Hv.
-  destruct t as [q | c r | c r | a];
+  destruct t as [q | c r | c r | a | a b];
     cbn [typed_region typed_dist typed_valid] in *.
   - split.
     + intros Q ->. lra.
@@ -224,6 +233,10 @@ Proof.
   - destruct (arc_dist_exact a O Hv) as [Hlow Hatt]. split.
     + intros Q HQ. exact (Hlow Q HQ).
     + destruct Hatt as [X [HX Ha]]. exists X. split; assumption.
+  - split.
+    + intros Q HQ. exact (seg_dist_lower a b O Q HQ).
+    + destruct (seg_dist_attained a b O) as [Q [HQ Ha]].
+      exists Q. split; assumption.
 Qed.
 
 (** The collection obstacle and its min-fold — the corpus twin of the

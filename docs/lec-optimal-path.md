@@ -2,9 +2,10 @@
 
 **Lane**: LargestEmptyCircle (construct) · **updated**: 16 Aug 2026 ·
 **modules**: `theories/LECChordGap.v`, `theories/LECObstacleDistance.v`,
-`theories/LECArcRow.v`, `theories/LECFlattenRow.v`,
-`theories/LargestEmptyCircle.v`, `theories/CellRadiusBound.v` ·
-**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE` (4-row typed table),
+`theories/LECArcRow.v`, `theories/LECSegmentRow.v`,
+`theories/LECFlattenRow.v`, `theories/LargestEmptyCircle.v`,
+`theories/CellRadiusBound.v` ·
+**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE` (5-row typed table),
 `ARC_DISTANCE` (§C pins)
 
 This lane runs prove-or-disprove: each engine-side hypothesis about how the
@@ -142,6 +143,29 @@ gate's 15% slack) stays engine-side by design.
   forced behaviour, now theorem-backed; engines should reject or
   special-case empty obstacle collections rather than fold a default.
 
+### F6 — "the supporting line's foot suffices" (REFUTED · `LECSegmentRow.v`)
+
+- **Hypothesis** (H-LINEFOOT): "the point-to-segment distance is the
+  distance to the perpendicular foot on the supporting line" — the
+  clamp-free projection an implementer gets by reusing a point-to-LINE
+  routine for a facet.
+- **Verdict**: `seg_line_foot_hypothesis_refuted`.  For A = (0,0),
+  B = (4,0), P = (7,4) the foot lands at (7,0) — distance 4 — but the
+  segment's nearest point is the ENDPOINT B = (4,0) at distance 5 (a
+  3-4-5 witness).  The unclamped foot UNDERSTATES whenever the foot
+  parameter leaves [0,1]: the segment is not its line.
+- **Why it fails structurally**: the quadratic |P − A − t(B−A)|² is
+  minimised over ℝ at the foot t₀, but over the FACET the domain is
+  [0,1]; convexity pushes the constrained minimum to the nearer endpoint
+  exactly when t₀ exits.  Dropping the clamp inflates every empty-circle
+  radius bound near segment ends — the LEC would claim clearance that a
+  facet endpoint already violates.
+- **Guide**: the clamp is not an optimisation, it IS the row
+  (`seg_dist`, proven exact in `empty_disk_seg_iff`; the degenerate
+  A = B facet collapses to the POINT row, `seg_dist_degenerate`, so no
+  validity gate is needed).  Oracle `OBSTACLE_DISTANCE` §H pins the trap
+  numerically: at the witness the row answers 5 where the foot says 4.
+
 ## What is Qed today (the verified bridge under the engine's table)
 
 - **Filled-disc row exact**: `empty_disk_disc_iff` — emptiness of the
@@ -180,30 +204,40 @@ gate's 15% slack) stays engine-side by design.
   `empty_disk_flatten_iff`: the min-fold of the typed per-member closed
   forms over a NONEMPTY list is exactly the collection's emptiness
   threshold.  One `exact_clearance` interface (lower bound + attained)
-  packages all four typed rows (`typed_row_exact`: point, disc, ring,
-  arc), `exact_clearance_union` closes it under union with value Rmin,
-  and `exact_clearance_fold` folds it down the member list — the
-  engine's `getNumMembers`/`getMemberN` min, as one Qed statement.  The
-  oracle's `OBSTACLE_DISTANCE` speaks the matching ARC member row
-  (singleton bit-parity with `ARC_DISTANCE`, mixed 4-row min-folds
-  pinned bit-exact).
+  packages the typed rows (`typed_row_exact`), `exact_clearance_union`
+  closes it under union with value Rmin, and `exact_clearance_fold`
+  folds it down the member list — the engine's
+  `getNumMembers`/`getMemberN` min, as one Qed statement.  The oracle's
+  `OBSTACLE_DISTANCE` speaks the matching ARC member row (singleton
+  bit-parity with `ARC_DISTANCE`, mixed min-folds pinned bit-exact).
+- **Segment/facet row exact** (`LECSegmentRow.v`, closes the last
+  per-component rung): the clamped projection
+  t* = clamp((P−A)·(B−A)/|B−A|², 0, 1) is the EXACT facet distance —
+  lower bound by the clamped-quadratic minimisation (interior branch
+  L·(f(t) − f(t*)) = (Lt − s)², endpoint branches by sign), attainment
+  definitional at the clamp point (`empty_disk_seg_iff`).  TOTAL: the
+  zero-length facet collapses to the point row
+  (`seg_dist_degenerate`) — no validity gate.  Slotted into the typed
+  table as `TSeg` (fifth row), so the flatten prices facets into
+  collections with zero new proof work — the first payoff of the
+  `exact_clearance` abstraction.  Oracle: SEG member row, §H clamp pins
+  (interior 3, endpoint 5-not-4, zero-length == POINT bit-exact).
 
 ## Open rungs (in likelihood order)
 
-The point-to-arc rung closed 15 Aug 2026 (`LECArcRow.v`, F4 above); the
-n-ary flatten rung closed 16 Aug 2026 (`LECFlattenRow.v`, F5 above).
+The point-to-arc rung closed 15 Aug 2026 (`LECArcRow.v`, F4); the n-ary
+flatten rung closed 16 Aug 2026 (`LECFlattenRow.v`, F5); the
+segment/facet rung closed 16 Aug 2026 (`LECSegmentRow.v`, F6 — slotted
+into the typed table as the fifth row, priced into collections by the
+flatten with no new work).  Every per-component metric the engine's
+`ObstacleDistance` table computes now has a Qed exactness spec.
 
-1. **Segment/facet row**: the clamped-projection closed form for
-   LineString facets — the last straight-edge metric without a spec.
-   (Slot it into the typed table as a fifth `typed_obstacle` row;
-   `typed_row_exact` + the flatten then price it into collections for
-   free.)
-2. **Candidate completeness** (the big one): every maximiser of the
+1. **Candidate completeness** (the big one): every maximiser of the
    weighted min-distance over a convex domain is a weighted-Voronoi
    vertex, an edge × boundary crossing, or a boundary vertex — the
    theorem an O(n log n) LEC needs to be TRUSTED, in the corpus's
    witness-scoped style first (three discs, one Apollonius vertex).
-3. **Runtime half**: stays engine-side (perf gate); the corpus only ever
+2. **Runtime half**: stays engine-side (perf gate); the corpus only ever
    adjudicates exactness.
 
 ## Relation to the engine lane
