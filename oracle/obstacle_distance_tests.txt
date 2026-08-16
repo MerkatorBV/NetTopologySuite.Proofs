@@ -54,4 +54,39 @@
   [NAN wins over DEGENERATE] -> 'NAN'   ok
   [r=0 disc is a point (allowed)] -> 'DIST 0x1.4p+2 N 1'   ok
 
-# All proven invariants (I1-I6) hold across the suite.
+## G. ARC members (LECArcRow.v arc_dist_exact + LECFlattenRow.v
+##    empty_disk_flatten_iff): the full 4-row typed table, min-folded.
+  [singleton ARC at (16,12)] -> 'DIST 0x1.e87573f6c42c5p+3 N 1'   ok
+  [parity with ARC_DISTANCE at (16,12)]   ok
+  [singleton ARC at (0,8)] -> 'DIST 0x1.8p+1 N 1'   ok
+  [parity with ARC_DISTANCE at (0,8)]   ok
+  [singleton ARC at (10,0)] -> 'DIST 0x1.01fe03f61badp+3 N 1'   ok
+  [parity with ARC_DISTANCE at (10,0)]   ok
+  [mixed: disc beats arc at (16,12)] -> 'DIST 0x1.bf0ed99bed9b2p+3 N 2'   ok
+  [mixed: arc radial wins at (0,8) -> 3] -> 'DIST 0x1.8p+1 N 2'   ok
+  [mixed: point wins at (0,8) -> 1/2] -> 'DIST 0x1p-1 N 2'   ok
+  [mixed quad ARC+DISC+RING+POINT] -> 'DIST 0x1.4c583ada5b53p-3 N 4'   ok
+  [permuted quad, same output] -> 'DIST 0x1.4c583ada5b53p-3 N 4'   ok
+  [arc-quad permutation == original]   ok
+  [duplicated arc member, same min] -> 'DIST 0x1.4c583ada5b53p-3 N 5'   ok
+  [arc duplication == original]   ok
+  [degenerate ARC (collinear controls)] -> 'DEGENERATE'   ok
+  [wrong ARC arity DEGENERATE] -> 'DEGENERATE'   ok
+  [nan ARC coord NAN] -> 'NAN'   ok
+  [NAN wins over degenerate ARC] -> 'NAN'   ok
+
+## H. SEG members (LECSegmentRow.v seg_dist exact; the F6 clamp trap).
+  [SEG interior foot at (2,3) -> 3] -> 'DIST 0x1.8p+1 N 1'   ok
+  [SEG endpoint clamp at (7,4) -> 5 (line foot would say 4)] -> 'DIST 0x1.4p+2 N 1'   ok
+  [SEG endpoint clamp at (-3,4) -> 5] -> 'DIST 0x1.4p+2 N 1'   ok
+  [zero-length SEG at (5,7) -> 5 (3-4-5)] -> 'DIST 0x1.4p+2 N 1'   ok
+  [POINT twin of zero-length SEG] -> 'DIST 0x1.4p+2 N 1'   ok
+  [zero-length SEG == POINT row]   ok
+  [mixed quint SEG+ARC+DISC+RING+POINT] -> 'DIST 0x1.4c583ada5b53p-3 N 5'   ok
+  [permuted quint, same output] -> 'DIST 0x1.4c583ada5b53p-3 N 5'   ok
+  [quint permutation == original]   ok
+  [mixed: SEG wins at (2,0.25) -> 1/4] -> 'DIST 0x1p-2 N 3'   ok
+  [wrong SEG arity DEGENERATE] -> 'DEGENERATE'   ok
+  [nan SEG coord NAN] -> 'NAN'   ok
+
+# All proven invariants (I1-I8) hold across the suite.

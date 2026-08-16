@@ -2712,6 +2712,28 @@ theories/ArcPointDistance.v
 # rational 3-4-5 witness; oracle ARC_DISTANCE §C pins it bit-exact).
 theories/LECArcRow.v
 
+# The LEC SEGMENT/facet row (ledger rung "Segment/facet row" closed + failed
+# path F6).  The clamped projection t* = clamp((P-A).(B-A)/|B-A|^2, 0, 1) is
+# the EXACT facet distance (clamped-quadratic minimisation; attainment
+# definitional at the clamp point; empty_disk_seg_iff), TOTAL with the
+# zero-length facet collapsing to the POINT row (seg_dist_degenerate).  The
+# UNCLAMPED supporting-line foot is REFUTED (3-4-5 witness: foot says 4, the
+# facet's endpoint is at 5).  Oracle OBSTACLE_DISTANCE SEG row §H pins.
+# Full-only: imports LargestEmptyCircle.v, LECObstacleDistance.v.
+theories/LECSegmentRow.v
+
+# The LEC n-ary FLATTEN row (ledger rung "CompoundCurve / n-ary flatten"
+# closed + failed path F5).  Generic exact_clearance algebra (union = Rmin,
+# folded over a nonempty member list via exact_clearance_fold), the typed
+# 5-row table (point/disc/ring/arc/segment) reusing LECObstacleDistance.v,
+# LECArcRow.v, and LECSegmentRow.v rows behind one interface
+# (typed_row_exact), headline empty_disk_flatten_iff (the
+# getNumMembers/getMemberN min-fold twin), and the REFUTED empty-fold unit
+# (empty_fold_no_finite_unit: Rmin has no unit in R -- the oracle's k = 0
+# DEGENERATE verdict is forced, not a policy).  Full-only: imports
+# LargestEmptyCircle.v, LECObstacleDistance.v, LECArcRow.v, LECSegmentRow.v.
+theories/LECFlattenRow.v
+
 # Issue #65 curve-aware buffer, rung 2: the SQL/MM three-point bridge.
 # radial_offset (homothety about the center, pure rational arithmetic,
 # no trig) carries ArcOffset's parallel-curve property into coordinate
