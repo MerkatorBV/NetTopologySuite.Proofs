@@ -47,7 +47,7 @@ build):
 
 ```sh
 cd packaging/rocq-robust-predicates
-./assemble.sh            # copy the 20 source files from the corpus
+./assemble.sh            # copy the 21 source files from the corpus
 ```
 
 Then build with **any** of the three supported toolchains (inspired by the
@@ -89,17 +89,18 @@ From NTS.Proofs.Flocq Require Import Orient_b64_exact_full.
 Check b64_orient2d_exact_sound.
 ```
 
-## Contents (20 files)
+## Contents (21 files)
 
 Source-of-record paths are listed in [`MANIFEST`](./MANIFEST): 4 exact-real
-spec files (`Orientation`, `Segment`, `Distance`, `Intersect`) and 16 binary64
-files (`Validate_binary64`, `Orientation_b64`, `B64_bridge`, `B64_lib`,
-`Orient_b64_R`, `Orient_b64_sound`, `Orient_b64_exact`, `Orient_b64_exact_full`,
-`B64_Expansion`, `Intersect_b64`, the five `Intersect_b64_exact_*` layered
-modules — `_core`, `_round_chain`, `_forward_error`, `_bridge`, `_tight` —
-and their `Intersect_b64_exact` Require Export umbrella). The set is closed
-under intra-corpus imports; the only external dependencies are Rocq's Stdlib
-and Flocq.
+spec files (`Orientation`, `Segment`, `Distance`, `Intersect`) and 17 files
+under `theories-flocq/` (`Validate_binary64`, `Orientation_b64`, `B64_bridge`,
+`B64_lib`, `Orient_b64_R`, `Orient_b64_sound`, `Orient_b64_exact`,
+`Orient_b64_exact_full`, `B64_Expansion`, `Intersect_b64`, the six
+`Intersect_b64_exact_*` layered modules — `_refs` (pure-R, no Flocq import),
+`_core`, `_round_chain`, `_forward_error`, `_bridge`, `_tight` — and their
+`Intersect_b64_exact` Require Export umbrella). The set is closed under
+intra-corpus imports; the only external dependencies are Rocq's Stdlib and
+Flocq.
 
 ## License
 

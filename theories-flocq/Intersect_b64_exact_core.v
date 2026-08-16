@@ -1,12 +1,11 @@
 (* ============================================================================
    NetTopologySuite.Proofs.Flocq.Intersect_b64_exact_core
    ----------------------------------------------------------------------------
-   SCOPE A + SCOPE B.1: the R-side Cramer references, the total binary64
-   projections, the safety predicate, and the pre-division exactness layer.
+   SCOPE A + SCOPE B.1: the total binary64 projections, the safety
+   predicate, and the pre-division exactness layer.  (The pure-R Cramer
+   reference expressions live below this module in
+   Intersect_b64_exact_refs.v, which imports no Flocq.)
 
-   - R-side reference expressions `intersect_param_s`, `intersect_x_R`,
-     `intersect_y_R`, proved equal to the clean-lane closed form
-     `Intersect.strict_intersection_point` (pure `ring` identities).
    - Total binary64 projections `b64_intersect_point_x` / `_y` and the
      safety predicate `intersect_point_inputs_int_safe`.
    - First-stage exactness: the two outer orient2d evaluations (`qp0`,
@@ -54,64 +53,6 @@ Local Open Scope R_scope.
 
 (* `BP2P` is imported from `Intersect_b64.v`; the bridge lemma                 *)
 (* `cross_R_BP_eq_cross_BP2P` over there carries the same definition.         *)
-
-(* -------------------------------------------------------------------------- *)
-(* R-side Cramer's-rule reference expressions.                                *)
-(*                                                                            *)
-(* Convention: the segment we parameterise is P0->P1, with `s` the parameter *)
-(* along it; the segment we test against is Q0->Q1.  Matches the b64 code:  *)
-(*    s := orient(Q0,Q1,P0) / (orient(Q0,Q1,P0) - orient(Q0,Q1,P1))         *)
-(* -------------------------------------------------------------------------- *)
-
-Definition intersect_param_s (P0 P1 Q0 Q1 : Point) : R :=
-  cross Q0 Q1 P0 / (cross Q0 Q1 P0 - cross Q0 Q1 P1).
-
-Definition intersect_x_R (P0 P1 Q0 Q1 : Point) : R :=
-  px P0 + intersect_param_s P0 P1 Q0 Q1 * (px P1 - px P0).
-
-Definition intersect_y_R (P0 P1 Q0 Q1 : Point) : R :=
-  py P0 + intersect_param_s P0 P1 Q0 Q1 * (py P1 - py P0).
-
-(* -------------------------------------------------------------------------- *)
-(* Dovetail with the clean-lane closed form (theories/Intersect.v).           *)
-(*                                                                            *)
-(* `Intersect.strict_intersection_point A B C D` (the convex combination of   *)
-(* C and D at t = cross A B C / (cross A B C - cross A B D)) is the named      *)
-(* closed form of *the* proper-crossing intersection point, proved to equal   *)
-(* every shared point by `Intersect.strict_intersection_eq_formula`.          *)
-(*                                                                            *)
-(* `intersect_x_R` / `intersect_y_R` are the exact R-side targets that        *)
-(* `b64_intersect_point_{x,y}_forward_error` bound the rounded binary64        *)
-(* projections against (and which the oracle's INTERSECT_POINT_XY mode         *)
-(* computes).  Our convention runs along P0->P1 using cross(Q0,Q1,.), so with  *)
-(* A:=Q0, B:=Q1, C:=P0, D:=P1 the reference IS that closed form -- and it      *)
-(* holds UNCONDITIONALLY (no proper-crossing hypothesis), since both sides are *)
-(* the same Cramer expression: a pure `ring` identity in the parameter.       *)
-(* Hence the forward-error story is stated against the canonical closed-form   *)
-(* intersection point, not an ad-hoc Cramer expression.                       *)
-(* -------------------------------------------------------------------------- *)
-
-Lemma intersect_x_R_eq_strict_point :
-  forall P0 P1 Q0 Q1 : Point,
-    intersect_x_R P0 P1 Q0 Q1
-      = px (Intersect.strict_intersection_point Q0 Q1 P0 P1).
-Proof.
-  intros P0 P1 Q0 Q1.
-  unfold intersect_x_R, intersect_param_s,
-         Intersect.strict_intersection_point, px.
-  simpl. ring.
-Qed.
-
-Lemma intersect_y_R_eq_strict_point :
-  forall P0 P1 Q0 Q1 : Point,
-    intersect_y_R P0 P1 Q0 Q1
-      = py (Intersect.strict_intersection_point Q0 Q1 P0 P1).
-Proof.
-  intros P0 P1 Q0 Q1.
-  unfold intersect_y_R, intersect_param_s,
-         Intersect.strict_intersection_point, py.
-  simpl. ring.
-Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Total binary64 projections.                                                *)
@@ -431,8 +372,6 @@ Print Assumptions cross_R_BP_abs_le_bpow_53.
 Print Assumptions b64_intersect_den_safe.
 Print Assumptions b64_intersect_den_R_round.
 Print Assumptions b64_intersect_den_B2R_nonzero.
-Print Assumptions intersect_x_R_eq_strict_point.
-Print Assumptions intersect_y_R_eq_strict_point.
 Print Assumptions b64_intersect_qp0_finite.
 Print Assumptions b64_intersect_qp1_finite.
 Print Assumptions Rabs_minus_le_add.

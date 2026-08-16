@@ -15,6 +15,7 @@ theories-flocq/Orient_b64_exact.v
 theories-flocq/Orient_b64_exact_full.v
 theories-flocq/B64_Expansion.v
 theories-flocq/Intersect_b64.v
+theories-flocq/Intersect_b64_exact_refs.v
 theories-flocq/Intersect_b64_exact_core.v
 theories-flocq/Intersect_b64_exact_round_chain.v
 theories-flocq/Intersect_b64_exact_forward_error.v

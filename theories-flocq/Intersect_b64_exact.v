@@ -73,17 +73,21 @@
      Assisted-by: Claude (Opus-4.7)
 
    SPLIT (2026-08-16): the Scope A / B.1 / B.2 / C.2-tight / Session-6
-   layers now live in five layered modules --
-   Intersect_b64_exact_core (Scope A + B.1), _round_chain (C.2-prep +
-   the Scope B.2 round-chain headline + polish), _forward_error
-   (C.2-tight Sessions 1-5 + y mirror), _bridge (Session 6 reference
-   bridge + HasIntersect / HasIntersect_sound typeclasses), _tight
-   (the parallel tight chain).  This file is the Require Export
-   umbrella: every name is re-exported, so importers are unaffected.
+   layers now live in six layered modules --
+   Intersect_b64_exact_refs (the pure-R Cramer references + strict-point
+   dovetail; imports no Flocq, trio-only footprint, deliberately off
+   docs/audit-exceptions.txt), _core (Scope A + B.1), _round_chain
+   (C.2-prep + the Scope B.2 round-chain headline + polish),
+   _forward_error (C.2-tight Sessions 1-5 + y mirror), _bridge
+   (Session 6 reference bridge + HasIntersect / HasIntersect_sound
+   typeclasses), _tight (the parallel tight chain).  This file is the
+   Require Export umbrella: every name is re-exported, so importers are
+   unaffected.
    topic: binary64
    claimId: none
    ============================================================================ *)
 
+From NTS.Proofs.Flocq Require Export Intersect_b64_exact_refs.
 From NTS.Proofs.Flocq Require Export Intersect_b64_exact_core.
 From NTS.Proofs.Flocq Require Export Intersect_b64_exact_round_chain.
 From NTS.Proofs.Flocq Require Export Intersect_b64_exact_forward_error.

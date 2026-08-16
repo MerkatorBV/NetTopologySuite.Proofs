@@ -3027,16 +3027,20 @@ theories-flocq/Intersect_b64.v
 # dx, dy), and a minimal `HasIntersect` typeclass + BPoint instance as the
 # thin leading wire for future curve primitives.  Round-chain identity
 # (Scope B) and forward-error bound (Scope C) landed in follow-up sessions.
-# Split (2026-08-16) into five layered modules + Require Export umbrella:
-# core = Scope A + B.1 (R-side Cramer references + strict-point dovetail,
-# total b64 projections, safety predicate, pre-division exactness,
-# denominator triple); round_chain = C.2-prep + the Scope B.2 nested-round
-# headline + polish (finiteness, magnitude, Returns-Some); forward_error =
-# C.2-tight Sessions 1-5 + y mirror (the four-layer cascade); bridge =
-# Session 6 (canonical-reference restatement + HasIntersect /
-# HasIntersect_sound typeclasses); tight = the parallel tight chain
-# (den_error_le_1 foundation, halved condition-number term).  The umbrella
-# re-exports all five, so the reverse dependency imports unchanged.
+# Split (2026-08-16) into six layered modules + Require Export umbrella:
+# refs = the pure-R Cramer references + strict-point dovetail (imports NO
+# Flocq -- trio-only footprint, deliberately OFF audit-exceptions.txt, the
+# first Intersect-lineage module to leave the Category C1 block, mirroring
+# meso-audit B4); core = Scope A + B.1 (total b64 projections, safety
+# predicate, pre-division exactness, denominator triple); round_chain =
+# C.2-prep + the Scope B.2 nested-round headline + polish (finiteness,
+# magnitude, Returns-Some); forward_error = C.2-tight Sessions 1-5 + y
+# mirror (the four-layer cascade); bridge = Session 6 (canonical-reference
+# restatement + HasIntersect / HasIntersect_sound typeclasses); tight =
+# the parallel tight chain (den_error_le_1 foundation, halved
+# condition-number term).  The umbrella re-exports all six, so the reverse
+# dependency imports unchanged.
+theories-flocq/Intersect_b64_exact_refs.v
 theories-flocq/Intersect_b64_exact_core.v
 theories-flocq/Intersect_b64_exact_round_chain.v
 theories-flocq/Intersect_b64_exact_forward_error.v

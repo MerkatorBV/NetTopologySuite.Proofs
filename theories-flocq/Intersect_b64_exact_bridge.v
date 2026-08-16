@@ -39,6 +39,7 @@ From NTS.Proofs.Flocq  Require Import Orient_b64_sound.
 From NTS.Proofs.Flocq  Require Import Orient_b64_exact.
 From NTS.Proofs.Flocq  Require Import Intersect_b64.
 From NTS.Proofs.Flocq  Require Import B64_lib.
+From NTS.Proofs.Flocq  Require Import Intersect_b64_exact_refs.
 From NTS.Proofs.Flocq  Require Import Intersect_b64_exact_core.
 From NTS.Proofs.Flocq  Require Import Intersect_b64_exact_round_chain.
 From NTS.Proofs.Flocq  Require Import Intersect_b64_exact_forward_error.
