@@ -2699,6 +2699,18 @@ theories/ArcPointDistance.v
 # rational 3-4-5 witness; oracle ARC_DISTANCE §C pins it bit-exact).
 theories/LECArcRow.v
 
+# The LEC n-ary FLATTEN row (ledger rung "CompoundCurve / n-ary flatten"
+# closed + failed path F5).  Generic exact_clearance algebra (union = Rmin,
+# folded over a nonempty member list via exact_clearance_fold), the typed
+# 4-row table (point/disc/ring/arc) reusing LECObstacleDistance.v and
+# LECArcRow.v rows behind one interface (typed_row_exact), headline
+# empty_disk_flatten_iff (the getNumMembers/getMemberN min-fold twin), and
+# the REFUTED empty-fold unit (empty_fold_no_finite_unit: Rmin has no unit
+# in R -- the oracle's k = 0 DEGENERATE verdict is forced, not a policy).
+# Full-only: imports LargestEmptyCircle.v, LECObstacleDistance.v,
+# LECArcRow.v.
+theories/LECFlattenRow.v
+
 # Issue #65 curve-aware buffer, rung 2: the SQL/MM three-point bridge.
 # radial_offset (homothety about the center, pure rational arithmetic,
 # no trig) carries ArcOffset's parallel-curve property into coordinate

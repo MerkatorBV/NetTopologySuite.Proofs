@@ -191,17 +191,25 @@ run_lec_circle
 # --- OBSTACLE_DISTANCE (LEC typed obstacle clearance) ------------------------
 # Mode OBSTACLE_DISTANCE emits the typed per-component obstacle clearance of
 # the LEC laser: min over components of POINT euclid |P-c|, filled-disc
-# max(0, |P-c| - r), full-circle-ring ||P-c| - r|.  Each row carries one
-# sqrt (irrational distance -- same INTERFACE-BOUNDARY category as
-# ARC_DISTANCE's radial-foot distance); the composite float IS the JTS/NTS
-# ObstacleDistance interface value the LEC perf gate compares against
-# (jts-curve typed-obstacle lane).  Every closed form is Qed-proven the
-# EXACT set distance (lower bound by reverse triangle AND attained by the
-# radial projection) in theories/LECObstacleDistance.v
-# (obstacle_distance_headline / empty_disk_disc_iff / empty_disk_ring_iff /
-# empty_disk_union_iff / min_disc_dist_weighted); the 3-4-5 witness-cell
-# pins (clearance 2 at (0,+-3), 1 at the rect centre, 0 at the corners) are
-# asserted bit-exact by the generator.
+# max(0, |P-c| - r), full-circle-ring ||P-c| - r|, and circular-ARC
+# point-to-arc (the ARC_DISTANCE kernel: radial ||P-O| - r| when the foot
+# passes the atan2 sector gate off the exact circumcentre_q centre, else the
+# nearer chord endpoint).  Each row carries one sqrt (irrational distance --
+# same INTERFACE-BOUNDARY category as ARC_DISTANCE's radial-foot distance),
+# ARC members additionally the shared atan2 sector gate (point_on_arc_sector,
+# the deferred transcendental layer, as in ARC_DISTANCE); the composite float
+# IS the JTS/NTS ObstacleDistance interface value the LEC perf gate compares
+# against (jts-curve typed-obstacle lane).  Every closed form is Qed-proven
+# the EXACT set distance (lower bound AND attained) --
+# theories/LECObstacleDistance.v (obstacle_distance_headline /
+# empty_disk_disc_iff / empty_disk_ring_iff / empty_disk_union_iff /
+# min_disc_dist_weighted), theories/LECArcRow.v (arc_dist_exact /
+# empty_disk_arc_iff), and the n-ary min-fold flatten is
+# theories/LECFlattenRow.v (empty_disk_flatten_iff; the k = 0 DEGENERATE
+# verdict is forced by empty_fold_no_finite_unit -- Rmin has no unit in R).
+# The 3-4-5 witness-cell pins (clearance 2 at (0,+-3), 1 at the rect centre,
+# 0 at the corners) and the mixed arc+disc pins are asserted bit-exact by the
+# generator, including singleton-ARC bit-parity with ARC_DISTANCE.
 run_obstacle_distance
 
 # --- ARC_SEGMENT_XY (N-AL, issue #224 W1) -----------------------------------

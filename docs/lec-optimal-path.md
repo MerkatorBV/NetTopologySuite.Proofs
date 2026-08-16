@@ -1,10 +1,11 @@
 # The LEC optimal-path ledger — failed hypotheses as guides
 
-**Lane**: LargestEmptyCircle (construct) · **updated**: 15 Aug 2026 ·
+**Lane**: LargestEmptyCircle (construct) · **updated**: 16 Aug 2026 ·
 **modules**: `theories/LECChordGap.v`, `theories/LECObstacleDistance.v`,
-`theories/LECArcRow.v`, `theories/LargestEmptyCircle.v`,
-`theories/CellRadiusBound.v` ·
-**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE`, `ARC_DISTANCE` (§C pins)
+`theories/LECArcRow.v`, `theories/LECFlattenRow.v`,
+`theories/LargestEmptyCircle.v`, `theories/CellRadiusBound.v` ·
+**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE` (4-row typed table),
+`ARC_DISTANCE` (§C pins)
 
 This lane runs prove-or-disprove: each engine-side hypothesis about how the
 largest empty circle can be computed FASTER is either Qed-proven or refuted
@@ -120,6 +121,27 @@ gate's 15% slack) stays engine-side by design.
   first — and the `ARC_DISTANCE` §C pins now trip any atan2 → chord-sign
   refactor that forgets to.
 
+### F5 — "seed the empty fold with unit 0" (REFUTED · `LECFlattenRow.v`)
+
+- **Hypothesis** (H-EMPTYFOLD): "the min-fold flatten extends to the empty
+  member list with fold unit 0" — the tempting `fold(min, 0, [])` base
+  case an implementer reaches for when the collection has no members.
+- **Verdict**: `empty_fold_zero_unit_hypothesis_refuted`.  Against an
+  empty obstacle list EVERY radius is empty (the emptiness quantifier is
+  vacuous), so the iff with threshold 0 already fails at rho = 1 — and no
+  finite unit can repair it: for any candidate v, rho = max(0, v) + 1 is
+  empty yet exceeds v (`empty_fold_no_finite_unit`).  Rmin has no unit
+  in R.
+- **Why it fails structurally**: the flatten is an infimum over member
+  clearances; an empty infimum is +∞, which R does not contain.  Any
+  finite default converts "no obstacles" into "an obstacle at distance
+  v" — it does not understate a constraint, it INVENTS one, capping the
+  LEC at v for no reason.
+- **Guide**: k = 0 must be a VERDICT, not a value.  The oracle's
+  `OBSTACLE_DISTANCE` k = 0 → DEGENERATE gate is the mathematically
+  forced behaviour, now theorem-backed; engines should reject or
+  special-case empty obstacle collections rather than fold a default.
+
 ## What is Qed today (the verified bridge under the engine's table)
 
 - **Filled-disc row exact**: `empty_disk_disc_iff` — emptiness of the
@@ -152,22 +174,36 @@ gate's 15% slack) stays engine-side by design.
   q·(q − m) = 0 collapse), so the span predicate IS one sign test
   (`arc_span_contains_iff_sign`) — decidable and atan2-free.  With
   `empty_disk_union_iff` this prices every CompoundCurve window.
+- **Flatten row exact, N-ARY** (`LECFlattenRow.v`, closes the former
+  flatten rung): `empty_disk_list_iff` — emptiness against a finite
+  union is emptiness against every member — and the headline
+  `empty_disk_flatten_iff`: the min-fold of the typed per-member closed
+  forms over a NONEMPTY list is exactly the collection's emptiness
+  threshold.  One `exact_clearance` interface (lower bound + attained)
+  packages all four typed rows (`typed_row_exact`: point, disc, ring,
+  arc), `exact_clearance_union` closes it under union with value Rmin,
+  and `exact_clearance_fold` folds it down the member list — the
+  engine's `getNumMembers`/`getMemberN` min, as one Qed statement.  The
+  oracle's `OBSTACLE_DISTANCE` speaks the matching ARC member row
+  (singleton bit-parity with `ARC_DISTANCE`, mixed 4-row min-folds
+  pinned bit-exact).
 
 ## Open rungs (in likelihood order)
 
-The point-to-arc rung closed 15 Aug 2026 (`LECArcRow.v`, F4 above).
+The point-to-arc rung closed 15 Aug 2026 (`LECArcRow.v`, F4 above); the
+n-ary flatten rung closed 16 Aug 2026 (`LECFlattenRow.v`, F5 above).
 
-1. **CompoundCurve / n-ary flatten**: fold `empty_disk_union_iff` over a
-   member list (finite indexed union), giving the engine's
-   `getNumMembers`/`getMemberN` min a corpus twin.
-2. **Segment/facet row**: the clamped-projection closed form for
+1. **Segment/facet row**: the clamped-projection closed form for
    LineString facets — the last straight-edge metric without a spec.
-3. **Candidate completeness** (the big one): every maximiser of the
+   (Slot it into the typed table as a fifth `typed_obstacle` row;
+   `typed_row_exact` + the flatten then price it into collections for
+   free.)
+2. **Candidate completeness** (the big one): every maximiser of the
    weighted min-distance over a convex domain is a weighted-Voronoi
    vertex, an edge × boundary crossing, or a boundary vertex — the
    theorem an O(n log n) LEC needs to be TRUSTED, in the corpus's
    witness-scoped style first (three discs, one Apollonius vertex).
-4. **Runtime half**: stays engine-side (perf gate); the corpus only ever
+3. **Runtime half**: stays engine-side (perf gate); the corpus only ever
    adjudicates exactness.
 
 ## Relation to the engine lane

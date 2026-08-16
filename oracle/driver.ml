@@ -1828,23 +1828,39 @@ let run_lec_circle () =
                                              bound AND attained)
      RING  cx cy r ->  ||P - c| - r|        (full-circle CircularString ring;
                                              empty_disk_ring_iff)
+     ARC ax ay mx my ex ey -> point-to-arc  (CircularString window, 3 control
+                                             points; the ARC_DISTANCE kernel:
+                                             radial ||P-O| - r| when the foot
+                                             passes the sector gate, else the
+                                             nearer chord endpoint;
+                                             LECArcRow.arc_dist_exact /
+                                             empty_disk_arc_iff)
    Flatten row: emptiness of a union is emptiness of each part
-   (empty_disk_union_iff / empty_disk_two_discs_iff), and the min of clamped
-   disc rows equals the CLAMPED additively-weighted min over the centres
-   (min_disc_dist_weighted -- the Apollonius reduction).
+   (empty_disk_union_iff, n-ary empty_disk_list_iff), the min-fold of the
+   typed rows over a NONEMPTY member list is the exact collection clearance
+   (LECFlattenRow.empty_disk_flatten_iff -- the getNumMembers/getMemberN
+   twin), and the min of clamped disc rows equals the CLAMPED additively-
+   weighted min over the centres (min_disc_dist_weighted -- the Apollonius
+   reduction).  The k = 0 DEGENERATE verdict below is FORCED, not a policy:
+   Rmin has no unit in R (LECFlattenRow.empty_fold_no_finite_unit; ledger F5).
 
    INTERFACE-BOUNDARY float: each row carries one sqrt (irrational distance,
-   same category as ARC_DISTANCE); the composite float IS the JTS/NTS
-   ObstacleDistance interface value the LEC perf gate compares against.
-   Proof companion: theories/LECObstacleDistance.v.
+   same category as ARC_DISTANCE), and ARC members reuse ARC_DISTANCE's
+   atan2 sector gate (point_on_arc_sector) off the exact circumcentre_q
+   centre; the composite float IS the JTS/NTS ObstacleDistance interface
+   value the LEC perf gate compares against.  Proof companions:
+   theories/LECObstacleDistance.v, theories/LECArcRow.v,
+   theories/LECFlattenRow.v.
 
    Input:  line 2 = the query point -- "px py"
            line 3 = k (component count; k >= 1)
            lines 4..3+k = one component each --
                           "POINT x y" | "DISC x y r" | "RING x y r"
+                          | "ARC ax ay mx my ex ey" (start, mid, end)
    Output: "DIST <min> N <k>" (hex float);
            "NAN" (any non-finite input; NAN wins over DEGENERATE);
-           "DEGENERATE" (k < 1, r < 0, wrong arity, or an unknown tag). *)
+           "DEGENERATE" (k < 1, r < 0, collinear ARC controls, wrong arity,
+           or an unknown tag). *)
 let run_obstacle_distance () =
   let tokens line =
     List.filter (fun s -> s <> "")
@@ -1872,6 +1888,21 @@ let run_obstacle_distance () =
         if not (finite_float x && finite_float y && finite_float r) then `Nan
         else if r < 0.0 then `Degen
         else `Ring (x, y, r)
+    | ["ARC"; sax; say; smx; smy; sex; sey] ->
+        let ax = fl sax and ay = fl say and mx = fl smx and my = fl smy
+        and ex = fl sex and ey = fl sey in
+        if not (finite_float ax && finite_float ay && finite_float mx
+                && finite_float my && finite_float ex && finite_float ey)
+        then `Nan
+        else begin
+          (* collinear controls: exact-Q degeneracy, as in ARC_DISTANCE *)
+          match circumcentre_q (qf ax, qf ay) (qf mx, qf my) (qf ex, qf ey) with
+          | None -> `Degen
+          | Some (ox, oy, r2) ->
+              `Arc ({ bx = ax; by_ = ay }, { bx = mx; by_ = my },
+                    { bx = ex; by_ = ey },
+                    Q.to_float ox, Q.to_float oy, sqrt (Q.to_float r2))
+        end
     | _ -> `Degen in
   let dist_to comp =
     let euclid x y =
@@ -1884,6 +1915,20 @@ let run_obstacle_distance () =
     | `Ring (x, y, r) ->
         let e = euclid x y -. r in
         if e < 0.0 then -. e else e
+    | `Arc (a, b, c, oxf, oyf, r) ->
+        (* the ARC_DISTANCE kernel: min-with-endpoints always; radial only
+           when the foot's ray passes the atan2 sector gate *)
+        let dpA = euclid a.bx a.by_ in
+        let dpC = euclid c.bx c.by_ in
+        let cand = ref (if dpA <= dpC then dpA else dpC) in
+        let d = euclid oxf oyf in
+        if d > 0.0 then begin
+          if point_on_arc_sector (oxf, oyf) a b c (p.bx, p.by_) then begin
+            let radial = abs_float (d -. r) in
+            if radial < !cand then cand := radial
+          end
+        end;
+        !cand
     | `Nan | `Degen -> nan in
   let parsed = List.map parse_comp comps in
   if not (finite_bpoint p) || List.exists (fun c -> c = `Nan) parsed
