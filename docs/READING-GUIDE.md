@@ -39,7 +39,7 @@ docs (cell-snap-rounding internals).
 **Take away.** The corpus has Qed-closed soundness for orient2d,
 intersection, snap-rounding's preservation invariant, a conditional
 headline for polygon overlay (`overlay_ng_correct_conditional`), and
-unconditional Rung-1 curve overlay (`arc_overlay_correct_chord_approx`).
+named-hypothesis / chord-approx curve overlay (`arc_overlay_correct_chord_approx`).
 Gaps are precisely named, not handwaved.
 
 ---
@@ -75,7 +75,7 @@ lane's open questions in [`clothoid-open-questions-triage.md`](clothoid-open-que
 
 **Skip.** Phase 0/1/2 unless you care about the underlying primitives.
 
-**Take away.** Arc-overlay correctness is unconditional Rung-1
+**Take away.** Arc-overlay correctness is the named-hypothesis / chord-approx claim
 (`arc_overlay_correct_chord_approx`); the b64 in-circle layer now has
 Qed-closed sign + integer-regime value exactness ([`theories-flocq/InCircle_b64_exact.v`](../theories-flocq/InCircle_b64_exact.v),
 PR #146). Arc-line coordinates are Scope A only ([`theories-flocq/ArcLineIntersect_b64_exact.v`](../theories-flocq/ArcLineIntersect_b64_exact.v)
@@ -183,7 +183,7 @@ the conditional pattern (`hobby_theorem_4_1_conditional`,
 thesis-shaped hypotheses; the corpus's contribution is the
 structural composition plus the precise naming of the load-bearing
 gaps, not the discharge of those gaps. `arc_overlay_correct_chord_approx`
-is unconditional Rung-1. `point_in_ring_correct_jct` is the vacuous
+is the named-hypothesis / chord-approx claim. `point_in_ring_correct_jct` is the vacuous
 stdlib shell, not a current conditional headline. This pattern is the
 corpus's shipping discipline; cite as such.
 
