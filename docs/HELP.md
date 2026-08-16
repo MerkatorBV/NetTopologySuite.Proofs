@@ -41,7 +41,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **OPEN** [`slice-a-retro.md`](slice-a-retro.md) + [`slice-a-piece-5b-retro.md`](slice-a-piece-5b-retro.md) + the four registries + `scripts/audit_axioms.sh /tmp/full-build.log`.
 
-**CITE** Conditional headline + named-hypothesis pattern (four instances).
+**CITE** Conditional headline + named-hypothesis pattern (two current instances: `hobby_theorem_4_1_conditional`, `overlay_ng_correct_conditional`).
 
 **TIERS** Forbidden / counterexample / deferred-proof (when auditing).
 
@@ -83,9 +83,11 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** Use `oracle_bin` from downstream (e.g. `.Curve`).
 
-**OPEN** `oracle/driver.ml` header (protocol reference).
+**OPEN** `oracle/driver.ml` header (protocol reference for the
+documented modes; not the full dispatch).
 
-**ENV** `ROCQ_REF_BIN` → path to binary.
+**ENV** CI uses `ORACLE_BIN=oracle/oracle_bin`. `HOLE_*` is
+help+dispatch only.
 
 ---
 

@@ -1,11 +1,12 @@
 # Hobby Theorem 4.1 — proof structure
 
-> **Status (Phase 2, this session).** Section 4 definitions land, two
-> supporting lemmas Admitted with registered deferred-proof entries,
-> the conditional theorem Qed-closed.  Mirrors the
-> `docs/shewchuk-theorem-13-proof-structure.md` treatment for Shewchuk
-> Theorem 13: a single document captures what the corpus has, what the
-> precise gap is, and what a future contributor needs to resume the work.
+> **Status.** Live headline is `hobby_theorem_4_1_conditional` (Qed
+> under a named per-pair preservation premise).
+> `hobby_lemma_4_3_no_proper` is false as stated (Qed-closed
+> refutation). No live Admitteds; the deferred-proof registry is
+> empty. A single document captures what the corpus has, what the
+> precise gap is, and what a future contributor needs to resume the
+> work.
 >
 > The conditional theorem's exact Coq form:
 >
@@ -86,7 +87,8 @@ Lemma 4.3 as an explicit hypothesis.
 **Status.** Qed-closed (May 2026, session 2) against the corrected
 strip-shaped `in_snap_region`.  Per-theorem `Print Assumptions`: only
 the two README-allowlisted classical-reals axioms; no
-`Classical_Prop.classic` pull.  Deferred-proof registry: 3 → 2.
+`Classical_Prop.classic` pull.  No live deferred-proof entry (the
+registry is empty).
 
 **Proof technique.** Case split on `(px P1 - px P0) * (py P1 - py P0)`:
 ≥ 0 use `alpha_y = +1`; < 0 use `alpha_y = -1`.  From `f(p) = f(q)`,
@@ -150,42 +152,41 @@ monotonicity could fail at the segment endpoints.  See §7.
 
 ## §4 — Lemma 4.3 (piecewise-linear ordering) — refactored
 
-**Status (May 2026).** `hobby_lemma_4_3` is now Qed-closed by
-composition, but the load-bearing thesis-shaped piece survives in a
-narrower sub-lemma.  The refactor splits Lemma 4.3 along the
-disjunctive structure of `segments_intersect_only_at_endpoints`:
+**Status.** `hobby_lemma_4_3_no_proper` is **FALSE as stated**
+(Qed-closed refutation). The live headline is
+`hobby_theorem_4_1_conditional` (Qed under a named premise). No live
+Admitteds; the deferred-proof registry is empty. The refactor splits
+Lemma 4.3 along the disjunctive structure of
+`segments_intersect_only_at_endpoints`:
 
   - **`hobby_lemma_4_3_shared_endpoint`** -- Qed-closed.  If the
     originals share a literal endpoint (`P0 = Q0 \/ P0 = Q1 \/ P1 = Q0
     \/ P1 = Q1`), the snapped versions share that snapped endpoint.
     Trivial: `snap_round` is a deterministic function.
 
-  - **`hobby_lemma_4_3_no_proper`** -- Admitted, now in the
-    **counterexample** registry (was deferred-proof).  It is **FALSE as
-    stated**: the bare two-segment form drops the noded-arrangement
-    context.  Qed-closed refutation in
-    `theories-flocq/HobbyCounterexample_b64.v`; writeup in
-    `docs/hobby-lemma-4-3-no-proper-refutation.md`.  Witness: two
-    parallel segments at y = 0.7 and y = 1.3 snap onto the same grid
-    line y = 1, becoming a collinear overlap (a proper intersection that
-    did not exist before).  The §4 "proof sketch" below is the argument
-    that WOULD apply over a noded arrangement; it does not save the
-    arbitrary-pair statement.
+  - **`hobby_lemma_4_3_no_proper`** -- false as stated (Qed-closed
+    refutation in `theories-flocq/HobbyCounterexample_b64.v`; writeup
+    in `docs/hobby-lemma-4-3-no-proper-refutation.md`).  The bare
+    two-segment form drops the noded-arrangement context.  Witness:
+    two parallel segments at y = 0.7 and y = 1.3 snap onto the same
+    grid line y = 1, becoming a collinear overlap (a proper
+    intersection that did not exist before).  The §4 "proof sketch"
+    below is the argument that WOULD apply over a noded arrangement;
+    it does not save the arbitrary-pair statement.  Both this
+    sub-lemma and the composed `hobby_lemma_4_3` are `Abort`ed; the
+    arrangement headline takes per-pair preservation as an explicit
+    hypothesis.
 
-  - **`hobby_lemma_4_3`** -- Qed-closed via case split on the
-    `segments_intersect_only_at_endpoints (P0, P1) (Q0, Q1)`
-    hypothesis, dispatching each branch to the appropriate sub-lemma.
-    Statement unchanged; `hobby_theorem_4_1_conditional`'s premise
-    shape unchanged.
+  - **`hobby_lemma_4_3`** -- not a live Qed.  The composed form is
+    `Abort`ed with the false no-proper half.  The live statement is
+    `hobby_theorem_4_1_conditional`, which keeps the per-pair
+    preservation premise as a named hypothesis.
 
-Net registry effect: the deferred-proof entry moves from
-`hobby_lemma_4_3` to `hobby_lemma_4_3_no_proper`.  Count unchanged
-(2 deferred + 3 counterexample = 5 total).  The actual load-bearing
-work is now sharper -- it doesn't contain the trivial
-shared-endpoint disjunct.
+No live deferred or counterexample registry entries remain (historical
+rows are commented / RESOLVED-VIA-ABORT).
 
-**Statement (corpus form, original `hobby_lemma_4_3` -- now
-Qed-closed via composition).**
+**Statement (corpus form, original `hobby_lemma_4_3` -- archived;
+the live headline is `hobby_theorem_4_1_conditional`).**
 
 ```coq
 Lemma hobby_lemma_4_3 :
@@ -272,28 +273,30 @@ Lemma 4.3 will eventually consume:
     arrangement-level lift conditional on Lemma 4.3 as an explicit
     pair-preservation hypothesis.
 
-The corpus is therefore in the same position for Hobby as it is for
-Shewchuk: the headline is conditional-closed, the gap is named, the
-infrastructure that the proof will sit on is in place.
+The live Hobby headline is therefore conditional-closed
+(`hobby_theorem_4_1_conditional`); the no-proper half is a
+Qed-closed refutation, not a live Admitted. The Shewchuk Theorem 13
+headline is archived false-as-stated, not a parallel live
+conditional.
 
 ## §6 — The precise gap
 
-Two Admitteds, both registered in `docs/admitted-deferred-proofs.txt`:
+No live Admitteds. The deferred-proof registry is empty. The live
+headline is `hobby_theorem_4_1_conditional` (Qed under a named
+per-pair preservation premise). `hobby_lemma_4_3_no_proper` is false
+as stated (Qed-closed refutation); it is not a live Admitted that
+composes into a Qed.
 
-| Lemma                | Scope      | Tools                                              |
+| Lemma                | Status     | Notes                                              |
 |----------------------|------------|----------------------------------------------------|
-| `hobby_lemma_4_2`    | 2-3 sessions | IZR, ceiling-over-Z, pure R arithmetic           |
-| `hobby_lemma_4_3`    | 4-6 weeks  | Piecewise-linear functions, (ξ, η) rotation, bound |
+| `hobby_lemma_4_2`    | Qed-closed | IZR, ceiling-over-Z, pure R arithmetic           |
+| `hobby_lemma_4_3_no_proper` | False as stated | Qed-closed refutation; noded-arrangement context dropped |
+| `hobby_theorem_4_1_conditional` | Live headline | Qed under the named per-pair preservation premise |
 
-Lemma 4.2 is the accessible warm-up.  Lemma 4.3 is the thesis-shaped
-piece.  Closing both clears Hobby Theorem 4.1 from `hobby_theorem_4_1_
-conditional` to the unconditional `hobby_theorem_4_1` (by discharging
-the `Hlemma43` premise via `hobby_lemma_4_3` plus a small wrapper that
-specialises `snap_round_segments [s1]` / `snap_round_segments [s2]` to
-the explicit `(snap_round (fst s_i) 1, snap_round (snd s_i) 1)` pair).
-
-The conditional theorem itself is **already Qed-closed**.  No proof work
-is needed on the headline — only the two supporting lemmas remain.
+The conditional theorem itself is **already Qed-closed**.  An
+unconditional `hobby_theorem_4_1` would require a true replacement
+for the false no-proper half, not a composition through that
+statement.
 
 ## §7 — Resumption checklist
 
@@ -330,10 +333,11 @@ In order:
         above: rotated coordinates → piecewise-linear functions →
         tolerance bound → ordering composition.  4-6 weeks.
   - [ ] **Close the unconditional Hobby Theorem 4.1** as a small wrapper
-        over `hobby_theorem_4_1_conditional` discharging `Hlemma43` via
-        the now-proved `hobby_lemma_4_3`.  Remove both registry entries.
+        over `hobby_theorem_4_1_conditional` only if a *true*
+        replacement for the false no-proper half lands.  There are no
+        live registry entries to remove (deferred-proof registry empty;
+        `hobby_lemma_4_3_no_proper` is a Qed-closed refutation).
 
-The conditional theorem is the corpus's commitment that the rest of the
-proof composes correctly once these pieces land.  The deferred-proof
-registry is the corpus's commitment that the pieces are tractable, with
-named tools and scope estimates rather than "TODO: hard."
+The conditional theorem is the corpus's commitment that the
+arrangement-level lift composes once a true per-pair preservation
+premise is supplied.  There is no live deferred-proof entry.

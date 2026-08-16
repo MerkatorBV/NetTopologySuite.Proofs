@@ -99,14 +99,20 @@ per-file output-synced build chunks covering the whole corpus on every
 run) checks every `Print Assumptions` block
 against [`docs/axiom-allowlist.txt`](docs/axiom-allowlist.txt), and
 [`scripts/check_readme_axioms.sh`](scripts/check_readme_axioms.sh)
-guarantees the list above never drifts from that allowlist. The whole of
-`theories/` is clean against this three-axiom set. `theories-flocq/`
-*additionally* inherits a fourth axiom, `Classical_Prop.classic`,
-transitively from Flocq's binary-arithmetic operations (`Binary.Bplus` /
-`Bminus` / `Bmult` carry it in their definition closure) — a structural
-consequence of using Flocq as the binary64 model, not a load-bearing
-axiom this corpus introduces. The affected files are enumerated with
-per-file rationale in
+guarantees the list above never drifts from that allowlist. The
+allowlisted trio is the only *corpus-introduced* axiom set; host-lane
+files on the exception list are not trio-clean. Sixteen `theories/`
+files are listed in
+[`docs/audit-exceptions.txt`](docs/audit-exceptions.txt) because Stdlib
+`atan` / `Ratan` / `sin_lt_x` pull `Classical_Prop.classic` (`InArc`,
+`ArcLength`, `CurveBufferArea`, `ArcChord*`, `RelateArcAnalytic`,
+`ArcSpanAtan2`, `ArcArcQuartic`, `Atan2`, `AngleBetween`, …).
+`theories-flocq/` *additionally* inherits a fourth axiom,
+`Classical_Prop.classic`, transitively from Flocq's binary-arithmetic
+operations (`Binary.Bplus` / `Bminus` / `Bmult` carry it in their
+definition closure) — a structural consequence of using Flocq as the
+binary64 model, not a load-bearing axiom this corpus introduces. The
+affected files are enumerated with per-file rationale in
 [`docs/audit-exceptions.txt`](docs/audit-exceptions.txt), and the policy
 trade-offs are analysed in
 [`docs/category-c-policy.md`](docs/category-c-policy.md). No
