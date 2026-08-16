@@ -173,7 +173,7 @@ In rough order of payoff vs. cost:
 4. **Phase 2 onward** — snap rounding noder
    (Hobby 1999 + Halperin-Packer 2002), planar overlay (DCEL /
    hypermap), etc.  See the Phase 0–7 chokepoint table in
-   [`README.md`](../README.md).
+   [`READING-GUIDE.md`](READING-GUIDE.md#phase-07-the-nts-topological-chokepoint).
 
 ## Audit summary
 

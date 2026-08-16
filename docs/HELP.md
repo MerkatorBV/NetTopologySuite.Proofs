@@ -17,7 +17,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 🏗️ **BIM Bea**
 
-**YOU** Model as-built geometry; care about arcs / CIRCULARSTRING and COMPOUNDCURVE (SQL/MM ISO/IEC 13249-3). NTS `Flatten()` linearizes those curves to chords before overlay — Flatten is not the curve.
+**YOU** Model as-built geometry; care about CIRCULARSTRING / COMPOUNDCURVE / CURVEPOLYGON (SQL/MM ISO/IEC 13249-3). NTS `Flatten()` linearizes those curves to chords before overlay — Flatten is lossy and is not the curve.
 
 **OPEN** [`audit-phase4-curves.md`](audit-phase4-curves.md).
 
@@ -29,7 +29,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** Keep CI green, own the build pipeline details, manage the registries, review PRs for adherence to the invariants and discipline, and understand the explicit risk surface (the registered Admitted tiers).
 
-**OPEN** The four registries (`axiom-allowlist.txt`, `audit-exceptions.txt`, `admitted-*.txt`) + [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) + [`README.md`](../README.md) § "The invariant".
+**OPEN** The four registries (`axiom-allowlist.txt`, `audit-exceptions.txt`, `admitted-*.txt`) + [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
 
 **BOOKMARK / REJECT** Run `scripts/check_admitted.sh`, `audit_axioms.sh`, `check_readme_axioms.sh`. Reject bare `Admitted.`, hand-rolled OCaml when extracted versions exist, or empty wrappers with no new content. (CI Cara and Risk-Officer Rico details live here now.)
 
@@ -61,11 +61,11 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** First contribution, or clicked a link and want the elevator pitch, or have literally never seen a proof assistant before.
 
-**OPEN** [`README.md`](../README.md) § "The invariant" → [`development-environment.md`](development-environment.md) (the host/`sudo`/`opam` install path — not the 60-second read).
+**OPEN** `make help` + [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) (the 60-second / zero-prior path).
 
 The 60-second / zero-prior path is the hands-on [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) example — it is self-contained, step-by-step with `ring` vs explicit rewrites, and explains why even "obvious" geometry takes real machine time + compute.
 
-**FIRST PR** The deferred-proof registry ([`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt)) is empty — a first PR is not "pick an `Admitted`." Start from [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) or [`README.md`](../README.md) § "The invariant".
+**FIRST PR** The deferred-proof registry ([`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt)) is empty — a first PR is not "pick an `Admitted`." Start from [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v).
 
 ---
 
