@@ -3,10 +3,10 @@
 **Lane**: LargestEmptyCircle (construct) · **updated**: 16 Aug 2026 ·
 **modules**: `theories/LECChordGap.v`, `theories/LECObstacleDistance.v`,
 `theories/LECArcRow.v`, `theories/LECSegmentRow.v`,
-`theories/LECFlattenRow.v`, `theories/LargestEmptyCircle.v`,
-`theories/CellRadiusBound.v` ·
-**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE` (5-row typed table),
-`ARC_DISTANCE` (§C pins)
+`theories/LECFlattenRow.v`, `theories/LECCandidateVertex.v`,
+`theories/LargestEmptyCircle.v`, `theories/CellRadiusBound.v` ·
+**oracle**: `LEC_CIRCLE`, `OBSTACLE_DISTANCE` (5-row typed table + §I
+candidate sweep), `ARC_DISTANCE` (§C pins)
 
 This lane runs prove-or-disprove: each engine-side hypothesis about how the
 largest empty circle can be computed FASTER is either Qed-proven or refuted
@@ -166,6 +166,26 @@ gate's 15% slack) stays engine-side by design.
   validity gate is needed).  Oracle `OBSTACLE_DISTANCE` §H pins the trap
   numerically: at the witness the row answers 5 where the foot says 4.
 
+### F7 — "interior candidates suffice" (REFUTED · `LECCandidateVertex.v`)
+
+- **Hypothesis** (H-INTERIOR): "the LEC maximiser lies strictly inside
+  the domain, so a candidate enumeration may skip the boundary classes"
+  — the shortcut that walks only Voronoi vertices.
+- **Verdict**: `interior_maximiser_hypothesis_refuted`.  The two-disc
+  corpus cell already kills it: BOTH its maximisers (0, ±3)
+  (`lec_two_discs_maximisers`) sit ON the rectangle's boundary — they
+  are bisector × boundary crossings, not interior vertices.
+- **Why it fails structurally**: the clearance function is convex-cell
+  concave-ish along bisectors; when the unconstrained tie point leaves
+  the domain, the max slides to where the bisector CROSSES the boundary
+  — a class the interior-only walk never visits.
+- **Guide**: both candidate classes are load-bearing, and the pairing of
+  witnesses proves each non-redundant: the three-point instance's unique
+  maximiser is the INTERIOR Voronoi vertex (`lec_three_points`), the
+  two-disc instance's maximisers are BOUNDARY crossings.  An enumeration
+  must walk vertices AND bisector × boundary crossings AND domain
+  vertices — exactly `tri_candidates`'s three classes.
+
 ## What is Qed today (the verified bridge under the engine's table)
 
 - **Filled-disc row exact**: `empty_disk_disc_iff` — emptiness of the
@@ -222,21 +242,46 @@ gate's 15% slack) stays engine-side by design.
   collections with zero new proof work — the first payoff of the
   `exact_clearance` abstraction.  Oracle: SEG member row, §H clamp pins
   (interior 3, endpoint 5-not-4, zero-length == POINT bit-exact).
+- **Candidate completeness, WITNESS-SCOPED** (`LECCandidateVertex.v`,
+  the summit rung's witness half): for the three-point instance —
+  sites (0,0), (4,0), (2,3), domain their hull — the LEC is the
+  interior Voronoi vertex (2, 5/6) at radius 13/6
+  (`lec_three_points`, stated through `largest_empty_disk` and priced
+  by the flatten row's `empty_disk_flatten_iff`), the maximiser is
+  UNIQUE (`lec_three_points_maximiser_unique`), and it lies in the
+  finite three-class enumeration {Voronoi vertex; bisector × boundary
+  crossings; domain vertices} (`maximiser_is_candidate`).  Proof
+  engine: hand-found per-cell Handelman certificates — e.g.
+  169 − 36(x² + y²) = 52(2−x) + 5(13−4x−6y) + 12(2−x)(3x−2y) +
+  6(13−4x−6y)y on A's cell — giving the bound AND the uniqueness from
+  one `ring` identity each, no solver search.  Paired with F7 (the
+  two-disc maximisers are boundary crossings), the two witnesses prove
+  both candidate classes non-redundant.  Oracle: `OBSTACLE_DISTANCE` §I
+  — vertex ≈ 13/6 at 1e-12, mirror-symmetric edge crossings
+  bit-identical, 109-sample grid sweep never beats the enumeration.
 
 ## Open rungs (in likelihood order)
 
 The point-to-arc rung closed 15 Aug 2026 (`LECArcRow.v`, F4); the n-ary
 flatten rung closed 16 Aug 2026 (`LECFlattenRow.v`, F5); the
-segment/facet rung closed 16 Aug 2026 (`LECSegmentRow.v`, F6 — slotted
-into the typed table as the fifth row, priced into collections by the
-flatten with no new work).  Every per-component metric the engine's
-`ObstacleDistance` table computes now has a Qed exactness spec.
+segment/facet rung closed 16 Aug 2026 (`LECSegmentRow.v`, F6).  Every
+per-component metric the engine's `ObstacleDistance` table computes now
+has a Qed exactness spec.  **Candidate completeness closed
+WITNESS-SCOPED 16 Aug 2026** (`LECCandidateVertex.v`, F7): the
+three-point instance's LEC is its interior Voronoi vertex, the maximiser
+is unique and lies in the finite three-class enumeration
+(`maximiser_is_candidate`), and F7 proves the boundary classes cannot be
+dropped.  The witness obligation of the summit is retired; what remains
+is generalisation:
 
-1. **Candidate completeness** (the big one): every maximiser of the
-   weighted min-distance over a convex domain is a weighted-Voronoi
-   vertex, an edge × boundary crossing, or a boundary vertex — the
-   theorem an O(n log n) LEC needs to be TRUSTED, in the corpus's
-   witness-scoped style first (three discs, one Apollonius vertex).
+1. **Candidate completeness, general** (the summit): every maximiser of
+   the weighted min-distance over a convex domain is a weighted-Voronoi
+   vertex, a bisector × boundary crossing, or a domain vertex — for
+   ARBITRARY finite site sets and convex domains.  The statement shape
+   and the per-cell certificate technique (Handelman on the cell
+   polygon, bound + uniqueness from one identity) are now fixed by the
+   witness module; the general proof needs the cell decomposition
+   abstracted, not new geometry.
 2. **Runtime half**: stays engine-side (perf gate); the corpus only ever
    adjudicates exactness.
 
