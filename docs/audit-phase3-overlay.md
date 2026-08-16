@@ -150,7 +150,7 @@ the deferred dependencies sit at the entry to Link 1.
 ### Phase 1 (segment intersection)
 
   - `HasIntersect_BPoint` instance
-    (`theories-flocq/Intersect_b64_exact.v:2159`) -- the binary64
+    (`theories-flocq/Intersect_b64_exact_bridge.v:242`) -- the binary64
     intersection primitive packaged as the chord-paradigm typeclass
     consumed downstream.  Soundness via the integer-regime headline
     `b64_intersect_sign_filtered_sound_small_int`.

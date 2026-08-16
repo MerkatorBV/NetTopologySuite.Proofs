@@ -40,7 +40,18 @@ theories-flocq/ClothoidResidual_b64_exact.v
 theories-flocq/ClothoidHalley_b64.v
 theories-flocq/Intersect_b64.v
 theories-flocq/B64_bridge.v
-theories-flocq/Intersect_b64_exact.v
+# Split (2026-08-16): the former monolith Intersect_b64_exact.v is now five
+# layered modules.  Unlike the PassesThrough B4 split, NO module leaves this
+# list: every layer states its lemmas over Flocq binary64 ops / `Binary.B2R`
+# (even the core, whose pure-R Cramer references are co-located with the b64
+# projections and exactness lemmas), so all five inherit the former
+# exemption.  The umbrella Intersect_b64_exact.v is a pure Require Export
+# re-export with no Print Assumptions output and is deliberately NOT listed.
+theories-flocq/Intersect_b64_exact_core.v
+theories-flocq/Intersect_b64_exact_round_chain.v
+theories-flocq/Intersect_b64_exact_forward_error.v
+theories-flocq/Intersect_b64_exact_bridge.v
+theories-flocq/Intersect_b64_exact_tight.v
 theories-flocq/B64_lib.v
 theories-flocq/Orient_b64_R.v
 theories-flocq/Validate_binary64_bridge.v

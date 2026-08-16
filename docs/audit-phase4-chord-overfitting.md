@@ -50,7 +50,7 @@ chord-paradigm primitives:
      `segments_intersect_properly P0 P1 Q0 Q1` (Overlay.v:125),
      defined via linear parametrisations.
   3. **4-point intersection signature**: `HasIntersect` typeclass
-     (Intersect_b64_exact.v:2153) requires `T -> T -> T -> T ->
+     (Intersect_b64_exact_bridge.v:236) requires `T -> T -> T -> T ->
      binary64` — two chord segments = four endpoints.
   4. **Linear edge in Liang-Barsky / hot-pixel test**:
      `segment_touches_hot_pixel P0 P1 C scale` (HotPixel.v:110),
