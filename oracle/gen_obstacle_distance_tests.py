@@ -534,7 +534,58 @@ else:
          " (f8_led)]   ok")
 emit()
 
+emit("## K. WEIGHTED candidate completeness (LECCandidateWeighted.v): at a")
+emit("##    weighted tie with unequal norms the unweighted sum-direction")
+emit("##    WORSENS the clearance (F9); the weighted-bisector normal")
+emit("##    v = d2*u1 + d1*u2 repairs it.  All coordinates dyadic-exact.")
+# K1: the F9 instance -- discs ((-1,0), 1/2) and ((4,-3), 9/2), p = (0,0).
+# Distances 1 and 5 (a 3-4-5 triangle), weighted clearance exactly 1/2.
+SIT_K = [("DISC", -1, 0, 0.5), ("DISC", 4, -3, 4.5)]
+tK = 2.0 ** -6
+pk = assess("F9 weighted tie p=(0,0) -> 1/2", 0, 0, SIT_K, pin=0.5,
+            mirror_check=True)
+# K2: THE F9 TRAP (f9_sum_direction_worsens): the unweighted supplier
+# direction u1+u2 = (-3,3) strictly DECREASES weighted clearance for all
+# t in (0, 1/3): dist^2 to c1 along it is 1 - 6t + 18t^2 < 1.
+qk_bad = assess("shifted along F8 formula u1+u2=(-3,3), t=2^-6",
+                -3 * tK, 3 * tK, SIT_K, mirror_check=True)
+if pk is not None and qk_bad is not None \
+        and not (qk_bad[0] < pk[0] - 1e-12):
+    emit(f"  !! K_TRAP sum-direction did not worsen: {qk_bad[0]!r}"
+         f" >= {pk[0]!r}")
+    failures += 1
+else:
+    emit("  [F8 sum-direction strictly WORSENS the weighted tie (F9)]   ok")
+# K3: the repaired supplier (weighted_within_two_direction): the
+# weighted-bisector normal v = d2*u1 + d1*u2 = 5*(1,0) + 1*(-4,3) = (1,3)
+# strictly improves (f9_weighted_supplier_improves).
+qk_good = assess("shifted along weighted bisector v=(1,3), t=2^-6",
+                 1 * tK, 3 * tK, SIT_K, mirror_check=True)
+if pk is not None and qk_good is not None \
+        and not (qk_good[0] > pk[0] + 1e-12):
+    emit(f"  !! K_REPAIR weighted bisector failed: {qk_good[0]!r}"
+         f" <= {pk[0]!r}")
+    failures += 1
+else:
+    emit("  [weighted-bisector normal strictly improves the F9 tie]   ok")
+# K4: equal weights degenerate to F8 (equal_weights_tie_unweighted): with
+# both radii 1/2 the sum direction works again -- F9's failure is an
+# unequal-weights phenomenon, not a weighted-clearance one.
+SIT_K4 = [("DISC", -1, 0, 0.5), ("DISC", 0, 1, 0.5)]
+pk4 = assess("equal-weight tie p=(0,0) -> 1/2", 0, 0, SIT_K4, pin=0.5,
+             mirror_check=True)
+qk4 = assess("shifted along u1+u2=(1,-1), t=2^-6", tK, -tK, SIT_K4,
+             mirror_check=True)
+if pk4 is not None and qk4 is not None \
+        and not (qk4[0] > pk4[0] + 1e-12):
+    emit(f"  !! K_EQUAL equal-weight sum-direction failed: {qk4[0]!r}"
+         f" <= {pk4[0]!r}")
+    failures += 1
+else:
+    emit("  [equal weights: the F8 sum-direction works again]   ok")
+emit()
+
 if failures:
     emit(f"# {failures} PROVEN-invariant violation(s) -- RocqRefRunner bug.")
     sys.exit(1)
-emit("# All proven invariants (I1-J6) hold across the suite.")
+emit("# All proven invariants (I1-K4) hold across the suite.")
