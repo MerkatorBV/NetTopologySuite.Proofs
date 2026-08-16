@@ -61,11 +61,11 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** First contribution, or clicked a link and want the elevator pitch, or have literally never seen a proof assistant before.
 
-**OPEN** [`README.md`](../README.md) § "The invariant" → [`development-environment.md`](development-environment.md).
+**OPEN** [`README.md`](../README.md) § "The invariant" → [`development-environment.md`](development-environment.md) (the host/`sudo`/`opam` install path — not the 60-second read).
 
-(If you have literally never seen a proof assistant before, start with the hands-on [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) example — it is self-contained, step-by-step with `ring` vs explicit rewrites, and explains why even "obvious" geometry takes real machine time + compute.)
+The 60-second / zero-prior path is the hands-on [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) example — it is self-contained, step-by-step with `ring` vs explicit rewrites, and explains why even "obvious" geometry takes real machine time + compute.
 
-**FIRST PR** Smallest entry in `admitted-deferred-proofs.txt` you understand.
+**FIRST PR** The deferred-proof registry ([`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt)) is empty — a first PR is not "pick an `Admitted`." Start from [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) or [`README.md`](../README.md) § "The invariant".
 
 ---
 

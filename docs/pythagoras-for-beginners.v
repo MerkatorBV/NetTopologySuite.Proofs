@@ -39,7 +39,8 @@
   (defining points, distance, the ring structure of reals, etc.) has already
   been done.
 
-  The project's 1,100+ theorems are the same idea, but applied to the
+  The project's theorems (over 5,100 — see README § The invariant)
+  are the same idea, but applied to the
   much harder problems of robust geometric predicates that must work
   correctly for floating-point inputs without sign flips on edge cases.
 *)
