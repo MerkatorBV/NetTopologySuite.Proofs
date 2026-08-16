@@ -102,4 +102,16 @@
   [all boundary candidates <= vertex]   ok
   [grid sweep 109 samples, max 2.136001 <= vertex]   ok
 
-# All proven invariants (I1-I9) hold across the suite.
+## J. Candidate completeness (LECCandidateComplete.v): non-candidates
+##    are strictly improvable along the proof's own directions; the
+##    naive sum-direction stalls exactly on the antipodal (F8) case.
+  [two-nearest bisector point (2,1)] -> 'DIST 0x1.1e3779b97f4a8p+1 N 2'   ok
+  [shifted along d=u1+u2=(4,0), t=2^-6] -> 'DIST 0x1.2564d8cd4886bp+1 N 2'   ok
+  [sum-direction strictly improves the bisector point]   ok
+  [F8 midpoint (1,0) -> 1] -> 'DIST 0x1p+0 N 2'   ok
+  [naive sum-direction stalls bit-identically at the midpoint]  ok
+  [perp direction (1, 2^-6) beats midpoint] -> 'DIST 0x1.0007ffe000fffp+0 N 2'   ok
+  [perp direction strictly improves, = sqrt(1+t^2) (1e-12)]   ok
+  [segment sweep 129 samples, max 1.000000 <= 1 (f8_led)]   ok
+
+# All proven invariants (I1-J6) hold across the suite.

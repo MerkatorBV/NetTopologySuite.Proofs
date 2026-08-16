@@ -2746,6 +2746,7 @@ theories/LECFlattenRow.v
 # witness's boundary maximisers.  Full-only: imports LECFlattenRow.v,
 # LECObstacleDistance.v, LargestEmptyCircle.v.
 theories/LECCandidateVertex.v
+theories/LECCandidateComplete.v
 
 # Issue #65 curve-aware buffer, rung 2: the SQL/MM three-point bridge.
 # radial_offset (homothety about the center, pure rational arithmetic,
