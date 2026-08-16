@@ -91,12 +91,12 @@ Shewchuk expansion arithmetic
 
 - TwoSum / Dekker building blocks (no-overlap, sign-preservation).
 - `fast_expansion_sum` over binary64 lists. The corpus headline
-  `fast_expansion_sum_nonoverlap_shewchuk` is a Qed-closed disproof
-  of the **corpus** postcondition (half-ulp `strict_succ_b64`), not
-  of Shewchuk 1997 as published. Witness:
-  [`B64_Shewchuk_Thm13_counterexample.v`](../theories-flocq/B64_Shewchuk_Thm13_counterexample.v);
-  analysis in
-  [`shewchuk-thm13-headline-counterexample.md`](shewchuk-thm13-headline-counterexample.md).
+  `fast_expansion_sum_nonoverlap_shewchuk` is false as stated: a
+  disproof of the **corpus** postcondition (half-ulp
+  `strict_succ_b64`), not of Shewchuk 1997 as published. See Proofs
+  [#482](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/482)
+  and
+  [`B64_Shewchuk_Thm13_counterexample.v`](../theories-flocq/B64_Shewchuk_Thm13_counterexample.v).
   A restricted true form,
   `fast_expansion_sum_nonoverlap_shewchuk_int_safe_two_pairs`, is
   Qed in `B64_FastExpansionSum_Shewchuk_Route2.v`.
