@@ -2734,6 +2734,18 @@ theories/LECSegmentRow.v
 # LargestEmptyCircle.v, LECObstacleDistance.v, LECArcRow.v, LECSegmentRow.v.
 theories/LECFlattenRow.v
 
+# LEC candidate completeness, WITNESS-SCOPED (the summit rung's witness
+# half + failed path F7).  Three-point instance (sites (0,0)/(4,0)/(2,3),
+# domain their hull): the LEC is the interior Voronoi vertex (2, 5/6) at
+# radius 13/6 (lec_three_points, priced via empty_disk_flatten_iff), the
+# maximiser is unique, and it lies in the finite three-class enumeration
+# (maximiser_is_candidate).  Per-cell Handelman certificates: one integer
+# ring identity per Voronoi cell gives bound + uniqueness, no solver
+# search.  F7 (interior candidates suffice) REFUTED via the two-disc
+# witness's boundary maximisers.  Full-only: imports LECFlattenRow.v,
+# LECObstacleDistance.v, LargestEmptyCircle.v.
+theories/LECCandidateVertex.v
+
 # Issue #65 curve-aware buffer, rung 2: the SQL/MM three-point bridge.
 # radial_offset (homothety about the center, pure rational arithmetic,
 # no trig) carries ArcOffset's parallel-curve property into coordinate

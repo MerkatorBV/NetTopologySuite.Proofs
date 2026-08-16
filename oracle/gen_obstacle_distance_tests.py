@@ -426,7 +426,56 @@ assess("nan SEG coord NAN", 0, 0, [("SEG", float("nan"), 0, 4, 0)],
        expect_verdict="NAN")
 emit()
 
+emit("## I. Candidate enumeration (LECCandidateVertex.v): the 3-point witness")
+emit("##    triangle -- the finite candidate list beats every grid sample.")
+TRI = [("POINT", 0, 0), ("POINT", 4, 0), ("POINT", 2, 3)]
+# the interior Voronoi vertex (2, 5/6): clearance = circumradius 13/6
+# (lec_three_points; maximiser UNIQUE by lec_three_points_maximiser_unique)
+kv = assess("Voronoi vertex (2,5/6) -> 13/6", 2, 5 / 6, TRI, mirror_check=True)
+if kv is None or abs(kv[0] - 13 / 6) > 1e-12:
+    emit(f"  !! I9_VERTEX got={kv} want~13/6")
+    failures += 1
+else:
+    emit("  [vertex clearance == 13/6 (1e-12)]   ok")
+# bisector x boundary crossings (tri_candidates rows 2-4)
+c20 = assess("bisector(A,B) x base (2,0) -> 2", 2, 0, TRI, pin=2.0,
+             mirror_check=True)
+c1 = assess("bisector(A,C) x edge (1,3/2)", 1, 1.5, TRI, mirror_check=True)
+c3 = assess("bisector(B,C) x edge (3,3/2)", 3, 1.5, TRI, mirror_check=True)
+# domain vertices: clearance 0 (the site itself)
+for (vx, vy) in ((0, 0), (4, 0), (2, 3)):
+    assess(f"domain vertex ({vx},{vy}) -> 0", vx, vy, TRI, pin=0.0,
+           mirror_check=True)
+# candidate dominance: every candidate <= the vertex value
+if kv is not None:
+    for nm, c in (("(2,0)", c20), ("(1,3/2)", c1), ("(3,3/2)", c3)):
+        if c is not None and c[0] > kv[0] + 1e-12:
+            emit(f"  !! I9_DOMINANCE candidate {nm} beats the vertex")
+            failures += 1
+    emit("  [all boundary candidates <= vertex]   ok")
+# grid sweep of the triangle: no sample beats the enumeration
+# (tri_min_bound: clearance <= 13/6 everywhere on the closed triangle)
+worst = -1.0
+n_grid = 0
+gy = 0.0
+while gy <= 3.0:
+    gx = 0.0
+    while gx <= 4.0:
+        if 3 * gx - 2 * gy >= 0.0 and 3 * gx + 2 * gy <= 12.0:
+            n_grid += 1
+            d = mirror(TRI, gx, gy)
+            if d > worst:
+                worst = d
+        gx += 0.25
+    gy += 0.25
+if kv is not None and worst > kv[0] + 1e-9:
+    emit(f"  !! I9_GRID a grid sample beats the vertex: {worst!r}")
+    failures += 1
+else:
+    emit(f"  [grid sweep {n_grid} samples, max {worst:.6f} <= vertex]   ok")
+emit()
+
 if failures:
     emit(f"# {failures} PROVEN-invariant violation(s) -- RocqRefRunner bug.")
     sys.exit(1)
-emit("# All proven invariants (I1-I8) hold across the suite.")
+emit("# All proven invariants (I1-I9) hold across the suite.")
