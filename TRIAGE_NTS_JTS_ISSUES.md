@@ -318,7 +318,7 @@ witness: <fixture or none>
    genuine global-geometry rung that #306's clearance hypothesis and #307's parity
    decider now sit beneath).
 
-## Recommended order of attack (revised 2026-06-20)
+## Recommended order of attack (revised 2026-08-16)
 
 1. **#67** — still the deepest *unfinished* build, but now well advanced: matrix
    algebra + witnesses (S0–S12), curve DE-9IM oracle (CURVE_RELATE_MATRIX),
@@ -336,6 +336,17 @@ witness: <fixture or none>
    above the landed BUFFER_REGION certificate.
 4. **#66** — finish remaining precision/overlay gaps (mostly there).
 5. **#68** — Delaunay / Voronoi on top of the now-proven `inCircle_R`.
+6. **#423** — Formal proofs for distance metrics: directed/discrete Hausdorff
+   and Fréchet correctness (`metric`; Distance / Hausdorff / Frechet cluster).
+7. **#424** — Formal proofs for hull constructions: minimum bounding triangle,
+   convex hull, enclosing-shape invariants (`hull`).
+8. **#425** — Formal proofs for polygonal coverage: validity, gap/overlap
+   cleaning, and union soundness (`coverage`; Coverage cleaner / gap-overlap).
+
+The #69 attack does **not** include an oracle-gate / CURVEPOLYGON type-I/O /
+RocqRefRunner-first-for-CP step. That is not a leftover implement.
+CURVEPOLYGON (ISO/IEC 13249-3, WKB 10) is JTS I/O identity on JTS #7 via #51,
+not an oracle keyword; no Proofs issue is closed as done on JTS #7.
 
 ## How to cite the corpus
 
