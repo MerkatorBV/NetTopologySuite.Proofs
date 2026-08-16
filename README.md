@@ -80,7 +80,7 @@ corpus (511 registered modules) is the pinned container. Toolchain:
 - **Not** a substitute for unit tests. Tests still cover rounding, exceptions, performance, and the rest of the runtime.
 - **Not** complete. Coverage is the foundational layer plus early-to-mid chokepoint phases; gaps are named in the Reading Guide, not silent.
 
-**Shewchuk-13.** Corpus postcondition (half-ulp `strict_succ_b64`) — [Proofs #482](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/482).
+**Shewchuk-13.** Corpus postcondition (half-ulp `strict_succ_b64`), not a disproof of Shewchuk 1997 — [Proofs #482](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/482).
 
 ## Doors
 

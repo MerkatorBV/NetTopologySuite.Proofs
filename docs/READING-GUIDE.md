@@ -24,8 +24,10 @@ which geometric primitives have formal proofs.
   4. [`audit-phase3-overlay.md`](audit-phase3-overlay.md) § headers — polygon overlay correctness
      (Union/Intersection/Difference/SymDiff).
   5. [`audit-phase4-curves.md`](audit-phase4-curves.md) § headers — arc/curve overlay status
-     (SQL/MM CIRCULARSTRING; `arc_overlay_correct_chord_approx` is
-     unconditional Rung-1, JCT gap precisely characterised).
+     (SQL/MM ISO/IEC 13249-3 CIRCULARSTRING / COMPOUNDCURVE /
+     CURVEPOLYGON; `arc_overlay_correct_chord_approx` is the
+     named-hypothesis / chord-approx claim, JCT gap precisely
+     characterised).
 
 For the citable index of every Qed-closed theorem (with axiom footprint
 and regime), see [`verified-claims.md`](verified-claims.md).
