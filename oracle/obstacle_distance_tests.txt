@@ -127,4 +127,12 @@
   [shifted along u1+u2=(1,-1), t=2^-6] -> 'DIST 0x1.080fc0befa37p-1 N 2'   ok
   [equal weights: the F8 sum-direction works again]   ok
 
-# All proven invariants (I1-K4) hold across the suite.
+## L. Chord-necessity counterexample (MICChordNecessity.v, ledger F10):
+##    the exact ARC row and the chord SEG row answer DIFFERENTLY at the
+##    circumcentre -- 5 vs 3 on the integer 3-4-5 arc -- so a chord swap
+##    is structurally inexact while the cell certificate needs no chord.
+  [F10 arc (3,4)-(5,0)-(3,-4) at centre -> 5] -> 'DIST 0x1.4p+2 N 1'   ok
+  [F10 chord (3,4)-(3,-4) at centre -> 3] -> 'DIST 0x1.8p+1 N 1'   ok
+  [the chord strictly understates the exact metric (F10)]   ok
+
+# All proven invariants (I1-L3) hold across the suite.
