@@ -475,7 +475,66 @@ else:
     emit(f"  [grid sweep {n_grid} samples, max {worst:.6f} <= vertex]   ok")
 emit()
 
+emit("## J. Candidate completeness (LECCandidateComplete.v): non-candidates")
+emit("##    are strictly improvable along the proof's own directions; the")
+emit("##    naive sum-direction stalls exactly on the antipodal (F8) case.")
+# J1-J2: generic two-nearest improvement (within_two_improvable): p on the
+# bisector of the two sites, direction d = u1 + u2, step t = 2^-6 (exact).
+SIT_J = [("POINT", 0, 0), ("POINT", 0, 2)]
+tJ = 2.0 ** -6
+pj = assess("two-nearest bisector point (2,1)", 2, 1, SIT_J,
+            mirror_check=True)
+qj = assess("shifted along d=u1+u2=(4,0), t=2^-6", 2 + tJ * 4, 1, SIT_J,
+            mirror_check=True)
+if pj is not None and qj is not None and not (qj[0] > pj[0] + 1e-12):
+    emit(f"  !! J_IMPROVE sum-direction failed: {qj[0]!r} <= {pj[0]!r}")
+    failures += 1
+else:
+    emit("  [sum-direction strictly improves the bisector point]   ok")
+# J3-J5: THE ANTIPODAL TRAP (f8_interiority_load_bearing): sites (0,0) and
+# (2,0), midpoint p = (1,0).  d = u1 + u2 = (0,0): the naive direction
+# DEGENERATES -- the "shifted" point is p itself, clearance bit-identical.
+F8_J = [("POINT", 0, 0), ("POINT", 2, 0)]
+pm = assess("F8 midpoint (1,0) -> 1", 1, 0, F8_J, pin=1.0,
+            mirror_check=True)
+qm_stall = mirror(F8_J, 1 + tJ * 0, 0 + tJ * 0)
+if pm is not None and qm_stall.hex() != pm[0].hex():
+    emit("  !! J_STALL naive d=u1+u2 moved the antipodal midpoint")
+    failures += 1
+else:
+    emit("  [naive sum-direction stalls bit-identically at the midpoint]  ok")
+# the proof's perpendicular direction improves: q = (1, t),
+# clearance sqrt(1 + t^2) > 1 (within_two_direction, antipodal branch).
+qp = assess("perp direction (1, 2^-6) beats midpoint", 1, tJ, F8_J,
+            mirror_check=True)
+want_perp = math.sqrt(1 + tJ * tJ)
+if qp is not None and (abs(qp[0] - want_perp) > 1e-12 or not (qp[0] > 1.0)):
+    emit(f"  !! J_PERP got={qp[0]!r} want={want_perp!r} (> 1)")
+    failures += 1
+else:
+    emit("  [perp direction strictly improves, = sqrt(1+t^2) (1e-12)]   ok")
+# J6: yet the midpoint IS optimal over the segment DOMAIN (f8_led): a
+# 129-sample sweep of the segment never beats clearance 1 -- two nearest
+# sites suffice on a degenerate domain, the interiority premise is
+# load-bearing.
+worst_j = -1.0
+n_seg = 0
+sx = 0.0
+while sx <= 2.0:
+    n_seg += 1
+    dj = mirror(F8_J, sx, 0.0)
+    if dj > worst_j:
+        worst_j = dj
+    sx += 1.0 / 64
+if worst_j > 1.0 + 1e-12:
+    emit(f"  !! J_SEGMENT a segment sample beats the midpoint: {worst_j!r}")
+    failures += 1
+else:
+    emit(f"  [segment sweep {n_seg} samples, max {worst_j:.6f} <= 1"
+         " (f8_led)]   ok")
+emit()
+
 if failures:
     emit(f"# {failures} PROVEN-invariant violation(s) -- RocqRefRunner bug.")
     sys.exit(1)
-emit("# All proven invariants (I1-I9) hold across the suite.")
+emit("# All proven invariants (I1-J6) hold across the suite.")
