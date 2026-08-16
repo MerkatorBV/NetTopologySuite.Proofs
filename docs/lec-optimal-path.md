@@ -186,6 +186,30 @@ gate's 15% slack) stays engine-side by design.
   must walk vertices AND bisector × boundary crossings AND domain
   vertices — exactly `tri_candidates`'s three classes.
 
+### F8 — "≥ 3 nearest sites, no interiority needed" (REFUTED · `LECCandidateComplete.v`)
+
+- **Hypothesis** (H-NO-BALL): "an LEC maximiser always has ≥ 3 nearest
+  sites, so the interior-ball premise of the general candidate theorem
+  is bureaucracy" — the reading that would let an implementation skip
+  the boundary candidate classes whenever the domain is convex.
+- **Verdict**: `f8_interiority_load_bearing`.  Two sites at (0,0) and
+  (2,0) with the domain their connecting segment: the midpoint (1,0) IS
+  the largest-empty-disk centre (radius 1, `f8_led`) yet has exactly
+  TWO nearest sites (`f8_within_two`).  The domain has empty interior,
+  so the ball premise fails at every point — and must.
+- **Why it fails structurally**: the improvement kernel needs room to
+  move.  On a degenerate (lower-dimensional) domain the only legal
+  directions are along the domain, and along the segment the midpoint's
+  two antipodal away-vectors genuinely block first-order improvement.
+  The instance is also the antipodal trap for the naive direction
+  d = u₁ + u₂ = 0 (the generic two-nearest supplier degenerates; the
+  perpendicular rescues improvement only OFF the segment).
+- **Guide**: degenerate domains route to the EDGE theorem (where two
+  nearest sites are permitted — the midpoint is a bisector crossing,
+  `f8_midpoint_not_within_one` confirms within-ONE fails), never to the
+  interior theorem.  An implementation may use the ≥ 3-nearest filter
+  only where a 2-D ball fits inside the domain.
+
 ## What is Qed today (the verified bridge under the engine's table)
 
 - **Filled-disc row exact**: `empty_disk_disc_iff` — emptiness of the
@@ -260,6 +284,33 @@ gate's 15% slack) stays engine-side by design.
   — vertex ≈ 13/6 at 1e-12, mirror-symmetric edge crossings
   bit-identical, 109-sample grid sweep never beats the enumeration.
 
+- **Candidate completeness, GENERAL for point sites**
+  (`LECCandidateComplete.v`, the summit rung's general half): for
+  ARBITRARY finite point-site sets, every largest-empty-disk maximiser
+  with positive clearance is a candidate — an interior maximiser can
+  never have its nearest sites covered by two points
+  (`lec_candidate_completeness_interior`: it is a Voronoi vertex, ≥ 3
+  nearest sites), and a maximiser strictly inside a domain edge can
+  never have a unique nearest site
+  (`lec_candidate_completeness_boundary_edge`: it is a bisector ×
+  boundary crossing); domain vertices are the only remaining boundary
+  points.  Proof engine: ONE improvement kernel
+  (`improvement_kernel`) over the shift expansion
+  dist²(p + t·d, s) = r² + 2t·⟨d, p−s⟩ + t²·|d|², with the inner
+  product required only ≥ 0 — the quadratic term forces strict
+  improvement, so the unique-nearest, generic two-nearest
+  (d = u₁ + u₂, strict positivity by the nonzero-square trick — no
+  Cauchy–Schwarz), ANTIPODAL two-nearest (d = the perpendicular, inner
+  products exactly zero), and along-edge (d = ±e) cases all feed the
+  same engine.  The positive forms (`within_two_improvable`,
+  `within_one_improvable_on_segment`) CONSTRUCT the strictly better
+  centre; the maximiser theorems are their negation-form corollaries,
+  so the whole file is classic-free (standard trio only).  Oracle:
+  `OBSTACLE_DISTANCE` §J — the sum-direction improvement pinned on a
+  bisector point, the antipodal stall bit-identical at the F8 midpoint,
+  the perpendicular rescue = √(1+t²) at 1e-12, and a 129-sample segment
+  sweep confirming `f8_led`.
+
 ## Open rungs (in likelihood order)
 
 The point-to-arc rung closed 15 Aug 2026 (`LECArcRow.v`, F4); the n-ary
@@ -267,22 +318,27 @@ flatten rung closed 16 Aug 2026 (`LECFlattenRow.v`, F5); the
 segment/facet rung closed 16 Aug 2026 (`LECSegmentRow.v`, F6).  Every
 per-component metric the engine's `ObstacleDistance` table computes now
 has a Qed exactness spec.  **Candidate completeness closed
-WITNESS-SCOPED 16 Aug 2026** (`LECCandidateVertex.v`, F7): the
-three-point instance's LEC is its interior Voronoi vertex, the maximiser
-is unique and lies in the finite three-class enumeration
-(`maximiser_is_candidate`), and F7 proves the boundary classes cannot be
-dropped.  The witness obligation of the summit is retired; what remains
-is generalisation:
+WITNESS-SCOPED 16 Aug 2026** (`LECCandidateVertex.v`, F7) and **GENERAL
+FOR POINT SITES 16 Aug 2026** (`LECCandidateComplete.v`, F8): every
+maximiser over arbitrary finite point-site sets is an interior Voronoi
+vertex, an edge bisector crossing, or a domain vertex — the theorem a
+trusted O(n log n) LEC needs, with F8 proving the interiority premise
+load-bearing.  What remains is the weighted variant:
 
-1. **Candidate completeness, general** (the summit): every maximiser of
-   the weighted min-distance over a convex domain is a weighted-Voronoi
-   vertex, a bisector × boundary crossing, or a domain vertex — for
-   ARBITRARY finite site sets and convex domains.  The statement shape
-   and the per-cell certificate technique (Handelman on the cell
-   polygon, bound + uniqueness from one identity) are now fixed by the
-   witness module; the general proof needs the cell decomposition
-   abstracted, not new geometry.
-2. **Runtime half**: stays engine-side (perf gate); the corpus only ever
+1. **Candidate completeness, WEIGHTED** (the Apollonius summit): the
+   same classification for the additively-weighted clearance
+   min (dist(p, cᵢ) − rᵢ) that `min_disc_dist_weighted` reduces disc
+   sites to.  The improvement kernel's shift expansion survives
+   verbatim (per-site radius r + wᵢ), but the two-nearest supplier does
+   not: with UNEQUAL norms |u₁| ≠ |u₂| the sum direction's inner
+   product ⟨u₁+u₂, u₁⟩ = |u₁|² + ⟨u₁,u₂⟩ can go negative, so the
+   weighted-bisector normal must replace it.  New supplier, same
+   engine.
+2. **Polygon assembly**: a concrete convex-polygon domain type packaging
+   interior/edge/vertex into one disjunctive classification statement —
+   pure plumbing over the two kernels once a polygon type exists in the
+   lane.
+3. **Runtime half**: stays engine-side (perf gate); the corpus only ever
    adjudicates exactness.
 
 ## Relation to the engine lane
