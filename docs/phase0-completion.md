@@ -90,14 +90,23 @@ Shewchuk expansion arithmetic
 [`theories-flocq/Orient_b64_expansion.v`](../theories-flocq/Orient_b64_expansion.v)):
 
 - TwoSum / Dekker building blocks (no-overlap, sign-preservation).
-- `fast_expansion_sum` over binary64 lists with nonoverlap invariant
-  preservation (Shewchuk Theorem 13).
+- `fast_expansion_sum` over binary64 lists. The corpus headline
+  `fast_expansion_sum_nonoverlap_shewchuk` is false as stated: a
+  disproof of the **corpus** postcondition (half-ulp
+  `strict_succ_b64`), not of Shewchuk 1997 as published. See Proofs
+  [#482](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/482)
+  and
+  [`B64_Shewchuk_Thm13_counterexample.v`](../theories-flocq/B64_Shewchuk_Thm13_counterexample.v).
+  A restricted true form,
+  `fast_expansion_sum_nonoverlap_shewchuk_int_safe_two_pairs`, is
+  Qed in `B64_FastExpansionSum_Shewchuk_Route2.v`.
 - `orient2d` via fast-expansion-sum — the expansion-based decoder
   feeding Stage D.
 - Slice A documented separately in [`docs/slice-a-retro.md`](slice-a-retro.md);
-  the 17-session Slice A engagement closed Shewchuk's
-  `fast_expansion_sum_nonoverlap` in
-  [`B64_FastExpansionSum_Shewchuk.v`](../theories-flocq/B64_FastExpansionSum_Shewchuk.v).
+  that engagement did not close the headline as a true theorem
+  (the statement in
+  [`B64_FastExpansionSum_Shewchuk.v`](../theories-flocq/B64_FastExpansionSum_Shewchuk.v)
+  is archived false-as-stated).
 
 Stage D decoder
 ([`theories-flocq/Orient_b64_stage_d.v`](../theories-flocq/Orient_b64_stage_d.v)):
