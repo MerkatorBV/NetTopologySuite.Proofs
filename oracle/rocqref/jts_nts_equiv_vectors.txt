@@ -1,0 +1,35 @@
+# Shared RocqRefRunner JTS ↔ NTS equivalence vectors.
+# Provenance: theories/RocqRefRunner.v
+#   rocqref_refSign_eq_cross
+#   rocqref_idet_fits_int64
+#
+# Format (whitespace-separated; '#' comments and blank lines ignored):
+#   p0x p0y  p1x p1y  qx qy  expected
+# expected in {-1, 0, 1}: -1 = CW, 0 = collinear, +1 = CCW.
+# Every coordinate is an integer in [-2^25, 2^25] (RocqRefRunner.SAFE_BOUND).
+# The expected sign is Z.sgn of the integer 2x2 determinant — the algorithm
+# both language ports implement. Production Orientation.index is NOT the
+# reference; these rows pin the ports to each other and to the Qed formula.
+
+# --- unit turns (locked Examples in RocqRefRunner.v) ---
+0 0    1 0    0 1     1
+0 0    1 0    0 -1   -1
+0 0    2 2    1 1     0
+
+# --- basic / JTS RocqRefRunnerTest resource ---
+0 0    0 1    1 0    -1
+0 0    4 2    2 1     0
+-33554432 -33554432   33554432 33554432   0 0   0
+
+# --- near-collinear (one unit off a long diagonal) ---
+0 0    1000000 1000000   1000001 1000000   -1
+0 0    1000000 1000000   1000000 1000001    1
+
+# --- domain boundary (largest representable determinants) ---
+33554432 33554432    -33554432 -33554432    33554432 -33554432    1
+-33554432 33554432    33554432 -33554432    33554431 -33554432   -1
+
+# --- coincident / zero-length ---
+0 0    0 0    1 1     0
+5 5    5 5    5 5     0
+3 4    3 4    0 0     0

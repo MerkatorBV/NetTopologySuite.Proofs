@@ -354,6 +354,14 @@ Coq-verified function or is hand-rolled with an explicit Coq pin
 comment. Phase 4 modes recently swapped from hand-rolled to
 extracted (commit `bd6d01f` on `claude/oracle-arc-extracted`).
 
+**JTS ↔ NTS RocqRefRunner port (catalyst).** The integer-domain
+reference both languages implement is proved in
+[`theories/RocqRefRunner.v`](../theories/RocqRefRunner.v)
+(`rocqref_refSign_eq_cross`, `rocqref_idet_fits_int64`). Shared
+vectors: [`oracle/rocqref/jts_nts_equiv_vectors.txt`](../oracle/rocqref/jts_nts_equiv_vectors.txt).
+Write-up: [`rocqref-jts-nts-equiv.md`](rocqref-jts-nts-equiv.md).
+This is **not** a soundness proof of production `Orientation.index`.
+
 **Differential test pattern.** The intended consumer workflow:
 keep one long-running `oracle_bin` instance; the C# differential
 runner sends a mode line + inputs over stdin; the binary replies
@@ -564,7 +572,7 @@ The repository has two source directories:
   directory split is about which CI runner builds the file (host vs
   container), not about which proof standard it meets.
 
-The host `_CoqProject` builds 41 foundational `theories/` modules;
+The host `_CoqProject` builds 47 foundational `theories/` modules;
 the container `_CoqProject.full` builds the entire corpus (511
 registered modules — 426 in `theories/`, 85 in `theories-flocq/`).
 
@@ -756,7 +764,7 @@ for Scholar Sam / Tech-Lead Tess / Joost the BDFL paths.
   cross-platform consistency, interaction with the rest of the runtime.
 - This is **not** complete. Current coverage is over 5,100 Qed-closed
   theorems across 511 registered `.v` modules (426 under `theories/` —
-  41 of them in the host `_CoqProject` foundational target — plus 85
+  47 of them in the host `_CoqProject` foundational target — plus 85
   modules under `theories-flocq/`). There are **no
   `Admitted` theorems today** — both the counterexample and
   deferred-proof registries are empty (see the registries and
@@ -787,7 +795,7 @@ rocq makefile -f _CoqProject -o Makefile.gen
 make -f Makefile.gen
 ```
 
-This builds the 41 foundational Stdlib-only modules in `_CoqProject`.
+This builds the 47 foundational Stdlib-only modules in `_CoqProject`.
 Modules with external dependencies (Flocq), plus the Stdlib-only Phase
 3/4 modules built alongside them, live in `_CoqProject.full` and are
 built inside the container only (see below).
