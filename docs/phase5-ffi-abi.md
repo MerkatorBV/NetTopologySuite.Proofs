@@ -180,7 +180,7 @@ From C++: `#include` `oracle/cpp/RocqNative.hpp` (or the GEOS copy at
 From Java: copy `oracle/java/.../RocqNative.java` into the consumer (JTS
 lands it on fork PR #7 in `jts-curve`), add JNA, and call
 `RocqNative.orientSignFiltered(...)` after `RocqNative.isAvailable()`.
-locationtech/jts is not the alignment target.
+Fork PR #7 is the Java SoT. Do not wait on locationtech/jts or dr-jts.
 
 **Lifecycle**: `nts_rocq_init()` boots the embedded OCaml runtime; it is
 idempotent, and every entry point calls it defensively. There is no shutdown.
@@ -215,7 +215,8 @@ never write past the declared capacity.
    Phase 5 headline: `RobustLineIntersector` / the noding pipeline calling
    the verified kernel. Bindings are in; flipping the default path is still
    blocked on 1–2, not on any proof. Official locationtech/jts is not the
-   Java landing zone — that work is greenfield on `grootstebozewolf/jts#7`.
+   Java landing zone and is not a gate — that work is greenfield on
+   `grootstebozewolf/jts#7` (`feature/sfa-curve-rgr`).
 5. **Phase 6** (CI of the corpus against the NTS test suite) inherits directly
    from 3–4; it stays pending.
 

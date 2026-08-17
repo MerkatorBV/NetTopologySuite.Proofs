@@ -29,6 +29,8 @@ import com.sun.jna.ptr.DoubleByReference;
  * <p>
  * This class is the ABI twin of {@code oracle/csharp/RocqNative.cs} and
  * {@code oracle/cpp/RocqNative.hpp}. If they disagree, one of them is wrong.
+ * The Java consumer lands on fork PR #7 ({@code feature/sfa-curve-rgr});
+ * locationtech/jts is not a gate.
  * <p>
  * AI disclosure: authored with AI assistance (see CONTRIBUTING.md).
  */

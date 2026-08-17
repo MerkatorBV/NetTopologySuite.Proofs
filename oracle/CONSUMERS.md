@@ -19,7 +19,9 @@ and skip when the native library is absent.
 - **GEOS** — header copied to `include/geos/algorithm/RocqNative.h`. Opt-in;
   `libgeos` does not link `libntsrocq`.
 - **JTS** — Java class copied into `jts-curve` on fork PR #7
-  (`grootstebozewolf/jts`). locationtech/jts is not the alignment target.
+  (`grootstebozewolf/jts`, `feature/sfa-curve-rgr`). That branch is the
+  Java SoT. Do not wait on locationtech/jts or dr-jts; do not open a
+  locationtech PR for this lane.
 - **NTS** — C# class copied into `NetTopologySuite.Lab`. Core
   `RobustLineIntersector` stays on the stock path unless a caller opts in.
 
