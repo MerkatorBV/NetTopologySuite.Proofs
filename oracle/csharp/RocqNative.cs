@@ -174,16 +174,47 @@ namespace NetTopologySuite.Robust.Native
 
         private static readonly object Gate = new object();
 
+        private static readonly bool Available;
+
         static RocqNative()
         {
-            RocqNativeMethods.nts_rocq_init();
+            try
+            {
+                if (RocqNativeMethods.nts_rocq_init() != 0)
+                {
+                    Available = false;
+                    return;
+                }
 
-            int abi = RocqNativeMethods.nts_rocq_abi_version();
-            if (abi != ExpectedAbiVersion)
+                int abi = RocqNativeMethods.nts_rocq_abi_version();
+                if (abi != ExpectedAbiVersion)
+                {
+                    Available = false;
+                    return;
+                }
+
+                Available = true;
+            }
+            catch (DllNotFoundException)
+            {
+                Available = false;
+            }
+            catch (BadImageFormatException)
+            {
+                Available = false;
+            }
+        }
+
+        /// <summary>True when <c>libntsrocq</c> loaded and the ABI matched.</summary>
+        public static bool IsAvailable => Available;
+
+        private static void Require()
+        {
+            if (!Available)
             {
                 throw new InvalidOperationException(
-                    $"libntsrocq ABI {abi} does not match the expected {ExpectedAbiVersion}. " +
-                    "Rebuild the native library from the matching NetTopologySuite.Proofs commit.");
+                    "libntsrocq is not available. Build it with `make -C oracle ffi` " +
+                    "in NetTopologySuite.Proofs, or put the native library on the loader path.");
             }
         }
 
@@ -195,6 +226,7 @@ namespace NetTopologySuite.Robust.Native
         {
             lock (Gate)
             {
+                Require();
                 return (RocqOrientSign)RocqNativeMethods.nts_rocq_orient_sign_filtered(
                     p0x, p0y, p1x, p1y, qx, qy);
             }

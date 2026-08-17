@@ -9,7 +9,10 @@ Companion sources:
 [`oracle/nts_ffi_stubs.c`](../oracle/nts_ffi_stubs.c) (C side),
 [`oracle/ffi_probe.c`](../oracle/ffi_probe.c) (parity driver),
 [`oracle/gen_ffi_parity_tests.py`](../oracle/gen_ffi_parity_tests.py) (the gate),
-[`oracle/csharp/RocqNative.cs`](../oracle/csharp/RocqNative.cs) (reference .NET binding).
+[`oracle/csharp/RocqNative.cs`](../oracle/csharp/RocqNative.cs) (reference .NET binding),
+[`oracle/cpp/RocqNative.hpp`](../oracle/cpp/RocqNative.hpp) (reference C++ binding),
+[`oracle/java/org/locationtech/jts/algorithm/rocq/RocqNative.java`](../oracle/java/org/locationtech/jts/algorithm/rocq/RocqNative.java) (reference Java/JNA binding).
+Consumer map: [`oracle/CONSUMERS.md`](../oracle/CONSUMERS.md).
 
 ---
 
@@ -59,6 +62,8 @@ is now callable **in-process** through a C ABI that .NET binds with `DllImport`.
 | Build | `oracle/Makefile` | `make -C oracle ffi` → `libntsrocq.so` + `ffi_probe`; `make -C oracle ffi-parity` runs the gate |
 | Parity gate | `oracle/gen_ffi_parity_tests.py` | ~1200 cases per run; every FFI entry point vs the `oracle_bin` protocol, compared as raw IEEE 754 bit patterns |
 | .NET binding | `oracle/csharp/RocqNative.cs` | Reference `DllImport` surface + managed façade (reference source; no .NET toolchain in this CI) |
+| C++ binding | `oracle/cpp/RocqNative.hpp` | Header-only `dlopen`/`LoadLibrary` façade; no link-time dependency |
+| Java binding | `oracle/java/.../RocqNative.java` | JNA façade (`Native.load("ntsrocq")`); skip when the .so is absent |
 | CI | `.github/workflows/build-oracle.yml` | Builds the library in the pinned container, runs the parity gate, uploads `libntsrocq.so` + `nts_ffi.h` as an artifact and attaches them to releases |
 
 The library links the extracted code plus OCaml's PIC runtime
@@ -167,6 +172,16 @@ From .NET: copy `oracle/csharp/RocqNative.cs` into the consumer, ship
 call `RocqNative.OrientSignFiltered(...)`. The façade serialises calls on a
 lock — see below.
 
+From C++: `#include` `oracle/cpp/RocqNative.hpp` (or the GEOS copy at
+`include/geos/algorithm/RocqNative.h`) and call
+`ntsrocq::RocqNative::orientSignFiltered(...)` after
+`ntsrocq::RocqNative::isAvailable()`.
+
+From Java: copy `oracle/java/.../RocqNative.java` into the consumer (JTS
+lands it on fork PR #7 in `jts-curve`), add JNA, and call
+`RocqNative.orientSignFiltered(...)` after `RocqNative.isAvailable()`.
+Fork PR #7 is the Java SoT. Do not wait on locationtech/jts or dr-jts.
+
 **Lifecycle**: `nts_rocq_init()` boots the embedded OCaml runtime; it is
 idempotent, and every entry point calls it defensively. There is no shutdown.
 
@@ -192,13 +207,16 @@ never write past the declared capacity.
 2. **Multi-platform native assets** — the CI artifact is Linux x64 only.
    macOS (x64 + arm64) and Windows x64 builds, plus a runtimes/-shaped NuGet
    package, are needed before the consumer can take a dependency.
-3. **Consumer wiring** — `NetTopologySuite.Robust.*` currently talks to
-   RocqRefRunner over a pipe. Swapping the hot predicates onto `RocqNative`
-   (keeping RocqRefRunner as the differential reference) is the consumer-side
-   half of this phase.
-4. **Call-site integration in production NTS** — the actual Phase 5 headline:
-   `RobustLineIntersector` / the noding pipeline calling the verified kernel.
-   Blocked on 1–3, not on any proof.
+3. **Consumer wiring** — reference bindings now exist for C#, C++, and Java
+   (`oracle/CONSUMERS.md`). NTS Lab, GEOS (header-only), and JTS `jts-curve`
+   (fork PR #7) copy them in. Production defaults still do **not** call the
+   kernel; `isAvailable()` keeps CI green without `libntsrocq`.
+4. **Call-site integration in production NTS / GEOS / JTS** — the actual
+   Phase 5 headline: `RobustLineIntersector` / the noding pipeline calling
+   the verified kernel. Bindings are in; flipping the default path is still
+   blocked on 1–2, not on any proof. Official locationtech/jts is not the
+   Java landing zone and is not a gate — that work is greenfield on
+   `grootstebozewolf/jts#7` (`feature/sfa-curve-rgr`).
 5. **Phase 6** (CI of the corpus against the NTS test suite) inherits directly
    from 3–4; it stays pending.
 
