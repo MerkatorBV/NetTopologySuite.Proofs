@@ -18,3 +18,5 @@ GEOS sibling: [grootstebozewolf/geos#2](https://github.com/grootstebozewolf/geos
 #852 should stay NTS copies + pins only. Phase 5 in-process `libntsrocq` is a separate Lab PR: [grootstebozewolf/NetTopologySuite#7](https://github.com/grootstebozewolf/NetTopologySuite/pull/7). Core `RobustLineIntersector` defaults stay on the stock path.
 
 Bindings + ABI: [NetTopologySuite.Proofs#485](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/pull/485), `oracle/CONSUMERS.md`.
+
+The JTS `RocqRefRunner.refSign` integer algorithm (not the subprocess, not production DD) now has a Qed proof that it is the exact `cross` sign, plus a C# port on NTS that loads the same vectors: `docs/rocqref-jts-nts-equiv.md`.

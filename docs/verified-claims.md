@@ -35,6 +35,8 @@ headline", never as solved; offer the oracle to reproduce a concrete case.
 | `Orientation.v : cross_cyclic` | Cyclic rotation preserves the sign `[exact]` | 3 |
 | `Orientation.v : cross_translation_invariant` | Translation preserves orientation `[exact]` | 3 |
 | `Orientation.v : cross_at_P0_is_collinear` (+`_P1`,`_degenerate_base`) | Coincident points ⇒ sign 0 `[exact]` | 3 |
+| `RocqRefRunner.v : rocqref_refSign_eq_cross` | JTS/NTS `RocqRefRunner.refSign` (integer 2×2 `Z.sgn`) is the exact `cross` sign of the embedded points — the catalyst port-equivalence theorem `[exact]` | 3 |
+| `RocqRefRunner.v : rocqref_idet_fits_int64` | On `|coord| ≤ 2²⁵`, `|det| ≤ 2⁵³ ≤ 2⁶³−1`, so Java/`C#` `long` evaluates the reference exactly `[int]` | 3 |
 | `Orient_b64_exact.v : b64_orient2d_exact_for_small_int` | binary64 determinant = exact cross on integer coords `[int-b64]` | 4 |
 | `Orient_b64_exact.v : b64_orient_sign_filtered_sound_small_int` | Filtered (fast) predicate's Pos/Neg/Zero agree with the true sign on integer coords `[int-b64]` | 4 |
 | `Orient_b64_exact_full.v : b64_orient2d_exact_sound` | **Full-plane headline.** The *exact* predicate's Pos/Neg/Zero agree with the true orientation sign for **all finite binary64** — no `\|coord\| ≤ 2²⁵` limit `[full-b64]` | 3 |

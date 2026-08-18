@@ -200,6 +200,7 @@ ci-guards:
 	bash scripts/check_deferred_registry_sync.sh
 	bash scripts/validate-claims.sh
 	bash scripts/check_oracle_handrolled.sh
+	python3 oracle/rocqref/check_jts_nts_equiv.py
 	@echo ""
 	@echo "All guardrails passed (or see output above)."
 

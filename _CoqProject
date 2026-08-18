@@ -7,6 +7,9 @@ theories/Distance.v
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v
 theories/Orientation.v
+# JTS / NTS RocqRefRunner integer algorithm = exact cross sign; long is exact
+# on |coord| <= 2^25.  See docs/rocqref-jts-nts-equiv.md.
+theories/RocqRefRunner.v
 theories/Segment.v
 theories/Intersect.v
 theories/Vec.v
