@@ -260,8 +260,12 @@ Definition JCT_two_components_cont (r : Ring) : Prop :=
    additionally guarded by `ring_vertices_distinct` (Overlay.v).  This is the
    canonical Phase 3 H1 target -- the bowtie (and any self-touching ring) is
    excluded by the added premise, so unlike the un-strengthened version it is
-   not refuted by `JCT_Counterexample.v`.  Still a thesis-scale `Prop`: not
-   proved, not axiomatised. *)
+   not refuted by `JCT_Counterexample.v`.  Still a thesis-scale `Prop` in
+   general (not axiomatised).  First discharge: half-plane-presented convex
+   rings, `JCTTwoComponentsConvex.convex_hp_jct_two_components_cont_simple`.
+   The uniform interior AABB bound for *any* polygonal ring (no convexity)
+   is `GeometricInteriorBound.geometric_interior_uniform_bound` — import
+   that module, not the convex discharge, to reuse it. *)
 Definition JCT_two_components_cont_simple (r : Ring) : Prop :=
   ring_simple r -> ring_closed r -> ring_has_minimum_points r ->
   ring_vertices_distinct r ->
