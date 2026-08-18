@@ -1373,6 +1373,15 @@ theories/ConvexExteriorEven.v
 # bimonotone_split_parity.  No open residual; validated on diamond + hexagon.
 # Three-axiom.  No Admitted.
 theories/ConvexJCT.v
+# JCTTwoComponentsConvex: the named two-component Prop
+# JCT_two_components_cont_simple, discharged for every nonempty
+# half-plane-presented convex ring (interior = open conv_min intersection,
+# exterior = a violated half-plane; segment / outward-ray + AABB walk).
+# Bonus: geometric_interior_uniform_bound for ANY polygonal ring.
+# First concrete instance: diamond_jct_two_components_cont_simple.
+# Honest residual: the same Prop on a general simple / taut non-convex ring.
+# Three-axiom.  No Admitted.
+theories/JCTTwoComponentsConvex.v
 # H1 PROPER, part 1: the transport engine + the reduction of the "trapped"
 # half to one analytic kernel.  Parity decidability (edge_crosses_ray_dec,
 # ray_parity_dec/_excl, point_in_ring_dec); invariant_transport_along_path
