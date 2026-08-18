@@ -3258,6 +3258,17 @@ theories-flocq/Orient_b64_underflow_recovery.v
 # Stage D's expansion-safety hypothesis), (c) total (never Nan/Uncertain),
 # (d) OrientRPos on the underflow witness where the shipped Stage D fails.
 theories-flocq/Orient_b64_stage_d_safe.v
+# Hypothesis package for binary64 orientation filters (Flocq model).
+# A: naive b64_orient2d / b64_orient_sign_naive disagrees with the true
+#    sign on the 2^-1100 underflow witness (restates Stage A unsoundness
+#    at the pure-float DAG).  A1: the same underflow flips a strict CCW
+#    winding test on a concrete binary64 triangle.  B: the trust-Zero
+#    hybrid is sound iff the filter is; existence via constantly-Uncertain
+#    + b64_orient_sign_intexact; Stage A as F is unsound.  C instance:
+#    any sound det-only filter (verdict a function of (det, detsum)) must
+#    return Uncertain/Nan on that observation class.  Ozaki / C·ε·M²
+#    near-optimality is a named residual, not a theorem.
+theories-flocq/OrientHybridPackage.v
 # Stratified Adaptive Precision Filter (APF): witness-carrying refinement of
 # the filter+expansion Stage D decoder.  (a) Re-derives soundness of the
 # composed decoder in the integer regime WITHOUT the false-as-stated
