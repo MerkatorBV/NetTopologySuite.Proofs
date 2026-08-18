@@ -432,6 +432,15 @@ Qed-closed `theories-flocq/` files (verified under Rocq 9.1.1 + Flocq 4.2.2):
   the entire finite plane (`b64_orient_sign_intexact_sound`, no underflow
   precondition) and returning `OrientRPos` on the witness.
 
+- **`OrientHybridPackage.v`** — packages the underflow facts as the A / A1 / B / C
+  filter hypotheses: naive `b64_orient2d` itself is Zero on the witness
+  (Hypothesis A, not only Stage A); a concrete CCW triangle has mathematical
+  interior but naive winding false (A1); a constantly-Uncertain + intexact
+  hybrid is sound, while Stage A + trust-Zero is not (B); any sound filter
+  that sees only `(det, detsum)` must return Uncertain/Nan on that observation
+  class (C instance). Ozaki / \(C\cdot\varepsilon\cdot M^2\) near-optimality
+  is documented as a residual, not a theorem.
+
 **Bearing on the B/C/D queue (§§4, 7-8).**  The reuse/vendor table and the
 Stage D feasibility findings are unchanged for the *near-collinear* case
 Shewchuk's adaptive predicate targets.  This finding only sharpens the spec

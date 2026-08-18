@@ -40,6 +40,10 @@ headline", never as solved; offer the oracle to reproduce a concrete case.
 | `Orient_b64_exact.v : b64_orient2d_exact_for_small_int` | binary64 determinant = exact cross on integer coords `[int-b64]` | 4 |
 | `Orient_b64_exact.v : b64_orient_sign_filtered_sound_small_int` | Filtered (fast) predicate's Pos/Neg/Zero agree with the true sign on integer coords `[int-b64]` | 4 |
 | `Orient_b64_exact_full.v : b64_orient2d_exact_sound` | **Full-plane headline.** The *exact* predicate's Pos/Neg/Zero agree with the true orientation sign for **all finite binary64** — no `\|coord\| ≤ 2²⁵` limit `[full-b64]` | 3 |
+| `OrientHybridPackage.v : hypothesis_A_naive_underflow` | **Hypothesis A.** Concrete finite points \(P_0=(0,0)\), \(P_1=(2^{-200},0)\), \(Q=(2^{-200},2^{-900})\): mathematical `cross_R_BP > 0` but naive `b64_orient2d` evaluates to `+0` (`b64_orient_sign_naive = OrientZero`). Pure binary64 orientation is not the mathematical sign on the whole of `BPoint` `[full-b64]` | 4 |
+| `OrientHybridPackage.v : corollary_A1_naive_winding_misses_interior` | **Corollary A1.** On the CCW triangle \((P_0,P_1,C)\) with \(C=(0,2^{-200})\) and interior query \(Q_Δ=(2^{-201},2^{-900})\), all three mathematical crosses are `> 0`, but the naive all-positive winding test returns `false` (base edge underflows to Zero). A PIP / winding test that uses only pure binary64 orientation cannot be correct for every binary64 query and polygon `[full-b64]` | 4 |
+| `OrientHybridPackage.v : hypothesis_B_exists_hybrid` | **Hypothesis B (existence).** There is a filter \(F\) and an exact decoder such that the trust-Zero hybrid equals mathematical orientation on every finite triple: \(F ≡ \mathrm{Uncertain}\) plus `b64_orient_sign_intexact`. The same combinator with Stage A as \(F\) is unsound (`hypothesis_B_stage_a_trust_zero_unsound`) `[full-b64]` | 3 |
+| `OrientHybridPackage.v : hypothesis_C_det_only_must_uncertain_underflow_class` | **Hypothesis C, det-only instance.** Any sound filter whose verdict is a function of `(b64_orient2d, b64_orient2d_detsum)` alone must return `Uncertain`/`Nan` on the underflow observation class: the witness and the origin triple share `(det,detsum)=(0,0)` but have different true signs. Not claimed: Ozaki / Bartels near-optimality, nor a DAG-sharp \(C\cdot\varepsilon\cdot M^2\) bound `[full-b64]` | 4 |
 
 `[oracle]` `RobustOrientation` bit-exact vs `ORIENT`/`ORIENT_FILTERED`;
 `ORIENT_EXACT` is the exact full-plane reference (an independent zarith
@@ -62,6 +66,9 @@ Stages B–D (general bounded-magnitude soundness) are not a live
 deferred-registry entry; the registry is empty. JTS/NTS double-double
 `Orientation.index` is **not** proven sound — the exact predicate is the
 ground-truth spec it should be diffed against (JTS #1106).
+Unconditional fast Pos/Neg on the whole finite plane, and Hypothesis C
+in the Ozaki / Bartels \(C\cdot\varepsilon\cdot M^2\) near-optimality
+form, remain residuals (`OrientHybridPackage.v`; Ozaki is ADR-0004 cold).
 
 ## Relate / DE-9IM integer-coordinate substrate (#67) <!-- feat:relate geom:arc,cs,cc,cp,multi -->
 

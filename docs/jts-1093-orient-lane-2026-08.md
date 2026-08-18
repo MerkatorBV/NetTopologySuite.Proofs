@@ -187,6 +187,11 @@ issue; Ozaki/JTS use non-strict `>=` as in the Java sources.
 
 - Bit-identity of JTS DD fallback with `ORIENT_EXACT`.
 - A full formal proof of the Ozaki error bound (paper is the reference).
+  The information-theoretic core that any such proof must contain is now
+  Qed in `theories-flocq/OrientHybridPackage.v`
+  (`hypothesis_C_det_only_must_uncertain_underflow_class`): a sound filter
+  that sees only `(det, detsum)` cannot commit on the underflow
+  observation class. That is not an Ozaki soundness theorem.
 - Exhaustive adversarial search over all binary64 triples.
 - Merge politics / review of Java style beyond the filter math.
 
