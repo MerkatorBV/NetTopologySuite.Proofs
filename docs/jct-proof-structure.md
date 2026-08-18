@@ -121,7 +121,9 @@ points are bounded-component; §3 shows that for bounded-component points,
 separation is free. Neither proves the JCT in general. The first family
 discharge of `JCT_two_components_cont_simple` is
 `JCTTwoComponentsConvex.convex_hp_jct_two_components_cont_simple` (half-plane
-convex rings; diamond instance). The general simple-ring case remains open.
+convex rings; diamond instance). The ring-generic uniform interior bound is
+`GeometricInteriorBound.geometric_interior_uniform_bound`. The general
+simple-ring case remains open.
 
 
 ## Verification

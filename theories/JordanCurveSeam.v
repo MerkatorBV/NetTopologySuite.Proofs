@@ -262,7 +262,10 @@ Definition JCT_two_components_cont (r : Ring) : Prop :=
    excluded by the added premise, so unlike the un-strengthened version it is
    not refuted by `JCT_Counterexample.v`.  Still a thesis-scale `Prop` in
    general (not axiomatised).  First discharge: half-plane-presented convex
-   rings, `JCTTwoComponentsConvex.convex_hp_jct_two_components_cont_simple`. *)
+   rings, `JCTTwoComponentsConvex.convex_hp_jct_two_components_cont_simple`.
+   The uniform interior AABB bound for *any* polygonal ring (no convexity)
+   is `GeometricInteriorBound.geometric_interior_uniform_bound` — import
+   that module, not the convex discharge, to reuse it. *)
 Definition JCT_two_components_cont_simple (r : Ring) : Prop :=
   ring_simple r -> ring_closed r -> ring_has_minimum_points r ->
   ring_vertices_distinct r ->
