@@ -107,9 +107,9 @@ Theorem rocqref_refSign_eq_cross :
     let P0 := mkPoint (IZR p0x) (IZR p0y) in
     let P1 := mkPoint (IZR p1x) (IZR p1y) in
     let Q  := mkPoint (IZR qx) (IZR qy) in
-    (0 < cross P0 P1 Q   <-> rocqref_refSign p0x p0y p1x p1y qx qy = 1) /\
-    (cross P0 P1 Q < 0   <-> rocqref_refSign p0x p0y p1x p1y qx qy = (-1)) /\
-    (cross P0 P1 Q = 0   <-> rocqref_refSign p0x p0y p1x p1y qx qy = 0).
+    ((0 < cross P0 P1 Q)%R <-> rocqref_refSign p0x p0y p1x p1y qx qy = 1) /\
+    ((cross P0 P1 Q < 0)%R <-> rocqref_refSign p0x p0y p1x p1y qx qy = (-1)) /\
+    ((cross P0 P1 Q = 0)%R <-> rocqref_refSign p0x p0y p1x p1y qx qy = 0).
 Proof.
   intros p0x p0y p1x p1y qx qy.
   unfold rocqref_refSign.
@@ -179,4 +179,18 @@ Example rocqref_unit_cw : rocqref_refSign 0 0 1 0 0 (-1) = (-1).
 Proof. reflexivity. Qed.
 
 Example rocqref_unit_collinear : rocqref_refSign 0 0 2 2 1 1 = 0.
+Proof. reflexivity. Qed.
+
+(* Shared-vector rows: near-collinear and domain-boundary (2^25). *)
+
+Example rocqref_near_collinear_cw :
+  rocqref_refSign 0 0 1000000 1000000 1000001 1000000 = (-1).
+Proof. reflexivity. Qed.
+
+Example rocqref_near_collinear_ccw :
+  rocqref_refSign 0 0 1000000 1000000 1000000 1000001 = 1.
+Proof. reflexivity. Qed.
+
+Example rocqref_domain_boundary_ccw :
+  rocqref_refSign (2 ^ 25) (2 ^ 25) (- 2 ^ 25) (- 2 ^ 25) (2 ^ 25) (- 2 ^ 25) = 1.
 Proof. reflexivity. Qed.
