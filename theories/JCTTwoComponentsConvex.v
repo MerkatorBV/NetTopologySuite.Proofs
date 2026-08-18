@@ -256,10 +256,12 @@ Proof.
   set (xmin := edges_minX (ring_edges r)).
   set (ymax := edges_maxY (ring_edges r)).
   set (ymin := edges_minY (ring_edges r)).
+  subst xmax xmin ymax ymin.
   destruct Hout as [Hr | [Hl | [Ht | Hb]]].
   - apply far_right_connected; [exact Hr | apply far_right_pt_is_far].
-  - set (p_top := mkPoint (px p) (ymax + 1)).
-    set (p_tr := mkPoint (xmax + 1) (ymax + 1)).
+  - set (p_top := mkPoint (px p) (edges_maxY (ring_edges r) + 1)).
+    set (p_tr := mkPoint (edges_maxX (ring_edges r) + 1)
+                         (edges_maxY (ring_edges r) + 1)).
     assert (H1 : connected_in_complement_cont r p p_top).
     { apply far_left_connected; [exact Hl |].
       unfold p_top. simpl. exact Hl. }
@@ -269,14 +271,14 @@ Proof.
     { apply far_right_connected; unfold p_tr, far_right_pt; simpl; lra. }
     eapply connected_in_complement_cont_trans; [exact H1 |].
     eapply connected_in_complement_cont_trans; [exact H2 | exact H3].
-  - set (p_tr := mkPoint (xmax + 1) (py p)).
+  - set (p_tr := mkPoint (edges_maxX (ring_edges r) + 1) (py p)).
     assert (H1 : connected_in_complement_cont r p p_tr).
     { apply far_top_connected; [exact Ht |].
       unfold p_tr. simpl. exact Ht. }
     assert (H2 : connected_in_complement_cont r p_tr (far_right_pt r)).
     { apply far_right_connected; unfold p_tr, far_right_pt; simpl; lra. }
     eapply connected_in_complement_cont_trans; [exact H1 | exact H2].
-  - set (p_br := mkPoint (xmax + 1) (py p)).
+  - set (p_br := mkPoint (edges_maxX (ring_edges r) + 1) (py p)).
     assert (H1 : connected_in_complement_cont r p p_br).
     { apply far_bottom_connected; [exact Hb |].
       unfold p_br. simpl. exact Hb. }
@@ -288,6 +290,17 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 (* §3  Geometric interior sits in the AABB — uniform bound, any ring.         *)
 (* -------------------------------------------------------------------------- *)
+
+Lemma radius_defeated_by_abscissa :
+  forall x y M, M > 0 -> M + 1 <= x \/ x <= - (M + 1) ->
+    ~ (x * x + y * y <= M * M).
+Proof.
+  intros x y M HM Hor Hle.
+  assert (Hsq : 0 <= y * y) by nra.
+  destruct Hor as [Hpos | Hneg].
+  - assert (M < x) by lra. nra.
+  - assert (x < - M) by lra. nra.
+Qed.
 
 Lemma right_of_aabb_unbounded :
   forall (r : Ring) (p : Point),
@@ -301,9 +314,11 @@ Proof.
   assert (HXM : M + 1 <= X) by apply Rmax_r.
   assert (Hcon : connected_in_complement_cont r p q).
   { apply far_right_connected; [exact Hp |].
-    unfold q. simpl. lra. }
+    unfold q. simpl.
+    apply Rlt_le_trans with (px p); [exact Hp | apply Rmax_l]. }
   specialize (Hbnd q Hcon). unfold q in Hbnd. simpl in Hbnd.
-  nra.
+  apply (radius_defeated_by_abscissa X (py p) M HM); [| exact Hbnd].
+  left. apply Rmax_r.
 Qed.
 
 Lemma left_of_aabb_unbounded :
@@ -318,9 +333,11 @@ Proof.
   assert (HXM : X <= - (M + 1)) by apply Rmin_r.
   assert (Hcon : connected_in_complement_cont r p q).
   { apply far_left_connected; [exact Hp |].
-    unfold q. simpl. lra. }
+    unfold q. simpl.
+    apply Rle_lt_trans with (px p); [apply Rmin_l | exact Hp]. }
   specialize (Hbnd q Hcon). unfold q in Hbnd. simpl in Hbnd.
-  nra.
+  apply (radius_defeated_by_abscissa X (py p) M HM); [| exact Hbnd].
+  right. apply Rmin_r.
 Qed.
 
 Lemma above_aabb_unbounded :
@@ -333,10 +350,11 @@ Proof.
   set (q := mkPoint (px p) Y).
   assert (Hcon : connected_in_complement_cont r p q).
   { apply far_top_connected; [exact Hp |].
-    unfold q. simpl. apply Rlt_le_trans with (M + 1); [lra | apply Rmax_r]. }
+    unfold q. simpl.
+    apply Rlt_le_trans with (py p); [exact Hp | apply Rmax_l]. }
   specialize (Hbnd q Hcon). unfold q in Hbnd. simpl in Hbnd.
-  assert (HY : M + 1 <= Y) by apply Rmax_r.
-  nra.
+  apply (radius_defeated_by_abscissa Y (px p) M HM); [| nra].
+  left. apply Rmax_r.
 Qed.
 
 Lemma below_aabb_unbounded :
@@ -349,10 +367,11 @@ Proof.
   set (q := mkPoint (px p) Y).
   assert (Hcon : connected_in_complement_cont r p q).
   { apply far_bottom_connected; [exact Hp |].
-    unfold q. simpl. lra. }
+    unfold q. simpl.
+    apply Rle_lt_trans with (py p); [apply Rmin_l | exact Hp]. }
   specialize (Hbnd q Hcon). unfold q in Hbnd. simpl in Hbnd.
-  assert (HY : Y <= - (M + 1)) by apply Rmin_r.
-  nra.
+  apply (radius_defeated_by_abscissa Y (px p) M HM); [| nra].
+  right. apply Rmin_r.
 Qed.
 
 Theorem geometric_interior_in_aabb :
@@ -383,9 +402,24 @@ Qed.
 Lemma abs_le_of_interval :
   forall a x b, a <= x <= b -> Rabs x <= Rmax (Rabs a) (Rabs b).
 Proof.
-  intros a x b [Hax Hxb]. unfold Rabs.
-  destruct (Rcase_abs x); destruct (Rcase_abs a); destruct (Rcase_abs b);
-    try apply Rmax_l; try apply Rmax_r; lra.
+  intros a x b [Hax Hxb].
+  destruct (Rle_dec 0 x) as [Hx0 | Hx0].
+  - rewrite (Rabs_right x) by lra.
+    apply Rle_trans with b; [exact Hxb |].
+    apply Rle_trans with (Rabs b); [apply Rle_abs | apply Rmax_r].
+  - rewrite (Rabs_left x) by lra.
+    apply Rle_trans with (Rabs a).
+    + rewrite (Rabs_left1 a) by lra. lra.
+    + apply Rmax_l.
+Qed.
+
+Lemma sq_le_of_abs_le :
+  forall x w, 0 <= w -> Rabs x <= w -> x * x <= w * w.
+Proof.
+  intros x w Hw H.
+  replace (x * x) with (Rabs x * Rabs x).
+  2:{ rewrite <- Rabs_mult. apply Rabs_pos_eq. nra. }
+  pose proof (Rabs_pos x). nra.
 Qed.
 
 Theorem geometric_interior_uniform_bound :
@@ -403,22 +437,19 @@ Proof.
   set (Wx := Rmax (Rabs xmin) (Rabs xmax)).
   set (Wy := Rmax (Rabs ymin) (Rabs ymax)).
   set (M := 1 + Wx + Wy).
+  assert (HWx : 0 <= Wx).
+  { unfold Wx. eapply Rle_trans; [apply Rabs_pos | apply Rmax_l]. }
+  assert (HWy : 0 <= Wy).
+  { unfold Wy. eapply Rle_trans; [apply Rabs_pos | apply Rmax_l]. }
   exists M. split.
-  - unfold M, Wx, Wy.
-    pose proof (Rmax_l (Rabs xmin) (Rabs xmax)).
-    pose proof (Rabs_pos xmin). lra.
+  - unfold M. lra.
   - intros p Hint.
     destruct (geometric_interior_in_aabb r p Hint) as [Hx Hy].
     pose proof (abs_le_of_interval xmin (px p) xmax Hx) as Hxabs.
     pose proof (abs_le_of_interval ymin (py p) ymax Hy) as Hyabs.
-    assert (Hpx : px p * px p <= Wx * Wx).
-    { replace (px p * px p) with (Rabs (px p) * Rabs (px p))
-        by (rewrite <- Rabs_mult, Rabs_pos_eq; nra).
-      unfold Wx in Hxabs. nra. }
-    assert (Hpy : py p * py p <= Wy * Wy).
-    { replace (py p * py p) with (Rabs (py p) * Rabs (py p))
-        by (rewrite <- Rabs_mult, Rabs_pos_eq; nra).
-      unfold Wy in Hyabs. nra. }
+    unfold Wx in Hxabs. unfold Wy in Hyabs.
+    pose proof (sq_le_of_abs_le (px p) Wx HWx Hxabs) as Hpx.
+    pose proof (sq_le_of_abs_le (py p) Wy HWy Hyabs) as Hpy.
     unfold M. nra.
 Qed.
 
@@ -481,12 +512,21 @@ Lemma convex_ray_off_ring :
       (mkPoint (px p + (t * T) * a) (py p + (t * T) * b)).
 Proof.
   intros r a b c p T t Hs Hv Hp HT Ht Himg.
+  destruct p as [u v]. cbn [px py] in *.
   pose proof (image_slack_nonneg r (a, b, c)
-                (mkPoint (px p + (t * T) * a) (py p + (t * T) * b))
+                (mkPoint (u + (t * T) * a) (v + (t * T) * b))
                 Hv Himg) as Hske.
-  rewrite hp_slack_ray in Hske.
   unfold hp_slack in Hp, Hske. cbn [px py] in Hp, Hske.
-  nra.
+  assert (Hexp : c - (a * (u + t * T * a) + b * (v + t * T * b))
+                 = (c - (a * u + b * v)) - t * T * (a * a + b * b))
+    by ring.
+  rewrite Hexp in Hske.
+  assert (Ht0 : 0 <= t) by lra.
+  assert (Hs0 : 0 <= a * a + b * b) by nra.
+  assert (Htt : 0 <= t * T) by (apply Rmult_le_pos; lra).
+  assert (Hprod : 0 <= t * T * (a * a + b * b))
+    by (apply Rmult_le_pos; lra).
+  lra.
 Qed.
 
 Lemma convex_ray_connected :
@@ -500,7 +540,7 @@ Lemma convex_ray_connected :
 Proof.
   intros r a b c p T Hs Hv Hp HT.
   apply segment_connected_off_ring.
-  intros t Ht.
+  intros t Ht. cbn [px py].
   replace ((1 - t) * px p + t * (px p + T * a))
     with (px p + (t * T) * a) by ring.
   replace ((1 - t) * py p + t * (py p + T * b))
@@ -674,7 +714,7 @@ Proof.
   assert (Hc' : forall a, 0 <= a <= 1 -> continuity_pt (fun t => - F t) a)
     by (intros a Ha; apply continuity_pt_opp; apply HcF; exact Ha).
   destruct (IVT_interv (fun t => - F t) 0 1 Hc' Rlt_0_1) as [z [Hz Hzeq]];
-    [simpl; lra | simpl; lra |].
+    [unfold F; lra | unfold F; lra |].
   exists z. split; [exact Hz |]. unfold F in Hzeq. lra.
 Qed.
 
@@ -708,27 +748,49 @@ Proof.
   assert (Hs : 0 < a * a + b * b).
   { inversion Hnd. exact H1. }
   set (s := a * a + b * b).
-  set (R0 := Rabs M + Rabs c + 1).
-  set (T := (R0 + 1) * (s + 1) / s).
+  set (K := Rabs M + Rabs c + 1).
+  set (T := Rabs M + 1 + K / s).
+  assert (HK : 0 < K).
+  { unfold K. pose proof (Rabs_pos M). pose proof (Rabs_pos c). lra. }
   assert (HT : 0 < T).
-  { unfold T, R0, s. pose proof (Rabs_pos M). pose proof (Rabs_pos c). nra. }
+  { unfold T. apply Rplus_lt_0_compat.
+    - pose proof (Rabs_pos M). lra.
+    - apply Rdiv_lt_0_compat; [exact HK | unfold s; exact Hs]. }
   set (q := mkPoint (T * a) (T * b)).
   exists q. split.
   - assert (Hsl : hp_slack (a, b, c) q = c - T * s).
     { unfold q, hp_slack, s. cbn [px py]. ring. }
     assert (Hneg : hp_slack (a, b, c) q < 0).
-    { rewrite Hsl. unfold T, R0, s in *.
-      pose proof (Rabs_pos M). pose proof (Rabs_pos c). nra. }
+    { rewrite Hsl.
+      assert (HTs : T * s = (Rabs M + 1) * s + K).
+      { unfold T. field. unfold s. lra. }
+      rewrite HTs. unfold K, s.
+      pose proof (Rabs_pos M). pose proof (Rabs_pos c).
+      assert (Hcabs : c <= Rabs c) by apply Rle_abs.
+      assert (0 < (Rabs M + 1) * (a * a + b * b)) by nra.
+      lra. }
     apply Rle_lt_trans with (hp_slack (a, b, c) q); [| exact Hneg].
     apply conv_min_le_in. left. reflexivity.
   - unfold q. cbn [px py].
     assert (HCS : (T * a) * (T * a) + (T * b) * (T * b) = T * T * s)
       by (unfold s; ring).
     rewrite HCS.
-    unfold T, R0, s.
-    pose proof (Rabs_pos M). pose proof (Rabs_pos c).
-    assert (HM2 : M * M <= Rabs M * Rabs M)
-      by (rewrite <- Rabs_mult; rewrite Rabs_pos_eq; nra).
+    assert (HTs : T * s = (Rabs M + 1) * s + K).
+    { unfold T. field. unfold s. lra. }
+    assert (HT1 : Rabs M + 1 < T).
+    { unfold T. rewrite <- (Rplus_0_r (Rabs M + 1)) at 1.
+      apply Rplus_lt_compat_l.
+      apply Rdiv_lt_0_compat; [exact HK | unfold s; exact Hs]. }
+    assert (HTs1 : Rabs M + 1 < T * s).
+    { rewrite HTs. unfold K. pose proof (Rabs_pos M). pose proof (Rabs_pos c).
+      nra. }
+    assert (HM2 : M * M <= (Rabs M + 1) * (Rabs M + 1)).
+    { pose proof (Rabs_pos M).
+      replace (M * M) with (Rabs M * Rabs M)
+        by (rewrite <- Rabs_mult, Rabs_pos_eq; nra). nra. }
+    apply Rle_lt_trans with ((Rabs M + 1) * (Rabs M + 1)); [exact HM2 |].
+    replace (T * T * s) with (T * (T * s)) by ring.
+    pose proof (Rabs_pos M) as HMabs.
     nra.
 Qed.
 
@@ -785,38 +847,37 @@ Lemma diamond_pos_off_ring :
   forall pt, 0 < conv_min diamond_hps pt -> ring_complement diamond_ring pt.
 Proof.
   intros pt Hpos Himg.
-  assert (Hnn : 0 <= conv_min diamond_hps pt).
-  { destruct Himg as [e [t [Hin [Ht [Hx Hy]]]]].
-    (* every slack is nonnegative on the skeleton *)
-    assert (Hall : Forall (fun hp => 0 <= hp_slack hp pt) diamond_hps).
-    { rewrite Forall_forall. intros hp Hhp.
-      pose proof (Forall_forall
-                    (vertices_in_halfplane diamond_ring)
-                    diamond_hps) as Hvf.
-      pose proof (proj1 Hvf diamond_vertices_in_hps hp Hhp) as Hv.
-      apply (image_slack_nonneg diamond_ring hp pt Hv).
-      exists e, t. repeat split; assumption. }
-    apply conv_min_nonneg. exact Hall. }
+  assert (Hall : Forall (fun hp => 0 <= hp_slack hp pt) diamond_hps).
+  { rewrite Forall_forall. intros hp Hhp.
+    apply (image_slack_nonneg diamond_ring hp pt).
+    - pose proof (proj1 (Forall_forall (vertices_in_halfplane diamond_ring)
+                         diamond_hps) diamond_vertices_in_hps hp Hhp) as Hv.
+      exact Hv.
+    - exact Himg. }
+  assert (Hnn : 0 <= conv_min diamond_hps pt)
+    by (apply conv_min_nonneg; exact Hall).
   (* supporting slack vanishes on each diamond edge *)
   destruct Himg as [e [t [Hin [Ht [Hx Hy]]]]].
   rewrite ring_edges_diamond in Hin.
   assert (Hle0 : conv_min diamond_hps pt <= 0).
-  { unfold diamond_hps.
-    destruct Hin as [He | [He | [He | [He | []]]]]; subst e;
-      cbn [fst snd] in Hx, Hy.
-    - (* ea: x - y = 2 *)
-      apply Rle_trans with (hp_slack (1, -1, 2) pt);
-        [apply conv_min_le_in; cbn; tauto |].
-      unfold hp_slack. cbn [px py]. lra.
-    - apply Rle_trans with (hp_slack (1, 1, 2) pt);
-        [apply conv_min_le_in; cbn; tauto |].
-      unfold hp_slack. cbn [px py]. lra.
-    - apply Rle_trans with (hp_slack (-1, 1, 2) pt);
-        [apply conv_min_le_in; cbn; tauto |].
-      unfold hp_slack. cbn [px py]. lra.
-    - apply Rle_trans with (hp_slack (-1, -1, 2) pt);
-        [apply conv_min_le_in; cbn; tauto |].
-      unfold hp_slack. cbn [px py]. lra. }
+  { destruct Hin as [He | [He | [He | [He | []]]]]; subst e;
+      cbn [fst snd px py] in Hx, Hy.
+    - eapply Rle_trans;
+        [apply (conv_min_le_in diamond_hps pt (1, -1, 2));
+         unfold diamond_hps; left; reflexivity |].
+      unfold hp_slack; cbn [px py]; rewrite Hx, Hy; lra.
+    - eapply Rle_trans;
+        [apply (conv_min_le_in diamond_hps pt (1, 1, 2));
+         unfold diamond_hps; right; left; reflexivity |].
+      unfold hp_slack; cbn [px py]; rewrite Hx, Hy; lra.
+    - eapply Rle_trans;
+        [apply (conv_min_le_in diamond_hps pt (-1, 1, 2));
+         unfold diamond_hps; right; right; left; reflexivity |].
+      unfold hp_slack; cbn [px py]; rewrite Hx, Hy; lra.
+    - eapply Rle_trans;
+        [apply (conv_min_le_in diamond_hps pt (-1, -1, 2));
+         unfold diamond_hps; right; right; right; left; reflexivity |].
+      unfold hp_slack; cbn [px py]; rewrite Hx, Hy; lra. }
   lra.
 Qed.
 
