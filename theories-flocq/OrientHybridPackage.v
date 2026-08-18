@@ -350,13 +350,13 @@ Proof.
       try (simpl in Hw; discriminate).
     destruct (b64_orient_sign_intexact C A Q) eqn:ECA;
       try (simpl in Hw; discriminate).
-    split; [apply (proj1 (inexact_pos_iff A B Q HAB)); exact EAB |].
-    split; [apply (proj1 (inexact_pos_iff B C Q HBC)); exact EBC |].
-    apply (proj1 (inexact_pos_iff C A Q HCA)). exact ECA.
+    split; [apply (proj1 (intexact_pos_iff A B Q HAB)); exact EAB |].
+    split; [apply (proj1 (intexact_pos_iff B C Q HBC)); exact EBC |].
+    apply (proj1 (intexact_pos_iff C A Q HCA)). exact ECA.
   - intros (HABP & HBCP & HCAP).
-    apply (proj2 (inexact_pos_iff A B Q HAB)) in HABP.
-    apply (proj2 (inexact_pos_iff B C Q HBC)) in HBCP.
-    apply (proj2 (inexact_pos_iff C A Q HCA)) in HCAP.
+    apply (proj2 (intexact_pos_iff A B Q HAB)) in HABP.
+    apply (proj2 (intexact_pos_iff B C Q HBC)) in HBCP.
+    apply (proj2 (intexact_pos_iff C A Q HCA)) in HCAP.
     rewrite HABP, HBCP, HCAP.
     reflexivity.
 Qed.
@@ -368,7 +368,7 @@ Theorem hybrid_triangle_recovers_A1_interior :
   /\ naive_strict_ccw_in tA tB tC tQ = false.
 Proof.
   split.
-  - apply (proj2 (inexact_strict_ccw_in_iff tA tB tC tQ
+  - apply (proj2 (intexact_strict_ccw_in_iff tA tB tC tQ
                     tABQ_all_finite tBCQ_all_finite tCAQ_all_finite)).
     exact triangle_math_strict_ccw_in.
   - apply (proj2 corollary_A1_naive_winding_misses_interior).
@@ -392,7 +392,7 @@ Lemma uP0_triple_all_finite : all_finite uP0 uP0 uP0.
 Proof. unfold all_finite. vm_compute. repeat split; reflexivity. Qed.
 
 Lemma uP0_triple_cross_zero : cross_R_BP uP0 uP0 uP0 = 0.
-Proof. vm_compute. reflexivity. Qed.
+Proof. vm_compute. ring. Qed.
 
 Lemma underflow_obs_eq_origin :
   det_obs uP0 uP1 uQ = det_obs uP0 uP0 uP0.
@@ -419,26 +419,24 @@ Proof.
   pose proof (Hsound P' Q' R' Hfin') as HS'.
   destruct (F P Q R) eqn:Hf;
     try (left; reflexivity); try (right; reflexivity).
-  - (* Pos ⇒ 0 < cross PQR and 0 < cross P'Q'R'. *)
-    rewrite Hf in HS.
-    rewrite <- HeqF in HS'. rewrite Hf in HS'.
+  - (* Pos. destruct substitutes in HeqF / HS. *)
+    cbn in HS.
+    rewrite <- HeqF in HS'. cbn in HS'.
     destruct Hsign as [[_ Hn] | [[Hp _] | [Hz _]]].
     + contradiction.
     + exfalso. apply (Rlt_asym _ _ HS Hp).
-    + rewrite Hz in HS. apply (Rlt_irrefl 0 HS).
-  - (* Neg ⇒ both crosses < 0. *)
-    rewrite Hf in HS.
-    rewrite <- HeqF in HS'. rewrite Hf in HS'.
+    + rewrite Hz in HS. exfalso. apply (Rlt_irrefl 0 HS).
+  - cbn in HS.
+    rewrite <- HeqF in HS'. cbn in HS'.
     destruct Hsign as [[Hp _] | [[_ Hn] | [Hz _]]].
     + exfalso. apply (Rlt_asym _ _ Hp HS).
     + contradiction.
-    + rewrite Hz in HS. apply (Rlt_irrefl 0 HS).
-  - (* Zero ⇒ both crosses = 0. *)
-    rewrite Hf in HS.
-    rewrite <- HeqF in HS'. rewrite Hf in HS'.
+    + rewrite Hz in HS. exfalso. apply (Rlt_irrefl 0 HS).
+  - cbn in HS.
+    rewrite <- HeqF in HS'. cbn in HS'.
     destruct Hsign as [[Hp _] | [[Hn _] | [_ Hnz]]].
-    + rewrite HS in Hp. apply (Rlt_irrefl 0 Hp).
-    + rewrite HS in Hn. apply (Rlt_irrefl 0 Hn).
+    + rewrite HS in Hp. exfalso. apply (Rlt_irrefl 0 Hp).
+    + rewrite HS in Hn. exfalso. apply (Rlt_irrefl 0 Hn).
     + contradiction.
 Qed.
 
@@ -459,19 +457,18 @@ Proof.
   destruct (F uP0 uP1 uQ) eqn:Hf;
     try (left; reflexivity); try (right; reflexivity).
   - (* Pos: correct on the witness, wrong on the origin. *)
-    rewrite <- HeqF in HS0. rewrite Hf in HS0.
+    rewrite <- HeqF in HS0. cbn in HS0.
     rewrite uP0_triple_cross_zero in HS0.
-    apply (Rlt_irrefl 0 HS0).
+    exfalso. apply (Rlt_irrefl 0 HS0).
   - (* Neg: wrong on the witness. *)
-    rewrite Hf in HS.
+    cbn in HS.
     pose proof uWitness_true_cross_pos as Hp.
-    apply (Rlt_asym _ _ Hp) in HS.
-    exact HS.
+    exfalso. exact (Rlt_asym _ _ Hp HS).
   - (* Zero: wrong on the witness. *)
-    rewrite Hf in HS.
+    cbn in HS.
     pose proof uWitness_true_cross_pos as Hp.
     rewrite HS in Hp.
-    apply (Rlt_irrefl 0 Hp).
+    exfalso. apply (Rlt_irrefl 0 Hp).
 Qed.
 
 (* Residual C-general / Ozaki / Bartels.  The package does *not* introduce
