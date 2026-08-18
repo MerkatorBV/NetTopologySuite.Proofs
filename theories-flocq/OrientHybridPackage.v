@@ -56,6 +56,13 @@
 
    No `Admitted`.  Residuals are documented, not stubbed.
 
+topic: binary64
+claimId: none
+witness: none
+
+   Intentionally off-board: this is the Phase 0 filter-hypothesis package,
+   not a minted micro-RGR / ADR-0004 teaching card.  Ozaki stays cold.
+
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
