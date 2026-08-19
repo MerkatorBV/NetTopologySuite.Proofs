@@ -2,6 +2,10 @@
 
 **Status**: evidence artifact (machine-generated 2026-08-16); discharges
 open input #1 of `docs/category-c-policy.md` §8.
+**Update 2026-08-19**: 28 Category A lemmas moved from
+`InCircle_b64_exact.v` into `InCircle_b64_exact_refs.v` (Flocq-free,
+off `audit-exceptions.txt`). The table row for the remaining file is
+35 / 18 A / 17 C1. The TSV remains the 2026-08-16 snapshot.
 **Data**: [`category-c-distribution.tsv`](category-c-distribution.tsv)
 (one row per PA-audited theorem: file, name, category).
 
@@ -134,7 +138,7 @@ registered `.v` with `Lemma`/`Theorem` content carries at least one
 | `theories-flocq/HobbyCounterexample_b64.v` | 15 | 1 | 14 | 0 | 0 |
 | `theories-flocq/HobbyTheorem_b64.v` | 3 | 1 | 2 | 0 | 0 |
 | `theories-flocq/HotPixel_b64.v` | 60 | 24 | 32 | 4 | 0 |
-| `theories-flocq/InCircle_b64_exact.v` | 63 | 46 | 17 | 0 | 0 |
+| `theories-flocq/InCircle_b64_exact.v` | 35 | 18 | 17 | 0 | 0 |
 | `theories-flocq/Intersect_b64.v` | 21 | 9 | 10 | 2 | 0 |
 | `theories-flocq/Intersect_b64_exact_bridge.v` | 4 | 0 | 4 | 0 | 0 |
 | `theories-flocq/Intersect_b64_exact_core.v` | 12 | 3 | 9 | 0 | 0 |

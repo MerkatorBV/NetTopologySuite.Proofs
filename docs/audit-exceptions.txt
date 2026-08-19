@@ -197,7 +197,9 @@ theories-flocq/KakeyaPerron_b64.v
 # `Binary.B2R`, whose closure carries `Classical_Prop.classic` -- the SAME
 # b64-arithmetic lineage that exempts Orient_b64_exact.v and
 # KakeyaOrient2d_b64.v above.  No Admitteds; all theorems Qed-closed.
-# Removable once the parametric refactor reaches the binary64 primitives.
+# The Flocq-free Z/R kernel lives in InCircle_b64_exact_refs.v and is
+# deliberately NOT on this list (trio-only footprint).  Removable once
+# the parametric refactor reaches the remaining binary64 primitives.
 theories-flocq/InCircle_b64_exact.v
 
 # Category C: Issue #64 ask #5a Scope A — arc-line first-stage exactness.
