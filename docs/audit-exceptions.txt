@@ -13,7 +13,7 @@
 #     immediately above the file line explaining what makes the file
 #     Category C / transitional and the planned resolution).
 #
-# Current state: 88 files are listed below -- 72 in `theories-flocq/` (the
+# Current state: 89 files are listed below -- 73 in `theories-flocq/` (the
 # initial bulk block for binary ops Bplus/Bminus/Bmult pulling
 # `Classical_Prop.classic` via Flocq, plus additional Category C for
 # snap-rounding, overlay, expansion-arithmetic, and Stage D as documented
@@ -197,7 +197,9 @@ theories-flocq/KakeyaPerron_b64.v
 # `Binary.B2R`, whose closure carries `Classical_Prop.classic` -- the SAME
 # b64-arithmetic lineage that exempts Orient_b64_exact.v and
 # KakeyaOrient2d_b64.v above.  No Admitteds; all theorems Qed-closed.
-# Removable once the parametric refactor reaches the binary64 primitives.
+# The Flocq-free Z/R kernel lives in InCircle_b64_exact_refs.v and is
+# deliberately NOT on this list (trio-only footprint).  Removable once
+# the parametric refactor reaches the remaining binary64 primitives.
 theories-flocq/InCircle_b64_exact.v
 
 # Category C: Issue #64 ask #5a Scope A — arc-line first-stage exactness.
@@ -605,6 +607,19 @@ theories-flocq/Orient_b64_underflow_recovery.v
 # corrected decoder abandons the expansion path -- the exact fallback is the
 # integer-mantissa model, not the EFT expansion).
 theories-flocq/Orient_b64_stage_d_safe.v
+
+# Category C: Issue #66 / #488 orientation-filter hypothesis package.
+# Headlines restated over `b64_orient2d` / `b64_orient_sign_naive` /
+# `b64_orient_sign_filtered` / `b64_orient_sign_intexact` and
+# `Binary.B2R`, whose closure carries `Classical_Prop.classic` -- the
+# SAME b64-arithmetic lineage that exempts Orient_b64_underflow_unsound.v,
+# Orient_b64_underflow_recovery.v and Orient_b64_stage_d_safe.v above
+# (the facts this file packages).  Seven of the nine PA footers pull
+# `classic`; two stay on the allowlist.  No Admitteds; all headlines
+# Qed-closed.  Landed in #488 without this exemption; first container
+# axioms-audit after that merge is #489.  Removable once the parametric
+# refactor reaches the binary64 primitives.
+theories-flocq/OrientHybridPackage.v
 
 # Category C: Stratified Adaptive Precision Filter (OrientStratifiedAPF).
 # Witness-carrying refinement of the filter+expansion Stage D decoder;

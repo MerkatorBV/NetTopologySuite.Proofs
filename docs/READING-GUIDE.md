@@ -77,7 +77,10 @@ lane's open questions in [`clothoid-open-questions-triage.md`](clothoid-open-que
 
 **Take away.** Arc-overlay correctness is the named-hypothesis / chord-approx claim
 (`arc_overlay_correct_chord_approx`); the b64 in-circle layer now has
-Qed-closed sign + integer-regime value exactness ([`theories-flocq/InCircle_b64_exact.v`](../theories-flocq/InCircle_b64_exact.v),
+Qed-closed sign + integer-regime value exactness
+([`theories-flocq/InCircle_b64_exact.v`](../theories-flocq/InCircle_b64_exact.v),
+Flocq-free Z/R kernel in
+[`InCircle_b64_exact_refs.v`](../theories-flocq/InCircle_b64_exact_refs.v);
 PR #146). Arc-line coordinates are Scope A only ([`theories-flocq/ArcLineIntersect_b64_exact.v`](../theories-flocq/ArcLineIntersect_b64_exact.v)
 — `sP`/`sQ`/`dx`/`dy` before division).
 
@@ -573,8 +576,8 @@ The repository has two source directories:
   container), not about which proof standard it meets.
 
 The host `_CoqProject` builds 47 foundational `theories/` modules;
-the container `_CoqProject.full` builds the entire corpus (516
-registered modules — 430 in `theories/`, 86 in `theories-flocq/`).
+the container `_CoqProject.full` builds the entire corpus (517
+registered modules — 430 in `theories/`, 87 in `theories-flocq/`).
 
 **Status.** The foundational layer (real-number, vector, distance,
 orientation, segment, bbox, triangle, convex, lex-order, plus their
@@ -763,8 +766,8 @@ for Scholar Sam / Tech-Lead Tess / Joost the BDFL paths.
   proofs don't reach: floating-point rounding, exceptions, performance,
   cross-platform consistency, interaction with the rest of the runtime.
 - This is **not** complete. Current coverage is over 5,100 Qed-closed
-  theorems across 516 registered `.v` modules (430 under `theories/` —
-  47 of them in the host `_CoqProject` foundational target — plus 86
+  theorems across 517 registered `.v` modules (430 under `theories/` —
+  47 of them in the host `_CoqProject` foundational target — plus 87
   modules under `theories-flocq/`). There are **no
   `Admitted` theorems today** — both the counterexample and
   deferred-proof registries are empty (see the registries and

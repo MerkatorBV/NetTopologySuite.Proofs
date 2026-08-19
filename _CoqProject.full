@@ -3397,8 +3397,13 @@ theories-flocq/PassesThrough_b64_grid_exact.v
 # path for INCIRCLE_SIGN (and the ARC_* incircle sign-products); inCircle_R is
 # R-side, not extractable.  See docs/oracle-handroll-migration.md item 2.
 theories-flocq/InCircle_b64_compute.v
+# Issue #64 ask #4b: Flocq-free Z/R kernel for the in-circle determinant
+# (Zfold_min8, IZR packs, degree-4 algebra, 2^k bounds).  Off
+# docs/audit-exceptions.txt — trio-only footprint.
+theories-flocq/InCircle_b64_exact_refs.v
 # Issue #64 ask #4b: b64_inCircle sign-exactness (full-double Z.sgn predicate +
 # integer-regime bit-exactness).  Closes the deferred oracle sign bridge.
+# Require Export umbrella for the refs kernel.
 theories-flocq/InCircle_b64_exact.v
 # Issue #68 ask #1: empty-circle (Delaunay) predicate `in_circle_test` over
 # `inCircle_R`, bridged to the discrete `b64_inCircle_exact` oracle.
