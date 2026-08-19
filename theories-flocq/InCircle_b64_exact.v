@@ -51,9 +51,7 @@ From Flocq Require Import IEEE754.Binary IEEE754.BinarySingleNaN Core.
 From NTS.Proofs        Require Import Distance ArcOrient.
 From NTS.Proofs.Flocq  Require Export InCircle_b64_exact_refs.
 From NTS.Proofs.Flocq  Require Import Validate_binary64 InCircle_b64_compute
-                                      B64_bridge Orient_b64_exact
-                                      Orient_b64_exact_full Orient_b64_sound
-                                      Intersect_b64.
+                                      Orient_b64_exact Orient_b64_exact_full.
 
 Local Open Scope R_scope.
 
@@ -77,6 +75,11 @@ Definition inCircle_R_BP (A B C P : BPoint) : R :=
   let nb := bx' * bx' + by' * by' in
   let nc := cx * cx + cy * cy in
   ax * (by' * nc - cy * nb) - ay * (bx' * nc - cx * nb) + na * (bx' * cy - cx * by').
+
+(* Same bridge as Intersect_b64.BP2P; defined here so this file does not
+   import the intersect predicate layer. *)
+Definition BP2P (p : BPoint) : Point :=
+  mkPoint (Binary.B2R prec emax (bx p)) (Binary.B2R prec emax (by_ p)).
 
 Lemma inCircle_R_BP_eq_inCircle_BP2P :
   forall A B C P,

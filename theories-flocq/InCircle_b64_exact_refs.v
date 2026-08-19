@@ -19,8 +19,7 @@
    (issue #64 ask #4b; topic: binary64, claimId: 64-d, witness:
    perron-sliver); InCircle_b64_exact.v remains as the Require Export
    umbrella, so reverse dependencies import unchanged.  Declarations
-   and proofs carried over verbatim.  No Admitted, no Axiom, no
-   Parameter.
+   and proofs carried over verbatim.  No Admitted, no Axiom, no Parameter.
    topic: binary64
    claimId: 64-d
    witness: none
