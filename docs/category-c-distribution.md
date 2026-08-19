@@ -6,6 +6,10 @@ open input #1 of `docs/category-c-policy.md` §8.
 `InCircle_b64_exact.v` into `InCircle_b64_exact_refs.v` (Flocq-free,
 off `audit-exceptions.txt`). The table row for the remaining file is
 35 / 18 A / 17 C1. The TSV remains the 2026-08-16 snapshot.
+**Update 2026-08-19 (CI)**: `OrientHybridPackage.v` (#488) was missing
+from `audit-exceptions.txt` and is now listed (89 files / 73
+`theories-flocq/`). The TSV still does not include that file's nine
+PA footers.
 **Data**: [`category-c-distribution.tsv`](category-c-distribution.tsv)
 (one row per PA-audited theorem: file, name, category).
 
