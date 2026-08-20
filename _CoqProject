@@ -22,6 +22,8 @@ theories/LineEq.v
 theories/Direction.v
 theories/Reflection.v
 theories/Disk.v
+# H-CV exact extrema (PR #8 disc + single-arc; CompoundCurve densify).
+theories/HullExactExtrema.v
 theories/Parallel.v
 theories/Centroid.v
 theories/Polynomial.v
