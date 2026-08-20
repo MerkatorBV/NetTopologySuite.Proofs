@@ -26,6 +26,7 @@
    ========================================================================== *)
 
 (* WITNESS {"claimId":"67-c","topic":"relate","lemma":"classify_disjoint_exterior_row_dim_pinned","title":"No-share line×line exterior row true-dim (IE=1,EI=1,BE=0,EB=0,EE=2)","file":"theories/RelateNodingLineLineExtPinned.v"} *)
+(* mutation-seed: 713586 *)
 
 From Stdlib Require Import Reals Lra List Lia.
 Import ListNotations.
