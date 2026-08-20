@@ -92,7 +92,7 @@ proven, soundness or coordinates open) · **⬜ planned** (not yet started) ·
 | **D-AA** | Arc-arc distance | #64 | `ArcArcDistance.v`, `ArcIntersect.v` (predicate); oracle `ARC_ARC_DISTANCE` | 🟡 disjoint circle-to-circle core ✅; sweep clamp deferred |
 | **D-SL** | Arc-segment distance | #64 | `ArcSegmentDistance.v`; oracle `ARC_SEGMENT_DISTANCE` | 🟡 line-outside-circle core ✅; sweep/segment clamp deferred |
 | **C-\*** | Centroid of curve geometries | #69, #64 | `ArcCentroid.v` (`arc_centroid_offset`), `ArcAreaCentroid.v`; oracle `ARC_CENTROID` / `ARC_AREA_CENTROID` | 🟡 offset spec proven (exact invariants); centroid POINT is interface-boundary (transcendental) |
-| **H-\*** | Hulls over curve inputs | #69 · **proposed `topic: hull` epic** (JTS#1160 MinimumBoundingTriangle / JTS 1.21) | `Convex.v` (linear); MBT port proposed in wire map | ⬜ linear hull foundation partial; MBT + curve hulls planned |
+| **H-\*** | Hulls over curve inputs | #69 · **#424** (`topic: hull`; JTS#1160 MBT / JTS #8 · #41 H-CV) | `Convex.v` (linear); `MinimumBoundingTriangle.v` (424-a); **`HullExactExtrema.v` (424-b, disc + single-arc cardinals)** | 🟡 424-a MBT + 424-b H-CV extrema Qed; H-CC CompoundCurve leftover (JTS #6) |
 | **S-\*** | Simplification of curves | #69 | `Simplify.v` (greedy-perp structural), `Linearise.v`; oracle `CP_BOUNDARY_SIMPLIFY` (extracted simplifier ∘ densify, `oracle/curve_polygon.py`) | 🟡 oracle composes extracted `greedy_simplify_perp_b64` over a densified boundary; simplification-preserves-curve soundness open |
 | **AT-\*** | Affine transforms (non-similarity → detect-and-densify, §7 risk) | #69 | — | ⬜ |
 | **LRF-\*** | Linear referencing on curves | #69 | — | ⬜ |
@@ -191,13 +191,13 @@ spending further proof effort — several are stale.
 | `koc` | #410 | Koc compound-curve alignment |
 | `metric` | #423 | Distance / Hausdorff / Frechet cluster |
 | `coverage` | #425 | Coverage validation / cleaning |
-| `hull` | *(proposed)* | Convex / minimum bounding hulls |
+| `hull` | #424 | Convex / minimum bounding hulls (424-a MBT · 424-b H-CV extrema) |
 
 ### Proposed new epics (paper ∪ major group)
 
 | `topic:` | Proposal | Upstream / paper | Proofs home today | Action |
 |---|---|---|---|---|
-| **`hull`** | Port **MinimumBoundingTriangle** from JTS 1.21 | [locationtech/jts#1160](https://github.com/locationtech/jts/issues/1160) (major uncovered group) | Linear `Convex.v` only; curve **H-\*** TAG still ⬜; local `.vo` artifacts for MBT may exist off-manifest | Open a board epic (e.g. **#hull** / next free id), wire JTS#1160 → that epic, land `MinimumBoundingTriangle.v` on `_CoqProject.full`, claim-register headlines |
+| **`hull`** | Port **MinimumBoundingTriangle** from JTS 1.21 + curve H-CV extrema | [locationtech/jts#1160](https://github.com/locationtech/jts/issues/1160); JTS #8 / #41 | Epic **#424** open. 424-a MBT + 424-b H-CV extrema (`HullExactExtrema.v`) on `_CoqProject`. H-CC CompoundCurve leftover | Keep #424; next hull rung is H-CC / constructive scan, not a remint of 424-b |
 
 PR body template once wired:
 

@@ -1,8 +1,9 @@
 (* ============================================================================
    NetTopologySuite.Proofs.HullExactExtrema
    ----------------------------------------------------------------------------
-   Laser H-CV · exact extrema.  PR #8: disc + single-arc hull are
-   CurveExact.  CompoundCurve hull still densifies (#6 bulge).
+   Laser H-CV · exact extrema (claimId 424-b, epic #424).
+   PR #8: disc + single-arc hull are CurveExact.
+   CompoundCurve hull still densifies (#6 bulge).
 
    Maintainability: axis extrema sit next to Disk / Bbox; no atan2.
    Soundness: on-circle points are sqrt-free (dist_sq = r²); envelope
@@ -16,7 +17,7 @@ From NTS.Proofs Require Import Distance Disk Bbox.
 
 Local Open Scope R_scope.
 
-(* WITNESS {"claimId":"h-cv-a","topic":"hull","lemma":"hcv_exact_extrema","title":"Disc and single-arc hull extrema are the axis cardinals; CompoundCurve stays off the PR #8 cell","file":"theories/HullExactExtrema.v"} *)
+(* WITNESS {"claimId":"424-b","topic":"hull","lemma":"hcv_exact_extrema","title":"Disc and single-arc hull extrema are the axis cardinals; CompoundCurve stays off the PR #8 cell","file":"theories/HullExactExtrema.v"} *)
 
 (* -------------------------------------------------------------------------- *)
 (* §1  Circle membership and the four axis extrema.                           *)

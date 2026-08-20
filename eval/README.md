@@ -107,6 +107,12 @@ candidate T₀ = △(0,0)(2,0)(0,2)): `theories/MinimumBoundingTriangle.v`
 (same WITNESS tag). Universal ∀-finite-P existence and unrestricted
 area lower bound deferred.
 
+Production home for 424-b (Green/Qed: H-CV exact extrema — CIRCLE_5
+cardinals on-circle, upper semicircle keeps north / rejects south,
+disc + single-arc are the PR #8 CurveExact cell, CompoundCurve is not):
+`theories/HullExactExtrema.v` (WITNESS 424-b, topic: hull). No eval
+mirror; the theory is the pin. H-CC leftover stays JTS #6.
+
 Production home for 9004-c (Green/Qed: the disk centre (1/2,1/2), radius
 1/2 is a maximum inscribed disk of [0,1]² — containment plus the
 maximiser over ALL centres and radii, via the horizontal probe points
