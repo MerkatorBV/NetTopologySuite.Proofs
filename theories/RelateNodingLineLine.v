@@ -29,7 +29,7 @@
          product fold soundness; test-10 collection pointset.
      - RelateNodingLineLinePinned.v      §19         (S15j)
          `line_cell_true_dim` / `line_cell_ok_pinned` + II/BB regime pins.
-     - RelateNodingLineLineExtPinned.v   S15l
+     - RelateNodingLineLineExtPinned.v   S15l / 67-c
          exterior-row true-dimension pinning (IE/EI/BE/EB/EE) +
          `line_pair_fill_disjoint_ie_not_true_dim` fill-honesty gap.
      - RelateNodingLineLineCapstone.v    §20         (S15k)

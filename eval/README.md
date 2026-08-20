@@ -71,6 +71,11 @@ self-relate / OGC equal DE-9IM): `theories/RelateNGMatrixEqual.v` (same WITNESS 
 Production home for 67-b (Green/Qed: rectangle core + rational unit-square
 witness): `theories/RelateNGBoundaryGraph.v` (same WITNESS tag).
 
+Production home for 67-c (Green/Qed: no-share line×line exterior-row
+true-dim IE=1 / EI=1 / BE=0 / EB=0 / EE=2 on parallel unit segments):
+`theories/RelateNodingLineLineExtPinned.v` (WITNESS 67-c, topic: relate).
+No eval mirror; the theory is the pin. Chunk S15l; leftovers stay S15l+.
+
 Production home for 68-a (full witness cluster, shared helpers):
 `theories/DelaunayEdgeEmptyCircle.v` (also tagged with the same WITNESS).
 

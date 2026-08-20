@@ -1,7 +1,8 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNodingLineLineExtPinned
    ----------------------------------------------------------------------------
-   Issue #67 S15l: line×line exterior-row true-dimension pinning.
+   Issue #67 subtask 67-c (chunk S15l): line×line exterior-row
+   true-dimension pinning.
 
    S15j (`RelateNodingLineLinePinned.v`) pins II/BB meet cells only;
    `line_cell_ok_pinned` is False on every exterior stratum.  This module
@@ -24,7 +25,7 @@
      Assisted-by: Grok
    ========================================================================== *)
 
-(* WITNESS {"claimId":"S15l","topic":"relate","lemma":"classify_disjoint_exterior_row_dim_pinned","title":"No-share line×line exterior row true-dim (IE=1,EI=1,BE=0,EB=0,EE=2)","file":"theories/RelateNodingLineLineExtPinned.v"} *)
+(* WITNESS {"claimId":"67-c","topic":"relate","lemma":"classify_disjoint_exterior_row_dim_pinned","title":"No-share line×line exterior row true-dim (IE=1,EI=1,BE=0,EB=0,EE=2)","file":"theories/RelateNodingLineLineExtPinned.v"} *)
 
 From Stdlib Require Import Reals Lra List Lia.
 Import ListNotations.

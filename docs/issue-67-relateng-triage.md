@@ -256,7 +256,8 @@ The recommended path forward:
 - **S15k (done):** collection relate-matrix pipeline capstone — fold-assign
   interface, regime wrapper, per-pair disjoint test-10 9-cell, test-10
   pointset + fold=oracle + intersects + meet-pinned corollary.
-- **S15l line×line exterior-row pin (done):** `RelateNodingLineLineExtPinned.v` —
+- **S15l / 67-c line×line exterior-row pin (done):** `RelateNodingLineLineExtPinned.v` —
+  catalogued board subtask **67-c** under epic #67 (sibling of 67-a / 67-b).
   IE=1/EI=1/BE=0/EB=0/EE=2 true-dim for no-share / `LPR_Disjoint`; test-10
   matrix match; S8 disjoint-fill honesty gap
   (`line_pair_fill_disjoint_ie_not_true_dim`). Witness: parallel unit segments.
