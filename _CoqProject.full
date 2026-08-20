@@ -2488,16 +2488,19 @@ theories/ArcArcCircles.v
 theories/DiscOverlay.v
 
 # The OverlayNGCurve TOUCH row (candidate-completeness prove-or-disprove).
-# The Phase 0 relation matrix (self/disjoint/covers/coveredBy/crossing) is
-# REFUTED by the externally tangent pair (kiss discs share one point;
-# discs_properly_intersect is strict), with the degenerate op values Qed:
-# CAP collapses to the 0-dimensional kiss singleton, SUB/XOR are
-# exact-minus-one-point, CUP's shell self-touches (V1); internal tangency
-# lands in covers but its annulus pinches.  REPAIRED by one new row --
-# disks_touch (nonempty cap, disjoint interiors) -- with generic
-# completeness disc_relations_complete_with_touch over positive discs.
-# Supplies the R-side spec for DISC_OVERLAY's EXT_TANGENT/INT_TANGENT
-# configs (generator family E).  Full-only: imports DiscOverlay.v.
+# Named pin: candidate_complete R := every positive-radius disc pair
+# satisfies R (not op-exactness).  seven_row_family = phase0_relation;
+# eight_row_family adds TOUCH (T-ext).  The Phase 0 relation matrix
+# (self/disjoint/covers/coveredBy/crossing) is REFUTED by the externally
+# tangent pair (kiss discs share one point; discs_properly_intersect is
+# strict), with the degenerate op values Qed: CAP collapses to the
+# 0-dimensional kiss singleton, SUB/XOR are exact-minus-one-point, CUP's
+# shell self-touches (V1); internal tangency lands in covers but its
+# annulus pinches.  REPAIRED by one new row -- disks_touch (nonempty cap,
+# disjoint interiors) -- with generic completeness
+# disc_relations_complete_with_touch over positive discs.  Supplies the
+# R-side spec for DISC_OVERLAY's EXT_TANGENT/INT_TANGENT configs
+# (generator family E).  Full-only: imports DiscOverlay.v.
 theories/OverlayTouchRow.v
 theories/RelateTouchDiscs.v
 # General circular noding rung 1: splitting an arc at an N-AA node is sound,

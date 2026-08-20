@@ -129,6 +129,21 @@ On the pinned pairs (`pin_disjoint_squares`, `pin_covers_squares`):
 **Module**: [`theories/OverlayTouchRow.v`](../theories/OverlayTouchRow.v) ·
 **Verdict**: both halves **GREEN** (Qed, classical-reals trio only).
 
+**Named pin (2026-08-20).** `candidate_complete R` means every pair of
+positive-radius closed discs satisfies relation family `R`. Domain =
+positive discs; a row = one binary relation on that domain. Distinct from
+op-exactness (`overlayng_curve_phase0_exact_cells`: a CAP/CUP/SUB/XOR cell
+is exact iff the result collapses to A, B, A∪B or ∅). The seven-row
+exactness matrix's *relation content* on this domain is
+`seven_row_family` = `phase0_relation` (empty-partner is out of domain;
+disc-vs-polygon is representation). The eight-row family is
+`eight_row_family` = `phase0_relation ∨ disks_touch` (T-ext only; T-int
+is covers). Headlines stay `phase0_relation_complete_hypothesis_refuted`
+and `disc_relations_complete_with_touch`; the names
+`seven_row_not_candidate_complete` / `eight_row_is_candidate_complete`
+are unfolds, not a second headline.
+topic: overlay · claimId: none (board card pending; related CRV-TOUCH / #1200) · witness: kiss-discs.
+
 The Phase 0 case matrix at region level (self · disjoint · covers ·
 coveredBy · properly-crossing, positive-radius discs) is **not** candidate
 complete: `phase0_relation_complete_hypothesis_refuted` exhibits the
@@ -150,10 +165,10 @@ for all positive discs (trichotomy on d vs |r1 − r2| and r1 + r2; radial
 kiss witness c1 + (r1/d)(c2 − c1)). External tangency is exactly the
 touch row; internal tangency lands in covers.
 
-Oracle alignment: `DISC_OVERLAY` already classifies `EXT_TANGENT` /
-`INT_TANGENT` via the exact-Q discriminant (generator family E) — the
-driver was ahead of the theory; this module supplies the missing R-side
-spec. No driver/generator change was needed for this rung.
+`DISC_OVERLAY` already classifies `EXT_TANGENT` / `INT_TANGENT` via the
+exact-Q discriminant (generator family E) — the driver was ahead of the
+theory; this module supplies the missing R-side spec. No driver/generator
+change was needed for this rung.
 
 ## The TOUCH pair's DE-9IM (2026-08-16): FF2F01212, cell-sound
 

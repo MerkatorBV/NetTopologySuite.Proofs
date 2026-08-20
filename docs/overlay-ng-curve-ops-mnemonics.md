@@ -46,14 +46,45 @@
 
 ---
 
+## What candidate-complete means (disc-pair overlay relations)
+
+**Definition.** A family `R` of binary relations on closed discs is
+**candidate-complete** when every pair of *positive-radius* discs is
+classified by `R`:
+
+```
+candidate_complete R  :=
+  ∀ A B,  0 < r(A) → 0 < r(B) → R A B
+```
+
+Domain = positive-radius closed discs. A **row** is one relation on that
+domain. This is the classification of *input pairs*, not the exactness of
+CAP ∩ / CUP ∪ / SUB ∖ / XOR Δ cells (`overlayng_curve_phase0_exact_cells`).
+A complete family can still have inexact op cells (crossing CAP is approx);
+an 8/8 exactness score on listed rows does not make the family complete if
+some pair fits no row.
+
+The seven-row exactness matrix (self · empty partner · disjoint · covers ·
+coveredBy · crossing · disc-vs-polygon) contributes **five** relations on
+this domain — empty-partner is excluded by positive radii; disc-vs-polygon
+is representation, not a disc-pair relation. Those five are
+`phase0_relation` (`seven_row_family`). Adding T-ext (TOUCH) is
+`eight_row_family`. T-int is covers, not a missing candidate.
+
+Pin: `OverlayTouchRow.candidate_complete`. Headlines (unchanged):
+`phase0_relation_complete_hypothesis_refuted` /
+`disc_relations_complete_with_touch`. Aliases:
+`seven_row_not_candidate_complete` / `eight_row_is_candidate_complete`.
+
 ## The missing row: TOUCH (T) — one kiss, no shared flesh
 
-The case matrix (self · empty · disjoint · covers · coveredBy · crossing)
-is **not candidate complete**: two externally tangent discs fit no row —
-not disjoint (they share the kiss point), neither covers, and `crossing`
-demands STRICT |r1 − r2| < d < r1 + r2, which fails at d = r1 + r2.
-Refuted Qed: `OverlayTouchRow.phase0_relation_complete_hypothesis_refuted`
-(witness: unit discs at (0,0) and (2,0), kiss (1,0)).
+The seven-row family is **not candidate complete**: two externally tangent
+discs fit no row — not disjoint (they share the kiss point), neither
+covers, and `crossing` demands STRICT |r1 − r2| < d < r1 + r2, which fails
+at d = r1 + r2. Refuted Qed:
+`OverlayTouchRow.phase0_relation_complete_hypothesis_refuted` /
+`seven_row_not_candidate_complete` (witness: unit discs at (0,0) and (2,0),
+kiss (1,0); `t_ext_misses_seven_row`).
 
 **T-ext** · External tangency — d = r1 + r2 — the DIMENSION COLLAPSE row:
 
@@ -65,22 +96,24 @@ Refuted Qed: `OverlayTouchRow.phase0_relation_complete_hypothesis_refuted`
 | **XOR** Δ | the blob minus ONE point — exact-minus-kiss | `ext_xor_off_by_point` |
 
 **T-int** · Internal tangency — d = |r1 − r2| > 0 — NOT a completeness gap
-(the covers/coveredBy row fires: `int_covers`) but an ANSWER degeneracy:
-the SUB annulus PINCHES where inner and outer boundaries meet
-(`int_kiss_pinch`), and the closed-region crescent misses its own pinch
-point (`int_kiss_not_in_crescent`) — V1 again.
+(the covers/coveredBy row fires: `int_covers` / `t_int_is_covers_not_a_gap`)
+but an ANSWER degeneracy: the SUB annulus PINCHES where inner and outer
+boundaries meet (`int_kiss_pinch`), and the closed-region crescent misses
+its own pinch point (`int_kiss_not_in_crescent`) — V1 again.
 
 **Repaired completeness** (Qed, the hypothesized-complete algorithm): add
 ONE relation row — TOUCH := nonempty ∩ with disjoint interiors — and the
-matrix decides every positive-disc pair:
+eight-row family is candidate-complete over positive discs:
 
+> `candidate_complete eight_row_family` —
 > `phase0_relation A B ∨ disks_touch A B` —
-> `OverlayTouchRow.disc_relations_complete_with_touch`, by trichotomy of
-> d against |r1 − r2| and r1 + r2; the kiss witness is the radial point
-> c1 + (r1/d)(c2 − c1).  External tangency IS the touch row; internal
-> tangency lands in covers.
+> `OverlayTouchRow.disc_relations_complete_with_touch` /
+> `eight_row_is_candidate_complete`, by trichotomy of d against
+> |r1 − r2| and r1 + r2; the kiss witness is the radial point
+> c1 + (r1/d)(c2 − c1).  External tangency IS the touch row
+> (`t_ext_is_eight_row_touch`); internal tangency lands in covers.
 
-Oracle: `DISC_OVERLAY` classified `EXT_TANGENT` / `INT_TANGENT` by exact-Q
+`DISC_OVERLAY` classified `EXT_TANGENT` / `INT_TANGENT` by exact-Q
 discriminant = 0 before the R-side had a spec (generator family E) — this
 module supplies the spec the driver was already honouring.
 
