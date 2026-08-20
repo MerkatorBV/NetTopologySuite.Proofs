@@ -3279,11 +3279,16 @@ theories-flocq/OrientHybridPackage.v
 # decidable stratum, sign-negation homomorphism) tied to cross_R_BP
 # antisymmetry for argument-swap antisymmetry of the whole decoder.
 theories-flocq/OrientStratifiedAPF.v
+# Phase 2 foundations: Flocq-free R-side kernel for the hot-pixel
+# predicates (`in_hot_pixel_at_radius`, closed-pixel touch).  Off
+# docs/audit-exceptions.txt — trio-only footprint.
+theories-flocq/HotPixel_b64_refs.v
 # Phase 2 foundations: binary64 mirror of theories/HotPixel.v.  Provides
 # the boolean decision `b64_in_hot_pixel` + a safety predicate + forward
 # soundness against a rounded-pixel R-side semantics.  Integer-regime
 # exactness (bridging the rounded pixel to the exact `in_hot_pixel`) is
 # the next slice; see the deferred block at the foot of HotPixel_b64.v.
+# Require Export umbrella for the refs kernel.
 theories-flocq/HotPixel_b64.v
 # Phase 2 milestone 3 (Slice 12): snap-rounding algorithm correctness.
 # The per-segment snap step + the preservation invariant (a segment passing

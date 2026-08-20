@@ -65,6 +65,8 @@ theories-flocq/Orientation_b64.v
 # Rcompare (the canonical Category C2 exemplar `b64_le_R_of_true` lives
 # here); highest-fan-in b64 module (21 dependents incl. the oracle
 # extraction path via Validate_binary64_extract.v).
+# The Flocq-free R-side kernel lives in HotPixel_b64_refs.v and is
+# deliberately NOT on this list (trio-only footprint).
 theories-flocq/HotPixel_b64.v
 theories-flocq/B64_Pff_bridge.v
 theories-flocq/Orient_b64_sound.v

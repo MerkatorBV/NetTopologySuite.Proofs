@@ -403,7 +403,8 @@ completion docs ([`phase0-completion.md`](phase0-completion.md), [`phase1-comple
      - `RobustLineIntersector` → `b64_intersect_*` (Phase 0/1).
      - `RobustDeterminant` → `b64_orient2d` + Stage A filter (Phase 0).
      - `HotPixel` snap-rounding → `b64_in_hot_pixel` + snap-round
-       preservation (Phase 2).
+       preservation (Phase 2; Flocq-free R-side kernel in
+       [`HotPixel_b64_refs.v`](../theories-flocq/HotPixel_b64_refs.v)).
      - `OverlayNG` boolean ops → `overlay_ng_correct_conditional`
        (Phase 3, conditional).
      - CIRCULARSTRING arc operations → Phase 4 `Arc*_b64.v` +
@@ -576,8 +577,8 @@ The repository has two source directories:
   container), not about which proof standard it meets.
 
 The host `_CoqProject` builds 47 foundational `theories/` modules;
-the container `_CoqProject.full` builds the entire corpus (517
-registered modules — 430 in `theories/`, 87 in `theories-flocq/`).
+the container `_CoqProject.full` builds the entire corpus (518
+registered modules — 430 in `theories/`, 88 in `theories-flocq/`).
 
 **Status.** The foundational layer (real-number, vector, distance,
 orientation, segment, bbox, triangle, convex, lex-order, plus their
@@ -766,8 +767,8 @@ for Scholar Sam / Tech-Lead Tess / Joost the BDFL paths.
   proofs don't reach: floating-point rounding, exceptions, performance,
   cross-platform consistency, interaction with the rest of the runtime.
 - This is **not** complete. Current coverage is over 5,100 Qed-closed
-  theorems across 517 registered `.v` modules (430 under `theories/` —
-  47 of them in the host `_CoqProject` foundational target — plus 87
+  theorems across 518 registered `.v` modules (430 under `theories/` —
+  47 of them in the host `_CoqProject` foundational target — plus 88
   modules under `theories-flocq/`). There are **no
   `Admitted` theorems today** — both the counterexample and
   deferred-proof registries are empty (see the registries and

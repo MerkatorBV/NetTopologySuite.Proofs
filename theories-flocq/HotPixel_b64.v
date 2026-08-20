@@ -44,6 +44,15 @@
         computations are bit-exact and the rounded pixel coincides
         with the R-side `in_hot_pixel`.
 
+   SPLIT: the Flocq-free R-side kernel (`in_hot_pixel_at_radius`,
+   `in_hot_pixel_unfold`, `in_hot_pixel_closed`,
+   `segment_touches_hot_pixel_closed`) lives in HotPixel_b64_refs.v
+   and is deliberately off docs/audit-exceptions.txt.  This file
+   keeps the binary64-facing membership / crossing / snap-round
+   tracks and Require Export's the kernel, so reverse dependencies
+   import unchanged.  The four Category C2 comparison lemmas stay
+   here (`Bcompare_correct`).
+
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
@@ -63,6 +72,7 @@ From Flocq Require Import IEEE754.BinarySingleNaN.
 From Flocq Require Import Core.
 
 From NTS.Proofs        Require Import Distance HotPixel.
+From NTS.Proofs.Flocq  Require Export HotPixel_b64_refs.
 From NTS.Proofs.Flocq  Require Import Validate_binary64.
 From NTS.Proofs.Flocq  Require Import Orientation_b64.
 From NTS.Proofs.Flocq  Require Import Orient_b64_exact.
@@ -159,21 +169,8 @@ Definition b64_hot_pixel_eval_safe
   b64_safe Rminus (by_ C) r /\
   b64_safe Rplus  (by_ C) r.
 
-(* -------------------------------------------------------------------------- *)
-(* `in_hot_pixel_at_radius`: variant of R-side `in_hot_pixel` that takes     *)
-(* the radius directly.  Lets soundness state the rounded-pixel form below  *)
-(* without paying for the integer-regime exact-radius theorem.              *)
-(* -------------------------------------------------------------------------- *)
-
-Definition in_hot_pixel_at_radius (P C : Point) (r : R) : Prop :=
-  px C - r <= px P < px C + r /\
-  py C - r <= py P < py C + r.
-
-Lemma in_hot_pixel_unfold :
-  forall P C scale,
-    in_hot_pixel P C scale
-    <-> in_hot_pixel_at_radius P C (hot_pixel_radius scale).
-Proof. intros. unfold in_hot_pixel, in_hot_pixel_at_radius. tauto. Qed.
+(* Radius-parameterised / closed-pixel R-side predicates live in
+   HotPixel_b64_refs.v. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Rounded-pixel membership: the R-side semantic content the b64 boolean    *)
@@ -2141,11 +2138,6 @@ Definition b64_liang_barsky_touches (P0 P1 C : BPoint) : bool :=
   && Rle_bool (Rmax 0 (Rmax (lb_tlo x0 x1 xlo xhi) (lb_tlo y0 y1 ylo yhi)))
               (Rmin 1 (Rmin (lb_thi x0 x1 xlo xhi) (lb_thi y0 y1 ylo yhi))).
 
-(* Closed-pixel touch predicate (soundness target). *)
-Definition in_hot_pixel_closed (P C : Point) (scale : R) : Prop :=
-  px C - hot_pixel_radius scale <= px P <= px C + hot_pixel_radius scale /\
-  py C - hot_pixel_radius scale <= py P <= py C + hot_pixel_radius scale.
-
 Definition b64_segment_touches_hot_pixel_closed_spec
     (P0 P1 C : BPoint) : Prop :=
   exists t : R, 0 <= t <= 1 /\
@@ -2354,10 +2346,8 @@ Definition snap_round (P : Point) (scale : R) : Point :=
 
 (* The half-open and closed touch relations, and their passes-through forms.
    `segment_touches_hot_pixel` (half-open) is from theories/HotPixel.v;
-   `in_hot_pixel_closed` is from Slice 10 above. *)
-Definition segment_touches_hot_pixel_closed (P0 P1 C : Point) (scale : R) : Prop :=
-  exists t : R, 0 <= t <= 1 /\ in_hot_pixel_closed (segment_point P0 P1 t) C scale.
-
+   `in_hot_pixel_closed` / `segment_touches_hot_pixel_closed` are from
+   HotPixel_b64_refs.v. *)
 Definition passes_through_hot_pixel (P0 P1 C : Point) (scale : R) : Prop :=
   segment_touches_hot_pixel P0 P1 C scale /\
   segment_touches_hot_pixel (snap_round P0 scale) (snap_round P1 scale) C scale.
@@ -2598,7 +2588,6 @@ Print Assumptions b64_passes_through_sound.
 (*    (the `2 * scale` step is exact when scale's significand fits) plus    *)
 (*    a Flocq reciprocal-of-power-of-two lemma.                             *)
 (* -------------------------------------------------------------------------- *)
-Print Assumptions in_hot_pixel_unfold.
 Print Assumptions b64_round_F2R_in_format.
 Print Assumptions B2R_and_finite_b64_one.
 Print Assumptions B2R_b64_one.

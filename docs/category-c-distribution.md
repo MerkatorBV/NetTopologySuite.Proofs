@@ -10,6 +10,12 @@ off `audit-exceptions.txt`). The table row for the remaining file is
 from `audit-exceptions.txt` and is now listed (89 files / 73
 `theories-flocq/`). The TSV still does not include that file's nine
 PA footers.
+**Update 2026-08-20**: Category A lemma `in_hot_pixel_unfold` (plus the
+closed-pixel R-side defs) moved from `HotPixel_b64.v` into
+`HotPixel_b64_refs.v` (Flocq-free, off `audit-exceptions.txt`). The
+table row for the remaining file is 59 / 23 A / 32 C1 / 4 C2. The four
+C2 comparison lemmas stay in-file. The TSV remains the 2026-08-16
+snapshot.
 **Data**: [`category-c-distribution.tsv`](category-c-distribution.tsv)
 (one row per PA-audited theorem: file, name, category).
 
@@ -141,7 +147,7 @@ registered `.v` with `Lemma`/`Theorem` content carries at least one
 | `theories-flocq/ExtractFacesBridge.v` | 10 | 8 | 2 | 0 | 0 |
 | `theories-flocq/HobbyCounterexample_b64.v` | 15 | 1 | 14 | 0 | 0 |
 | `theories-flocq/HobbyTheorem_b64.v` | 3 | 1 | 2 | 0 | 0 |
-| `theories-flocq/HotPixel_b64.v` | 60 | 24 | 32 | 4 | 0 |
+| `theories-flocq/HotPixel_b64.v` | 59 | 23 | 32 | 4 | 0 |
 | `theories-flocq/InCircle_b64_exact.v` | 35 | 18 | 17 | 0 | 0 |
 | `theories-flocq/Intersect_b64.v` | 21 | 9 | 10 | 2 | 0 |
 | `theories-flocq/Intersect_b64_exact_bridge.v` | 4 | 0 | 4 | 0 | 0 |
