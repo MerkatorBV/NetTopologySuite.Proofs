@@ -61,8 +61,12 @@ Domain = positive-radius closed discs. A **row** is one relation on that
 domain. This is the classification of *input pairs*, not the exactness of
 CAP ∩ / CUP ∪ / SUB ∖ / XOR Δ cells (`overlayng_curve_phase0_exact_cells`).
 A complete family can still have inexact op cells (crossing CAP is approx);
-an 8/8 exactness score on listed rows does not make the family complete if
-some pair fits no row.
+an exactness score on listed rows does not make the family complete if
+some pair fits no row. The **display** exactness matrix has nine rows
+(seven plus T-ext plus T-in shown as covers, not a tenth candidate).
+Shares on that board: CAP 8/9 · CUP 9/9 · SUB 8/9 · XOR 8/9. CUP is the
+only op still exact on every display row. T-ext CAP is regularized ∅
+(R1 unmeetable); T-ext SUB/XOR are off-by-point; T-in SUB/XOR pay V1 pinch.
 
 The seven-row exactness matrix (self · empty partner · disjoint · covers ·
 coveredBy · crossing · disc-vs-polygon) contributes **five** relations on
@@ -112,6 +116,8 @@ eight-row family is candidate-complete over positive discs:
 > |r1 − r2| and r1 + r2; the kiss witness is the radial point
 > c1 + (r1/d)(c2 − c1).  External tangency IS the touch row
 > (`t_ext_is_eight_row_touch`); internal tangency lands in covers.
+> The nine-row *display* matrix lists T-in for contrast; it is not a
+> tenth candidate.
 
 `DISC_OVERLAY` classified `EXT_TANGENT` / `INT_TANGENT` by exact-Q
 discriminant = 0 before the R-side had a spec (generator family E) — this
