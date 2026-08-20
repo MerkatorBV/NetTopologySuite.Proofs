@@ -923,8 +923,9 @@ Romanschek EE = 2 / test-10 exterior rows, JTS#1175 collection BI witnesses,
 existential collection union, `matrix_dim_join` fold soundness (S15i),
 meet-layer II/BB dimension pinning (S15j), and collection relate-matrix
 pipeline capstone with test-10 pointset + fold=oracle (S15k).
-Exterior-row true-dimension pinning, per-pair full `line_pair_fill` bridges
-without hypotheses, and Touches-vs-Share fill split remain S15l+.
+Exterior-row true-dimension pinning landed S15l
+(`RelateNodingLineLineExtPinned.v`). Per-pair full `line_pair_fill` bridges
+without hypotheses and Touches-vs-Share fill split remain S15l+.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -974,6 +975,8 @@ without hypotheses, and Touches-vs-Share fill split remain S15l+.
 | `RelateNodingLineLinePinned.v : classify_proper_cross_ii_dim_pinned` | `LPR_ProperCross` pins II = 0-dim point cell (S15j) `[exact]` | 3 |
 | `RelateNodingLineLinePinned.v : classify_share_interior_ii_dim_pinned` | `LPR_Share` + interior share pins II = 0-dim (S15j) `[exact]` | 3 |
 | `RelateNodingLineLinePinned.v : line_pair_fill_share_ii_not_pinned_int_bnd_only` | Share fill II not pinned when only int×bnd contact (Touches gap) (S15j) `[exact]` | 3 |
+| `RelateNodingLineLineExtPinned.v : classify_disjoint_exterior_row_dim_pinned` (+ `no_share_ie_dim_pinned`, `no_share_ei_dim_pinned`, `no_share_be_dim_pinned`, `no_share_eb_dim_pinned`, `bounded_ee_dim_pinned`, `line_cell_ok_pinned_ext_implies_ok`, `classify_disjoint_test10_exterior_row_pinned`, `parallel_unit_segments_exterior_row_pinned`) | **#67 S15l exterior-row true-dimension pinning:** complementary to S15j II/BB — IE=1 / EI=1 / BE=0 / EB=0 / EE=2 for non-degenerate no-share (and `LPR_Disjoint`) pairs. Forward bridge to `line_cell_ok`. Test-10 matrix carries the true row. Witness: parallel unit segments AB=(0,0)–(1,0), CD=(0,1)–(1,1). `[exact]` | 3 |
+| `RelateNodingLineLineExtPinned.v : line_pair_fill_disjoint_ie_not_true_dim` | S8 `line_pair_fill LPR_Disjoint` assigns IE=None; true dim is Some 1 — fill-honesty companion of the S15j Share/Touches gap `[exact]` | 3 |
 | `RelateNodingLineLineCapstone.v : line_collection_relate_matrix_fold_sound` | Fold-assign interface soundness headline (S15k capstone) `[exact]` | 3 |
 | `RelateNodingLineLineCapstone.v : line_collection_relate_matrix_regime_fold_sound` | Regime-driven fold sound with separate classify + de9im hypotheses (S15k) `[exact]` | 3 |
 | `RelateNodingLineLineCapstone.v : classify_disjoint_pair_de9im_pointset_test10` | Disjoint + bnd×int + non-degenerate ⇒ per-pair full 9-cell test-10 pointset (S15k) `[exact]` | 3 |

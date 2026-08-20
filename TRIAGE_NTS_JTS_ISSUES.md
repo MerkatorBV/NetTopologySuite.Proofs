@@ -323,12 +323,13 @@ witness: <fixture or none>
 1. **#67** — still the deepest *unfinished* build, but now well advanced: matrix
    algebra + witnesses (S0–S12), curve DE-9IM oracle (CURVE_RELATE_MATRIX),
    prepared-cache refinement (S13–S14b), and **line×line RelateNG noding through
-   S15k** (`RelateNodingLineLine.v` collection capstone). Remaining: **S15l+**
-   (prepared evaluate hook, exterior-row pinning, Touches fill split), global
+   S15k** (`RelateNodingLineLine.v` collection capstone). **S15l line×line
+   exterior-row true-dimension pinning** landed (`RelateNodingLineLineExtPinned.v`).
+   Remaining **S15l+**: prepared evaluate hook, Touches fill split, global
    cell-**dimension** (Jordan/overlay) soundness, and multi-geometry pipeline
    beyond line×line. (Recent rungs: general-triangle Jordan cell-dim soundness,
    direct right-triangle `hole_inside_outer`, RelateNG/Prepared pipeline skeleton
-   + rects_relate.)
+   + rects_relate, line×line exterior-row pin.)
 2. **#64** — finish ask #5a Scope B/C (arc-line coordinate **identity** + forward
    error) and the quartic arc-arc coordinates; the sign/length/area/distance and
    intersection-**existence** foundation is now done.
