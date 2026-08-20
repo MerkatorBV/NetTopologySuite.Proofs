@@ -57,8 +57,7 @@
    on this domain (= `phase0_relation`); `eight_row_family` adds T-ext.
    The §3 / §6 theorems inhabit those names; no second headline.
 
-   WITNESS topic: overlay · claimId: none (board card pending; related
-   CRV-TOUCH / #1200) · witness: kiss-discs
+   WITNESS topic: overlay · claimId: laser-ov · witness: kiss-discs
 
    Pure math on R.  Classical-reals trio only (see Print Assumptions).
 
@@ -119,7 +118,7 @@ Definition seven_row_family : Disk -> Disk -> Prop :=
 Definition eight_row_family (A B : Disk) : Prop :=
   phase0_relation A B \/ disks_touch A B.
 
-(* WITNESS {"claimId":"none","topic":"overlay","lemma":"candidate_complete","title":"Disc-pair candidate-complete = every positive-radius pair is classified","witness":"kiss-discs","board":"pending (CRV-TOUCH / #1200)"} *)
+(* WITNESS {"claimId":"laser-ov","topic":"overlay","lemma":"candidate_complete","title":"Disc-pair candidate-complete = every positive-radius pair is classified","witness":"kiss-discs","board":"#1200"} *)
 
 (* -------------------------------------------------------------------------- *)
 (* §2  Metric bridges.                                                         *)

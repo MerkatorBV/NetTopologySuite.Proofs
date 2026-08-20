@@ -142,7 +142,7 @@ is covers). Headlines stay `phase0_relation_complete_hypothesis_refuted`
 and `disc_relations_complete_with_touch`; the names
 `seven_row_not_candidate_complete` / `eight_row_is_candidate_complete`
 are unfolds, not a second headline.
-topic: overlay · claimId: none (board card pending; related CRV-TOUCH / #1200) · witness: kiss-discs.
+topic: overlay · claimId: laser-ov · witness: kiss-discs.
 
 The Phase 0 case matrix at region level (self · disjoint · covers ·
 coveredBy · properly-crossing, positive-radius discs) is **not** candidate
