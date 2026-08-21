@@ -34,7 +34,8 @@ public static class CaseIllustrator
         int width = 41,
         int height = 21,
         bool useColor = false,
-        bool showOvershoot = true)
+        bool showOvershoot = true,
+        double cellAspect = WorldToGrid.DefaultCellAspect)
     {
         wktA ??= DefaultA;
         wktB ??= DefaultB;
@@ -124,7 +125,7 @@ public static class CaseIllustrator
         width = Math.Clamp(width, 8, 200);
         height = Math.Clamp(height, 4, 100);
 
-        var map = new WorldToGrid(env, width, height);
+        var map = new WorldToGrid(env, width, height, cellAspect: cellAspect);
         var canvas = new Canvas(width, height);
 
         Rasterizer.DrawGeometry(canvas, map, aDraw, Layer.A);
