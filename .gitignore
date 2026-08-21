@@ -43,3 +43,6 @@ oracle/extracted.ml
 # Local agent / MCP scratch (not part of the corpus)
 /agent-tools/
 /mcps/
+
+# Downloaded CI artifacts (reproducible via Dockerfile+make; never commit)
+.ci-artifacts/
