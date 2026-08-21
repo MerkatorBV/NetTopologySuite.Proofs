@@ -96,6 +96,13 @@ internal static class Program
 
             Requires the local curve-aware NetTopologySuite clone for CIRCULARSTRING.
 
+            Exit codes:
+              0  ok
+              2  bad arguments, WKT parse failure, or empty geometry
+              3  overshoot extraction or overlay operation failed
+              4  curve WKT given, but this build has no curve support (NuGet
+                 fallback; no chord approximation is rendered, by design)
+
             Examples:
               dotnet run --project tools/WktUnicodeIllustrator -- --demo overshoot
               dotnet run --project tools/WktUnicodeIllustrator -- --demo curve

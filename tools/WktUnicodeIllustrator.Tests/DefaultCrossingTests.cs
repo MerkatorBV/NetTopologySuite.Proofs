@@ -74,7 +74,7 @@ public class DefaultCrossingTests
         Assert.Equal(Normalize(a), Normalize(b));
     }
 
-    [Fact]
+    [CurveFact]
     public void CircularString_pair_parses_via_local_NTS_and_draws_curved_strokes()
     {
         var r = CaseIllustrator.Render(
@@ -116,7 +116,7 @@ public class DefaultCrossingTests
         Assert.True(r.Text.Contains('╳') || r.Text.Contains('┼') || r.Text.Contains('●'));
     }
 
-    [Fact]
+    [CurveFact]
     public void CircularString_self_retrace_reports_overshoot_layers()
     {
         var r = CaseIllustrator.Render(
@@ -151,7 +151,7 @@ public class DefaultCrossingTests
         Assert.Contains("A-overshoot (maroon): (none)", r.Text);
     }
 
-    [Fact]
+    [CurveFact]
     public void Color_mode_includes_maroon_and_navy_when_overshoot_present()
     {
         var r = CaseIllustrator.Render(
@@ -181,7 +181,7 @@ public class DefaultCrossingTests
         Assert.Equal('╱', StructureGlyph.ChooseFromMask(16 | 64));    // NE|SW → ╱
     }
 
-    [Fact]
+    [CurveFact]
     public void CircularString_crosses_horizontal_line()
     {
         // Chord of the densified upper arc is crossed by y = 5 (same mid-height as --demo curve).

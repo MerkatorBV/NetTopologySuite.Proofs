@@ -39,6 +39,18 @@ public static class CaseIllustrator
         wktA ??= DefaultA;
         wktB ??= DefaultB;
 
+        // No chord fallback, by design: a lines-only build must never render a
+        // curve case as its control chords — that picture lies.
+        if (!GeometryCurves.HasCurveSupport
+            && (GeometryCurves.ContainsCurveWkt(wktA) || GeometryCurves.ContainsCurveWkt(wktB)))
+        {
+            return IllustratorResult.Fail(4,
+                "Curve WKT requires the curve-aware NetTopologySuite clone; this build uses "
+                + "NuGet NetTopologySuite (lines only). Clone NetTopologySuite (branch "
+                + "feat/curves-structure-wkt-foundation) next to this repo or pass "
+                + "-p:NtsProject=<path-to-NetTopologySuite.csproj>.");
+        }
+
         Geometry a, b;
         try
         {
