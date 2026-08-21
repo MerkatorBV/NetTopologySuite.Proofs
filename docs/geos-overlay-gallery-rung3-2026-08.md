@@ -1,5 +1,7 @@
 # GEOS overlay differential gallery — rung 3 (August 2026)
 
+**topic:** `overlay` / `docs` · issues [libgeos/geos#1342](https://github.com/libgeos/geos/issues/1342), [libgeos/geos#1344](https://github.com/libgeos/geos/issues/1344)
+
 Rung 3 of the ladder from [geos-oracle-rung-2026-08.md](geos-oracle-rung-2026-08.md):
 harvest the OverlayNG wrong/invalid-output reports
 [libgeos/geos#1342](https://github.com/libgeos/geos/issues/1342) and
