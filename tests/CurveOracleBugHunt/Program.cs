@@ -163,8 +163,10 @@ static class Oracle
 {
     public static string Run(string modeInput)
     {
-        const string wslBin =
-            "/mnt/c/com/github/grootstebozewolf/NetTopologySuite.Proofs/.ci-artifacts/oracle-bin-linux/oracle_bin";
+        // Same contract as tests/GeosOracleBugHunt/hunt.py: ORACLE overrides,
+        // default is the downloaded CI artifact (WSL path).
+        string wslBin = Environment.GetEnvironmentVariable("ORACLE")
+            ?? "/mnt/c/com/github/grootstebozewolf/NetTopologySuite.Proofs/.ci-artifacts/oracle-bin-linux/oracle_bin";
         var psi = new ProcessStartInfo
         {
             FileName = "wsl",
