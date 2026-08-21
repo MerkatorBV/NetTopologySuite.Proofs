@@ -19,31 +19,10 @@ internal static class StructureGlyph
     private const int NW = 128;
 
     /// <summary>
-    /// Overwrite per-layer glyphs from connectivity structure.
-    /// Result points (no neighbours) stay ● so the op mark stays distinct.
+    /// Result glyph from connectivity structure. Isolated result points stay ●
+    /// so the op mark stays distinct.
     /// </summary>
-    public static void Assign(Canvas canvas)
-    {
-        for (int y = 0; y < canvas.Height; y++)
-        {
-            for (int x = 0; x < canvas.Width; x++)
-            {
-                var cell = canvas[x, y];
-                if (cell.Layers.HasFlag(Layer.A))
-                    cell.GlyphA = Choose(canvas, x, y, Layer.A);
-                if (cell.Layers.HasFlag(Layer.B))
-                    cell.GlyphB = Choose(canvas, x, y, Layer.B);
-                if (cell.Layers.HasFlag(Layer.OvershootA))
-                    cell.GlyphOvershootA = Choose(canvas, x, y, Layer.OvershootA);
-                if (cell.Layers.HasFlag(Layer.OvershootB))
-                    cell.GlyphOvershootB = Choose(canvas, x, y, Layer.OvershootB);
-                if (cell.Layers.HasFlag(Layer.Result))
-                    cell.GlyphResult = ChooseResult(canvas, x, y);
-            }
-        }
-    }
-
-    private static char ChooseResult(Canvas canvas, int x, int y)
+    public static char ChooseResult(Canvas canvas, int x, int y)
     {
         int mask = NeighbourMask(canvas, x, y, Layer.Result);
         int ortho = mask & 0xF;
@@ -53,7 +32,8 @@ internal static class StructureGlyph
         return ChooseFromMask(mask);
     }
 
-    private static char Choose(Canvas canvas, int x, int y, Layer layer)
+    /// <summary>Glyph for one layer's stroke at a cell, from its 8-neighbourhood.</summary>
+    public static char Choose(Canvas canvas, int x, int y, Layer layer)
     {
         int mask = NeighbourMask(canvas, x, y, layer);
         return ChooseFromMask(mask);
@@ -76,7 +56,7 @@ internal static class StructureGlyph
     private static bool Has(Canvas canvas, int x, int y, Layer layer)
     {
         if ((uint)x >= (uint)canvas.Width || (uint)y >= (uint)canvas.Height) return false;
-        return canvas[x, y].Layers.HasFlag(layer);
+        return canvas[x, y].HasFlag(layer);
     }
 
     /// <summary>

@@ -1,4 +1,3 @@
-using System.Text;
 using NetTopologySuite.Geometries;
 
 namespace WktUnicodeIllustrator;
@@ -6,6 +5,8 @@ namespace WktUnicodeIllustrator;
 /// <summary>
 /// Pure entry for WKT pair Unicode case sketches (lines and SQL/MM curves).
 /// Used by the CLI and by automated checks — same code path both ways.
+/// Internally: <see cref="Compose"/> → <see cref="Scenario"/> →
+/// <see cref="Style"/> → <see cref="Doc"/> → a printer (ANSI here).
 /// </summary>
 public static class CaseIllustrator
 {
@@ -37,6 +38,33 @@ public static class CaseIllustrator
         bool showOvershoot = true,
         double cellAspect = WorldToGrid.DefaultCellAspect)
     {
+        var composed = Compose(wktA, wktB, operation, width, height, showOvershoot, cellAspect);
+        if (composed.Scenario is null)
+            return IllustratorResult.Fail(composed.ExitCode, composed.Error!);
+
+        var scenario = composed.Scenario;
+        var doc = Style.Build(scenario, colored: useColor);
+
+        return new IllustratorResult
+        {
+            ExitCode = 0,
+            Text = AnsiPrinter.Print(doc),
+            ResultWkt = scenario.Result is null ? null : scenario.Result.AsText(),
+            ResultIsEmpty = scenario.Result?.IsEmpty ?? true,
+            OvershootAWkt = scenario.OvershootA is { IsEmpty: false } oa ? oa.AsText() : null,
+            OvershootBWkt = scenario.OvershootB is { IsEmpty: false } ob ? ob.AsText() : null,
+        };
+    }
+
+    internal static ComposeResult Compose(
+        string? wktA = null,
+        string? wktB = null,
+        string operation = "intersection",
+        int width = 41,
+        int height = 21,
+        bool showOvershoot = true,
+        double cellAspect = WorldToGrid.DefaultCellAspect)
+    {
         wktA ??= DefaultA;
         wktB ??= DefaultB;
 
@@ -45,7 +73,7 @@ public static class CaseIllustrator
         if (!GeometryCurves.HasCurveSupport
             && (GeometryCurves.ContainsCurveWkt(wktA) || GeometryCurves.ContainsCurveWkt(wktB)))
         {
-            return IllustratorResult.Fail(4,
+            return ComposeResult.Fail(4,
                 "Curve WKT requires the curve-aware NetTopologySuite clone; this build uses "
                 + "NuGet NetTopologySuite (lines only). Clone NetTopologySuite (branch "
                 + "feat/curves-structure-wkt-foundation) next to this repo or pass "
@@ -60,11 +88,11 @@ public static class CaseIllustrator
         }
         catch (Exception ex)
         {
-            return IllustratorResult.Fail(2, $"WKT parse failed: {ex.Message}");
+            return ComposeResult.Fail(2, $"WKT parse failed: {ex.Message}");
         }
 
         if (a.IsEmpty || b.IsEmpty)
-            return IllustratorResult.Fail(2, "A and B must be non-empty geometries.");
+            return ComposeResult.Fail(2, "A and B must be non-empty geometries.");
 
         Geometry aDraw = GeometryCurves.Linearize(a);
         Geometry bDraw = GeometryCurves.Linearize(b);
@@ -81,7 +109,7 @@ public static class CaseIllustrator
         }
         catch (Exception ex)
         {
-            return IllustratorResult.Fail(3, $"Overshoot extract failed: {ex.Message}");
+            return ComposeResult.Fail(3, $"Overshoot extract failed: {ex.Message}");
         }
 
         var env = aDraw.EnvelopeInternal.Copy();
@@ -113,7 +141,7 @@ public static class CaseIllustrator
         }
         catch (Exception ex)
         {
-            return IllustratorResult.Fail(3, $"Operation failed: {ex.Message}");
+            return ComposeResult.Fail(3, $"Operation failed: {ex.Message}");
         }
 
         if (result is { IsEmpty: false })
@@ -137,64 +165,19 @@ public static class CaseIllustrator
         if (result is { IsEmpty: false })
             Rasterizer.DrawGeometry(canvas, map, result, Layer.Result);
 
-        StructureGlyph.Assign(canvas);
-
-        var sb = new StringBuilder();
-        sb.AppendLine("WKT Unicode illustrator — line / curve cases");
-        sb.AppendLine($"  A ({Describe(a)}): {a.AsText()}");
-        sb.AppendLine($"  B ({Describe(b)}): {b.AsText()}");
-        sb.AppendLine($"  op: {opName}");
-        if (showOvershoot)
+        return ComposeResult.Ok(new Scenario
         {
-            sb.AppendLine(overA is { IsEmpty: false }
-                ? $"  A-overshoot (maroon): {overA.AsText()}"
-                : "  A-overshoot (maroon): (none)");
-            sb.AppendLine(overB is { IsEmpty: false }
-                ? $"  B-overshoot (navy): {overB.AsText()}"
-                : "  B-overshoot (navy): (none)");
-        }
-        if (result is null)
-            sb.AppendLine("  result: (skipped)");
-        else if (result.IsEmpty)
-            sb.AppendLine("  result: EMPTY");
-        else
-            sb.AppendLine($"  result ({Describe(result)}): {result.AsText()}");
-        sb.AppendLine();
-        sb.AppendLine(AnsiRenderer.Legend(useColor));
-        sb.AppendLine();
-
-        sb.AppendLine("— inputs (A blue, B red; overshoot maroon/navy; magenta where A∩B) —");
-        sb.Append(AnsiRenderer.Render(canvas, showResult: false, useColor: useColor));
-        sb.AppendLine();
-
-        if (result is not null)
-        {
-            sb.AppendLine("— after operation (result in green) —");
-            sb.Append(AnsiRenderer.Render(canvas, showResult: true, useColor: useColor));
-        }
-
-        return new IllustratorResult
-        {
-            ExitCode = 0,
-            Text = sb.ToString(),
-            ResultWkt = result is null ? null : result.AsText(),
-            ResultIsEmpty = result?.IsEmpty ?? true,
-            OvershootAWkt = overA is { IsEmpty: false } ? overA.AsText() : null,
-            OvershootBWkt = overB is { IsEmpty: false } ? overB.AsText() : null,
-        };
+            A = a,
+            B = b,
+            Result = result,
+            OvershootA = overA,
+            OvershootB = overB,
+            ShowOvershoot = showOvershoot,
+            OpName = opName,
+            Canvas = canvas,
+            Map = map,
+        });
     }
-
-    private static string Describe(Geometry g) =>
-        g switch
-        {
-            Point => "Point",
-            LineString ls => ls.IsClosed ? "LinearRing" : "LineString",
-            MultiLineString => "MultiLineString",
-            Polygon => "Polygon",
-            MultiPoint => "MultiPoint",
-            GeometryCollection => g.GeometryType,
-            _ => g.GeometryType,
-        };
 }
 
 public sealed class IllustratorResult

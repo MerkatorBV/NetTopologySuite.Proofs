@@ -86,9 +86,6 @@ internal static class Overshoot
     }
 #endif
 
-    public static bool HasOvershoot(Geometry g) =>
-        ExtractSelfOverlap(g) is { IsEmpty: false };
-
     /// <summary>
     /// Node a (possibly non-simple) lineal geometry so OverlayNG can consume it.
     /// Self-overlapping densified circular strings are unioned edge-wise.

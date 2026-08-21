@@ -3,7 +3,7 @@ using NetTopologySuite.Geometries;
 namespace WktUnicodeIllustrator;
 
 /// <summary>
-/// Rasterizes NTS linework onto a <see cref="Canvas"/> with Unicode direction glyphs.
+/// Rasterizes NTS linework onto a <see cref="Canvas"/> as layer occupancy.
 /// Callers should <see cref="GeometryCurves.Linearize"/> curves first so arcs become dense polylines.
 /// </summary>
 internal static class Rasterizer
@@ -26,7 +26,7 @@ internal static class Rasterizer
                 break;
             case Point p:
                 var (c, r) = map.Project(p.Coordinate);
-                canvas.Paint(c, r, layer, '●');
+                canvas.Paint(c, r, layer);
                 break;
             case GeometryCollection gc:
                 for (int i = 0; i < gc.NumGeometries; i++)
@@ -47,7 +47,7 @@ internal static class Rasterizer
         if (coords.Length == 1)
         {
             var (c, r) = map.Project(coords[0]);
-            canvas.Paint(c, r, layer, '●');
+            canvas.Paint(c, r, layer);
             return;
         }
 
@@ -59,10 +59,9 @@ internal static class Rasterizer
         }
     }
 
-    /// <summary>Bresenham line with slope-aware Unicode glyphs.</summary>
+    /// <summary>Bresenham line over layer occupancy.</summary>
     public static void DrawSegment(Canvas canvas, int x0, int y0, int x1, int y1, Layer layer)
     {
-        char glyph = DirectionGlyph(x0, y0, x1, y1);
         int dx = Math.Abs(x1 - x0);
         int dy = Math.Abs(y1 - y0);
         int sx = x0 < x1 ? 1 : -1;
@@ -72,27 +71,11 @@ internal static class Rasterizer
 
         while (true)
         {
-            canvas.Paint(x, y, layer, glyph);
+            canvas.Paint(x, y, layer);
             if (x == x1 && y == y1) break;
             int e2 = 2 * err;
             if (e2 > -dy) { err -= dy; x += sx; }
             if (e2 < dx) { err += dx; y += sy; }
         }
-    }
-
-    public static char DirectionGlyph(int x0, int y0, int x1, int y1)
-    {
-        int dx = x1 - x0;
-        int dy = y1 - y0; // grid: +dy is downward
-        if (dx == 0 && dy == 0) return '●';
-        if (dx == 0) return '│';
-        if (dy == 0) return '─';
-
-        // Screen Y grows down, so geometric / (NE-SW) is screen ╲ and \ (NW-SE) is ╱.
-        double slope = (double)dy / dx; // dy/dx in grid space
-        if (Math.Abs(slope) < 0.4) return '─';
-        if (Math.Abs(slope) > 2.5) return '│';
-        // Same sign: moving right+down or left+up → ╲
-        return Math.Sign(dx) == Math.Sign(dy) ? '╲' : '╱';
     }
 }
