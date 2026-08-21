@@ -34,10 +34,23 @@ public static class CaseIllustrator
         int width = 41,
         int height = 21,
         bool useColor = false,
-        bool showOvershoot = true)
+        bool showOvershoot = true,
+        double cellAspect = WorldToGrid.DefaultCellAspect)
     {
         wktA ??= DefaultA;
         wktB ??= DefaultB;
+
+        // No chord fallback, by design: a lines-only build must never render a
+        // curve case as its control chords — that picture lies.
+        if (!GeometryCurves.HasCurveSupport
+            && (GeometryCurves.ContainsCurveWkt(wktA) || GeometryCurves.ContainsCurveWkt(wktB)))
+        {
+            return IllustratorResult.Fail(4,
+                "Curve WKT requires the curve-aware NetTopologySuite clone; this build uses "
+                + "NuGet NetTopologySuite (lines only). Clone NetTopologySuite (branch "
+                + "feat/curves-structure-wkt-foundation) next to this repo or pass "
+                + "-p:NtsProject=<path-to-NetTopologySuite.csproj>.");
+        }
 
         Geometry a, b;
         try
@@ -112,7 +125,7 @@ public static class CaseIllustrator
         width = Math.Clamp(width, 8, 200);
         height = Math.Clamp(height, 4, 100);
 
-        var map = new WorldToGrid(env, width, height);
+        var map = new WorldToGrid(env, width, height, cellAspect: cellAspect);
         var canvas = new Canvas(width, height);
 
         Rasterizer.DrawGeometry(canvas, map, aDraw, Layer.A);

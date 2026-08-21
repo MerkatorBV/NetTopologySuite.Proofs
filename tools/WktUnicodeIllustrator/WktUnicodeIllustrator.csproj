@@ -11,6 +11,12 @@
     <NtsProject Condition="'$(NtsProject)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\NetTopologySuite\src\NetTopologySuite\NetTopologySuite.csproj'))</NtsProject>
   </PropertyGroup>
 
+  <!-- Curve-aware code compiles only against the local clone; the NuGet fallback
+       is lines-only and exits 4 on curve WKT (no chord fallback, by design). -->
+  <PropertyGroup Condition="Exists('$(NtsProject)')">
+    <DefineConstants>$(DefineConstants);CURVE_NTS</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="WktUnicodeIllustrator.Tests" />
   </ItemGroup>
@@ -25,7 +31,7 @@
   </ItemGroup>
 
   <Target Name="WarnIfNuGetNts" BeforeTargets="Build" Condition="!Exists('$(NtsProject)')">
-    <Warning Text="Local curve-aware NTS not found at '$(NtsProject)'. Using NuGet 2.6.0 (no CIRCULARSTRING). Clone NetTopologySuite next to this repo or pass -p:NtsProject=..." />
+    <Warning Text="Local curve-aware NTS not found at '$(NtsProject)'. Using NuGet 2.6.0: lines only, curve WKT exits 4. Clone NetTopologySuite next to this repo or pass -p:NtsProject=..." />
   </Target>
 
 </Project>

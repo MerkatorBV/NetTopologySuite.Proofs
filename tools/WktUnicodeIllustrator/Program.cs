@@ -52,7 +52,8 @@ internal static class Program
             width: opts.Width,
             height: opts.Height,
             useColor: useColor,
-            showOvershoot: opts.ShowOvershoot);
+            showOvershoot: opts.ShowOvershoot,
+            cellAspect: opts.CellAspect);
 
         if (result.ExitCode != 0)
         {
@@ -82,6 +83,8 @@ internal static class Program
               --no-overshoot     skip maroon/navy self-overlap layers
               --width N          grid width  (default: 41)
               --height N         grid height (default: 21)
+              --cell-aspect R    terminal cell height/width for visual aspect
+                                 (default: 2.0; 1.0 = treat cells as square)
               --no-color         plain Unicode, no ANSI escapes
               --force-color      emit ANSI even when stdout is redirected
               -h, --help         this help
@@ -95,6 +98,13 @@ internal static class Program
             CIRCULARSTRING whose second arc reverses the first (same mid control).
 
             Requires the local curve-aware NetTopologySuite clone for CIRCULARSTRING.
+
+            Exit codes:
+              0  ok
+              2  bad arguments, WKT parse failure, or empty geometry
+              3  overshoot extraction or overlay operation failed
+              4  curve WKT given, but this build has no curve support (NuGet
+                 fallback; no chord approximation is rendered, by design)
 
             Examples:
               dotnet run --project tools/WktUnicodeIllustrator -- --demo overshoot
@@ -110,6 +120,7 @@ internal static class Program
         public string Operation { get; init; } = "intersection";
         public int Width { get; init; } = 41;
         public int Height { get; init; } = 21;
+        public double CellAspect { get; init; } = WorldToGrid.DefaultCellAspect;
         public bool Color { get; init; } = true;
         public bool ForceColor { get; init; }
         public bool DemoCurve { get; init; }
@@ -121,6 +132,7 @@ internal static class Program
         {
             string? a = null, b = null, op = "intersection";
             int w = 41, h = 21;
+            double cellAspect = WorldToGrid.DefaultCellAspect;
             bool color = true, forceColor = false, help = false;
             bool demoCurve = false, demoOvershoot = false, showOvershoot = true;
 
@@ -173,6 +185,10 @@ internal static class Program
                     case "--height" when i + 1 < args.Length:
                         h = int.Parse(args[++i]);
                         break;
+                    case "--cell-aspect" when i + 1 < args.Length:
+                        cellAspect = double.Parse(
+                            args[++i], System.Globalization.CultureInfo.InvariantCulture);
+                        break;
                     default:
                         if (s.StartsWith('-'))
                             throw new ArgumentException($"Unknown option: {s}");
@@ -190,6 +206,7 @@ internal static class Program
                 Operation = op,
                 Width = w,
                 Height = h,
+                CellAspect = cellAspect,
                 Color = color,
                 ForceColor = forceColor,
                 DemoCurve = demoCurve,

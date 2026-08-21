@@ -7,19 +7,26 @@ namespace WktUnicodeIllustrator;
 /// </summary>
 internal sealed class WorldToGrid
 {
+    /// <summary>Terminal character height ÷ width; ~2 for typical monospace fonts.</summary>
+    public const double DefaultCellAspect = 2.0;
+
     private readonly double _minX, _minY, _maxX, _maxY;
     private readonly int _width, _height;
     private readonly double _pad;
 
-    public WorldToGrid(Envelope env, int width, int height, double padFraction = 0.08)
+    public WorldToGrid(Envelope env, int width, int height, double padFraction = 0.08,
+        double cellAspect = DefaultCellAspect)
     {
         _width = width;
         _height = height;
         double dx = Math.Max(env.Width, 1e-9);
         double dy = Math.Max(env.Height, 1e-9);
-        // Keep aspect: expand the thinner world axis so shapes are not stretched.
+        // Keep *visual* aspect: a grid cell is cellAspect× taller than wide on
+        // screen, so the frame's visual aspect is (w-1) / ((h-1)·cellAspect).
+        // Expand the thinner world axis so shapes are not stretched.
         double worldAspect = dx / dy;
-        double gridAspect = (double)(width - 1) / Math.Max(1, height - 1);
+        double gridAspect = (double)(width - 1)
+            / (Math.Max(1, height - 1) * Math.Max(0.1, cellAspect));
         if (worldAspect > gridAspect)
             dy = dx / gridAspect;
         else

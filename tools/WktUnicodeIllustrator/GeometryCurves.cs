@@ -1,5 +1,7 @@
 using NetTopologySuite.Geometries;
+#if CURVE_NTS
 using NetTopologySuite.Geometries.Curves;
+#endif
 using NetTopologySuite.IO;
 
 namespace WktUnicodeIllustrator;
@@ -13,6 +15,23 @@ namespace WktUnicodeIllustrator;
 internal static class GeometryCurves
 {
     private static readonly GeometryFactory Gf = GeometryFactory.Default;
+
+    /// <summary>True when compiled against the curve-aware NTS clone (CURVE_NTS).</summary>
+    public static bool HasCurveSupport =>
+#if CURVE_NTS
+        true;
+#else
+        false;
+#endif
+
+    private static readonly string[] CurveWktKeywords =
+    {
+        "CIRCULARSTRING", "COMPOUNDCURVE", "CURVEPOLYGON", "MULTICURVE", "MULTISURFACE",
+    };
+
+    /// <summary>Cheap pre-parse check for SQL/MM curve WKT keywords.</summary>
+    public static bool ContainsCurveWkt(string wkt) =>
+        CurveWktKeywords.Any(k => wkt.Contains(k, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>Parse WKT with the linked NTS (curve-aware when using the local clone).</summary>
     public static Geometry Parse(string wkt)
@@ -30,6 +49,7 @@ internal static class GeometryCurves
     {
         if (g is null || g.IsEmpty) return g;
 
+#if CURVE_NTS
         // Official linearize path when the type implements it (Curve package / future NTS).
         if (g is ILinearizable<LineString> linLs)
             return linLs.Linearize();
@@ -37,21 +57,27 @@ internal static class GeometryCurves
             return linPoly.Linearize();
         if (g is ILinearizable<Geometry> linAny)
             return linAny.Linearize();
+#endif
 
         return g switch
         {
+#if CURVE_NTS
             CircularString cs => DensifyCircularString(cs, samplesPerArc),
             CompoundCurve cc => DensifyCompoundCurve(cc, samplesPerArc),
             CurvePolygon cp => DensifyCurvePolygon(cp, samplesPerArc),
+#endif
             GeometryCollection gc when NeedsLinearize(gc) => LinearizeCollection(gc, samplesPerArc),
             _ => g,
         };
     }
 
     public static bool IsCurve(Geometry g) =>
+#if CURVE_NTS
         g is CircularString or CompoundCurve or CurvePolygon
         || g is ILinearizable<LineString>
-        || (g is GeometryCollection coll && NeedsLinearize(coll));
+        ||
+#endif
+        (g is GeometryCollection coll && NeedsLinearize(coll));
 
     private static bool NeedsLinearize(GeometryCollection gc)
     {
@@ -68,6 +94,7 @@ internal static class GeometryCurves
         return gc.Factory.BuildGeometry(parts);
     }
 
+#if CURVE_NTS
     private static LineString DensifyCircularString(CircularString cs, int samplesPerArc)
     {
         var controls = cs.CoordinateSequence;
@@ -152,6 +179,7 @@ internal static class GeometryCurves
         var list = new List<Coordinate>(coords) { Copy(coords[0]) };
         return list.ToArray();
     }
+#endif
 
     /// <summary>Sample circle arc a → c through on-arc point b.</summary>
     internal static Coordinate[] SampleArc(Coordinate a, Coordinate b, Coordinate c, int samples)

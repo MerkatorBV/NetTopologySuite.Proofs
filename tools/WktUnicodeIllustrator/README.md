@@ -13,7 +13,12 @@ ANSI-coloured **Unicode sketches** of spatial cases from WKT — lines **and** S
 
 **NTS dependency:** prefers a **project reference** to the sibling curve-aware clone  
 `../NetTopologySuite` (`CIRCULARSTRING` / `COMPOUNDCURVE` / `CURVEPOLYGON` in `WKTReader`).  
-Override with `-p:NtsProject=...`. Falls back to NuGet 2.6 (lines only) with a build warning.
+Override with `-p:NtsProject=...`. Falls back to NuGet 2.6 (lines only) with a build warning;
+in that build **curve WKT exits 4** with a message — no chord approximation is ever rendered,
+because a degraded picture is worse than no picture.
+
+**Exit codes:** `0` ok · `2` bad args / WKT parse / empty geometry · `3` overshoot or overlay
+operation failed · `4` curve WKT without curve support (lines-only NuGet build).
 
 Curves are **linearized** for draw + overlay (playground curve ops); labels keep native curve WKT.
 

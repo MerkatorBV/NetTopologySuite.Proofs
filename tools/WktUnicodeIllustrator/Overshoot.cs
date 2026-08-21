@@ -1,5 +1,7 @@
 using NetTopologySuite.Geometries;
+#if CURVE_NTS
 using NetTopologySuite.Geometries.Curves;
+#endif
 
 namespace WktUnicodeIllustrator;
 
@@ -21,6 +23,7 @@ internal static class Overshoot
     {
         if (g is null || g.IsEmpty) return null;
 
+#if CURVE_NTS
         // CircularString reverse-retrace: (A, M, B, M, A) — second arc walks the first
         // backwards; treat the whole densified path as overshoot so maroon/navy
         // lights the entire self-overlap, not only floating multipoints.
@@ -30,6 +33,7 @@ internal static class Overshoot
             if (retrace is { IsEmpty: false })
                 return retrace;
         }
+#endif
 
         var lin = GeometryCurves.Linearize(g, samplesPerArc);
         return lin switch
@@ -42,6 +46,7 @@ internal static class Overshoot
         };
     }
 
+#if CURVE_NTS
     /// <summary>
     /// Detect arcs that reverse an earlier arc (shared mid control, swapped ends).
     /// Returns densified union of those reverse arcs (the overshooting retrace).
@@ -79,6 +84,7 @@ internal static class Overshoot
 
         return Combine(parts);
     }
+#endif
 
     public static bool HasOvershoot(Geometry g) =>
         ExtractSelfOverlap(g) is { IsEmpty: false };
