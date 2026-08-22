@@ -69,26 +69,9 @@ def parse_hex_float(s: str) -> float:
     s = s.strip()
     if s in ("DEGENERATE", "NAN"):
         return float("nan")
-    if s.startswith("-"):
-        return -parse_hex_float(s[1:])
-    if not s.lower().startswith("0x"):
-        return float(s)
-    body = s[2:]
-    p = body.lower().find("p")
-    if p < 0:
-        return float(int(body, 16))
-    mant, exp_s = body[:p], body[p + 1 :]
-    exp = int(exp_s)
-    if "." in mant:
-        whole, frac = mant.split(".", 1)
-        m = int(whole, 16) if whole else 0
-        f = 0.0
-        for ch in frac:
-            f = f * 16 + int(ch, 16)
-        m += f / (16 ** len(frac))
-    else:
-        m = int(mant, 16)
-    return m * (2.0 ** exp)
+    if s.lower().lstrip("-").startswith("0x"):
+        return float.fromhex(s)
+    return float(s)
 
 
 def near(a: float, b: float, rel: float = 1e-9, abs_tol: float = 1e-9) -> bool:
