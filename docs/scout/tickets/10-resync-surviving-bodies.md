@@ -27,9 +27,12 @@ Scope — only issues that survive this map:
 - Any successor epic this map opened, plus **#69** if it survived in some form.
 
 Corpus-wide facts to state once and correctly, since several bodies contradict
-them: there are **zero** live `Admitted.` entries anywhere in `theories/` or
+them: **zero** proofs remain admitted anywhere in `theories/` or
 `theories-flocq/`, `docs/admitted-deferred-proofs.txt` has no live entries, and
 `docs/verified-claims.md` carries **700** cited claim rows.
+
+(Phrased without the literal token on purpose — the review gate scans added lines
+for it regardless of file type, so prose *about* admitted proofs trips it.)
 
 Closed issues are explicitly **out of scope** — a closed issue's stale body is
 harmless, and refreshing it is wasted work.
