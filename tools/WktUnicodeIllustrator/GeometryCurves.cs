@@ -50,7 +50,16 @@ internal static class GeometryCurves
         if (g is null || g.IsEmpty) return g;
 
 #if CURVE_NTS
-        // Official linearize path when the type implements it (Curve package / future NTS).
+        // The clone's ILinearizable.Linearize() is documented as "the explicit
+        // chord escape hatch" — control chords, not arcs. Our SampleArc
+        // densification draws true arcs, so it wins for the types it knows;
+        // ILinearizable is only the fallback for future linearizable types.
+        switch (g)
+        {
+            case CircularString cs: return DensifyCircularString(cs, samplesPerArc);
+            case CompoundCurve cc: return DensifyCompoundCurve(cc, samplesPerArc);
+            case CurvePolygon cp: return DensifyCurvePolygon(cp, samplesPerArc);
+        }
         if (g is ILinearizable<LineString> linLs)
             return linLs.Linearize();
         if (g is ILinearizable<Polygon> linPoly)
@@ -61,11 +70,6 @@ internal static class GeometryCurves
 
         return g switch
         {
-#if CURVE_NTS
-            CircularString cs => DensifyCircularString(cs, samplesPerArc),
-            CompoundCurve cc => DensifyCompoundCurve(cc, samplesPerArc),
-            CurvePolygon cp => DensifyCurvePolygon(cp, samplesPerArc),
-#endif
             GeometryCollection gc when NeedsLinearize(gc) => LinearizeCollection(gc, samplesPerArc),
             _ => g,
         };
