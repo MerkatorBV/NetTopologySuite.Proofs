@@ -45,23 +45,51 @@ internal static class Program
             wktB ??= CaseIllustrator.DefaultCurveB;
         }
 
-        var result = CaseIllustrator.Render(
+        if (opts.PngPath is null)
+        {
+            var result = CaseIllustrator.Render(
+                wktA: wktA,
+                wktB: wktB,
+                operation: opts.Operation,
+                width: opts.Width,
+                height: opts.Height,
+                useColor: useColor,
+                showOvershoot: opts.ShowOvershoot,
+                cellAspect: opts.CellAspect);
+
+            if (result.ExitCode != 0)
+            {
+                Console.Error.Write(result.Text);
+                return result.ExitCode;
+            }
+
+            Console.Write(result.Text);
+            return 0;
+        }
+
+        // --png: compose once, print through both adapters.
+        var composed = CaseIllustrator.Compose(
             wktA: wktA,
             wktB: wktB,
             operation: opts.Operation,
             width: opts.Width,
             height: opts.Height,
-            useColor: useColor,
             showOvershoot: opts.ShowOvershoot,
             cellAspect: opts.CellAspect);
 
-        if (result.ExitCode != 0)
+        if (composed.Scenario is null)
         {
-            Console.Error.Write(result.Text);
-            return result.ExitCode;
+            Console.Error.Write(composed.Error + Environment.NewLine);
+            return composed.ExitCode;
         }
 
-        Console.Write(result.Text);
+        var ansiDoc = Style.Build(composed.Scenario, colored: useColor);
+        Console.Write(AnsiPrinter.Print(ansiDoc));
+
+        // The facsimile is always the coloured form — that is what a terminal shows.
+        var pngDoc = useColor ? ansiDoc : Style.Build(composed.Scenario, colored: true);
+        File.WriteAllBytes(opts.PngPath, PngPrinter.Print(pngDoc));
+        Console.Error.WriteLine($"png: {opts.PngPath}");
         return 0;
     }
 
@@ -87,6 +115,8 @@ internal static class Program
                                  (default: 2.0; 1.0 = treat cells as square)
               --no-color         plain Unicode, no ANSI escapes
               --force-color      emit ANSI even when stdout is redirected
+              --png <path>       also write a PNG facsimile (always coloured;
+                                 embedded Cascadia Mono, Campbell palette)
               -h, --help         this help
 
             Colours:
@@ -121,6 +151,7 @@ internal static class Program
         public int Width { get; init; } = 41;
         public int Height { get; init; } = 21;
         public double CellAspect { get; init; } = WorldToGrid.DefaultCellAspect;
+        public string? PngPath { get; init; }
         public bool Color { get; init; } = true;
         public bool ForceColor { get; init; }
         public bool DemoCurve { get; init; }
@@ -131,6 +162,7 @@ internal static class Program
         public static Options Parse(string[] args)
         {
             string? a = null, b = null, op = "intersection";
+            string? pngPath = null;
             int w = 41, h = 21;
             double cellAspect = WorldToGrid.DefaultCellAspect;
             bool color = true, forceColor = false, help = false;
@@ -189,6 +221,9 @@ internal static class Program
                         cellAspect = double.Parse(
                             args[++i], System.Globalization.CultureInfo.InvariantCulture);
                         break;
+                    case "--png" when i + 1 < args.Length:
+                        pngPath = args[++i];
+                        break;
                     default:
                         if (s.StartsWith('-'))
                             throw new ArgumentException($"Unknown option: {s}");
@@ -207,6 +242,7 @@ internal static class Program
                 Width = w,
                 Height = h,
                 CellAspect = cellAspect,
+                PngPath = pngPath,
                 Color = color,
                 ForceColor = forceColor,
                 DemoCurve = demoCurve,
