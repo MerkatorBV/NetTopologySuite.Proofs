@@ -30,6 +30,12 @@ Work deferred because there is no statement worth proving yet — no published
 true form to aim at. It graduates only when someone finds one.
 _Avoid_: research-scale (as a synonym for "multi-session" or "hard"), blocked
 
+**Technique park**:
+Work deferred with the statement already written and the evidence strong, missing
+only a proof method. It graduates when the method is found, so naming the missing
+method *is* the deliverable.
+_Avoid_: research park (a statement exists), hard, high-risk
+
 **Witness-scoped**:
 Proven for named concrete instances rather than universally. An honest partial
 result, and this corpus's most reliable route to a usable headline — not a

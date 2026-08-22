@@ -15,7 +15,7 @@ Order of work: top-down from #64, with the freebie first.
 | 03 | ~~[Open the module-split queue epic](closed/03-open-module-split-queue-epic.md)~~ **closed** → #506 | task | 02 |
 | 04 | ~~[Retire #64 — arc primitives](closed/04-retire-64-arc-primitives.md)~~ **closed** → #508 #509 #510 #511 | grilling | — |
 | 05 | ~~[Retire #65 — buffer and offset curves](closed/05-retire-65-buffer-and-offset.md)~~ **closed** → #515 #513 #514, ADR-0002 | grilling | — |
-| 06 | [Retire #66 — precision models, snap rounding, OverlayNG](06-retire-66-precision-and-overlay.md) | grilling | — |
+| 06 | ~~[Retire #66 — precision models, snap rounding, OverlayNG](closed/06-retire-66-precision-and-overlay.md)~~ **closed** → #517 #518 #519 #520, ADR-0002 amended | grilling | — |
 | 07 | [Retire #67 — RelateNG matrix and boundary handling](07-retire-67-relateng.md) | grilling | — |
 | 08 | [Retire #68 — Delaunay triangulation and Voronoi diagrams](08-retire-68-delaunay-voronoi.md) | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 04, 05, 06, 07, 08 |
@@ -28,10 +28,10 @@ Order of work: top-down from #64, with the freebie first.
               (queue must empty)  ├── 10
 04 ═══════════════════════╗       │  #64 closed → #508 #509 #510 #511
 05 ═══════════════════════╣       │  #65 closed → #515 (hero shot), #513 #514
-06 ┐                      ║       │
-07 ├── 09 ────────────────╝───────┘
-08 ┘
+06 ═══════════════════════╣       │  #66 closed → #517 #518 #519 #520
+07 ┐                      ║       │
+08 ├── 09 ────────────────╝───────┘
 ```
 
-**Frontier:** 06, 07, 08 — three takeable, one per session. Two epics retired;
-#69's hinge waits on #66, #67 and #68.
+**Frontier:** 07, 08 — two takeable, one per session. Three epics retired;
+#69's hinge waits on #67 and #68.

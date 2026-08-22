@@ -53,11 +53,12 @@ body, which is stale everywhere (all six bodies date from 2026-07-04).
 row(s), (2) `file:line` pointers to the Qed'd statements, and (3) the status line
 in the relevant lane doc. Name what is *not* covered and where it went.
 
-**Vocabulary is load-bearing here.** Per **ADR-0002**: a *sequencing park* waits
-on another lane and graduates when its gate lands; a *research park* waits for a
-statement worth proving and graduates only when someone finds one. Do not call
-the first the second — they behave differently. `CONTEXT.md` carries both, plus
-*witness-scoped*. Note also that `doc/EXACT_CURVE_BIBLE.md`, cited by several
+**Vocabulary is load-bearing here.** Per **ADR-0002** (as amended), parks are
+named by *what is missing*, because that predicts how each graduates: a
+**sequencing park** lacks a gate — an event or an owner; a **research park** lacks
+a statement worth proving; a **technique park** has both statement and evidence
+and lacks only a proof method. Value and priority are orthogonal. `CONTEXT.md`
+carries all three, plus *witness-scoped*. Note also that `doc/EXACT_CURVE_BIBLE.md`, cited by several
 tickets, lives in the **`jts-*` fork clones**, not in this repository.
 
 **The module-split gate (new policy, derived not judged).** A module over
@@ -99,6 +100,13 @@ whatever its epic's body says about it.
   showed B2 already satisfied by side effect (`CornerCorridorBridge.v` is 138
   lines, its worked example now in `BaseToTipSample.v`), B5 therefore unblocked
   and still real at 0 claims rows, and B3 is build-lane hygiene.
+- [Retire #66 — precision models, snap rounding, OverlayNG](tickets/closed/06-retire-66-precision-and-overlay.md)
+  — **closed**; residue is #517 tie-freeness, #518 the ownerless
+  `fully_intersected` bridge, #519 guard 5, #520 the three OverlayNG hypotheses.
+  Guard 2 struck (already Qed). ADR-0002 **amended**: parks are classified by what
+  is missing — a gate, a statement, or a **proof method** — after C2 turned out to
+  be a *technique* park, not the *value* park I proposed. Three doc corrections
+  into #503, two of which widened the truth.
 - [Retire #65 — buffer and offset curves](tickets/closed/05-retire-65-buffer-and-offset.md)
   — **closed on linear+arc scope**; hero shot is #515 (buffer with curve
   preservation, after #508). Three of four residue items were stale: `H_valid`

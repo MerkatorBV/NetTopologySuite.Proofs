@@ -78,10 +78,41 @@ Two further findings shape how it is carried:
   would otherwise skip the reachable part.
 - Terminology is now load-bearing: in this corpus **"research-scale" means no
   published true statement to aim at**, and must not be used for work that is
-  merely multi-session or gated behind another lane. Sequencing parks and
-  difficulty parks are recorded differently because they graduate differently —
-  a sequencing park graduates when its gate lands, a research park only when
-  someone finds a statement worth proving.
+  merely multi-session or gated behind another lane.
+
+### Amendment, 2026-08-22 — three park kinds, keyed on what is missing
+
+Applying this ADR to issue #66 exposed a third case its original wording could
+not name. **C2** (general-binary64 rounded-filter completeness) has a precise
+Coq statement already written out (`b64_passes_through_complete_compute`,
+`docs/oracle-soundness-finding.md:128-133`) and overwhelming evidence — zero
+violations across 36,864 exhaustive, 217,728 ULP-band and 18M random trials —
+yet is blocked because round-to-nearest gives no outward guarantee, so
+`b64_le_complete`'s hypothesis is exactly what monotonicity cannot supply. That
+is neither a missing gate nor a missing statement.
+
+Parks are therefore classified by **what is missing**, because that is the only
+axis that predicts how a park graduates:
+
+| Kind | Missing | Graduates when |
+|---|---|---|
+| **Sequencing park** | a gate — an event, or an owner | the gate lands |
+| **Research park** | a statement worth proving | someone finds one |
+| **Technique park** | a proof method; statement and evidence are in hand | the method is found |
+
+**Value and priority are orthogonal.** A technique park can be high or low
+priority without changing kind. #66's body calls C2 *"high risk, low marginal
+value"* while `oracle-soundness-finding.md` records *"proof BLOCKED"* for a
+specific technical reason — both true, and only the second tells you what would
+unblock it.
+
+Worked examples in this corpus: **sequencing** — the Minkowski bridge (this ADR),
+and the `fully_intersected → noded_general_position` bridge, which is *ownerless*
+rather than hard. **Research** — the arc-Hobby analog, *"no published true
+statement"*, this ADR's calibration point. **Technique** — C2, and the C1 width
+extension, whose target is now nameable as a **rounding-tie-freeness lemma** on
+the Liang-Barsky quotient family (the comparator `rat_le_iff` is already Qed),
+where "high risk" had told nobody anything.
 - The general simple-ring `even_parity_escapes` case remains the gate for the
   *unrestricted* bridge, and stays where it is (P5, the JCT escape descent).
 - No claim in `docs/verified-claims.md` changes: nothing here proves anything
