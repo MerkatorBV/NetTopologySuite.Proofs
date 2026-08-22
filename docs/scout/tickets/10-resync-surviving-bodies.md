@@ -1,7 +1,7 @@
 # Resync surviving issue bodies to corpus state
 
 **Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** [Open the module-split queue epic](03-open-module-split-queue-epic.md) — *and that epic's queue must be **empty**, not merely open* · [End #69's umbrella role](09-end-69-umbrella.md)
+**Blocked by:** **#506** *Module split campaign* — its queue must be **empty**, not merely the epic open (see [Open the module-split queue epic](closed/03-open-module-split-queue-epic.md)) · [End #69's umbrella role](09-end-69-umbrella.md)
 
 ## Question
 

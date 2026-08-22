@@ -87,6 +87,11 @@ whatever its epic's body says about it.
   `make ci-guards`, three entries in `docs/module-split-allowlist.txt`; headroom
   is 5 % of recorded **lines** (not the metric, since another module's `Require`
   must not fail your build), and stale entries fail so the ratchet only shrinks.
+- [Open the module-split queue epic](tickets/closed/03-open-module-split-queue-epic.md)
+  — live as #506; no audit-doc B-row folds into it, because checking premises
+  showed B2 already satisfied by side effect (`CornerCorridorBridge.v` is 138
+  lines, its worked example now in `BaseToTipSample.v`), B5 therefore unblocked
+  and still real at 0 claims rows, and B3 is build-lane hygiene.
 
 ## Not yet specified
 
