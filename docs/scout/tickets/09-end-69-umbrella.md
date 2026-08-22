@@ -1,7 +1,7 @@
 # End #69's umbrella role and re-parent the standing epics
 
 **Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** [#64](04-retire-64-arc-primitives.md) · [#65](05-retire-65-buffer-and-offset.md) · [#66](06-retire-66-precision-and-overlay.md) · [#67](07-retire-67-relateng.md) · [#68](08-retire-68-delaunay-voronoi.md)
+**Blocked by:** ~~[#64](closed/04-retire-64-arc-primitives.md)~~ ✔ · ~~[#65](closed/05-retire-65-buffer-and-offset.md)~~ ✔ · ~~[#66](closed/06-retire-66-precision-and-overlay.md)~~ ✔ · **[Retire #67 — second pass](11-retire-67-second-pass.md)** (the first pass declined to close — #67 is still open) · [#68](08-retire-68-delaunay-voronoi.md)
 
 ## Question
 
