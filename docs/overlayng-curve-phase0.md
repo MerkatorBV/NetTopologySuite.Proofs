@@ -5,13 +5,18 @@ claimId: none
 witness: self-ops
 mutation-seed: none
 
-(ADR-0004 mint, explicit: this is a lane opener with no board card yet, so
-no oracle-facing micro-kernel claim is minted — `claimId: none`, no
-`eval/` mirror. The documentation-level falsifier seed is `self-ops`: the
-G3/G4 self-cancellations `A ∖ A = ∅`, `A Δ A = ∅`, whose mutation into
-G1/G2 keep-laws the crossing probes would catch. When a board card id is
-assigned, the rename + `eval/ClaimNNN.v` mirror follow in one pass, as for
-the LEC opener.)
+(ADR-0004 mint, explicit: this gates table is the Phase 0 **opener**
+(`OverlayNGCurve` exact-cell kernel). It stays `claimId: none` / witness
+`self-ops` — not stale vs tip. The OverlayTouchRow candidate-complete pin
+is a later section: `claimId: laser-ov` (not `laser-ml2`) · witness
+`kiss-discs` · mutation-seed `668404`. No oracle-facing micro-kernel
+claim is minted on the opener — no `eval/` mirror. The documentation-level
+falsifier seed is `self-ops`: the G3/G4 self-cancellations `A ∖ A = ∅`,
+`A Δ A = ∅`, whose mutation into G1/G2 keep-laws the crossing probes
+would catch. When a board card id is assigned to the opener, the rename +
+`eval/ClaimNNN.v` mirror follow in one pass, as for the LEC opener.
+ADR-0001 tripwire not needed: Overlay → Distance only; OverlayTouchRow
+is a consumer; no Overlay ↔ Jordan / ArcOrient cycle.)
 
 **lane:** overlay · curve-aware overlay algebra
 **Module**: [`theories/OverlayNGCurve.v`](../theories/OverlayNGCurve.v)
@@ -142,7 +147,7 @@ is covers). Headlines stay `phase0_relation_complete_hypothesis_refuted`
 and `disc_relations_complete_with_touch`; the names
 `seven_row_not_candidate_complete` / `eight_row_is_candidate_complete`
 are unfolds, not a second headline.
-topic: overlay · claimId: laser-ov · witness: kiss-discs.
+topic: overlay · claimId: laser-ov · witness: kiss-discs · mutation-seed: 668404.
 
 The Phase 0 case matrix at region level (self · disjoint · covers ·
 coveredBy · properly-crossing, positive-radius discs) is **not** candidate

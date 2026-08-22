@@ -58,6 +58,8 @@
    The §3 / §6 theorems inhabit those names; no second headline.
 
    WITNESS topic: overlay · claimId: laser-ov · witness: kiss-discs
+   ADR-0001 tripwire not needed: Overlay → Distance only; this module
+   is a consumer; no Overlay ↔ Jordan / ArcOrient cycle.
 
    Pure math on R.  Classical-reals trio only (see Print Assumptions).
 
