@@ -52,6 +52,33 @@ Proof.
   intros pg g. unfold evaluate. reflexivity.
 Qed.
 
+(* -------------------------------------------------------------------------- *)
+(* What the theorem above does NOT say.                                       *)
+(*                                                                            *)
+(* `prepared_evaluate_agrees` is `reflexivity` because `evaluate` is defined   *)
+(* as `relate (pg_geom pg) g` -- it holds by construction and would keep       *)
+(* holding if the caches were garbage.  The witness below makes that explicit: *)
+(* `evaluate` gives the same answer for ANY two cache values, i.e. the cache   *)
+(* is never consulted.  So the NTS#819 obligation ("the cached path agrees     *)
+(* with the direct path") is currently satisfied trivially, by there being no  *)
+(* cached path at all.                                                        *)
+(*                                                                            *)
+(* A real short-circuiting `evaluate` would read `pg_cache` / `pg_tri_cache`   *)
+(* and this lemma would then FAIL to compile -- which is the point of keeping  *)
+(* it: it is a tripwire that fires exactly when the cache starts being used.   *)
+(* -------------------------------------------------------------------------- *)
+
+Theorem evaluate_ignores_cache :
+  forall (g gg : Geometry)
+         (c1 c2 : option (R * R * R * R))
+         (t1 t2 : option (R * R * R * R * R * R)),
+    evaluate (mkPrepared g c1 t1) gg = evaluate (mkPrepared g c2 t2) gg.
+Proof.
+  intros g gg c1 c2 t1 t2. unfold evaluate. reflexivity.
+Qed.
+
+Print Assumptions evaluate_ignores_cache.
+
 (* Rect-specific strengthened version + example of using the cache data. *)
 Theorem prepared_rect_evaluate_agrees :
   forall x0 y0 x1 y1 (g : Geometry),

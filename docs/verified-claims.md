@@ -545,6 +545,7 @@ regime-wide `bpow 13` for every non-worst-case input.
 | `DE9IM.v : im_disjoint_not_intersects_partial` | **Partial headline:** JTS `disjoint` forces `intersects₀/₁/₄` false (not full `intersects` — `intersects₃` can still match; see gap witnesses) `[exact]` | 0 |
 | `DE9IM.v : im_contains_transpose_within` (+`predicate_contains_transpose_within`) | `contains` on `m` ⇔ `within` on `matrix_transpose m` (JTS converse) `[exact]` | 0 |
 | `DE9IM.v : im_covers_transpose_coveredBy` (+`predicate_covers_transpose_coveredBy`) | `covers` on `m` ⇔ `coveredBy` on transpose (`pattern_transpose` on all four JTS covers patterns) `[exact]` | 0 |
+| `DE9IM.v : im_unsupported_not_ok` (+ `im_unsupported_not_disjoint`) | **Unsupported-input sentinel (#522):** `im_unsupported` carries an out-of-range dimension in every cell, so it fails `matrix_ok` and does **not** satisfy `im_disjoint` — a total dispatch can decline without emitting a disjointness claim `[exact]` | 0 |
 | `DE9IM.v : disjoint_intersects3_example_holds` | **Honest gap:** a matrix can be both `disjoint` and `intersects₃` (abstract IM algebra ≠ complete geometry IM) `[exact]` | 0 |
 
 Prepared-mode cache refinement landed (#67 S13); full RelateNG noding and
@@ -857,6 +858,9 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 | `RelateNGRect.v : relate_on_rects_dispatches` (+ `relate_rect_touch`, `touch_regime_exterior_row_pinned`) | Rect relate dispatch to rects_relate + touch-regime exterior pinning (EE=2, cross terms None) landed; core for rect touch geom_de9im_pointset. `[exact]` | 3 |
 | `RelateNGRect.v : touch_rect_pair_ii_cell` | Rect vertical touch: SInt/SInt cell is None (interiors disjoint via x-sep on half-open rings). `[exact]` | 3 |
 | `RelatePrepared.v : prepared_evaluate_agrees` (+ `prepared_rect_evaluate_agrees`, `prepared_rect_touch_cached`, `prepared_identity`, `prepared_rect_has_bounds_cache`) | Prepared hook: evaluate(prepare g) = relate g; rects store non-trivial bounds cache in pg_cache (NTS#819 shape). `[exact]` | 0 |
+| `RelateNGCore.v : relate_unsupported_pair` (+ `relate_unsupported_not_ok`, `relate_unsupported_not_disjoint`) | **Honest decline (#522):** outside the supported domain (neither a rect pair nor a triangle pair) `relate` returns the sentinel rather than `ll_matrix_disjoint`; the result is provably not a well-formed matrix and provably not a disjointness claim `[exact]` | 2 |
+| `RelatePrepared.v : evaluate_ignores_cache` | **Honesty tripwire (#522):** `evaluate` returns the same matrix for any two cache values, i.e. `pg_cache` / `pg_tri_cache` are never consulted — so `prepared_evaluate_agrees` holds by construction, and this lemma stops compiling the moment a real cache short-circuit lands `[exact]` | 2 |
+| `RelateMatrixTriangle.v : classify_overlap_vacuous` (+ `classify_disjoint_vacuous`, `classify_contains_vacuous`, `classify_touch_vertex_vacuous`, `classify_overlap_holds_of_a_separated_pair`) | **Vacuity witnesses (#522):** four of the five `classify_triangle_pair` arms are `True` and hence hold of *any* six points — the last instance shows `TPR_Overlap` holding of a provably separated pair. Only `TPR_TouchEdge` carries content `[exact]` | 0 |
 
 ## Issue #67 — curve-polygon×point: validity + witnesses (`RelateCurveAreaPoint.v`, S12) <!-- feat:relate,area geom:cp -->
 

@@ -334,7 +334,13 @@ Definition relate (A B : Geometry) : IntersectionMatrix :=
         Some (dx, dy, ex, ey, fx, fy) =>
           tris_relate ax ay bx by_ cx cy dx dy ex ey fx fy
             (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
-      | _, _ => ll_matrix_disjoint  (* fall back; general case later *)
+      (* Outside the supported domain.  This MUST NOT be a disjointness
+         matrix: `FFFFFFFFF` asserts the two geometries do not interact, and
+         nothing here has established that.  `DE9IM.im_unsupported` is the
+         sentinel -- `matrix_ok` rejects it, so a caller cannot read it as an
+         answer.  The general case (the RelateNG noding pipeline) is still to
+         come; until it lands the dispatch declines instead of guessing. *)
+      | _, _ => im_unsupported
       end
   end.
 
@@ -381,10 +387,35 @@ Proof.
   rewrite Hreg. reflexivity.
 Qed.
 
-Lemma relate_delegates_line_disjoint :
-  relate [] [] = ll_matrix_disjoint.  (* illustrative; real dispatch later *)
+(* -------------------------------------------------------------------------- *)
+(* Unsupported input declines rather than guessing.                           *)
+(*                                                                            *)
+(* Previously this dispatch answered `ll_matrix_disjoint` for every pair it    *)
+(* could not classify -- a positive claim of disjointness, indistinguishable  *)
+(* to the caller from a computed one.  It now returns the sentinel, and the    *)
+(* two lemmas below are the honesty properties that make the difference       *)
+(* checkable rather than a comment.                                           *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma relate_unsupported_pair :
+  relate [] [] = im_unsupported.
 Proof.
   unfold relate. reflexivity.
+Qed.
+
+(* The sentinel is not a well-formed matrix, so a caller validating its input
+   catches the unsupported case. *)
+Lemma relate_unsupported_not_ok :
+  ~ matrix_ok (relate [] []).
+Proof.
+  rewrite relate_unsupported_pair. exact im_unsupported_not_ok.
+Qed.
+
+(* And it is specifically not the disjointness claim it replaced. *)
+Lemma relate_unsupported_not_disjoint :
+  ~ im_disjoint (relate [] []).
+Proof.
+  rewrite relate_unsupported_pair. exact im_unsupported_not_disjoint.
 Qed.
 
 
@@ -395,4 +426,4 @@ Qed.
 (* Audit.                                                                     *)
 (* -------------------------------------------------------------------------- *)
 
-Print Assumptions relate_delegates_line_disjoint.
+Print Assumptions relate_unsupported_not_disjoint.

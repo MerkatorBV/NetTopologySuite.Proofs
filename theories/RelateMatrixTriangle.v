@@ -86,6 +86,15 @@ Definition triangles_touch_on_shared_edge (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
   (shares_edge a3 a1 b2 b3 /\ opposite_sides a3 a1 a2 b1) \/
   (shares_edge a3 a1 b3 b1 /\ opposite_sides a3 a1 a2 b2).
 
+(* WARNING -- four of the five below are `True`, i.e. they carry NO content.
+   Only `triangles_touch_on_edge` names a real configuration.  The vacuity
+   witnesses at the end of this file make that machine-checked, so a result
+   cannot cite one of these as if it classified anything.
+
+   They cannot be strengthened in place: a real definition needs `gtri`
+   (triangle interior sign), which lives above this module in the layer order
+   -- see `RelateNGCore.v`, which imports `GeneralTriangleSeparation`.  Doing
+   it properly means moving the classifier up, not adding an import here. *)
 Definition triangles_separated (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
 Definition triangles_partial_overlap (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
 Definition triangle_a_contains_b (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
@@ -102,3 +111,43 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
   | TPR_TouchEdge   => triangles_touch_on_edge a1 a2 a3 b1 b2 b3
   | TPR_TouchVertex => triangles_touch_at_vertex a1 a2 a3 b1 b2 b3
   end.
+
+(* -------------------------------------------------------------------------- *)
+(* Vacuity witnesses (honesty).                                               *)
+(*                                                                            *)
+(* Four of the five classifier arms are `True`, so `classify_triangle_pair`   *)
+(* holds of ANY six points at those regimes.  Stating that as theorems is the *)
+(* point: a downstream result that appeals to one of these has proven nothing *)
+(* about the configuration, and these lemmas are the citation that says so.   *)
+(*                                                                            *)
+(* `TPR_TouchEdge` is deliberately absent from the list -- it delegates to    *)
+(* `triangles_touch_on_shared_edge`, which is real, and is the one regime      *)
+(* whose classification is used soundly (see `RelateNGCore` and               *)
+(* `RelateNGTouch`).                                                          *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma classify_disjoint_vacuous :
+  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_Disjoint.
+Proof. intros; exact I. Qed.
+
+Lemma classify_overlap_vacuous :
+  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_Overlap.
+Proof. intros; exact I. Qed.
+
+Lemma classify_contains_vacuous :
+  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_Contains.
+Proof. intros; exact I. Qed.
+
+Lemma classify_touch_vertex_vacuous :
+  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_TouchVertex.
+Proof. intros; exact I. Qed.
+
+(* The sharpest form: two triangles that are provably NOT partially
+   overlapping still satisfy the overlap arm, because the arm is `True`.
+   Instantiated on a separated pair for concreteness. *)
+Lemma classify_overlap_holds_of_a_separated_pair :
+  classify_triangle_pair (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                         (mkPoint 9 9) (mkPoint 10 9) (mkPoint 9 10) TPR_Overlap.
+Proof. exact I. Qed.
+
+Print Assumptions classify_overlap_holds_of_a_separated_pair.

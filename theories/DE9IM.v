@@ -580,8 +580,46 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* Unsupported-input sentinel.                                                *)
+(*                                                                            *)
+(* A total `relate`-style dispatch must return something for input it cannot  *)
+(* classify.  Returning a disjointness matrix is unsound: `FFFFFFFFF` is a    *)
+(* positive topological claim ("these two do not interact") that an           *)
+(* unclassified input has not earned.                                         *)
+(*                                                                            *)
+(* `im_unsupported` is the honest alternative.  Every cell carries an          *)
+(* out-of-range dimension, so `matrix_ok` rejects the whole matrix and no OGC  *)
+(* pattern can match it -- a caller that treats it as an answer is caught      *)
+(* rather than silently misled.  It is a sentinel, not a tenth DE-9IM value.   *)
+(* -------------------------------------------------------------------------- *)
+
+Definition dim_unsupported : DimValue := Some 3%nat.
+
+Definition im_unsupported : IntersectionMatrix :=
+  {| im_ii := dim_unsupported; im_ib := dim_unsupported; im_ie := dim_unsupported;
+     im_bi := dim_unsupported; im_bb := dim_unsupported; im_be := dim_unsupported;
+     im_ei := dim_unsupported; im_eb := dim_unsupported; im_ee := dim_unsupported |}.
+
+(* No cell dimension may exceed 2, so the sentinel is not a well-formed
+   matrix.  This is what makes it impossible to mistake for an answer. *)
+Lemma im_unsupported_not_ok : ~ matrix_ok im_unsupported.
+Proof.
+  unfold matrix_ok, dim_value_ok, im_unsupported, dim_unsupported.
+  cbn. intros [H _]. lia.
+Qed.
+
+(* In particular it is not the disjointness claim it replaces: `pat_disjoint`
+   demands F (empty) in the II cell, and the sentinel is non-empty there. *)
+Lemma im_unsupported_not_disjoint : ~ im_disjoint im_unsupported.
+Proof.
+  unfold im_disjoint, matrix_matches, im_unsupported, dim_unsupported.
+  cbn. intros [H _]. exact H.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Audit footprint.                                                           *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions im_disjoint_not_intersects_partial.
+Print Assumptions im_unsupported_not_disjoint.
 Print Assumptions predicate_disjoint_not_intersects_partial.
