@@ -2905,66 +2905,6 @@ let run_ring_orientation () =
 exception Buffer_empty
 exception Buffer_degenerate
 
-let build_segment_graph_and_rings (asm : _ list) : _ list list =
-  (* unified topology assembly (Slice 4) — reuses segment model + proofs primitives
-     (pair_pts / arc_*_pts / chord_*_pts / arc_seg_pts from RING_SIMPLE + HOLES_DISJOINT,
-      signed_area2, circumcentre_q; no new math).
-     SegmentGraph skeleton (nodes=inters+ends collected via pair inter logic) + RingBuilder (area filter for spurious).
-     Full splitting/cycle extraction/hole depth for later; current bypass preserves legacy fidelity.
-     Matrix: Buffer/CP + Buffer/Multi (pilot stage).
-     Allowlisted as INTERFACE-BOUNDARY pilot (see docs/oracle-handrolled-allowlist.txt);
-     hand-rolled floats for eps/params (ratchet: new hand-rolls only for justified pilots). *)
-  if asm = [] then [] else
-  let n = List.length asm in
-  let eps = 1e-9 in
-  let same (x1,y1) (x2,y2) = abs_float (x1 -. x2) < eps && abs_float (y1 -. y2) < eps in
-  let nodes = ref [] in
-  let add (x,y) = if not (List.exists (same (x,y)) !nodes) then nodes := (x,y) :: !nodes in
-  List.iter (function
-    | `Chord (p,q) -> add (p.bx,p.by_); add (q.bx,q.by_)
-    | `Arc (a,_,c) -> add (a.bx,a.by_); add (c.bx,c.by_)
-  ) asm;
-  (* inters reuse (pair logic) - SegmentGraph nodes populated *)
-  let segs_a = Array.of_list asm in
-  let has_inter = ref false in
-  for i=0 to n-1 do for j=i+1 to n-1 do
-    match segs_a.(i), segs_a.(j) with
-    | `Chord (p1,q1), `Chord (p2,q2) ->
-        let d1x = q1.bx-.p1.bx and d1y=q1.by_-.p1.by_ in let d2x=q2.bx-.p2.bx and d2y=q2.by_-.p2.by_ in
-        let denom = d1x*.d2y -. d1y*.d2x in
-        if abs_float denom > 1e-12 then
-          let t = ((p2.bx-.p1.bx)*.d2y -. (p2.by_-.p1.by_)*.d1x) /. denom in
-          let u = ((p2.bx-.p1.bx)*.d1y -. (p2.by_-.p1.by_)*.d1x) /. denom in
-          if t>=0. && t<=1. && u>=0. && u<=1. then (add (p1.bx +. t*.d1x, p1.by_ +. t*.d1y); has_inter := true)
-    | _ -> ()
-  done done;
-  (* SegmentGraph + RingBuilder: split at inters for noding (real edges); return split ring(s) or original if no inters.
-     Area filter for collapse/spurious. Reuses pair inter logic. *)
-  let split_ring = ref [] in
-  let param (p1, q1) (x, y) =
-    let dx = q1.bx -. p1.bx and dy = q1.by_ -. p1.by_ in
-    let l2 = dx *. dx +. dy *. dy in if l2 < eps then 0.0 else ((x -. p1.bx) *. dx +. (y -. p1.by_) *. dy) /. l2 in
-  List.iter (fun s ->
-    match s with
-    | `Chord (p, q) ->
-        let pts = ref [(p.bx, p.by_, 0.0); (q.bx, q.by_, 1.0)] in
-        List.iter (fun (x,y) ->
-          if not (same (p.bx, p.by_) (x,y) || same (q.bx, q.by_) (x,y)) then
-            pts := (x, y, param (p, q) (x,y)) :: !pts
-        ) !nodes;
-        let sorted = List.sort (fun (_,_,t1) (_,_,t2) -> compare t1 t2) !pts in
-        for k=0 to List.length sorted - 2 do
-          let (x1,y1,_), (x2,y2,_) = List.nth sorted k, List.nth sorted (k+1) in
-          split_ring := `Chord ({bx = x1; by_ = y1}, {bx = x2; by_ = y2}) :: !split_ring
-        done
-    | arc -> split_ring := arc :: !split_ring
-  ) asm;
-  let ring = List.rev !split_ring in
-  let cross p q = p.bx *. q.by_ -. p.by_ *. q.bx in
-  let s2 = List.fold_left (fun s seg -> s +. match seg with `Chord(p,q)->cross p q | `Arc(a,_,c)->cross a c) 0.0 ring in
-  let area = s2 /. 2.0 in
-  if abs_float area < 1e-6 *. (1. +. abs_float area) then [] else [ring]
-
 let buffer_region_output (segs : [< `Chord of bPoint * bPoint | `Arc of bPoint * bPoint * bPoint ] array) (d : float) : string =
   let n = Array.length segs in
   let bp x y = { bx = x; by_ = y } in
@@ -3050,14 +2990,12 @@ let buffer_region_output (segs : [< `Chord of bPoint * bPoint | `Arc of bPoint *
                         bp (p.bx +. d *. mhx) (p.by_ +. d *. mhy),
                         bp (p.bx +. d *. nx2) (p.by_ +. d *. ny2)))
           end else
-            (* unified topology (Slice 4): non-G1 join relaxed here; graph+builder in build_segment_graph_and_rings cleans *)
-            ()
+            (* Reflex / U-turn, or non-G1 with d<0: v1 contract is DEGENERATE,
+               not a gapped ring whose shoelace invents AREA (#513). *)
+            raise Buffer_degenerate
         end
       done;
-      let asm_raw = List.rev !out in
-      (* Slice 4: SegmentGraph + RingBuilder available (nodes/inters collected + split logic in build).
-         Bypass to asm_raw for exact legacy fidelity (BUFFER_REGION gens, d=0 identity). Unified red tests use the structure indirectly via counts. *)
-      let asm = asm_raw in
+      let asm = List.rev !out in
       let area = signed_area2 asm /. 2.0 in
       let line = function
         | `Chord (a, b) -> Printf.sprintf "C %h %h %h %h" a.bx a.by_ b.bx b.by_

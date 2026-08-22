@@ -255,6 +255,7 @@ def stadium(cx, hw, r):
 
 
 # ---------------------------------------------------------------------------
+emit("# coverage: feat:buffer geom:arc,cs,cp")
 emit("# Adversarial tests for BUFFER_REGION (RocqRefRunner), BUF-1/BUF-NEG, JTS #1195 §7.")
 emit("# Assembles the offset boundary of a closed curve ring + its signed area.")
 emit("# I1 parallel-dist, I2 area vs Minkowski, I3 Steiner, I4 EMPTY, I5 d=0, I6 monotonic.")
@@ -352,6 +353,8 @@ for nm, ring in [("disk r5", disk(0, 0, 5)), ("square 10", sq(0, 0, 10, 10))]:
 
 emit()
 emit("## scope guards: reflex / cornered-inward -> DEGENERATE (out of v1)")
+# #513 pin: a reflex / non-G1 inward corner must refuse, never shoelace a
+# gapped ring into AREA. Independent of I2 — this is fail-closed, not Minkowski.
 chevron = [("C", (0, 0), (6, 0)), ("C", (6, 0), (3, 3)),
            ("C", (3, 3), (6, 6)), ("C", (6, 6), (0, 6)), ("C", (0, 6), (0, 0))]
 for nm, ring, d in [("reflex quad d=1", chevron, 1.0),

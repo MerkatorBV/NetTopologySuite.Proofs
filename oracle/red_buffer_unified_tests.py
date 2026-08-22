@@ -180,13 +180,16 @@ CLOSED 1
     print("RED for TestBuffer_CurvePolygon_HoleSurvival (graph + RingBuilder wired for hole survival)")
 
 def test_multi_no_spurious_rings():
-    # Multi with members that when buffered produce crosses in offset; expect no spurious extra rings.
+    # Closed square (v1 convex) + open arc. A 3-side "ring" used to print a
+    # gapped AREA here; BUFFER_REGION now refuses that (#513). Count rings
+    # on an in-scope closed member so we don't pin the old wrong answer.
     stdin = """BUFFER_UNIFIED
 2
-3
+4
 C 0 0 5 0
 C 5 0 5 5
 C 5 5 0 5
+C 0 5 0 0
 CLOSED 1
 1
 A 10 0 10.7071 0.7071 11 0
