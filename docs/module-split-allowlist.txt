@@ -1,0 +1,54 @@
+# =============================================================================
+# docs/module-split-allowlist.txt
+# -----------------------------------------------------------------------------
+# Ratchet list for the meso-scale module split gate
+# (policy: docs/macro-meso-micro.md "Module split gate";
+#  guard:  scripts/check_module_split.py, wired into `make ci-guards`).
+#
+# A module trips the gate when it is BOTH a monolith (>= 1234 lines) AND
+# load-bearing ((transitive dependents + 1) * lines >= 3210). Modules already
+# over the gate when the policy landed are recorded here so the guard fails on
+# *new* violations rather than on the existing backlog.
+#
+# Format:  <repo-relative path> | <lines at time of record>   # note
+#
+# The recorded number is LINES, not the metric. Blast radius rises whenever some
+# other module starts requiring this one, so recording the metric would fail a
+# contributor's build for an edit they did not make.
+#
+# Rules:
+#   * The list may SHRINK, never grow. A new gated module is a build failure,
+#     not a new line here.
+#   * Headroom is 5% of the recorded line count, rounded up: a comment-sized
+#     edit to a listed module does not fail the build, a chapter does.
+#   * When a split lands, DELETE the entry in the same change. A listed module
+#     that no longer trips the gate is a build failure ("stale entry") — that is
+#     what keeps the ratchet honest.
+#
+# Work the queue as a maintainer's chore: one split per session, drawn from
+# `python3 scripts/check_module_split.py --list` by the day's seed
+# (e.g. 20260822), the same seeded-sample convention as
+# docs/geos-open-issues-triage-2026-08.md. Do not cherry-pick; the seed is what
+# stops the cheap ones being taken first forever.
+# =============================================================================
+
+# Recorded 2026-08-22, when the gate landed. Ordered by blast-weighted size,
+# which is the order the chore should retire them in.
+
+theories-flocq/Orient_b64_exact.v | 1270
+# metric 91440 (x72). The corpus's exact-orientation model; highest fan-in of
+# any monolith. Splitting it is the single biggest maintainability win here.
+
+theories-flocq/HotPixel_b64.v | 2604
+# metric 83328 (x32). The largest module in the corpus. Marked "split BLOCKED —
+# 21 reverse deps incl. the oracle extraction path" in
+# docs/audit-meso-sample-2026-08.md; that verdict predates the umbrella
+# re-export pattern, which makes fan-in unobservable to importers. Revisit
+# rather than inherit the block. A previous pass carved out
+# HotPixel_b64_refs.v (63 lines) without reducing the monolith.
+
+theories-flocq/B64_FastExpansionSum_Shewchuk_Route2.v | 2293
+# metric 20637 (x9). Holds the restricted true form of the Shewchuk headline
+# whose unrestricted version is refuted (see Proofs #482,
+# B64_Shewchuk_Thm13_counterexample.v). Lowest fan-in of the three: the cheapest
+# split of the batch.

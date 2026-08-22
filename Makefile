@@ -201,6 +201,7 @@ ci-guards:
 	bash scripts/validate-claims.sh
 	bash scripts/check_oracle_handrolled.sh
 	python3 oracle/rocqref/check_jts_nts_equiv.py
+	python3 scripts/check_module_split.py
 	@echo ""
 	@echo "All guardrails passed (or see output above)."
 
