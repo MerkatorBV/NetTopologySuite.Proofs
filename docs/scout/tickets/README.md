@@ -18,7 +18,7 @@ Order of work: top-down from #64, with the freebie first.
 | 06 | ~~[Retire #66 — precision models, snap rounding, OverlayNG](closed/06-retire-66-precision-and-overlay.md)~~ **closed** → #517 #518 #519 #520, ADR-0002 amended | grilling | — |
 | 07 | ~~[Retire #67 — RelateNG matrix and boundary handling](closed/07-retire-67-relateng.md)~~ **closed: decided not to close #67** → ADR-0003, #522, #523 | grilling | — |
 | 11 | [Retire #67 — second pass](11-retire-67-second-pass.md) | grilling | **#522 fixed** |
-| 08 | [Retire #68 — Delaunay triangulation and Voronoi diagrams](08-retire-68-delaunay-voronoi.md) | grilling | — |
+| 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 04, 05, 06, 07, 08 |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty**, 09 |
 
