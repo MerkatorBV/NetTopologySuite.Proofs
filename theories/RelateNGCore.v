@@ -296,15 +296,21 @@ Definition contains_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    `touch_edge_b` decision, proven correct on the `triangles_touch_on_shared_edge`
    inputs by `triangle_pair_regime_touch` below) and the containment regime
    (the `contains_b` decision, proven correct by `triangle_pair_regime_contains`
-   below), returning TPR_Disjoint as the default for the remaining
-   not-yet-classified regime (overlap). *)
+   below), and DECLINING on everything else.
+
+   The default used to be TPR_Disjoint, which was unsound: failing the
+   shared-edge and containment tests does not establish disjointness, so
+   two genuinely overlapping triangles -- a supported input pair -- were
+   classified disjoint and filled with `aa_matrix_disjoint`.  The default is
+   now TPR_Unsupported, whose fill is the sentinel.  Recovering the real
+   verdict for the overlap regime needs a sound cheap test (issue #522). *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   then TPR_TouchEdge
   else if contains_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Contains
-  else TPR_Disjoint.
+  else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the
    Req_dec_T / Rlt_dec approach used throughout the boolean detectors above,
@@ -334,7 +340,19 @@ Definition relate (A B : Geometry) : IntersectionMatrix :=
         Some (dx, dy, ex, ey, fx, fy) =>
           tris_relate ax ay bx by_ cx cy dx dy ex ey fx fy
             (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
-      | _, _ => ll_matrix_disjoint  (* fall back; general case later *)
+      (* Outside the supported domain.  This MUST NOT be a disjointness
+         matrix: `FFFFFFFFF` asserts the two geometries do not interact, and
+         nothing here has established that.  `DE9IM.im_unsupported` is the
+         sentinel: it fails `matrix_ok` and supports no standard predicate
+         (`im_unsupported_no_predicate`), so it cannot be read as any verdict.
+         The general case (the RelateNG noding pipeline) is still to come;
+         until it lands the dispatch declines instead of guessing.
+
+         KNOWN GAP: the empty/empty pair lands here too, and that one input
+         does have an uncontroversial answer (`FFFFFFFF2`, disjoint).  The
+         dispatch declines on it rather than special-casing; recovering it is
+         a completeness item, not an honesty one. *)
+      | _, _ => im_unsupported
       end
   end.
 
@@ -353,15 +371,16 @@ Proof.
 Qed.
 
 (* Basic example of triangle dispatch reducing.  These two triangles share no
-   edge, so the tightened classifier returns TPR_Disjoint (the shared-edge
-   detector `touch_edge_b` is false -- every candidate vertex match fails on a
-   differing coordinate). *)
+   edge and neither contains the other, so the classifier DECLINES: it returns
+   TPR_Unsupported, not TPR_Disjoint.  Note that these two triangles happen to
+   be genuinely disjoint -- but the classifier never established that, and the
+   whole point of #522 is that it must not claim what it did not test. *)
 Example relate_triangle_dispatch_ex :
   relate (triangle_geometry 0 0 1 0 0 1) (triangle_geometry 2 0 3 0 2 1) =
-  tris_relate 0 0 1 0 0 1 2 0 3 0 2 1 TPR_Disjoint.
+  tris_relate 0 0 1 0 0 1 2 0 3 0 2 1 TPR_Unsupported.
 Proof.
   rewrite relate_on_triangles_dispatches.
-  assert (Hreg : triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Disjoint).
+  assert (Hreg : triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Unsupported).
   { unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
     cbn [px py].
     repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
@@ -381,10 +400,71 @@ Proof.
   rewrite Hreg. reflexivity.
 Qed.
 
-Lemma relate_delegates_line_disjoint :
-  relate [] [] = ll_matrix_disjoint.  (* illustrative; real dispatch later *)
+(* -------------------------------------------------------------------------- *)
+(* Unsupported input declines rather than guessing.                           *)
+(*                                                                            *)
+(* Previously this dispatch answered `ll_matrix_disjoint` for every pair it    *)
+(* could not classify -- a positive claim of disjointness, indistinguishable  *)
+(* to the caller from a computed one.  It now returns the sentinel, and the    *)
+(* two lemmas below are the honesty properties that make the difference       *)
+(* checkable rather than a comment.                                           *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma relate_unsupported_pair :
+  relate [] [] = im_unsupported.
 Proof.
   unfold relate. reflexivity.
+Qed.
+
+(* The sentinel is not a well-formed matrix, so a caller validating its input
+   catches the unsupported case. *)
+Lemma relate_unsupported_not_ok :
+  ~ matrix_ok (relate [] []).
+Proof.
+  rewrite relate_unsupported_pair. exact im_unsupported_not_ok.
+Qed.
+
+(* Stronger, and the property that matters: the declined result supports NO
+   standard predicate -- not the disjointness it replaced, and not the
+   intersection an everywhere-non-empty sentinel would have asserted. *)
+Lemma relate_unsupported_no_predicate :
+  forall r : RelatePredicate, ~ predicate_holds r (relate [] []).
+Proof.
+  intros r. rewrite relate_unsupported_pair. exact (im_unsupported_no_predicate r).
+Qed.
+
+Lemma relate_unsupported_not_disjoint :
+  ~ im_disjoint (relate [] []).
+Proof. exact (relate_unsupported_no_predicate RDisjoint). Qed.
+
+(* The second half of #522, and the sharper one: an unclassified *triangle*
+   pair is a SUPPORTED input on which the classifier has no verdict.  It used
+   to be filled with `aa_matrix_disjoint`; it now declines.  Stated on the
+   concrete pair of `relate_triangle_dispatch_ex` -- which happens to be
+   genuinely disjoint, making the point exactly: even when the answer would
+   have been right, the dispatch had not earned it. *)
+Lemma relate_unclassified_triangles_no_predicate :
+  forall r : RelatePredicate,
+    ~ predicate_holds r (relate (triangle_geometry 0 0 1 0 0 1)
+                                (triangle_geometry 2 0 3 0 2 1)).
+Proof.
+  intros r. rewrite relate_triangle_dispatch_ex.
+  unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
+  exact (im_unsupported_no_predicate r).
+Qed.
+
+Lemma relate_unclassified_triangles_not_disjoint :
+  ~ im_disjoint (relate (triangle_geometry 0 0 1 0 0 1)
+                        (triangle_geometry 2 0 3 0 2 1)).
+Proof. exact (relate_unclassified_triangles_no_predicate RDisjoint). Qed.
+
+Lemma relate_unclassified_triangles_not_ok :
+  ~ matrix_ok (relate (triangle_geometry 0 0 1 0 0 1)
+                      (triangle_geometry 2 0 3 0 2 1)).
+Proof.
+  rewrite relate_triangle_dispatch_ex.
+  unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
+  exact im_unsupported_not_ok.
 Qed.
 
 
@@ -395,4 +475,4 @@ Qed.
 (* Audit.                                                                     *)
 (* -------------------------------------------------------------------------- *)
 
-Print Assumptions relate_delegates_line_disjoint.
+Print Assumptions relate_unsupported_not_disjoint.

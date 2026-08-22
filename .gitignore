@@ -48,3 +48,7 @@ oracle/extracted.ml
 
 # Downloaded CI artifacts (reproducible via Dockerfile+make; never commit)
 .ci-artifacts/
+
+# coq_makefile / rocq makefile output from ad-hoc target builds (any suffix).
+Makefile.*.conf
+Makefile.5*
