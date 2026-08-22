@@ -18,6 +18,24 @@ A runner that puts one engine's answers against the Oracle's on the same inputs
 and emits an ok/warn/bug verdict summary.
 _Avoid_: test suite, driver
 
+### Roadmap
+
+**Sequencing park**:
+Work deferred because it waits on another lane, not because it is hard. It
+graduates the moment its gate lands, so it must record *what* gates it.
+_Avoid_: parked (unqualified — says nothing about why)
+
+**Research park**:
+Work deferred because there is no statement worth proving yet — no published
+true form to aim at. It graduates only when someone finds one.
+_Avoid_: research-scale (as a synonym for "multi-session" or "hard"), blocked
+
+**Witness-scoped**:
+Proven for named concrete instances rather than universally. An honest partial
+result, and this corpus's most reliable route to a usable headline — not a
+weaker form of the general claim.
+_Avoid_: partial, example-based
+
 ### Illustrator
 
 **Case**:
