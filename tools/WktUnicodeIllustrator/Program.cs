@@ -32,6 +32,27 @@ internal static class Program
         bool useColor = opts.ForceColor
             || (opts.Color && !Console.IsOutputRedirected);
 
+        // A panel wider than the live terminal wraps its right border onto the
+        // next line, breaking the frame. Auto-fit; redirected output is untouched.
+        int width = opts.Width;
+        if (!Console.IsOutputRedirected)
+        {
+            try
+            {
+                int fit = Console.WindowWidth - 2; // frame adds 2 columns
+                if (fit >= 8 && width > fit)
+                {
+                    Console.Error.WriteLine(
+                        $"width {width} exceeds this terminal ({Console.WindowWidth} cols); using {fit}. Redirect output to keep the full width.");
+                    width = fit;
+                }
+            }
+            catch (IOException)
+            {
+                // No measurable console (some hosts) — keep the requested width.
+            }
+        }
+
         string? wktA = opts.WktA;
         string? wktB = opts.WktB;
         if (opts.DemoOvershoot)
@@ -51,7 +72,7 @@ internal static class Program
                 wktA: wktA,
                 wktB: wktB,
                 operation: opts.Operation,
-                width: opts.Width,
+                width: width,
                 height: opts.Height,
                 useColor: useColor,
                 showOvershoot: opts.ShowOvershoot,
@@ -72,7 +93,7 @@ internal static class Program
             wktA: wktA,
             wktB: wktB,
             operation: opts.Operation,
-            width: opts.Width,
+            width: width,
             height: opts.Height,
             showOvershoot: opts.ShowOvershoot,
             cellAspect: opts.CellAspect);
@@ -109,7 +130,8 @@ internal static class Program
               --demo curve       CIRCULARSTRING × CIRCULARSTRING crossing
               --demo overshoot   self-overlapping CIRCULARSTRINGs (retrace arcs)
               --no-overshoot     skip maroon/navy self-overlap layers
-              --width N          grid width  (default: 41)
+              --width N          grid width  (default: 41; auto-shrunk to fit a
+                                 live terminal — redirect output to keep N)
               --height N         grid height (default: 21)
               --cell-aspect R    terminal cell height/width for visual aspect
                                  (default: 2.0; 1.0 = treat cells as square)
