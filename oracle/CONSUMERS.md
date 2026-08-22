@@ -27,4 +27,25 @@ and skip when the native library is absent.
 
 ABI contract and soundness ledger: [`docs/phase5-ffi-abi.md`](../docs/phase5-ffi-abi.md).
 
+## Interface-boundary modes — read before choosing one
+
+Not every oracle mode is exact. Some answer with a float whose transcendental
+step has no Coq-extractable form: the **rational invariants** are proven, the
+final `sqrt`/`acos`/`atan2` is hand-rolled and sanctioned per mode in
+[`docs/oracle-handrolled-allowlist.txt`](../docs/oracle-handrolled-allowlist.txt),
+with the same caution repeated in the `oracle/driver.ml` per-mode header.
+
+Known interface-boundary modes include `ARC_LENGTH` (`r·Θ` as a float — prefer
+`ARC_LENGTH_INVARIANTS_EXACT`, which returns exact `r²` and `cos Θ₀` and leaves
+the single `acos` to you), `ARC_DISTANCE`, `POINT_IN_CURVE_RING` and
+`RING_ORIENTATION` (the swept angle needs `atan2`/`acos`; the topological
+"sign = inside orientation" Jordan step is deferred). `ARC_SHORTER` shows the
+preferred alternative shape: it answers exactly when radii match and **declines**
+with `TRANSCENDENTAL` rather than rounding when they differ.
+
+Two consequences for a consumer: prefer the `*_INVARIANTS_EXACT` sibling when one
+exists, and never read an interface-boundary answer as a certified one. Curve
+segment tokens are a live trap here — see the per-mode allowlist entries before
+feeding `E` (elliptic) or `B` (Bézier) segments to any ring predicate.
+
 AI disclosure: authored with AI assistance (see CONTRIBUTING.md).
