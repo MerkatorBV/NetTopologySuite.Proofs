@@ -113,9 +113,12 @@ geosop -a "<A>" -b "<B>" union
 dotnet run --project tools/WktUnicodeIllustrator -- --op union --width 90 --height 12 "<A>" "<B>"
 ```
 
-<!-- TODO(manual capture): docs/images/geos1344-inputs-union.png,
-     docs/images/geos1344-expected-vs-actual.png — run the two commands in
-     §Reproduce with colour in Windows Terminal and screenshot. -->
+Colour facsimiles (generated with `--png`, not screenshots — regenerate with
+the §Reproduce commands plus `--png <path>`):
+
+![Inputs and NTS union — colour facsimile](images/geos1344-inputs-union.png)
+
+![Expected union vs GEOS actual — colour facsimile](images/geos1344-expected-vs-actual.png)
 
 ## 2. #1342 — intersection emits hole-outside-shell (GEOS invalid, NTS throws)
 
@@ -188,7 +191,7 @@ dotnet run --project tools/WktUnicodeIllustrator -- --op intersection "<A>" "<B>
 dotnet run --project tools/WktUnicodeIllustrator -- --op none --width 71 --height 33 "<A>" "<B>"  # inputs sketch
 ```
 
-<!-- TODO(manual capture): docs/images/geos1342-inputs.png -->
+![#1342 inputs — colour facsimile](images/geos1342-inputs.png)
 
 ## 3. Ladder position
 

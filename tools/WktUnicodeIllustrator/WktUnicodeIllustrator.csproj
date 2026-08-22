@@ -21,6 +21,14 @@
     <InternalsVisibleTo Include="WktUnicodeIllustrator.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- PNG facsimile printer (Six Labors Split License: Apache-2.0 terms for OSS). -->
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.6" />
+    <!-- Cascadia Mono, OFL-1.1 (assets/CascadiaMono-LICENSE.txt) — pinned so
+         facsimiles reproduce on machines without the font installed. -->
+    <EmbeddedResource Include="assets\CascadiaMono-Regular.ttf" />
+  </ItemGroup>
+
   <ItemGroup Condition="Exists('$(NtsProject)')">
     <ProjectReference Include="$(NtsProject)" />
   </ItemGroup>

@@ -1,0 +1,195 @@
+Copyright (c) 2019 - Present, Microsoft Corpo
+ration,
+with Reserved Font Name Cascadia Cod
+e.
+
+This Font Software is licensed under th
+e SIL Open Font License, Version 1.1.
+This l
+icense is copied below, and is also available
+ with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+
+-----------------------------------------
+------------------
+SIL OPEN FONT LICENSE Ver
+sion 1.1 - 26 February 2007
+----------------
+-------------------------------------------
+
+
+PREAMBLE
+The goals of the Open Font Licens
+e (OFL) are to stimulate worldwide
+developme
+nt of collaborative font projects, to support
+ the font creation
+efforts of academic and l
+inguistic communities, and to provide a free 
+and
+open framework in which fonts may be sha
+red and improved in partnership
+with others.
+
+
+The OFL allows the licensed fonts to be u
+sed, studied, modified and
+redistributed fre
+ely as long as they are not sold by themselve
+s. The
+fonts, including any derivative works
+, can be bundled, embedded, 
+redistributed a
+nd/or sold with any software provided that an
+y reserved
+names are not used by derivative 
+works. The fonts and derivatives,
+however, c
+annot be released under any other type of lic
+ense. The
+requirement for fonts to remain un
+der this license does not apply
+to any docum
+ent created using the fonts or their derivati
+ves.
+
+DEFINITIONS
+"Font Software" refers t
+o the set of files released by the Copyright
+
+Holder(s) under this license and clearly mar
+ked as such. This may
+include source files, 
+build scripts and documentation.
+
+"Reserved
+ Font Name" refers to any names specified as 
+such after the
+copyright statement(s).
+
+"O
+riginal Version" refers to the collection of 
+Font Software components as
+distributed by t
+he Copyright Holder(s).
+
+"Modified Version"
+ refers to any derivative made by adding to, 
+deleting,
+or substituting -- in part or in w
+hole -- any of the components of the
+Origina
+l Version, by changing formats or by porting 
+the Font Software to a
+new environment.
+
+"
+Author" refers to any designer, engineer, pro
+grammer, technical
+writer or other person wh
+o contributed to the Font Software.
+
+PERMIS
+SION & CONDITIONS
+Permission is hereby grant
+ed, free of charge, to any person obtaining
+
+a copy of the Font Software, to use, study, c
+opy, merge, embed, modify,
+redistribute, and
+ sell modified and unmodified copies of the F
+ont
+Software, subject to the following condi
+tions:
+
+1) Neither the Font Software nor an
+y of its individual components,
+in Original 
+or Modified Versions, may be sold by itself.
+
+
+2) Original or Modified Versions of the Fo
+nt Software may be bundled,
+redistributed an
+d/or sold with any software, provided that ea
+ch copy
+contains the above copyright notice 
+and this license. These can be
+included eith
+er as stand-alone text files, human-readable 
+headers or
+in the appropriate machine-readab
+le metadata fields within text or
+binary fil
+es as long as those fields can be easily view
+ed by the user.
+
+3) No Modified Version of 
+the Font Software may use the Reserved Font
+
+Name(s) unless explicit written permission is
+ granted by the corresponding
+Copyright Hold
+er. This restriction only applies to the prim
+ary font name as
+presented to the users.
+
+
+4) The name(s) of the Copyright Holder(s) or 
+the Author(s) of the Font
+Software shall not
+ be used to promote, endorse or advertise any
+
+Modified Version, except to acknowledge the
+ contribution(s) of the
+Copyright Holder(s) 
+and the Author(s) or with their explicit writ
+ten
+permission.
+
+5) The Font Software, mod
+ified or unmodified, in part or in whole,
+mu
+st be distributed entirely under this license
+, and must not be
+distributed under any othe
+r license. The requirement for fonts to
+rema
+in under this license does not apply to any d
+ocument created
+using the Font Software.
+
+
+TERMINATION
+This license becomes null and vo
+id if any of the above conditions are
+not me
+t.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVID
+ED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EX
+PRESS OR IMPLIED, INCLUDING BUT NOT LIMITED T
+O ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS
+ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER R
+IGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER
+ BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LI
+ABILITY,
+INCLUDING ANY GENERAL, SPECIAL, IND
+IRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OT
+HERWISE, ARISING
+FROM, OUT OF THE USE OR INA
+BILITY TO USE THE FONT SOFTWARE OR FROM
+OTHE
+R DEALINGS IN THE FONT SOFTWARE.
+
+

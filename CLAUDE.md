@@ -15,6 +15,8 @@ dotnet run --project tools/WktUnicodeIllustrator -- [options] "WKT_A" "WKT_B"
   --width N --height N        grid size (default 41×21)
   --cell-aspect R             terminal cell h/w (default 2.0)
   --no-color                  plain Unicode (use when output is captured)
+  --png <path>                also write a deterministic PNG facsimile
+                              (always coloured; use for doc images)
   --demo curve|overshoot
 ```
 

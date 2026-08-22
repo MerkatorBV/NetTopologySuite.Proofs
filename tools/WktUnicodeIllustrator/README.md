@@ -20,6 +20,12 @@ because a degraded picture is worse than no picture.
 **Exit codes:** `0` ok · `2` bad args / WKT parse / empty geometry · `3` overshoot or overlay
 operation failed · `4` curve WKT without curve support (lines-only NuGet build).
 
+**PNG facsimile:** `--png <path>` additionally writes a PNG of what the terminal
+shows — always coloured, rastered with the embedded Cascadia Mono (OFL, see
+`assets/`) on the Windows Terminal Campbell palette, long lines wrapped at
+max(80, panel width). Deterministic: same inputs → same bytes, so doc images
+regenerate instead of being screenshotted.
+
 Curves are **linearized** for draw + overlay (playground curve ops); labels keep native curve WKT.
 
 **Structure glyphs:** after occupancy paint, each cell is remapped from its 8-neighbour
