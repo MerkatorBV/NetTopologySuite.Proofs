@@ -18,6 +18,12 @@ Override with `-p:NtsProject=...`. Falls back to NuGet 2.6 (lines only) with a b
 in that build **curve WKT exits 4** with a message — no chord approximation is ever rendered,
 because a degraded picture is worse than no picture.
 
+**Terminal fit:** on a live console the grid auto-shrinks so the frame never
+wraps (redirect output to keep the requested `--width`). If the frame's right
+edge still drifts on rows containing `●`/`╳`, your terminal renders those
+East-Asian-ambiguous glyphs double-width — use a font/terminal that treats
+them as narrow (Windows Terminal + Cascadia Mono does).
+
 **Exit codes:** `0` ok · `2` bad args / WKT parse / empty geometry · `3` overshoot or overlay
 operation failed · `4` curve WKT without curve support (lines-only NuGet build).
 

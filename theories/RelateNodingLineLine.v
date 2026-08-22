@@ -4,7 +4,7 @@
    Issue #67 sessions 15a–15k (S15a–S15k): line×line point-set DE-9IM bridge —
    re-export umbrella.
 
-   The former 2 500-line monolith was split (2026-08) into six layered
+   The former 2 500-line monolith was split (2026-08) into layered
    modules; this file re-exports them all, so existing
    `Require Import RelateNodingLineLine` clients (RelateEdgeNodeStratum,
    RelateEdgeNodeDecide, RelateEdgeDisjointCert) are unaffected.  The
@@ -29,14 +29,18 @@
          product fold soundness; test-10 collection pointset.
      - RelateNodingLineLinePinned.v      §19         (S15j)
          `line_cell_true_dim` / `line_cell_ok_pinned` + II/BB regime pins.
+     - RelateNodingLineLineExtPinned.v   S15l / 67-c
+         exterior-row true-dimension pinning (IE/EI/BE/EB/EE) +
+         `line_pair_fill_disjoint_ie_not_true_dim` fill-honesty gap.
      - RelateNodingLineLineCapstone.v    §20         (S15k)
          collection relate-matrix pipeline capstone (fold-assign + regime
          wrapper + test-10 pointset / fold=oracle / intersects).
 
-   Honest gaps (deferred S15l+):
+   Honest gaps (remaining S15l+):
 
-     - Prepared evaluate hook; exterior-row true-dimension pinning;
-       new `LinePairRegime` for Touches-vs-Share at fill API.
+     - Prepared evaluate hook (identity `prepared_evaluate_agrees` already
+       Qed; end-to-end cache-path still the S13–S14 skeleton).
+     - New `LinePairRegime` for Touches-vs-Share at fill API.
 
    No `Admitted`, no `Axiom`, no `Parameter`.  Per-theorem audit footprints
    (`Print Assumptions`) live in the split files, next to their theorems.
@@ -53,4 +57,5 @@ From NTS.Proofs Require Export
   RelateNodingLineLineRows
   RelateNodingLineLineCollection
   RelateNodingLineLinePinned
+  RelateNodingLineLineExtPinned
   RelateNodingLineLineCapstone.
