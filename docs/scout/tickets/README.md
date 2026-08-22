@@ -16,7 +16,8 @@ Order of work: top-down from #64, with the freebie first.
 | 04 | ~~[Retire #64 — arc primitives](closed/04-retire-64-arc-primitives.md)~~ **closed** → #508 #509 #510 #511 | grilling | — |
 | 05 | ~~[Retire #65 — buffer and offset curves](closed/05-retire-65-buffer-and-offset.md)~~ **closed** → #515 #513 #514, ADR-0002 | grilling | — |
 | 06 | ~~[Retire #66 — precision models, snap rounding, OverlayNG](closed/06-retire-66-precision-and-overlay.md)~~ **closed** → #517 #518 #519 #520, ADR-0002 amended | grilling | — |
-| 07 | [Retire #67 — RelateNG matrix and boundary handling](07-retire-67-relateng.md) | grilling | — |
+| 07 | ~~[Retire #67 — RelateNG matrix and boundary handling](closed/07-retire-67-relateng.md)~~ **closed: decided not to close #67** → ADR-0003, #522, #523 | grilling | — |
+| 11 | [Retire #67 — second pass](11-retire-67-second-pass.md) | grilling | **#522 fixed** |
 | 08 | [Retire #68 — Delaunay triangulation and Voronoi diagrams](08-retire-68-delaunay-voronoi.md) | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 04, 05, 06, 07, 08 |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty**, 09 |
@@ -29,9 +30,13 @@ Order of work: top-down from #64, with the freebie first.
 04 ═══════════════════════╗       │  #64 closed → #508 #509 #510 #511
 05 ═══════════════════════╣       │  #65 closed → #515 (hero shot), #513 #514
 06 ═══════════════════════╣       │  #66 closed → #517 #518 #519 #520
-07 ┐                      ║       │
-08 ├── 09 ────────────────╝───────┘
+07 ═══ 11 ────────────────╣       │  #67 NOT closed → ADR-0003, #522, #523
+       (needs #522 fixed) ║       │  11 = second pass
+08 ────────── 09 ─────────╝───────┘
 ```
 
-**Frontier:** 07, 08 — two takeable, one per session. Three epics retired;
-#69's hinge waits on #67 and #68.
+**Frontier:** 08 — one takeable. Ticket 11 is blocked on **#522** being fixed
+(an out-of-map code change), so #69's hinge now waits on 08 and 11.
+
+Three epics retired, one deliberately not: **an epic closes only when its closure
+comment would be true.**

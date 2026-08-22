@@ -18,6 +18,28 @@ A runner that puts one engine's answers against the Oracle's on the same inputs
 and emits an ok/warn/bug verdict summary.
 _Avoid_: test suite, driver
 
+### Interior and boundary
+
+Per **ADR-0003**, "inside a ring" is two-tier. Always say which tier a claim is in.
+
+**Specified interior**:
+The OGC **open** interior — `0 < gtri` for a triangle, a strict box for a
+rectangle. What DE-9IM matrices and predicates are stated against.
+_Avoid_: interior (unqualified), inside
+
+**Computed interior**:
+The **half-open** ray-parity region — `point_in_ring` via `edge_crosses_ray`.
+What the algorithms and the oracle evaluate. A left edge counts, a right edge does
+not; it is not an OGC interior and a theorem over it states no OGC fact.
+_Avoid_: interior (unqualified), point_set (as if it were the specification)
+
+**Interior bridge**:
+The guarded route from computed to specified interior
+(`gtri_point_in_ring_imp_pos` and siblings). Its guards — `ring_complement`,
+`ray_avoids_vertices` — are **permanent and load-bearing**, proven maximal by a
+Qed refutation of the guard-free form.
+_Avoid_: deferral, side condition (both imply temporary)
+
 ### Roadmap
 
 **Sequencing park**:

@@ -53,6 +53,13 @@ body, which is stale everywhere (all six bodies date from 2026-07-04).
 row(s), (2) `file:line` pointers to the Qed'd statements, and (3) the status line
 in the relevant lane doc. Name what is *not* covered and where it went.
 
+**An epic closes only when the closure comment would be true.** Three of the block
+closed on scope achieved, where the amber was named conditionals and flagged
+frontiers. #67 did not, because its compute path returns confidently wrong answers
+with no marker — see **ADR-0003** for the convention that unblocks it and
+[Retire #67 — second pass](tickets/11-retire-67-second-pass.md) for the retry. The
+destination is worth less than an honest tracker.
+
 **Vocabulary is load-bearing here.** Per **ADR-0002** (as amended), parks are
 named by *what is missing*, because that predicts how each graduates: a
 **sequencing park** lacks a gate — an event or an owner; a **research park** lacks
@@ -100,6 +107,16 @@ whatever its epic's body says about it.
   showed B2 already satisfied by side effect (`CornerCorridorBridge.v` is 138
   lines, its worked example now in `BaseToTipSample.v`), B5 therefore unblocked
   and still real at 0 claims rows, and B3 is build-lane hygiene.
+- [Retire #67 — RelateNG matrix and boundary handling](tickets/closed/07-retire-67-relateng.md)
+  — **decided NOT to close #67**, the first break from the pattern: its compute
+  path answers `FFFFFFFFF` for unsupported pairs and classifies overlapping
+  triangles as disjoint (#522), with four `Prop := True` classifiers, so "satisfied
+  on scope achieved" would have been an overclaim. The convention blocking the
+  nine-cell capstone is settled as **ADR-0003** (two-tier: OGC open interior
+  specifies, half-open parity computes, guarded bridge between) — which also
+  reclassifies four of the six GEOS WARNs from undecided to expected. Also #523
+  (`F` conflated with not-computed) and four doc defects to #503. Closure moves to
+  [Retire #67 — second pass](tickets/11-retire-67-second-pass.md).
 - [Retire #66 — precision models, snap rounding, OverlayNG](tickets/closed/06-retire-66-precision-and-overlay.md)
   — **closed**; residue is #517 tie-freeness, #518 the ownerless
   `fully_intersected` bridge, #519 guard 5, #520 the three OverlayNG hypotheses.
