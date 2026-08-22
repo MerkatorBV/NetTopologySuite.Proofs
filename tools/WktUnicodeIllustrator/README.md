@@ -8,6 +8,7 @@ ANSI-coloured **Unicode sketches** of spatial cases from WKT — lines **and** S
 | **B** | red | second input geometry |
 | **result** | green | operation output (default: intersection) |
 | A∩B pixel | magenta | grid cell touched by both inputs (before result paint) |
+| **fill** | ░ (input colour) | surface interior; `╳` magenta where both interiors overlap (`--no-fill` to disable) |
 | **A-overshoot** | maroon | self-overlap on A (e.g. CIRCULARSTRING that retraces itself) |
 | **B-overshoot** | navy | self-overlap on B |
 
@@ -85,7 +86,9 @@ Requires a UTF-8 terminal (Windows Terminal, modern PowerShell, or `chcp 65001`)
 4. Rasterize linework with Bresenham + direction glyphs (`─ │ ╱ ╲`).
 5. Print twice: inputs only, then with green result overlay.
 
-Polygons and other types stroke their boundary as a fallback; richer fills are out of MVP scope.
+Polygons stroke their boundary and shade their interior (`░` single, `╳` overlap;
+cell-centre point-in-polygon against the linearized surfaces). `--demo venn` shows it;
+`--no-fill` reverts to boundary-only.
 
 ## Layout
 

@@ -43,6 +43,14 @@ internal sealed class WorldToGrid
         _maxY = cy + hy;
     }
 
+    /// <summary>World coordinates of a cell's centre (inverse of <see cref="Project"/>).</summary>
+    public Coordinate Unproject(int col, int row)
+    {
+        double u = (double)col / (_width - 1);
+        double v = 1.0 - (double)row / (_height - 1);
+        return new Coordinate(_minX + u * (_maxX - _minX), _minY + v * (_maxY - _minY));
+    }
+
     public (int Col, int Row) Project(Coordinate c)
     {
         double u = (c.X - _minX) / (_maxX - _minX);

@@ -40,4 +40,8 @@ internal enum Layer
     OvershootA = 8,
     /// <summary>Self-overlap / overshoot on geometry B (navy).</summary>
     OvershootB = 16,
+    /// <summary>Interior of a surface in A (░ fill; ╳ where it meets FillB).</summary>
+    FillA = 32,
+    /// <summary>Interior of a surface in B.</summary>
+    FillB = 64,
 }

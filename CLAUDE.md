@@ -17,7 +17,8 @@ dotnet run --project tools/WktUnicodeIllustrator -- [options] "WKT_A" "WKT_B"
   --no-color                  plain Unicode (use when output is captured)
   --png <path>                also write a deterministic PNG facsimile
                               (always coloured; use for doc images)
-  --demo curve|overshoot
+  --no-fill                   boundary-only (fills: ░ interior, ╳ overlap)
+  --demo curve|overshoot|venn
 ```
 
 Exit codes: `0` ok · `2` bad args/parse/empty · `3` overlay or overshoot
