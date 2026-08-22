@@ -5,13 +5,18 @@ claimId: none
 witness: self-ops
 mutation-seed: none
 
-(ADR-0004 mint, explicit: this is a lane opener with no board card yet, so
-no oracle-facing micro-kernel claim is minted — `claimId: none`, no
-`eval/` mirror. The documentation-level falsifier seed is `self-ops`: the
-G3/G4 self-cancellations `A ∖ A = ∅`, `A Δ A = ∅`, whose mutation into
-G1/G2 keep-laws the crossing probes would catch. When a board card id is
-assigned, the rename + `eval/ClaimNNN.v` mirror follow in one pass, as for
-the LEC opener.)
+(ADR-0004 mint, explicit: this gates table is the Phase 0 **opener**
+(`OverlayNGCurve` exact-cell kernel). It stays `claimId: none` / witness
+`self-ops` — not stale vs tip. The OverlayTouchRow candidate-complete pin
+is a later section: `claimId: laser-ov` (not `laser-ml2`) · witness
+`kiss-discs` · mutation-seed `668404`. No oracle-facing micro-kernel
+claim is minted on the opener — no `eval/` mirror. The documentation-level
+falsifier seed is `self-ops`: the G3/G4 self-cancellations `A ∖ A = ∅`,
+`A Δ A = ∅`, whose mutation into G1/G2 keep-laws the crossing probes
+would catch. When a board card id is assigned to the opener, the rename +
+`eval/ClaimNNN.v` mirror follow in one pass, as for the LEC opener.
+ADR-0001 tripwire not needed: Overlay → Distance only; OverlayTouchRow
+is a consumer; no Overlay ↔ Jordan / ArcOrient cycle.)
 
 **lane:** overlay · curve-aware overlay algebra
 **Module**: [`theories/OverlayNGCurve.v`](../theories/OverlayNGCurve.v)
@@ -129,6 +134,21 @@ On the pinned pairs (`pin_disjoint_squares`, `pin_covers_squares`):
 **Module**: [`theories/OverlayTouchRow.v`](../theories/OverlayTouchRow.v) ·
 **Verdict**: both halves **GREEN** (Qed, classical-reals trio only).
 
+**Named pin (2026-08-20).** `candidate_complete R` means every pair of
+positive-radius closed discs satisfies relation family `R`. Domain =
+positive discs; a row = one binary relation on that domain. Distinct from
+op-exactness (`overlayng_curve_phase0_exact_cells`: a CAP/CUP/SUB/XOR cell
+is exact iff the result collapses to A, B, A∪B or ∅). The seven-row
+exactness matrix's *relation content* on this domain is
+`seven_row_family` = `phase0_relation` (empty-partner is out of domain;
+disc-vs-polygon is representation). The eight-row family is
+`eight_row_family` = `phase0_relation ∨ disks_touch` (T-ext only; T-int
+is covers). Headlines stay `phase0_relation_complete_hypothesis_refuted`
+and `disc_relations_complete_with_touch`; the names
+`seven_row_not_candidate_complete` / `eight_row_is_candidate_complete`
+are unfolds, not a second headline.
+topic: overlay · claimId: laser-ov · witness: kiss-discs · mutation-seed: 668404.
+
 The Phase 0 case matrix at region level (self · disjoint · covers ·
 coveredBy · properly-crossing, positive-radius discs) is **not** candidate
 complete: `phase0_relation_complete_hypothesis_refuted` exhibits the
@@ -150,10 +170,10 @@ for all positive discs (trichotomy on d vs |r1 − r2| and r1 + r2; radial
 kiss witness c1 + (r1/d)(c2 − c1)). External tangency is exactly the
 touch row; internal tangency lands in covers.
 
-Oracle alignment: `DISC_OVERLAY` already classifies `EXT_TANGENT` /
-`INT_TANGENT` via the exact-Q discriminant (generator family E) — the
-driver was ahead of the theory; this module supplies the missing R-side
-spec. No driver/generator change was needed for this rung.
+`DISC_OVERLAY` already classifies `EXT_TANGENT` / `INT_TANGENT` via the
+exact-Q discriminant (generator family E) — the driver was ahead of the
+theory; this module supplies the missing R-side spec. No driver/generator
+change was needed for this rung.
 
 ## The TOUCH pair's DE-9IM (2026-08-16): FF2F01212, cell-sound
 

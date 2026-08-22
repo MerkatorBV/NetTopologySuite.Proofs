@@ -44,10 +44,22 @@
    (via `covers_of_reach`), strict between → properly crossing, beyond →
    disjoint, and d = r1 + r2 → touch, with the kiss witness constructed
    radially at c1 + (r1/d)(c2 − c1).  Internal tangency lands in covers,
-   external tangency is EXACTLY the touch row — matching the oracle's
-   DISC_OVERLAY configs (INT_TANGENT/EXT_TANGENT, discriminant = 0 in
-   exact Q, generator family E), which the driver classified before the
-   R-side had a spec.  This module supplies that spec.
+   external tangency is EXACTLY the touch row — matching DISC_OVERLAY
+   configs (INT_TANGENT/EXT_TANGENT, discriminant = 0 in exact Q,
+   generator family E), which the driver classified before the R-side
+   had a spec.  This module supplies that spec.
+
+   Named pin (`candidate_complete`): a family R of disc-pair relations
+   is candidate-complete when every positive-radius pair satisfies R.
+   Distinct from op-exactness (`overlayng_curve_phase0_exact_cells`):
+   classifying the pair is not CAP/CUP/SUB/XOR cells collapsing.
+   `seven_row_family` is the relation content of the seven-row matrix
+   on this domain (= `phase0_relation`); `eight_row_family` adds T-ext.
+   The §3 / §6 theorems inhabit those names; no second headline.
+
+   WITNESS topic: overlay · claimId: laser-ov · witness: kiss-discs
+   ADR-0001 tripwire not needed: Overlay → Distance only; this module
+   is a consumer; no Overlay ↔ Jordan / ArcOrient cycle.
 
    Pure math on R.  Classical-reals trio only (see Print Assumptions).
 
@@ -89,6 +101,26 @@ Definition in_disk_int (D : Disk) (p : Point) : Prop :=
 Definition disks_touch (A B : Disk) : Prop :=
   (exists p, in_disk A p /\ in_disk B p) /\
   (forall p, ~ (in_disk_int A p /\ in_disk_int B p)).
+
+(** Candidate-complete: family R classifies every pair in the
+    positive-radius disc-pair domain.  The seven-row exactness matrix
+    (self, empty partner, disjoint, covers, coveredBy, crossing,
+    disc-vs-polygon) contributes five relations here: empty-partner is
+    excluded by positive radii; disc-vs-polygon is representation, not
+    a disc-pair relation.  Those five are [phase0_relation].  Not
+    op-exactness — see OverlayNGCurve.overlayng_curve_phase0_exact_cells. *)
+Definition candidate_complete (R : Disk -> Disk -> Prop) : Prop :=
+  forall A B : Disk, 0 < dradius A -> 0 < dradius B -> R A B.
+
+Definition seven_row_family : Disk -> Disk -> Prop :=
+  phase0_relation.
+
+(** Seven-row relation content plus T-ext (TOUCH).  T-int is covers,
+    not a new row. *)
+Definition eight_row_family (A B : Disk) : Prop :=
+  phase0_relation A B \/ disks_touch A B.
+
+(* WITNESS {"claimId":"laser-ov","topic":"overlay","lemma":"candidate_complete","title":"Disc-pair candidate-complete = every positive-radius pair is classified","witness":"kiss-discs","board":"#1200"} *)
 
 (* -------------------------------------------------------------------------- *)
 (* §2  Metric bridges.                                                         *)
@@ -401,6 +433,38 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* §6b  Named predicate applied to the two families.                           *)
+(*      Not a second headline: unfolds of the §3 / §6 theorems.                *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma seven_row_not_candidate_complete :
+  ~ candidate_complete seven_row_family.
+Proof. exact phase0_relation_complete_hypothesis_refuted. Qed.
+
+Lemma eight_row_is_candidate_complete :
+  candidate_complete eight_row_family.
+Proof. exact disc_relations_complete_with_touch. Qed.
+
+Lemma t_ext_misses_seven_row : ~ seven_row_family ext_A ext_B.
+Proof.
+  intros [Hsame | [Hdisj | [Hcov | [Hcovby | Hcross]]]].
+  - exact (ext_not_same Hsame).
+  - exact (ext_not_disjoint Hdisj).
+  - exact (ext_not_covers Hcov).
+  - exact (ext_not_coveredBy Hcovby).
+  - exact (ext_not_crossing Hcross).
+Qed.
+
+Lemma t_ext_is_eight_row_touch : eight_row_family ext_A ext_B.
+Proof. right. exact ext_touch. Qed.
+
+Lemma t_int_is_covers_not_a_gap : seven_row_family int_A int_B.
+Proof.
+  unfold seven_row_family, phase0_relation.
+  right. right. left. exact int_covers.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* §7  Audit footprint (classical-reals trio only).                            *)
 (* -------------------------------------------------------------------------- *)
 
@@ -412,3 +476,7 @@ Print Assumptions ext_touch.
 Print Assumptions int_covers.
 Print Assumptions int_kiss_pinch.
 Print Assumptions disc_relations_complete_with_touch.
+Print Assumptions seven_row_not_candidate_complete.
+Print Assumptions eight_row_is_candidate_complete.
+Print Assumptions t_ext_misses_seven_row.
+Print Assumptions t_int_is_covers_not_a_gap.
