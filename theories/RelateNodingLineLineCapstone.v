@@ -12,8 +12,9 @@
    wrapper, test-10 pointset + fold=oracle + intersects; meet-layer pinned
    corollary on witness pairs.
 
-   Honest gaps (deferred S15l+): prepared evaluate hook; exterior-row true-
-   dimension pinning; new `LinePairRegime` for Touches-vs-Share at fill API.
+   Honest gaps (remaining S15l+): prepared evaluate hook (identity already
+   Qed); new `LinePairRegime` for Touches-vs-Share at fill API.
+   Exterior-row true-dimension pinning landed in RelateNodingLineLineExtPinned.
 
    Sections: §20 (collection relate-matrix pipeline capstone, S15k).
 

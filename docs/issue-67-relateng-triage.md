@@ -1,11 +1,9 @@
 # Issue #67 — RelateNG / DE-9IM predicates: research & gap triage
 
-> **Status:** living triage — S0–**S15k** **complete in the working tree**
-> (2026-06-20); rect relate dispatch + prepared hook + exterior pinning + **horizontal
-> expansion + full rect family regime decision** (S15l) **landed** (real rect_pair_regime
-> deciding all regimes + TouchHoriz; horiz predicate; fidelity). Full 9-cell pointset
-> wiring remains the capstone. Core helpers + examples + oracle batch landed.
-> Refresh when a new session closes.
+> **Status:** living triage — S0–**S15k** complete; rect/triangle S15l landed;
+> **line×line exterior-row true-dimension pinning** landed
+> (`RelateNodingLineLineExtPinned.v`). Full 9-cell pointset wiring and the
+> Touches-vs-Share fill split remain. Refresh when a new session closes.
 >
 > (Our S13 rungs contributed: general-triangle Jordan cell-dim soundness,
 > direct right-triangle `hole_inside_outer`, RelateNG pipeline skeleton +
@@ -81,7 +79,7 @@ segment intersection machinery but need a **new DE-9IM layer**.
 | **#3a Segment intersection (line-line)** | **PROVEN (Qed)** | `Intersect.v:900` (`segment_intersection_decision`), `:243` (`strict_completeness`) | Feeds `Intersects`/`Crosses`/`Touches` for line-line; collinear case closed (`collinear_share_iff_1d_overlap`). |
 | **#3b Point-in-polygon (area-point)** | **DEFINED; correctness PARTIAL** | `Overlay.v:183-203` (`point_in_ring`, `point_in_polygon`, `point_in_geometry`) | Algorithm defined; full correctness is conditional on JCT seam (`point_in_ring_correct_jct_cont` in `PointInRingCorrect.v`). |
 | **#3c Boundary / endpoint semantics** | **PARTIAL (S4b)** | `RelateBoundary.v` | MOD2 `BoundaryNodeRule`, endpoint vs interior contact predicates, Touches/Intersects soundness; JTS#1175 class pinned via test 10. Area-point boundary Touches in `RelateAreaPoint.v`. Full RelateNG boundary fill still absent. |
-| **#4 RelateNG algorithm** | **PARTIAL (S15k)** | `RelateNodingLineLine.v` | Line×line strata + point-set DE-9IM; regime bridges through S8 fill; collection `matrix_dim_join` fold soundness (S15i); per-pair test-10 fill bridges + II/BB dimension pinning (S15h–j); collection relate-matrix pipeline capstone — fold-assign soundness, regime wrapper, test-10 pointset + fold=oracle + intersects (S15k). Prepared evaluate hook / exterior-row pinning / Touches fill split remain S15l+. |
+| **#4 RelateNG algorithm** | **PARTIAL (S15l)** | `RelateNodingLineLine.v` | Line×line strata + point-set DE-9IM; regime bridges through S8 fill; collection `matrix_dim_join` fold soundness (S15i); per-pair test-10 fill bridges + II/BB dimension pinning (S15h–j); collection relate-matrix pipeline capstone (S15k); **exterior-row true-dimension pinning** (S15l, `RelateNodingLineLineExtPinned.v`: IE=1/EI=1/BE=0/EB=0/EE=2). Prepared evaluate hook / Touches fill split remain S15l+. |
 | **#5 Prepared-mode correctness** | **PARTIAL (S13–S14b)** | `RelatePreparedCache.v`, `RelatePreparedCacheAreaLine.v` | Generic + segment + rectangle-boundary area-line refinement + polygon-envelope early-exit; full `relate(A,B)` pipeline still absent. |
 | **#6 Oracle / extraction** | **PARTIAL (S11)** | `oracle/relate_matrix.ml`, `driver.ml` | `RELATE_MATRIX` + `RELATE_PREDICATE` on pinned catalog; no geometry compute. |
 | **#7 Curve-aware predicates (V-CP, R-*)** | **PARTIAL (S12)** | `RelateArcChord.v`, `RelateCurveAreaPoint.v` | Arc×line + curve-polygon×point (chord rect via `to_geometry`). Chord-length bridge now closed (`ArcChordLength.v`); arc-span soundness partially closed (`ArcChordSound.v`, side/endpoint-conditioned). `to_geometry` point-in-ring bridge (S12b) now closed (`point_in_rect_curve_geometry_iff_polygon`). |
@@ -180,9 +178,10 @@ Next frontier:
 - **(E) Full RelateNG noding pipeline** — *high / multi-session.* **Primary
   next rung (S15l+).** S15a–S15k land line×line strata + regime bridges,
   collection `matrix_dim_join` fold, per-pair test-10 fill, II/BB pinning,
-  and collection relate-matrix capstone (`RelateNodingLineLine.v`). Remaining:
-  prepared evaluate hook, exterior-row true-dimension pinning, Touches-vs-Share
-  fill API split — Phase-3-scale.
+  and collection relate-matrix capstone (`RelateNodingLineLine.v`).
+  Exterior-row true-dimension pinning landed S15l
+  (`RelateNodingLineLineExtPinned.v`). Remaining: prepared evaluate hook,
+  Touches-vs-Share fill API split — Phase-3-scale.
 
 - **(F) Prepared A-L cache correctness** — **partial (S13–S14).** Generic
   refinement + rectangle-boundary area-line instance in `RelatePreparedCache*.v`;
@@ -257,7 +256,16 @@ The recommended path forward:
 - **S15k (done):** collection relate-matrix pipeline capstone — fold-assign
   interface, regime wrapper, per-pair disjoint test-10 9-cell, test-10
   pointset + fold=oracle + intersects + meet-pinned corollary.
-- **S15l+:** prepared + dispatch + exterior pinning + horiz/full rect family regime decision + II cell landed; **Rect + Triangle touch helpers + EE cell + prepared wrappers + registry entries** (full strict-II/BB/satisfy_pointset capstone + regime still DEFERRED, registered in admitted-deferred-proofs.txt). See docs/rect-triangle-touch-milestone.md and #68 (Delaunay composition / arb-polygon next).
+- **S15l / 67-c line×line exterior-row pin (done):** `RelateNodingLineLineExtPinned.v` —
+  catalogued board subtask **67-c** under epic #67 (sibling of 67-a / 67-b).
+  IE=1/EI=1/BE=0/EB=0/EE=2 true-dim for no-share / `LPR_Disjoint`; test-10
+  matrix match; S8 disjoint-fill honesty gap
+  (`line_pair_fill_disjoint_ie_not_true_dim`). Witness: parallel unit segments.
+- **S15l+ remaining:** prepared evaluate hook (identity already Qed);
+  Touches-vs-Share `LPR_Touches` fill split; global Jordan-overlay cell-dim;
+  multi-geom beyond line×line. Rect/triangle S15l (dispatch + exterior pinning
+  + horiz/full rect family + II cell + triangle helpers) already landed; see
+  docs/rect-triangle-touch-milestone.md and #68.
 - rect touch: **dispatch + exterior-row pinning + horizontal/full rect family regime decision + touch-metric helpers (y-overlap, BB point ctor) + examples + II cell (interior disjointness) LANDED** (`relate_on_rects_dispatches`, `relate_rect_touch`, `touch_regime_exterior_row_pinned`, `rect_pair_regime_{vert,horiz}_touch`, `touch_y_overlap_nonempty`, `touch_rect_pair_ii_cell`). The **full 9-cell `geom_de9im_pointset` capstone assembly is DEFERRED** (BI + side E* cells mismatch the hand-specified `aa_matrix_touch_vertical` / `pat_touches_1` F values due to half-open ring inclusion on shared edge; only II/IB/BB/EE provably align; see #68). Trimmed for build; II cell uses correct `px < ax1` vs `>=` from `point_in_ring_rect_iff`. Oracle consumption in `test_relate_matrix.ml`.
 
 - triangle touch capstone (S15l cont): helpers + EE cell + prepared tri cache + deferred registry entries added. Strict II / BB / satisfy_pointset capstone landed; **regime→cell_ok TRIPLE now landed (2026-07-20, Qed): `touch_triangles_regime_cells_ii_bb_ee`** delivers the II cell as the real `cell_ok None SInt SInt` (guarded, via_seam) together with BB + EE `cell_ok` under `r = TPR_TouchEdge`. The II guard (ray-genericity residual) is **irreducible**, not deferred — a guard-free II cell is a false theorem, refuted by the Qed'd `touch_triangle_ii_separation_not_unconditional`. Full 9-cell `geom_de9im_pointset` (BI/side-E* half-open mismatch) remains DEFERRED; target #68 for composition/arb polygons.
