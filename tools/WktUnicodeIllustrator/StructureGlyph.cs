@@ -65,6 +65,9 @@ internal static class StructureGlyph
     /// </summary>
     internal static char ChooseFromMask(int mask)
     {
+        // Degree-0: an isolated mark is a point, not stroke residue.
+        if (mask == 0) return '●';
+
         int ortho = mask & 0xF;
         int diag = mask & 0xF0;
         int oCount = Pop4(ortho);
@@ -74,14 +77,18 @@ internal static class StructureGlyph
         // Screen Y grows downward. Unicode:
         //   ╱ = upper-right ↔ lower-left  → NE–SW neighbours
         //   ╲ = upper-left  ↔ lower-right → NW–SE neighbours
+        // A crossing needs both opposite pairs; two same-side diagonals are an
+        // extremum of one stroke (arc apex/valley → ─, left/right bulge → │).
         if (oCount == 0 && dCount > 0)
         {
-            bool nesw = (diag & (NE | SW)) != 0;
-            bool nwse = (diag & (NW | SE)) != 0;
-            if (nesw && !nwse) return '╱';
-            if (nwse && !nesw) return '╲';
-            if (nesw && nwse) return '╳';
-            return '·';
+            bool ne = (diag & NE) != 0, se = (diag & SE) != 0;
+            bool sw = (diag & SW) != 0, nw = (diag & NW) != 0;
+            if (dCount >= 3) return '╳';
+            if (ne && sw) return '╱';
+            if (nw && se) return '╲';
+            if ((sw && se) || (nw && ne)) return '─'; // peak / valley
+            if ((ne && se) || (nw && sw)) return '│'; // side extremum
+            return ne || sw ? '╱' : '╲';
         }
 
         // Orthogonal box-drawing (structure junctions).
