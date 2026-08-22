@@ -53,6 +53,13 @@ body, which is stale everywhere (all six bodies date from 2026-07-04).
 row(s), (2) `file:line` pointers to the Qed'd statements, and (3) the status line
 in the relevant lane doc. Name what is *not* covered and where it went.
 
+**Vocabulary is load-bearing here.** Per **ADR-0002**: a *sequencing park* waits
+on another lane and graduates when its gate lands; a *research park* waits for a
+statement worth proving and graduates only when someone finds one. Do not call
+the first the second — they behave differently. `CONTEXT.md` carries both, plus
+*witness-scoped*. Note also that `doc/EXACT_CURVE_BIBLE.md`, cited by several
+tickets, lives in the **`jts-*` fork clones**, not in this repository.
+
 **The module-split gate (new policy, derived not judged).** A module over
 **1234 lines** whose blast-weighted size — `(transitive dependents + 1) × lines`
 — reaches **3210** must be split, using the established umbrella pattern: keep
@@ -92,6 +99,15 @@ whatever its epic's body says about it.
   showed B2 already satisfied by side effect (`CornerCorridorBridge.v` is 138
   lines, its worked example now in `BaseToTipSample.v`), B5 therefore unblocked
   and still real at 0 claims rows, and B3 is build-lane hygiene.
+- [Retire #65 — buffer and offset curves](tickets/closed/05-retire-65-buffer-and-offset.md)
+  — **closed on linear+arc scope**; hero shot is #515 (buffer with curve
+  preservation, after #508). Three of four residue items were stale: `H_valid`
+  already discharged, the two-sided walk landed 2026-07-05, round-join is a type
+  mismatch not a gap. The "research-scale" park on P2 Minkowski did not survive
+  review → **ADR-0002** (dependency-gated, witness-scoped slice available now).
+  Verifying found #513 (`BUFFER_REGION` answers where its contract promises
+  refusal — and it is `CurveBufferArea.v`'s oracle) and #514 (three advertised
+  capabilities that are a stub, a prefix and dead code).
 - [Retire #64 — arc primitives](tickets/closed/04-retire-64-arc-primitives.md)
   — **closed on circular-arc scope** (3 of 4 round-2 items had landed, including
   the quartic it called its deepest open work). Residue → #508 zoo-wide exact
