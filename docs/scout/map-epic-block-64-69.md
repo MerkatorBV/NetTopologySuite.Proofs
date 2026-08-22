@@ -82,6 +82,11 @@ whatever its epic's body says about it.
   separate micro (#503), because refutations *are* citable by convention here
   (`hobby_lemma_4_3_no_proper` carries a "**Refuted:**" row) and nothing checks
   source-negative → claims.
+- [Write the module-split gate: policy and ratchet guard](tickets/closed/02-module-split-gate-policy-and-guard.md)
+  — policy in `docs/macro-meso-micro.md`, `scripts/check_module_split.py` in
+  `make ci-guards`, three entries in `docs/module-split-allowlist.txt`; headroom
+  is 5 % of recorded **lines** (not the metric, since another module's `Require`
+  must not fail your build), and stale entries fail so the ratchet only shrinks.
 
 ## Not yet specified
 
@@ -96,6 +101,12 @@ whatever its epic's body says about it.
   several is not visible from outside the ticket.
 - **A standing freshness re-run.** Whether "no stale issue bodies" becomes a
   quarterly chore like the split queue, once this map has walked it once.
+- **Whether allowlist *growth* needs its own check.** `check_module_split.py`
+  cannot see history, so it catches a new violation but not someone quietly
+  adding a line to `docs/module-split-allowlist.txt`. The review gate already
+  reports an "audit exceptions delta — no exception-list growth" for the older
+  registry; whether it covers this new file, or whether CI needs an explicit
+  `git diff` check, is not yet visible from here.
 
 ## Out of scope
 
