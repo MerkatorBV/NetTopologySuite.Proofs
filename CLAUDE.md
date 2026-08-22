@@ -50,3 +50,17 @@ lines-only builds).
 - Bug-hunt writeups: `docs/<topic>-<yyyy-mm>.md`, pin oracle/tool provenance
   (run id, commit) and record a `SUMMARY ok/warn/bug` line.
 - There is no solution file; build/test per-project by path.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in this repo's GitHub Issues (`gh` CLI); open issues are proof
+programs, and `TRIAGE_NTS_JTS_ISSUES.md` is their status source of record. See
+`docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: root `CONTEXT.md` + `docs/adr/`, with
+`docs/macro-meso-micro.md` and `docs/verified-claims.md` as companions. See
+`docs/agents/domain.md`.
