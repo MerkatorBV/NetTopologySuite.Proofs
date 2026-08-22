@@ -77,7 +77,11 @@ whatever its epic's body says about it.
 
 <!-- one line per closed ticket: gist, then zoom the link for detail -->
 
-_None yet — charted this session; charting resolves nothing._
+- [Close #482 — Shewchuk half-ulp counterexample retip](tickets/closed/01-close-shewchuk-counterexample-subtask.md)
+  — satisfied and closed with evidence; the missing claims-register row is a
+  separate micro (#503), because refutations *are* citable by convention here
+  (`hobby_lemma_4_3_no_proper` carries a "**Refuted:**" row) and nothing checks
+  source-negative → claims.
 
 ## Not yet specified
 

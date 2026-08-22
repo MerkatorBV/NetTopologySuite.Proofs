@@ -10,7 +10,7 @@ Order of work: top-down from #64, with the freebie first.
 
 | # | Ticket | Type | Blocked by |
 |---|---|---|---|
-| 01 | [Close #482 — Shewchuk half-ulp counterexample retip](01-close-shewchuk-counterexample-subtask.md) | task | — |
+| 01 | ~~[Close #482 — Shewchuk half-ulp counterexample retip](closed/01-close-shewchuk-counterexample-subtask.md)~~ **closed** | task | — |
 | 02 | [Write the module-split gate: policy and ratchet guard](02-module-split-gate-policy-and-guard.md) | task | — |
 | 03 | [Open the module-split queue epic](03-open-module-split-queue-epic.md) | task | 02 |
 | 04 | [Retire #64 — arc primitives](04-retire-64-arc-primitives.md) | grilling | — |
@@ -22,7 +22,7 @@ Order of work: top-down from #64, with the freebie first.
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | 03 (queue **empty**), 09 |
 
 ```
-01 ─────────────────────────────────────── (freebie, closes today)
+01 ══════════════════════════════════════ closed 2026-08-22 (#482)
 
 02 ── 03 ─────────────────────────┐
                                   ├── 10
@@ -33,5 +33,4 @@ Order of work: top-down from #64, with the freebie first.
 08 ┘
 ```
 
-**Frontier today:** 01, 02, 04, 05, 06, 07, 08 — seven takeable, which is the
-whole point of doing them one per session rather than all at once.
+**Frontier:** 02, 04, 05, 06, 07, 08 — six takeable, one per session.
