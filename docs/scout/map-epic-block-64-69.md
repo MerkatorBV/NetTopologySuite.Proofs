@@ -107,6 +107,13 @@ whatever its epic's body says about it.
   showed B2 already satisfied by side effect (`CornerCorridorBridge.v` is 138
   lines, its worked example now in `BaseToTipSample.v`), B5 therefore unblocked
   and still real at 0 claims rows, and B3 is build-lane hygiene.
+- [Retire #68 — Delaunay triangulation and Voronoi diagrams](tickets/closed/08-retire-68-delaunay-voronoi.md)
+  — **closed** on the predicate and local-flip layer; the global tier is #525.
+  The phase boundary was real but drawn wrong: Voronoi is cleanly absent, yet
+  *phase 1 is not a triangulation either* — `triangulation_of` is satisfied by a
+  single triangle, and no theorem quantifies over a mesh. Closes truthfully
+  because the lane carries none of #67's failure modes and its docs already say
+  "weak skeleton". Also #526 and two register gaps to #503.
 - [Retire #67 — RelateNG matrix and boundary handling](tickets/closed/07-retire-67-relateng.md)
   — **decided NOT to close #67**, the first break from the pattern: its compute
   path answers `FFFFFFFFF` for unsupported pairs and classifies overlapping
