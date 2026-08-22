@@ -28,7 +28,8 @@ Inductive TrianglePairRegime : Type :=
 | TPR_Overlap
 | TPR_Contains
 | TPR_TouchEdge
-| TPR_TouchVertex.  (* vertex contact; matrix shape can be adjusted later *)
+| TPR_TouchVertex   (* vertex contact; matrix shape can be adjusted later *)
+| TPR_Unsupported.  (* the classifier declined -- NOT a geometric verdict *)
 
 Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
   match r with
@@ -37,6 +38,7 @@ Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
   | TPR_Contains    => aa_matrix_contains
   | TPR_TouchEdge   => aa_matrix_touch_vertical  (* BB=1, EE=2 *)
   | TPR_TouchVertex => aa_matrix_touch_vertical  (* same for starter; point contact may be dim 0 *)
+  | TPR_Unsupported => im_unsupported            (* decline; see DE9IM.im_unsupported *)
   end.
 
 Lemma triangle_pair_fill_disjoint_eq :
@@ -58,6 +60,19 @@ Proof. reflexivity. Qed.
 Lemma triangle_pair_fill_touch_vertex_eq :
   triangle_pair_fill TPR_TouchVertex = aa_matrix_touch_vertical.
 Proof. reflexivity. Qed.
+
+Lemma triangle_pair_fill_unsupported_eq :
+  triangle_pair_fill TPR_Unsupported = im_unsupported.
+Proof. reflexivity. Qed.
+
+(* The point of the new regime: declining is not the same answer as
+   "disjoint".  A classifier that cannot place a pair must not fill the
+   disjointness matrix for it. *)
+Lemma triangle_pair_fill_unsupported_not_disjoint :
+  ~ im_disjoint (triangle_pair_fill TPR_Unsupported).
+Proof.
+  rewrite triangle_pair_fill_unsupported_eq. exact im_unsupported_not_disjoint.
+Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Classifier (geometry predicates).                                          *)
@@ -91,10 +106,12 @@ Definition triangles_touch_on_shared_edge (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
    witnesses at the end of this file make that machine-checked, so a result
    cannot cite one of these as if it classified anything.
 
-   They cannot be strengthened in place: a real definition needs `gtri`
-   (triangle interior sign), which lives above this module in the layer order
-   -- see `RelateNGCore.v`, which imports `GeneralTriangleSeparation`.  Doing
-   it properly means moving the classifier up, not adding an import here. *)
+   Strengthening them needs `gtri` (triangle interior sign), which lives in
+   `GeneralTriangleSeparation.v`.  That module does NOT import this one -- the
+   only importers of this file are `RelateNGCore.v`, `RelatePrepared.v` and
+   `DelaunayFlipGeometric.v`, all strictly above it -- so the import can be
+   added here with no cycle.  Doing it is real geometry work (issue #522
+   item 2), not a layering obstruction. *)
 Definition triangles_separated (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
 Definition triangles_partial_overlap (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
 Definition triangle_a_contains_b (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
@@ -110,6 +127,11 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
   | TPR_Contains    => triangle_a_contains_b a1 a2 a3 b1 b2 b3
   | TPR_TouchEdge   => triangles_touch_on_edge a1 a2 a3 b1 b2 b3
   | TPR_TouchVertex => triangles_touch_at_vertex a1 a2 a3 b1 b2 b3
+  (* `TPR_Unsupported` names no configuration -- it records that the
+     classifier made no claim.  `True` is the correct denotation of "no
+     claim", and unlike the four arms below it is not pretending to be a
+     geometric predicate awaiting a definition. *)
+  | TPR_Unsupported => True
   end.
 
 (* -------------------------------------------------------------------------- *)

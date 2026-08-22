@@ -587,34 +587,76 @@ Qed.
 (* positive topological claim ("these two do not interact") that an           *)
 (* unclassified input has not earned.                                         *)
 (*                                                                            *)
-(* `im_unsupported` is the honest alternative.  Every cell carries an          *)
-(* out-of-range dimension, so `matrix_ok` rejects the whole matrix and no OGC  *)
-(* pattern can match it -- a caller that treats it as an answer is caught      *)
-(* rather than silently misled.  It is a sentinel, not a tenth DE-9IM value.   *)
+(* `im_unsupported` is the honest alternative: a matrix that fails `matrix_ok`  *)
+(* AND supports no standard predicate, so it cannot be read as any verdict.    *)
+(*                                                                            *)
+(* Which cells carry the out-of-range dimension is forced, and the naive       *)
+(* choice is wrong.  Filling ALL nine cells does not work: `char_matches       *)
+(* PTrue (Some _)` holds, so an everywhere-non-empty matrix satisfies          *)
+(* `pat_intersects_0` and `pat_overlaps_pp_aa` -- trading one unearned claim   *)
+(* (disjoint) for two.                                                        *)
+(*                                                                            *)
+(* Nor does any single cell work.  `pat_disjoint` requires II IB BI BB EI EB   *)
+(* all empty, so declining disjointness means making one of those six          *)
+(* non-empty -- and each of the six is `PTrue` in some positive pattern:       *)
+(*                                                                            *)
+(*     II -> intersects_0    IB -> intersects_1    BI -> coveredBy_1          *)
+(*     BB -> intersects_4    EB -> touches_3       EI -> coveredBy_3          *)
+(*                                                                            *)
+(* So two cells are needed.  EI breaks `disjoint`; BE then breaks the          *)
+(* `coveredBy_3` that EI alone would satisfy (that pattern demands BE empty),  *)
+(* and BE is required non-empty by nothing once II is empty.  Every remaining  *)
+(* cell stays empty, which starves every other `PTrue` / `PDim` constraint.    *)
+(* `im_unsupported_no_predicate` below is the machine-checked version of this  *)
+(* paragraph -- trust it rather than the prose.                                *)
 (* -------------------------------------------------------------------------- *)
 
 Definition dim_unsupported : DimValue := Some 3%nat.
 
 Definition im_unsupported : IntersectionMatrix :=
-  {| im_ii := dim_unsupported; im_ib := dim_unsupported; im_ie := dim_unsupported;
-     im_bi := dim_unsupported; im_bb := dim_unsupported; im_be := dim_unsupported;
-     im_ei := dim_unsupported; im_eb := dim_unsupported; im_ee := dim_unsupported |}.
+  {| im_ii := None;            im_ib := None; im_ie := None;
+     im_bi := None;            im_bb := None; im_be := dim_unsupported;
+     im_ei := dim_unsupported; im_eb := None; im_ee := None |}.
 
 (* No cell dimension may exceed 2, so the sentinel is not a well-formed
-   matrix.  This is what makes it impossible to mistake for an answer. *)
+   matrix.  A caller that validates its input catches it here. *)
 Lemma im_unsupported_not_ok : ~ matrix_ok im_unsupported.
 Proof.
   unfold matrix_ok, dim_value_ok, im_unsupported, dim_unsupported.
-  cbn. intros [H _]. lia.
+  cbn. intros [_ [_ [_ [_ [_ [H _]]]]]]. lia.
 Qed.
 
-(* In particular it is not the disjointness claim it replaces: `pat_disjoint`
-   demands F (empty) in the II cell, and the sentinel is non-empty there. *)
-Lemma im_unsupported_not_disjoint : ~ im_disjoint im_unsupported.
+(* The headline: the sentinel supports NO standard predicate.  This is the
+   property that makes it a decline rather than a differently-wrong answer. *)
+Theorem im_unsupported_no_predicate :
+  forall r : RelatePredicate, ~ predicate_holds r im_unsupported.
 Proof.
-  unfold im_disjoint, matrix_matches, im_unsupported, dim_unsupported.
-  cbn. intros [H _]. exact H.
+  intros r.
+  destruct r;
+    unfold predicate_holds, im_disjoint, im_intersects, im_contains, im_within,
+      im_covers, im_coveredBy, im_equals_topo, im_touches, im_crosses,
+      im_overlaps, matrix_matches, pattern_transpose,
+      pat_disjoint, pat_intersects_0, pat_intersects_1, pat_intersects_3,
+      pat_intersects_4, pat_contains, pat_within, pat_covers_0, pat_covers_1,
+      pat_covers_3, pat_covers_4, pat_coveredBy_0, pat_coveredBy_1,
+      pat_coveredBy_3, pat_coveredBy_4, pat_equals_topo, pat_touches_0,
+      pat_touches_1, pat_touches_3, pat_crosses_pl_pa_la, pat_crosses_lp_ap_al,
+      pat_crosses_ll, pat_overlaps_pp_aa, pat_overlaps_ll,
+      im_unsupported, dim_unsupported;
+    cbn; tauto.
 Qed.
+
+(* The two consequences worth naming: it is not the disjointness claim it
+   replaces, and -- the mistake the all-cells version made -- it does not
+   assert intersection either. *)
+Corollary im_unsupported_not_disjoint : ~ im_disjoint im_unsupported.
+Proof. exact (im_unsupported_no_predicate RDisjoint). Qed.
+
+Corollary im_unsupported_not_intersects : ~ im_intersects im_unsupported.
+Proof. exact (im_unsupported_no_predicate RIntersects). Qed.
+
+Corollary im_unsupported_not_overlaps : ~ im_overlaps im_unsupported.
+Proof. exact (im_unsupported_no_predicate ROverlaps). Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Audit footprint.                                                           *)
