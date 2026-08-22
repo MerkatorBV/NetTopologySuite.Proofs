@@ -92,6 +92,14 @@ whatever its epic's body says about it.
   showed B2 already satisfied by side effect (`CornerCorridorBridge.v` is 138
   lines, its worked example now in `BaseToTipSample.v`), B5 therefore unblocked
   and still real at 0 claims rows, and B3 is build-lane hygiene.
+- [Retire #64 — arc primitives](tickets/closed/04-retire-64-arc-primitives.md)
+  — **closed on circular-arc scope** (3 of 4 round-2 items had landed, including
+  the quartic it called its deepest open work). Residue → #508 zoo-wide exact
+  length (Bible §4.2 puts `length()` on the thin protocol; the `LENGTH_UNIFIED`
+  oracle already exists but has no Coq companion and refuses `E`/`B` tokens),
+  #509 V-CP Jordan, #510 the three arc conditionals, #511 the elliptic no-op,
+  #503 register accuracy. The float-mode caveat was already documented per-mode;
+  only `oracle/CONSUMERS.md` lacked a pointer, now added.
 
 ## Not yet specified
 
@@ -104,6 +112,22 @@ whatever its epic's body says about it.
 - **#67's DE-9IM capstone residue.** The full 9-cell `geom_de9im_pointset` is
   deferred on a half-open ring-inclusion question; whether that is one issue or
   several is not visible from outside the ticket.
+- **CurvePolygon kit completeness.** The maintainer asked for proof that the
+  kits are complete in combination with CUP / CAP / XOR / SUB and a T-in / T-out
+  Dim9 extension. `doc/EXACT_CURVE_BIBLE.md` §8 settles that "kits" means the
+  **laser kits** (OverlayNGCurve, CurveExact, MIC/LEC, metrics, DE-9IM) rather
+  than the corpus's seven `*Kit*.v` JCT modules — but two things block a sharp
+  ticket. **T-in / T-out is vocabulary this corpus does not have** (exhaustive
+  grep finds no directed touch notion; `theories/Tin.v` is Triangulated
+  Irregular Networks, a false friend), and **"complete" has a refuted
+  ancestor**: `OverlayTouchRow.v:225 phase0_relation_complete_hypothesis_refuted`
+  proves the 7-row Phase-0 family incomplete because the external kiss is a
+  genuine 8th row, with `seven_row_not_candidate_complete` alongside. Note also
+  that `grep curve_polygon × (union|intersection|difference|symmetric|cup|cap|
+  xor|sub)` over `theories/` is **empty** — the four ops are proven only on the
+  abstract `OSet` carrier (`OverlayNGCurve.v:194`, axiom-free) and concretely
+  only for two discs (`DiscOverlay.v`), so the centre of the ask is unbuilt.
+  Graduates once the directed-touch definition and the intended row set exist.
 - **A standing freshness re-run.** Whether "no stale issue bodies" becomes a
   quarterly chore like the split queue, once this map has walked it once.
 - **Whether allowlist *growth* needs its own check.** `check_module_split.py`
