@@ -44,6 +44,11 @@ internal static class Program
             wktA ??= CaseIllustrator.DefaultCurveA;
             wktB ??= CaseIllustrator.DefaultCurveB;
         }
+        else if (opts.DemoVenn)
+        {
+            wktA ??= CaseIllustrator.DefaultVennA;
+            wktB ??= CaseIllustrator.DefaultVennB;
+        }
 
         if (opts.PngPath is null)
         {
@@ -55,7 +60,8 @@ internal static class Program
                 height: opts.Height,
                 useColor: useColor,
                 showOvershoot: opts.ShowOvershoot,
-                cellAspect: opts.CellAspect);
+                cellAspect: opts.CellAspect,
+                showFill: opts.ShowFill);
 
             if (result.ExitCode != 0)
             {
@@ -75,7 +81,8 @@ internal static class Program
             width: opts.Width,
             height: opts.Height,
             showOvershoot: opts.ShowOvershoot,
-            cellAspect: opts.CellAspect);
+            cellAspect: opts.CellAspect,
+            showFill: opts.ShowFill);
 
         if (composed.Scenario is null)
         {
@@ -108,7 +115,9 @@ internal static class Program
               --op <name>        intersection | union | difference | symdifference | none
               --demo curve       CIRCULARSTRING × CIRCULARSTRING crossing
               --demo overshoot   self-overlapping CIRCULARSTRINGs (retrace arcs)
+              --demo venn        two overlapping discs (░ single, ╳ overlap)
               --no-overshoot     skip maroon/navy self-overlap layers
+              --no-fill          skip ░/╳ surface-interior fills
               --width N          grid width  (default: 41)
               --height N         grid height (default: 21)
               --cell-aspect R    terminal cell height/width for visual aspect
@@ -156,7 +165,9 @@ internal static class Program
         public bool ForceColor { get; init; }
         public bool DemoCurve { get; init; }
         public bool DemoOvershoot { get; init; }
+        public bool DemoVenn { get; init; }
         public bool ShowOvershoot { get; init; } = true;
+        public bool ShowFill { get; init; } = true;
         public bool Help { get; init; }
 
         public static Options Parse(string[] args)
@@ -166,7 +177,8 @@ internal static class Program
             int w = 41, h = 21;
             double cellAspect = WorldToGrid.DefaultCellAspect;
             bool color = true, forceColor = false, help = false;
-            bool demoCurve = false, demoOvershoot = false, showOvershoot = true;
+            bool demoCurve = false, demoOvershoot = false, demoVenn = false;
+            bool showOvershoot = true, showFill = true;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -187,6 +199,9 @@ internal static class Program
                     case "--no-overshoot":
                         showOvershoot = false;
                         break;
+                    case "--no-fill":
+                        showFill = false;
+                        break;
                     case "--demo" when i + 1 < args.Length:
                         {
                             string which = args[++i];
@@ -198,8 +213,12 @@ internal static class Program
                                      || which.Equals("self", StringComparison.OrdinalIgnoreCase)
                                      || which.Equals("overlap", StringComparison.OrdinalIgnoreCase))
                                 demoOvershoot = true;
+                            else if (which.Equals("venn", StringComparison.OrdinalIgnoreCase)
+                                     || which.Equals("discs", StringComparison.OrdinalIgnoreCase)
+                                     || which.Equals("fill", StringComparison.OrdinalIgnoreCase))
+                                demoVenn = true;
                             else
-                                throw new ArgumentException($"Unknown demo '{which}' (try: curve | overshoot).");
+                                throw new ArgumentException($"Unknown demo '{which}' (try: curve | overshoot | venn).");
                             break;
                         }
                     case "--curve" or "--curves":
@@ -247,7 +266,9 @@ internal static class Program
                 ForceColor = forceColor,
                 DemoCurve = demoCurve,
                 DemoOvershoot = demoOvershoot,
+                DemoVenn = demoVenn,
                 ShowOvershoot = showOvershoot,
+                ShowFill = showFill,
                 Help = help,
             };
         }

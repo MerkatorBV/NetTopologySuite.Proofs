@@ -28,6 +28,14 @@ public static class CaseIllustrator
     public const string DefaultOvershootB =
         "CIRCULARSTRING (0 10, 5 4, 10 10, 5 4, 0 10)";
 
+    /// <summary>Two heavily overlapping discs (Venn demo: ░ single, ╳ overlap).</summary>
+    public const string DefaultVennA =
+        "CURVEPOLYGON (CIRCULARSTRING (-1.4 0, -0.4 1, 0.6 0, -0.4 -1, -1.4 0))";
+
+    /// <summary>Right disc of the Venn demo.</summary>
+    public const string DefaultVennB =
+        "CURVEPOLYGON (CIRCULARSTRING (-0.6 0, 0.4 1, 1.4 0, 0.4 -1, -0.6 0))";
+
     public static IllustratorResult Render(
         string? wktA = null,
         string? wktB = null,
@@ -36,9 +44,10 @@ public static class CaseIllustrator
         int height = 21,
         bool useColor = false,
         bool showOvershoot = true,
-        double cellAspect = WorldToGrid.DefaultCellAspect)
+        double cellAspect = WorldToGrid.DefaultCellAspect,
+        bool showFill = true)
     {
-        var composed = Compose(wktA, wktB, operation, width, height, showOvershoot, cellAspect);
+        var composed = Compose(wktA, wktB, operation, width, height, showOvershoot, cellAspect, showFill);
         if (composed.Scenario is null)
             return IllustratorResult.Fail(composed.ExitCode, composed.Error!);
 
@@ -63,7 +72,8 @@ public static class CaseIllustrator
         int width = 41,
         int height = 21,
         bool showOvershoot = true,
-        double cellAspect = WorldToGrid.DefaultCellAspect)
+        double cellAspect = WorldToGrid.DefaultCellAspect,
+        bool showFill = true)
     {
         wktA ??= DefaultA;
         wktB ??= DefaultB;
@@ -158,6 +168,11 @@ public static class CaseIllustrator
 
         Rasterizer.DrawGeometry(canvas, map, aDraw, Layer.A);
         Rasterizer.DrawGeometry(canvas, map, bDraw, Layer.B);
+        if (showFill)
+        {
+            Rasterizer.FillGeometry(canvas, map, aDraw, Layer.FillA);
+            Rasterizer.FillGeometry(canvas, map, bDraw, Layer.FillB);
+        }
         if (overA is { IsEmpty: false })
             Rasterizer.DrawGeometry(canvas, map, overA, Layer.OvershootA);
         if (overB is { IsEmpty: false })

@@ -17,7 +17,7 @@ validation; see §4).
 | GEOS (issue reports) | 3.14.1 (via shapely 2.1.2, per reporters) |
 | GEOS (local repro) | `/home/user/geos-src` @ `4f7ec39`, branch `feat/curve-pip-collections-rebase` (tracks main + curve PRs), `geosop` from `/home/user/geos-build` |
 | NTS | sibling clone, branch `feat/curves-structure-wkt-foundation` |
-| Illustrator | `tools/WktUnicodeIllustrator` @ `aafb92b` (post cell-aspect fix) |
+| Illustrator | text panels @ `aafb92b` (boundary-only era); PNG facsimiles regenerated with surface fills (░ interior, ╳ overlap) |
 | Date | 2026-08-21 |
 
 Both bugs **reproduce on the local near-main GEOS build**, not only on released

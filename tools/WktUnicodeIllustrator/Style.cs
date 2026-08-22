@@ -188,6 +188,12 @@ internal static class Style
         if (a && glyphs.A[y, x] is not ('\0' or ' ')) return glyphs.A[y, x];
         if (b && glyphs.B[y, x] is not ('\0' or ' ')) return glyphs.B[y, x];
         if (a || b) return '·';
+
+        // Surface interiors: ░ for one geometry, ╳ where both overlap.
+        bool fa = layers.HasFlag(Layer.FillA);
+        bool fb = layers.HasFlag(Layer.FillB);
+        if (fa && fb) return '╳';
+        if (fa || fb) return '░';
         return ' ';
     }
 
@@ -207,6 +213,12 @@ internal static class Style
         if (a && b) return DocColor.Both;
         if (a) return DocColor.A;
         if (b) return DocColor.B;
+
+        bool fa = layers.HasFlag(Layer.FillA);
+        bool fb = layers.HasFlag(Layer.FillB);
+        if (fa && fb) return DocColor.Both;
+        if (fa) return DocColor.A;
+        if (fb) return DocColor.B;
         return DocColor.Dim;
     }
 

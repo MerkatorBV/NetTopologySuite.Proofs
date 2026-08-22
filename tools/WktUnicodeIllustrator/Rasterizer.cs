@@ -1,4 +1,6 @@
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Prepared;
+using NetTopologySuite.Geometries.Utilities;
 
 namespace WktUnicodeIllustrator;
 
@@ -56,6 +58,30 @@ internal static class Rasterizer
             var a = map.Project(coords[i]);
             var b = map.Project(coords[i + 1]);
             DrawSegment(canvas, a.Col, a.Row, b.Col, b.Row, layer);
+        }
+    }
+
+    /// <summary>
+    /// Mark every cell whose centre lies inside a surface of <paramref name="g"/>.
+    /// Non-areal geometry contributes nothing.
+    /// </summary>
+    public static void FillGeometry(Canvas canvas, WorldToGrid map, Geometry g, Layer fillLayer)
+    {
+        var polygons = PolygonExtracter.GetPolygons(g);
+        if (polygons.Count == 0) return;
+
+        Geometry areal = g.Factory.BuildGeometry(polygons);
+        var prepared = PreparedGeometryFactory.Prepare(areal);
+        var factory = g.Factory;
+
+        for (int y = 0; y < canvas.Height; y++)
+        {
+            for (int x = 0; x < canvas.Width; x++)
+            {
+                var centre = factory.CreatePoint(map.Unproject(x, y));
+                if (prepared.Covers(centre))
+                    canvas.Paint(x, y, fillLayer);
+            }
         }
     }
 

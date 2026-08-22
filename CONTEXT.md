@@ -51,7 +51,7 @@ _Avoid_: diagram, illustration, art
 
 **Layer**:
 One of the named strata a grid cell can carry: A, B, result, A∩B, A-overshoot,
-B-overshoot.
+B-overshoot, and the surface-interior fills of A and B.
 _Avoid_: channel, plane
 
 **Overshoot**:
