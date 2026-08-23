@@ -40,9 +40,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import JordanRingKit.
-From NTS.Proofs Require Import JCTParityTransport JCTHalfOpenParity.
-From NTS.Proofs Require Import JCTGenericStability JCTLevelJump JCTTrappedHalf.
+From NTS.Proofs Require Import JctSeamPack.
 Import ListNotations.
 
 Local Open Scope R_scope.
