@@ -71,13 +71,7 @@ From Stdlib Require Import Lra.
 From Stdlib Require Import Lia.
 From Stdlib Require Import List.
 
-From NTS.Proofs Require Import Distance.
-From NTS.Proofs Require Import Overlay.
-From NTS.Proofs Require Import PointInRingTangents.
-From NTS.Proofs Require Import PointInRingCorrect.
-From NTS.Proofs Require Import JordanCurveSeam.
-From NTS.Proofs Require Import JCT.
-
+From NTS.Proofs Require Import JordanRingKit.
 Import ListNotations.
 Local Open Scope R_scope.
 

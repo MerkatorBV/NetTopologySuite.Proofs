@@ -20,13 +20,14 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth Direction
-                               Dart DartAngularOrder PointInRingTangents
-                               JordanCurveSeam JCT JCTHugStep JCTMinOpenStep
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth Direction Dart
+                               DartAngularOrder JCTHugStep JCTMinOpenStep
                                JCTTautClearance JCTNesting GeneralTautBridge
-                               RingClearance SectorPath CornerSamples CornerConnector
-                               JCTCorridor StraddleSides MirrorCorridor DartSideKit
-                               HandoffWedge WalkCorridor FaceTwinAware HBridgeCoreSlice
+                               RingClearance SectorPath CornerSamples
+                               CornerConnector JCTCorridor StraddleSides
+                               MirrorCorridor DartSideKit HandoffWedge
+                               WalkCorridor FaceTwinAware HBridgeCoreSlice
                                RingExtract RectangleJCT.
 From NTS.Proofs Require Export CornerCorridorBridge C3eEfCorridorAssumption
                                HandoffConnector.
@@ -94,7 +95,6 @@ Proof.
   field.
   - split; [ exact Hden | exact Hvy ].
 Qed.
-
 
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.                                                                *)

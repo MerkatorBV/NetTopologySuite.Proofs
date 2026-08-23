@@ -28,18 +28,18 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List Permutation.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
-                               Direction Dart DartAngularOrder
-                               PointInRingTangents JordanCurveSeam JCT
-                               JCTHugStep RingClearance SectorPath
-                               CornerSamples CornerConnector FanGapSector
-                               FanCorner WalkCorners DartPath RingExtract
-                               CycleRing GeneralTautBridge EdgeConnectivity
-                               ArrangementEMinus HBridgeCoreSlice
-                               WalkVertexPack JCTCorridor JCTMinOpenStep
-                               WalkCorridor MirrorCorridor DartSideKit
-                               CornerCorridorBridge HandoffConnector
-                               C3eEfCorridorAssumption BaseToTipHeadline WalkEndTies.
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth Direction Dart
+                               DartAngularOrder JCTHugStep RingClearance
+                               SectorPath CornerSamples CornerConnector
+                               FanGapSector FanCorner WalkCorners DartPath
+                               RingExtract CycleRing GeneralTautBridge
+                               EdgeConnectivity ArrangementEMinus
+                               HBridgeCoreSlice WalkVertexPack JCTCorridor
+                               JCTMinOpenStep WalkCorridor MirrorCorridor
+                               DartSideKit CornerCorridorBridge
+                               HandoffConnector C3eEfCorridorAssumption
+                               BaseToTipHeadline WalkEndTies.
 
 Import ListNotations.
 Local Open Scope R_scope.

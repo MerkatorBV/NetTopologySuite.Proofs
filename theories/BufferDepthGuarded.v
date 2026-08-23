@@ -40,15 +40,10 @@
 From Stdlib Require Import Reals.
 From Stdlib Require Import List.
 
-From NTS.Proofs Require Import Distance.
-From NTS.Proofs Require Import Overlay.
+From NTS.Proofs Require Import JordanRingKit.
 From NTS.Proofs Require Import OverlayGraph.
 From NTS.Proofs Require Import BufferCorrectness.
 From NTS.Proofs Require Import BufferDepth.
-From NTS.Proofs Require Import PointInRingCorrect.
-From NTS.Proofs Require Import PointInRingTangents.
-From NTS.Proofs Require Import JordanCurveSeam.
-From NTS.Proofs Require Import JCT.
 
 Import ListNotations.
 Local Open Scope R_scope.

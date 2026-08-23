@@ -37,11 +37,11 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals List Lra Lia.
-From NTS.Proofs Require Import Distance Overlay ConvexField PointInRingTangents
-                               PointInRingCorrect ConvexNesting MonotoneChainParity
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import ConvexField ConvexNesting MonotoneChainParity
                                MonotoneChainConstruction MonotoneChainCoverage
-                               ConvexChainSplit ConvexOffringSeam GeneralTriangleParity
-                               JordanCurveSeam JCT_OnEdgeCounterexample.
+                               ConvexChainSplit ConvexOffringSeam
+                               GeneralTriangleParity.
 
 Import ListNotations.
 Local Open Scope R_scope.

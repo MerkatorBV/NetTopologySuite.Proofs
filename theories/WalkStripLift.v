@@ -31,10 +31,10 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
-                               Dart PointInRingTangents JordanCurveSeam
-                               JCT JCTHugStep RingClearance JCTCorridor
-                               EdgeConnectivity StraddleSides.
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth Dart JCTHugStep
+                               RingClearance JCTCorridor EdgeConnectivity
+                               StraddleSides.
 
 Import ListNotations.
 Local Open Scope R_scope.

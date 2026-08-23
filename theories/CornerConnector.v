@@ -41,10 +41,10 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
-                               EdgeConnectivity PointInRingTangents
-                               JordanCurveSeam JCT JCTHugStep
-                               RingClearance SectorPath CornerSamples.
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth EdgeConnectivity
+                               JCTHugStep RingClearance SectorPath
+                               CornerSamples.
 
 Import ListNotations.
 Local Open Scope R_scope.

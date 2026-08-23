@@ -64,8 +64,9 @@ witness: none
 
 From Stdlib Require Import Reals Lra List.
 From Stdlib Require Import Ranalysis Ranalysis5.
-From NTS.Proofs Require Import Distance Overlay PointInRingTangents JordanCurveSeam.
-From NTS.Proofs Require Import JCT GeometricInteriorBound ConvexField ConvexOffringSeam.
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import GeometricInteriorBound ConvexField
+                               ConvexOffringSeam.
 From NTS.Proofs Require Import ConvexChainSplit DiamondOffringSeam.
 
 Import ListNotations.

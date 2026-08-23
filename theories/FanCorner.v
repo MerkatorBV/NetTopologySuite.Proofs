@@ -44,13 +44,12 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
-                               Direction Dart DartAngularOrder DartNext
-                               DartNextSpec MinDegreeCore EdgeConnectivity
-                               PointInRingTangents JordanCurveSeam JCT
-                               JCTHugStep RingClearance SectorPath
-                               CornerSamples CornerConnector FanGapSector
-                               CornerGapKit.
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth Direction Dart
+                               DartAngularOrder DartNext DartNextSpec
+                               MinDegreeCore EdgeConnectivity JCTHugStep
+                               RingClearance SectorPath CornerSamples
+                               CornerConnector FanGapSector CornerGapKit.
 
 Import ListNotations.
 Local Open Scope R_scope.
