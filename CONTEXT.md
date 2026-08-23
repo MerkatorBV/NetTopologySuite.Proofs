@@ -8,6 +8,14 @@ oracle and pictures the cases under scrutiny.
 
 ### Curve types
 
+topic: docs
+topics: relate, binary64, arc, overlay
+claimId: none
+witness: none
+macro: none
+mutation-seed: 890884
+issue: none
+
 Abbreviations are **shared with the `grootstebozewolf/jts` fork** so a table can be
 read across both trackers. The initials always match the type: CS is the type
 starting "Circular", CC the one starting "Compound".
