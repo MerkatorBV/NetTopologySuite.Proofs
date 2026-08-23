@@ -6,6 +6,62 @@ oracle and pictures the cases under scrutiny.
 
 ## Language
 
+### Curve types
+
+Abbreviations are **shared with the `grootstebozewolf/jts` fork** so a table can be
+read across both trackers. The initials always match the type: CS is the type
+starting "Circular", CC the one starting "Compound".
+
+| Abbrev | Type | JTS | NTS |
+|---|---|---|---|
+| CS | CircularString | `geom/curve/CircularString.java` | `Geometries/Curves/CircularString.cs` |
+| CC | CompoundCurve | `geom/curve/CompoundCurve.java` | `Geometries/Curves/CompoundCurve.cs` |
+| CP | CurvePolygon | `geom/curve/CurvePolygon.java` | `Geometries/Curves/CurvePolygon.cs` |
+| Multi | MultiCurve / MultiSurface | `geom/curve/MultiCurve.java` | `Geometries/Curves/MultiCurve.cs` |
+| Arc | CircularArc | *(no class — a Proofs primitive)* | — |
+
+**CircularString (CS)**:
+One curve geometry made of a run of circular arcs, each sharing an endpoint with
+the next; WKT `CIRCULARSTRING`, 2n+1 points. A *sequence*, so a single-arc fact
+reaches it only through a concatenation argument.
+_Avoid_: CC (the fork and this repo both mean CompoundCurve), arc, Arc
+
+**CompoundCurve (CC)**:
+One curve geometry whose members are contiguous LineStrings and CircularStrings
+joined head to tail. Mixed linear and curved by construction.
+_Avoid_: CS (means CircularString), compound, curve chain
+
+**CircularArc (Arc)**:
+This corpus's **primitive** — a single arc, not a geometry type. It has no WKT
+keyword and no class in any engine. An Arc theorem is not a CS theorem.
+_Avoid_: CircularString, CS, arc geometry
+
+**CurveCollection**:
+**Retired — the type does not exist.** No such class in JTS, GEOS or NTS
+(verified 2026-08-22: zero matching files in all three trees). It appeared as a
+`CC` column heading in the coverage matrix and in Slice 10 prose; both were
+naming a type no engine has. Say Multi (for member recursion) or CC
+(for CompoundCurve), whichever the evidence actually covers.
+_Avoid_: CC, curve collection, collection of curves
+
+### Performance
+
+**Laser**:
+The exact, curve-preserving path — an `Exact*` implementation that keeps a curve
+a curve through an operation.
+_Avoid_: exact path (ambiguous with exact arithmetic), analytic
+
+**Chainsaw**:
+The densify/linearise path — the documented escape hatch that replaces a curve
+with segments. The baseline a laser is measured against, never a fallback a
+laser may silently take.
+_Avoid_: linearization (the act, not the path), fallback, approximation
+
+**Laser ratchet**:
+The gate `t_laser ≤ 1.15 × t_chainsaw`, measured **per curve type**. A count of
+holding gates is not the ratchet; the ratchet is the timings.
+_Avoid_: perf gate (the harness that measures it), benchmark, 1.15 rule
+
 ### Differential tooling
 
 **Oracle**:
