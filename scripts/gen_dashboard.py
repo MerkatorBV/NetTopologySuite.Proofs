@@ -225,7 +225,8 @@ def count_entries(path):
 # Levels: "full"=Qed theorems, "partial"=some/conditional coverage, "none"=no coverage
 # Short tag keys used in verified-claims.md section comments.
 # COVERAGE_FEAT_TAGS / COVERAGE_GEOM_TAGS define the canonical order.
-COVERAGE_FEAT_TAGS = ["distance", "arc-len", "area", "relate", "overlay", "buffer"]
+COVERAGE_FEAT_TAGS = ["distance", "arc-len", "area", "relate", "overlay", "buffer",
+                      "join", "metric"]
 COVERAGE_GEOM_TAGS = ["arc", "cs", "cc", "cp", "multi"]
 
 COVERAGE_FEAT_LABEL = {
@@ -235,6 +236,8 @@ COVERAGE_FEAT_LABEL = {
     "relate":   "Relate (DE-9IM)",
     "overlay":  "Intersection / Overlay",
     "buffer":   "Buffer",
+    "join":     "Join continuity (C¹ / C²)",
+    "metric":   "LEC / MIC",
 }
 COVERAGE_GEOM_LABEL = {
     "arc": "Arc", "cs": "CS", "cc": "CC", "cp": "CP", "multi": "Multi",
@@ -307,6 +310,24 @@ COVERAGE_MATRIX = {
         "CC":    ("qed",      "Qed, and literally the mixed case: curve_ring_offset maps over CSChord and CSArc alike (CurveRingOffset.v:80-87), with the mixed-member join at :311 segment_join_offset_continuous; CurveBevelJoin.v:300 isolates the all-chord sub-case. Oracle BUFFER_UNIFIED head-to-tail compound vectors red_buffer_unified_tests.py:207 (closed chord/arc/chord/chord thin-neck erosion), :185 (multi-component with an arc member)"),
         "CP":    ("oracle",   "oracle/buffer_region_tests.txt + red_buffer_unified_tests.py; SegmentGraph + RingBuilder (nodes/inters, area filter); hole survival via ncomps"),
         "Multi": ("oracle",   "BUFFER_UNIFIED is the only unified mode with a real multi-component envelope (driver.ml:3237 ncomps) — the others parse a flat segment list. Red tests for no spurious rings + erosion count"),
+    },
+    # Added 2026-08-23.  These two rows hold the corpus's deepest curve work and
+    # were invisible because no feature tag reached them: the join/offset claims
+    # live inside "Phase 4 — Native curves" and the Koc section, and the LEC/MIC
+    # claims were tagged feat:metric, which was not a matrix feature.
+    "Join continuity (C¹ / C²)": {
+        "Arc":   ("qed",      "Qed: ArcOffset.v:262 arc_offset_tangent_parallel, :285 arc_offset_no_kink, :297 arc_offset_tangent_reverses_past_singularity. Decision procedures CurveJoinClassify.v:335 g1_decision_correct, :349 uturn_decision_correct. Round-join filler arc CurveRoundJoin.v:192 round_join_arc_valid, :311 round_join_connects — both sit after End JoinFacts, so they carry no section hypotheses"),
+        "CS":    ("qed",      "The strongest CS cell in the matrix. Arc-to-arc C¹ join: CompoundCurveKocJoin.v:224 koc25_compound_join_C1 (Qed) — the junction lies on BOTH circles at radii R1 and R2, and both radii are perpendicular to the shared tangent; :251 koc25_compound_centers_collinear gives the classical S1-C-S2 collinearity; :200 koc25_mirror_negates_slope covers the reverse curve (R2 < 0). Plus a genuine NEGATIVE result: CurveRingOffset.v:213 tangent_continuity_insufficient_for_offset (Qed) exhibits an S-curve — unit radii, shared endpoint, anti-parallel normals — whose offsets TEAR, (2,0) against (0,0). Tangent-line continuity is provably NOT sufficient for offset continuity across an arc-arc join. No oracle mode exercises joins at all"),
+        "CC":    ("qed",      "The real content of this column. C¹ across all four joints of the five-member EN 13803-1 chain TC1-CA1-TC2-CA2-TC3 — clothoid transitions plus circular arcs, so genuinely mixed members: CompoundCurveAssembly.v:134 koc_compound_assembly_C1 (Qed), built from :96 koc_joint_transition_to_arc and :112 koc_joint_arc_to_transition, with slope provenance at :174 and the whole result reproven after the stakeout transform to the national grid at :270 koc_assembly_C1_in_grid. C² / curvature continuity is the companion: CompoundCurveCurvature.v:322 koc_compound_assembly_C0 (Qed) — no jump in lateral acceleration at any of the four joints — with :163 koc_tc2_linear_ramp and :344 koc_assembly_C0_to_straight. Generic segment-pair version CurveRingOffset.v:311 segment_join_offset_continuous. Oracle: nothing"),
+        "CP":    ("none",     "Nothing found. Join continuity is a member-boundary property; no CurvePolygon ring-join theorem exists"),
+        "Multi": ("none",     "Nothing found"),
+    },
+    "LEC / MIC": {
+        "Arc":   ("qed",      "Qed: LECArcRow.v:257 arc_dist_exact — unconditional lower bound AND attainment, no case hypotheses survive — with :330 empty_disk_arc_iff and the span gate :169 arc_span_contains_iff_sign, which replaces atan2 with a single multiplication; refutation :477 query_side_sector_hypothesis_refuted. MIC side MICChordNecessity.v:126 mic_cell_bound_exact_arc, :226 chord_of_arc_understates_at_centre. Oracle OBSTACLE_DISTANCE singleton-ARC vectors with bit-parity asserted against the ARC_DISTANCE kernel; LEC_CIRCLE"),
+        "CS":    ("qed",      "LECObstacleDistance.v:284 empty_disk_ring_iff — its own header calls this the full-circle CircularString ring — with :272 empty_disk_disc_iff and :574 obstacle_distance_headline (Qed). CAVEAT: LEC_CIRCLE accepts a 5-point CIRCULARSTRING form, but driver.ml:1798 runs circumcentre on the FIRST THREE POINTS ONLY and collapses the result to one (centre, radius), so it is a single-circle primitive, not a multi-arc run"),
+        "CC":    ("qed",      "Qed for a MIXED member list — and the one place a 'delegation/sum over members' claim is actually earned by a proof: LECFlattenRow.v:175 typed_obstacle mixes TArc and TRing (curved) with TSeg (linear) in one list, :215 typed_row_exact certifies every row against its closed form, and :252 obstacle_list_flatten_exact plus :270 empty_disk_flatten_iff fold them. The file's header states it closes the ledger's 'CompoundCurve / n-ary flatten' rung. CAVEAT: the fold is over an UNORDERED union (:60 runion_list) — adjacency between members is never stated or used, so this is collection semantics, not a head-to-tail run. Also proven: no unit exists for the empty list (:289, :299), matching the oracle's k=0 DEGENERATE gate"),
+        "CP":    ("qed",      "Qed: MaximumInscribedCircle.v and LargestEmptyCircle.v (unit square, side midpoints), CellRadiusBound.v cell-pruning bound, LECChordGap.v:297 lec_chord_hypothesis_refuted with :315 lec_circle_closed_form, and candidate completeness at three strengths — LECCandidateVertex.v (witness-scoped), LECCandidateComplete.v (general), LECCandidateWeighted.v (weighted / Apollonius)"),
+        "Multi": ("qed",      "The min-fold over an unordered union IS collection semantics, so LECFlattenRow.v:252 is the honest home of member-recursion claims — permutation and duplication invariants included (oracle obstacle_distance_tests.txt:70, :72). This is where the retired CurveCollection column's 'delegation/sum' prose actually belongs"),
     },
 }
 COVERAGE_ICON  = {"full": "✅", "partial": "⚠️", "none": "❌"}

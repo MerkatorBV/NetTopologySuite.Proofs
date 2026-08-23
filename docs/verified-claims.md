@@ -395,7 +395,7 @@ vacuous. See [`docs/jct-vacuity-finding.md`](jct-vacuity-finding.md) and
 
 **#66 OV progress link (2026-06 dedup):** The pts-hoist + contact dedup (top-level `arc_seg_pts` etc. after `point_on_arc_sector`; `run_overlay_unified` now thin delegates `<> []` using `pair_pts`) provides clean single-source contact math for the unified OVERLAY_UNIFIED oracle path. This directly supports #66's OV item (arc-preserving overlay output) and related N-SS/PRC-SN without duplicating projection logic. No new Admitteds; supports conditional headline in `OverlayCorrectness.v` / `extract_rings_valid`. See also driver source, allowlist, and TRIAGE #66 per-ask.
 
-## Phase 4 — Native curves (linearization, chord-approx arcs) <!-- feat:metric,arc-len,area,relate,overlay geom:arc,cs -->
+## Phase 4 — Native curves (linearization, chord-approx arcs) <!-- feat:metric,arc-len,area,relate,overlay,join,buffer geom:arc,cs,cc -->
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -755,7 +755,7 @@ Minimal `ClothoidChord` carrier; witnesses reuse S2 line-line matrices.
 | `RelateClothoid.v : cl_matrix_point_ii_crosses` / `_intersects` / `cl_matrix_disjoint_witness` | **Witness:** the reused S2 matrices satisfy `Crosses`/`Intersects`/`Disjoint` `[exact]` | 0 |
 | `RelateClothoid.v : clothoid_L_unique_on_branch` | Conditional Halley/L uniqueness on monotone clothoid branch `[exact]` | 0 |
 
-## Koc compound curves — satellite-survey railway alignment (`CompoundCurveKoc.v`) <!-- feat:curves geom:cs -->
+## Koc compound curves — satellite-survey railway alignment (`CompoundCurveKoc.v`) <!-- feat:curves,join geom:arc,cs,cc -->
 
 The analytic core of Koc (2015), *Archives of Transport* 34(2): compound-curve
 (EN 13803-1) railway re-alignment from mobile GNSS surveys, when the design
@@ -1144,7 +1144,7 @@ topic: construct · claimId: none (hypothesis lane, board card pending) · witne
 | `LECChordGap.v : chorded_max` (+ `chorded_empty`, `lec_chorded_answer`) | The chainsaw's exact answer: every chord point is ≥ √2 from the origin (per-chord identity dist² = 2 + 2(2t−1)²), and in each quadrant the chord midpoint (±1,±1) caps every candidate at √2 via x² ≤ 2x on the quadrant-disk `[exact]` | 3 |
 | `LECChordGap.v : exact_disk_not_chord_empty` (+ `chord_midpoint_witness`, `sqrt2_lt_2`) | Mismatch probe: the chord path cannot even certify the true disk — (centre, 2) is not empty of the chorded obstacle, its own midpoint (1,1) sits at distance √2 < 2 inside it `[exact]` | 3 |
 
-## LEC typed obstacle distance — the laser's metric, proven exact (`LECObstacleDistance.v`) <!-- feat:metric geom:cp -->
+## LEC typed obstacle distance — the laser's metric, proven exact (`LECObstacleDistance.v`) <!-- feat:metric geom:cp,cs -->
 
 The typed per-component obstacle metric that replaces the refuted chord path (`LECChordGap.v`): the engine's `ObstacleDistance` rows for the two curved obstacle types are the EXACT set distances, emptiness against an infinite obstacle point set collapses to one closed-form comparison, collections flatten by min, and clamping commutes with min — the Apollonius reduction that makes LEC over discs the additively-weighted LEC over their centres (the O(n log n) candidate-enumeration target). Witness cell fully rational (3-4-5): discs of radius 3 at (±4, 0) over [−4,4]×[−3,3]; the LEC is ((0,3), 2) and the maximisers are exactly (0,±3). Two candidate-enumeration hypotheses REFUTED on the cell; the prose ledger of failed paths is [`lec-optimal-path.md`](lec-optimal-path.md). Oracle mode `OBSTACLE_DISTANCE` gates the pins bit-exact (`oracle/gen_obstacle_distance_tests.py`).
 topic: construct · claimId: none (hypothesis lane, board card pending) · witness: two-disc-345 — discs r=3 at (±4,0) over the rectangle; clearance 2 at (0,±3), 1 at the rect centre, 0 at all four corners.
@@ -1172,7 +1172,7 @@ topic: construct · claimId: none (hypothesis lane, board card pending) · witne
 | `LECArcRow.v : empty_disk_arc_iff` | The LEC-table ARC row: a candidate disk is empty of the arc obstacle ⟺ its radius is at most `arc_dist` — one comparison against an infinite point set, the same iff shape as the disc/ring/union rows of `LECObstacleDistance.v` `[exact]` | 3 |
 | `LECArcRow.v : query_side_sector_hypothesis_refuted` (+ `warc_arc_dist`, `warc_no_point_within_15`) | **Failed path H-QUERYGATE (ledger F4):** "the chord-sign gate may test the query point instead of its radial foot" — refuted: at (16,12) the naive gate passes and prices the window at 15, yet no arc point is within 15 + 1/5; the correct row is the endpoint fallback sqrt 233. Angular gates are ray-invariant; sign gates are circle-bound — project first `[exact]` | 3 |
 
-## LEC flatten row — the collection min-fold priced exact, n-ary (`LECFlattenRow.v`) <!-- feat:metric geom:cp -->
+## LEC flatten row — the collection min-fold priced exact, n-ary (`LECFlattenRow.v`) <!-- feat:metric geom:cc,multi -->
 
 The engine's `ObstacleDistance` prices a collection by folding min over its members (`getNumMembers`/`getMemberN`); #467 proved the binary union. This module gives the fold its corpus twin: a generic `exact_clearance` interface (lower bound on every member point + attained) that every typed row satisfies (`typed_row_exact`: point euclid, disc max(0, d − r), ring abs(d − r), arc `arc_dist`), closure under union with value Rmin, and the fold over a NONEMPTY member list — so emptiness against a typed collection is ONE comparison against the min-fold (`empty_disk_flatten_iff`), the whole per-component table plus flatten as a single Qed statement. Failed path F5 recorded: seeding the empty fold with unit 0 is refuted, and no finite unit exists — Rmin has no unit in R, so k = 0 is a verdict, not a value (the oracle's DEGENERATE gate, now theorem-backed). Ledger: [`lec-optimal-path.md`](lec-optimal-path.md). Oracle `OBSTACLE_DISTANCE` gained the matching ARC member row: singleton bit-parity with `ARC_DISTANCE`, mixed 4-row min-folds pinned bit-exact (`oracle/gen_obstacle_distance_tests.py` §G).
 topic: construct · claimId: none (hypothesis lane, board card pending) · witness: empty-fold-rho — rho = max(0, v) + 1 defeats any finite unit v; typed pins reuse two-disc-345 and arc-345-sector through the oracle's mixed families.
