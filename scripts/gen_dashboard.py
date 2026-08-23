@@ -26,7 +26,7 @@
 # AI assistance disclosure: AI-drafted, human-reviewed.  Assisted-by: Claude
 # =============================================================================
 
-import os, re, sys, html, subprocess
+import os, re, sys, html, json, subprocess
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -225,7 +225,8 @@ def count_entries(path):
 # Levels: "full"=Qed theorems, "partial"=some/conditional coverage, "none"=no coverage
 # Short tag keys used in verified-claims.md section comments.
 # COVERAGE_FEAT_TAGS / COVERAGE_GEOM_TAGS define the canonical order.
-COVERAGE_FEAT_TAGS = ["distance", "arc-len", "area", "relate", "overlay", "buffer"]
+COVERAGE_FEAT_TAGS = ["distance", "arc-len", "area", "relate", "overlay", "buffer",
+                      "join", "metric"]
 COVERAGE_GEOM_TAGS = ["arc", "cs", "cc", "cp", "multi"]
 
 COVERAGE_FEAT_LABEL = {
@@ -235,6 +236,8 @@ COVERAGE_FEAT_LABEL = {
     "relate":   "Relate (DE-9IM)",
     "overlay":  "Intersection / Overlay",
     "buffer":   "Buffer",
+    "join":     "Join continuity (C¹ / C²)",
+    "metric":   "LEC / MIC",
 }
 COVERAGE_GEOM_LABEL = {
     "arc": "Arc", "cs": "CS", "cc": "CC", "cp": "CP", "multi": "Multi",
@@ -242,56 +245,89 @@ COVERAGE_GEOM_LABEL = {
 # Keep display names for backward compat (COVERAGE_MATRIX tooltip lookup)
 COVERAGE_FEATURES  = [COVERAGE_FEAT_LABEL[t] for t in COVERAGE_FEAT_TAGS]
 COVERAGE_GEOMTYPES = [COVERAGE_GEOM_LABEL[t] for t in COVERAGE_GEOM_TAGS]
+# Abbreviations are shared with the grootstebozewolf/jts fork; the initials always
+# match the type (CS starts "Circular", CC starts "Compound").  See CONTEXT.md
+# "Curve types".  A previous revision had CS=CompoundCurve and CC=CurveCollection —
+# the latter is a type no engine has (zero classes in JTS, GEOS and NTS), and it
+# was squatting on the abbreviation CompoundCurve needs.  Substrate note: in
+# theories/CurveGeometry.v a `CurveRing` (list of CSChord|CSArc) *is* a
+# CompoundCurve; an all-CSArc ring is a CircularString.  There is no separate
+# Rocq type for either, and none at all for a "CurveCollection".
 COVERAGE_GEOMTYPE_LONG = {
-    "Arc": "CircularArc",
-    "CS": "CompoundCurve",
-    "CC": "CurveCollection",
+    "Arc": "CircularArc (primitive — not a geometry type)",
+    "CS": "CircularString",
+    "CC": "CompoundCurve",
     "CP": "CurvePolygon",
-    "Multi": "MultiSurface / MultiCurve",
+    "Multi": "MultiCurve / MultiSurface",
 }
-# Source-of-record for each cell (file:lemma or prose note for deferred items)
+# Source-of-record note for each cell.  Only element [1] is read (the icon comes
+# from live theorem/oracle counts via _coverage_level), so element [0] is kept
+# purely as the audited verdict for a human reading this file.
+#
+# Notes rewritten 2026-08-22 from a corpus audit, after the CS/CC relabel.  Slice
+# numbers were dropped throughout: they contradict each other across plan.md and
+# the oracle files (Area is "Slice 6" in one and "Slice 7" in the other; arc-len
+# is "Slice 9" vs "Slice 11"), so cells cite mode tag + file:line instead.
 COVERAGE_MATRIX = {
     "Distance": {
-        "Arc":   ("full",    "ArcPointDistance.v + ArcChordLength.v (Qed); radial/sweep core + fallback stub"),
-        "CS":    ("partial", "Arc support for members (via Phase 4 arc,cs tag); unified GetSegments + DISTANCE_UNIFIED in oracle/RED (Slice 5); no Qed Coq unified dispatcher for CompoundCurve yet"),
-        "CC":    ("partial", "oracle DISTANCE_UNIFIED tags (Rung 3) + planned delegation via GetSegments; 0 Qed proofs for CurveCollection distance"),
-        "CP":    ("partial", "oracle DISTANCE_UNIFIED + TestCurvePolygon_Distance_MultiCurve (Rung 3); planned; core arc proven but composite dispatch not Qed"),
-        "Multi": ("partial", "oracle DISTANCE_UNIFIED + red tests (Slice 5 + Rung 3); recursion planned; mixed linear/curve; no full Qed composite support"),
+        "Arc":   ("qed",      "Qed: ArcPointDistance.v:88 point_to_arc_dist_radial_lower, :114 point_to_arc_attains_radial; closed form LECArcRow.v:257 arc_dist_exact; pairwise ArcArcDistance.v:140 arc_arc_dist_external + ArcSegmentDistance.v:141"),
+        "CS":    ("none",     "No Rocq theorem for a multi-arc run. LECFlattenRow.v:252 obstacle_list_flatten_exact (Qed) is a min-fold over an UNORDERED member union (runion_list:60) — collection semantics, not a head-to-tail run, and point-to-region clearance rather than geometry-to-geometry distance. Oracle DISTANCE_UNIFIED has no head-to-tail multi-arc vector: red_distance_unified_tests.py:115 is two DISCONNECTED arcs"),
+        "CC":    ("oracle",   "Oracle vectors only: DISTANCE_UNIFIED red_distance_unified_tests.py:65 (chord then arc, head-to-tail), :137 (chord, chord, arc). No Rocq distance theorem over a CurveRing"),
+        "CP":    ("oracle",   "Oracle DISTANCE_UNIFIED + TestCurvePolygon_Distance_MultiCurve; core arc distance proven but composite dispatch not Qed"),
+        "Multi": ("oracle",   "Member recursion / min-fold — where the retired CurveCollection cell's content belongs: docs/arc-offset-red-test-example.cs:190 recurses exactly like the Multi* branches. Oracle DISTANCE_UNIFIED; no Qed composite"),
     },
     "Arc / chord length": {
-        "Arc":   ("full",    "ArcChordLength.v:arc_chord_le_arc_length + RelateArcAnalytic.v (Qed); OM_perp_chord discharges bridge in ArcOverlay.v (Rung 1)"),
-        "CS":    ("full",    "scalar arc-length proven; concatenation + OM_perp_chord (Rung 1)"),
-        "CC":    ("full",    "unified GetSegments + dispatcher + LENGTH_UNIFIED/ARC_LEN_UNIFIED (Slice 9 + Rung 3 oracle tags): delegation/sum for CurveCollection"),
-        "CP":    ("full",    "unified GetSegments + dispatcher + LENGTH_UNIFIED/ARC_LEN_UNIFIED (Slice 9 + Rung 3): perimeter via rings for CurvePolygon"),
-        "Multi": ("full",    "unified GetSegments + dispatcher + LENGTH_UNIFIED/ARC_LEN_UNIFIED (Slice 9 + Rung 3): recursion + segment length sum; red_length_unified_tests.py"),
+        "Arc":   ("qed",      "Qed: ArcLength.v:51 chord_le_arc_length, :60 chord_subtended_sq; ArcChordLength.v:125 arc_chord_le_arc_length, :82 arc_chord_dist_sq_via_sweep; subdivision budget ArcChordSubdivision.v:200 equal_angle_chords_achieve_eps"),
+        "CS":    ("none",     "NO CONCATENATION EXISTS — neither a Rocq summation lemma over consecutive arc lengths nor an oracle vector containing two arcs (red_length_unified_tests.py holds two 'A' lines in total and never two in one vector). The corpus's only additive-over-concatenation lemma is RingOrientation.v signed_area2_app, which is linear-only and arc-blind. A previous revision of this cell claimed 'concatenation proven'; it was unearned"),
+        "CC":    ("oracle",   "Oracle vectors only: LENGTH_UNIFIED red_length_unified_tests.py:83, whose own comment reads 'Mixed chord + arc (simulates CompoundCurve / CC segments)' — chord (0,0)-(1,0) then arc (1,0) to (0,1), head-to-tail. No Rocq theorem"),
+        "CP":    ("oracle",   "Oracle LENGTH_UNIFIED / ARC_LEN_UNIFIED: perimeter via rings. No Rocq perimeter aggregate exists over any curve structure"),
+        "Multi": ("oracle",   "Oracle LENGTH_UNIFIED / ARC_LEN_UNIFIED: recursion + segment length sum; red_length_unified_tests.py"),
     },
     "Area / perimeter": {
-        "Arc":   ("full",    "signed-area lemmas + ARC_AREA; unified AREA_UNIFIED (Slice 6)"),
-        "CS":    ("full",    "perimeter via arc-chord + area via segments; unified GetSegments + AREA_UNIFIED (Slice 6)"),
-        "CC":    ("full",    "unified GetSegments + dispatcher + AREA_UNIFIED (Slice 6 + Rung 3): delegation for CurveCollection"),
-        "CP":    ("full",    "triangle polygon area + unified (Slice 6): CurvePolygon perimeter + area via rings/segments"),
-        "Multi": ("full",    "unified GetSegments + dispatcher (Slice 6): recursion + area via segments (shoelace + arc sectors); red_area_unified_tests.py"),
+        "Arc":   ("qed",      "Qed: ArcArea.v:40 segment_area_sector_minus_triangle, :46 segment_area_nonneg, :59/:64 half- and full-disc; centroid ArcAreaCentroid.v:54-102; CurveBufferArea.v:72 buffer_arc_area_grows"),
+        "CS":    ("none",     "No area or perimeter fold over a CurveRing exists anywhere in the corpus. AREA_UNIFIED does sum a per-segment sector contribution (driver.ml:3037) but no vector has two arcs — red_area_unified_tests.py:47 is one arc plus its closing chord"),
+        "CC":    ("oracle",   "Oracle vectors only: AREA_UNIFIED red_area_unified_tests.py:47 (arc + chord closed ring), :56 ('CC-like multi seg (compound)'), :62 (chord, arc, chord, chord). No Rocq theorem"),
+        "CP":    ("oracle",   "Triangle polygon area + AREA_UNIFIED. Note CurvePolygonOrientation.v:85 takes signed areas as OPAQUE reals supplied by the oracle, so it states no area fact of its own"),
+        "Multi": ("oracle",   "Oracle AREA_UNIFIED: recursion, shoelace + arc sectors; red_area_unified_tests.py"),
     },
     "Relate (DE-9IM)": {
-        "Arc":   ("full",    "RelateArcAnalytic.v stubs + RelateNG + unified CURVE_RELATE_MATRIX (Slice 8)"),
-        "CS":    ("full",    "RelateNG integer substrate (#67); unified GetSegments + dispatcher (Slice 8)"),
-        "CC":    ("full",    "DE-9IM integer substrate (#67); unified (Slice 8)"),
-        "CP":    ("full",    "triangle touch + regime guard; unified CURVE_RELATE_MATRIX (Slice 8)"),
-        "Multi": ("full",    "substrate proven; unified GetSegments + dispatcher (Slice 8); red_relate_unified_tests.py"),
+        "Arc":   ("qed",      "Qed for a partial cell set: RelateArcAnalytic.v:368 arc_analytic_proper_cross_share plus the sweep-range chain :161-:339; single-arc lens RelateCurveArcSegment.v:149 point_in_ring_arc_seg_iff; disk witnesses RelateCurveMatrix.v:404/:419/:434/:449. Oracle CURVE_RELATE_MATRIX vectors are all single-segment"),
+        "CS":    ("qed-adj",  "Real multi-arc Rocq content, but the predicate is SIMPLICITY, not DE-9IM: RingContactSound.v:275 ring_not_simple_of_arc_arc_circle_cross, :301 _witness, :322 _shared_endpoint (all Qed) quantify over a CurveRing indexed at i,j; consecutive-arc case ArcArcSound.v:78. DE-9IM proper: nothing — every bridge in RelateCurveBoundaryMeet.v is chord-chord, and RingContactSound.v:47 states the arc boundary cells remain on the deferred frontier. No multi-arc CURVE_RELATE_MATRIX vector"),
+        "CC":    ("qed-adj",  "Simplicity Qed for mixed arc/chord pairs: RingContactSound.v:232 ring_not_simple_of_arc_chord, :415 holes_not_disjoint_of_arc_chord. DE-9IM predicates do reduce over mixed rings — RelateCurveInscribedGeometry.v:145-:232 (Qed) — but via LINEARISED point sets (to_geometry vs inscribed_geometry), so they are arc-blind by construction, not arc-exact DE-9IM"),
+        "CP":    ("qed",      "Triangle touch + regime guard; CURVE_RELATE_MATRIX"),
+        "Multi": ("oracle",   "DE-9IM integer substrate (#67). red_relate_unified_tests.py:44 is the only multi-segment relate vector and it is ALL CHORDS — no arc member"),
     },
     "Intersection / Overlay": {
-        "Arc":   ("full",    "H_bridge... + unified OVERLAY_UNIFIED (Slice 7)"),
-        "CS":    ("full",    "OverlayBridge + unified GetSegments + OVERLAY_UNIFIED (Slice 7)"),
-        "CC":    ("full",    "unified GetSegments + dispatcher (Slice 7): delegation for CompoundCurve"),
-        "CP":    ("full",    "unified GetSegments + dispatcher (Slice 7): delegation for CurvePolygon"),
-        "Multi": ("full",    "unified GetSegments + dispatcher (Slice 7): recursion for Multi* + arc-aware overlay; red_overlay_unified_tests.py"),
+        "Arc":   ("qed-cond", "CONDITIONAL: ArcOverlay.v:160 arc_overlay_correct_chord_approx is Qed but assumes H_A_bridge / H_B_bridge (:166-172), which the corpus does not discharge; :237 says the unconditional headline is deferred. Contact kernels in OverlayContactSound.v are unconditional. Oracle OVERLAY_UNIFIED single-arc vectors red_overlay_unified_tests.py:39, :114"),
+        "CS":    ("qed-cond", "Generic only: arc_overlay_correct_chord_approx quantifies over CurveGeometry so it formally applies to an all-arc ring, but its conclusion is an existential over arcs_of A ++ arcs_of B with NO ordering, adjacency or concatenation content — and the hypotheses are open. No CircularString-specific overlay lemma; no 2+-arc OVERLAY_UNIFIED vector"),
+        "CC":    ("oracle",   "Oracle vectors only: OVERLAY_UNIFIED red_overlay_unified_tests.py:52 (chord then arc, head-to-tail, vs a chord), :66 (chord,chord vs chord,arc). Plus the generic conditional above. No CompoundCurve-specific overlay theorem"),
+        "CP":    ("oracle",   "Oracle OVERLAY_UNIFIED: delegation for CurvePolygon"),
+        "Multi": ("oracle",   "Oracle OVERLAY_UNIFIED: recursion for Multi* + arc-aware overlay; red_overlay_unified_tests.py"),
     },
     "Buffer": {
-        "Arc":   ("full", "oracle/arc_buffer_simple_tests.txt (ARC_BUFFER_SIMPLE) + oracle/red_buffer_unified_tests.py (BUFFER_UNIFIED + Slice 4 SegmentGraph/RingBuilder); analytical offset via ARC_OFFSET_XY"),
-        "CS":    ("full", "oracle/arc_buffer_simple_tests.txt + oracle/red_buffer_unified_tests.py pilot + Slice 4; open-path round caps; arc preservation"),
-        "CC":    ("full", "oracle/red_buffer_unified_tests.py pilot via unified GetSegments + Slice 4 graph skeleton"),
-        "CP":    ("full", "oracle/buffer_region_tests.txt + red_buffer_unified_tests.py; unified + Slice 4 SegmentGraph + RingBuilder (nodes/inters, area filter); hole survival via ncomps"),
-        "Multi": ("full", "unified delegation (Slice 3) + Slice 4 SegmentGraph skeleton; ncomps in BUFFER_UNIFIED; red tests for no spurious rings + erosion count"),
+        "Arc":   ("qed",      "Qed: ArcOffset.v:175 arc_offset_dist_exact, :154 _dist_lower, :197 inner_offset_past_center_not_at_distance, :262 arc_offset_tangent_parallel, :285 arc_offset_no_kink, :308 arc_offset_length. Oracle ARC_BUFFER_SIMPLE — note its header declares single-arc only, so the 'cs' half of its geom:arc,cs tag is unearned by its vectors"),
+        "CS":    ("qed",      "THE ONE ROW with real multi-member Rocq content: CurveRingOffset.v:434 curve_ring_offset_valid (Qed) — a whole CurveRing offset by d stays a valid curve ring; supporting :386 _adjacent, :405 _closed. Join variants CurveOffsetAssembly.v:369 (round), CurveMiterJoin.v:329, CurveBevelJoin.v:236, CurveCapWalk.v:269 curve_chain_buffer_valid. SCOPE: structural validity — arcs valid, adjacency, closedness — NOT buffer area or point-set correctness. No 2+-arc BUFFER_UNIFIED vector"),
+        "CC":    ("qed",      "Qed, and literally the mixed case: curve_ring_offset maps over CSChord and CSArc alike (CurveRingOffset.v:80-87), with the mixed-member join at :311 segment_join_offset_continuous; CurveBevelJoin.v:300 isolates the all-chord sub-case. Oracle BUFFER_UNIFIED head-to-tail compound vectors red_buffer_unified_tests.py:207 (closed chord/arc/chord/chord thin-neck erosion), :185 (multi-component with an arc member)"),
+        "CP":    ("oracle",   "oracle/buffer_region_tests.txt + red_buffer_unified_tests.py; SegmentGraph + RingBuilder (nodes/inters, area filter); hole survival via ncomps"),
+        "Multi": ("oracle",   "BUFFER_UNIFIED is the only unified mode with a real multi-component envelope (driver.ml:3237 ncomps) — the others parse a flat segment list. Red tests for no spurious rings + erosion count"),
+    },
+    # Added 2026-08-23.  These two rows hold the corpus's deepest curve work and
+    # were invisible because no feature tag reached them: the join/offset claims
+    # live inside "Phase 4 — Native curves" and the Koc section, and the LEC/MIC
+    # claims were tagged feat:metric, which was not a matrix feature.
+    "Join continuity (C¹ / C²)": {
+        "Arc":   ("qed",      "Qed: ArcOffset.v:262 arc_offset_tangent_parallel, :285 arc_offset_no_kink, :297 arc_offset_tangent_reverses_past_singularity. Decision procedures CurveJoinClassify.v:335 g1_decision_correct, :349 uturn_decision_correct. Round-join filler arc CurveRoundJoin.v:192 round_join_arc_valid, :311 round_join_connects — both sit after End JoinFacts, so they carry no section hypotheses"),
+        "CS":    ("qed",      "The strongest CS cell in the matrix. Arc-to-arc C¹ join: CompoundCurveKocJoin.v:224 koc25_compound_join_C1 (Qed) — the junction lies on BOTH circles at radii R1 and R2, and both radii are perpendicular to the shared tangent; :251 koc25_compound_centers_collinear gives the classical S1-C-S2 collinearity; :200 koc25_mirror_negates_slope covers the reverse curve (R2 < 0). Plus a genuine NEGATIVE result: CurveRingOffset.v:213 tangent_continuity_insufficient_for_offset (Qed) exhibits an S-curve — unit radii, shared endpoint, anti-parallel normals — whose offsets TEAR, (2,0) against (0,0). Tangent-line continuity is provably NOT sufficient for offset continuity across an arc-arc join. No oracle mode exercises joins at all"),
+        "CC":    ("qed",      "The real content of this column. C¹ across all four joints of the five-member EN 13803-1 chain TC1-CA1-TC2-CA2-TC3 — clothoid transitions plus circular arcs, so genuinely mixed members: CompoundCurveAssembly.v:134 koc_compound_assembly_C1 (Qed), built from :96 koc_joint_transition_to_arc and :112 koc_joint_arc_to_transition, with slope provenance at :174 and the whole result reproven after the stakeout transform to the national grid at :270 koc_assembly_C1_in_grid. C² / curvature continuity is the companion: CompoundCurveCurvature.v:322 koc_compound_assembly_C0 (Qed) — no jump in lateral acceleration at any of the four joints — with :163 koc_tc2_linear_ramp and :344 koc_assembly_C0_to_straight. Generic segment-pair version CurveRingOffset.v:311 segment_join_offset_continuous. Oracle: nothing"),
+        "CP":    ("none",     "Nothing found. Join continuity is a member-boundary property; no CurvePolygon ring-join theorem exists"),
+        "Multi": ("none",     "Nothing found"),
+    },
+    "LEC / MIC": {
+        "Arc":   ("qed",      "Qed: LECArcRow.v:257 arc_dist_exact — unconditional lower bound AND attainment, no case hypotheses survive — with :330 empty_disk_arc_iff and the span gate :169 arc_span_contains_iff_sign, which replaces atan2 with a single multiplication; refutation :477 query_side_sector_hypothesis_refuted. MIC side MICChordNecessity.v:126 mic_cell_bound_exact_arc, :226 chord_of_arc_understates_at_centre. Oracle OBSTACLE_DISTANCE singleton-ARC vectors with bit-parity asserted against the ARC_DISTANCE kernel; LEC_CIRCLE"),
+        "CS":    ("qed",      "LECObstacleDistance.v:284 empty_disk_ring_iff — its own header calls this the full-circle CircularString ring — with :272 empty_disk_disc_iff and :574 obstacle_distance_headline (Qed). CAVEAT: LEC_CIRCLE accepts a 5-point CIRCULARSTRING form, but driver.ml:1798 runs circumcentre on the FIRST THREE POINTS ONLY and collapses the result to one (centre, radius), so it is a single-circle primitive, not a multi-arc run"),
+        "CC":    ("qed",      "Qed for a MIXED member list — and the one place a 'delegation/sum over members' claim is actually earned by a proof: LECFlattenRow.v:175 typed_obstacle mixes TArc and TRing (curved) with TSeg (linear) in one list, :215 typed_row_exact certifies every row against its closed form, and :252 obstacle_list_flatten_exact plus :270 empty_disk_flatten_iff fold them. The file's header states it closes the ledger's 'CompoundCurve / n-ary flatten' rung. CAVEAT: the fold is over an UNORDERED union (:60 runion_list) — adjacency between members is never stated or used, so this is collection semantics, not a head-to-tail run. Also proven: no unit exists for the empty list (:289, :299), matching the oracle's k=0 DEGENERATE gate"),
+        "CP":    ("qed",      "Qed: MaximumInscribedCircle.v and LargestEmptyCircle.v (unit square, side midpoints), CellRadiusBound.v cell-pruning bound, LECChordGap.v:297 lec_chord_hypothesis_refuted with :315 lec_circle_closed_form, and candidate completeness at three strengths — LECCandidateVertex.v (witness-scoped), LECCandidateComplete.v (general), LECCandidateWeighted.v (weighted / Apollonius)"),
+        "Multi": ("qed",      "The min-fold over an unordered union IS collection semantics, so LECFlattenRow.v:252 is the honest home of member-recursion claims — permutation and duplication invariants included (oracle obstacle_distance_tests.txt:70, :72). This is where the retired CurveCollection column's 'delegation/sum' prose actually belongs"),
     },
 }
 COVERAGE_ICON  = {"full": "✅", "partial": "⚠️", "none": "❌"}
@@ -369,6 +405,117 @@ def bar(segments, width=320):
     return (f'<span style="display:inline-flex;width:{width}px;border-radius:7px;'
             f'overflow:hidden;background:#e5e7eb;vertical-align:middle">'
             + "".join(parts) + "</span>")
+
+
+def parse_laser_ratchet():
+    """Vendored engine-side perf data; see docs/laser-ratchet.json."""
+    path = os.path.join(ROOT, "docs", "laser-ratchet.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+def _ratio_badge(ratio, slack):
+    """Green when the ratchet holds, red when it does not."""
+    if ratio is None:
+        return '<span class="muted">—</span>'
+    ok = ratio <= slack
+    bg, fg = ("#dcfce7", "#166534") if ok else ("#fee2e2", "#991b1b")
+    mark = "✅" if ok else "❌"
+    return (f'<span style="background:{bg};color:{fg};border-radius:5px;'
+            f'padding:1px 6px;white-space:nowrap">{mark}&nbsp;{ratio:.3f}×</span>')
+
+
+def laser_ratchet_html(lr):
+    if not lr:
+        return ('<p class="muted">No <code>docs/laser-ratchet.json</code> — '
+                'perf section skipped.</p>')
+    slack = lr["contract"]["slack"]
+    prov  = lr["provenance"]
+
+    # ---- curve-type coverage of the ratchet
+    chips = []
+    for t in lr["types"]:
+        if t["measured"]:
+            bg, fg, mark = "#dcfce7", "#166534", "✅ measured"
+        elif t["implemented"]:
+            bg, fg, mark = "#fef9c3", "#854d0e", "⚠️ unmeasured"
+        else:
+            bg, fg, mark = "#fee2e2", "#991b1b", "❌ not implemented"
+        chips.append(f'<span class="chip" style="border-color:{fg};background:{bg}'
+                     f';color:{fg}" title="{e(t["note"])}"><b>{e(t["name"])}</b>'
+                     f'&nbsp;{mark}</span>')
+    n_meas = sum(1 for t in lr["types"] if t["measured"])
+    types_html = (f'<p class="muted"><b>{n_meas} of {len(lr["types"])}</b> named '
+                  f'laser types exist at all — the ratchet is "measured per curve '
+                  f'type", so it is satisfied for one type out of five.</p>'
+                  f'<div class="chips">' + "".join(chips) + "</div>")
+
+    # ---- primitive (per-curve-type) gates
+    prows = ""
+    for g in lr["primitive_gates"]:
+        laser_ms    = g["laser_ns"] / 1e6
+        chainsaw_ms = g["chainsaw_ns"] / 1e6
+        prows += (f'<tr><td><code>{e(g["id"])}</code></td>'
+                  f'<td>{e(g["op"])}</td>'
+                  f'<td class="num" title="{g["laser_ns"]} ns">{laser_ms:.1f} ms</td>'
+                  f'<td class="num" title="{g["chainsaw_ns"]} ns">{chainsaw_ms:.1f} ms</td>'
+                  f'<td class="num">{_ratio_badge(g["ratio"], slack)}</td>'
+                  f'<td class="muted">{e(g["stat"])} over {g["calls"]:,} calls · '
+                  f'{e(g["conditions"])}</td></tr>')
+
+    # ---- operation-level gates, red baseline vs current
+    orows = ""
+    for h in lr["operation_gates"]:
+        note = f' — {h["note"]}' if h.get("note") else ""
+        orows += (f'<tr style="background:#f8fafc"><td colspan="6">'
+                  f'<b>{e(h["harness"])}</b> <span class="muted">· {e(h["module"])}'
+                  f' · chainsaw leg: {e(h["chainsaw_leg"])}{e(note)}</span></td></tr>')
+        for r in h["rows"]:
+            if r.get("red_ratio") is None:
+                red = '<td class="muted" colspan="2">not transcribed</td>'
+            else:
+                red = (f'<td class="num muted">{r["red_laser"]:.3f} / '
+                       f'{r["red_chainsaw"]:.3f} ms</td>'
+                       f'<td class="num">{_ratio_badge(r["red_ratio"], slack)}</td>')
+            orows += (f'<tr><td>{e(r["case"])}</td>{red}'
+                      f'<td class="num">{r["now_laser"]:.3f} / '
+                      f'{r["now_chainsaw"]:.3f} ms</td>'
+                      f'<td class="num">{_ratio_badge(r["now_ratio"], slack)}</td>'
+                      f'<td></td></tr>')
+
+    ungauged = ", ".join(f'<code>{e(u["harness"])}</code>'
+                         for u in lr["ungauged_gates"])
+    caveats = "".join(f"<li>{e(c)}</li>" for c in prov["caveats"])
+
+    return (
+        f'<p><b>Contract:</b> <code>{e(lr["contract"]["expr"])}</code> · '
+        f'{e(lr["contract"]["scope"])}</p>'
+        f'{types_html}'
+        f'<h3>Per-curve-type ratchet — ExactCircularArc</h3>'
+        f'<table><thead><tr><th>Gate</th><th>Operation</th><th>Laser</th>'
+        f'<th>Chainsaw</th><th>Ratio</th><th>Conditions</th></tr></thead>'
+        f'<tbody>{prows}</tbody></table>'
+        f'<h3>Operation gates — red baseline vs current</h3>'
+        f'<p class="muted">Each pair is laser&nbsp;/&nbsp;chainsaw. <b>Red</b> is '
+        f'the state that opened the gate; <b>current</b> is after the laser landed. '
+        f'The red column is kept deliberately — the interesting number is that '
+        f'overlay started <b>30× slower</b> than densifying, not that it now wins.</p>'
+        f'<table><thead><tr><th>Case</th><th>Red laser / chainsaw</th>'
+        f'<th>Red ratio</th><th>Current laser / chainsaw</th>'
+        f'<th>Current ratio</th><th></th></tr></thead>'
+        f'<tbody>{orows}</tbody></table>'
+        f'<h3>Gates live but unmeasured</h3>'
+        f'<p class="muted">A 1.15× assertion is armed in each of these, but no '
+        f'numbers have been transcribed: {ungauged}.</p>'
+        f'<h3>Provenance</h3>'
+        f'<p class="muted">Imported {e(prov["imported"])} from '
+        f'<code>{e(prov["source_repo"])}</code> PR&nbsp;#{prov["pr"]}, branch '
+        f'<code>{e(prov["branch"])}</code>, tip <code>{e(prov["tip"])}</code>. '
+        f'Method: {e(prov["method"])}.</p>'
+        f'<ul class="muted" style="font-size:12px;line-height:1.6">{caveats}</ul>')
 
 
 def render(data):
@@ -458,6 +605,7 @@ def render(data):
         card_html=card_html, regime_legend=regime_legend(),
         issue_rows=issue_rows, sec_rows=sec_rows, mode_rows=mode_rows,
         audit_rows=audit_rows, coverage_matrix=coverage_matrix_html(coverage_cells),
+        laser_ratchet=laser_ratchet_html(data["laser_ratchet"]),
         claims_total=claims_total, n_modes=len(modes),
         oracle_vectors=oracle_vectors, oracle_tagged=oracle_tagged)
 
@@ -625,11 +773,32 @@ witness: empty-circle</div>
   <section>
     <h2>Feature × geometry-type coverage</h2>
     <p class="muted">Which NTS operations have mechanically-verified proofs for
-      each curve geometry type. Column headers: Arc&nbsp;=&nbsp;CircularArc,
-      CS&nbsp;=&nbsp;CompoundCurve, CC&nbsp;=&nbsp;CurveCollection,
-      CP&nbsp;=&nbsp;CurvePolygon, Multi&nbsp;=&nbsp;Multi*.
-      Hover a cell for the source-of-record lemma or deferral note.</p>
+      each curve geometry type. Column headers:
+      <b>CS</b>&nbsp;=&nbsp;CircularString, <b>CC</b>&nbsp;=&nbsp;CompoundCurve,
+      <b>CP</b>&nbsp;=&nbsp;CurvePolygon,
+      <b>Multi</b>&nbsp;=&nbsp;MultiCurve&nbsp;/&nbsp;MultiSurface — the
+      abbreviations used by the <code>grootstebozewolf/jts</code> fork, so a row
+      reads the same in both trackers. <b>Arc</b>&nbsp;=&nbsp;CircularArc is this
+      corpus's single-arc <em>primitive</em>, not a geometry type: an Arc theorem
+      is not a CS theorem until something concatenates it.
+      Hover a cell for the source-of-record lemma or the reason it is empty.</p>
+    <p class="muted">Read the icons with care: they are driven by theorem and
+      oracle-tag <em>counts</em>, and every <code>red_*_unified_tests.py</code>
+      file carries one blanket <code>geom:arc,cs,cc,cp,multi</code> tag, so a
+      single unified file credits itself to all five columns at once. The hover
+      note is the honest per-column reading.</p>
     {coverage_matrix}
+  </section>
+
+  <section>
+    <h2>Laser ratchet — exact curves vs densified</h2>
+    <p class="muted">The <b>laser</b> is the curve-preserving path; the
+      <b>chainsaw</b> is densify-then-compute. These are engine-side measurements
+      from the JTS fork, vendored into
+      <code>docs/laser-ratchet.json</code> so this page keeps reporting only on
+      data that lives in this repo. They are <em>timings, not proofs</em> — no
+      theorem below depends on them.</p>
+    {laser_ratchet}
   </section>
 
   <section>
@@ -734,6 +903,7 @@ def build():
         "claims": claims_data,
         "issues": parse_issues(),
         "oracle": oracle_modes,
+        "laser_ratchet": parse_laser_ratchet(),
         "registries": {
             "counterexamples": count_entries("docs/admitted-counterexamples.txt"),
             "deferred": count_entries("docs/admitted-deferred-proofs.txt"),
