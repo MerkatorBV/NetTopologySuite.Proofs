@@ -25,9 +25,34 @@ CI rejects unregistered `Admitted`. Full README: [../README.md](../README.md).
 When citing: lead with `[exact]` rows; present `[cond]` rows as "conditional
 headline", never as solved; offer the oracle to reproduce a concrete case.
 
+**Coverage tags.** Every `##` section carries an HTML comment
+`<!-- feat:… geom:… -->`, read by [`scripts/gen_dashboard.py`](../scripts/gen_dashboard.py)
+to build the dashboard's *Feature × geometry-type* matrix. Documented here
+because the vocabulary drifted once with nothing recording it.
+
+`feat:` — the matrix rows are `distance` · `arc-len` · `area` · `relate` ·
+`overlay` · `buffer` · `join` (continuity across a member boundary) · `metric`
+(LEC / MIC). `curves`, `foundations` and `teaching` classify a section without
+adding a row.
+
+`geom:` — the matrix has a column per **curve** type only: `arc` = CircularArc
+(this corpus's single-arc *primitive*, not a geometry type) · `cs` =
+CircularString · `cc` = CompoundCurve · `cp` = CurvePolygon · `multi` =
+MultiCurve / MultiSurface. Linear subjects are tagged `ls` = LineString ·
+`poly` = Polygon · `pt` = Point, and are **deliberately absent from the curve
+matrix**: they classify a section without inflating a curve column. Before
+2026-08-23, `cs` was used loosely for any *CurveSegment* (the `CSChord` /
+`CSArc` constructor prefix of `theories/CurveGeometry.v`), which credited
+line-line and snap-rounding work to a curve column. The canonical mapping lives
+in [`CONTEXT.md`](../CONTEXT.md) under *Curve types* and is shared with the
+`grootstebozewolf/jts` fork, so a row reads the same in both trackers.
+
+Tags are per *section*, so a broadly-scoped section credits every feature it
+names. Prefer a narrow section over a broad tag.
+
 ---
 
-## Phase 0 — Robust orientation (CCW / `Orientation.Index`) <!-- feat:relate geom:arc,cs -->
+## Phase 0 — Robust orientation (CCW / `Orientation.Index`) <!-- feat:relate geom:pt -->
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -73,7 +98,7 @@ form, remain residuals (`OrientHybridPackage.v`; Ozaki is ADR-0004 cold).
 
 topic: binary64 · claimId: none · witness: none (Phase 0 filter-hypothesis package; not a minted micro-RGR / ADR-0004 teaching card).
 
-## Relate / DE-9IM integer-coordinate substrate (#67) <!-- feat:relate geom:arc,cs,cc,cp,multi -->
+## Relate / DE-9IM integer-coordinate substrate (#67) <!-- feat:relate geom:ls,poly -->
 
 Grounds the integer-arithmetic overflow-safety of the Romanschek, Clemen &
 Huhnt (ISPRS IJGI 2021, 10, 715) robust DE-9IM approach (§3.2). Pure `ℤ`,
@@ -128,7 +153,7 @@ window.
 | `RelateEdgeDisjointCert.v : decide_line_no_ib_meet` (+`same_side_cutb`, `same_side_cut_no_share`, `cut_product_is_cross_product`) | **One integer sign test empties all four meet cells.** `same_side_cutb := 0 <? cut_product` is a runnable exact DISJOINTNESS certificate: `true` ⇒ no shared point ⇒ `line_no_ib_meet … ll_matrix_disjoint` (II, IB, BI, BB all empty). The cheapest exact filter for the highest-frequency relate query. **Sufficient, not complete** — it declines on disjoint pairs whose cut-line separates the host endpoints (verified by `Compute`). `[exact]` | 3 |
 | `RelateEdgeDisjointCert.v : same_side_excludes_dual_proper` | **Coherence:** the disjointness certificate and the II-cell classifier are mutually exclusive — `same_side_cutb = true` forces `dual_proper_cutb = false`. Pure `Z` `[int]` | 0 |
 
-## Phase 1 — Robust segment intersection (`RobustLineIntersector`) <!-- feat:overlay,relate geom:cs -->
+## Phase 1 — Robust segment intersection (`RobustLineIntersector`) <!-- feat:overlay,relate geom:ls -->
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -143,7 +168,7 @@ window.
 `[oracle]` `SignFiltered` bit-exact on 187/187 differential cases.
 **Open:** float coordinate computation (needs `b64_div` + error analysis).
 
-## Phase 2 — Snap rounding (Hobby / Halperin–Packer noder) <!-- feat:overlay geom:cs -->
+## Phase 2 — Snap rounding (Hobby / Halperin–Packer noder) <!-- feat:overlay geom:ls -->
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -229,7 +254,7 @@ controls go collinear). Exact `Q` catches the double-rounding the JTS binary64
 centre computation hides on large / sub-grid coordinates. Reuses the
 snap-rounding machinery; pure rational, no transcendental and no new axiom.
 
-## Phase 3 — Planar overlay (OverlayNG) <!-- feat:overlay,area geom:cs,cc,cp -->
+## Phase 3 — Planar overlay (OverlayNG) <!-- feat:overlay,area geom:ls,poly -->
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -538,7 +563,7 @@ bit-exact denominator (B.1) → exact round-chain identity (B.2) → absolute
 output form: `ulp(coord)/2 + ulp(t·d)/2 + |d|·½`), strictly sharper than the
 regime-wide `bpow 13` for every non-worst-case input.
 
-## Issue #67 — DE-9IM matrix algebra (`DE9IM.v`, session 1) <!-- feat:relate geom:arc,cs,cc,cp,multi -->
+## Issue #67 — DE-9IM matrix algebra (`DE9IM.v`, session 1) <!-- feat:relate geom:ls,poly -->
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -553,7 +578,7 @@ arc/clothoid carrier gaps remain follow-up (#67 S14+). (Recent S13 rungs:
 general-triangle Jordan cell-dim soundness in RelateCurveMatrix, direct
 right-triangle `hole_inside_outer`, RelateNG/Prepared pipeline infra.)
 
-## Issue #67 — line-line DE-9IM: witnesses + geometry (`RelateLineLine.v`, session 2) <!-- feat:relate geom:cs -->
+## Issue #67 — line-line DE-9IM: witnesses + geometry (`RelateLineLine.v`, session 2) <!-- feat:relate geom:ls -->
 
 **Honesty note (whole #67 RelateNG arc).** Each slice has two *independent*
 layers and does **not** bridge them: (a) constant `*_witness` lemmas — a
@@ -582,7 +607,7 @@ alongside its dependencies, and marked `4` below).
 The regime→witness assignment is realised by `line_pair_fill` in
 `RelateMatrixLineLine.v` (S8).
 
-## Issue #67 — Romanschek line–line oracle matrices (`RelateLineLine.v`, S3 seed) <!-- feat:relate geom:cs -->
+## Issue #67 — Romanschek line–line oracle matrices (`RelateLineLine.v`, S3 seed) <!-- feat:relate geom:ls -->
 
 Pinned 9-char DE-9IM strings from Romanschek et al. (IJGI 2021) Table 5/6 /
 [topology-relations](https://github.com/dd-bim/topology-relations) agree with NTS 2.3.0 at
@@ -597,7 +622,7 @@ lemmas only — no WKT→matrix computation yet.
 | `RelateLineLine.v : paper_test10_not_disjoint` | Test 10 (`FF10F0102`) is **not** `Disjoint` (BI=0) though segments are separated `[exact]` | 0 |
 | `RelateLineLine.v : paper_test7_agrees_overlap_witness_core` | Test 7 shares II/BB cells with `ll_matrix_overlap_ii` `[exact]` | 0 |
 
-## Issue #67 — area-point: membership + witnesses (`RelateAreaPoint.v`, S4) <!-- feat:relate,area geom:cp -->
+## Issue #67 — area-point: membership + witnesses (`RelateAreaPoint.v`, S4) <!-- feat:relate,area geom:poly,pt -->
 
 Guarded rectangle (open box, no holes). Geometry layer = point membership;
 witness layer = hand-specified Contains/Touches matrices (not derived from
@@ -611,7 +636,7 @@ geometry).
 | `RelateAreaPoint.v : left_boundary_in_polygon_not_strict` | **Geometry:** a left-edge point is in the polygon but outside the strict interior (`px = x0`) `[exact]` | 0 |
 | `RelateAreaPoint.v : ap_matrix_rect_touches_boundary_witness` | **Witness:** the S4b boundary matrix (`pat_touches_3`, EB=0) satisfies `Touches` `[exact]` | 0 |
 
-## Issue #67 — boundary / MOD2 policy (`RelateBoundary.v`, S4b) <!-- feat:relate geom:arc,cs,cc,cp,multi -->
+## Issue #67 — boundary / MOD2 policy (`RelateBoundary.v`, S4b) <!-- feat:relate geom:ls,poly -->
 
 Line-line endpoint classification and JTS#1175 regression class.
 
@@ -622,7 +647,7 @@ Line-line endpoint classification and JTS#1175 regression class.
 | `RelateBoundary.v : ll_matrix_touches_endpoint_witness` | **Witness:** the endpoint-only matrix (`pat_touches_0`, IB=0) satisfies `Touches` `[exact]` | 0 |
 | `RelateBoundary.v : jts1175_boundary_cells_preclude_disjoint` | Romanschek test 10 / JTS#1175 class: `intersects` yet not `disjoint` (BI=0 boundary visibility) `[exact]` | 0 |
 
-## Issue #67 — area-line: witnesses + geometry (`RelateAreaLine.v`, S5) <!-- feat:relate,area geom:cp,cs -->
+## Issue #67 — area-line: witnesses + geometry (`RelateAreaLine.v`, S5) <!-- feat:relate,area geom:poly,ls -->
 
 Guarded axis-aligned rectangle vs closed segment. Regime→witness selection via
 `RelateMatrixAreaLine.v` (S9).
@@ -635,7 +660,7 @@ Guarded axis-aligned rectangle vs closed segment. Regime→witness selection via
 | `RelateAreaLine.v : al_matrix_disjoint_witness` | **Witness:** the empty matrix satisfies `Disjoint` (segment-above regime) `[exact]` | 0 |
 | `RelateAreaLine.v : al_matrix_boundary_touch_witness` | **Witness:** the boundary matrix (`pat_touches_1`, BB=0) satisfies `Touches` `[exact]` | 0 |
 
-## Issue #67 — area-area DE-9IM witnesses (`RelateAreaArea.v`, S6) <!-- feat:relate,area geom:cp -->
+## Issue #67 — area-area DE-9IM witnesses (`RelateAreaArea.v`, S6) <!-- feat:relate,area geom:poly -->
 
 Guarded axis-aligned rectangle pairs (no holes). Hand-specified witnesses, one
 per regime; regime→witness selection via `RelateMatrixRect.v` (S7). The regime
@@ -649,7 +674,7 @@ consumed.
 | `RelateAreaArea.v : aa_matrix_contains_witness` (+`_intersects`) | **Witness:** the contains matrix satisfies `Contains` + `Intersects` `[exact]` | 0 |
 | `RelateAreaArea.v : aa_matrix_touch_vertical_witness` | **Witness:** the touch matrix (`pat_touches_1`, BB=1) satisfies `Touches` `[exact]` | 0 |
 
-## Issue #67 — rect×rect regime→witness (`RelateMatrixRect.v`, S7) <!-- feat:relate geom:cp -->
+## Issue #67 — rect×rect regime→witness (`RelateMatrixRect.v`, S7) <!-- feat:relate geom:poly -->
 
 Regime-indexed `rect_pair_fill` **selects** (does not compute from geometry) the
 S6 witness matrices. `classify_rect_pair` records which S6 guard names each
@@ -664,7 +689,7 @@ regime; the `*_fill_witness` facts are constant (regime hypothesis not consumed)
 | `RelateMatrixRect.v : overlap_not_strictly_separated` | **Geometry:** partial overlap excludes strict horizontal separation (`ax1 < bx0`) `[exact]` | 0 |
 | `RelateMatrixRect.v : touch_not_overlap` | **Geometry:** vertical edge touch excludes partial overlap `[exact]` | 0 |
 
-## Issue #67 — line×line regime→witness (`RelateMatrixLineLine.v`, S8) <!-- feat:relate geom:cs -->
+## Issue #67 — line×line regime→witness (`RelateMatrixLineLine.v`, S8) <!-- feat:relate geom:ls -->
 
 Regime-indexed `line_pair_fill` selects the S2 witness matrices. Romanschek
 paper matrices (S3) remain oracle pins, not selection targets.
@@ -678,7 +703,7 @@ paper matrices (S3) remain oracle pins, not selection targets.
 | `RelateMatrixLineLine.v : rejection_not_share` | **Geometry:** same-side rejection excludes segment share `[exact]` | 0 |
 | `RelateMatrixLineLine.v : collinear_overlap_not_proper_cross` | **Geometry:** collinear overlap excludes proper crossing `[exact]` | 0 |
 
-## Issue #67 — area×line regime→witness (`RelateMatrixAreaLine.v`, S9) <!-- feat:relate geom:cp,cs -->
+## Issue #67 — area×line regime→witness (`RelateMatrixAreaLine.v`, S9) <!-- feat:relate geom:poly,ls -->
 
 Regime-indexed `area_line_fill` selects the S5 witness matrices. Oracle
 vocabulary for all fill APIs is seeded in
@@ -694,7 +719,7 @@ vocabulary for all fill APIs is seeded in
 | `RelateMatrixAreaLine.v : interior_not_disjoint` | **Geometry:** strict interior excludes the segment-above-rect disjoint guard `[exact]` | 0 |
 | `RelateMatrixAreaLine.v : pierce_not_touch` | **Geometry:** horizontal pierce excludes left-boundary touch (given `x0 < x1`) `[exact]` | 0 |
 
-## Issue #67 — arc×line: chord geometry + witnesses (`RelateArcChord.v`, S10) <!-- feat:relate,distance geom:arc,cs -->
+## Issue #67 — arc×line: chord geometry + witnesses (`RelateArcChord.v`, S10) <!-- feat:relate,distance geom:arc,ls -->
 
 First curve-aware relate slice (Option B chord path). Arc chord
 (`arc_start`–`arc_end`) reuses S2 line-line geometry; `chord_crosses_arc_circle`
@@ -709,7 +734,7 @@ analytic regimes landed in S10b.
 | `RelateArcChord.v : arc_chord_proper_cross_not_rejected` | **Geometry:** proper cross excludes same-side rejection on arc chord `[exact]` | 0 |
 | `RelateArcChord.v : ac_matrix_point_ii_crosses` / `_intersects` / `ac_matrix_disjoint_witness` | **Witness:** the reused S2 matrices satisfy `Crosses`/`Intersects`/`Disjoint` `[exact]` | 0 |
 
-## Issue #67 — arc×line regime→witness (`RelateMatrixArcChord.v`, S10) <!-- feat:relate geom:arc,cs -->
+## Issue #67 — arc×line regime→witness (`RelateMatrixArcChord.v`, S10) <!-- feat:relate geom:arc,ls -->
 
 Regime-indexed `arc_chord_fill` selects the S10 witness matrices.
 
@@ -720,7 +745,7 @@ Regime-indexed `arc_chord_fill` selects the S10 witness matrices.
 | `RelateMatrixArcChord.v : arc_fill_circle_cross_witness` | **Witness:** `Intersects` on `arc_chord_fill ACR_CircleCross` `[exact]` | 0 |
 | `RelateMatrixArcChord.v : chord_rejected_not_share` | **Geometry:** chord rejection excludes chord share `[exact]` | 0 |
 
-## Issue #67 — arc×line analytic: geometry + witnesses (`RelateArcAnalytic.v`, S10b) <!-- feat:relate,arc-len,distance geom:arc,cs -->
+## Issue #67 — arc×line analytic: geometry + witnesses (`RelateArcAnalytic.v`, S10b) <!-- feat:relate,arc-len,distance geom:arc,ls -->
 
 Option-A sweep via `AngleBetween.angle_between`. This is the one issue-67
 `Relate*` file in the 4-axiom lane: `arc_sweep_principal_range` is built on
@@ -734,7 +759,7 @@ alongside `Atan2.v` / `AngleBetween.v` / `ArcLength.v`.
 | `RelateArcAnalytic.v : arc_analytic_proper_cross_share` | **Geometry:** analytic-guarded proper cross ⇒ shared point (S10 delegate) `[exact]` | 4 |
 | `ArcChordLength.v : arc_chord_dist_sq_via_sweep` (+ `law_of_cosines_equal_norm`) | **Geometry (issue #67 S10b bridge):** the deferred law-of-cosines chord-length step, in squared form — `dist_sq(start,end) = 2·dist_sq(center,start)·(1 − cos(arc_sweep_angle))`, i.e. `chord² = 2r²(1 − cos θ)`. Provider-agnostic equal-norm law of cosines (`law_of_cosines_equal_norm`) over `cos_angle_between`, instantiated at the center-to-endpoint vectors (equal norm by `arc_center_equidistant`). Closes the `RelateArcAnalytic`/`RelateClothoid` "pose/set transparency seam" deferral; squared form avoids the sqrt/half-angle sign guard `[exact]` | 4 |
 
-## Issue #67 — arc×line analytic regime→witness (`RelateMatrixArcAnalytic.v`, S10b) <!-- feat:relate geom:arc,cs -->
+## Issue #67 — arc×line analytic regime→witness (`RelateMatrixArcAnalytic.v`, S10b) <!-- feat:relate geom:arc,ls -->
 
 `arc_analytic_fill` selects the S10 point witness for the analytic-cross regime.
 
@@ -742,7 +767,7 @@ alongside `Atan2.v` / `AngleBetween.v` / `ArcLength.v`.
 |---|---|---|
 | `RelateMatrixArcAnalytic.v : arc_analytic_fill_cross_witness` | **Witness:** `Crosses` + `Intersects` on `arc_analytic_fill AAR_AnalyticCross` `[exact]` | 0 |
 
-## Issue #67 — clothoid×line: chord geometry + witnesses (`RelateClothoid.v`, S10b) <!-- feat:relate geom:cs -->
+## Issue #67 — clothoid×line: chord geometry + witnesses (`RelateClothoid.v`, S10b) <!-- feat:relate geom:cc,ls -->
 
 Minimal `ClothoidChord` carrier; witnesses reuse S2 line-line matrices.
 `clothoid_L_unique_on_branch` re-exports monotone-branch uniqueness from
@@ -793,7 +818,7 @@ the field failure modes each lemma guards.
 | `CompoundCurveCurvature.v : koc_exit_clothoid_angle_deriv` (+`koc_exit_is_reversed_entry`, `koc_assembly_C0_to_straight`) | **TC3 exit ramp 1/R → 0** is the entry clothoid read backwards; θ′ = k; lands on the straight (curvature 0) at the second main direction `[exact]` | 3 |
 | `CompoundCurveCurvature.v : koc_curvature_example_345` (+`koc_curvature_example_reverse`, `_is_koc`) | **Rational witness R₁=5, R₂=10, L=4** and reverse R₂=−10: all four C⁰ joints + TC2 midpoint mean + land-on-straight, by field arithmetic `[exact]` | 3 |
 
-## Issue #67 — clothoid Flocq + Halley (`ClothoidDegenerate_b64.v`, `ClothoidResidual_b64_exact.v`, `ClothoidHalley_b64.v`, `ClothoidHalley.v`) <!-- feat:relate geom:cs -->
+## Issue #67 — clothoid Flocq + Halley (`ClothoidDegenerate_b64.v`, `ClothoidResidual_b64_exact.v`, `ClothoidHalley_b64.v`, `ClothoidHalley.v`) <!-- feat:relate geom:cc -->
 
 Route **(A)** b64 mirror of the κ₀ = κ₁ = 0 degenerate residual; route **(C)**
 Scope A.0–A.3 polynomial assembly (`d2`, `r2`, `f`, `f′`) matching
@@ -823,7 +848,7 @@ only. Chord coords: `|n| ≤ 2¹¹` (`arc_coord_int_safe`); scalar moments:
 
 **Open:** full `HasClothoidIntersect` evaluator (transcendental Fresnel).
 
-## Issue #67 — clothoid×line regime→witness (`RelateMatrixClothoid.v`, S10b) <!-- feat:relate geom:cs -->
+## Issue #67 — clothoid×line regime→witness (`RelateMatrixClothoid.v`, S10b) <!-- feat:relate geom:cc,ls -->
 
 `clothoid_fill` selects the S10b witness matrices.
 
@@ -833,7 +858,7 @@ only. Chord coords: `|n| ≤ 2¹¹` (`arc_coord_int_safe`); scalar moments:
 | `RelateMatrixClothoid.v : clothoid_fill_disjoint_witness` | **Witness:** `Disjoint` on `clothoid_fill CLR_ChordDisjoint` `[exact]` | 0 |
 | `RelateMatrixClothoid.v : clothoid_fill_share_witness` | **Witness:** `Intersects` on `clothoid_fill CLR_ChordShare` `[exact]` | 0 |
 
-## Issue #67 — oracle `RELATE_MATRIX` driver (S11) <!-- feat:relate geom:arc,cs,cc,cp,multi -->
+## Issue #67 — oracle `RELATE_MATRIX` driver (S11) <!-- feat:relate geom:arc,ls,poly -->
 
 Hand-rolled pinned-matrix catalog + `DE9IM.v` predicate engine in
 `oracle/relate_matrix.ml`; wired as `RELATE_MATRIX` (9-char lookup) and
@@ -847,7 +872,7 @@ computation — full RelateNG noding remains S13+.
 | `oracle/relate_matrix_fill_vocabulary.txt` | Seven fill APIs → witness matrix mapping |
 | `oracle/de9im_*_vectors.txt` | Per-regime COQ + MATRIX pins for NTS/JTS diff |
 
-## Issue #67 — S13 pipeline + Jordan cell dim (RelateNG.v, RelatePrepared.v, RelateCurveMatrix, RelateBoundary) <!-- feat:relate geom:arc,cs,cc,cp,multi -->
+## Issue #67 — S13 pipeline + Jordan cell dim (RelateNG.v, RelatePrepared.v, RelateCurveMatrix, RelateBoundary) <!-- feat:relate geom:arc,cp,ls,poly -->
 
 Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE cell + prepared tri cache + registry entries added. Full capstone (strict-II/BB/satisfy_pointset) + regime DEFERRED (registered). See docs/rect-triangle-touch-milestone.md.
 
@@ -863,7 +888,7 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 | `RelatePrepared.v : evaluate_ignores_cache` | **Honesty tripwire (#522):** `evaluate` returns the same matrix for any two cache values, i.e. `pg_cache` / `pg_tri_cache` are never consulted — so `prepared_evaluate_agrees` holds by construction, and this lemma stops compiling the moment a real cache short-circuit lands `[exact]` | 2 |
 | `RelateMatrixTriangle.v : classify_overlap_vacuous` (+ `classify_disjoint_vacuous`, `classify_contains_vacuous`, `classify_touch_vertex_vacuous`, `classify_overlap_holds_of_a_separated_pair`) | **Vacuity witnesses (#522):** four of the five `classify_triangle_pair` arms are `True` and hence hold of *any* six points — the last instance shows `TPR_Overlap` holding of a provably separated pair. Only `TPR_TouchEdge` carries content `[exact]` | 0 |
 
-## Issue #67 — curve-polygon×point: validity + witnesses (`RelateCurveAreaPoint.v`, S12) <!-- feat:relate,area geom:cp -->
+## Issue #67 — curve-polygon×point: validity + witnesses (`RelateCurveAreaPoint.v`, S12) <!-- feat:relate,area geom:cp,pt -->
 
 First curve-polygon relate slice: axis-aligned rectangle as a four-chord
 `COMPOUNDCURVE`. The curve-specific content is the structural-validity spine;
@@ -881,7 +906,7 @@ so the S4 facts transport to the curve geometry's point set.
 | `RayParityDegenerate.v : ray_parity_zero_edge_irrelevant` (+ `edge_crosses_ray_degenerate`, `rpo_cons_iff`, `rpe_cons_iff`, `point_in_ring_dup_head`) | **Curve→matrix transport foundation (issue #67):** a zero-length edge `(v,v)` is parity-neutral for the crossing-number `point_in_ring` test — it never meets `edge_crosses_ray`'s strict y-straddle, so it always takes the `_skip` branch; inserting/removing one anywhere preserves both parities. Unblocks transporting Phase-3 `point_in_ring` facts to `flat_map` chord rings, which carry `(v,v)` edges at every segment join. Pure inductive + `lra` `[exact]` | 3 |
 | `RelateCurveAreaPointSound.v : point_in_rect_curve_geometry_characterisation` (+ `point_in_ring_chord_rect_iff`, `point_in_rect_curve_polygon_characterisation`, `not_in_box_not_in_rect_curve_geometry`, `strict_interior_in_rect_curve_geometry`, `left_boundary_in_rect_curve_polygon_not_strict`, `ring_edges_chord_rect`) | **Curve→matrix soundness (issue #67):** the **complete** membership characterisation for the chord-rectangle curve geometry — `point_in_rect_curve_geometry x0 y0 x1 y1 n p <-> (y0 < py p < y1 /\ x0 <= px p < x1)` — subsuming Contains (strict interior), Touches (boundary, not strict), and Disjoint (exterior, `not_in_box_*`). `point_in_ring_chord_rect_iff` strips the chord ring's three degenerate `(v,v)` join edges (`ray_parity_zero_edge_irrelevant`) so the linearised ring matches `rect_ring`, then `RectangleJCT.point_in_ring_rect_iff` transports through the S12b point-set bridge. n-independent (all-chord ring) `[exact]` | 3 |
 
-## Issue #67 — curve-polygon×point regime→witness (`RelateMatrixCurveAreaPoint.v`, S12) <!-- feat:relate geom:cp -->
+## Issue #67 — curve-polygon×point regime→witness (`RelateMatrixCurveAreaPoint.v`, S12) <!-- feat:relate geom:cp,pt -->
 
 `curve_point_fill` selects the S12 / S4 witness matrices.
 
@@ -891,7 +916,40 @@ so the S4 facts transport to the curve geometry's point set.
 | `RelateMatrixCurveAreaPoint.v : curve_point_fill_touch_witness` | **Witness:** `Touches` on `curve_point_fill CPR_LeftBoundaryTouch` `[exact]` | 0 |
 | `RelateMatrixCurveAreaPoint.v : strict_interior_not_left_boundary_touch` | **Geometry:** strict interior excludes left-boundary touch `[exact]` | 0 |
 
-## Issue #67 — prepared-mode cache refinement (`RelatePreparedCache.v`, S13) <!-- feat:relate geom:arc,cs,cc,cp,multi -->
+## Curve ring contact, boundary meet and the inscribed reduction (`RingContactSound.v`, `RelateCurveArcSegment.v`, `RelateCurveBoundaryMeet.v`, `RelateCurveInscribedGeometry.v`, `OverlayContactSound.v`) <!-- feat:relate,overlay geom:arc,cs,cc,cp -->
+
+Backfilled 2026-08-23: these five files were **proved but never cited**, so the
+curve columns of the coverage matrix were being carried by blanket line-line
+tags instead of by their own theorems. A `CurveRing` here is a `list
+CurveSegment` (`CSChord` | `CSArc`) per `theories/CurveGeometry.v` — so an
+all-`CSArc` ring is a CircularString and a mixed ring is a CompoundCurve, which
+is why one family of lemmas serves both columns.
+
+Read the scope carefully: the ring results establish **simplicity / hole
+disjointness**, not DE-9IM cells, and the inscribed reduction is over
+*linearised* point sets, so it is arc-blind by construction. The arc-exact
+boundary cells remain on the deferred frontier, as that file's own header states.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `RingContactSound.v : ring_not_simple_of_arc_arc_circle_cross` (+`_witness`, `ring_not_simple_of_arc_arc_shared_endpoint`) | **A CircularString ring with two touching arcs is not simple.** Quantified over `r : CurveRing` and indices `i j` with `nth_error r i = Some (CSArc a1)` — genuinely indexed over a multi-arc ring, not a two-arc special case. The invalidity witness a validity checker must report `[exact]` | 3 |
+| `RingContactSound.v : ring_not_simple_of_arc_chord` (+`_witness`) | Same for a **mixed** ring: an arc member and a chord member that meet make the CompoundCurve ring non-simple `[exact]` | 3 |
+| `RingContactSound.v : arc_arc_meet_of_intersects` (+`arc_arc_meet_of_shared_endpoint`, `arc_chord_meet_of_contact`) | The contact kernels the ring results consume: arc∩arc and arc∩chord contact each imply the segments *meet*, with the shared-endpoint case separated so consecutive members of a ring are not reported as self-intersections `[exact]` | 3 |
+| `RingContactSound.v : holes_not_disjoint_of_segments_meet` | Two hole rings whose segments meet are **not disjoint** — the CurvePolygon-level consequence of the same kernel `[exact]` | 3 |
+| `RelateCurveArcSegment.v : point_in_ring_arc_seg_iff` (+`valid_arc_seg_curve_ring`, `arc_seg_curve_ring_adjacent`, `arc_seg_curve_ring_closed`) | **Point-in-ring for an arc+segment ring** decided exactly, with the ring's validity, adjacency and closure discharged rather than assumed `[exact]` | 3 |
+| `RelateCurveArcSegment.v : point_in_arc_seg_curve_polygon_iff_triangle` (+`point_in_arc_seg_curve_geometry_iff_polygon`, `_iff_triangle`) | The same membership lifted to `CurvePolygon` and `CurveGeometry`, reduced to the control triangle — the lens region where an arc's bulge is decided by a linear test `[exact]` | 3 |
+| `RelateCurveArcSegment.v : point_in_arc_seg_curve_geometry_iff_control_interior` (+`gtri_ring_arc_control`, `arc_seg_control_interior_in_curve_geometry`) | Control-interior characterisation: membership in the curve geometry iff membership in the control interior, the bridge the oracle's arc lens evaluates `[exact]` | 3 |
+| `RelateCurveBoundaryMeet.v : curve_boundaries_meet_of_chord_chord_crossing` (+`_collinear`, `_endpoint`, `_shared_vertex`) | Two curve geometries whose chord boundaries cross **have meeting boundaries** — the four contact modes, each a separate theorem `[exact]` | 3 |
+| `RelateCurveBoundaryMeet.v : bb_nonempty_of_boundary_meet` (+`not_disjoint_of_boundary_meet`, `curve_relate_not_disjoint_of_chord_chord_crossing`) | **A boundary meet populates the DE-9IM BB cell** and refutes `disjoint` — the one place the curve relate matrix is reached from contact geometry. Chord-chord only; the arc cells are deferred `[exact]` | 3 |
+| `RelateCurveBoundaryMeet.v : chord_approx_ring_lineal_n_independent` (+`to_geometry_lineal_n_independent`) | The chord-approximation ring's *lineal* content does not depend on the subdivision count `n` — a refinement of the linearisation is not a different geometry at the boundary `[exact]` | 3 |
+| `RelateCurveInscribedGeometry.v : to_geometry_point_set_eq_inscribed` (+`point_in_inscribed_polygon_iff`, `point_in_inscribed_geometry_iff`) | **The linearised curve geometry and the inscribed polygon have the same point set.** The foundation the six predicate reductions below stand on `[exact]` | 3 |
+| `RelateCurveInscribedGeometry.v : curve_intersects_iff_inscribed` (+`curve_disjoint_iff_inscribed`, `curve_within_iff_inscribed`, `curve_contains_iff_inscribed`, `curve_equals_iff_inscribed`, `curve_overlaps_core_iff_inscribed`) | **Six DE-9IM predicates on curve geometries reduce exactly to their inscribed-polygon counterparts.** A complete predicate family — but over linearised point sets, so it states no *arc-exact* fact; it is the reduction, not the arc semantics `[exact]` | 3 |
+| `OverlayContactSound.v : arc_chord_contact_sound` (+`arc_chord_contact_witness_sound`) | The overlay contact classifier is **sound on arc∩chord**: a reported contact is a real intersection `[exact]` | 3 |
+| `OverlayContactSound.v : arc_arc_contact_shared_endpoint` (+`_rev`, `arc_arc_contact_witness_sound`) | Sound on arc∩arc via a shared endpoint (both orientations) and via a direct witness on both circumcircles and in both arc spans `[exact]` | 3 |
+| `OverlayContactSound.v : arc_arc_contact_circle_cross_cond` | The circle-crossing branch, **conditional**: needs every point between the second arc's endpoints on the first circumcircle to lie on the second circumcircle and in both spans. The atan2 span check stays at the interface boundary `[cond]` | 3 |
+| `OverlayContactSound.v : overlay_circumcenter_formula_sound` (+`overlay_circumcenter_candidate_sound`) | The circumcentre used to reconstruct an arc through an overlay node is the *correct* circumcentre, by formula and as a candidate — the node-to-arc step of curve-preserving overlay `[exact]` | 3 |
+
+## Issue #67 — prepared-mode cache refinement (`RelatePreparedCache.v`, S13) <!-- feat:relate geom:ls,poly -->
 
 STRtree query contract modelled as a permutation of bbox-overlap-filtered items.
 Generic commutative-monoid fold proves prepared evaluation equals brute force;
@@ -906,7 +964,7 @@ result-independent-of-cache-path.
 | `RelatePreparedCache.v : prepared_intersects_eq_brute` | **Concrete refinement:** prepared "any A-segment intersects t" equals brute `orb` fold, for any sound `intersect_test` `[exact]` | 3 |
 | `RelatePreparedCache.v : prepared_intersects_path_independent` | **Concrete path independence:** STRtree build/order irrelevant for segment-intersects prepared mode `[exact]` | 3 |
 
-## Issue #67 — area-line prepared-cache instance (`RelatePreparedCacheAreaLine.v`, S14) <!-- feat:relate,area geom:cp,cs -->
+## Issue #67 — area-line prepared-cache instance (`RelatePreparedCacheAreaLine.v`, S14) <!-- feat:relate,area geom:poly,ls -->
 
 Rectangle boundary edges (`rect_boundary_segments`) as the prepared-area indexed
 item list; line segment envelope as query box. Instantiates S13 refinement for
@@ -919,7 +977,7 @@ the NTS#819 area-line carrier.
 | `RelatePreparedCacheAreaLine.v : rect_envelope_disjoint_all_edges` | **Polygon-envelope early-exit soundness (issue #67 S14b / NTS#819):** when the rectangle envelope `bbox_of_rect` and the query-segment envelope are disjoint, no boundary edge of `rect_boundary_segments` can meet the query segment — the soundness floor for skipping the STRtree query entirely `[exact]` | 3 |
 | `RelatePreparedCacheAreaLine.v : prepared_area_line_envelope_early_exit` | **Early-exit corollary (S14b):** under the same envelope-disjoint hypothesis, the brute-force `area_line_intersects_brute` fold is `false` for any sound `intersect_test` — the prepared area-line predicate may short-circuit before per-edge enumeration `[exact]` | 3 |
 
-## Issue #67 — line×line noding bridge (`RelateNodingLineLine*.v`, S15a–S15k; split 2026-08, `RelateNodingLineLine.v` is the re-export umbrella) <!-- feat:overlay,relate geom:cs -->
+## Issue #67 — line×line noding bridge (`RelateNodingLineLine*.v`, S15a–S15k; split 2026-08, `RelateNodingLineLine.v` is the re-export umbrella) <!-- feat:overlay,relate geom:ls -->
 
 First RelateNG-noding rung: closed-segment strata + point-set DE-9IM
 specification (`line_de9im_pointset`), with meet-layer bridges from S8
@@ -991,7 +1049,7 @@ without hypotheses and Touches-vs-Share fill split remain S15l+.
 | `Intersect.v : strict_intersection_point_open_ab` | Proper-cross intersection point lies in strict interior of AB `[exact]` | 3 |
 | `Intersect.v : strict_intersection_point_open_cd` | Proper-cross intersection point lies in strict interior of CD `[exact]` | 3 |
 
-## Foundational — squared distance / degenerate cases (`Distance.v`) <!-- feat:metric geom:arc,cs -->
+## Foundational — squared distance / degenerate cases (`Distance.v`) <!-- feat:metric geom:pt -->
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -1050,7 +1108,7 @@ Unconditional exact-reals — the most directly citable rows.
 | `OracleCurveChecklist.v : w1_w5_coverage_table_complete` (+ `is_ring`, `sq_ring_is_ring`, `pinched_ring_not_ring`, `w5_row_repaired_holds`, `w1_row_holds`–`w4_row_holds`, `w5_row_contradicted`, `w1_w5_table_as_tabled_refuted`) | **69-a Green by table repair — the SQL/MM + SFA oracle-mode checklist W1–W5 closes (topic: oracle):** five witness obligations anchored to standard curve predicates — ST_IsClosed closed/not-closed pair, ST_Length squared perimeter 4, ST_CircularString rational 3-point circle membership, relate/R-* point-on-curve at the 65-b carrier, and ST_IsRing. The Red planted the W5 row deliberately mis-tabled ("closedness alone implies pinch-freeness") and PROVED it contradicted by the rational pinched ring (0,0)-(1,0)-(0,0)-(0,1)-(0,0); Green repairs the row — `is_ring = closed ∧ no_pinch` as witness obligations, SQL/MM's closed AND simple — and closes the repaired table. The mis-tabled row and its refutation stay Qed as permanent hardening against the derive-simplicity-from-closedness misreading. Mirrored self-contained in `eval/Claim69a.v` (WITNESS 69-a) `[exact]` | 3 |
 | `BufferEndcapSquare.v : square_endcap_is_diameter_square` (+ `sq_corner_fwd`, `sq_corner_fwd_plus_is_sq_corner`, `sq_corner_fwd_forward_signed`) | **65-e Green — the square endcap is exactly the U-shaped boundary of the forward square (topic: buffer; planted as 65-c, renumbered after the concurrent-id collision with the aborted envelope claim):** `q` on the three-segment walk `cap_endpoint(−d) → fwd-corner(−d) → fwd-corner(d) → cap_endpoint(d)` ⟺ `q = E + d·(a·unit_perp ein + b·unit_dir ein)` with `(a=−1, b∈[0,1]) ∨ (b=1, a∈[−1,1]) ∨ (a=1, b∈[0,1])` — the unit square's boundary minus its open bottom (the diameter belongs to 65-a's flat cap). Completes the endcap trio's carrier characterisations over one frame vocabulary; entirely linear (six lra branches, no circle/sqrt/vmag in the headline). `sq_corner_fwd` bridges definitionally to the corpus `sq_corner` on the plus side; `sq_corner_fwd_forward_signed` pins both corners' signed forward coordinate = d for ALL side values (kills d-sign flips; companion of the 65-a/65-b signed pins). Mirrored self-contained in `eval/Claim65e.v` with the rational pins (corners at dist_sq 2 echoing `square_cap_corner_dist_sq`; face midpoint = the round apex, the trio's cross-cap seam; terminal off all sides; WITNESS 65-e) `[exact]` | 3 |
 
-## Discrete → Sh(ℝ²) bridge — spatial-topos foundations (`HeytingOpens.v`, `PlaneConnected.v`, `DiscreteShBridge.v`) <!-- feat:foundations geom:cs,cp -->
+## Discrete → Sh(ℝ²) bridge — spatial-topos foundations (`HeytingOpens.v`, `PlaneConnected.v`, `DiscreteShBridge.v`) <!-- feat:foundations geom:poly -->
 
 Subterminal fragment of the sheaf topos on the plane: opens of ℝ² as the truth-value algebra Ω, the Boolean bridge into it, and the soundness of pointwise (classical) evaluation. See [`discrete-sh-r2-bridge.md`](discrete-sh-r2-bridge.md).
 topic: foundations · claimId: none · witness: none (no minted micro-claim). Falsifier seed for readers: punct — the punctured plane (EM fails at its origin stalk: `HeytingOpens.v : heyting_em_fails`, `DiscreteShBridge.v : punct_stalk_not_boolean`); non-strict falsifier `HeytingOpens.v : closed_halfplane_not_open`.
@@ -1072,7 +1130,7 @@ topic: foundations · claimId: none · witness: none (no minted micro-claim). Fa
 | `DiscreteShBridge.v : stalk_imp_strict` (+ `stalk_sound_and`, `stalk_sound_or`, `stalk_sound_join`, `stalk_lax_imp`, `stalk_lax_not`, `oincl_pointwise`) | **Spatial soundness, sharp:** pointwise evaluation is exact on `⊤ ⊥ ∧ ∨ ⋁`, sound-but-lax on `⇒ ¬`, and the laxity is strict (a pointwise implication the topos rejects, at the origin of the punctured plane — the row's real content); entailment is pointwise by construction in the subterminal encoding (`oincl_pointwise`, definitional) `[exact]` | 3 |
 | `DiscreteShBridge.v : strict_halfplane_open` (+ `dx_le_dist`, `open_disk_open`, `open_disk_incl_in_disk`) | NTS instantiation: strict half-planes and open disks (strict `in_disk`) are truth values of Sh(ℝ²); their closures are not `[exact]` | 3 |
 
-## MIC — maximum inscribed circle of the unit square (`MaximumInscribedCircle.v`, board #9004 / epic #813) <!-- feat:metric geom:cp -->
+## MIC — maximum inscribed circle of the unit square (`MaximumInscribedCircle.v`, board #9004 / epic #813) <!-- feat:metric geom:poly -->
 
 The 9004-a surface (`Region` / `inscribed_disk` / `max_inscribed_disk` — containment *plus* the maximiser, which no other corpus definition states) and its rational unit-square witness. Hosts the Polycenter cite (Zhai et al. 2026, doi:10.1080/13658816.2025.2514056). Mirrored self-contained in [`eval/Claim9004c.v`](../eval/Claim9004c.v) with the side-midpoint on-circle pins and two mismatch probes (WITNESS 9004-c).
 topic: construct · claimId: 9004-c · witness: unit-square — centre (1/2,1/2), radius 1/2; probes: same radius off-centre escapes the left wall, radius 3/5 admits no centre.
@@ -1082,7 +1140,7 @@ topic: construct · claimId: 9004-c · witness: unit-square — centre (1/2,1/2)
 | `MaximumInscribedCircle.v : mic_unit_square` | **9004-c headline.** The closed disk centre (1/2,1/2), radius 1/2 is a MAXIMUM inscribed disk of [0,1]²: contained (every point within 1/2 of the centre has both coordinates in [0,1]) and maximal (any inscribed (O′,r′) contains the probes (ox′ ± r′, oy′), forcing 2r′ ≤ 1). Rational throughout; sqrt-free beyond `dist_le_iff_dist_sq_le` `[exact]` | 3 |
 | `MaximumInscribedCircle.v : mic_unit_square_inscribed` (+ `mic_unit_square_radius_maximal`) | The two projections exported for consumers: the witness disk is inscribed; no inscribed disk of the unit square beats radius 1/2 — the maximiser 9004-b observed `InDisk`/`Disk.in_disk` do not supply `[exact]` | 3 |
 
-## LEC — largest empty circle over the side midpoints (`LargestEmptyCircle.v`, board card pending / epic #813) <!-- feat:metric geom:cp -->
+## LEC — largest empty circle over the side midpoints (`LargestEmptyCircle.v`, board card pending / epic #813) <!-- feat:metric geom:poly -->
 
 The LEC surface (`empty_disk` / `largest_empty_disk` — the obstacle-avoiding dual of 9004-a's `inscribed_disk` / `max_inscribed_disk`, with the domain-constrained maximiser) and its rational witness. JTS/NTS twin: `algorithm.construct.LargestEmptyCircle`. No eval mirror is minted until the board assigns the card id (no invented ancestry).
 topic: construct · claimId: none (board card pending) · witness: side-midpoints — the four side midpoints of [0,1]² as obstacles; the LEC over the unit square is the MIC witness circle itself.
@@ -1092,7 +1150,7 @@ topic: construct · claimId: none (board card pending) · witness: side-midpoint
 | `LargestEmptyCircle.v : lec_side_midpoints` | **LEC headline.** Centre (1/2,1/2), radius 1/2 is a LARGEST empty disk of the four side midpoints with centre constrained to [0,1]²: empty (each midpoint at squared distance exactly 1/4) and maximal (in the centre's quadrant the two adjacent midpoints give dist²₁ + dist²₂ ≤ 1/2, so 2r′² ≤ 1/2). Rational; sqrt-free beyond the Distance.v bridges `[exact]` | 3 |
 | `LargestEmptyCircle.v : mic_lec_duality` (+ `lec_side_midpoints_empty`, `lec_side_midpoints_radius_maximal`, `empty_disk_sq_bound`, `dist_ge_of_dist_sq_ge`) | **The duality:** one rational circle is simultaneously the maximum disk inscribed in the unit square (#9004) and the largest disk empty of the square's side midpoints — the midpoints are exactly the inscribed disk's touch points `[exact]` | 3 |
 
-## Cell pruning bound — Polycenter / JTS Cell.getMaxDistance soundness (`CellRadiusBound.v`, board #9004 / 9004-d, epic #813) <!-- feat:metric geom:cp -->
+## Cell pruning bound — Polycenter / JTS Cell.getMaxDistance soundness (`CellRadiusBound.v`, board #9004 / 9004-d, epic #813) <!-- feat:metric geom:poly -->
 
 The per-cell achievable-radius bound that justifies the branch-and-bound subdivision shared by Polycenter and JTS `MaximumInscribedCircle` / `LargestEmptyCircle`, plus the centre-shift machinery on both duals. Mirrored self-contained in [`eval/Claim9004d.v`](../eval/Claim9004d.v) (WITNESS 9004-d; local Lagrange-identity triangle inequality, corner circumradius-equality pin, slack-free-misreading probe).
 topic: construct · claimId: 9004-d · witness: cell-slack — obstacle (2,0), cell centre (0,0), half-side 1, probe (−1,0): empty radius 3 beats centre clearance 2, so the √2·h slack is not droppable.
@@ -1103,12 +1161,12 @@ topic: construct · claimId: 9004-d · witness: cell-slack — obstacle (2,0), c
 | `CellRadiusBound.v : empty_disk_centre_shift` (+ `inscribed_disk_centre_shift`, `empty_disk_radius_mono`, `inscribed_disk_radius_mono`) | Centre-shift Lipschitz lemmas on BOTH duals: moving a disk's centre by d costs at most d of radius, for emptiness and inscribedness alike; radius monotonicity companions `[exact]` | 3 |
 | `CellRadiusBound.v : cell_empty_disk_at_centre` (+ `cell_inscribed_disk_at_centre`) | The per-cell corollaries a subdivision step consumes: whatever radius a cell point achieves, the cell centre achieves minus √2·h — on the empty (LEC) and inscribed (MIC) sides `[exact]` | 3 |
 
-## PIA teaching claim — poles of inaccessibility, planar instance (eval/Claim9005a.v, board #9005) <!-- feat:teaching geom:cp -->
+## PIA teaching claim — poles of inaccessibility, planar instance (eval/Claim9005a.v, board #9005) <!-- feat:teaching geom:poly -->
 
 **Teaching-only; no production home by design.** Garcia-Castellanos & Lombardo 2007 (doi:10.1080/14702540801897809) define the pole of inaccessibility — but on the sphere, and plane MIC/LEC ≠ spherical PIA, so the paper gets no `theories/` cite (see library-footnotes). The self-contained micro unit eval/Claim9005a.v teaches the paper's DEFINITIONAL signature planarly, Qed-closed: `pia_triangle_three_touch` — the PIA of the three-point shoreline A=(0,0), B=(4,0), C=(0,4) over the closed triangle is the hypotenuse midpoint (2,2) with clearance √8, a largest empty disk in the LargestEmptyCircle sense, equidistant (squared distance exactly 8) from ALL THREE shoreline points (`pia_touches_all_three` — the exactly-three-closest-points signature). Probes: `centroid_cannot_reach_pia_radius` (clearance² 32/9 at A: the PIA is a max-min point, not a mass centre) and `hypotenuse_drift_clearance_drops` ((3,1) drops clearance² to 2). Maximality is the rational nearest-vertex case split; the off-land quadrant x>2 ∧ y>2 is vacuous. The unit is the mutation seed for the eval engine's 5-op vacuity suite. The spherical gap stays open on board card #9005.
 topic: teaching · claimId: 9005-a · witness: three-touch — the three equidistance pins dist² = 8.
 
-## OverlayNGCurve Phase 0 — the exact-cell kernel of the four ops (`OverlayNGCurve.v`) <!-- feat:overlay geom:cs,cp -->
+## OverlayNGCurve Phase 0 — the exact-cell kernel of the four ops (`OverlayNGCurve.v`) <!-- feat:overlay geom:arc,cp -->
 
 The four overlay ops in point-set semantics on the `HeytingOpens.v` carrier — CAP ∩ = `oand`, CUP ∪ = `oor`, SUB ∖ = `odiff`, XOR Δ = `osym` — and the kernel of the OverlayNGCurve exactness matrix: a cell is exact precisely when the result collapses to A, B, A ∪ B or ∅, which is the soundness of the F1 "fast before fat" short-circuit (the G1–G5 algebra may run BEFORE `CurveOps.linearise`). Name gate NTSC0001: `OverlayNGCurve`, never "OverlayNGCurved". V1–V3 validity gates, R1/R2 retention policy, instance-level `equalsExact`, and the measured densification counts stay engine-side (see [`overlayng-curve-phase0.md`](overlayng-curve-phase0.md)). No eval mirror until a board card id is assigned (no invented ancestry).
 topic: overlay · claimId: none (lane opener, board card pending) · witness: self-ops — G3/G4 self-cancellation, with the crossing/covers probes as the falsifiers keeping the frontier tight.
@@ -1120,7 +1178,7 @@ topic: overlay · claimId: none (lane opener, board card pending) · witness: se
 | `OverlayNGCurve.v : xor_disjoint_squares_is_cup` (+ `cap_disjoint_squares_empty`, `cap_covers_squares_is_inner`, `cup_covers_squares_is_outer`, `pin_disjoint_squares`, `pin_covers_squares`) | The exact rows instantiated on rational squares: disjoint pair [0,1]² · [2,3]², covers pair [0,3]² ⊇ [1,2]² `[exact]` | 2 |
 | `OverlayNGCurve.v : probe_crossing_xor_not_cup` (+ `probe_crossing_cap_not_empty`, `probe_crossing_cup_not_left`, `probe_crossing_sub_not_left`, `probe_covers_sub_not_empty`, `probe_covers_sub_not_outer`) | **Mismatch probes — the approx cells genuinely fail to collapse:** on the crossing pair [0,2]² × [1,3]² no op collapses (CAP≠∅, CUP≠A, SUB≠A, XOR≠CUP), and covers-SUB is neither ∅ nor the outer square (the rim is a new region) — so the exact/approx frontier is tight, not vacuous `[exact]` | 2 |
 
-## Circular noding rung 1 — arc split at an N-AA node (`ArcSplitAtNode.v`) <!-- feat:arc geom:cs -->
+## Circular noding rung 1 — arc split at an N-AA node (`ArcSplitAtNode.v`) <!-- feat:overlay geom:arc -->
 
 The first obligation of the unparked "general circular noding" lane (wishlist v7.0): replacing one arc edge by two at a detected intersection node is sound. Witness-scoped on the DISC_OVERLAY locked fixture — parent = the open upper semicircle of circle (0,0) r=5, node = the `ArcArcCircles` radical point (7/2, √(51/4)) with its pins consumed from `DiscOverlay.v : locked_disc_nodes` (no re-derivation). Child membership in the 3-axiom chord-sign form (`arc_side_chord` cross convention, no atan2). General configuration, child mids, N-AL twins, and faces/labels are the next rungs.
 topic: arc · claimId: none (lane rung, board card pending) · witness: locked-split — the DISC_OVERLAY node splitting the upper semicircle, seam pinned on both cut chords.
@@ -1132,7 +1190,7 @@ topic: arc · claimId: none (lane rung, board card pending) · witness: locked-s
 | `ArcSplitAtNode.v : split_node_on_circle` (+ `split_node_in_parent`, `split_node_on_both_cuts`) | Pins: the node lies on the parent circle (via `ArcArcCircles.radical_points_on_circles`), in the parent span, and ON both cut chords — the seam equalities close by ring alone `[exact]` | 3 |
 | `ArcSplitAtNode.v : probe_lower_point_fails_AX` (+ `probe_off_circle_fails_AX`) | Mismatch probes: the lower-circle point (4,−3) has px > 7/2 yet fails the child test (the partition lives on the arc, not on a vertical strip), and the off-circle point (4, 1/10) shows the on-circle hypothesis is load-bearing `[exact]` | 3 |
 
-## LEC chord-path hypothesis — disproved on the circle cell (`LECChordGap.v`) <!-- feat:metric geom:cp -->
+## LEC chord-path hypothesis — disproved on the circle cell (`LECChordGap.v`) <!-- feat:metric geom:arc,cp -->
 
 Prove-or-disprove of the JTS PERF-GATE hypothesis "LargestEmptyCircle stays on the chord path — no cheaper construction beat densify-then-LEC". Verdict: **disproved as an exactness claim** on the single-circle-obstacle cell (the LEC analogue of the R1.5 two-disc overlay cell): the exact answer is a closed form, the chord path's answer at the 4-chord tolerance is provably different, and the gap is the cos(θ/2) underestimate. The runtime half of the hypothesis stays engine-side by design.
 topic: construct · claimId: none (hypothesis lane, board card pending) · witness: circle-chord-gap — circle r=2 about the origin vs its inscribed-square chording; laser 2 vs chainsaw √2.
@@ -1199,7 +1257,7 @@ topic: construct · claimId: none (hypothesis lane, board card pending) · witne
 | `LECSegmentRow.v : seg_dist_degenerate` | Totality at the degenerate end: a zero-length facet (A = B) collapses to the POINT row dist P A — the engine's l2 = 0 guard is the same collapse, so the row needs no validity hypothesis `[exact]` | 3 |
 | `LECSegmentRow.v : seg_line_foot_hypothesis_refuted` (+ `line_foot_dist`) | **Failed path H-LINEFOOT (ledger F6):** "the supporting line's foot suffices" — refuted by the 3-4-5 witness A=(0,0), B=(4,0), P=(7,4): the foot (7,0) says 4 but the facet's nearest point is the endpoint at 5; the clamp IS the row `[exact]` | 3 |
 
-## OverlayNGCurve case matrix — candidate completeness refuted, repaired with TOUCH (`OverlayTouchRow.v`) <!-- feat:overlay geom:cp -->
+## OverlayNGCurve case matrix — candidate completeness refuted, repaired with TOUCH (`OverlayTouchRow.v`) <!-- feat:overlay geom:arc,cp -->
 
 **Candidate-complete** (named pin): a family `R` of disc-pair relations classifies every positive-radius pair — `candidate_complete R := ∀ A B, 0 < r(A) → 0 < r(B) → R A B`. Domain = closed discs with positive radius; a row = one binary relation on that domain. Distinct from op-exactness (`OverlayNGCurve.v : overlayng_curve_phase0_exact_cells`): classifying the pair is not CAP/CUP/SUB/XOR cells collapsing. The seven-row exactness matrix's relation content on this domain is `seven_row_family` = `phase0_relation` (empty-partner is out of domain; disc-vs-polygon is representation). That family is **not** candidate-complete: T-ext (unit discs (0,0)/(2,0), kiss (1,0)) fits no row. T-int is covers, not a missing candidate. The eight-row family `phase0_relation ∨ disks_touch` **is** candidate-complete. Headlines stay `phase0_relation_complete_hypothesis_refuted` / `disc_relations_complete_with_touch` (no second headline). Prove-or-disprove on the Phase 0 ops matrix (docs/overlay-ng-curve-ops-mnemonics.md): do the relation rows self / disjoint / covers / coveredBy / properly-crossing decide every pair of positive-radius discs? **No** — two externally tangent unit discs fit no row: they share the kiss point (so not disjoint), each holds a far point the other misses (so neither covers), and `discs_properly_intersect` is deliberately strict, failing at d = r1 + r2. The degenerate op values at the kiss are pinned: CAP collapses from a 2-D ∩ 2-D query to the 0-dimensional singleton (the whole proof is 2(x−1)² + 2y² ≤ 0), SUB and XOR are exact-minus-one-point, CUP's shell self-touches (V1's wound). Internal tangency is NOT a gap — covers fires — but its SUB annulus pinches where the boundaries meet. The repair is one row: TOUCH := nonempty intersection with disjoint interiors, and completeness becomes a theorem, generic over positive discs, by trichotomy of the centre distance against |r1 − r2| and r1 + r2 with the radial kiss witness c1 + (r1/d)(c2 − c1). `DISC_OVERLAY` had classified EXT_TANGENT/INT_TANGENT by exact-Q discriminant before the R-side had a spec (generator family E) — this module supplies that spec; no driver change. Ledger: [`overlayng-curve-phase0.md`](overlayng-curve-phase0.md).
 topic: overlay · claimId: laser-ov · witness: kiss-discs — unit discs at (0,0)/(2,0) kissing at (1,0); internal pair (0,0,r2)⊇(1,0,r1) pinching at (2,0).
@@ -1214,14 +1272,14 @@ topic: overlay · claimId: laser-ov · witness: kiss-discs — unit discs at (0,
 | `OverlayTouchRow.v : int_covers` (+ `t_int_is_covers_not_a_gap`, `int_not_crossing`, `covers_of_reach`) | Internal tangency is NOT a completeness gap: the covers row fires by the reach bound d + r2 ≤ r1 (the workhorse `covers_of_reach` also settles every nested case of the headline); T-int is therefore already a seven-row candidate `[exact]` | 3 |
 | `OverlayTouchRow.v : int_kiss_pinch` (+ `int_kiss_not_in_crescent`) | The internal-tangency ANSWER degeneracy: the SUB annulus's inner and outer boundaries meet at the kiss (pinched shell, V1), and the closed-region crescent misses its own pinch point `[exact]` | 3 |
 
-## The TOUCH pair's DE-9IM — FF2F01212, every cell point-set-backed (`RelateTouchDiscs.v`) <!-- feat:relate geom:cp -->
+## The TOUCH pair's DE-9IM — FF2F01212, every cell point-set-backed (`RelateTouchDiscs.v`) <!-- feat:relate geom:arc,cp -->
 
 | `RelateTouchDiscs.v : touch_discs_de9im_sound` (+ `td_ii_empty`, `td_ib_empty`, `td_bi_empty`, `td_ie_ball`, `td_ei_ball`, `td_ee_ball`, `td_be_nonempty`, `td_eb_nonempty`) | **Headline.** The externally tangent pair's DE-9IM is FF2F01212 with every cell backed by a point-set fact: F-cells proven empty (triangle squeeze at the kiss), 2-cells each containing a metric ball, 1-cells nonempty — the relate lane's first curved-pair matrix earned from geometry rather than hand-specified `[exact]` | 3 |
 | `RelateTouchDiscs.v : td_bb_singleton` | BB = 0 is an EXACT singleton: boundary × boundary is {kiss} — boundary × boundary sits inside the closed lens, which `ext_cap_singleton` already pinned to the kiss `[exact]` | 3 |
 | `RelateTouchDiscs.v : circle_subset_no_ball` (+ `td_be_no_ball`, `td_eb_no_ball`) | No subset of a circle contains a metric ball: off-circle points are dense (radial-scale perturbation about the centre; off-circle query points defeat the ball at its own centre) — the dimension-≤-1 witness for the two boundary-arc cells `[exact]` | 3 |
 | `RelateTouchDiscs.v : touch_discs_matrix_touches` (+ `touch_discs_matrix_ok`) | The matrix satisfies OGC `touches` (`pat_touches_1`: BI = F with BB nonempty) and `matrix_ok` — closed under the global context, zero axioms `[exact]` | 3 |
 
-## LEC candidate completeness, witness-scoped — the enumeration contains every maximiser (`LECCandidateVertex.v`) <!-- feat:metric geom:cp -->
+## LEC candidate completeness, witness-scoped — the enumeration contains every maximiser (`LECCandidateVertex.v`) <!-- feat:metric geom:poly -->
 
 The summit rung's witness half. For three point obstacles — sites (0,0), (4,0), (2,3), an acute triangle with rational circumcentre (2, 5/6) and circumradius 13/6 — over their convex hull, the largest empty circle is Qed end-to-end: the LEC is centred at the interior Voronoi vertex with radius 13/6 (`lec_three_points`, stated through the lane's `largest_empty_disk` and priced by the flatten row's `empty_disk_flatten_iff` — the summit consumes the typed table it stands on), the maximiser is unique, and it lies in the finite three-class candidate enumeration {Voronoi vertex; bisector × boundary crossings; domain vertices} — candidate completeness for the instance. The proof engine is hand-found per-Voronoi-cell Handelman certificates (one integer-coefficient `ring` identity per cell yields the radius bound AND the maximiser uniqueness — no solver search), with a four-way `Rle_dec` trichotomy stitching the cells. Failed path F7 recorded: "interior candidates suffice" is refuted by the two-disc corpus witness, whose maximisers both sit on the domain boundary (`lec_two_discs_maximisers`) — so the two instances together prove both candidate classes non-redundant. Ledger: [`lec-optimal-path.md`](lec-optimal-path.md). Oracle `OBSTACLE_DISTANCE` §I: vertex clearance ≈ 13/6 at 1e-12, mirror-symmetric edge crossings bit-identical, a 109-sample grid sweep never beats the enumeration; no driver change.
 topic: construct · claimId: none (hypothesis lane, board card pending) · witness: tri-circum-13-6 — sites (0,0)/(4,0)/(2,3), vertex (2,5/6), R = 13/6; enumeration {(2,5/6),(2,0),(1,3/2),(3,3/2),3 vertices}.
@@ -1234,7 +1292,7 @@ topic: construct · claimId: none (hypothesis lane, board card pending) · witne
 | `LECCandidateVertex.v : tri_cell_bound` (+ `cell_A_cert`, `cell_B_cert`, `cell_C_cert`) | The per-cell Handelman certificates: on each Voronoi cell one integer-coefficient ring identity (e.g. 169 − 36(x²+y²) = 52(2−x) + 5(13−4x−6y) + 12(2−x)(3x−2y) + 6(13−4x−6y)y) proves the clearance bound AND, at equality, forces the tight factors to the vertex — bound and uniqueness from the same certificate `[exact]` | 3 |
 | `LECCandidateVertex.v : interior_maximiser_hypothesis_refuted` (+ `strictly_interior_rect`) | **Failed path H-INTERIOR (ledger F7):** "the maximiser lies strictly inside the domain, so boundary candidates can be skipped" — refuted by the two-disc corpus witness: both its maximisers (0, ±3) sit ON the rectangle's boundary; paired with this module's interior-vertex maximiser, both candidate classes are proven load-bearing `[exact]` | 3 |
 
-## LEC candidate completeness, general — the theorem a trusted O(n log n) LEC needs (`LECCandidateComplete.v`) <!-- feat:metric geom:cp -->
+## LEC candidate completeness, general — the theorem a trusted O(n log n) LEC needs (`LECCandidateComplete.v`) <!-- feat:metric geom:poly -->
 
 | `LECCandidateComplete.v : improvement_kernel` (+ `dist_sq_shift`, `uniform_tau`, `lt_dist_of_lt_sq`) | **The engine.** For any nonzero direction d with ⟨d, p−s⟩ ≥ 0 at every nearest site, every small positive step along d strictly clears radius r at EVERY site — the inner product may be ZERO, the quadratic term t²·\|d\|² of dist²(p+t·d, s) = r² + 2t·⟨d, p−s⟩ + t²·\|d\|² forces improvement, which is what lets one kernel serve the unique-nearest, generic two-nearest, antipodal, and along-edge cases alike `[exact]` | 3 |
 | `LECCandidateComplete.v : within_two_improvable` (+ `within_two_direction`) | **Positive improvement, interior form (fully constructive).** At most two nearest sites at positive clearance ⇒ a strictly better centre is CONSTRUCTED at every small step along an explicit direction: d = u₁+u₂ when nonzero (both inner products strictly positive by the nonzero-square trick, no Cauchy–Schwarz), the perpendicular when antipodal (inner products exactly zero) `[exact]` | 3 |
@@ -1243,7 +1301,7 @@ topic: construct · claimId: none (hypothesis lane, board card pending) · witne
 | `LECCandidateComplete.v : lec_candidate_completeness_boundary_edge` | **Candidate completeness, edge (GENERAL).** A maximiser strictly inside a domain edge can never have a unique nearest site — an edge maximiser is a bisector × boundary crossing; with domain vertices as the only remaining boundary points, the three-class enumeration is exhaustive for maximisers `[exact]` | 3 |
 | `LECCandidateComplete.v : f8_interiority_load_bearing` (+ `f8_led`, `f8_within_two`, `f8_midpoint_not_within_one`) | **Failed path H-NO-BALL (ledger F8):** "≥ 3 nearest sites holds for maximisers over any convex domain, no interiority premise" — refuted: two sites (0,0), (2,0) with the domain their connecting segment, the midpoint (1,0) maximises at radius 1 with exactly TWO nearest sites; the instance is also the antipodal trap where the naive direction u₁+u₂ = 0 degenerates `[exact]` | 3 |
 
-## LEC candidate completeness, WEIGHTED — the Apollonius summit (`LECCandidateWeighted.v`) <!-- feat:metric geom:cp -->
+## LEC candidate completeness, WEIGHTED — the Apollonius summit (`LECCandidateWeighted.v`) <!-- feat:metric geom:poly -->
 
 | `LECCandidateWeighted.v : weighted_improvement_kernel` (+ `uniform_tau_disks`, `wdist_engine_bridge`) | **The engine, per-site levels.** The shift expansion survives weighting verbatim: a disc site's radius only moves the LEVEL L = w + r its centre distance must clear, so one kernel drives all weighted cases; `wdist_engine_bridge` ties wdist to the engine's `disc_dist` (the `min_disc_dist_weighted` reduction) `[exact]` | 3 |
 | `LECCandidateWeighted.v : weighted_within_two_direction` (+ `weighted_within_two_improvable`) | **THE NEW SUPPLIER.** At a weighted two-site tie the kernel-ready direction is the weighted-bisector normal v = d₂·u₁ + d₁·u₂ (square-root-free); one identity — \|v\|² = 2·d₁·d₂·N, ⟨v,u₁⟩ = d₁·N, ⟨v,u₂⟩ = d₂·N for N = d₁·d₂ + ⟨u₁,u₂⟩ — runs the whole case split: N > 0 generic, N = 0 antipodal ridge (perpendicular, tangent), N < 0 impossible (Cauchy–Schwarz for free) `[exact]` | 3 |
