@@ -42,8 +42,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay PointInRingTangents JordanCurveSeam.
-From NTS.Proofs Require Import PointInRingCorrect JCT JCT_OnEdgeCounterexample.
+From NTS.Proofs Require Import JordanRingKit.
 From NTS.Proofs Require Import RectangleJCT RectangleSeparation RectangleOffringSeam.
 From NTS.Proofs Require Import GeneralTriangleSeparation GeneralTriangleParity.
 From NTS.Proofs Require Import GeneralTriangleHoleNesting GeneralTriangleJCT.

@@ -38,11 +38,12 @@
    ========================================================================== *)
 
 From Stdlib Require Import List Arith Lia.
-From NTS.Proofs Require Import Distance Overlay BufferAssembly RingExtract
-                               RingSimple PointInRingCorrect JordanCurveSeam JCT
-                               Vec Direction Azimuth Dart DartAngularOrder
-                               DartNext DartNextSpec DartNextInjective OrbitCycle
-                               DartFace FaceChain FaceRingSimple FacePolygonHoles.
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import BufferAssembly RingExtract RingSimple Vec
+                               Direction Azimuth Dart DartAngularOrder
+                               DartNext DartNextSpec DartNextInjective
+                               OrbitCycle DartFace FaceChain FaceRingSimple
+                               FacePolygonHoles.
 
 Import ListNotations.
 

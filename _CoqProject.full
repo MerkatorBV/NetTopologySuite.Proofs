@@ -1302,6 +1302,9 @@ theories/GeneralTriangleJCT.v
 # cont_offring (+ ring_complement premise) and re-wires the conditional
 # headline against it.  Three-axiom.  No Admitted.
 theories/JCT_OnEdgeCounterexample.v
+# Facade: PIP + overlay + Jordan seam — one import instead of the pack.
+# Importers × (members − 1) Requires dropped. Overlay.v unchanged (ADR-0001).
+theories/JordanRingKit.v
 # The corrected H1 seam discharged TOTALLY for the rectangle -- the first
 # family where parity_characterises_interior_cont_offring itself is Qed (all
 # off-ring points, not just strict interior).  New machinery: the generic

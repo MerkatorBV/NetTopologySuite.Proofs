@@ -57,10 +57,9 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra Lia List.
-From NTS.Proofs Require Import Distance Overlay.
-From NTS.Proofs Require Import JordanCurveSeam PointInRingCorrect PointInRingTangents.
+From NTS.Proofs Require Import JordanRingKit.
 From NTS.Proofs Require Import JCTTautClearance JCTRingCycle JCTHugStep.
-From NTS.Proofs Require Import JCT_OnEdgeCounterexample JCTEscapeDescentHolds.
+From NTS.Proofs Require Import JCTEscapeDescentHolds.
 Import ListNotations.
 
 Local Open Scope R_scope.

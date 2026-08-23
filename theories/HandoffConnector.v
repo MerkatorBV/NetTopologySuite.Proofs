@@ -20,11 +20,10 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
-                               Direction Dart DartAngularOrder
-                               PointInRingTangents JordanCurveSeam JCT
-                               JCTHugStep RingClearance SectorPath
-                               CornerSamples CornerConnector
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth Direction Dart
+                               DartAngularOrder JCTHugStep RingClearance
+                               SectorPath CornerSamples CornerConnector
                                JCTCorridor StraddleSides MirrorCorridor
                                DartSideKit HandoffWedge.
 From NTS.Proofs Require Export CornerCorridorBridge.
@@ -342,7 +341,6 @@ Proof.
   rewrite Heq.
   apply connected_in_complement_cont_refl. exact Hcomp.
 Qed.
-
 
 (* -------------------------------------------------------------------------- *)
 (* Axiom audit.                                                                *)

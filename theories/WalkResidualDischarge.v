@@ -46,21 +46,20 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List Arith Lia.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
-                               Direction Dart DartAngularOrder DartNext
-                               DartNextSpec DartFace NoShortFaces OrbitCycle
-                               FaceTwinAware PointInRingTangents
-                               JordanCurveSeam JCT JCTHugStep RingClearance
-                               JCTTautClearance SectorPath CornerSamples
-                               CornerConnector FanGapSector FanCorner
-                               WalkCorners WalkCornerRange DartPath
-                               BufferAssembly RingExtract CycleRing
-                               GeneralTautBridge
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth Direction Dart
+                               DartAngularOrder DartNext DartNextSpec DartFace
+                               NoShortFaces OrbitCycle FaceTwinAware
+                               JCTHugStep RingClearance JCTTautClearance
+                               SectorPath CornerSamples CornerConnector
+                               FanGapSector FanCorner WalkCorners
+                               WalkCornerRange DartPath BufferAssembly
+                               RingExtract CycleRing GeneralTautBridge
                                EdgeConnectivity ArrangementEMinus
-                               EdgeFaceBridge HBridgeCoreSlice
-                               WalkVertexPack WalkFamilies JCTCorridor
-                               JCTMinOpenStep WalkCorridor MirrorCorridor
-                               DartSideKit CornerCorridorBridge HandoffConnector
+                               EdgeFaceBridge HBridgeCoreSlice WalkVertexPack
+                               WalkFamilies JCTCorridor JCTMinOpenStep
+                               WalkCorridor MirrorCorridor DartSideKit
+                               CornerCorridorBridge HandoffConnector
                                C3eEfCorridorAssumption BaseToTipHeadline
                                WalkStepChain WalkChainInduction WalkEndTies
                                WalkRides WalkPremiseBridge WalkResidualKit

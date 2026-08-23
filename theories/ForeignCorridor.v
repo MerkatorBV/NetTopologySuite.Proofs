@@ -42,16 +42,14 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay PointInRingTangents
-                               JordanCurveSeam PointInRingCorrect JCT
-                               JCT_OnEdgeCounterexample ConvexOffringSeam
-                               JCTParityTransport JCTHalfOpenParity
-                               JCTGenericStability JCTLevelJump
-                               JCTTrappedHalf JCTSeamAssembly
-                               JCTEscapeDescent JCTEastApproach
-                               JCTCorridor JCTWalkKit JCTWalkStep
-                               JCTTautClearance JCTWallClear
-                               Dart FaceTwinAware HBridgeCoreSlice.
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import ConvexOffringSeam JCTParityTransport
+                               JCTHalfOpenParity JCTGenericStability
+                               JCTLevelJump JCTTrappedHalf JCTSeamAssembly
+                               JCTEscapeDescent JCTEastApproach JCTCorridor
+                               JCTWalkKit JCTWalkStep JCTTautClearance
+                               JCTWallClear Dart FaceTwinAware
+                               HBridgeCoreSlice.
 
 Import ListNotations.
 Local Open Scope R_scope.

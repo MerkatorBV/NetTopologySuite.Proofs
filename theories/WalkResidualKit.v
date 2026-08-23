@@ -47,21 +47,19 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List Arith Lia.
-From NTS.Proofs Require Import Distance Overlay OverlayGraph Vec Azimuth
-                               Direction Dart DartAngularOrder DartNext
-                               DartNextSpec DartFace NoShortFaces
-                               FaceTwinAware PointInRingTangents
-                               JordanCurveSeam JCT JCTHugStep RingClearance
-                               JCTTautClearance SectorPath CornerSamples
-                               CornerConnector FanGapSector FanCorner
-                               WalkCorners WalkCornerRange DartPath
+From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import OverlayGraph Vec Azimuth Direction Dart
+                               DartAngularOrder DartNext DartNextSpec DartFace
+                               NoShortFaces FaceTwinAware JCTHugStep
+                               RingClearance JCTTautClearance SectorPath
+                               CornerSamples CornerConnector FanGapSector
+                               FanCorner WalkCorners WalkCornerRange DartPath
                                RingExtract CycleRing GeneralTautBridge
                                EdgeConnectivity ArrangementEMinus
                                HBridgeCoreSlice WalkVertexPack WalkFamilies
                                JCTCorridor JCTMinOpenStep WalkCorridor
-                               MirrorCorridor DartSideKit
-                               CornerCorridorBridge HandoffConnector
-                               WalkStepChain WalkRides.
+                               MirrorCorridor DartSideKit CornerCorridorBridge
+                               HandoffConnector WalkStepChain WalkRides.
 
 Import ListNotations.
 Local Open Scope R_scope.

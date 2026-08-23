@@ -23,8 +23,7 @@ witness: none
    ============================================================================ *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay PointInRingTangents JordanCurveSeam JCT.
-
+From NTS.Proofs Require Import JordanRingKit.
 Import ListNotations.
 Local Open Scope R_scope.
 
