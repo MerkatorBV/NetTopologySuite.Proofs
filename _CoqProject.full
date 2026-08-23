@@ -1456,6 +1456,12 @@ theories/JCTLevelJump.v
 # closed ring (ring_simple NOT needed).  The load-bearing half of H1.
 # Three-axiom.  No Admitted.
 theories/JCTTrappedHalf.v
+# Clique facade: JCT modules that travel together (support ≥ 12).
+# Require-Export umbrella — JordanRingKit · ConvexOffringSeam ·
+# JCTParityTransport · JCTHalfOpenParity · JCTGenericStability ·
+# JCTLevelJump · JCTTrappedHalf.  One import instead of the pack.
+# claimId: none (packaging).  After the last member; importers follow.
+theories/JctSeamPack.v
 # H1 PROPER, assembly: the kernel chain named (ho_parity_locally_constant_
 # holds for every closed ring); the seam's hard direction unconditional
 # (point_in_ring_imp_geometric_cont: odd guarded off-ring points of any

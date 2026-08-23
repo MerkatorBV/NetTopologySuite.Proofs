@@ -44,9 +44,8 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay.
-From NTS.Proofs Require Import JordanCurveSeam PointInRingTangents.
-From NTS.Proofs Require Import JCTHalfOpenParity JCTSeamAssembly JCTParityTransport.
+From NTS.Proofs Require Import JctSeamPack.
+From NTS.Proofs Require Import JCTSeamAssembly.
 From NTS.Proofs Require Import GeneralTriangleSeparation TriangleValidPolygon.
 Import ListNotations.
 

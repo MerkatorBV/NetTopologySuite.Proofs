@@ -37,14 +37,12 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import JctSeamPack.
 From NTS.Proofs Require Import RectangleJCT RectangleSeparation RectangleOffringSeam.
 From NTS.Proofs Require Import GeneralTriangleSeparation GeneralTriangleParity.
 From NTS.Proofs Require Import GeneralTriangleHoleNesting GeneralTriangleJCT.
 From NTS.Proofs Require Import GeneralTriangleExterior GeneralTriangleOffringSeam.
-From NTS.Proofs Require Import ConvexOffringSeam RightTriangleJCT.
-From NTS.Proofs Require Import JCTParityTransport JCTHalfOpenParity.
-From NTS.Proofs Require Import JCTGenericStability JCTLevelJump JCTTrappedHalf.
+From NTS.Proofs Require Import RightTriangleJCT.
 From NTS.Proofs Require Import JCTSeamAssembly JCTEscapeDescent.
 Import ListNotations.
 

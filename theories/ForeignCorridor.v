@@ -42,10 +42,8 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import JordanRingKit.
-From NTS.Proofs Require Import ConvexOffringSeam JCTParityTransport
-                               JCTHalfOpenParity JCTGenericStability
-                               JCTLevelJump JCTTrappedHalf JCTSeamAssembly
+From NTS.Proofs Require Import JctSeamPack.
+From NTS.Proofs Require Import JCTSeamAssembly
                                JCTEscapeDescent JCTEastApproach JCTCorridor
                                JCTWalkKit JCTWalkStep JCTTautClearance
                                JCTWallClear Dart FaceTwinAware
