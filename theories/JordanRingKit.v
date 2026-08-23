@@ -15,6 +15,7 @@
    Overlay before Jordan; Overlay.v itself is unchanged (no Overlay↔Jordan
    cycle).  Real chain stays the rocq makefile / `_CoqProject.full`.
 
+   claimId: none (packaging; not a geometric micro). issue: #69.
    No lemmas.  No `Admitted` / `Axiom` / `Parameter`.
 
    Author: NetTopologySuite.Proofs contributors

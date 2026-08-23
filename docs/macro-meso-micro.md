@@ -57,6 +57,12 @@ each declaration's new home. Importers therefore cannot observe a split, so
 **high fan-in is not a reason to refuse one** — it is a reason to sequence it
 carefully.
 
+**Clique facades** (PR #534, `JordanRingKit.v`) are the other Require-Export
+shape: a *new* name that packs modules already co-required together
+(support ≥ 12). Savings = importers × (members − 1). Not a monolith split —
+no declarations move. Overlay stays a member, not a Require of Jordan
+(ADR-0001 layer law). RelateNG and Overlay-only leaves stay off the kit.
+
 **Enforcement is a ratchet.** `scripts/check_module_split.py` runs in
 `make ci-guards`; modules already over the gate are recorded in
 [`docs/module-split-allowlist.txt`](module-split-allowlist.txt) with their line
