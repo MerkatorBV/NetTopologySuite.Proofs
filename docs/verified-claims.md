@@ -1260,7 +1260,7 @@ topic: construct · claimId: none (hypothesis lane, board card pending) · witne
 
 ## V-CS — even CircularString controls are valid only as the closed 4-point annulus (`CircularStringValid.v`) <!-- feat:valid geom:cs -->
 
-topic: curve · claimId: V-CS · witness: circularstring-abca · JTS `2b56b1a4`
+topic: arc · claimId: V-CS · witness: circularstring-abca · JTS `2b56b1a4`
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|

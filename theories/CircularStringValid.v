@@ -14,8 +14,11 @@
    Non-collinear / circumcircle is the existing `valid_arc` rule, not reminted.
    Not H-CC area `50 + 12.5 acos(0.6)`. Year-1 circular only.
 
+   topic: arc
    claimId: V-CS
    witness: circularstring-abca
+
+   (* WITNESS {"claimId":"V-CS","topic":"arc","lemma":"circularstring_abca_valid","title":"Even CircularString controls valid only as CIRCULARSTRING(A,B,C,A)","witness":"circularstring-abca","file":"theories/CircularStringValid.v","board":"#86"} *)
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
