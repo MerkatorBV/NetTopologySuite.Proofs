@@ -26,6 +26,10 @@
    witness: none
    issue: #69
 
+   Survivor module for blast-cone gates (PR #535): this file.  Gates may
+   attribute the cone to an importer (`DiamondOffringSeam.v`).  claimId
+   stays none — packaging, not laser-ml2 / laser-ov / 69-c / 424-b.
+
    No lemmas.  No `Admitted` / `Axiom` / `Parameter`.
 
    Author: NetTopologySuite.Proofs contributors
