@@ -2212,6 +2212,9 @@ theories/BufferDepthGuarded.v
 # docs/audit-phase4-chord-overfitting.md §7).  Six Qed-closed
 # structural lemmas; no Admitteds; no Classical_Prop.classic.
 theories/CurveGeometry.v
+# V-CS / JTS #86: even CircularString control count is valid only as the
+# closed 4-control annulus CIRCULARSTRING(A,B,C,A). Port of JTS 2b56b1a4.
+theories/CircularStringValid.v
 # Issue #64 subtask 64-d — GREEN: InDisk / InDisk_supporting_circle closed-disk
 # membership on the supporting circle of a CircularArc, plus rational unit-arc
 # witness (a=(1,0)→(0,1)→(−1,0); interior (0,1/2), boundary (3/5,4/5),

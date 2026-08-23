@@ -1257,3 +1257,13 @@ topic: construct · claimId: none (hypothesis lane, board card pending) · witne
 | `MICChordNecessity.v : chord_strictly_understates` (+ `chord_midpoint_strictly_inside`) | **Negative half.** EVERY chord of a circle strictly understates the clearance at the centre: the chord's midpoint sits at squared depth r² − \|AB\|²/4 (parallelogram law; \|AB\|² > 0 once A ≠ B by the nonzero-square trick), so the segment metric dips strictly below r — a chord swap is structurally inexact at any finite resolution `[exact]` | 3 |
 | `MICChordNecessity.v : chord_of_arc_understates_at_centre` (+ `arc_dist_centre`) | The arc's OWN chord — the segment linearization substitutes for it — strictly understates the exact clearance at the circumcentre, where the exact metric answers the radius on the nose `[exact]` | 3 |
 | `MICChordNecessity.v : mic345_chord_gap` (+ `mic345_valid`, `mic345_centre`, `mic345_radius`, `mic345_understates`) | The integer 3-4-5 instance pins the gap exactly: arc (3,4)→(5,0)→(3,−4) about centre (0,0) — exact clearance 5, chord clearance 3, all integers (oracle family L pins both bit-exact) `[exact]` | 3 |
+
+## V-CS — even CircularString controls are valid only as the closed 4-point annulus (`CircularStringValid.v`) <!-- feat:valid geom:cs -->
+
+topic: curve · claimId: V-CS · witness: circularstring-abca · JTS `2b56b1a4`
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CircularStringValid.v : circularstring_abca_valid` (+ `closed_four_valid`, `cs_first_eq_last`) | **Even+closed valid.** `CIRCULARSTRING(A,B,C,A)` with A=(−5,0), B=(0,5), C=(5,0) is a valid control count: n=4 and first=last — the #86 full-circle / annulus ring, complementary close implicit `[exact]` | 3 |
+| `CircularStringValid.v : circularstring_open_even_invalid` (+ `even_open_four_invalid`) | **Even+open invalid.** Four leftover controls (0,0),(1,1),(2,0),(3,1) with first≠last are not a valid CircularString control count `[exact]` | 3 |
+| `CircularStringValid.v : circularstring_odd_closed_valid` (+ `odd_controls_valid`) | **Odd still valid.** The usual 5-control closed SFA ring (−5,0),(0,5),(5,0),(0,−5),(−5,0) remains a valid control count `[exact]` | 3 |
