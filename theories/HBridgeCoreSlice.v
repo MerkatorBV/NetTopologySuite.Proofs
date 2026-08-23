@@ -41,12 +41,11 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List Arith Lia.
-From NTS.Proofs Require Import JordanRingKit.
+From NTS.Proofs Require Import JctSeamPack.
 From NTS.Proofs Require Import OverlayGraph Dart DartAngularOrder DartNextSpec
                                DartFace FaceOrbitSep EdgeConnectivity
                                EdgeFaceBridge ArrangementEMinus DartPath
-                               CycleRing RingExtract JCTHalfOpenParity
-                               JCTGenericStability JCTEscapeDescent JCTHugStep
+                               CycleRing RingExtract JCTEscapeDescent JCTHugStep
                                JCTCorridor RingClearance JCTTautClearance
                                GeneralTautBridge EdgeCrossParity FaceTwinAware
                                StraddlePair StraddleSides.

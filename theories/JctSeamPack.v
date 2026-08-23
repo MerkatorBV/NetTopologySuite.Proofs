@@ -7,9 +7,10 @@
    Members: JordanRingKit · ConvexOffringSeam · JCTParityTransport ·
    JCTHalfOpenParity · JCTGenericStability · JCTLevelJump · JCTTrappedHalf.
 
-   Full-pack importers (all 7) plus the near-clique theorem module
-   JCTSeamAssembly (≥6 of 7) Require this facade.  RelateNG and Overlay-only
-   leaves stay off it so the JCT cone does not leak sideways.
+   Full-pack importers (all 7) plus near-clique theorem modules: JCTSeamAssembly
+   (≥6 of 7) and JCT-cone files already on the kit / ≥4 kit members that still
+   pulled seam modules piecewise.  RelateNG, Overlay-only, and convex-layer
+   leaves (ConvexSlice / ConvexJCT / …) stay off it so the cone does not leak.
 
    Not JctSeamPack7 — one pack, this member set (highest savings).  Competing
    7-sets that swap JCTSeamAssembly / JCTEscapeDescent / JCTEastApproach /

@@ -40,9 +40,8 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List Arith Lia.
-From NTS.Proofs Require Import Distance Overlay Vec Azimuth Dart RingExtract
-                               PointInRingTangents PointInRingCorrect
-                               JCTHalfOpenParity JCTGenericStability
+From NTS.Proofs Require Import JctSeamPack.
+From NTS.Proofs Require Import Vec Azimuth Dart RingExtract
                                JCTEscapeDescent EdgeCrossParity
                                JCTCorridor JCTTautClearance
                                GeneralTautBridge JCTHugStep StraddlePair
