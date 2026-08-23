@@ -42,8 +42,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs Require Import Distance Overlay PointInRingTangents JordanCurveSeam.
-From NTS.Proofs Require Import PointInRingCorrect JCT JCT_OnEdgeCounterexample.
+From NTS.Proofs Require Import JordanRingKit.
 From NTS.Proofs Require Import ConvexOffringSeam JCTParityTransport.
 From NTS.Proofs Require Import JCTHalfOpenParity JCTGenericStability JCTLevelJump.
 Import ListNotations.
