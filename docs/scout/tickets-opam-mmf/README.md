@@ -12,7 +12,7 @@ moving the file to `closed/`, and adding a one-line pointer to the map's
 |---|---|---|---|
 | 01 | [Collect the community verdict on the `rocq-*` rename](01-community-verdict-on-rocq-rename.md) | task | — |
 | 02 | [Decide the shape of the manifest-closure gate](02-gate-manifest-closure.md) | grilling | — |
-| 03 | [Decide the Rocq version constraint](03-rocq-version-constraint.md) | grilling | — |
+| 03 | ~~[Decide the Rocq version constraint](closed/03-rocq-version-constraint.md)~~ **closed** — match `rocq-bignums` | grilling | — |
 | 04 | [Establish why `opam publish` never landed a package](04-why-opam-publish-never-landed.md) | research | — |
 | 05 | [Decide the axiom-footprint line, per package](05-axiom-footprint-line.md) | grilling | — |
 | 07 | [Audit the opam descriptions for stale and unearned claims](07-audit-description-claims.md) | task | — |
@@ -21,16 +21,17 @@ moving the file to `closed/`, and adding a one-line pointer to the map's
 ```
 01 ──┐  rename verdict → decides the version labels
 02 ──┤  closure gate
-03 ──┼── 06  write the bar
-04 ──┤  why publish never landed  ← the load-bearing diagnosis
+03 ══┼══ closed 2026-08-24 — rocq-core {>= "9.2" & < "9.4~"}
+04 ──┼── 06  write the bar
 05 ──┤  axiom line, per package
 07 ──┘  description accuracy
+      ↑ 04 = why publish never landed, the load-bearing diagnosis
 ```
 
-**Frontier:** 01, 02, 03, 04, 05, 07 — six takeable, none blocked. Ticket 06 is
+**Frontier:** 01, 02, 04, 05, 07 — five takeable, none blocked. Ticket 06 is
 the only blocked one, and it is the destination.
 
-The six can run in parallel, so expect concurrent sessions. **04 is the one to
+The five can run in parallel, so expect concurrent sessions. **04 is the one to
 take first if you only take one**: six releases have shipped without reaching
 the archive, and until that is understood the bar cannot name a gate that would
 have caught it.

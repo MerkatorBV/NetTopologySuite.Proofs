@@ -66,7 +66,13 @@ This map does **not** cut the releases. Plan, don't mint.
 
 <!-- one line per closed ticket: enough to judge relevance, then open the ticket -->
 
-_(none yet — charting resolves nothing)_
+- [Decide the Rocq version constraint](tickets-opam-mmf/closed/03-rocq-version-constraint.md)
+  — match `rocq-bignums`, not `coq-fourcolor`: `rocq-core {>= "9.2" & < "9.4~"}`
+  with `rocq-stdlib` unconstrained, `coq-flocq {>= "4.2.2" & < "4.3~"}`, and a
+  published tested-on date. A wider Rocq range is served by publishing
+  `+rocqX.Y` versions, never by widening a bound. Carries rename evidence to
+  ticket 01 (archive is 1111 `rocq-*` to 5302 mostly-legacy `coq-*`) and three
+  bar lines to ticket 06.
 
 ## Not yet specified
 
