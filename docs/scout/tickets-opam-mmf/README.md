@@ -12,7 +12,7 @@ moving the file to `closed/`, and adding a one-line pointer to the map's
 |---|---|---|---|
 | 01 | [Collect the community verdict on the `rocq-*` rename](01-community-verdict-on-rocq-rename.md) | task | — |
 | 02 | [Decide the shape of the manifest-closure gate](02-gate-manifest-closure.md) | grilling | — |
-| 03 | ~~[Decide the Rocq version constraint](closed/03-rocq-version-constraint.md)~~ **closed** — match `rocq-bignums` | grilling | — |
+| 03 | ~~[Decide the Rocq version constraint](closed/03-rocq-version-constraint.md)~~ **closed** — `rocq-core {>= "9.2" & < "9.3~"}` | grilling | — |
 | 04 | [Establish why `opam publish` never landed a package](04-why-opam-publish-never-landed.md) | research | — |
 | 05 | [Decide the axiom-footprint line, per package](05-axiom-footprint-line.md) | grilling | — |
 | 07 | [Audit the opam descriptions for stale and unearned claims](07-audit-description-claims.md) | task | — |
@@ -22,7 +22,7 @@ moving the file to `closed/`, and adding a one-line pointer to the map's
 ```
 01 ──┐  rename verdict → decides the version labels
 02 ──┤  closure gate
-03 ══┼══ closed 2026-08-24 — rocq-core {>= "9.2" & < "9.4~"}
+03 ══┼══ closed 2026-08-24 — rocq-core {>= "9.2" & < "9.3~"}  (9.3 unreleased)
 04 ──┼── 06  write the bar
 05 ──┤  axiom line, per package
 07 ──┤  description accuracy
