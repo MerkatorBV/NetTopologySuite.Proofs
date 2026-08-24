@@ -115,3 +115,40 @@ land on the same core interval. Their dependency lines still differ, because onl
 - **Ticket 06** inherits three bar lines: the declared interval equals the tested
   interval; the tested-on date is published; and a new Rocq release is handled by
   publishing a version, never by widening a bound.
+
+### Amendment 2026-08-24 — the upper bound was wrong
+
+Asked whether the packages are compatible with Rocq 9.3. They cannot be: **9.3
+is not released.** Stable `rocq-core` is 9.0.0, 9.0.1, 9.1.0, 9.1.1, 9.2.0 —
+confirmed independently by `ocaml/opam-repository` (where stable Rocq actually
+lives; `rocq-core` is *not* in the Rocq archive's `released/`) and by a local
+`opam show rocq-core -f all-versions`. The Rocq archive's `core-dev` carries only
+`9.3+rc1` and `9.3.dev`.
+
+So the adopted `< "9.4~"` **permitted two versions that do not exist** and had
+been tested against neither. Copying bignums' interval was the error: bignums is
+core-adjacent and maintained in lockstep with Rocq, so its maintainers can carry
+forward-looking headroom that we cannot.
+
+**Corrected constraint:** `rocq-core {>= "9.2" & < "9.3~"}` — permits 9.2.x
+only, which is exactly what CI builds. When 9.3 ships and is tested, it arrives
+as a published `+rocq9.3` version, which is the idiom this ticket already
+adopted for widening.
+
+Evidence gathered while verifying, both packages assembled and built locally
+against **Rocq 9.1.1 + Flocq 4.2.2**:
+
+- `spatial-algebra` — 2 files, `make` exit 0, and `Print Assumptions` reports
+  *Closed under the global context* throughout, so the zero-axiom claim holds
+  for current content including the new `im_unsupported` sentinel.
+- `robust-predicates` — 21 files, `make` exit 0, `Print Assumptions` reports
+  exactly `functional_extensionality_dep` and `Classical_Prop.classic`, matching
+  its declared footprint.
+- `opam lint` **passes** on both opam files.
+
+Note the asymmetry this creates: **both packages demonstrably build on 9.1.1**,
+yet the constraint declares `>= 9.2`. That is deliberate — CI is the authority
+for a published claim and it tests only the pinned 9.2.0. If 9.1 reach is
+wanted, it is earned the same way as 9.3: a CI job plus a published
+`+rocq9.1` version. Recording it here so nobody later reads `>= 9.2` as
+evidence that 9.1 fails.

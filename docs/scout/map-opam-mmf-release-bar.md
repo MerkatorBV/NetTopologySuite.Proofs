@@ -72,7 +72,10 @@ This map does **not** cut the releases. Plan, don't mint.
   published tested-on date. A wider Rocq range is served by publishing
   `+rocqX.Y` versions, never by widening a bound. Carries rename evidence to
   ticket 01 (archive is 1111 `rocq-*` to 5302 mostly-legacy `coq-*`) and three
-  bar lines to ticket 06.
+  bar lines to ticket 06. **Amended same day:** the upper bound was wrong —
+  Rocq 9.3 is not released (stable tops out at 9.2.0), so `< "9.4~"` permitted
+  two nonexistent versions; corrected to `< "9.3~"`. Both packages verified to
+  build and lint locally in the same pass.
 
 ## Not yet specified
 

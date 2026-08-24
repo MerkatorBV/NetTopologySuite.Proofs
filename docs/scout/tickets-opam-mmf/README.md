@@ -16,6 +16,7 @@ moving the file to `closed/`, and adding a one-line pointer to the map's
 | 04 | [Establish why `opam publish` never landed a package](04-why-opam-publish-never-landed.md) | research | — |
 | 05 | [Decide the axiom-footprint line, per package](05-axiom-footprint-line.md) | grilling | — |
 | 07 | [Audit the opam descriptions for stale and unearned claims](07-audit-description-claims.md) | task | — |
+| 08 | [Decide how to stop CRLF breaking local verification](08-crlf-breaks-local-verification.md) | task | — |
 | 06 | [Write the bar](06-write-the-bar.md) | grilling | 01, 02, 03, 04, 05, 07 |
 
 ```
@@ -24,14 +25,15 @@ moving the file to `closed/`, and adding a one-line pointer to the map's
 03 ══┼══ closed 2026-08-24 — rocq-core {>= "9.2" & < "9.4~"}
 04 ──┼── 06  write the bar
 05 ──┤  axiom line, per package
-07 ──┘  description accuracy
+07 ──┤  description accuracy
+08 ──┘  CRLF blocks local verification (found while verifying)
       ↑ 04 = why publish never landed, the load-bearing diagnosis
 ```
 
-**Frontier:** 01, 02, 04, 05, 07 — five takeable, none blocked. Ticket 06 is
+**Frontier:** 01, 02, 04, 05, 07, 08 — six takeable, none blocked. Ticket 06 is
 the only blocked one, and it is the destination.
 
-The five can run in parallel, so expect concurrent sessions. **04 is the one to
+The six can run in parallel, so expect concurrent sessions. **04 is the one to
 take first if you only take one**: six releases have shipped without reaching
 the archive, and until that is understood the bar cannot name a gate that would
 have caught it.
