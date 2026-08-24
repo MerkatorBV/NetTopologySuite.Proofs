@@ -32,8 +32,9 @@ bug-reports: "https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues
 dev-repo: "git+https://github.com/grootstebozewolf/NetTopologySuite.Proofs.git"
 
 depends: [
-  "rocq-core" {>= "9.0"}
-  "rocq-stdlib" {>= "9.0"}
+  "ocaml"
+  "rocq-core" {>= "9.2" & < "9.3~"}
+  "rocq-stdlib"
 ]
 
 build: [
@@ -51,4 +52,5 @@ tags: [
   "keyword:intersection matrix"
   "keyword:orientation determinant"
   "logpath:NTS.Proofs"
+  "date:2026-08-24"
 ]

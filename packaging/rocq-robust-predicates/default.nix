@@ -8,7 +8,7 @@
 , coqPackages ? pkgs.coqPackages
 }:
 coqPackages.mkCoqDerivation {
-  pname = "robust-predicates";
+  pname = "rocq-robust-predicates";
   owner = "grootstebozewolf";
   version = "0.1.0";
   src = ./.;

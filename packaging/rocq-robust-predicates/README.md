@@ -1,4 +1,4 @@
-# coq-robust-predicates
+# rocq-robust-predicates
 
 Machine-checked **robust geometric predicates for binary64 (IEEE-754 double)
 coordinates**, with `Qed`-closed soundness against exact arithmetic — extracted
@@ -76,7 +76,7 @@ To produce a standalone opam source tarball (self-contained, no corpus needed
 — bundles the opam, dune, and nix files):
 
 ```sh
-make package             # -> dist/coq-robust-predicates.tar.gz
+make package             # -> dist/rocq-robust-predicates.tar.gz
 ```
 
 ## Namespace

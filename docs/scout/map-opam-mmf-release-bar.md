@@ -5,8 +5,9 @@ Charted 2026-08-24 · Tickets: [`docs/scout/tickets-opam-mmf/`](tickets-opam-mmf
 ## Destination
 
 A **locked release bar** — a named checklist plus the gate evidence it cites, on a
-pinned corpus commit — which, when met, makes `spatial-algebra` and
-`robust-predicates` **installable from the Rocq opam archive**. The map is done
+pinned corpus commit — which, when met, makes **`rocq-spatial-algebra 0.1.0`**
+and **`rocq-robust-predicates 0.1.0`** *installable from the Rocq opam
+archive*. The map is done
 when nothing remains to decide before someone can write that bar and clear it.
 
 This map does **not** cut the releases. Plan, don't mint.
@@ -37,8 +38,9 @@ This map does **not** cut the releases. Plan, don't mint.
 
 - **The bar requires opam-installable.** A GitHub release with an attached
   tarball is not a mint. An MMF nobody can `opam install` has no "M".
-- **Rename to `rocq-*` if the community does not object.** The question is out
-  with the community already; ticket 01 collects the verdict.
+- **Both packages are `rocq-*` and restart at 0.1.0.** Settled by ticket 01 —
+  no objection upstream, nothing was ever released to the archive, so there is
+  no lineage to continue. Supersedes the original 0.1.4 / 0.1.3 targets.
 - **The manifest stays pinned.** Same module set, updated content — that is what
   a `0.1.x` patch means here. Growing the packages is a separate effort.
 - **Manifest closure is part of the bar, and gated.** Not a nice-to-have.
@@ -65,6 +67,14 @@ This map does **not** cut the releases. Plan, don't mint.
 ## Decisions so far
 
 <!-- one line per closed ticket: enough to judge relevance, then open the ticket -->
+
+- [Collect the community verdict on the `rocq-*` rename](tickets-opam-mmf/closed/01-community-verdict-on-rocq-rename.md)
+  — no objection; **both** packages become `rocq-*` and restart at **0.1.0**. The
+  ideal "rocq-* depends only on rocq-*" rule initially suggested keeping
+  `robust-predicates` as `coq-*` because of `coq-flocq`; dropped deliberately,
+  since Flocq 4.2.2 already implements the Rocq standard library and only its
+  upstream *name* is still `coq-*`. New tag prefix was forced: the old
+  `*-v0.1.0` tags already exist. Old releases kept as history.
 
 - [Decide the Rocq version constraint](tickets-opam-mmf/closed/03-rocq-version-constraint.md)
   — match `rocq-bignums`, not `coq-fourcolor`: `rocq-core {>= "9.2" & < "9.4~"}`

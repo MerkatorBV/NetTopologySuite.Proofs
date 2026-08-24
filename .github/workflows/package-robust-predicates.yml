@@ -1,6 +1,6 @@
-name: Package coq-robust-predicates
+name: Package rocq-robust-predicates
 
-# Validate and publish the standalone `coq-robust-predicates` opam package
+# Validate and publish the standalone `rocq-robust-predicates` opam package
 # (packaging/rocq-robust-predicates/), extracted from the corpus via its
 # MANIFEST + assemble.sh.
 #
@@ -10,7 +10,7 @@ name: Package coq-robust-predicates
 #     (build: [make]; install: [make install]).  This catches manifest drift
 #     (a renamed/removed source file makes assemble.sh fail), opam-file
 #     regressions, and build breakage.
-#   - publish: on a `robust-predicates-v*` release, build the self-contained
+#   - publish: on a `rocq-robust-predicates-v*` release, build the self-contained
 #     source tarball (`make package`), attach it to the release, and -- when
 #     an OPAM_PUBLISH_TOKEN secret is configured -- open the opam-repository
 #     PR via `opam publish`.  Without the secret it attaches the tarball and
@@ -43,7 +43,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   TOOLCHAIN_IMAGE: ghcr.io/${{ github.repository_owner }}/nts-proofs-toolchain
   PKG_DIR: packaging/rocq-robust-predicates
-  OPAM_FILE: coq-robust-predicates.opam
+  OPAM_FILE: rocq-robust-predicates.opam
 
 concurrency:
   group: package-robust-predicates-${{ github.ref }}
@@ -121,7 +121,7 @@ jobs:
   publish:
     name: Build tarball and publish on release
     # Only the package's own release tags; ignores corpus/oracle releases.
-    if: github.event_name == 'release' && startsWith(github.event.release.tag_name, 'robust-predicates-v')
+    if: github.event_name == 'release' && startsWith(github.event.release.tag_name, 'rocq-robust-predicates-v')
     needs: validate
     runs-on: ubuntu-latest
     permissions:
@@ -169,7 +169,7 @@ jobs:
 
       - name: Build self-contained source tarball
         # `make package` runs assemble.sh then archives the vendored tree to
-        # packaging/rocq-robust-predicates/dist/coq-robust-predicates.tar.gz (builds with no corpus present).
+        # packaging/rocq-robust-predicates/dist/rocq-robust-predicates.tar.gz (builds with no corpus present).
         run: |
           chmod -R a+rwX .
           docker run --rm -v "$PWD:/workspace" -w /workspace \
@@ -181,22 +181,22 @@ jobs:
               make package
             '
           sudo chown -R "$(id -u):$(id -g)" .
-          ls -la packaging/rocq-robust-predicates/dist/coq-robust-predicates.tar.gz
-          sha256sum packaging/rocq-robust-predicates/dist/coq-robust-predicates.tar.gz | tee packaging/rocq-robust-predicates/dist/coq-robust-predicates.tar.gz.sha256
+          ls -la packaging/rocq-robust-predicates/dist/rocq-robust-predicates.tar.gz
+          sha256sum packaging/rocq-robust-predicates/dist/rocq-robust-predicates.tar.gz | tee packaging/rocq-robust-predicates/dist/rocq-robust-predicates.tar.gz.sha256
 
       - name: Attach tarball to the release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            packaging/rocq-robust-predicates/dist/coq-robust-predicates.tar.gz
-            packaging/rocq-robust-predicates/dist/coq-robust-predicates.tar.gz.sha256
+            packaging/rocq-robust-predicates/dist/rocq-robust-predicates.tar.gz
+            packaging/rocq-robust-predicates/dist/rocq-robust-predicates.tar.gz.sha256
 
       - name: Submit to opam-repository (if OPAM_PUBLISH_TOKEN configured)
         env:
           OPAM_PUBLISH_TOKEN: ${{ secrets.OPAM_PUBLISH_TOKEN }}
           OPAM_TARGET_REPO: ${{ vars.OPAM_TARGET_REPO || 'coq/opam' }}
           TAG: ${{ github.event.release.tag_name }}
-          TARBALL_URL: ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/coq-robust-predicates.tar.gz
+          TARBALL_URL: ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/rocq-robust-predicates.tar.gz
         run: |
           if [ -z "${OPAM_PUBLISH_TOKEN:-}" ]; then
             echo "::notice::OPAM_PUBLISH_TOKEN not set -- skipping automated opam-repository PR; tarball is attached to the release."
@@ -208,11 +208,11 @@ jobs:
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          # Clean semver from the tag (strip the "robust-predicates-v" prefix):
-          #   robust-predicates-v0.1.0 -> 0.1.0.  MUST be exported so `docker -e
+          # Clean semver from the tag (strip the "rocq-robust-predicates-v" prefix):
+          #   rocq-robust-predicates-v0.1.0 -> 0.1.0.  MUST be exported so `docker -e
           #   VERSION` passes it into the container (a bare assignment is not
           #   in the environment -> `set -u` would trip).
-          export VERSION="${TAG#robust-predicates-v}"
+          export VERSION="${TAG#rocq-robust-predicates-v}"
           # opam-publish reads its GitHub token from OPAM_PUBLISH_GH_TOKEN
           # (NOT GITHUB_TOKEN).  Best-effort: the tarball is already attached,
           # so if opam publish trips (auth/fork/etc.) we warn + print the
@@ -226,9 +226,9 @@ jobs:
               set -euxo pipefail
               opam install -y opam-publish
               # opam-publish takes the package NAME from the opam filename
-              # (coq-robust-predicates) and the VERSION from the version: field;
+              # (rocq-robust-predicates) and the VERSION from the version: field;
               # set it from the tag so the submitted package is
-              # coq-robust-predicates.$VERSION (not the raw tag).
+              # rocq-robust-predicates.$VERSION (not the raw tag).
               echo "version: \"$VERSION\"" >> "$PKG_DIR/$OPAM_FILE"
               # opam-publish reads its Continue/Submit confirmations from the
               # controlling TTY, not stdin, so in CI (no tty) it aborts with no

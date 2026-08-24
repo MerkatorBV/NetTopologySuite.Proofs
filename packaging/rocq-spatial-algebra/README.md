@@ -1,4 +1,4 @@
-# coq-spatial-algebra
+# rocq-spatial-algebra
 
 A tiny, **dependency-free, axiom-free** Rocq library of spatial-relation
 algebra, extracted from
@@ -51,7 +51,7 @@ To produce a standalone opam source tarball (self-contained, no corpus needed
 — bundles the opam, dune, and nix files):
 
 ```sh
-make package             # -> dist/coq-spatial-algebra.tar.gz
+make package             # -> dist/rocq-spatial-algebra.tar.gz
 ```
 
 ## Usage
