@@ -1,4 +1,4 @@
-# MANIFEST for coq-spatial-algebra
+# MANIFEST for rocq-spatial-algebra
 # ---------------------------------------------------------------------------
 # Source-of-record paths (relative to the NetTopologySuite.Proofs repo root)
 # for every .v file vendored into this standalone package.  `assemble.sh`

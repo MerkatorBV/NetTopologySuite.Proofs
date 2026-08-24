@@ -38,8 +38,21 @@ bug-reports: "https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues
 dev-repo: "git+https://github.com/grootstebozewolf/NetTopologySuite.Proofs.git"
 
 depends: [
-  "rocq-core" {>= "9.0"}
-  "coq-flocq" {>= "4.2.0"}
+  "ocaml"
+  "rocq-core" {>= "9.2" & < "9.3~"}
+  "rocq-stdlib"
+  # Flocq has no rocq-* release yet, so this package necessarily depends on a
+  # coq-* one.  The archive's ideal is that a rocq-* package depends only on
+  # rocq-* packages, so that CI can prove it builds without the compatibility
+  # binaries from coq-core; upstream guidance is that the rule is not
+  # universally followed, so the name follows the development.
+  #
+  # The >= 4.2.2 floor is not merely "the version we tested": 4.2.2 is the
+  # release that implements the Rocq standard library, so it is the first Flocq
+  # that is Rocq-native in substance despite carrying a coq-* name.  Anything
+  # older would pull the Coq compat layer back in and defeat the point of the
+  # rocq-* naming.
+  "coq-flocq" {>= "4.2.2" & < "4.3~"}
 ]
 
 build: [
@@ -58,4 +71,5 @@ tags: [
   "keyword:floating point"
   "keyword:Flocq"
   "logpath:NTS.Proofs"
+  "date:2026-08-24"
 ]

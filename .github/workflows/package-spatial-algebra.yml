@@ -1,6 +1,6 @@
-name: Package coq-spatial-algebra
+name: Package rocq-spatial-algebra
 
-# Validate and publish the standalone `coq-spatial-algebra` opam package
+# Validate and publish the standalone `rocq-spatial-algebra` opam package
 # (packaging/rocq-spatial-algebra/), extracted from the corpus via its
 # MANIFEST + assemble.sh.  Mirrors package-robust-predicates.yml.
 #
@@ -14,7 +14,7 @@ name: Package coq-spatial-algebra
 #     the sources, `opam lint`, then `make` + `make install` -- exactly the
 #     commands opam runs.  Catches manifest drift, opam-file regressions,
 #     and build breakage.
-#   - publish: on a `spatial-algebra-v*` release, build the self-contained
+#   - publish: on a `rocq-spatial-algebra-v*` release, build the self-contained
 #     source tarball (`make package`), attach it + sha256 to the release, and
 #     -- when OPAM_PUBLISH_TOKEN is configured -- open the opam-repository PR
 #     via `opam publish` (otherwise prints the manual command, still succeeds).
@@ -40,7 +40,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   TOOLCHAIN_IMAGE: ghcr.io/${{ github.repository_owner }}/nts-proofs-toolchain
   PKG_DIR: packaging/rocq-spatial-algebra
-  OPAM_FILE: coq-spatial-algebra.opam
+  OPAM_FILE: rocq-spatial-algebra.opam
 
 concurrency:
   group: package-spatial-algebra-${{ github.ref }}
@@ -112,7 +112,7 @@ jobs:
 
   publish:
     name: Build tarball and publish on release
-    if: github.event_name == 'release' && startsWith(github.event.release.tag_name, 'spatial-algebra-v')
+    if: github.event_name == 'release' && startsWith(github.event.release.tag_name, 'rocq-spatial-algebra-v')
     needs: validate
     runs-on: ubuntu-latest
     permissions:
@@ -170,22 +170,22 @@ jobs:
               make package
             '
           sudo chown -R "$(id -u):$(id -g)" .
-          ls -la packaging/rocq-spatial-algebra/dist/coq-spatial-algebra.tar.gz
-          sha256sum packaging/rocq-spatial-algebra/dist/coq-spatial-algebra.tar.gz | tee packaging/rocq-spatial-algebra/dist/coq-spatial-algebra.tar.gz.sha256
+          ls -la packaging/rocq-spatial-algebra/dist/rocq-spatial-algebra.tar.gz
+          sha256sum packaging/rocq-spatial-algebra/dist/rocq-spatial-algebra.tar.gz | tee packaging/rocq-spatial-algebra/dist/rocq-spatial-algebra.tar.gz.sha256
 
       - name: Attach tarball to the release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            packaging/rocq-spatial-algebra/dist/coq-spatial-algebra.tar.gz
-            packaging/rocq-spatial-algebra/dist/coq-spatial-algebra.tar.gz.sha256
+            packaging/rocq-spatial-algebra/dist/rocq-spatial-algebra.tar.gz
+            packaging/rocq-spatial-algebra/dist/rocq-spatial-algebra.tar.gz.sha256
 
       - name: Submit to opam-repository (if OPAM_PUBLISH_TOKEN configured)
         env:
           OPAM_PUBLISH_TOKEN: ${{ secrets.OPAM_PUBLISH_TOKEN }}
           OPAM_TARGET_REPO: ${{ vars.OPAM_TARGET_REPO || 'coq/opam' }}
           TAG: ${{ github.event.release.tag_name }}
-          TARBALL_URL: ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/coq-spatial-algebra.tar.gz
+          TARBALL_URL: ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/rocq-spatial-algebra.tar.gz
         run: |
           if [ -z "${OPAM_PUBLISH_TOKEN:-}" ]; then
             echo "::notice::OPAM_PUBLISH_TOKEN not set -- skipping automated opam-repository PR; tarball is attached to the release."
@@ -197,11 +197,11 @@ jobs:
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          # Clean semver from the tag (strip the "spatial-algebra-v" prefix):
-          #   spatial-algebra-v0.1.0 -> 0.1.0.  MUST be exported so `docker -e
+          # Clean semver from the tag (strip the "rocq-spatial-algebra-v" prefix):
+          #   rocq-spatial-algebra-v0.1.0 -> 0.1.0.  MUST be exported so `docker -e
           #   VERSION` passes it into the container (a bare assignment is not
           #   in the environment -> `set -u` would trip).
-          export VERSION="${TAG#spatial-algebra-v}"
+          export VERSION="${TAG#rocq-spatial-algebra-v}"
           # opam-publish reads its GitHub token from OPAM_PUBLISH_GH_TOKEN
           # (NOT GITHUB_TOKEN).  Best-effort: the tarball is already attached,
           # so if opam publish trips (auth/fork/etc.) we warn + print the
@@ -215,9 +215,9 @@ jobs:
               set -euxo pipefail
               opam install -y opam-publish
               # opam-publish takes the package NAME from the opam filename
-              # (coq-spatial-algebra) and the VERSION from the version: field;
+              # (rocq-spatial-algebra) and the VERSION from the version: field;
               # set it from the tag so the submitted package is
-              # coq-spatial-algebra.$VERSION (not the raw tag).
+              # rocq-spatial-algebra.$VERSION (not the raw tag).
               echo "version: \"$VERSION\"" >> "$PKG_DIR/$OPAM_FILE"
               # opam-publish reads its Continue/Submit confirmations from the
               # controlling TTY, not stdin, so in CI (no tty) it aborts with no

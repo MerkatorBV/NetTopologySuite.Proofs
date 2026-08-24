@@ -228,6 +228,21 @@ def count_entries(path):
 COVERAGE_FEAT_TAGS = ["distance", "arc-len", "area", "relate", "overlay", "buffer",
                       "join", "metric"]
 COVERAGE_GEOM_TAGS = ["arc", "cs", "cc", "cp", "multi"]
+# Tags that classify a section without earning a matrix row/column.  `ls`/`poly`/
+# `pt` are the LINEAR subjects: recorded so a section is classified, deliberately
+# absent from a matrix whose columns are curve types.  See the "Coverage tags"
+# block in docs/verified-claims.md, which is the documented vocabulary; check 5
+# in _check_grounding enforces that nothing outside these sets appears.
+# `valid` (validity / simplicity) is a strong candidate for a matrix ROW rather
+# than a bare classifier -- CircularStringValid.v, RingContactSound.v's
+# ring_not_simple_* family, RelateCurveArcSegment.v : valid_arc_seg_curve_ring and
+# CurveRingOffset.v : curve_ring_offset_valid all populate it across arc/cs/cc.
+# Left as a classifier here because growing the published table is the
+# maintainer's call, not a side effect of registering a tag.
+NON_MATRIX_FEAT_TAGS = {"curves", "foundations", "teaching", "valid"}
+NON_MATRIX_GEOM_TAGS = {"ls", "poly", "pt"}
+KNOWN_FEAT_TAGS = set(COVERAGE_FEAT_TAGS) | NON_MATRIX_FEAT_TAGS
+KNOWN_GEOM_TAGS = set(COVERAGE_GEOM_TAGS) | NON_MATRIX_GEOM_TAGS
 
 COVERAGE_FEAT_LABEL = {
     "distance": "Distance",
@@ -267,67 +282,74 @@ COVERAGE_GEOMTYPE_LONG = {
 # Notes rewritten 2026-08-22 from a corpus audit, after the CS/CC relabel.  Slice
 # numbers were dropped throughout: they contradict each other across plan.md and
 # the oracle files (Area is "Slice 6" in one and "Slice 7" in the other; arc-len
-# is "Slice 9" vs "Slice 11"), so cells cite mode tag + file:line instead.
+# is "Slice 9" vs "Slice 11").
+#
+# CITE BY NAME, NEVER BY LINE.  A `File.v : theorem_name` reference survives a
+# refactor and validate-claims.sh verifies the name against source; a
+# `File.v:123` hook rots the moment anything above it moves, and nothing
+# recompiles prose.  Check 4 in _check_grounding fails the build on any such
+# hook in these notes -- the same stance validate-claims.sh takes on the doc,
+# where a prose `File.v:123` is read as a claim citing a theorem named "123".
 COVERAGE_MATRIX = {
     "Distance": {
-        "Arc":   ("qed",      "Qed: ArcPointDistance.v:88 point_to_arc_dist_radial_lower, :114 point_to_arc_attains_radial; closed form LECArcRow.v:257 arc_dist_exact; pairwise ArcArcDistance.v:140 arc_arc_dist_external + ArcSegmentDistance.v:141"),
-        "CS":    ("none",     "No Rocq theorem for a multi-arc run. LECFlattenRow.v:252 obstacle_list_flatten_exact (Qed) is a min-fold over an UNORDERED member union (runion_list:60) — collection semantics, not a head-to-tail run, and point-to-region clearance rather than geometry-to-geometry distance. Oracle DISTANCE_UNIFIED has no head-to-tail multi-arc vector: red_distance_unified_tests.py:115 is two DISCONNECTED arcs"),
-        "CC":    ("oracle",   "Oracle vectors only: DISTANCE_UNIFIED red_distance_unified_tests.py:65 (chord then arc, head-to-tail), :137 (chord, chord, arc). No Rocq distance theorem over a CurveRing"),
+        "Arc":   ("qed",      "Qed: ArcPointDistance.v : point_to_arc_dist_radial_lower, point_to_arc_attains_radial; closed form LECArcRow.v : arc_dist_exact; pairwise ArcArcDistance.v : arc_arc_dist_external + ArcSegmentDistance.v"),
+        "CS":    ("none",     "No Rocq theorem for a multi-arc run. LECFlattenRow.v : obstacle_list_flatten_exact (Qed) is a min-fold over an UNORDERED member union (runion_list) — collection semantics, not a head-to-tail run, and point-to-region clearance rather than geometry-to-geometry distance. Oracle DISTANCE_UNIFIED has no head-to-tail multi-arc vector: its only two-arc case in red_distance_unified_tests.py is two DISCONNECTED arcs"),
+        "CC":    ("oracle",   "Oracle vectors only: DISTANCE_UNIFIED red_distance_unified_tests.py (chord then arc, head-to-tail), (chord, chord, arc). No Rocq distance theorem over a CurveRing"),
         "CP":    ("oracle",   "Oracle DISTANCE_UNIFIED + TestCurvePolygon_Distance_MultiCurve; core arc distance proven but composite dispatch not Qed"),
-        "Multi": ("oracle",   "Member recursion / min-fold — where the retired CurveCollection cell's content belongs: docs/arc-offset-red-test-example.cs:190 recurses exactly like the Multi* branches. Oracle DISTANCE_UNIFIED; no Qed composite"),
+        "Multi": ("oracle",   "Member recursion / min-fold — where the retired CurveCollection cell's content belongs: docs/arc-offset-red-test-example.cs recurses exactly like the Multi* branches. Oracle DISTANCE_UNIFIED; no Qed composite"),
     },
     "Arc / chord length": {
-        "Arc":   ("qed",      "Qed: ArcLength.v:51 chord_le_arc_length, :60 chord_subtended_sq; ArcChordLength.v:125 arc_chord_le_arc_length, :82 arc_chord_dist_sq_via_sweep; subdivision budget ArcChordSubdivision.v:200 equal_angle_chords_achieve_eps"),
+        "Arc":   ("qed",      "Qed: ArcLength.v : chord_le_arc_length, chord_subtended_sq; ArcChordLength.v : arc_chord_le_arc_length, arc_chord_dist_sq_via_sweep; subdivision budget ArcChordSubdivision.v : equal_angle_chords_achieve_eps"),
         "CS":    ("none",     "NO CONCATENATION EXISTS — neither a Rocq summation lemma over consecutive arc lengths nor an oracle vector containing two arcs (red_length_unified_tests.py holds two 'A' lines in total and never two in one vector). The corpus's only additive-over-concatenation lemma is RingOrientation.v signed_area2_app, which is linear-only and arc-blind. A previous revision of this cell claimed 'concatenation proven'; it was unearned"),
-        "CC":    ("oracle",   "Oracle vectors only: LENGTH_UNIFIED red_length_unified_tests.py:83, whose own comment reads 'Mixed chord + arc (simulates CompoundCurve / CC segments)' — chord (0,0)-(1,0) then arc (1,0) to (0,1), head-to-tail. No Rocq theorem"),
+        "CC":    ("oracle",   "Oracle vectors only: LENGTH_UNIFIED red_length_unified_tests.py, whose own comment reads 'Mixed chord + arc (simulates CompoundCurve / CC segments)' — chord (0,0)-(1,0) then arc (1,0) to (0,1), head-to-tail. No Rocq theorem"),
         "CP":    ("oracle",   "Oracle LENGTH_UNIFIED / ARC_LEN_UNIFIED: perimeter via rings. No Rocq perimeter aggregate exists over any curve structure"),
         "Multi": ("oracle",   "Oracle LENGTH_UNIFIED / ARC_LEN_UNIFIED: recursion + segment length sum; red_length_unified_tests.py"),
     },
     "Area / perimeter": {
-        "Arc":   ("qed",      "Qed: ArcArea.v:40 segment_area_sector_minus_triangle, :46 segment_area_nonneg, :59/:64 half- and full-disc; centroid ArcAreaCentroid.v:54-102; CurveBufferArea.v:72 buffer_arc_area_grows"),
-        "CS":    ("none",     "No area or perimeter fold over a CurveRing exists anywhere in the corpus. AREA_UNIFIED does sum a per-segment sector contribution (driver.ml:3037) but no vector has two arcs — red_area_unified_tests.py:47 is one arc plus its closing chord"),
-        "CC":    ("oracle",   "Oracle vectors only: AREA_UNIFIED red_area_unified_tests.py:47 (arc + chord closed ring), :56 ('CC-like multi seg (compound)'), :62 (chord, arc, chord, chord). No Rocq theorem"),
-        "CP":    ("oracle",   "Triangle polygon area + AREA_UNIFIED. Note CurvePolygonOrientation.v:85 takes signed areas as OPAQUE reals supplied by the oracle, so it states no area fact of its own"),
+        "Arc":   ("qed",      "Qed: ArcArea.v : segment_area_sector_minus_triangle, segment_area_nonneg, segment_area_half_disc, segment_area_full_disc; centroid ArcAreaCentroid.v; CurveBufferArea.v : buffer_arc_area_grows"),
+        "CS":    ("none",     "No area or perimeter fold over a CurveRing exists anywhere in the corpus. AREA_UNIFIED does sum a per-segment sector contribution (driver.ml) but no vector has two arcs — red_area_unified_tests.py is one arc plus its closing chord"),
+        "CC":    ("oracle",   "Oracle vectors only: AREA_UNIFIED red_area_unified_tests.py (arc + chord closed ring), ('CC-like multi seg (compound)'), (chord, arc, chord, chord). No Rocq theorem"),
+        "CP":    ("oracle",   "Triangle polygon area + AREA_UNIFIED. Note CurvePolygonOrientation.v : takes signed areas as OPAQUE reals supplied by the oracle, so it states no area fact of its own"),
         "Multi": ("oracle",   "Oracle AREA_UNIFIED: recursion, shoelace + arc sectors; red_area_unified_tests.py"),
     },
     "Relate (DE-9IM)": {
-        "Arc":   ("qed",      "Qed for a partial cell set: RelateArcAnalytic.v:368 arc_analytic_proper_cross_share plus the sweep-range chain :161-:339; single-arc lens RelateCurveArcSegment.v:149 point_in_ring_arc_seg_iff; disk witnesses RelateCurveMatrix.v:404/:419/:434/:449. Oracle CURVE_RELATE_MATRIX vectors are all single-segment"),
-        "CS":    ("qed-adj",  "Real multi-arc Rocq content, but the predicate is SIMPLICITY, not DE-9IM: RingContactSound.v:275 ring_not_simple_of_arc_arc_circle_cross, :301 _witness, :322 _shared_endpoint (all Qed) quantify over a CurveRing indexed at i,j; consecutive-arc case ArcArcSound.v:78. DE-9IM proper: nothing — every bridge in RelateCurveBoundaryMeet.v is chord-chord, and RingContactSound.v:47 states the arc boundary cells remain on the deferred frontier. No multi-arc CURVE_RELATE_MATRIX vector"),
-        "CC":    ("qed-adj",  "Simplicity Qed for mixed arc/chord pairs: RingContactSound.v:232 ring_not_simple_of_arc_chord, :415 holes_not_disjoint_of_arc_chord. DE-9IM predicates do reduce over mixed rings — RelateCurveInscribedGeometry.v:145-:232 (Qed) — but via LINEARISED point sets (to_geometry vs inscribed_geometry), so they are arc-blind by construction, not arc-exact DE-9IM"),
+        "Arc":   ("qed",      "Qed for a partial cell set: RelateArcAnalytic.v : arc_analytic_proper_cross_share plus the sweep-range chain; single-arc lens RelateCurveArcSegment.v : point_in_ring_arc_seg_iff; disk witnesses in RelateCurveMatrix.v. Oracle CURVE_RELATE_MATRIX vectors are all single-segment"),
+        "CS":    ("qed-adj",  "Real multi-arc Rocq content, but the predicate is SIMPLICITY, not DE-9IM: RingContactSound.v : ring_not_simple_of_arc_arc_circle_cross, _witness, _shared_endpoint (all Qed) quantify over a CurveRing indexed at i,j; consecutive-arc case ArcArcSound.v. DE-9IM proper: nothing — every bridge in RelateCurveBoundaryMeet.v is chord-chord, and RingContactSound.v : states the arc boundary cells remain on the deferred frontier. No multi-arc CURVE_RELATE_MATRIX vector"),
+        "CC":    ("qed-adj",  "Simplicity Qed for mixed arc/chord pairs: RingContactSound.v : ring_not_simple_of_arc_chord, holes_not_disjoint_of_arc_chord. DE-9IM predicates do reduce over mixed rings — RelateCurveInscribedGeometry.v (Qed) — but via LINEARISED point sets (to_geometry vs inscribed_geometry), so they are arc-blind by construction, not arc-exact DE-9IM"),
         "CP":    ("qed",      "Triangle touch + regime guard; CURVE_RELATE_MATRIX"),
-        "Multi": ("oracle",   "DE-9IM integer substrate (#67). red_relate_unified_tests.py:44 is the only multi-segment relate vector and it is ALL CHORDS — no arc member"),
+        "Multi": ("oracle",   "DE-9IM integer substrate (#67). red_relate_unified_tests.py is the only multi-segment relate vector and it is ALL CHORDS — no arc member"),
     },
     "Intersection / Overlay": {
-        "Arc":   ("qed-cond", "CONDITIONAL: ArcOverlay.v:160 arc_overlay_correct_chord_approx is Qed but assumes H_A_bridge / H_B_bridge (:166-172), which the corpus does not discharge; :237 says the unconditional headline is deferred. Contact kernels in OverlayContactSound.v are unconditional. Oracle OVERLAY_UNIFIED single-arc vectors red_overlay_unified_tests.py:39, :114"),
+        "Arc":   ("qed-cond", "CONDITIONAL: ArcOverlay.v : arc_overlay_correct_chord_approx is Qed but assumes H_A_bridge / H_B_bridge (), which the corpus does not discharge; says the unconditional headline is deferred. Contact kernels in OverlayContactSound.v are unconditional. Oracle OVERLAY_UNIFIED single-arc vectors red_overlay_unified_tests.py,"),
         "CS":    ("qed-cond", "Generic only: arc_overlay_correct_chord_approx quantifies over CurveGeometry so it formally applies to an all-arc ring, but its conclusion is an existential over arcs_of A ++ arcs_of B with NO ordering, adjacency or concatenation content — and the hypotheses are open. No CircularString-specific overlay lemma; no 2+-arc OVERLAY_UNIFIED vector"),
-        "CC":    ("oracle",   "Oracle vectors only: OVERLAY_UNIFIED red_overlay_unified_tests.py:52 (chord then arc, head-to-tail, vs a chord), :66 (chord,chord vs chord,arc). Plus the generic conditional above. No CompoundCurve-specific overlay theorem"),
+        "CC":    ("oracle",   "Oracle vectors only: OVERLAY_UNIFIED red_overlay_unified_tests.py (chord then arc, head-to-tail, vs a chord), (chord,chord vs chord,arc). Plus the generic conditional above. No CompoundCurve-specific overlay theorem"),
         "CP":    ("oracle",   "Oracle OVERLAY_UNIFIED: delegation for CurvePolygon"),
         "Multi": ("oracle",   "Oracle OVERLAY_UNIFIED: recursion for Multi* + arc-aware overlay; red_overlay_unified_tests.py"),
     },
     "Buffer": {
-        "Arc":   ("qed",      "Qed: ArcOffset.v:175 arc_offset_dist_exact, :154 _dist_lower, :197 inner_offset_past_center_not_at_distance, :262 arc_offset_tangent_parallel, :285 arc_offset_no_kink, :308 arc_offset_length. Oracle ARC_BUFFER_SIMPLE — note its header declares single-arc only, so the 'cs' half of its geom:arc,cs tag is unearned by its vectors"),
-        "CS":    ("qed",      "THE ONE ROW with real multi-member Rocq content: CurveRingOffset.v:434 curve_ring_offset_valid (Qed) — a whole CurveRing offset by d stays a valid curve ring; supporting :386 _adjacent, :405 _closed. Join variants CurveOffsetAssembly.v:369 (round), CurveMiterJoin.v:329, CurveBevelJoin.v:236, CurveCapWalk.v:269 curve_chain_buffer_valid. SCOPE: structural validity — arcs valid, adjacency, closedness — NOT buffer area or point-set correctness. No 2+-arc BUFFER_UNIFIED vector"),
-        "CC":    ("qed",      "Qed, and literally the mixed case: curve_ring_offset maps over CSChord and CSArc alike (CurveRingOffset.v:80-87), with the mixed-member join at :311 segment_join_offset_continuous; CurveBevelJoin.v:300 isolates the all-chord sub-case. Oracle BUFFER_UNIFIED head-to-tail compound vectors red_buffer_unified_tests.py:207 (closed chord/arc/chord/chord thin-neck erosion), :185 (multi-component with an arc member)"),
+        "Arc":   ("qed",      "Qed: ArcOffset.v : arc_offset_dist_exact, _dist_lower, inner_offset_past_center_not_at_distance, arc_offset_tangent_parallel, arc_offset_no_kink, arc_offset_length. Oracle ARC_BUFFER_SIMPLE — note its header declares single-arc only, so the 'cs' half of its geom:arc,cs tag is unearned by its vectors"),
+        "CS":    ("qed",      "THE ONE ROW with real multi-member Rocq content: CurveRingOffset.v : curve_ring_offset_valid (Qed) — a whole CurveRing offset by d stays a valid curve ring; supporting _adjacent, _closed. Join variants CurveOffsetAssembly.v (round), CurveMiterJoin.v, CurveBevelJoin.v, CurveCapWalk.v : curve_chain_buffer_valid. SCOPE: structural validity — arcs valid, adjacency, closedness — NOT buffer area or point-set correctness. No 2+-arc BUFFER_UNIFIED vector"),
+        "CC":    ("qed",      "Qed, and literally the mixed case: curve_ring_offset maps over CSChord and CSArc alike (CurveRingOffset.v), with the mixed-member join at segment_join_offset_continuous; CurveBevelJoin.v : isolates the all-chord sub-case. Oracle BUFFER_UNIFIED head-to-tail compound vectors red_buffer_unified_tests.py (closed chord/arc/chord/chord thin-neck erosion), (multi-component with an arc member)"),
         "CP":    ("oracle",   "oracle/buffer_region_tests.txt + red_buffer_unified_tests.py; SegmentGraph + RingBuilder (nodes/inters, area filter); hole survival via ncomps"),
-        "Multi": ("oracle",   "BUFFER_UNIFIED is the only unified mode with a real multi-component envelope (driver.ml:3237 ncomps) — the others parse a flat segment list. Red tests for no spurious rings + erosion count"),
+        "Multi": ("oracle",   "BUFFER_UNIFIED is the only unified mode with a real multi-component envelope (driver.ml ncomps) — the others parse a flat segment list. Red tests for no spurious rings + erosion count"),
     },
     # Added 2026-08-23.  These two rows hold the corpus's deepest curve work and
     # were invisible because no feature tag reached them: the join/offset claims
     # live inside "Phase 4 — Native curves" and the Koc section, and the LEC/MIC
     # claims were tagged feat:metric, which was not a matrix feature.
     "Join continuity (C¹ / C²)": {
-        "Arc":   ("qed",      "Qed: ArcOffset.v:262 arc_offset_tangent_parallel, :285 arc_offset_no_kink, :297 arc_offset_tangent_reverses_past_singularity. Decision procedures CurveJoinClassify.v:335 g1_decision_correct, :349 uturn_decision_correct. Round-join filler arc CurveRoundJoin.v:192 round_join_arc_valid, :311 round_join_connects — both sit after End JoinFacts, so they carry no section hypotheses"),
-        "CS":    ("qed",      "The strongest CS cell in the matrix. Arc-to-arc C¹ join: CompoundCurveKocJoin.v:224 koc25_compound_join_C1 (Qed) — the junction lies on BOTH circles at radii R1 and R2, and both radii are perpendicular to the shared tangent; :251 koc25_compound_centers_collinear gives the classical S1-C-S2 collinearity; :200 koc25_mirror_negates_slope covers the reverse curve (R2 < 0). Plus a genuine NEGATIVE result: CurveRingOffset.v:213 tangent_continuity_insufficient_for_offset (Qed) exhibits an S-curve — unit radii, shared endpoint, anti-parallel normals — whose offsets TEAR, (2,0) against (0,0). Tangent-line continuity is provably NOT sufficient for offset continuity across an arc-arc join. No oracle mode exercises joins at all"),
-        "CC":    ("qed",      "The real content of this column. C¹ across all four joints of the five-member EN 13803-1 chain TC1-CA1-TC2-CA2-TC3 — clothoid transitions plus circular arcs, so genuinely mixed members: CompoundCurveAssembly.v:134 koc_compound_assembly_C1 (Qed), built from :96 koc_joint_transition_to_arc and :112 koc_joint_arc_to_transition, with slope provenance at :174 and the whole result reproven after the stakeout transform to the national grid at :270 koc_assembly_C1_in_grid. C² / curvature continuity is the companion: CompoundCurveCurvature.v:322 koc_compound_assembly_C0 (Qed) — no jump in lateral acceleration at any of the four joints — with :163 koc_tc2_linear_ramp and :344 koc_assembly_C0_to_straight. Generic segment-pair version CurveRingOffset.v:311 segment_join_offset_continuous. Oracle: nothing"),
+        "Arc":   ("qed",      "Qed: ArcOffset.v : arc_offset_tangent_parallel, arc_offset_no_kink, arc_offset_tangent_reverses_past_singularity. Decision procedures CurveJoinClassify.v : g1_decision_correct, uturn_decision_correct. Round-join filler arc CurveRoundJoin.v : round_join_arc_valid, round_join_connects — both sit after End JoinFacts, so they carry no section hypotheses"),
+        "CS":    ("qed",      "The strongest CS cell in the matrix. Arc-to-arc C¹ join: CompoundCurveKocJoin.v : koc25_compound_join_C1 (Qed) — the junction lies on BOTH circles at radii R1 and R2, and both radii are perpendicular to the shared tangent; koc25_compound_centers_collinear gives the classical S1-C-S2 collinearity; koc25_mirror_negates_slope covers the reverse curve (R2 < 0). Plus a genuine NEGATIVE result: CurveRingOffset.v : tangent_continuity_insufficient_for_offset (Qed) exhibits an S-curve — unit radii, shared endpoint, anti-parallel normals — whose offsets TEAR, (2,0) against (0,0). Tangent-line continuity is provably NOT sufficient for offset continuity across an arc-arc join. No oracle mode exercises joins at all"),
+        "CC":    ("qed",      "The real content of this column. C¹ across all four joints of the five-member EN 13803-1 chain TC1-CA1-TC2-CA2-TC3 — clothoid transitions plus circular arcs, so genuinely mixed members: CompoundCurveAssembly.v : koc_compound_assembly_C1 (Qed), built from koc_joint_transition_to_arc and koc_joint_arc_to_transition, with slope provenance at and the whole result reproven after the stakeout transform to the national grid at koc_assembly_C1_in_grid. C² / curvature continuity is the companion: CompoundCurveCurvature.v : koc_compound_assembly_C0 (Qed) — no jump in lateral acceleration at any of the four joints — with koc_tc2_linear_ramp and koc_assembly_C0_to_straight. Generic segment-pair version CurveRingOffset.v : segment_join_offset_continuous. Oracle: nothing"),
         "CP":    ("none",     "Nothing found. Join continuity is a member-boundary property; no CurvePolygon ring-join theorem exists"),
         "Multi": ("none",     "Nothing found"),
     },
     "LEC / MIC": {
-        "Arc":   ("qed",      "Qed: LECArcRow.v:257 arc_dist_exact — unconditional lower bound AND attainment, no case hypotheses survive — with :330 empty_disk_arc_iff and the span gate :169 arc_span_contains_iff_sign, which replaces atan2 with a single multiplication; refutation :477 query_side_sector_hypothesis_refuted. MIC side MICChordNecessity.v:126 mic_cell_bound_exact_arc, :226 chord_of_arc_understates_at_centre. Oracle OBSTACLE_DISTANCE singleton-ARC vectors with bit-parity asserted against the ARC_DISTANCE kernel; LEC_CIRCLE"),
-        "CS":    ("qed",      "LECObstacleDistance.v:284 empty_disk_ring_iff — its own header calls this the full-circle CircularString ring — with :272 empty_disk_disc_iff and :574 obstacle_distance_headline (Qed). CAVEAT: LEC_CIRCLE accepts a 5-point CIRCULARSTRING form, but driver.ml:1798 runs circumcentre on the FIRST THREE POINTS ONLY and collapses the result to one (centre, radius), so it is a single-circle primitive, not a multi-arc run"),
-        "CC":    ("qed",      "Qed for a MIXED member list — and the one place a 'delegation/sum over members' claim is actually earned by a proof: LECFlattenRow.v:175 typed_obstacle mixes TArc and TRing (curved) with TSeg (linear) in one list, :215 typed_row_exact certifies every row against its closed form, and :252 obstacle_list_flatten_exact plus :270 empty_disk_flatten_iff fold them. The file's header states it closes the ledger's 'CompoundCurve / n-ary flatten' rung. CAVEAT: the fold is over an UNORDERED union (:60 runion_list) — adjacency between members is never stated or used, so this is collection semantics, not a head-to-tail run. Also proven: no unit exists for the empty list (:289, :299), matching the oracle's k=0 DEGENERATE gate"),
-        "CP":    ("qed",      "Qed: MaximumInscribedCircle.v and LargestEmptyCircle.v (unit square, side midpoints), CellRadiusBound.v cell-pruning bound, LECChordGap.v:297 lec_chord_hypothesis_refuted with :315 lec_circle_closed_form, and candidate completeness at three strengths — LECCandidateVertex.v (witness-scoped), LECCandidateComplete.v (general), LECCandidateWeighted.v (weighted / Apollonius)"),
-        "Multi": ("qed",      "The min-fold over an unordered union IS collection semantics, so LECFlattenRow.v:252 is the honest home of member-recursion claims — permutation and duplication invariants included (oracle obstacle_distance_tests.txt:70, :72). This is where the retired CurveCollection column's 'delegation/sum' prose actually belongs"),
+        "Arc":   ("qed",      "Qed: LECArcRow.v : arc_dist_exact — unconditional lower bound AND attainment, no case hypotheses survive — with empty_disk_arc_iff and the span gate arc_span_contains_iff_sign, which replaces atan2 with a single multiplication; refutation query_side_sector_hypothesis_refuted. MIC side MICChordNecessity.v : mic_cell_bound_exact_arc, chord_of_arc_understates_at_centre. Oracle OBSTACLE_DISTANCE singleton-ARC vectors with bit-parity asserted against the ARC_DISTANCE kernel; LEC_CIRCLE"),
+        "CS":    ("qed",      "LECObstacleDistance.v : empty_disk_ring_iff — its own header calls this the full-circle CircularString ring — with empty_disk_disc_iff and obstacle_distance_headline (Qed). CAVEAT: LEC_CIRCLE accepts a 5-point CIRCULARSTRING form, but driver.ml runs circumcentre on the FIRST THREE POINTS ONLY and collapses the result to one (centre, radius), so it is a single-circle primitive, not a multi-arc run"),
+        "CC":    ("qed",      "Qed for a MIXED member list — and the one place a 'delegation/sum over members' claim is actually earned by a proof: LECFlattenRow.v : typed_obstacle mixes TArc and TRing (curved) with TSeg (linear) in one list, typed_row_exact certifies every row against its closed form, and obstacle_list_flatten_exact plus empty_disk_flatten_iff fold them. The file's header states it closes the ledger's 'CompoundCurve / n-ary flatten' rung. CAVEAT: the fold is over an UNORDERED union (runion_list) — adjacency between members is never stated or used, so this is collection semantics, not a head-to-tail run. Also proven: no unit exists for the empty list, matching the oracle's k=0 DEGENERATE gate"),
+        "CP":    ("qed",      "Qed: MaximumInscribedCircle.v and LargestEmptyCircle.v (unit square, side midpoints), CellRadiusBound.v cell-pruning bound, LECChordGap.v : lec_chord_hypothesis_refuted with lec_circle_closed_form, and candidate completeness at three strengths — LECCandidateVertex.v (witness-scoped), LECCandidateComplete.v (general), LECCandidateWeighted.v (weighted / Apollonius)"),
+        "Multi": ("qed",      "The min-fold over an unordered union IS collection semantics, so LECFlattenRow.v : is the honest home of member-recursion claims — permutation and duplication invariants included (oracle obstacle_distance_tests.txt,). This is where the retired CurveCollection column's 'delegation/sum' prose actually belongs"),
     },
 }
 COVERAGE_ICON  = {"full": "✅", "partial": "⚠️", "none": "❌"}
@@ -879,6 +901,34 @@ def _check_grounding():
                 errors.append(
                     f"unknown regime tag [{tag}] in docs/verified-claims.md table "
                     f"(known: {', '.join(REGIMES)})")
+    # 4. No file:line references in the coverage notes.  Line numbers rot on the
+    #    first refactor and nothing recompiles a prose hook, so cite a theorem by
+    #    NAME -- which validate-claims.sh actually verifies.  This mirrors the
+    #    deliberate behaviour of validate-claims.sh, which treats a prose
+    #    `File.v:123` as a claim citing a theorem named "123" and fails.
+    for feat, row in COVERAGE_MATRIX.items():
+        for geom, (_, note) in row.items():
+            for hook in re.findall(r'[A-Za-z_][A-Za-z0-9_]*\.(?:v|ml|py|txt|cs):\d+',
+                                   note):
+                errors.append(
+                    f"line-number hook '{hook}' in COVERAGE_MATRIX[{feat!r}][{geom!r}] "
+                    f"— cite the theorem by name instead; line numbers go stale")
+    # 5. Every feat:/geom: coverage tag must be in the documented vocabulary.
+    #    This is the check that would have caught `cs` drifting from
+    #    CircularString to CompoundCurve to "any CurveSegment".
+    for m in re.finditer(r'coverage:|feat:([\w,\-]+)\s+geom:([\w,]+)', txt):
+        if not m.group(1):
+            continue
+        for tag in m.group(1).split(","):
+            if tag.strip() and tag.strip() not in KNOWN_FEAT_TAGS:
+                errors.append(f"unknown feat tag '{tag.strip()}' in "
+                              f"docs/verified-claims.md (known: "
+                              f"{', '.join(sorted(KNOWN_FEAT_TAGS))})")
+        for tag in m.group(2).split(","):
+            if tag.strip() and tag.strip() not in KNOWN_GEOM_TAGS:
+                errors.append(f"unknown geom tag '{tag.strip()}' in "
+                              f"docs/verified-claims.md (known: "
+                              f"{', '.join(sorted(KNOWN_GEOM_TAGS))})")
     for msg in errors:
         print("GROUNDING WARN:", msg, file=sys.stderr)
     return len(errors)

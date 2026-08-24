@@ -9,7 +9,7 @@
 , coqPackages ? pkgs.coqPackages
 }:
 coqPackages.mkCoqDerivation {
-  pname = "spatial-algebra";
+  pname = "rocq-spatial-algebra";
   owner = "grootstebozewolf";
   version = "0.1.0";
   src = ./.;

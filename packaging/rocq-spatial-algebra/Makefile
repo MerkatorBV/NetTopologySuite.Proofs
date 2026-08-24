@@ -1,4 +1,4 @@
-# Makefile for coq-spatial-algebra.
+# Makefile for rocq-spatial-algebra.
 #
 # Delegates to the Rocq-generated Makefile.coq.  Run ./assemble.sh first to
 # vendor the source .v files from the corpus (the opam source tarball produced
@@ -20,11 +20,11 @@ install: Makefile.coq
 package: clean
 	./assemble.sh
 	mkdir -p dist
-	tar czf dist/coq-spatial-algebra.tar.gz \
-	    --transform 's,^,coq-spatial-algebra/,' \
+	tar czf dist/rocq-spatial-algebra.tar.gz \
+	    --transform 's,^,rocq-spatial-algebra/,' \
 	    MANIFEST _CoqProject Makefile assemble.sh README.md LICENSE \
-	    coq-spatial-algebra.opam dune-project default.nix theories
-	@echo "Wrote dist/coq-spatial-algebra.tar.gz"
+	    rocq-spatial-algebra.opam dune-project default.nix theories
+	@echo "Wrote dist/rocq-spatial-algebra.tar.gz"
 
 clean:
 	@if [ -f Makefile.coq ]; then $(MAKE) -f Makefile.coq cleanall || true; fi

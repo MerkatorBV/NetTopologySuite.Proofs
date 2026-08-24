@@ -70,6 +70,36 @@ The gate `t_laser ≤ 1.15 × t_chainsaw`, measured **per curve type**. A count 
 holding gates is not the ratchet; the ratchet is the timings.
 _Avoid_: perf gate (the harness that measures it), benchmark, 1.15 rule
 
+### Packaging
+
+**Package**:
+One of the two Rocq theory libraries distributed through opam — assembled from
+the corpus by a MANIFEST, shipping `.v` files under the `NTS.Proofs` logpath.
+They are **not OCaml libraries**: neither contains a line of OCaml, and the
+repo's actual OCaml (the extracted oracle) is unpackaged. "The OCaml libraries"
+is a phrase to retire; opam is the OCaml *ecosystem*, not the content.
+_Avoid_: OCaml library, module (a package holds many), extraction
+
+**Mint**:
+A published release of a Package that is **installable from the Rocq opam
+archive**. A GitHub release with an attached tarball is not a mint — six of
+those exist and none reached the archive.
+_Avoid_: release (ambiguous with the GitHub artifact), tag, publish
+
+**Release bar**:
+A named checklist plus the gate evidence each line cites, on a pinned corpus
+commit, that a Mint must clear. A checklist with no verdict line is a
+suggestion; a bar says what it omits.
+_Avoid_: definition of done, acceptance criteria, gate (a gate is one line of a bar)
+
+**MMF**:
+Minimum Marketable Feature — imported from the `grootstebozewolf/jts` fork,
+where it names a release bar plus published gate numbers on a named mint. Here
+it means the smallest release a stranger can install and use, which is why
+opam-installability is load-bearing rather than cosmetic. The fork's own gates
+are not inherited.
+_Avoid_: MVP, milestone, marketable (alone — the constraint is *minimum*)
+
 ### Differential tooling
 
 **Oracle**:
