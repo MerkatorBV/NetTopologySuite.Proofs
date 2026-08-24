@@ -32,8 +32,9 @@ because the vocabulary drifted once with nothing recording it.
 
 `feat:` — the matrix rows are `distance` · `arc-len` · `area` · `relate` ·
 `overlay` · `buffer` · `join` (continuity across a member boundary) · `metric`
-(LEC / MIC). `curves`, `foundations` and `teaching` classify a section without
-adding a row.
+(LEC / MIC). `curves`, `foundations`, `teaching` and `valid` classify a section
+without adding a row — `valid` (validity / simplicity) is a candidate row, held
+back only because growing the published table is a deliberate act.
 
 `geom:` — the matrix has a column per **curve** type only: `arc` = CircularArc
 (this corpus's single-arc *primitive*, not a geometry type) · `cs` =

@@ -233,7 +233,13 @@ COVERAGE_GEOM_TAGS = ["arc", "cs", "cc", "cp", "multi"]
 # absent from a matrix whose columns are curve types.  See the "Coverage tags"
 # block in docs/verified-claims.md, which is the documented vocabulary; check 5
 # in _check_grounding enforces that nothing outside these sets appears.
-NON_MATRIX_FEAT_TAGS = {"curves", "foundations", "teaching"}
+# `valid` (validity / simplicity) is a strong candidate for a matrix ROW rather
+# than a bare classifier -- CircularStringValid.v, RingContactSound.v's
+# ring_not_simple_* family, RelateCurveArcSegment.v : valid_arc_seg_curve_ring and
+# CurveRingOffset.v : curve_ring_offset_valid all populate it across arc/cs/cc.
+# Left as a classifier here because growing the published table is the
+# maintainer's call, not a side effect of registering a tag.
+NON_MATRIX_FEAT_TAGS = {"curves", "foundations", "teaching", "valid"}
 NON_MATRIX_GEOM_TAGS = {"ls", "poly", "pt"}
 KNOWN_FEAT_TAGS = set(COVERAGE_FEAT_TAGS) | NON_MATRIX_FEAT_TAGS
 KNOWN_GEOM_TAGS = set(COVERAGE_GEOM_TAGS) | NON_MATRIX_GEOM_TAGS
