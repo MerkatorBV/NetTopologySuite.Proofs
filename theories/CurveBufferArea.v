@@ -32,11 +32,11 @@
    sampling + the convex Steiner closed form + the proven parallel-distance
    property ArcOffset.arc_offset_dist_exact).
 
-   Footprint: 4-axiom `[exact]` -- the area MAGNITUDE pulls
-   `ArcArea.segment_area_nonneg` (the `sin_lt_x` / `Classical_Prop.classic`
-   lineage), the documented exemption shared by `ArcArea` / `ArcLength`.
-   (`RING_ORIENTATION`/`CurvePolygonOrientation` stayed 3-axiom only because they
-   used the sign / sin-oddness, not the magnitude.)
+   Footprint: 3-axiom `[exact]` -- the area MAGNITUDE pulls
+   `ArcArea.segment_area_nonneg` via `ArcLength.sin_le_x` (Taylor envelope,
+   not Stdlib `sin_lt_x` / MVT).
+   (`RING_ORIENTATION`/`CurvePolygonOrientation` stay 3-axiom on the sign
+   / sin-oddness path.)
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 

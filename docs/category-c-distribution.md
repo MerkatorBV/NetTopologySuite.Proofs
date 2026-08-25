@@ -16,6 +16,19 @@ closed-pixel R-side defs) moved from `HotPixel_b64.v` into
 table row for the remaining file is 59 / 23 A / 32 C1 / 4 C2. The four
 C2 comparison lemmas stay in-file. The TSV remains the 2026-08-16
 snapshot.
+**Update 2026-08-25**: Five all-C2 `theories/` files left
+`audit-exceptions.txt` after a 3-axiom Taylor-envelope proof of
+`sin x < x` (`pre_sin_bound` / `SIN_bound` in `ArcLength.v`) replaced
+Stdlib `sin_lt_x` (MVT → `classic`): `ArcLength.v`, `ArcArea.v`,
+`ArcCentroid.v`, `ArcAreaCentroid.v`, `CurveBufferArea.v`. The six
+tainted theorems (`chord_le_arc_length`, `segment_area_nonneg`,
+`arc_centroid_offset_le_radius`, `segment_area_factor_pos`,
+`segment_centroid_offset_nonneg`, `buffer_arc_area_grows`) are now
+allowlist-clean. `ArcChordSubdivision.v` stays listed (atan2 C1);
+its `sin_sq_le_sq` is now allowlist via the same envelope. Remaining
+C2 on the 2026-08-16 shortlist: 11 flocq + `sin_sq_le_sq`. Exceptions
+list: 84 files / 73 `theories-flocq/` / 11 `theories/`. The TSV
+remains the 2026-08-16 snapshot.
 **Data**: [`category-c-distribution.tsv`](category-c-distribution.tsv)
 (one row per PA-audited theorem: file, name, category).
 
@@ -83,9 +96,11 @@ is reported as C1.
 | `theories/ArcLength.v` | `chord_le_arc_length` |
 | `theories/CurveBufferArea.v` | `buffer_arc_area_grows` |
 
-Five `theories/` arc files are **all-C2** — every tainted theorem in them
-is proof-only, so tactical re-proof would take the whole file off the
-exceptions list: `theories/ArcArea.v`, `theories/ArcAreaCentroid.v`, `theories/ArcCentroid.v`, `theories/ArcLength.v`, `theories/CurveBufferArea.v`.
+Five `theories/` arc files were **all-C2** at the 2026-08-16 snapshot
+and left `audit-exceptions.txt` on 2026-08-25 (see the header update):
+`theories/ArcArea.v`, `theories/ArcAreaCentroid.v`,
+`theories/ArcCentroid.v`, `theories/ArcLength.v`,
+`theories/CurveBufferArea.v`. `ArcChordSubdivision.v` stays (atan2 C1).
 The flocq-lane C2s (`b64_le_R_of_true` and kin) are the policy doc's §4
 canonical exemplars: comparison-reflection lemmas whose taint enters via
 `Bcompare_correct`.

@@ -23,9 +23,9 @@
      - `arc_centroid_offset_le_radius`   : `offset ≤ r` for `theta > 0`
        (the centroid lies inside the disc — via `ArcLength.chord_le_arc_length`).
 
-   Stated over `(r, theta)` abstractly (no `atan2`), so only `chord_le_arc_length`
-   crosses into the `sin_lt_x`/`classic` lane — the file is 4-axiom, same lineage
-   as `ArcLength.v` (`docs/audit-exceptions.txt`).  No `Admitted`/`Axiom`/`Parameter`.
+   Stated over `(r, theta)` abstractly (no `atan2`).  `chord_le_arc_length`
+   is 3-axiom after the Taylor-envelope `sin_le_x`.  THREE-AXIOM.
+   No `Admitted`/`Axiom`/`Parameter`.
    The Point-valued centroid of a `CircularArc` (bisector direction via
    `arc_sweep_angle`) is the natural follow-up.
 
