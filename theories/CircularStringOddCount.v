@@ -25,7 +25,7 @@
      Assisted-by: Cursor Grok 4.6
    ========================================================================== *)
 
-From Stdlib Require Import Reals List Arith Lia Lra.
+From Stdlib Require Import Reals List Lia.
 From NTS.Proofs Require Import Distance.
 
 Import ListNotations.
