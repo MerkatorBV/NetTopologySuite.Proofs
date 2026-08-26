@@ -1331,3 +1331,15 @@ topic: arc · claimId: V-CS · witness: circularstring-abca · JTS `2b56b1a4`
 | `CircularStringValid.v : circularstring_abca_valid` (+ `closed_four_valid`, `cs_first_eq_last`) | **Even+closed valid.** `CIRCULARSTRING(A,B,C,A)` with A=(−5,0), B=(0,5), C=(5,0) is a valid control count: n=4 and first=last — the #86 full-circle / annulus ring, complementary close implicit `[exact]` | 3 |
 | `CircularStringValid.v : circularstring_open_even_invalid` (+ `even_open_four_invalid`) | **Even+open invalid.** Four leftover controls (0,0),(1,1),(2,0),(3,1) with first≠last are not a valid CircularString control count `[exact]` | 3 |
 | `CircularStringValid.v : circularstring_odd_closed_valid` (+ `odd_controls_valid`) | **Odd still valid.** The usual 5-control closed SFA ring (−5,0),(0,5),(5,0),(0,−5),(−5,0) remains a valid control count `[exact]` | 3 |
+
+## EX-CS-4 — four-item CIRCULARSTRING(A,B,C,A) is not a PostGIS control count (`CircularStringOddCount.v`) <!-- feat:valid geom:cs -->
+
+topic: arc · claimId: EX-CS-4 · witness: circularstring-abca-rejected · JTS `81c2e996`
+
+V-CS above remains the historical JTS `2b56b1a4` pin. Product SoT after JTS #124 is odd ≥ 3 only.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CircularStringOddCount.v : circularstring_abca_postgis_invalid` (+ `even_four_invalid`) | **Closed-4 invalid.** `CIRCULARSTRING(A,B,C,A)` with A=(−5,0), B=(0,5), C=(5,0) is not a valid PostGIS / JTS `81c2e996` control count: n=4 is even `[exact]` | 3 |
+| `CircularStringOddCount.v : circularstring_open_even_postgis_invalid` | **Open-4 invalid.** Four leftover controls (0,0),(1,1),(2,0),(3,1) are not a valid control count `[exact]` | 3 |
+| `CircularStringOddCount.v : circularstring_odd_closed_postgis_valid` (+ `odd_controls_valid`) | **Odd still valid.** The 5-control closed SFA ring remains a valid control count `[exact]` | 3 |

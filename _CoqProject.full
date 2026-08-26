@@ -2223,7 +2223,13 @@ theories/BufferDepthGuarded.v
 theories/CurveGeometry.v
 # V-CS / JTS #86: even CircularString control count is valid only as the
 # closed 4-control annulus CIRCULARSTRING(A,B,C,A). Port of JTS 2b56b1a4.
+# Historical pin; stays on the full corpus so CI still compiles and
+# axiom-audits the three verified-claims rows. Host _CoqProject dropped
+# it (EX-CS-4 is the curated host door).
 theories/CircularStringValid.v
+# EX-CS-4 / JTS 81c2e996: PostGIS odd control count. Four-item
+# CIRCULARSTRING(A,B,C,A) is invalid. Does not reuse claimId V-CS.
+theories/CircularStringOddCount.v
 # Issue #64 subtask 64-d — GREEN: InDisk / InDisk_supporting_circle closed-disk
 # membership on the supporting circle of a CircularArc, plus rational unit-arc
 # witness (a=(1,0)→(0,1)→(−1,0); interior (0,1/2), boundary (3/5,4/5),
