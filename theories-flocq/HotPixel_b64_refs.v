@@ -18,10 +18,9 @@
    (claimId: 66-a, topic: binary64, witness: hot-pixel);
    HotPixel_b64.v remains as the Require Export umbrella, so reverse
    dependencies import unchanged.  Declarations and proofs carried over
-   verbatim.  The four Category C2 comparison lemmas
-   (`b64_le_R_of_true` / `b64_le_complete` / `b64_lt_R_of_true` /
-   `b64_lt_complete`) stay in HotPixel_b64.v: their taint is
-   `Bcompare_correct` and they are not a Flocq-free surface.
+   verbatim.  The four comparison lemmas stay in HotPixel_b64.v
+   (not a Flocq-free surface); they are now allowlist via a payload
+   split, not `Bcompare_correct`.
    No Admitted, no Axiom, no Parameter.
    topic: binary64
    claimId: 66-a

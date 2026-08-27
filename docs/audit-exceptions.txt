@@ -64,9 +64,9 @@ theories-flocq/Orient_b64_R.v
 theories-flocq/Validate_binary64_bridge.v
 theories-flocq/Orientation_b64.v
 # HotPixel_b64.v: hot-pixel membership + segment-crossing + passes-through
-# layer over b64 predicates.  `b64_lt`/`b64_le` route through classical
-# Rcompare (the canonical Category C2 exemplar `b64_le_R_of_true` lives
-# here); highest-fan-in b64 module (21 dependents incl. the oracle
+# layer over b64 predicates.  Four C2 exemplars (`b64_le_R_of_true` and
+# kin) are now allowlist (payload Bcompare, no Bcompare_correct); 32 C1
+# stay.  Highest-fan-in b64 module (21 dependents incl. the oracle
 # extraction path via Validate_binary64_extract.v).
 # The Flocq-free R-side kernel lives in HotPixel_b64_refs.v and is
 # deliberately NOT on this list (trio-only footprint).
