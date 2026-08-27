@@ -3058,36 +3058,97 @@ let run_area_unified () =
   let area = !s2 /. 2.0 in
   Printf.printf "%h\n" area
 
-(* ----- LENGTH_UNIFIED (Slice 11: Arc / chord length CC/CP): total length
+(* ----- LENGTH_UNIFIED (Slice 11 + #508 M-LEN-ZOO): total metric length
    of a (curve) path/ring/boundary given as segments.
    For arcs: r*Theta using same robust asin((1-cos)/2) path as ARC_LENGTH
    (reuses arc_invariants_q + exact Q; rounds only at interface).
    For chords (and degenerate arcs): euclid end-to-end.
-   Sums over the flattened segment list.
+   Zoo segments (#508, Bible section 4.2 length() obligation; ADR-0004).
+   Token grammars are ISO/IEC 13249-3:2016 subclause 5.1.67 WKT projections:
+     "E cx cy rx ry rot sa sw"    <elliptical text>: AFFINEPLACEMENT(LOCATION
+                                  cx cy, REFERENCEDIRECTIONS rot), UAXISLENGTH
+                                  rx, VAXISLENGTH ry, STARTANGLE sa, and
+                                  sw = ENDANGLE - STARTANGLE.  rx = ry is the
+                                  circular bridge: closed form rx*|sw|; else
+                                  adaptive-Simpson quadrature of the speed
+                                  (rotation is an isometry and drops out).
+     "B x0 y0 x1 y1 x2 y2 x3 y3"  cubic Bezier (Esri BezierCurveSegment; the
+                                  ISO has no Bezier): quadrature of |B'(t)|.
+     "K x y dx dy A sd ed"        <clothoid text>: AFFINEPLACEMENT(LOCATION =
+                                  the s=0 inflection point, REFERENCEDIRECTIONS
+                                  = tangent dx dy there), SCALEFACTOR A > 0,
+                                  STARTDISTANCE sd <= ENDDISTANCE ed.  The ISO
+                                  parameterization is BY arc length, so metric
+                                  length is ed - sd EXACTLY (subtraction) --
+                                  Halley's unknown-L is the fitting direction,
+                                  never this evaluation direction.
+     "N d x0 y0 w0 .. xd yd wd"   <nurbs text>, single-span clamped (Bible
+                                  section 4.3 single-span first): DEGREE d >= 1,
+                                  d+1 CONTROLPOINTS as WEIGHTEDPOINT + WEIGHT;
+                                  the ISO KNOTS field is fixed at KNOT(0, d+1),
+                                  KNOT(1, d+1) for this mint.  Quadrature of
+                                  the rational speed.
+   Quadrature / densify float paths are interface-boundary (sanctioned, same
+   stance as the transcendental arc parts).
    Protocol (mirrors AREA_UNIFIED / DISTANCE_UNIFIED for unified dispatch):
      LENGTH_UNIFIED
      <n>
-     seg...   ("C x1 y1 x2 y2" | "A x1 y1 x2 y2 x3 y3")
+     seg...
    Also accepted as ARC_LEN_UNIFIED for matrix tagging (Rung 3).
-   Output: "<len>" (%h) | "DEGENERATE" | "NAN"
+   Output: "<len>" (%h) | "DEGENERATE" | "NAN"; when the input holds at least
+   one zoo segment (E/B/K/N) a SECOND line "DENSIFIED <len>" (%h) follows --
+   the uniform 4096-chord cross-check column (#508 decision).  C/A-only
+   inputs keep the single-line answer, so pre-zoo consumers are unchanged.
+   DEGENERATE: rx or ry <= 0 (E); A <= 0, ed < sd, or zero tangent (K);
+   a weight <= 0 (N).  Collinear arcs still contribute their chord.
    CC: sum of member lengths (via GetSegments recursion).
    CP: perimeter length = sum of exterior ring + hole rings segment lengths.
    Multi: sum of members.
-   Uses interface-boundary float only for the transcendental arc parts (sanctioned).
 *)
 let run_length_unified () =
   let n = int_of_string (String.trim (input_line stdin)) in
   let parse_seg () =
     let toks = List.filter (fun s -> s <> "") (String.split_on_char ' ' (String.map (fun c -> if c='\t' then ' ' else c) (String.trim (input_line stdin)))) in
     let p a b = { bx = float_of_string a; by_ = float_of_string b } in
+    let f = float_of_string in
     match toks with
     | "C" :: x1::y1::x2::y2::[] -> `Chord (p x1 y1, p x2 y2)
     | "A" :: x1::y1::x2::y2::x3::y3::[] -> `Arc (p x1 y1, p x2 y2, p x3 y3)
+    | "E" :: cx::cy::rx::ry::rot::sa::sw::[] ->
+        `Elliptic (p cx cy, f rx, f ry, f rot, f sa, f sw)
+    | "B" :: x0::y0::x1::y1::x2::y2::x3::y3::[] ->
+        `Bezier (p x0 y0, p x1 y1, p x2 y2, p x3 y3)
+    | "K" :: x::y::dx::dy::a::sd::ed::[] ->
+        `Clothoid (p x y, f dx, f dy, f a, f sd, f ed)
+    | "N" :: d :: rest when (match int_of_string_opt d with
+                             | Some d -> d >= 1 && List.length rest = 3 * (d + 1)
+                             | None -> false) ->
+        let d = int_of_string d in
+        let rec take3 = function
+          | [] -> []
+          | x :: y :: w :: tl -> (p x y, f w) :: take3 tl
+          | _ -> failwith "LENGTH_UNIFIED: bad seg" in
+        `Nurbs (d, Array.of_list (take3 rest))
     | _ -> failwith "LENGTH_UNIFIED: bad seg" in
   let segs = Array.init n (fun _ -> parse_seg ()) in
-  let seg_pts = function `Chord (a, b) -> [a; b] | `Arc (a, b, c) -> [a; b; c] in
-  let all_pts = Array.to_list segs |> List.concat_map seg_pts in
-  if not (List.for_all finite_bpoint all_pts) then print_endline "NAN" else
+  let seg_nums = function
+    | `Chord (a, b) -> [a.bx; a.by_; b.bx; b.by_]
+    | `Arc (a, b, c) -> [a.bx; a.by_; b.bx; b.by_; c.bx; c.by_]
+    | `Elliptic (c, rx, ry, rot, sa, sw) -> [c.bx; c.by_; rx; ry; rot; sa; sw]
+    | `Bezier (p0, p1, p2, p3) ->
+        [p0.bx; p0.by_; p1.bx; p1.by_; p2.bx; p2.by_; p3.bx; p3.by_]
+    | `Clothoid (o, dx, dy, a, sd, ed) -> [o.bx; o.by_; dx; dy; a; sd; ed]
+    | `Nurbs (_, cps) ->
+        Array.to_list cps |> List.concat_map (fun (pt, w) -> [pt.bx; pt.by_; w]) in
+  let all_nums = Array.to_list segs |> List.concat_map seg_nums in
+  if not (List.for_all finite_float all_nums) then print_endline "NAN" else
+  let seg_degenerate = function
+    | `Chord _ | `Arc _ | `Bezier _ -> false
+    | `Elliptic (_, rx, ry, _, _, _) -> rx <= 0.0 || ry <= 0.0
+    | `Clothoid (_, dx, dy, a, sd, ed) ->
+        a <= 0.0 || ed < sd || (dx = 0.0 && dy = 0.0)
+    | `Nurbs (_, cps) -> Array.exists (fun (_, w) -> w <= 0.0) cps in
+  if Array.exists seg_degenerate segs then print_endline "DEGENERATE" else begin
   let hypot2 dx dy = sqrt (dx *. dx +. dy *. dy) in
   let point_dist p q = hypot2 (p.bx -. q.bx) (p.by_ -. q.by_) in
   let arc_len a b c =
@@ -3101,12 +3162,169 @@ let run_length_unified () =
         let theta = if major = 1 then 2.0 *. Float.pi -. t0 else t0 in
         r *. theta
   in
-  let total = ref 0.0 in
-  Array.iter (fun seg -> match seg with
-    | `Chord (p, q) -> total := !total +. point_dist p q
-    | `Arc (a, b, c) -> total := !total +. arc_len a b c
-  ) segs;
-  Printf.printf "%h\n" !total
+  (* Adaptive Simpson with Richardson correction; interface-boundary float. *)
+  let adaptive_simpson f a b =
+    if a = b then 0.0 else begin
+      let simpson a b fa fm fb = (b -. a) /. 6.0 *. (fa +. 4.0 *. fm +. fb) in
+      let rec go a b fa fm fb whole depth =
+        let m = 0.5 *. (a +. b) in
+        let lm = 0.5 *. (a +. m) and rm = 0.5 *. (m +. b) in
+        let flm = f lm and frm = f rm in
+        let left = simpson a m fa flm fm and right = simpson m b fm frm fb in
+        let delta = left +. right -. whole in
+        if depth = 0 || abs_float delta <= 1e-13 *. abs_float (left +. right)
+        then left +. right +. delta /. 15.0
+        else go a m fa flm fm left (depth - 1)
+             +. go m b fm frm fb right (depth - 1) in
+      let m = 0.5 *. (a +. b) in
+      let fa = f a and fm = f m and fb = f b in
+      go a b fa fm fb (simpson a b fa fm fb) 48
+    end in
+  let elliptic_len rx ry sa sw =
+    if rx = ry then rx *. abs_float sw   (* circular bridge: closed form *)
+    else
+      let speed t = hypot2 (rx *. sin t) (ry *. cos t) in
+      adaptive_simpson speed (Float.min sa (sa +. sw)) (Float.max sa (sa +. sw)) in
+  let bezier_speed p0 p1 p2 p3 t =
+    let u = 1.0 -. t in
+    let dx = 3.0 *. (u *. u *. (p1.bx -. p0.bx)
+                     +. 2.0 *. u *. t *. (p2.bx -. p1.bx)
+                     +. t *. t *. (p3.bx -. p2.bx)) in
+    let dy = 3.0 *. (u *. u *. (p1.by_ -. p0.by_)
+                     +. 2.0 *. u *. t *. (p2.by_ -. p1.by_)
+                     +. t *. t *. (p3.by_ -. p2.by_)) in
+    hypot2 dx dy in
+  (* All Bernstein values of degree d at t (de Casteljau accumulation). *)
+  let bernstein d t =
+    let b = Array.make (d + 1) 0.0 in
+    b.(0) <- 1.0;
+    for j = 1 to d do
+      let saved = ref 0.0 in
+      for k = 0 to j - 1 do
+        let tmp = b.(k) in
+        b.(k) <- !saved +. (1.0 -. t) *. tmp;
+        saved := t *. tmp
+      done;
+      b.(j) <- !saved
+    done;
+    b in
+  (* Homogeneous curve H(t) = (sum wi Pi Bi, sum wi Bi); C = A / w. *)
+  let nurbs_homog d (cps : (bPoint * float) array) t =
+    let b = bernstein d t in
+    let ax = ref 0.0 and ay = ref 0.0 and w = ref 0.0 in
+    Array.iteri (fun i (pt, wi) ->
+      ax := !ax +. wi *. pt.bx *. b.(i);
+      ay := !ay +. wi *. pt.by_ *. b.(i);
+      w  := !w  +. wi *. b.(i)) cps;
+    (!ax, !ay, !w) in
+  let nurbs_pt d cps t =
+    let (ax, ay, w) = nurbs_homog d cps t in
+    { bx = ax /. w; by_ = ay /. w } in
+  let nurbs_speed d (cps : (bPoint * float) array) t =
+    let (ax, ay, w) = nurbs_homog d cps t in
+    let bd = bernstein (d - 1) t in
+    let dax = ref 0.0 and day = ref 0.0 and dw = ref 0.0 in
+    for i = 0 to d - 1 do
+      let (pi, wi) = cps.(i) and (pj, wj) = cps.(i + 1) in
+      let fd = float_of_int d in
+      dax := !dax +. fd *. (wj *. pj.bx -. wi *. pi.bx) *. bd.(i);
+      day := !day +. fd *. (wj *. pj.by_ -. wi *. pi.by_) *. bd.(i);
+      dw  := !dw  +. fd *. (wj -. wi) *. bd.(i)
+    done;
+    hypot2 ((!dax *. w -. ax *. !dw) /. (w *. w))
+           ((!day *. w -. ay *. !dw) /. (w *. w)) in
+  let seg_len = function
+    | `Chord (p, q) -> point_dist p q
+    | `Arc (a, b, c) -> arc_len a b c
+    | `Elliptic (_, rx, ry, _, sa, sw) -> elliptic_len rx ry sa sw
+    | `Bezier (p0, p1, p2, p3) -> adaptive_simpson (bezier_speed p0 p1 p2 p3) 0.0 1.0
+    | `Clothoid (_, _, _, _, sd, ed) -> ed -. sd   (* exact by subtraction *)
+    | `Nurbs (d, cps) -> adaptive_simpson (nurbs_speed d cps) 0.0 1.0 in
+  (* DENSIFIED cross-check column: uniform 4096-chord sum per segment, an
+     independent numerical route (sampled points, not the speed integral). *)
+  let densify_m = 4096 in
+  let chord_sum (pts : bPoint array) =
+    let s = ref 0.0 in
+    for i = 1 to Array.length pts - 1 do
+      s := !s +. point_dist pts.(i - 1) pts.(i)
+    done;
+    !s in
+  let sample_curve pt_at =
+    Array.init (densify_m + 1)
+      (fun i -> pt_at (float_of_int i /. float_of_int densify_m)) in
+  let elliptic_pt c rx ry rot theta =
+    let cr = cos rot and sr = sin rot in
+    let ux = rx *. cos theta and vy = ry *. sin theta in
+    { bx = c.bx +. cr *. ux -. sr *. vy;
+      by_ = c.by_ +. sr *. ux +. cr *. vy } in
+  let bezier_pt p0 p1 p2 p3 t =
+    let u = 1.0 -. t in
+    let b0 = u *. u *. u and b1 = 3.0 *. u *. u *. t
+    and b2 = 3.0 *. u *. t *. t and b3 = t *. t *. t in
+    { bx = b0 *. p0.bx +. b1 *. p1.bx +. b2 *. p2.bx +. b3 *. p3.bx;
+      by_ = b0 *. p0.by_ +. b1 *. p1.by_ +. b2 *. p2.by_ +. b3 *. p3.by_ } in
+  let densified_len = function
+    | `Chord (p, q) -> point_dist p q
+    | `Arc (a, b, c) ->
+        (match circumcentre_q (qf a.bx, qf a.by_) (qf b.bx, qf b.by_)
+                              (qf c.bx, qf c.by_) with
+         | None -> point_dist a c
+         | Some (oxq, oyq, r2q) ->
+             let ox = Q.to_float oxq and oy = Q.to_float oyq in
+             let r = sqrt (Q.to_float r2q) in
+             let twopi = 2.0 *. Float.pi in
+             let ang p = atan2 (p.by_ -. oy) (p.bx -. ox) in
+             let a0 = ang a in
+             let norm t =
+               let u = Float.rem (t -. a0) twopi in
+               if u < 0.0 then u +. twopi else u in
+             let m = norm (ang b) and e = norm (ang c) in
+             let sweep = if m <= e then e else e -. twopi in
+             chord_sum (sample_curve (fun t ->
+               let th = a0 +. sweep *. t in
+               { bx = ox +. r *. cos th; by_ = oy +. r *. sin th })))
+    | `Elliptic (c, rx, ry, rot, sa, sw) ->
+        chord_sum (sample_curve (fun t -> elliptic_pt c rx ry rot (sa +. sw *. t)))
+    | `Bezier (p0, p1, p2, p3) ->
+        chord_sum (sample_curve (bezier_pt p0 p1 p2 p3))
+    | `Clothoid (_, dx, dy, a, sd, ed) ->
+        (* Heading phi(s) = phi0 + s^2/(2 A^2); positions by cumulative
+           composite Simpson of (cos phi, sin phi).  The chord sum is
+           translation-invariant, so integration starts at s = sd. *)
+        let phi0 = atan2 dy dx in
+        let phi s = phi0 +. s *. s /. (2.0 *. a *. a) in
+        let m = densify_m in
+        let h = (ed -. sd) /. float_of_int m in
+        let pts = Array.make (m + 1) { bx = 0.0; by_ = 0.0 } in
+        let x = ref 0.0 and y = ref 0.0 in
+        for j = 1 to m do
+          let s0 = sd +. h *. float_of_int (j - 1) in
+          let panels = 4 in
+          let hh = h /. float_of_int (2 * panels) in
+          let sx = ref (cos (phi s0)) and sy = ref (sin (phi s0)) in
+          for k = 1 to 2 * panels - 1 do
+            let s = s0 +. hh *. float_of_int k in
+            let w = if k mod 2 = 1 then 4.0 else 2.0 in
+            sx := !sx +. w *. cos (phi s);
+            sy := !sy +. w *. sin (phi s)
+          done;
+          sx := !sx +. cos (phi (s0 +. h));
+          sy := !sy +. sin (phi (s0 +. h));
+          x := !x +. hh /. 3.0 *. !sx;
+          y := !y +. hh /. 3.0 *. !sy;
+          pts.(j) <- { bx = !x; by_ = !y }
+        done;
+        chord_sum pts
+    | `Nurbs (d, cps) -> chord_sum (sample_curve (nurbs_pt d cps)) in
+  let has_zoo =
+    Array.exists (function `Chord _ | `Arc _ -> false | _ -> true) segs in
+  let total = Array.fold_left (fun acc s -> acc +. seg_len s) 0.0 segs in
+  Printf.printf "%h\n" total;
+  if has_zoo then begin
+    let dtotal = Array.fold_left (fun acc s -> acc +. densified_len s) 0.0 segs in
+    Printf.printf "DENSIFIED %h\n" dtotal
+  end
+  end
 
 let run_buffer_region () =
   let n = int_of_string (String.trim (input_line stdin)) in

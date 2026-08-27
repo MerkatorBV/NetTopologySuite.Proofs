@@ -416,13 +416,21 @@ run_distance_unified
 # JTS/NTS area interface value. Reuses ARC_AREA / buffer patterns.
 run_area_unified
 
-# --- LENGTH_UNIFIED (M-LEN-CS/M-LEN-CC, JTS #1195 §7 + arc-len CC/CP) --------
+# --- LENGTH_UNIFIED (M-LEN-CS/M-LEN-CC + M-LEN-ZOO #508, JTS #1195 §7) -------
 # Mode LENGTH_UNIFIED emits total length of curve geom (or perimeter for CP)
 # given as segment list: sum of euclid chords for Linear + r*theta (via same
 # asin path off arc_invariants_q) for arcs. The float IS the JTS/NTS .Length
 # interface value for arc-aware curves (unified model for CC/CP). Reuses the
 # ARC_LENGTH interface-boundary kernel (exact companion ARC_LENGTH_INVARIANTS_EXACT).
 # Covers CC/CP/Multi cells via GetSegments flattening + sum.
+# #508 zoo extension (ADR-0004): E/B/K/N segment tokens as ISO/IEC 13249-3
+# §5.1.67 projections. Closed forms where exact (rx=ry ellipse bridge r*|sw|,
+# clothoid ed-sd by ISO arc-length parameterization); adaptive-Simpson speed
+# quadrature elsewhere (interface-boundary float, gated differentially by
+# oracle/red_length_unified_zoo_tests.py against Carlson-integral and
+# closed-form truth); zoo inputs answer a second "DENSIFIED <len>" line, the
+# uniform 4096-chord cross-check column. No Rocq theorem is claimed here —
+# the proof-side obligations live under #508 (curve_length spec lane).
 run_length_unified
 
 # --- OVERLAY_UNIFIED (Precision + Overlay trusted-kernel pass, Slice 7) -------
