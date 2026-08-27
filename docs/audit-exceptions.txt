@@ -13,7 +13,7 @@
 #     immediately above the file line explaining what makes the file
 #     Category C / transitional and the planned resolution).
 #
-# Current state: 84 files are listed below -- 73 in `theories-flocq/` (the
+# Current state: 85 files are listed below -- 74 in `theories-flocq/` (the
 # initial bulk block for binary ops Bplus/Bminus/Bmult pulling
 # `Classical_Prop.classic` via Flocq, plus additional Category C for
 # snap-rounding, overlay, expansion-arithmetic, and Stage D as documented
@@ -589,6 +589,17 @@ theories-flocq/Orient_b64_stage_d_safe.v
 # axioms-audit after that merge is #489.  Removable once the parametric
 # refactor reaches the binary64 primitives.
 theories-flocq/OrientHybridPackage.v
+
+# C1: GEOS #968 / #1505 on-segment det-scale pins.  Headlines
+# `geos1505_onsegment_det_scales` / `geos968_orig_ozaki_failure` /
+# `geos1505_review_ozaki_failure` name `b64_geos_onsegment_det`
+# (`b64_minus` / `b64_mult` = Flocq Bminus/Bmult).  Three of six PA
+# footers pull `classic` via that DAG; the decimal-collinear /
+# true-cross / K-disequality pins stay allowlist.  No Admitteds.
+# Same binary-op lineage as Orient_b64_exact.v.  Removable once the
+# parametric refactor reaches the binary64 primitives.  Landed in
+# #540 without this line; container axioms-audit is the first failure.
+theories-flocq/Orient_geos968_onsegment_pins.v
 
 # Category C: Stratified Adaptive Precision Filter (OrientStratifiedAPF).
 # Witness-carrying refinement of the filter+expansion Stage D decoder;

@@ -57,8 +57,9 @@ From NTS.Proofs.Flocq Require Import Validate_binary64.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
-(* Abs, matching Orientation_b64.b64_abs (copied so this pin file depends    *)
-(* only on Validate_binary64).                                               *)
+(* Abs, copied from Orientation_b64.b64_abs so this pin file imports only    *)
+(* Validate_binary64.  Do not add Orientation_b64 here: that module pulls    *)
+(* BinarySingleNaN, whose B754_nan arity is not the Binary one.              *)
 (* -------------------------------------------------------------------------- *)
 
 Definition default_abs_nan_b64
@@ -82,7 +83,9 @@ Definition b64_geos_detright (p0 p1 p : BPoint) : binary64 :=
 Definition b64_geos_onsegment_det (p0 p1 p : BPoint) : binary64 :=
   b64_minus (b64_geos_detleft p0 p1 p) (b64_geos_detright p0 p1 p).
 
-(* Published Ozaki double; pin only, not a soundness theorem. *)
+(* GEOS C++ literal 3.3306690621773724e-16 (m=6755399417329184, e=-104).
+   That is not 3·2⁻⁵³ (m=6755399441055744, e=-104) and not 1.5·eps.
+   Pin only; not an Ozaki soundness theorem. *)
 Definition b64_ozaki_K : binary64 :=
   Binary.B754_finite prec emax false 6755399417329184 (-104) eq_refl.
 
