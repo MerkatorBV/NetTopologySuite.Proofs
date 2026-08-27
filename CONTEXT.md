@@ -52,6 +52,46 @@ naming a type no engine has. Say Multi (for member recursion) or CC
 (for CompoundCurve), whichever the evidence actually covers.
 _Avoid_: CC, curve collection, collection of curves
 
+### Exact curves
+
+**Bible**:
+The governing architecture document for exact curve work — `doc/EXACT_CURVE_BIBLE.md`
+(*JTS Arc-Native Programme*, canonical August 2026) on the `feature/sfa-curve-rgr`
+branch of the `grootstebozewolf/jts` fork. It is in neither this repo nor the fork's
+default branch, so cite it by section (§) and pin the branch commit whenever a claim
+leans on it.
+_Avoid_: the spec (which one?), architecture doc, bible (lowercase — unfindable)
+
+**Zoo**:
+The five Exact* curve types of Bible §4.1: CircularArc (the privileged, served
+member), cubic Bézier (replacing the Bible's quadratic — §9 amendment decided
+2026-08-27, fork edit pending), EllipticalArc, Clothoid, and single-span NURBS.
+Membership criterion: curves living in the wild engines — never "curves that are
+easy to prove". The other ISO 13249-3 curve types (SPIRALCURVE's bloss,
+biquadratic, sine and cosine; CIRCLE; GEODESICSTRING) are expansion backlog per
+Bible §5 Year 5–7, not members.
+_Avoid_: curve types (broader), Exact family (vague), ExactCurve (the protocol, not the roster)
+
+**Exact**:
+The Bible §2.2 property: the mathematics is closed-form or exactness-preserving and
+never densifies silently — what `isExact()` reports. Says nothing about doubles
+agreeing across platforms; that different property is Oracle-stable.
+_Avoid_: precise, oracle-stable (different property), exact path (see Laser)
+
+**Oracle-stable**:
+Agreement across engines and platforms (C++/Java/.NET) in the `clothoid-halley-coq`
+golden-vector sense: |value − reference| < 1e-9 on a shared, checked-in corpus
+against one designated reference implementation, plus ≥ 99% iteration-count
+agreement where the algorithm iterates. An exact formula can still be
+oracle-unstable through libm.
+_Avoid_: exact (the Bible §2.2 property), stable (unqualified), bit-exact (stronger, rarely achievable)
+
+**Metric length**:
+The 1-D measure of a curve — the number the Bible §4.2 `length()` obligation owes and
+`LENGTH_UNIFIED` emits. Never confuse it with `List.length`: lemmas named `*_length`
+but proved by `length_map` are element counts stating no metric fact.
+_Avoid_: length (unqualified where a count could be meant), size
+
 ### Performance
 
 **Laser**:
