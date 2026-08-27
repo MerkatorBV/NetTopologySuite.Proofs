@@ -1,4 +1,4 @@
-# Makefile for rocq-robust-predicates.
+# Makefile for rocq-robust-geometric-predicates.
 #
 # Delegates to the Rocq-generated Makefile.coq.  Run ./assemble.sh first to
 # vendor the source .v files from the corpus (the opam source tarball produced
@@ -20,12 +20,12 @@ install: Makefile.coq
 package: clean
 	./assemble.sh
 	mkdir -p dist
-	tar czf dist/rocq-robust-predicates.tar.gz \
-	    --transform 's,^,rocq-robust-predicates/,' \
+	tar czf dist/rocq-robust-geometric-predicates.tar.gz \
+	    --transform 's,^,rocq-robust-geometric-predicates/,' \
 	    MANIFEST _CoqProject Makefile assemble.sh README.md LICENSE \
-	    rocq-robust-predicates.opam dune-project default.nix \
+	    rocq-robust-geometric-predicates.opam dune-project default.nix \
 	    theories theories-flocq
-	@echo "Wrote dist/rocq-robust-predicates.tar.gz"
+	@echo "Wrote dist/rocq-robust-geometric-predicates.tar.gz"
 
 clean:
 	@if [ -f Makefile.coq ]; then $(MAKE) -f Makefile.coq cleanall || true; fi

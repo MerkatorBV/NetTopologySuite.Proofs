@@ -1,4 +1,4 @@
-# MANIFEST for rocq-robust-predicates
+# MANIFEST for rocq-robust-geometric-predicates
 # ---------------------------------------------------------------------------
 # Source-of-record paths (relative to the NetTopologySuite.Proofs repo root)
 # for every .v file vendored into this standalone package.  `assemble.sh`
