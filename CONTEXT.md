@@ -64,8 +64,8 @@ _Avoid_: the spec (which one?), architecture doc, bible (lowercase — unfindabl
 
 **Zoo**:
 The five Exact* curve types of Bible §4.1: CircularArc (the privileged, served
-member), cubic Bézier (replacing the Bible's quadratic — §9 amendment decided
-2026-08-27, fork edit pending), EllipticalArc, Clothoid, and single-span NURBS.
+member), cubic Bézier (replacing the Bible's quadratic — §9 amendment A1,
+signed off 2026-08-27), EllipticalArc, Clothoid, and single-span NURBS.
 Membership criterion: curves living in the wild engines — never "curves that are
 easy to prove". The other ISO 13249-3 curve types (SPIRALCURVE's bloss,
 biquadratic, sine and cosine; CIRCLE; GEODESICSTRING) are expansion backlog per
