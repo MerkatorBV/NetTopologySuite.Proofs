@@ -33,6 +33,12 @@ remains the 2026-08-16 snapshot.
 missing from `audit-exceptions.txt` and is now listed (85 files / 74
 `theories-flocq/`). Three PA footers are C1 via `Bminus`/`Bmult` in
 the Ozaki DAG. The TSV still does not include this file.
+**Update 2026-08-27**: Four HotPixel comparison lemmas
+(`b64_le_R_of_true`, `b64_le_complete`, `b64_lt_R_of_true`,
+`b64_lt_complete`) left `classic` after a payload split on finite
+`B2R` (`± IZR m * bpow e`) replaced `rewrite Bcompare_correct`.
+`HotPixel_b64.v` stays on the exceptions list (32 C1). Remaining C2:
+7 flocq after HotPixel four. The TSV remains the 2026-08-16 snapshot.
 **Data**: [`category-c-distribution.tsv`](category-c-distribution.tsv)
 (one row per PA-audited theorem: file, name, category).
 
@@ -105,9 +111,10 @@ and left `audit-exceptions.txt` on 2026-08-25 (see the header update):
 `theories/ArcArea.v`, `theories/ArcAreaCentroid.v`,
 `theories/ArcCentroid.v`, `theories/ArcLength.v`,
 `theories/CurveBufferArea.v`. `ArcChordSubdivision.v` stays (atan2 C1).
-The flocq-lane C2s (`b64_le_R_of_true` and kin) are the policy doc's §4
-canonical exemplars: comparison-reflection lemmas whose taint enters via
-`Bcompare_correct`.
+The four HotPixel flocq-lane C2s (`b64_le_R_of_true` and kin) were the
+policy doc's §4 canonical exemplars (`rewrite Bcompare_correct`). They
+are now allowlist via the payload split (2026-08-27 update). Remaining
+flocq C2: Intersect two + PassesThrough grid five.
 
 Definition seeds: `arc_sweep` (`theories/RelateArcAnalytic.v`), `cascade_h_chain_statement` (`theories-flocq/B64_FastExpansionSum_Shewchuk_Route2.v`), `fast_expansion_sum` (`theories-flocq/B64_FastExpansionSum_Shewchuk.v`), `b64_orient2d_expansion` (`theories-flocq/Orient_b64_expansion.v`).
 

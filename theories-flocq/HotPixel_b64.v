@@ -50,8 +50,9 @@
    and is deliberately off docs/audit-exceptions.txt.  This file
    keeps the binary64-facing membership / crossing / snap-round
    tracks and Require Export's the kernel, so reverse dependencies
-   import unchanged.  The four Category C2 comparison lemmas stay
-   here (`Bcompare_correct`).
+   import unchanged.  The four comparison lemmas (`b64_le_R_of_true`
+   and kin) are now allowlist: finite-payload split on `B2R`, no
+   `Bcompare_correct`.  The file stays on the exceptions list (32 C1).
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -201,6 +202,10 @@ Definition b64_in_rounded_hot_pixel
 (* the rounded pixel to the R-side exact pixel is the next slice.           *)
 (* -------------------------------------------------------------------------- *)
 
+(* Payload Bcompare reflection lives in B64_lib (`b64_compare_payload`).
+   Finite B2R is ± IZR m * bpow e; do not rewrite Bcompare_correct. *)
+
+
 (* Helper: `b64_le a b = true` (with `a`, `b` finite) implies `B2R a <= B2R b`. *)
 Lemma b64_le_R_of_true :
   forall a b : binary64,
@@ -211,11 +216,11 @@ Lemma b64_le_R_of_true :
 Proof.
   intros a b Fa Fb Hle.
   unfold b64_le, b64_compare in Hle.
-  rewrite Binary.Bcompare_correct in Hle by assumption.
-  destruct (Rcompare (Binary.B2R prec emax a)
-                     (Binary.B2R prec emax b)) eqn:E; try discriminate.
-  - apply Rcompare_Eq_inv in E. rewrite E. apply Rle_refl.
-  - apply Rcompare_Lt_inv in E. lra.
+  pose proof (b64_compare_payload a b Fa Fb) as Hp.
+  set (c := Binary.Bcompare prec emax a b) in *.
+  destruct c as [[]|]; try discriminate Hle.
+  - rewrite Hp. apply Rle_refl.
+  - apply Rlt_le. exact Hp.
 Qed.
 
 (* Helper: `b64_lt a b = true` (with `a`, `b` finite) implies `B2R a < B2R b`. *)
@@ -228,10 +233,10 @@ Lemma b64_lt_R_of_true :
 Proof.
   intros a b Fa Fb Hlt.
   unfold b64_lt, b64_compare in Hlt.
-  rewrite Binary.Bcompare_correct in Hlt by assumption.
-  destruct (Rcompare (Binary.B2R prec emax a)
-                     (Binary.B2R prec emax b)) eqn:E; try discriminate.
-  apply Rcompare_Lt_inv in E. exact E.
+  pose proof (b64_compare_payload a b Fa Fb) as Hp.
+  set (c := Binary.Bcompare prec emax a b) in *.
+  destruct c as [[]|]; try discriminate Hlt.
+  exact Hp.
 Qed.
 
 Theorem b64_in_hot_pixel_sound_rounded :
@@ -1934,12 +1939,11 @@ Lemma b64_le_complete :
 Proof.
   intros a b Fa Fb Hle.
   unfold b64_le, b64_compare.
-  rewrite Binary.Bcompare_correct by assumption.
-  destruct (Rcompare (Binary.B2R prec emax a)
-                     (Binary.B2R prec emax b)) eqn:E.
-  - reflexivity.
-  - reflexivity.
-  - apply Rcompare_Gt_inv in E. lra.
+  pose proof (b64_compare_payload a b Fa Fb) as Hp.
+  set (c := Binary.Bcompare prec emax a b) in *.
+  destruct c as [[]|]; try reflexivity.
+  - lra.
+  - destruct Hp.
 Qed.
 
 Lemma b64_lt_complete :
@@ -1951,12 +1955,12 @@ Lemma b64_lt_complete :
 Proof.
   intros a b Fa Fb Hlt.
   unfold b64_lt, b64_compare.
-  rewrite Binary.Bcompare_correct by assumption.
-  destruct (Rcompare (Binary.B2R prec emax a)
-                     (Binary.B2R prec emax b)) eqn:E.
-  - apply Rcompare_Eq_inv in E. lra.
-  - reflexivity.
-  - apply Rcompare_Gt_inv in E. lra.
+  pose proof (b64_compare_payload a b Fa Fb) as Hp.
+  set (c := Binary.Bcompare prec emax a b) in *.
+  destruct c as [[]|]; try reflexivity.
+  - lra.
+  - lra.
+  - destruct Hp.
 Qed.
 
 (* The four pixel-bound expressions are bit-exact (B2R = center +/- 1/2) and
