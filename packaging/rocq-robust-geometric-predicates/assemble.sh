@@ -12,7 +12,7 @@
 #   ./assemble.sh [CORPUS_ROOT]
 #
 # CORPUS_ROOT defaults to the repo root two levels up (this package lives at
-# <repo>/packaging/rocq-robust-predicates/).
+# <repo>/packaging/rocq-robust-geometric-predicates/).
 # ===========================================================================
 set -euo pipefail
 

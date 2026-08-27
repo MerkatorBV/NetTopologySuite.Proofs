@@ -7,8 +7,7 @@ $ErrorActionPreference = 'Stop'
 $repo = 'grootstebozewolf/NetTopologySuite.Proofs'
 
 $releases = @(
-  @{ Tag='rocq-spatial-algebra-v0.1.0';   Title='rocq-spatial-algebra 0.1.0';   Notes='Axiom-free DE-9IM algebra + integer determinant bounds.' }
-  @{ Tag='rocq-robust-predicates-v0.1.0'; Title='rocq-robust-predicates 0.1.0'; Notes='Robust binary64 geometric predicates, sound vs. exact arithmetic.' }
+  @{ Tag='rocq-robust-geometric-predicates-v0.1.0'; Title='rocq-robust-geometric-predicates 0.1.0'; Notes='Robust binary64 geometric predicates, sound vs. exact arithmetic.' }
 )
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {

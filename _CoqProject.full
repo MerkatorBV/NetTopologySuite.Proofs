@@ -3305,6 +3305,14 @@ theories-flocq/OrientHybridPackage.v
 # decidable stratum, sign-negation homomorphism) tied to cross_R_BP
 # antisymmetry for argument-swap antisymmetry of the whole decoder.
 theories-flocq/OrientStratifiedAPF.v
+# GEOS #968 / libgeos/geos#1505 on-segment det pins.  WKT decimals of
+# LINESTRING (1 0, 0 2) / POINT (0.9 0.2) are collinear over R; the
+# binary64 Ozaki DAG residual is -2^-54.  Review pair
+# (0,0)-(1e16,1e16) vs (5e15, 5e15+1) has true cross 10^16 and rounded
+# det 2^53.  The #1505 membership cap 1e-12 sits strictly between those
+# |det| scales and is not the Ozaki K.  Computational Ozaki FAILURE
+# mirror only; no soundness theorem; ADR-0004 stays cold.  claimId none.
+theories-flocq/Orient_geos968_onsegment_pins.v
 # Phase 2 foundations: Flocq-free R-side kernel for the hot-pixel
 # predicates (`in_hot_pixel_at_radius`, closed-pixel touch).  Off
 # docs/audit-exceptions.txt — trio-only footprint.

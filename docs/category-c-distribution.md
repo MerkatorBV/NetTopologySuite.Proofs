@@ -29,6 +29,10 @@ its `sin_sq_le_sq` is now allowlist via the same envelope. Remaining
 C2 on the 2026-08-16 shortlist: 11 flocq + `sin_sq_le_sq`. Exceptions
 list: 84 files / 73 `theories-flocq/` / 11 `theories/`. The TSV
 remains the 2026-08-16 snapshot.
+**Update 2026-08-27**: `Orient_geos968_onsegment_pins.v` (#540) was
+missing from `audit-exceptions.txt` and is now listed (85 files / 74
+`theories-flocq/`). Three PA footers are C1 via `Bminus`/`Bmult` in
+the Ozaki DAG. The TSV still does not include this file.
 **Update 2026-08-27**: Four HotPixel comparison lemmas
 (`b64_le_R_of_true`, `b64_le_complete`, `b64_lt_R_of_true`,
 `b64_lt_complete`) left `classic` after a payload split on finite
