@@ -24,9 +24,8 @@
      - `segment_centroid_offset_nonneg`      : `0 <= offset` for `0 <= theta <= 2*PI`.
 
    Stated over `(r, theta)` abstractly (no `atan2`).  `segment_area_factor_pos`
-   and the nonneg headline use Stdlib `sin_lt_x` (-> `Classical_Prop.classic`),
-   so the file is 4-axiom, same lineage as `ArcLength.v` / `ArcCentroid.v`
-   (`docs/audit-exceptions.txt`).  No `Admitted`/`Axiom`/`Parameter`.
+   uses `ArcLength.sin_lt_x_pos` (3-axiom Taylor envelope, not Stdlib
+   `sin_lt_x` / MVT).  THREE-AXIOM.  No `Admitted`/`Axiom`/`Parameter`.
 
    The `offset <= r` bound (`4 sin^3(theta/2) <= 3(theta - sin theta)`) is a
    genuinely harder trig inequality (needs monotonicity, not a chord<=arc reuse);
@@ -40,6 +39,7 @@
 
 Require Import Reals.
 Require Import Lra.
+From NTS.Proofs Require Import ArcLength.
 Local Open Scope R_scope.
 
 (* The circular-segment centroid's signed distance from the centre along the
@@ -54,7 +54,7 @@ Definition segment_centroid_offset (r theta : R) : R :=
 Lemma segment_area_factor_pos :
   forall theta, 0 < theta -> 0 < theta - sin theta.
 Proof.
-  intros theta Ht. pose proof (sin_lt_x theta Ht) as H. lra.
+  intros theta Ht. pose proof (sin_lt_x_pos theta Ht) as H. lra.
 Qed.
 
 (* Semicircle (theta = PI): the half-disc centroid is 4r/(3·PI) from the centre. *)

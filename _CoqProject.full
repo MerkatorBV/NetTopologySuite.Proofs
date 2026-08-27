@@ -363,23 +363,23 @@ theories/BufferJoin.v
 # Issue #64 / Option-A foundation 3 (ask #1): exact arc length s = r*theta with
 # the chord/arc soundness relations.  Headlines chord_le_arc_length (chord <=
 # arc, arc analogue of chord_le_detour) and chord_subtended_sq (half-angle
-# bridge chord^2 = 2 r^2 (1 - cos theta)).  Pulls classic via Stdlib sin_lt_x
-# (see audit-exceptions).  No Admitted.
+# bridge chord^2 = 2 r^2 (1 - cos theta)).  3-axiom (Taylor-envelope
+# sin_lt_x_pos / sin_le_x; not Stdlib sin_lt_x).  No Admitted.
 theories/ArcLength.v
 # Issue #64 / M-AREA-CP: circular-segment area (r^2/2)(theta - sin theta), proof
 # companion of the ARC_AREA oracle mode.  sector-triangle decomposition, nonneg,
-# half-disc PI*r^2/2, full disc PI*r^2.  4-axiom (sin_lt_x lineage, audit-exceptions).
+# half-disc PI*r^2/2, full disc PI*r^2.  3-axiom (ArcLength.sin_le_x).
 theories/ArcArea.v
 # Issue #64/#69 C-LIN: the circular-arc centroid offset 2r·sin(theta/2)/theta
 # (= chord/angle), the proof-side foundation for the oracle's missing ARC_CENTROID
 # mode and CircularString.getCentroid().  Semicircle -> 2r/PI, full turn -> 0,
-# 0 <= offset <= r (the last via ArcLength.chord_le_arc_length).  4-axiom (sin_lt_x
-# lineage, see audit-exceptions).  No Admitted.
+# 0 <= offset <= r (the last via ArcLength.chord_le_arc_length).  3-axiom
+# (ArcLength.sin_le_x).  No Admitted.
 theories/ArcCentroid.v
 # Issue #64/#69 C-AREA: circular-SEGMENT centroid offset 4r·sin^3(theta/2)/
 # (3(theta-sin theta)), proof-side foundation for the oracle's ARC_AREA_CENTROID
 # mode.  Semicircle -> 4r/(3·PI), full turn -> 0, nonneg, and the segment-area
-# guard theta-sin theta > 0.  4-axiom (sin_lt_x lineage, see audit-exceptions).
+# guard theta-sin theta > 0.  3-axiom (ArcLength.sin_lt_x_pos).
 theories/ArcAreaCentroid.v
 # Issue #67 session 1 (S1): DE-9IM intersection-matrix algebra — foundation
 # only (no geometry carrier, no RelateNG).  DimValue / IMPattern /
@@ -2998,7 +2998,7 @@ theories/CurveCapWalk.v
 # buffer_arc_area_grows (outward buffer grows each arc's segment area); reuse of
 # offset_safe_iff_sq (rational EMPTY decision), curve_ring_offset_arcs_valid
 # (boundary validity), arc_offset_dist_exact (the parallel-distance property).
-# 4-axiom [exact] (segment_area magnitude pulls the sin_lt_x lineage).  The
+# 3-axiom [exact] (segment_area magnitude uses ArcLength.sin_le_x).  The
 # geometric "signed area = true Minkowski buffer area" is the deferred P2 frontier,
 # pinned by oracle/gen_buffer_region_tests.py.
 theories/CurveBufferArea.v

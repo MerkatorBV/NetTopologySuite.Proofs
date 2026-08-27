@@ -247,7 +247,8 @@ of evidence would sharpen the policy choice:
    files. Result: **362 A / 618 C1 / 18 C2 / 4 definition seeds — C1:C2
    ≈ 34:1**, confirming the sample-based guess decisively. Tactical
    re-proof can clean at most 18 theorems (five `theories/` arc files
-   are all-C2 and could leave the list that way); everything else is
+   were all-C2 and left the list on 2026-08-25 via a 3-axiom
+   `sin x < x` envelope in `ArcLength.v`); everything else is
    co-located-clean or structurally inherent. Method: per-theorem PA
    attribution from an `--output-sync=target` build, then
    `ltac:(type of _)` statement probes to split type-level from

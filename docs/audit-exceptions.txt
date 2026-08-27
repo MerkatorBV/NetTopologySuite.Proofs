@@ -13,13 +13,16 @@
 #     immediately above the file line explaining what makes the file
 #     Category C / transitional and the planned resolution).
 #
-# Current state: 89 files are listed below -- 73 in `theories-flocq/` (the
+# Current state: 84 files are listed below -- 73 in `theories-flocq/` (the
 # initial bulk block for binary ops Bplus/Bminus/Bmult pulling
 # `Classical_Prop.classic` via Flocq, plus additional Category C for
 # snap-rounding, overlay, expansion-arithmetic, and Stage D as documented
-# per-file) and 16 in `theories/` (a distinct R-side lineage: Stdlib
-# `atan`/`Ratan` and `sin_lt_x` pull `Classical_Prop.classic`, documented
-# per-file below).  Per-theorem categorisation of every listed file:
+# per-file) and 11 in `theories/` (a distinct R-side lineage: Stdlib
+# `atan`/`Ratan` pull `Classical_Prop.classic`, documented per-file
+# below).  The five all-C2 arc files (`ArcLength` / `ArcArea` /
+# `ArcCentroid` / `ArcAreaCentroid` / `CurveBufferArea`) left this list
+# after a 3-axiom Taylor-envelope proof of `sin x < x` replaced Stdlib
+# `sin_lt_x` (MVT → classic).  Per-theorem categorisation of every listed file:
 # docs/category-c-distribution.md (2026-08-16 pass; 1002 theorems -- 362
 # co-located clean, 618 C1, 18 C2, 4 definition seeds).  The Flocq contamination is a pre-existing condition the
 # corpus inherited from Flocq's binary model; the parametric refactor clears
@@ -407,48 +410,12 @@ theories/InSector.v
 # headlines Qed-closed; no Admitteds.
 theories/BufferJoin.v
 
-# Category C (R-side): issue #64 Option-A foundation 3, exact arc length.
-# chord_subtended_sq is 3-axiom, but chord_le_arc_length uses Stdlib `sin_lt_x`
-# (whose proof pulls Classical_Prop.classic), so the file is 4-axiom.  No
-# Admitteds; both headlines Qed-closed.
-theories/ArcLength.v
-
-# Category C (R-side, same sin_lt_x lineage as ArcLength.v): issue #64 M-AREA-CP
-# circular-segment area.  The sector-triangle / half-disc / full-disc facts are
-# 3-axiom, but segment_area_nonneg uses ArcLength.sin_le_x (Stdlib sin_lt_x ->
-# Classical_Prop.classic), so the file is 4-axiom.  No Admitteds; all Qed.
-theories/ArcArea.v
-
-# Category C (R-side, same sin_lt_x lineage as ArcLength.v): issue #64/#69 C-LIN
-# arc centroid offset.  The semicircle / full-turn / nonneg facts are 3-axiom,
-# but arc_centroid_offset_le_radius reuses ArcLength.chord_le_arc_length (Stdlib
-# `sin_lt_x` -> Classical_Prop.classic), so the file is 4-axiom.  No Admitteds;
-# all headlines Qed-closed.  Removal tracks ArcLength's cleanup.
-theories/ArcCentroid.v
-
-# Category C (R-side, same sin_lt_x lineage as ArcLength.v / ArcCentroid.v):
-# issue #64/#69 C-AREA circular-segment centroid offset.  The semicircle /
-# full-turn facts are 3-axiom, but segment_area_factor_pos and the nonneg
-# headline use Stdlib `sin_lt_x` (-> Classical_Prop.classic) for theta - sin
-# theta > 0, so the file is 4-axiom.  No Admitteds; all headlines Qed-closed.
-# Removal tracks ArcLength's cleanup.
-theories/ArcAreaCentroid.v
-
-# Category C (R-side, same sin_lt_x lineage as ArcArea.v): issue #65 BUF-1/BUF-NEG
-# buffer-region AREA companion of the BUFFER_REGION oracle.  buffer_arc_area_zero
-# / buffer_arc_safe_iff_sq / buffer_boundary_arcs_valid / buffer_offset_point_dist
-# are 3-axiom, but buffer_arc_area_grows reuses ArcArea.segment_area's
-# `theta - sin theta >= 0` (Stdlib `sin_lt_x` -> Classical_Prop.classic), so the
-# file is 4-axiom.  No Admitteds; all headlines Qed-closed.  Removal tracks
-# ArcLength's / ArcArea's cleanup.
-theories/CurveBufferArea.v
-
-# Category C (R-side, same atan/sin lineage as ArcLength.v / AngleBetween.v):
-# route (B) follow-up, equal-angle budget discharge.  arc_central_angle is
-# built on angle_between = atan2(...), and sin_sq_le_sq uses Stdlib `sin_lt_x`
-# via ArcLength.sin_le_x, so the angle/headline theorems inherit
-# Classical_Prop.classic (4-axiom).  chord_sq_law_of_cosines and
-# one_minus_cos_half_angle stay on the 3-axiom allowlist.  No Admitteds;
+# Category C (R-side, atan2 lineage as AngleBetween.v): route (B) follow-up,
+# equal-angle budget discharge.  arc_central_angle is built on
+# angle_between = atan2(...), so the angle/headline theorems inherit
+# Classical_Prop.classic (4-axiom).  chord_sq_law_of_cosines,
+# one_minus_cos_half_angle, and sin_sq_le_sq (via the 3-axiom
+# ArcLength.sin_le_x Taylor envelope) stay on the allowlist.  No Admitteds;
 # all headlines Qed-closed.
 theories/ArcChordSubdivision.v
 

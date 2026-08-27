@@ -17,9 +17,8 @@
      - `segment_area_half_disc` : at `theta = PI`, area = `PI*r^2/2` (a half disc).
      - `segment_area_full_disc` : at `theta = 2*PI`, area = `PI*r^2` (the whole disc).
 
-   Stated over `(r, theta)` abstractly (no atan2).  `segment_area_nonneg` uses
-   Stdlib `sin_lt_x` (via `ArcLength.sin_le_x`) which pulls `Classical_Prop.classic`,
-   so the file is 4-axiom, same lineage as `ArcLength.v` (`docs/audit-exceptions.txt`).
+   Stated over `(r, theta)` abstractly (no atan2).  `segment_area_nonneg`
+   uses `ArcLength.sin_le_x` (3-axiom Taylor envelope).  THREE-AXIOM.
    No `Admitted`/`Axiom`/`Parameter`.
 
    Author: NetTopologySuite.Proofs contributors
