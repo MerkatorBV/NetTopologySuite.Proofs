@@ -40,6 +40,22 @@ FLOCQ_TAG="flocq-4.2.2"
 
 log() { echo "[session-start] $*"; }
 
+# --- 0. mattpocock-skills plugin ---------------------------------------------
+# .claude/settings.json declares the mattpocock marketplace and enables
+# mattpocock-skills@mattpocock, but remote sessions don't auto-register
+# project-declared marketplaces, so /setup-matt-pocock-skills, /wayfinder etc.
+# come up as unknown commands.  Install at user scope (part of the cached
+# container state) so the plugin loads from the next session onward.
+# Best-effort: a failure here must not sink the Rocq provisioning below.
+if command -v claude >/dev/null 2>&1; then
+  if ! claude plugin list 2>/dev/null | grep -q 'mattpocock-skills@mattpocock'; then
+    log "installing mattpocock-skills plugin"
+    claude plugin marketplace add mattpocock/skills >/dev/null 2>&1 || true
+    claude plugin install mattpocock-skills@mattpocock \
+      || log "WARN: mattpocock-skills install failed (skills unavailable until retried)"
+  fi
+fi
+
 SUDO=""; [ "$(id -u)" != "0" ] && SUDO="sudo"
 SANDBOX=""; [ "$(id -u)" = "0" ] && SANDBOX="--disable-sandboxing"
 
