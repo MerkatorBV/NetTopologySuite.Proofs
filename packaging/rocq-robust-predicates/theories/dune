@@ -1,3 +1,0 @@
-(coq.theory
- (name NTS.Proofs)
- (package rocq-robust-predicates))
