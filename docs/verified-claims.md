@@ -71,6 +71,12 @@ names. Prefer a narrow section over a broad tag.
 | `OrientHybridPackage.v : hypothesis_B_exists_hybrid` | **Hypothesis B (existence).** There is a filter \(F\) and an exact decoder such that the trust-Zero hybrid equals mathematical orientation on every finite triple: \(F ≡ \mathrm{Uncertain}\) plus `b64_orient_sign_intexact` `[full-b64]` | 3 |
 | `OrientHybridPackage.v : hypothesis_B_stage_a_trust_zero_unsound` | **Hypothesis B (negative).** The same trust-Zero combinator with Stage A as \(F\) returns `OrientRZero` on the underflow witness while `cross_R_BP > 0` — the reason the corrected decoder must not trust filter Zero `[full-b64]` | 4 |
 | `OrientHybridPackage.v : hypothesis_C_det_only_must_uncertain_underflow_class` | **Hypothesis C, det-only instance.** Any sound filter whose verdict is a function of `(b64_orient2d, b64_orient2d_detsum)` alone must return `Uncertain`/`Nan` on the underflow observation class: the witness and the origin triple share `(det,detsum)=(0,0)` but have different true signs. Not claimed: Ozaki / Bartels near-optimality, nor a DAG-sharp \(C\cdot\varepsilon\cdot M^2\) bound `[full-b64]` | 4 |
+| `Orient_geos968_onsegment_pins.v : geos1505_onsegment_det_scales` | **GEOS #968 / #1505 det scales.** Binary64 Ozaki-DAG det of `(1,0)-(0,2)` vs `(0.9,0.2)` and `(0.1,1.8)` is \(-2^{-54}\); of `(0,0)-(10^{16},10^{16})` vs `(5{\cdot}10^{15},5{\cdot}10^{15}+1)` is \(2^{53}\). The binary64 constant `1e-12` sits strictly between those magnitudes. Not the Ozaki \(K\); not an Ozaki soundness theorem `[full-b64]` | 4 |
+| `Orient_geos968_onsegment_pins.v : geos968_decimal_collinear` | WKT decimals \((1,0)\), \((0,2)\), \((9/10,1/5)\) are collinear over \(\mathbb{R}\) `[exact]` | 3 |
+| `Orient_geos968_onsegment_pins.v : geos1505_review_true_cross` | Exact \(B2R\) cross of the review pair is \(10^{16}\) (coordinates are the integers) `[full-b64]` | 3 |
+| `Orient_geos968_onsegment_pins.v : geos968_orig_ozaki_failure` | Ozaki FAILURE pin (`\|det\| < \|detleft+detright\|{\cdot}K`) on the #968 original triple. Computational mirror only `[full-b64]` | 4 |
+| `Orient_geos968_onsegment_pins.v : geos1505_review_ozaki_failure` | Same FAILURE pin on the large-scale review triple `[full-b64]` | 4 |
+| `Orient_geos968_onsegment_pins.v : geos1505_tol_neq_ozaki_K` | The #1505 cap `1e-12` is not the published Ozaki double `[full-b64]` | 3 |
 
 `[oracle]` `RobustOrientation` bit-exact vs `ORIENT`/`ORIENT_FILTERED`;
 `ORIENT_EXACT` is the exact full-plane reference (an independent zarith
