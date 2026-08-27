@@ -3068,10 +3068,14 @@ let run_area_unified () =
      "E cx cy rx ry rot sa sw"    <elliptical text>: AFFINEPLACEMENT(LOCATION
                                   cx cy, REFERENCEDIRECTIONS rot), UAXISLENGTH
                                   rx, VAXISLENGTH ry, STARTANGLE sa, and
-                                  sw = ENDANGLE - STARTANGLE.  rx = ry is the
-                                  circular bridge: closed form rx*|sw|; else
-                                  adaptive-Simpson quadrature of the speed
-                                  (rotation is an isometry and drops out).
+                                  sw = ENDANGLE - STARTANGLE.  sa/sw are the
+                                  PARAMETRIC angles of t |-> (rx cos t,
+                                  ry sin t) -- not geometric polar angles;
+                                  the two readings coincide iff rx = ry.
+                                  rx = ry is the circular bridge: closed form
+                                  rx*|sw|; else adaptive-Simpson quadrature of
+                                  the speed (rotation is an isometry and
+                                  drops out).
      "B x0 y0 x1 y1 x2 y2 x3 y3"  cubic Bezier (Esri BezierCurveSegment; the
                                   ISO has no Bezier): quadrature of |B'(t)|.
      "K x y dx dy A sd ed"        <clothoid text>: AFFINEPLACEMENT(LOCATION =
@@ -3079,7 +3083,8 @@ let run_area_unified () =
                                   = tangent dx dy there), SCALEFACTOR A > 0,
                                   STARTDISTANCE sd <= ENDDISTANCE ed.  The ISO
                                   parameterization is BY arc length, so metric
-                                  length is ed - sd EXACTLY (subtraction) --
+                                  length = ed - sd as a real identity; the one
+                                  float subtraction is interface-boundary --
                                   Halley's unknown-L is the fitting direction,
                                   never this evaluation direction.
      "N d x0 y0 w0 .. xd yd wd"   <nurbs text>, single-span clamped (Bible
@@ -3096,9 +3101,11 @@ let run_area_unified () =
      seg...
    Also accepted as ARC_LEN_UNIFIED for matrix tagging (Rung 3).
    Output: "<len>" (%h) | "DEGENERATE" | "NAN"; when the input holds at least
-   one zoo segment (E/B/K/N) a SECOND line "DENSIFIED <len>" (%h) follows --
-   the uniform 4096-chord cross-check column (#508 decision).  C/A-only
-   inputs keep the single-line answer, so pre-zoo consumers are unchanged.
+   one NON-ARC zoo token (E/B/K/N; CONTEXT.md's Zoo includes the served
+   CircularArc, which stays on the C/A path) a SECOND line "DENSIFIED <len>"
+   (%h) follows -- the uniform 4096-chord cross-check column (#508 decision).
+   C/A-only inputs keep the single-line answer, so pre-zoo consumers are
+   unchanged.
    DEGENERATE: rx or ry <= 0 (E); A <= 0, ed < sd, or zero tangent (K);
    a weight <= 0 (N).  Collinear arcs still contribute their chord.
    CC: sum of member lengths (via GetSegments recursion).
@@ -3266,6 +3273,8 @@ let run_length_unified () =
   let densified_len = function
     | `Chord (p, q) -> point_dist p q
     | `Arc (a, b, c) ->
+        (* angle/sweep recovery mirrors densify_arc (defined later in this
+           file, unreachable from here) -- keep the two in sync *)
         (match circumcentre_q (qf a.bx, qf a.by_) (qf b.bx, qf b.by_)
                               (qf c.bx, qf c.by_) with
          | None -> point_dist a c
@@ -3316,11 +3325,11 @@ let run_length_unified () =
         done;
         chord_sum pts
     | `Nurbs (d, cps) -> chord_sum (sample_curve (nurbs_pt d cps)) in
-  let has_zoo =
+  let has_nonarc_zoo =
     Array.exists (function `Chord _ | `Arc _ -> false | _ -> true) segs in
   let total = Array.fold_left (fun acc s -> acc +. seg_len s) 0.0 segs in
   Printf.printf "%h\n" total;
-  if has_zoo then begin
+  if has_nonarc_zoo then begin
     let dtotal = Array.fold_left (fun acc s -> acc +. densified_len s) 0.0 segs in
     Printf.printf "DENSIFIED %h\n" dtotal
   end

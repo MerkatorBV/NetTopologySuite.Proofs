@@ -19,11 +19,14 @@ least one zoo segment (E/B/K/N) — a second line "DENSIFIED <len>" (%h): the
 uniform chord-sum cross-check column decided in #508 (oracle answers stay
 single-line for pre-zoo consumers).
 
-Independent truth sources (never the driver's own quadrature route):
+Independent truth sources (never the driver's own quadrature route; the
+Oracle-stable gate is |delta| < max(1e-9, 4*ulp(expected)) per ADR-0004):
   - circular-bridge ellipse rx=ry: closed form r*|sweep|
-  - non-circular ellipse quarter: Carlson RF/RD symmetric integrals
-    (Carlson 1995 duplication algorithm), quarter = a*E(e^2)
-  - collinear cubic Béziers: |P3-P0|
+  - non-circular ellipse, complete quarter AND a non-axis parametric span:
+    Carlson RF/RD symmetric integrals (Carlson duplication algorithm) --
+    the non-axis case also pins sa/sw as PARAMETRIC angles
+  - collinear cubic Béziers: |P3-P0|; degree-elevated quadratic (exact
+    rational elevation): closed form sqrt(2) + ln(1 + sqrt(2))
   - clothoid: ISO arc-length parameterization, length = ed - sd exactly
   - degree-1 NURBS: point distance; rational-quadratic quarter circle
     (w1 = cos 45°): pi/2
@@ -64,7 +67,15 @@ def parse_zoo_output(name, out, sample):
     return to_float(lines[0]), to_float(lines[1].split()[1])
 
 
+def tol(expected):
+    """Oracle-stable agreement gate: max(1e-9, 4*ulp(expected)) (ADR-0004)."""
+    return max(1e-9, 4 * math.ulp(abs(expected)))
+
+
 def check_crosscheck(name, primary, densified, sample):
+    # 4096-chord sampling underestimates by ~ L*(kappa_max*h)^2/24; for every
+    # case in this suite that bound sits below 1e-6 relative, so tighter
+    # agreement would test the sampler, not the primary.
     if abs(primary - densified) > 1e-6 * max(1.0, abs(primary)):
         fail(name + "_crosscheck", f"{primary} vs DENSIFIED {densified}",
              "agreement within 1e-6 rel", sample)
@@ -116,6 +127,13 @@ def ellip_e_complete(m):
     return carlson_rf(0, 1 - m, 1) - m / 3 * carlson_rd(0, 1 - m, 1)
 
 
+def ellip_e_incomplete(phi, m):
+    """Incomplete E(phi, m) via Carlson: sin RF - (m/3) sin^3 RD."""
+    s, c = math.sin(phi), math.cos(phi)
+    q = 1 - m * s * s
+    return s * carlson_rf(c * c, q, 1) - m / 3 * s ** 3 * carlson_rd(c * c, q, 1)
+
+
 # 1) rx = ry bridge: circular ellipse, sweep pi/2, r = 2 -> length pi
 stdin = """LENGTH_UNIFIED
 1
@@ -126,7 +144,7 @@ print("RED_NOTE ellipse_bridge_got=", out)
 if rc != 0 or not out:
     fail("ellipse_bridge", out, "pi", stdin)
 got, dens = parse_zoo_output("ellipse_bridge", out, stdin)
-if abs(got - math.pi) > 1e-9:
+if abs(got - math.pi) > tol(math.pi):
     fail("ellipse_bridge", out, "pi", stdin)
 check_crosscheck("ellipse_bridge", got, dens, stdin)
 print("ellipse rx=ry bridge ok")
@@ -143,10 +161,29 @@ print("RED_NOTE ellipse_quarter_got=", out, "exp=", exp_quarter)
 if rc != 0 or not out:
     fail("ellipse_quarter", out, str(exp_quarter), stdin)
 got, dens = parse_zoo_output("ellipse_quarter", out, stdin)
-if abs(got - exp_quarter) > 1e-9:
+if abs(got - exp_quarter) > tol(exp_quarter):
     fail("ellipse_quarter", out, str(exp_quarter), stdin)
 check_crosscheck("ellipse_quarter", got, dens, stdin)
 print("ellipse quarter (Carlson) ok")
+
+# 2b) non-axis parametric span on the same ellipse: sa=0.3, sw=0.9.  Pins the
+#     PARAMETRIC-angle reading of sa/sw: with speed 2*sqrt(1 - 0.75 cos^2 t)
+#     and u = pi/2 - t, expected = 2*(E(pi/2-0.3, .75) - E(pi/2-1.2, .75)).
+exp_span = 2 * (ellip_e_incomplete(math.pi / 2 - 0.3, 0.75)
+                - ellip_e_incomplete(math.pi / 2 - 1.2, 0.75))
+stdin = """LENGTH_UNIFIED
+1
+E 0 0 2 1 0 0.3 0.9
+"""
+out, _, rc = run(stdin)
+print("RED_NOTE ellipse_span_got=", out, "exp=", exp_span)
+if rc != 0 or not out:
+    fail("ellipse_span", out, str(exp_span), stdin)
+got, dens = parse_zoo_output("ellipse_span", out, stdin)
+if abs(got - exp_span) > tol(exp_span):
+    fail("ellipse_span", out, str(exp_span), stdin)
+check_crosscheck("ellipse_span", got, dens, stdin)
+print("ellipse non-axis parametric span (Carlson incomplete) ok")
 
 # 3) collinear cubic Béziers: straight line, uniform and non-uniform controls
 for name, seg, exp in [
@@ -159,10 +196,28 @@ for name, seg, exp in [
     if rc != 0 or not out:
         fail(name, out, str(exp), stdin)
     got, dens = parse_zoo_output(name, out, stdin)
-    if abs(got - exp) > 1e-9:
+    if abs(got - exp) > tol(exp):
         fail(name, out, str(exp), stdin)
     check_crosscheck(name, got, dens, stdin)
     print(name, "ok")
+
+# 3b) degree-elevated quadratic (exact rational elevation of P0=(0,0),
+#     P1=(1,1), P2=(2,0)): a genuinely curved cubic with the quadratic's
+#     closed-form length sqrt(2) + ln(1 + sqrt(2)).
+exp_parab = math.sqrt(2) + math.log(1 + math.sqrt(2))
+stdin = """LENGTH_UNIFIED
+1
+B 0 0 0.6666666666666666 0.6666666666666666 1.3333333333333333 0.6666666666666666 2 0
+"""
+out, _, rc = run(stdin)
+print("RED_NOTE bezier_parabola_got=", out, "exp=", exp_parab)
+if rc != 0 or not out:
+    fail("bezier_parabola", out, str(exp_parab), stdin)
+got, dens = parse_zoo_output("bezier_parabola", out, stdin)
+if abs(got - exp_parab) > tol(exp_parab):
+    fail("bezier_parabola", out, str(exp_parab), stdin)
+check_crosscheck("bezier_parabola", got, dens, stdin)
+print("bezier degree-elevated parabola (closed form) ok")
 
 # 4) curved cubic: sandwich chord <= len <= control polygon + cross-check
 stdin = """LENGTH_UNIFIED
@@ -197,10 +252,13 @@ if abs(got - 2.75) > 1e-12:
 check_crosscheck("clothoid", got, dens, stdin)
 print("clothoid exact-by-subtraction ok")
 
-# 6) clothoid degenerate: ed < sd, and scalefactor 0
+# 6) DEGENERATE guards: clothoid (ed < sd, scalefactor 0), ellipse axis <= 0,
+#    NURBS weight <= 0
 for name, seg in [
     ("clothoid_reversed", "K 0 0 1 0 1 3.25 0.5"),
     ("clothoid_zero_scale", "K 0 0 1 0 0 0.5 3.25"),
+    ("ellipse_zero_axis", "E 0 0 0 1 0 0 1"),
+    ("nurbs_zero_weight", "N 1 0 0 1 3 4 0"),
 ]:
     stdin = f"LENGTH_UNIFIED\n1\n{seg}\n"
     out, _, rc = run(stdin)
@@ -219,7 +277,7 @@ print("RED_NOTE nurbs_line_got=", out)
 if rc != 0 or not out:
     fail("nurbs_line", out, "5", stdin)
 got, dens = parse_zoo_output("nurbs_line", out, stdin)
-if abs(got - 5.0) > 1e-9:
+if abs(got - 5.0) > tol(5.0):
     fail("nurbs_line", out, "5", stdin)
 check_crosscheck("nurbs_line", got, dens, stdin)
 print("nurbs line ok")
@@ -233,7 +291,7 @@ print("RED_NOTE nurbs_arc_got=", out)
 if rc != 0 or not out:
     fail("nurbs_arc", out, "pi/2", stdin)
 got, dens = parse_zoo_output("nurbs_arc", out, stdin)
-if abs(got - math.pi / 2) > 1e-9:
+if abs(got - math.pi / 2) > tol(math.pi / 2):
     fail("nurbs_arc", out, "pi/2", stdin)
 check_crosscheck("nurbs_arc", got, dens, stdin)
 print("nurbs rational quarter circle ok")
@@ -250,8 +308,9 @@ print("RED_NOTE mixed_zoo_got=", out)
 if rc != 0 or not out:
     fail("mixed_zoo", out, str(1 + math.pi + 2.75), stdin)
 got, dens = parse_zoo_output("mixed_zoo", out, stdin)
-if abs(got - (1 + math.pi + 2.75)) > 1e-9:
+if abs(got - (1 + math.pi + 2.75)) > tol(1 + math.pi + 2.75):
     fail("mixed_zoo", out, str(1 + math.pi + 2.75), stdin)
+check_crosscheck("mixed_zoo", got, dens, stdin)
 print("mixed pre-zoo + zoo ok")
 
 # 9) C/A-only inputs still answer a single line (pre-zoo consumers unbroken)
