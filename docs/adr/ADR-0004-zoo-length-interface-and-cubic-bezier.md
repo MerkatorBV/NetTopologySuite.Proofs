@@ -63,8 +63,8 @@ rung (the last closed-form equality target in the zoo, sanctioned by §4.3's
 affine-reduction rule).
 
 The fork edit (`doc/EXACT_CURVE_BIBLE.md` on `feature/sfa-curve-rgr` in
-`grootstebozewolf/jts`, §4.1 + §5 + amendment record) is staged on a branch
-for sign-off; CONTEXT.md's Zoo entry tracks the pending state.
+`grootstebozewolf/jts`, §4.1 + §5 + amendment record) was signed off by merge
+of the fork's PR #125 on 2026-08-27.
 
 ## Consequences
 
