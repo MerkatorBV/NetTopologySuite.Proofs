@@ -62,6 +62,28 @@ default branch, so cite it by section (§) and pin the branch commit whenever a 
 leans on it.
 _Avoid_: the spec (which one?), architecture doc, bible (lowercase — unfindable)
 
+**Zoo**:
+The five Exact* curve types of Bible §4.1: CircularArc (the privileged, served
+member), cubic Bézier (replacing the Bible's quadratic — §9 amendment decided
+2026-08-27, fork edit pending), EllipticalArc, Clothoid, and single-span NURBS.
+Membership criterion: curves living in the wild engines — never "curves that are
+easy to prove".
+_Avoid_: curve types (broader), Exact family (vague), ExactCurve (the protocol, not the roster)
+
+**Exact**:
+The Bible §2.2 property: the mathematics is closed-form or exactness-preserving and
+never densifies silently — what `isExact()` reports. Says nothing about doubles
+agreeing across platforms; that different property is Oracle-stable.
+_Avoid_: precise, oracle-stable (different property), exact path (see Laser)
+
+**Oracle-stable**:
+Agreement across engines and platforms (C++/Java/.NET) in the `clothoid-halley-coq`
+golden-vector sense: |value − reference| < 1e-9 on a shared, checked-in corpus
+against one designated reference implementation, plus ≥ 99% iteration-count
+agreement where the algorithm iterates. An exact formula can still be
+oracle-unstable through libm.
+_Avoid_: exact (the Bible §2.2 property), stable (unqualified), bit-exact (stronger, rarely achievable)
+
 **Metric length**:
 The 1-D measure of a curve — the number the Bible §4.2 `length()` obligation owes and
 `LENGTH_UNIFIED` emits. Never confuse it with `List.length`: lemmas named `*_length`
