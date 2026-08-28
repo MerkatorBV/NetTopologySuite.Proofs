@@ -16,10 +16,13 @@
    spec, at whatever tier it can reach.
 
    Proven here (the base facts every obligation leans on), all Qed:
-     - curve_length_ge_chord : chord <= L      (the lower sandwich half)
-     - curve_length_nonneg   : 0 <= L
-     - curve_length_unique   : the spec pins L
-     - curve_length_additive : L(a,c) = L(a,b) + L(b,c)
+     - curve_length_ge_chord  : chord <= L     (the lower sandwich half)
+     - curve_length_nonneg    : 0 <= L
+     - curve_length_unique    : the spec pins L
+     - curve_length_additive  : L(a,c) = L(a,b) + L(b,c)
+     - is_curve_length_ext    : pointwise-equal curves carry the same lengths
+     - is_curve_length_shift  : translated parameterizations too (t ↦ g (c+t))
+       — both reparameterization invariances funext-free
 
    curve_length_additive is the aggregation theorem behind LENGTH_UNIFIED's
    "CC: sum of member lengths" semantics — before this file that was a
@@ -214,3 +217,81 @@ Proof.
 Qed.
 
 Print Assumptions curve_length_additive.
+
+(* -------------------------------------------------------------------------- *)
+(* Reparameterization invariances (#508 ellipse rung 2 consumers): the spec   *)
+(* only sees curves through dist, so pointwise-equal curves and translated    *)
+(* parameterizations carry the same lengths.  Both proven without funext.     *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma polyline_len_ext : forall (g1 g2 : Curve),
+  (forall t, g1 t = g2 t) ->
+  forall ts t, polyline_len g1 t ts = polyline_len g2 t ts.
+Proof.
+  intros g1 g2 Hg ts; induction ts as [|u tl IH]; intro t; simpl.
+  - reflexivity.
+  - rewrite !Hg, IH. reflexivity.
+Qed.
+
+Lemma is_curve_length_ext : forall (g1 g2 : Curve) a b L,
+  (forall t, g1 t = g2 t) ->
+  is_curve_length g1 a b L -> is_curve_length g2 a b L.
+Proof.
+  intros g1 g2 a b L Hg [Hub Hlst].
+  assert (H21 : forall l, inscribed_len g2 a b l -> inscribed_len g1 a b l).
+  { intros l (ts & Hch & Hl). exists ts. split; [exact Hch |].
+    rewrite (polyline_len_ext g1 g2 Hg). exact Hl. }
+  assert (H12 : forall l, inscribed_len g1 a b l -> inscribed_len g2 a b l).
+  { intros l (ts & Hch & Hl). exists ts. split; [exact Hch |].
+    rewrite <- (polyline_len_ext g1 g2 Hg). exact Hl. }
+  split.
+  - intros l Hl. exact (Hub _ (H21 _ Hl)).
+  - intros M HM. apply Hlst. intros l Hl. exact (HM _ (H12 _ Hl)).
+Qed.
+
+Lemma chain_shift : forall c ts lo hi,
+  chain lo ts hi -> chain (c + lo) (map (Rplus c) ts) (c + hi).
+Proof.
+  intros c ts; induction ts as [|u tl IH]; simpl; intros lo hi Hch.
+  - lra.
+  - destruct Hch as [Hlu Hch]. split; [lra | exact (IH u hi Hch)].
+Qed.
+
+Lemma map_shift_cancel : forall c ts,
+  map (Rplus c) (map (Rplus (- c)) ts) = ts.
+Proof.
+  intros c ts; induction ts as [|u tl IH]; simpl.
+  - reflexivity.
+  - rewrite IH. f_equal. ring.
+Qed.
+
+Lemma polyline_len_shift : forall (g : Curve) c ts t,
+  polyline_len (fun u => g (c + u)) t ts
+  = polyline_len g (c + t) (map (Rplus c) ts).
+Proof.
+  intros g c ts; induction ts as [|u tl IH]; intro t; simpl.
+  - reflexivity.
+  - rewrite IH. reflexivity.
+Qed.
+
+Lemma is_curve_length_shift : forall (g : Curve) c a b L,
+  is_curve_length g (c + a) (c + b) L ->
+  is_curve_length (fun t => g (c + t)) a b L.
+Proof.
+  intros g c a b L [Hub Hlst].
+  split.
+  - intros l (ts & Hch & Hl). subst l.
+    apply Hub. exists (map (Rplus c) ts). split.
+    + exact (chain_shift c ts a b Hch).
+    + rewrite polyline_len_shift, map_app. reflexivity.
+  - intros M HM. apply Hlst. intros l (ts & Hch & Hl). subst l.
+    apply HM.
+    exists (map (Rplus (- c)) ts). split.
+    + pose proof (chain_shift (- c) ts (c + a) (c + b) Hch) as H.
+      replace (- c + (c + a)) with a in H by ring.
+      replace (- c + (c + b)) with b in H by ring.
+      exact H.
+    + rewrite polyline_len_shift, map_app, map_shift_cancel. reflexivity.
+Qed.
+
+Print Assumptions is_curve_length_shift.

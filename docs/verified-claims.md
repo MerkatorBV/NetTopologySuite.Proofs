@@ -1422,3 +1422,36 @@ the elliptic-E primitive. Meanwhile the oracle's `LENGTH_UNIFIED` quadrature
 |---|---|---|
 | `EllipseLength.v : ellipse_length_upper` (+ `ellipse_chord_le`, `ellipse_polyline_le`, `trig_gap_sq`) | **Tier 0, unconditional:** rotation is an isometry, every chord ≤ `Rmax rx ry · gap` (half-angle + the 3-axiom `\|sin x\| ≤ x`), so any `is_curve_length` value satisfies `L ≤ Rmax rx ry · (b−a)`; the chord lower bound is `curve_length_ge_chord`, free `[exact]` | 3 |
 | `EllipseLength.v : ellipse_conditional_is_curve_length` (+ `ellipse_polyline_le_E`, `uniform_lower_E`) | **Tier 1, conditional (named hypotheses `H_E_chord`, `H_E_approx`):** the ellipse's metric length is `E b − E a` in the `is_curve_length` sense — upper half telescopes E-increments; least half squeezes any upper bound with uniform partitions and the ε-δ tightness hypothesis, reusing ArcRectifiable's partition plumbing `[conditional]` | 3 |
+
+## Issue #508 — ellipse rung 2: shift invariance + the rx = ry circular bridge <!-- feat:arc-len geom:cs,arc -->
+
+Two additions. `CurveLength.v` gains the spec-level reparameterization
+invariances (pointwise extensionality and translation shift, both funext-free);
+`EllipseLength.v` uses them to make the oracle's `E`-token closed form
+(`rx = ry → r·|sweep|`) a spec theorem: an equal-axes ellipse is a
+parameter-shifted circle, so its metric length is `r·(b−a)` unconditionally.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CurveLength.v : is_curve_length_shift` (+ `is_curve_length_ext`, `polyline_len_{ext,shift}`, `chain_shift`, `map_shift_cancel`) | **Reparameterization invariance:** pointwise-equal curves carry the same lengths, and `is_curve_length g (c+a) (c+b) L` transfers to the translated parameterization `t ↦ g (c+t)` over `[a,b]` — inscribed sets correspond through `map (Rplus c)`, no functional extensionality spent `[exact]` | 3 |
+| `EllipseLength.v : ellipse_circular_is_curve_length` (+ `ellipse_pt_equal_axes`) | **The rx = ry circular bridge:** `ellipse_pt Oc r r rot t = circle_pt Oc r (rot + t)` (the rotation folds into the angle by `cos_plus`/`sin_plus`), so `is_curve_length (ellipse_param Oc r r rot) a b (r·(b−a))` — the equal-axes closed form `LENGTH_UNIFIED` emits for `E` tokens is a metric length in the canonical spec's sense, unconditionally `[exact]` | 3 |
+
+## Issue #508 — ellipse rung 3: the Rmin lower sandwich <!-- feat:arc-len geom:cs,arc -->
+
+Rung 1's Tier 0 bounded every metric-length value above (`L ≤ Rmax rx ry·(b−a)`);
+this rung closes the sandwich from below, and pays a refactor dividend on the
+way: the archimedean least-half squeeze that closed the circle headline is
+factored out of `arc_r_theta_is_curve_length` into the generic
+`chord_envelope_lower` (any curve whose chords dominate the half-angle
+envelope `2c·|sin(gap/2)|` forces every inscribed-length upper bound up to
+`c·(b−a)`), which the circle meets with equality and the ellipse meets with
+`c = Rmin rx ry` — unconditionally, no elliptic-integral hypotheses spent.
+At `rx = ry` the two bounds pinch to `r·(b−a)`, agreeing with the rung-2
+bridge. The rotation-isometry dist_sq computation both chord bounds share is
+likewise factored (`ellipse_dist_sq`).
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ArcRectifiable.v : chord_envelope_lower` (+ `uniform_polyline_ge`) | **The generic least-half squeeze:** if every chord of `g` dominates `2c·\|sin(gap/2)\|`, then every upper bound of `inscribed_len g a b` is ≥ `c·(b−a)` — uniform partitions + the lower Taylor envelope `sin x ≥ x − x³/6` + archimedean choice, epsilon-free; `arc_r_theta_is_curve_length`'s least half is now its instance at `c = r` `[exact]` | 3 |
+| `EllipseLength.v : ellipse_length_lower` (+ `ellipse_chord_ge`, `ellipse_dist_sq`) | **The unconditional lower bound:** every ellipse chord is ≥ `2·Rmin rx ry·\|sin(gap/2)\|` (the shared dist_sq isometry computation bounded below through `Rmin² ≤ rx², ry²`), so `chord_envelope_lower` squeezes any `is_curve_length` value: `Rmin rx ry·(b−a) ≤ L` `[exact]` | 3 |
+| `EllipseLength.v : ellipse_length_sandwich` | **The sandwich, assembled:** `Rmin rx ry·(b−a) ≤ L ≤ Rmax rx ry·(b−a)` for any metric-length value of the `E`-token parameterization — Tier 0's upper bound and rung 3's lower bound in one statement, pinching to the exact `r·(b−a)` at equal axes `[exact]` | 3 |
