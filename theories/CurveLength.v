@@ -23,6 +23,9 @@
      - is_curve_length_ext    : pointwise-equal curves carry the same lengths
      - is_curve_length_shift  : translated parameterizations too (t ↦ g (c+t))
        — both reparameterization invariances funext-free
+     - curve_length_upper_of_chord_modulus (+ polyline_le_of_chord_modulus,
+       chain_le) : a chord modulus F on [a,b] telescopes, so L <= F b − F a
+       — the one upper-half telescoping every Lipschitz/primitive lane uses
 
    curve_length_additive is the aggregation theorem behind LENGTH_UNIFIED's
    "CC: sum of member lengths" semantics — before this file that was a
