@@ -25,9 +25,10 @@
   "types": [
     { "name": "ExactCircularArc",   "implemented": true,  "measured": true,
       "note": "algorithm/exactcurve/ExactCircularArc.java — the only Exact* type that exists" },
-    { "name": "ExactQuadraticBezier", "implemented": false, "measured": false,
-      "note": "no source file; Bible §5 Year-2 order, first after the arc" },
-    { "name": "ExactEllipticalArc", "implemented": false, "measured": false, "note": "no source file" },
+    { "name": "ExactEllipticalArc", "implemented": false, "measured": false,
+      "note": "no source file; Bible A1 Year-2 opener after the circular arc" },
+    { "name": "ExactCubicBezier", "implemented": false, "measured": false,
+      "note": "no source file; Bible A1 / ADR-0004: cubic (Esri BezierCurveSegment, RelateBezier3.v, oracle B token). ExactQuadraticBezier is amended out; quadratic is a degree-elevation special case" },
     { "name": "ExactClothoid",      "implemented": false, "measured": false,
       "note": "no source file; ClothoidHaley lives in CompoundCurve, not as an Exact* type" },
     { "name": "ExactNurbsSegment",  "implemented": false, "measured": false,
