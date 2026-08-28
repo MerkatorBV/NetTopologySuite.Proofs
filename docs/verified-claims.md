@@ -1349,3 +1349,18 @@ V-CS above remains the historical JTS `2b56b1a4` pin. Product SoT after JTS #124
 | `CircularStringOddCount.v : circularstring_abca_postgis_invalid` (+ `even_four_invalid`) | **Closed-4 invalid.** `CIRCULARSTRING(A,B,C,A)` with A=(−5,0), B=(0,5), C=(5,0) is not a valid PostGIS / JTS `81c2e996` control count: n=4 is even `[exact]` | 3 |
 | `CircularStringOddCount.v : circularstring_open_even_postgis_invalid` | **Open-4 invalid.** Four leftover controls (0,0),(1,1),(2,0),(3,1) are not a valid control count `[exact]` | 3 |
 | `CircularStringOddCount.v : circularstring_odd_closed_postgis_valid` (+ `odd_controls_valid`) | **Odd still valid.** The 5-control closed SFA ring remains a valid control count `[exact]` | 3 |
+
+## Issue #508 — the canonical metric-length spec (`CurveLength.v`) <!-- feat:arc-len geom:arc,cs,cc,cp,multi -->
+
+The ADR-0004 / CONTEXT.md "Metric length" spec lane: `is_curve_length g a b L`
+is `is_lub` of the inscribed-polyline-length set (classical rectifiable
+length, integration-free, stated as a predicate so no completeness axiom is
+spent constructing `L`). Every #508 zoo obligation states its formula against
+this spec. Arc `r·θ` rectifiability is the next rung; these are the base
+facts.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CurveLength.v : curve_length_ge_chord` (+ `inscribed_chord`, `curve_length_nonneg`) | **Chord lower bound.** The single chord is an inscribed polyline, so no curve is shorter than its chord and every length is nonnegative `[exact]` | 3 |
+| `CurveLength.v : curve_length_unique` | **The spec pins its value:** two lubs of the same inscribed set are equal `[exact]` | 3 |
+| `CurveLength.v : curve_length_additive` (+ `chain_split`, `chain_app`, `polyline_len_app_mid`, `polyline_len_last_triangle`, `polyline_split_le`) | **Waypoint additivity** `L(a,c) = L(a,b) + L(b,c)`: split any [a,c] chain at b paying one `dist_triangle` at the seam (upper half); concatenated pairs are inscribed, two lub minimalities peel `L1` then `L2` (least half, epsilon-free). This is the aggregation theorem behind `LENGTH_UNIFIED`'s "CC: sum of member lengths" — a differential observation until now (#508 datapoint 2026-08-22) `[exact]` | 3 |

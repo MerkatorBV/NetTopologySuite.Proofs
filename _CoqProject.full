@@ -3,6 +3,12 @@
 theories/Real.v
 theories/Lattice.v
 theories/Distance.v
+# #508 M-LEN-ZOO curve-length spec lane (ADR-0004): the canonical metric-length
+# spec — is_curve_length as is_lub of inscribed polyline lengths — with the
+# chord lower bound, uniqueness, and waypoint additivity (the theorem behind
+# LENGTH_UNIFIED's sum-of-members aggregation).  Arc r·θ rectifiability is the
+# next rung.  3-axiom.
+theories/CurveLength.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v
