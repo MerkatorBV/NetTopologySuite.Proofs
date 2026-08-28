@@ -1405,3 +1405,20 @@ claim that it passes through `arc_mid`, and the `arc_sweep ≠ 0` pin under
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `ArcTraversalBridge.v : arc_traversal_param_bridge` (+ `arc_sweep_cases`, `circle_pt_{add,sub}_2PI`) | **Major arcs included:** for a `valid_arc` with `arc_sweep a ≠ 0`, a parameter interval of width `\|arc_sweep a\|` has circle points exactly `arc_start`/`arc_end` (in traversal orientation) and `is_curve_length` value `arc_length (arc_radius a) (Rabs (arc_sweep a))`. Route: enumerate `arc_sweep`'s four decision-tree outcomes (θ, θ±2π, 0), shift the ArcParamBridge anchors by 2π-periodicity, assemble with `realize_sweep` `[exact]` | 4 |
+
+## Issue #508 — ellipse rung 1: two tiers against the spec (`EllipseLength.v`) <!-- feat:arc-len geom:cs -->
+
+The zoo's ellipse lane opens. The parameterization is the oracle `E` token
+(ISO 13249-3 §5.1.67 projection, parametric angle). Tier 0 is unconditional;
+Tier 1 is the #508-contracted conditional idiom (ADR-0001): the incomplete
+elliptic integral enters as a Section variable under two named hypotheses,
+and the headline is Qed from them. Discharge of the hypotheses is a
+**Technique park** item — no external witness exists yet (unlike the clothoid
+lane's `clothoid-halley-coq`); the missing method is integral machinery for
+the elliptic-E primitive. Meanwhile the oracle's `LENGTH_UNIFIED` quadrature
++ `DENSIFIED` cross-check (Carlson-gated) is the differential witness.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `EllipseLength.v : ellipse_length_upper` (+ `ellipse_chord_le`, `ellipse_polyline_le`, `trig_gap_sq`) | **Tier 0, unconditional:** rotation is an isometry, every chord ≤ `Rmax rx ry · gap` (half-angle + the 3-axiom `\|sin x\| ≤ x`), so any `is_curve_length` value satisfies `L ≤ Rmax rx ry · (b−a)`; the chord lower bound is `curve_length_ge_chord`, free `[exact]` | 3 |
+| `EllipseLength.v : ellipse_conditional_is_curve_length` (+ `ellipse_polyline_le_E`, `uniform_lower_E`) | **Tier 1, conditional (named hypotheses `H_E_chord`, `H_E_approx`):** the ellipse's metric length is `E b − E a` in the `is_curve_length` sense — upper half telescopes E-increments; least half squeezes any upper bound with uniform partitions and the ε-δ tightness hypothesis, reusing ArcRectifiable's partition plumbing `[conditional]` | 3 |
