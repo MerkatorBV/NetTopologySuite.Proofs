@@ -282,3 +282,35 @@ Section EllipseConditionalTier.
 End EllipseConditionalTier.
 
 Print Assumptions ellipse_length_upper.
+
+(* -------------------------------------------------------------------------- *)
+(* Rung 2: the rx = ry circular bridge — the oracle's E-token closed form     *)
+(* (rx = ry  =>  r·|sweep|) as a spec theorem.  An equal-axes ellipse is a    *)
+(* parameter-shifted circle (the rotation folds into the angle), so the       *)
+(* CurveLength shift/ext invariances hand the length to                       *)
+(* ArcRectifiable.arc_r_theta_is_curve_length.  Unconditional, 3-axiom.       *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma ellipse_pt_equal_axes : forall Oc r rot t,
+  ellipse_pt Oc r r rot t = circle_pt Oc r (rot + t).
+Proof.
+  intros Oc r rot t. unfold ellipse_pt, circle_pt.
+  f_equal.
+  - rewrite cos_plus. ring.
+  - rewrite sin_plus. ring.
+Qed.
+
+Theorem ellipse_circular_is_curve_length : forall Oc r rot a b,
+  0 <= r -> a <= b ->
+  is_curve_length (ellipse_param Oc r r rot) a b (r * (b - a)).
+Proof.
+  intros Oc r rot a b Hr Hab.
+  apply (is_curve_length_ext (fun t => circle_param Oc r (rot + t))).
+  { intro t. cbv beta. unfold ellipse_param, circle_param.
+    symmetry. apply ellipse_pt_equal_axes. }
+  replace (r * (b - a)) with (r * ((rot + b) - (rot + a))) by ring.
+  apply (is_curve_length_shift (circle_param Oc r) rot a b).
+  apply arc_r_theta_is_curve_length; [exact Hr | lra].
+Qed.
+
+Print Assumptions ellipse_circular_is_curve_length.
