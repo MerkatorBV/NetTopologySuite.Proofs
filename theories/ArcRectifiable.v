@@ -135,11 +135,14 @@ Lemma circle_polyline_le : forall (O : Point) r ts t b,
   0 <= r -> chain t ts b ->
   polyline_len (circle_param O r) t (ts ++ [b]) <= r * (b - t).
 Proof.
-  intros O r ts; induction ts as [|u tl IH]; simpl; intros t b Hr Hch.
-  - pose proof (circle_edge_le O r t b Hr Hch). lra.
-  - destruct Hch as [Htu Hch].
-    pose proof (circle_edge_le O r t u Hr Htu).
-    specialize (IH u b Hr Hch). lra.
+  intros O r ts t b Hr Hch.
+  replace (r * (b - t)) with (r * b - r * t) by ring.
+  apply (polyline_le_of_chord_modulus (circle_param O r) (fun x => r * x)
+           t b ts t).
+  - intros s u Hts Hsu Hub. cbv beta.
+    pose proof (circle_edge_le O r s u Hr Hsu). lra.
+  - lra.
+  - exact Hch.
 Qed.
 
 (* -------------------------------------------------------------------------- *)

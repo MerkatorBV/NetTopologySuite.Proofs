@@ -163,11 +163,15 @@ Lemma ellipse_polyline_le : forall Oc rx ry rot ts t b,
   polyline_len (ellipse_param Oc rx ry rot) t (ts ++ [b])
   <= Rmax rx ry * (b - t).
 Proof.
-  intros Oc rx ry rot ts; induction ts as [|u tl IH]; simpl; intros t b Hrx Hry Hch.
-  - pose proof (ellipse_chord_le Oc rx ry rot t b Hrx Hry Hch). lra.
-  - destruct Hch as [Htu Hch].
-    pose proof (ellipse_chord_le Oc rx ry rot t u Hrx Hry Htu).
-    specialize (IH u b Hrx Hry Hch). lra.
+  intros Oc rx ry rot ts t b Hrx Hry Hch.
+  replace (Rmax rx ry * (b - t)) with (Rmax rx ry * b - Rmax rx ry * t)
+    by ring.
+  apply (polyline_le_of_chord_modulus (ellipse_param Oc rx ry rot)
+           (fun x => Rmax rx ry * x) t b ts t).
+  - intros s u Hts Hsu Hub. cbv beta.
+    pose proof (ellipse_chord_le Oc rx ry rot s u Hrx Hry Hsu). lra.
+  - lra.
+  - exact Hch.
 Qed.
 
 Theorem ellipse_length_upper : forall Oc rx ry rot a b L,
@@ -175,9 +179,13 @@ Theorem ellipse_length_upper : forall Oc rx ry rot a b L,
   is_curve_length (ellipse_param Oc rx ry rot) a b L ->
   L <= Rmax rx ry * (b - a).
 Proof.
-  intros Oc rx ry rot a b L Hrx Hry Hab [_ Hlst].
-  apply Hlst. intros l (ts & Hch & Hl). subst l.
-  apply ellipse_polyline_le; assumption.
+  intros Oc rx ry rot a b L Hrx Hry Hab HL.
+  replace (Rmax rx ry * (b - a)) with (Rmax rx ry * b - Rmax rx ry * a)
+    by ring.
+  apply (curve_length_upper_of_chord_modulus (ellipse_param Oc rx ry rot)
+           (fun x => Rmax rx ry * x) a b L); [| exact HL].
+  intros s t Has Hst Htb. cbv beta.
+  pose proof (ellipse_chord_le Oc rx ry rot s t Hrx Hry Hst). lra.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -204,11 +212,11 @@ Section EllipseConditionalTier.
   Lemma ellipse_polyline_le_E : forall ts t b,
     chain t ts b -> polyline_len g t (ts ++ [b]) <= E b - E t.
   Proof.
-    induction ts as [|u tl IH]; simpl; intros t b Hch.
-    - pose proof (H_E_chord t b Hch). lra.
-    - destruct Hch as [Htu Hch].
-      pose proof (H_E_chord t u Htu).
-      specialize (IH u b Hch). lra.
+    intros ts t b Hch.
+    apply (polyline_le_of_chord_modulus g E t b ts t).
+    - intros s u Hts Hsu Hub. apply H_E_chord. exact Hsu.
+    - lra.
+    - exact Hch.
   Qed.
 
   Lemma uniform_lower_E : forall h eps,

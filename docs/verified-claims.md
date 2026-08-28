@@ -1455,3 +1455,27 @@ likewise factored (`ellipse_dist_sq`).
 | `ArcRectifiable.v : chord_envelope_lower` (+ `uniform_polyline_ge`) | **The generic least-half squeeze:** if every chord of `g` dominates `2c·\|sin(gap/2)\|`, then every upper bound of `inscribed_len g a b` is ≥ `c·(b−a)` — uniform partitions + the lower Taylor envelope `sin x ≥ x − x³/6` + archimedean choice, epsilon-free; `arc_r_theta_is_curve_length`'s least half is now its instance at `c = r` `[exact]` | 3 |
 | `EllipseLength.v : ellipse_length_lower` (+ `ellipse_chord_ge`, `ellipse_dist_sq`) | **The unconditional lower bound:** every ellipse chord is ≥ `2·Rmin rx ry·\|sin(gap/2)\|` (the shared dist_sq isometry computation bounded below through `Rmin² ≤ rx², ry²`), so `chord_envelope_lower` squeezes any `is_curve_length` value: `Rmin rx ry·(b−a) ≤ L` `[exact]` | 3 |
 | `EllipseLength.v : ellipse_length_sandwich` | **The sandwich, assembled:** `Rmin rx ry·(b−a) ≤ L ≤ Rmax rx ry·(b−a)` for any metric-length value of the `E`-token parameterization — Tier 0's upper bound and rung 3's lower bound in one statement, pinching to the exact `r·(b−a)` at equal axes `[exact]` | 3 |
+
+## Issue #508 — Bézier rung 1: degree-elevation exactness + the control-net Lipschitz bound (`Bezier3Length.v`) <!-- feat:arc-len geom:cs -->
+
+The zoo's cubic-Bézier lane opens (oracle `B` token, Bernstein cubic on
+[0,1]). Two unconditional results. First, the Bible A1 amendment
+(cubic-for-quadratic storage, Esri provenance) becomes a spec theorem: the
+degree-elevated cubic (`q1 = (p0+2p1)/3`, `q2 = (2p1+p2)/3`) equals the
+quadratic POINTWISE, so `is_curve_length` transfers as an iff — elevation
+loses nothing, exactly. Second, the chord between parameters factors through
+the divided difference `B(t) − B(s) = (t−s)·(c0·d0 + c1·d1 + c2·d2)` with
+the symmetrized Bernstein-2 weights `c_i ≥ 0`, `Σc_i = 3` on `[0,1]²`, so
+every metric-length value is bounded by the control net — derivative-free,
+no integration machinery. The chord lower bound is `curve_length_ge_chord`,
+free; a tight control-polygon bound and the conditional exact tier are
+future rungs. `CurveLength.v` gains the generic `chain_le` and the
+chord-modulus telescoping pair (`polyline_le_of_chord_modulus`,
+`curve_length_upper_of_chord_modulus`), which now carries every upper-half
+telescoping in the corpus — circle, ellipse, elliptic-E tier, and Bézier
+are all instances.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `Bezier3Length.v : bezier3_elevation_length` (+ `bezier3_elevation_pointwise`) | **Degree-elevation exactness (Bible A1):** `bezier3_pt p0 ((p0+2p1)/3) ((2p1+p2)/3) p2 = bezier2_pt p0 p1 p2` pointwise (a field identity — the elevated points divide by 3, so `field`, not `ring`, discharges it), hence `is_curve_length (bezier2 …) a b L ↔ is_curve_length (bezier3 elevated …) a b L` through `is_curve_length_ext` — storing quadratics as elevated cubics changes no metric length `[exact]` | 3 |
+| `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `norm_triple_le`, `scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` `[exact]` | 3 |
