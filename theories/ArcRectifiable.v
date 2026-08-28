@@ -17,7 +17,11 @@
    to r·(b−a).  Least half: the uniform n-partition polyline is inscribed and
    `n · 2r·sin(θ/(2n)) ≥ rθ − rθ·h²/24` (lower Taylor envelope
    `pre_sin_bound`), and an archimedean choice of n forces any upper bound M
-   up to rθ — epsilon-free, no limits library.
+   up to rθ — epsilon-free, no limits library.  The squeeze is factored as
+   `chord_envelope_lower`, generic in the envelope constant c: any curve
+   whose chords dominate `2c·|sin(gap/2)|` has every inscribed-length upper
+   bound ≥ c·(b−a).  The circle meets the envelope with equality (c = r);
+   EllipseLength.v meets it with c = Rmin rx ry.
 
    Deliberately NOT this file: the 3-point (start/mid/end) CircularArc model
    bridge — its sweep angle lives in the atan2 / `angle_between` 4-axiom
@@ -185,6 +189,18 @@ Proof.
   - rewrite He, (IH (t0 + h) h e He), S_INR. ring.
 Qed.
 
+Lemma uniform_polyline_ge : forall (g : Curve) m t0 h c,
+  (forall t, c <= dist (g t) (g (t + h))) ->
+  INR m * c <= polyline_len g t0 (uniform_tail t0 h m).
+Proof.
+  intros g m; induction m as [|k IH]; intros t0 h c Hc;
+    cbn [uniform_tail polyline_len].
+  - simpl. lra.
+  - pose proof (Hc t0) as He0.
+    specialize (IH (t0 + h) h c Hc).
+    rewrite S_INR. lra.
+Qed.
+
 (* The lower Taylor envelope: sin x >= x - x^3/6 on [0, 4]. *)
 Lemma sin_approx_1 : forall a : R, sin_approx a 1 = a - a ^ 3 / 6.
 Proof.
@@ -218,6 +234,101 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* The generic least-half squeeze: any curve whose chords dominate the        *)
+(* half-angle envelope 2c·|sin(gap/2)| forces every inscribed-length upper    *)
+(* bound up to c·(b−a).  The uniform n-partition polyline is                  *)
+(* ≥ c·(b−a) − c·(b−a)·h²/24 (lower Taylor envelope), and an archimedean      *)
+(* choice of n does the rest — epsilon-free, no limits library.  The circle   *)
+(* meets the envelope with equality; the ellipse meets it with c = Rmin.      *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma chord_envelope_lower : forall (g : Curve) (c a b M : R),
+  0 <= c -> a <= b ->
+  (forall s t, 2 * c * Rabs (sin ((t - s) / 2)) <= dist (g s) (g t)) ->
+  is_upper_bound (inscribed_len g a b) M ->
+  c * (b - a) <= M.
+Proof.
+  intros g c a b M Hc Hab Henv Hub.
+  destruct (Rle_dec (c * (b - a)) M) as [Hok | Hbad]. { exact Hok. }
+  exfalso.
+  set (th := b - a).
+  assert (Hth : 0 <= th) by (unfold th; lra).
+  set (dlt := c * th - M).
+  assert (Hdlt : 0 < dlt) by (unfold dlt, th; lra).
+  (* M bounds the chord, so M >= 0 and c*th = dlt + M > 0 *)
+  assert (Hchord := Hub _ (inscribed_chord g a b Hab)).
+  pose proof (dist_nonneg (g a) (g b)) as Hd0.
+  assert (Hcthpos : 0 < c * th) by (unfold dlt in Hdlt; lra).
+  (* choose n beyond both demands *)
+  destruct (exists_nat_gt (Rmax th (th * (c * th) / (24 * dlt))))
+    as [n Hn].
+  assert (Hnth : th < INR n)
+    by (eapply Rle_lt_trans; [apply Rmax_l | exact Hn]).
+  assert (Hnq : th * (c * th) / (24 * dlt) < INR n)
+    by (eapply Rle_lt_trans; [apply Rmax_r | exact Hn]).
+  assert (Hnpos : 0 < INR n) by lra.
+  set (h := th / INR n).
+  assert (Hh0 : 0 <= h) by (unfold h; apply Rle_mult_inv_pos; lra).
+  assert (Hnh : INR n * h = th) by (unfold h; field; lra).
+  assert (Hh1 : h < 1).
+  { apply Rmult_lt_reg_l with (INR n); [lra |].
+    rewrite Hnh, Rmult_1_r; lra. }
+  (* n = S k, so the uniform partition has a nonempty snoc form *)
+  destruct n as [|k]. { simpl in Hnpos. lra. }
+  assert (Hb : b = a + INR (S k) * h) by (rewrite Hnh; unfold th; ring).
+  (* per-edge lower bound from the envelope + the lower Taylor envelope *)
+  assert (Hsin0 : 0 <= sin (h / 2)).
+  { apply sin_ge_0; [lra |]. pose proof PI_ge_2. lra. }
+  assert (Htay : h / 2 - (h / 2) ^ 3 / 6 <= sin (h / 2))
+    by (apply sin_lower_taylor; lra).
+  assert (He : forall t, c * h - c * h ^ 3 / 24 <= dist (g t) (g (t + h))).
+  { intro t.
+    pose proof (Henv t (t + h)) as Hcg.
+    replace ((t + h - t) / 2) with (h / 2) in Hcg by field.
+    rewrite Rabs_right in Hcg by lra.
+    eapply Rle_trans; [| exact Hcg].
+    assert (Hstep : 2 * c * (h / 2 - (h / 2) ^ 3 / 6)
+                    <= 2 * c * sin (h / 2))
+      by (apply Rmult_le_compat_l; lra).
+    eapply Rle_trans; [| exact Hstep].
+    right. field. }
+  (* the uniform partition is inscribed and its value is bounded below *)
+  set (ln := polyline_len g a (uniform_tail a h (S k))).
+  assert (Hln_lb : INR (S k) * (c * h - c * h ^ 3 / 24) <= ln).
+  { unfold ln. apply uniform_polyline_ge. exact He. }
+  assert (Hins : inscribed_len g a b ln).
+  { exists (uniform_tail a h k). split.
+    - apply uniform_tail_chain; [exact Hh0 |].
+      rewrite Hb, !S_INR.
+      assert (0 <= h) by exact Hh0. nra.
+    - unfold ln. rewrite uniform_tail_snoc, <- Hb. reflexivity. }
+  specialize (Hub _ Hins).
+  assert (Hval : c * th - c * th * h ^ 2 / 24 <= ln).
+  { eapply Rle_trans; [| exact Hln_lb].
+    right. rewrite <- Hnh. field. }
+  (* the error term is < dlt *)
+  assert (Herr : c * th * h ^ 2 / 24 < dlt).
+  { assert (H24 : th * (c * th) < 24 * dlt * INR (S k)).
+    { apply Rmult_lt_reg_r with (/ (24 * dlt)).
+      { apply Rinv_0_lt_compat. lra. }
+      replace (24 * dlt * INR (S k) * / (24 * dlt)) with (INR (S k))
+        by (field; lra).
+      unfold Rdiv in Hnq. exact Hnq. }
+    assert (Hrh : c * th * h < 24 * dlt).
+    { apply Rmult_lt_reg_l with (INR (S k)); [lra |].
+      replace (INR (S k) * (c * th * h))
+        with (th * (c * th)) by (rewrite <- Hnh; ring).
+      lra. }
+    assert (Hsq : c * th * h ^ 2 <= c * th * h).
+    { replace (c * th * h ^ 2) with ((c * th * h) * h) by ring.
+      replace (c * th * h) with ((c * th * h) * 1) at 2 by ring.
+      apply Rmult_le_compat_l; [| lra].
+      assert (0 <= c * th) by lra. nra. }
+    lra. }
+  unfold dlt in Herr. lra.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Headline: r·θ satisfies the CurveLength spec.                              *)
 (* -------------------------------------------------------------------------- *)
 
@@ -230,103 +341,12 @@ Proof.
   - (* upper bound: telescoping chord bounds *)
     intros l (ts & Hch & Hl). subst l.
     pose proof (circle_polyline_le O r ts a b Hr Hch). lra.
-  - (* least upper bound *)
+  - (* least upper bound: circle chords MEET the half-angle envelope *)
     intros M HM.
-    (* M bounds the chord, so M >= 0-length cases come free; the fight is
-       r*(b-a) <= M, by contradiction through a fine uniform partition. *)
-    destruct (Rle_dec (r * (b - a)) M) as [Hok | Hbad]. { exact Hok. }
-    exfalso.
-    set (th := b - a).
-    assert (Hth : 0 <= th) by (unfold th; lra).
-    set (dlt := r * th - M).
-    assert (Hdlt : 0 < dlt) by (unfold dlt, th; lra).
-    (* rule out the degenerate r*th = 0 first: then M >= chord >= 0 = r*th *)
-    assert (Hrth : 0 <= r * th) by (apply Rmult_le_pos; assumption).
-    assert (Hchord := HM _ (inscribed_chord (circle_param O r) a b Hab)).
-    pose proof (dist_nonneg (circle_param O r a) (circle_param O r b))
-      as Hd0.
-    assert (Hrthpos : 0 < r * th) by (unfold dlt in Hdlt; lra).
-    (* choose n beyond both demands *)
-    destruct (exists_nat_gt (Rmax th (th * (r * th) / (24 * dlt))))
-      as [n Hn].
-    assert (Hnth : th < INR n)
-      by (eapply Rle_lt_trans; [apply Rmax_l | exact Hn]).
-    assert (Hnq : th * (r * th) / (24 * dlt) < INR n)
-      by (eapply Rle_lt_trans; [apply Rmax_r | exact Hn]).
-    assert (Hnpos : 0 < INR n) by lra.
-    set (h := th / INR n).
-    assert (Hh0 : 0 <= h) by (unfold h; apply Rle_mult_inv_pos; lra).
-    assert (Hnh : INR n * h = th) by (unfold h; field; lra).
-    assert (Hh1 : h < 1).
-    { apply Rmult_lt_reg_l with (INR n); [lra |].
-      rewrite Hnh, Rmult_1_r; lra. }
-    (* n = S k, so the uniform partition has a nonempty snoc form *)
-    destruct n as [|k].
-    { simpl in Hnpos. lra. }
-    (* b in partition coordinates *)
-    assert (Hb : b = a + INR (S k) * h) by (rewrite Hnh; unfold th; ring).
-    (* the constant edge length *)
-    assert (Hsin0 : 0 <= sin (h / 2)).
-    { apply sin_ge_0; [lra |].
-      pose proof PI_ge_2. lra. }
-    assert (He : forall t,
-      dist (circle_param O r t) (circle_param O r (t + h))
-      = 2 * r * sin (h / 2)).
-    { intro t. unfold circle_param.
-      rewrite circle_chord_dist by exact Hr.
-      replace ((t + h - t) / 2) with (h / 2) by field.
-      rewrite Rabs_right by lra.
-      reflexivity. }
-    (* the uniform partition is inscribed with value INR (S k) * edge *)
-    set (ln := INR (S k) * (2 * r * sin (h / 2))).
-    assert (Hins : inscribed_len (circle_param O r) a b ln).
-    { exists (uniform_tail a h k). split.
-      - apply uniform_tail_chain; [exact Hh0 |].
-        rewrite Hb, !S_INR.
-        assert (0 <= h) by exact Hh0. nra.
-      - unfold ln.
-        rewrite Hb.
-        rewrite <- uniform_tail_snoc.
-        symmetry.
-        apply (uniform_polyline_val (circle_param O r) (S k) a h _ He). }
-    specialize (HM _ Hins).
-    (* Taylor lower bound on the edge *)
-    assert (Htay : h / 2 - (h / 2) ^ 3 / 6 <= sin (h / 2))
-      by (apply sin_lower_taylor; lra).
-    assert (Hedge : r * h - r * h ^ 3 / 24 <= 2 * r * sin (h / 2)).
-    { assert (Hstep : 2 * r * (h / 2 - (h / 2) ^ 3 / 6)
-                      <= 2 * r * sin (h / 2))
-        by (apply Rmult_le_compat_l; lra).
-      eapply Rle_trans; [| exact Hstep].
-      right. field. }
-    assert (Hln : r * th - r * th * h ^ 2 / 24 <= ln).
-    { unfold ln.
-      assert (Hmul : INR (S k) * (r * h - r * h ^ 3 / 24)
-                     <= INR (S k) * (2 * r * sin (h / 2)))
-        by (apply Rmult_le_compat_l; [apply pos_INR | exact Hedge]).
-      eapply Rle_trans; [| exact Hmul].
-      right. rewrite <- Hnh. field. }
-    (* the error term is < dlt *)
-    assert (Herr : r * th * h ^ 2 / 24 < dlt).
-    { (* from INR n > th*(r*th)/(24*dlt):  r*th*h < 24*dlt, then h < 1 *)
-      assert (H24 : th * (r * th) < 24 * dlt * INR (S k)).
-      { apply Rmult_lt_reg_r with (/ (24 * dlt)).
-        { apply Rinv_0_lt_compat. lra. }
-        replace (24 * dlt * INR (S k) * / (24 * dlt)) with (INR (S k))
-          by (field; lra).
-        unfold Rdiv in Hnq. exact Hnq. }
-      assert (Hrh : r * th * h < 24 * dlt).
-      { apply Rmult_lt_reg_l with (INR (S k)); [lra |].
-        replace (INR (S k) * (r * th * h))
-          with (th * (r * th)) by (rewrite <- Hnh; ring).
-        lra. }
-      assert (Hsq : r * th * h ^ 2 <= r * th * h).
-      { replace (r * th * h ^ 2) with ((r * th * h) * h) by ring.
-        replace (r * th * h) with ((r * th * h) * 1) at 2 by ring.
-        apply Rmult_le_compat_l; [| lra].
-        assert (0 <= r * th) by lra. nra. }
-      lra. }
-    unfold dlt in Herr. lra.
+    apply (chord_envelope_lower (circle_param O r) r a b M Hr Hab); [| exact HM].
+    intros s t. unfold circle_param.
+    rewrite circle_chord_dist by exact Hr.
+    apply Rle_refl.
 Qed.
 
 Corollary arc_rectifiable : forall (O : Point) r a b,

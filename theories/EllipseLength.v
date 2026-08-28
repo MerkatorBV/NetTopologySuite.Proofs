@@ -90,6 +90,31 @@ Qed.
 (* Tier 0: the unconditional upper sandwich.                                  *)
 (* -------------------------------------------------------------------------- *)
 
+(* Rotation is an isometry: the shared dist_sq computation of both chord
+   bounds — the rot terms collapse under sin²+cos². *)
+Lemma ellipse_dist_sq : forall Oc rx ry rot s t,
+  dist_sq (ellipse_pt Oc rx ry rot s) (ellipse_pt Oc rx ry rot t)
+  = rx * rx * ((cos s - cos t) * (cos s - cos t))
+    + ry * ry * ((sin s - sin t) * (sin s - sin t)).
+Proof.
+  intros Oc rx ry rot s t.
+  assert (Hrot : sin rot * sin rot + cos rot * cos rot = 1)
+    by (pose proof (sin2_cos2 rot) as H; unfold Rsqr in H; lra).
+  unfold dist_sq, ellipse_pt; cbn [px py].
+  replace ((px Oc + cos rot * (rx * cos s) - sin rot * (ry * sin s)
+            - (px Oc + cos rot * (rx * cos t) - sin rot * (ry * sin t)))
+           * (px Oc + cos rot * (rx * cos s) - sin rot * (ry * sin s)
+              - (px Oc + cos rot * (rx * cos t) - sin rot * (ry * sin t)))
+           + (py Oc + sin rot * (rx * cos s) + cos rot * (ry * sin s)
+              - (py Oc + sin rot * (rx * cos t) + cos rot * (ry * sin t)))
+             * (py Oc + sin rot * (rx * cos s) + cos rot * (ry * sin s)
+                - (py Oc + sin rot * (rx * cos t) + cos rot * (ry * sin t))))
+    with ((sin rot * sin rot + cos rot * cos rot)
+          * (rx * rx * ((cos s - cos t) * (cos s - cos t))
+             + ry * ry * ((sin s - sin t) * (sin s - sin t)))) by ring.
+  rewrite Hrot. ring.
+Qed.
+
 Lemma ellipse_chord_le : forall Oc rx ry rot s t,
   0 <= rx -> 0 <= ry -> s <= t ->
   dist (ellipse_param Oc rx ry rot s) (ellipse_param Oc rx ry rot t)
@@ -101,32 +126,14 @@ Proof.
   assert (Hym : ry <= m) by apply Rmax_r.
   assert (Hm0 : 0 <= m) by lra.
   unfold ellipse_param, dist.
-  assert (Hrot : sin rot * sin rot + cos rot * cos rot = 1)
-    by (pose proof (sin2_cos2 rot) as H; unfold Rsqr in H; lra).
   set (su := sin ((t - s) / 2)).
-  assert (Hds : dist_sq (ellipse_pt Oc rx ry rot s) (ellipse_pt Oc rx ry rot t)
-                = rx * rx * ((cos s - cos t) * (cos s - cos t))
-                  + ry * ry * ((sin s - sin t) * (sin s - sin t))).
-  { unfold dist_sq, ellipse_pt; cbn [px py].
-    replace ((px Oc + cos rot * (rx * cos s) - sin rot * (ry * sin s)
-              - (px Oc + cos rot * (rx * cos t) - sin rot * (ry * sin t)))
-             * (px Oc + cos rot * (rx * cos s) - sin rot * (ry * sin s)
-                - (px Oc + cos rot * (rx * cos t) - sin rot * (ry * sin t)))
-             + (py Oc + sin rot * (rx * cos s) + cos rot * (ry * sin s)
-                - (py Oc + sin rot * (rx * cos t) + cos rot * (ry * sin t)))
-               * (py Oc + sin rot * (rx * cos s) + cos rot * (ry * sin s)
-                  - (py Oc + sin rot * (rx * cos t) + cos rot * (ry * sin t))))
-      with ((sin rot * sin rot + cos rot * cos rot)
-            * (rx * rx * ((cos s - cos t) * (cos s - cos t))
-               + ry * ry * ((sin s - sin t) * (sin s - sin t)))) by ring.
-    rewrite Hrot. ring. }
   assert (HX : 0 <= (cos s - cos t) * (cos s - cos t))
     by (pose proof (Rle_0_sqr (cos s - cos t)) as H; unfold Rsqr in H; lra).
   assert (HY : 0 <= (sin s - sin t) * (sin s - sin t))
     by (pose proof (Rle_0_sqr (sin s - sin t)) as H; unfold Rsqr in H; lra).
   assert (Hbound : dist_sq (ellipse_pt Oc rx ry rot s) (ellipse_pt Oc rx ry rot t)
                    <= Rsqr (2 * m * Rabs su)).
-  { rewrite Hds.
+  { rewrite ellipse_dist_sq.
     assert (Hxx : rx * rx <= m * m) by nra.
     assert (Hyy : ry * ry <= m * m) by nra.
     assert (Hcomb : rx * rx * ((cos s - cos t) * (cos s - cos t))
@@ -314,3 +321,79 @@ Proof.
 Qed.
 
 Print Assumptions ellipse_circular_is_curve_length.
+
+(* -------------------------------------------------------------------------- *)
+(* Rung 3: the Rmin lower sandwich.  Tier 0 gave L ≤ Rmax rx ry·(b−a); here   *)
+(* the shared ellipse_dist_sq computation flips into a chord LOWER bound     *)
+(* 2·Rmin rx ry·|sin(gap/2)| — exactly the half-angle envelope of            *)
+(* ArcRectifiable.chord_envelope_lower, which then forces                    *)
+(* Rmin rx ry·(b−a) ≤ L for ANY is_curve_length value.  Together:            *)
+(* Rmin·(b−a) ≤ L ≤ Rmax·(b−a), collapsing to L = r·(b−a) when rx = ry —     *)
+(* consistent with the rung-2 bridge.  Unconditional, 3-axiom.               *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma ellipse_chord_ge : forall Oc rx ry rot s t,
+  0 <= rx -> 0 <= ry ->
+  2 * Rmin rx ry * Rabs (sin ((t - s) / 2))
+  <= dist (ellipse_param Oc rx ry rot s) (ellipse_param Oc rx ry rot t).
+Proof.
+  intros Oc rx ry rot s t Hrx Hry.
+  set (mn := Rmin rx ry).
+  assert (Hmx : mn <= rx) by apply Rmin_l.
+  assert (Hmy : mn <= ry) by apply Rmin_r.
+  assert (Hm0 : 0 <= mn) by (apply Rmin_glb; assumption).
+  unfold ellipse_param, dist.
+  set (su := sin ((t - s) / 2)).
+  assert (Hbound : Rsqr (2 * mn * Rabs su)
+                   <= dist_sq (ellipse_pt Oc rx ry rot s)
+                              (ellipse_pt Oc rx ry rot t)).
+  { rewrite ellipse_dist_sq.
+    assert (HX : 0 <= (cos s - cos t) * (cos s - cos t))
+      by (pose proof (Rle_0_sqr (cos s - cos t)) as H; unfold Rsqr in H; lra).
+    assert (HY : 0 <= (sin s - sin t) * (sin s - sin t))
+      by (pose proof (Rle_0_sqr (sin s - sin t)) as H; unfold Rsqr in H; lra).
+    assert (Hxx : mn * mn <= rx * rx) by nra.
+    assert (Hyy : mn * mn <= ry * ry) by nra.
+    assert (Hcomb : mn * mn * ((cos s - cos t) * (cos s - cos t)
+                               + (sin s - sin t) * (sin s - sin t))
+                    <= rx * rx * ((cos s - cos t) * (cos s - cos t))
+                       + ry * ry * ((sin s - sin t) * (sin s - sin t)))
+      by nra.
+    eapply Rle_trans; [| exact Hcomb].
+    rewrite trig_gap_sq.
+    assert (Habs : Rabs su * Rabs su = su * su).
+    { rewrite <- Rabs_mult. apply Rabs_right.
+      pose proof (Rle_0_sqr su) as H; unfold Rsqr in H; lra. }
+    unfold Rsqr. fold su. rewrite <- Habs. apply Req_le. ring. }
+  rewrite <- (sqrt_Rsqr (2 * mn * Rabs su))
+    by (pose proof (Rabs_pos su); nra).
+  apply sqrt_le_1_alt. exact Hbound.
+Qed.
+
+Theorem ellipse_length_lower : forall Oc rx ry rot a b L,
+  0 <= rx -> 0 <= ry -> a <= b ->
+  is_curve_length (ellipse_param Oc rx ry rot) a b L ->
+  Rmin rx ry * (b - a) <= L.
+Proof.
+  intros Oc rx ry rot a b L Hrx Hry Hab [Hub _].
+  apply (chord_envelope_lower (ellipse_param Oc rx ry rot)
+                              (Rmin rx ry) a b L).
+  - apply Rmin_glb; assumption.
+  - exact Hab.
+  - intros s t. apply ellipse_chord_ge; assumption.
+  - exact Hub.
+Qed.
+
+Corollary ellipse_length_sandwich : forall Oc rx ry rot a b L,
+  0 <= rx -> 0 <= ry -> a <= b ->
+  is_curve_length (ellipse_param Oc rx ry rot) a b L ->
+  Rmin rx ry * (b - a) <= L <= Rmax rx ry * (b - a).
+Proof.
+  intros Oc rx ry rot a b L Hrx Hry Hab HL.
+  split.
+  - apply (ellipse_length_lower Oc rx ry rot a b L); assumption.
+  - apply (ellipse_length_upper Oc rx ry rot a b L); assumption.
+Qed.
+
+Print Assumptions ellipse_length_lower.
+Print Assumptions ellipse_length_sandwich.
