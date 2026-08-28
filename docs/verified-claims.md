@@ -1391,3 +1391,17 @@ mid-disambiguated major traversal (`arc_sweep`, reflex case) is the next rung.
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `ArcParamBridge.v : arc_sweep_param_bridge` (+ `point_ext`) | **The principal sweep is realized on the circumscribed circle:** for a `valid_arc` there is a parameter interval of width `\|arc_sweep_angle\|` whose circle points are exactly `arc_start`/`arc_end` (in sweep orientation) and whose `is_curve_length` value is `arc_length (arc_radius a) (Rabs (arc_sweep_angle a))`. Branch-cut-free: `atan2_on_circle` anchors the start angle; `cos_plus`/`sin_plus` against `cos/sin_angle_between` rotate onto the end point via ux(ux·vx+uy·vy) − uy(ux·vy−uy·vx) = (ux²+uy²)·vx `[exact]` | 4 |
+
+## Issue #508 — the mid-disambiguated traversal meets the spec (`ArcTraversalBridge.v`) <!-- feat:arc-len geom:arc -->
+
+The arc-lane final rung: `arc_sweep` — the mid-disambiguated directed central
+angle, possibly REFLEX (π < |sweep| < 2π), the regime the #508 differential
+datapoint's 219° arc exercises — is realized on the circumscribed circle with
+metric length `arc_length r |arc_sweep|` in the `is_curve_length` sense.
+Realizes whatever traversal `arc_sweep`'s definition chose; the point-set
+claim that it passes through `arc_mid`, and the `arc_sweep ≠ 0` pin under
+`valid_arc`, are separate future rungs.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ArcTraversalBridge.v : arc_traversal_param_bridge` (+ `arc_sweep_cases`, `circle_pt_{add,sub}_2PI`) | **Major arcs included:** for a `valid_arc` with `arc_sweep a ≠ 0`, a parameter interval of width `\|arc_sweep a\|` has circle points exactly `arc_start`/`arc_end` (in traversal orientation) and `is_curve_length` value `arc_length (arc_radius a) (Rabs (arc_sweep a))`. Route: enumerate `arc_sweep`'s four decision-tree outcomes (θ, θ±2π, 0), shift the ArcParamBridge anchors by 2π-periodicity, assemble with `realize_sweep` `[exact]` | 4 |

@@ -23,6 +23,11 @@ theories/ArcRectifiable.v
 # (docs/audit-exceptions.txt); the mid-disambiguated major traversal is the
 # next rung.
 theories/ArcParamBridge.v
+# #508 arc-lane final rung: the mid-disambiguated traversal (arc_sweep,
+# possibly reflex) realized on the circumscribed circle — arc_sweep's four
+# outcomes enumerated, anchors shifted by 2π-periodicity, assembled with
+# realize_sweep.  atan2 lane, 4-axiom (docs/audit-exceptions.txt).
+theories/ArcTraversalBridge.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v

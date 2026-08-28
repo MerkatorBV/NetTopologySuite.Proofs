@@ -443,6 +443,14 @@ theories/ArcChordLength.v
 # tracks AngleBetween's cleanup.
 theories/ArcParamBridge.v
 
+# Category C (R-side, same atan lineage as AngleBetween.v): issue #508
+# arc-lane final rung.  arc_traversal_param_bridge inherits
+# Classical_Prop.classic through ArcParamBridge's anchor lemmas (atan2 /
+# angle_between); its own additions (2π-periodicity shifts, arc_sweep case
+# enumeration) are axiom-free.  No Admitteds; headline Qed-closed.  Removal
+# tracks AngleBetween's cleanup.
+theories/ArcTraversalBridge.v
+
 # Category C (R-side, same atan lineage as Atan2.v / AngleBetween.v): issue
 # #64 arc-span atan2 sector membership.  `arc_span_contains_atan2` and the
 # headline `arc_span_contains_atan2_iff_chord_sign` are built on
