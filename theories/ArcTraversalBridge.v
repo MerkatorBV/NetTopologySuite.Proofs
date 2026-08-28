@@ -44,11 +44,18 @@ Local Open Scope R_scope.
 Lemma circle_pt_add_2PI : forall (Oc : Point) r t,
   circle_pt Oc r (t + 2 * PI) = circle_pt Oc r t.
 Proof.
+  intros Oc r t.
+  apply point_ext; unfold circle_pt; cbn [px py].
+  - rewrite cos_plus, cos_2PI, sin_2PI. ring.
+  - rewrite sin_plus, cos_2PI, sin_2PI. ring.
 Qed.
 
 Lemma circle_pt_sub_2PI : forall (Oc : Point) r t,
   circle_pt Oc r (t - 2 * PI) = circle_pt Oc r t.
 Proof.
+  intros Oc r t.
+  rewrite <- (circle_pt_add_2PI Oc r (t - 2 * PI)).
+  f_equal. ring.
 Qed.
 
 (* The four outcomes of arc_sweep's decision tree. *)
@@ -58,6 +65,17 @@ Lemma arc_sweep_cases : forall a : CircularArc,
   arc_sweep a = arc_sweep_angle a + 2 * PI \/
   arc_sweep a = 0.
 Proof.
+  intro a. unfold arc_sweep. cbv zeta.
+  repeat match goal with
+         | |- context [Rgt_dec ?x ?y] => destruct (Rgt_dec x y)
+         end;
+  repeat match goal with
+         | |- context [Rlt_dec ?x ?y] => destruct (Rlt_dec x y)
+         end;
+  first [ left; reflexivity
+        | right; left; reflexivity
+        | right; right; left; reflexivity
+        | right; right; right; reflexivity ].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -77,6 +95,24 @@ Theorem arc_traversal_param_bridge : forall a : CircularArc,
     is_curve_length (circle_param (arc_center a) (arc_radius a)) s t
                     (arc_length (arc_radius a) (Rabs (arc_sweep a))).
 Proof.
+  intros a Hva Hnz.
+  destruct (arc_anchor_endpoints a Hva) as [HA HB].
+  assert (Hr0 : 0 <= arc_radius a)
+    by (unfold arc_radius; apply dist_nonneg).
+  assert (HBpsi : circle_pt (arc_center a) (arc_radius a)
+                    (arc_anchor_angle a + arc_sweep a) = arc_end a).
+  { destruct (arc_sweep_cases a) as [Hc | [Hc | [Hc | Hc]]]; rewrite Hc.
+    - exact HB.
+    - replace (arc_anchor_angle a + (arc_sweep_angle a - 2 * PI))
+        with ((arc_anchor_angle a + arc_sweep_angle a) - 2 * PI) by ring.
+      rewrite circle_pt_sub_2PI. exact HB.
+    - replace (arc_anchor_angle a + (arc_sweep_angle a + 2 * PI))
+        with ((arc_anchor_angle a + arc_sweep_angle a) + 2 * PI) by ring.
+      rewrite circle_pt_add_2PI. exact HB.
+    - contradiction. }
+  exact (realize_sweep (arc_center a) (arc_radius a) (arc_anchor_angle a)
+                       (arc_sweep a) (arc_start a) (arc_end a)
+                       Hr0 HA HBpsi).
 Qed.
 
 Print Assumptions arc_traversal_param_bridge.
