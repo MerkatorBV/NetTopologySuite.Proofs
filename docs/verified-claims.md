@@ -1421,7 +1421,7 @@ the elliptic-E primitive. Meanwhile the oracle's `LENGTH_UNIFIED` quadrature
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `EllipseLength.v : ellipse_length_upper` (+ `ellipse_chord_le`, `ellipse_polyline_le`, `trig_gap_sq`) | **Tier 0, unconditional:** rotation is an isometry, every chord ≤ `Rmax rx ry · gap` (half-angle + the 3-axiom `\|sin x\| ≤ x`), so any `is_curve_length` value satisfies `L ≤ Rmax rx ry · (b−a)`; the chord lower bound is `curve_length_ge_chord`, free `[exact]` | 3 |
-| `EllipseLength.v : ellipse_conditional_is_curve_length` (+ `ellipse_polyline_le_E`, `uniform_lower_E`) | **Tier 1, conditional (named hypotheses `H_E_chord`, `H_E_approx`):** the ellipse's metric length is `E b − E a` in the `is_curve_length` sense — upper half telescopes E-increments; least half squeezes any upper bound with uniform partitions and the ε-δ tightness hypothesis, reusing ArcRectifiable's partition plumbing `[conditional]` | 3 |
+| `EllipseLength.v : ellipse_conditional_is_curve_length` | **Tier 1, conditional (named hypotheses `H_E_chord`, `H_E_approx`):** the ellipse's metric length is `E b − E a` in the `is_curve_length` sense — the two hypotheses are exactly the premises of the generic first-order-tight primitive engine (`ArcRectifiable.v : curve_length_of_primitive`), instantiated at `F = E` `[conditional]` | 3 |
 
 ## Issue #508 — ellipse rung 2: shift invariance + the rx = ry circular bridge <!-- feat:arc-len geom:cs,arc -->
 
@@ -1479,3 +1479,28 @@ are all instances.
 |---|---|---|
 | `Bezier3Length.v : bezier3_elevation_length` (+ `bezier3_elevation_pointwise`) | **Degree-elevation exactness (Bible A1):** `bezier3_pt p0 ((p0+2p1)/3) ((2p1+p2)/3) p2 = bezier2_pt p0 p1 p2` pointwise (a field identity — the elevated points divide by 3, so `field`, not `ring`, discharges it), hence `is_curve_length (bezier2 …) a b L ↔ is_curve_length (bezier3 elevated …) a b L` through `is_curve_length_ext` — storing quadratics as elevated cubics changes no metric length `[exact]` | 3 |
 | `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `norm_triple_le`, `scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` `[exact]` | 3 |
+
+## Issue #508 — clothoid rung 1: arc-length parameterization + the generic primitive engine (`ClothoidLength.v`) <!-- feat:arc-len geom:cs -->
+
+The zoo's clothoid lane opens with the fact that makes it special: the oracle
+`K` token is the ISO clothoid, parameterized BY ARC LENGTH, so its exact
+metric length over `[sd, ed]` is `ed − sd` — the closed form `LENGTH_UNIFIED`
+emits. On the way, the ellipse tier's conditional squeeze generalizes into
+the engine every integral lane instantiates:
+`curve_length_of_primitive` — a chord modulus `F` on `[a,b]` that is
+first-order tight on fine gaps within the window has `F b − F a` as THE
+metric length. The premises are deliberately WINDOWED: the Euler spiral
+wraps toward its asymptotic point, so no global tightness δ exists for it,
+while every compact window satisfies the contract. The ellipse tier is now
+the engine's instance at `F = elliptic-E`; the clothoid at `F = id` under
+the window-local unit-speed contract (ADR-0001 idiom, mirroring
+`ClothoidResidual.v`: the Fresnel integrals are not in-corpus, so the
+parameterization is an abstract Section variable and the dischargeable
+witness lane is `clothoid-halley-coq`, Coquelicot; the oracle's `K`
+quadrature + `DENSIFIED` cumulative-Simpson cross-check is the differential
+witness meanwhile).
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ArcRectifiable.v : curve_length_of_primitive` (+ `uniform_lower_primitive`) | **The first-order-tight primitive engine:** if every chord within `[a,b]` is ≤ its `F`-increment and, on fine gaps within the window, the increment exceeds the chord by at most `ε·gap`, then `is_curve_length g a b (F b − F a)` — upper half by chord-modulus telescoping; least half by uniform partitions, instantiating the tightness at `ε = slack/(b−a+1)` where slack is the lub gap being refuted; no limits library; the conditional-tier headline of every integral lane `[exact]` | 3 |
+| `ClothoidLength.v : clothoid_arclength_is_curve_length` (+ `clothoid_length_upper`) | **The window-local unit-speed tier (named hypotheses `H_unit_chord`, `H_unit_approx` on the K token's own `[sd, ed]`):** a clothoid parameterized by arc length has metric length exactly `ed − sd` — the engine at `F = id`; the upper bound needs only the chord hypothesis (chord-modulus telescoping, not the full engine). Discharge of the windowed contract for the concrete Fresnel parameterization tracks the ADR-0001 internalisation stack / `clothoid-halley-coq` `[conditional]` | 3 |

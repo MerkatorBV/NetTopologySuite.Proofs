@@ -41,6 +41,13 @@ theories/EllipseLength.v
 # is_curve_length iff, and the control-net Lipschitz upper bound
 # L <= 3·max(net edge)·(b−a) on [a,b] ⊆ [0,1].  3-axiom.
 theories/Bezier3Length.v
+# #508 clothoid rung 1: the K-token clothoid is parameterized BY arc length,
+# so its exact metric length over [sd, ed] is ed − sd.  ADR-0001 conditional
+# idiom (as ClothoidResidual.v): unit-speed contract as named Section
+# hypotheses over an abstract parameterization, headline Qed from them via
+# ArcRectifiable's generic primitive engine at F = id.  Discharge lane:
+# clothoid-halley-coq (Coquelicot).  3-axiom.
+theories/ClothoidLength.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v

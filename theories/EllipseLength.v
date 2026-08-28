@@ -52,7 +52,8 @@
      witness that such an E exists numerically.
 
    3-axiom: no atan2 anywhere — the parameterization is explicit, and the
-   least-half squeeze reuses ArcRectifiable's uniform-partition plumbing.
+   conditional tier instantiates ArcRectifiable's generic first-order-tight
+   primitive engine (curve_length_of_primitive) at F = E.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
@@ -225,89 +226,18 @@ Section EllipseConditionalTier.
       forall s t, s <= t -> t - s < delta ->
         E t - E s - dist (g s) (g t) <= eps * (t - s).
 
-  Lemma ellipse_polyline_le_E : forall ts t b,
-    chain t ts b -> polyline_len g t (ts ++ [b]) <= E b - E t.
-  Proof.
-    intros ts t b Hch.
-    apply (polyline_le_of_chord_modulus g E t b ts t).
-    - intros s u Hts Hsu Hub. apply H_E_chord. exact Hsu.
-    - lra.
-    - exact Hch.
-  Qed.
-
-  Lemma uniform_lower_E : forall h eps,
-    0 <= h ->
-    (forall t, E (t + h) - E t - dist (g t) (g (t + h)) <= eps * h) ->
-    forall m t0,
-      E (t0 + INR m * h) - E t0 - eps * (INR m * h)
-      <= polyline_len g t0 (uniform_tail t0 h m).
-  Proof.
-    intros h eps Hh Hedge.
-    induction m as [|k IH]; intros t0; cbn [uniform_tail polyline_len].
-    - simpl. replace (t0 + 0 * h) with t0 by ring. lra.
-    - specialize (IH (t0 + h)). rewrite S_INR.
-      pose proof (Hedge t0) as He0.
-      replace (t0 + h + INR k * h) with (t0 + (INR k + 1) * h) in IH by ring.
-      lra.
-  Qed.
-
+  (* The named hypotheses weaken to the (windowed) premises of the generic
+     first-order-tight primitive engine, at F = E. *)
   Theorem ellipse_conditional_is_curve_length : forall a b,
     a <= b -> is_curve_length g a b (E b - E a).
   Proof.
-    intros a b Hab. split.
-    - intros l (ts & Hch & Hl). subst l.
-      apply (ellipse_polyline_le_E ts a b Hch).
-    - intros M HM.
-      destruct (Rle_dec (E b - E a) M) as [Hok | Hbad]. { exact Hok. }
-      exfalso.
-      set (dlt := E b - E a - M).
-      assert (Hdlt : 0 < dlt) by (unfold dlt; lra).
-      set (eps := dlt / (b - a + 1)).
-      assert (Heps : 0 < eps).
-      { unfold eps. apply Rdiv_lt_0_compat; lra. }
-      destruct (H_E_approx eps Heps) as (delta & Hdpos & Hd).
-      destruct (exists_nat_gt ((b - a) / delta)) as [n0 Hn0].
-      assert (Hnpos : 0 < INR (S n0))
-        by (rewrite S_INR; pose proof (pos_INR n0); lra).
-      assert (Hngt : (b - a) / delta < INR (S n0))
-        by (rewrite S_INR; lra).
-      set (h := (b - a) / INR (S n0)).
-      assert (Hh0 : 0 <= h) by (unfold h; apply Rle_mult_inv_pos; lra).
-      assert (Hnh : INR (S n0) * h = b - a) by (unfold h; field; lra).
-      assert (Hhd : h < delta).
-      { apply Rmult_lt_reg_l with (INR (S n0)); [lra |].
-        rewrite Hnh.
-        pose proof (Rmult_lt_compat_l delta _ _ Hdpos Hngt) as Hm.
-        replace (delta * ((b - a) / delta)) with (b - a) in Hm
-          by (field; lra).
-        lra. }
-      assert (Hedge : forall t,
-        E (t + h) - E t - dist (g t) (g (t + h)) <= eps * h).
-      { intro t.
-        assert (Ht := Hd t (t + h)).
-        replace (t + h - t) with h in Ht by ring.
-        apply Ht; lra. }
-      assert (Hins : inscribed_len g a b
-                       (polyline_len g a (uniform_tail a h n0 ++ [b]))).
-      { exists (uniform_tail a h n0). split; [| reflexivity].
-        apply uniform_tail_chain; [exact Hh0 |].
-        assert (Hb' : b = a + INR (S n0) * h) by (rewrite Hnh; ring).
-        rewrite Hb', S_INR.
-        pose proof (pos_INR n0). nra. }
-      specialize (HM _ Hins).
-      assert (Hb : b = a + INR (S n0) * h) by (rewrite Hnh; ring).
-      assert (Hval : E b - E a - eps * (b - a)
-                     <= polyline_len g a (uniform_tail a h n0 ++ [b])).
-      { replace (uniform_tail a h n0 ++ [b])
-          with (uniform_tail a h (S n0))
-          by (rewrite Hb; apply uniform_tail_snoc).
-        rewrite <- Hnh.
-        rewrite Hb at 1.
-        apply (uniform_lower_E h eps Hh0 Hedge (S n0) a). }
-      assert (Hlt : eps * (b - a) < dlt).
-      { assert (H1 : eps * (b - a + 1) = dlt) by (unfold eps; field; lra).
-        nra. }
-      unfold dlt in Hlt. lra.
+    intros a b Hab.
+    apply (curve_length_of_primitive g E a b); [| | exact Hab].
+    - intros s t _ Hst _. apply H_E_chord. exact Hst.
+    - intros eps Heps.
+      destruct (H_E_approx eps Heps) as (delta & Hd0 & Hd).
+      exists delta. split; [exact Hd0 |].
+      intros s t _ Hst _ Hts. apply Hd; assumption.
   Qed.
 
 End EllipseConditionalTier.
