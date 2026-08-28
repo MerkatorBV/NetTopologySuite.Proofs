@@ -1364,3 +1364,17 @@ facts.
 | `CurveLength.v : curve_length_ge_chord` (+ `inscribed_chord`, `curve_length_nonneg`) | **Chord lower bound.** The single chord is an inscribed polyline, so no curve is shorter than its chord and every length is nonnegative `[exact]` | 3 |
 | `CurveLength.v : curve_length_unique` | **The spec pins its value:** two lubs of the same inscribed set are equal `[exact]` | 3 |
 | `CurveLength.v : curve_length_additive` (+ `chain_split`, `chain_app`, `polyline_len_app_mid`, `polyline_len_last_triangle`, `polyline_split_le`) | **Waypoint additivity** `L(a,c) = L(a,b) + L(b,c)`: split any [a,c] chain at b paying one `dist_triangle` at the seam (upper half); concatenated pairs are inscribed, two lub minimalities peel `L1` then `L2` (least half, epsilon-free). This is the aggregation theorem behind `LENGTH_UNIFIED`'s "CC: sum of member lengths" — a differential observation until now (#508 datapoint 2026-08-22) `[exact]` | 3 |
+
+## Issue #508 — arc rectifiability: r·θ meets the spec (`ArcRectifiable.v`) <!-- feat:arc-len geom:arc -->
+
+The arc rung of the #508 curve-length lane: the circle parameterization
+`t ↦ O + r·(cos t, sin t)` satisfies `CurveLength.is_curve_length` with
+`L = r·(b − a)` — so `ArcLength.arc_length r θ = r·θ` is no longer a
+definition with sandwich companions but THE metric length in the canonical
+spec's sense. Deliberately off the atan2/`angle_between` 4-axiom lane; the
+3-point CircularArc model bridge is the next rung.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ArcRectifiable.v : circle_chord_dist` (+ `Rabs_sin_le`, `PI_ge_2`) | **The chord of a parameter gap, exactly:** `dist(γs, γt) = 2r·\|sin((t−s)/2)\|` by `cos_minus` + half-angle; `\|sin x\| ≤ x` on `x ≥ 0`; `PI ≥ 2` derived classic-free from `sin_PI2` + the 3-axiom `sin_le_x` (Stdlib's `PI2_1` drags `Classical_Prop.classic`) `[exact]` | 3 |
+| `ArcRectifiable.v : arc_r_theta_is_curve_length` (+ `circle_polyline_le`, `uniform_tail_{snoc,chain}`, `uniform_polyline_val`, `sin_lower_taylor`, `exists_nat_gt`; corollaries `arc_rectifiable`, `arc_length_meets_spec`) | **r·θ IS the metric length.** Upper half: every chain edge is a chord `≤ r·gap`, telescoping to `r(b−a)`. Least half: the uniform n-partition is inscribed with value `n·2r·sin(θ/2n) ≥ rθ − rθ·h²/24` (lower Taylor envelope `pre_sin_bound`), and an archimedean n squeezes any upper bound up to `rθ` — epsilon-free, no limits library. Closes the definition-vs-theorem gap of the reopened M-LEN triage row for the parameterized-circle model `[exact]` | 3 |
