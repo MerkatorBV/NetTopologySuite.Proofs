@@ -16,10 +16,13 @@
    spec, at whatever tier it can reach.
 
    Proven here (the base facts every obligation leans on), all Qed:
-     - curve_length_ge_chord : chord <= L      (the lower sandwich half)
-     - curve_length_nonneg   : 0 <= L
-     - curve_length_unique   : the spec pins L
-     - curve_length_additive : L(a,c) = L(a,b) + L(b,c)
+     - curve_length_ge_chord  : chord <= L     (the lower sandwich half)
+     - curve_length_nonneg    : 0 <= L
+     - curve_length_unique    : the spec pins L
+     - curve_length_additive  : L(a,c) = L(a,b) + L(b,c)
+     - is_curve_length_ext    : pointwise-equal curves carry the same lengths
+     - is_curve_length_shift  : translated parameterizations too (t ↦ g (c+t))
+       — both reparameterization invariances funext-free
 
    curve_length_additive is the aggregation theorem behind LENGTH_UNIFIED's
    "CC: sum of member lengths" semantics — before this file that was a
