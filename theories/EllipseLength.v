@@ -400,6 +400,8 @@ Proof.
   - exact Hub.
 Qed.
 
+(* WITNESS {"claimId":"ellipselength-ellipse-length-sandwich","topic":"arc","lemma":"ellipse_length_sandwich","title":"Ellipse metric length sandwich: Rmin*(b-a) <= L <= Rmax*(b-a) for the E-token parameterization","file":"theories/EllipseLength.v"} *)
+
 Corollary ellipse_length_sandwich : forall Oc rx ry rot a b L,
   0 <= rx -> 0 <= ry -> a <= b ->
   is_curve_length (ellipse_param Oc rx ry rot) a b L ->
