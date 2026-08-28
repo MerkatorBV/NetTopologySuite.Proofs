@@ -15,13 +15,25 @@
 # the "incremental" PR cache silently degraded to a full rebuild every run.
 # Sharing one function here removes that failure mode structurally.
 #
-# Semantics: Coq comments ((* ... *)) and `#`-comment lines carry no proof
-# content, so they are stripped and whitespace is normalized before hashing.
-# A comment-only / formatting-only edit therefore does NOT force a rebuild of
-# the file or its dependents -- a deliberate, sound speed/accuracy tradeoff
-# (Coq semantics are unaffected).  The strip is a simple, non-nested regex;
-# the rare semantics-identical edit that slips through only ever causes an
-# extra (safe) rebuild, never a skipped one.
+# Semantics: Coq comments ((* ... *)) carry no proof content, so they are
+# stripped and whitespace is normalized before hashing.  A comment-only /
+# formatting-only edit therefore does NOT force a rebuild of the file or its
+# dependents -- a deliberate, sound speed/accuracy tradeoff (Coq semantics
+# are unaffected).  The strip is a simple, non-nested, NON-GREEDY regex:
+# under-stripping (e.g. around nested comments) only ever causes an extra
+# (safe) rebuild, never a skipped one.
+#
+# HISTORY (2026-08, the stale-CurveLength.vo incident): this function used
+# to also delete "#-comment lines" via `(?m)^[^#]*#.*$`.  Coq has no `#`
+# comments, and `[^#]` matches NEWLINES, so that pattern greedily deleted
+# everything from a line start up to the next `#` ANYWHERE in the file.
+# Corpus files routinely cite issue numbers (`#508`) in comments, so whole
+# swaths of CODE between two such mentions were invisible to the hash --
+# two different sources compared "unchanged", the invalidator aged the .v,
+# and make reused a stale .vo (PR #555's pinned jobs: ArcRectifiable.v
+# failed against a CurveLength.vo missing polyline_le_of_chord_modulus).
+# `#` stripping is for _CoqProject files (see parse_project), NEVER for .v
+# sources.  Do not reintroduce it here.
 #
 # _CoqProject flag lines (-Q/-R/-arg ...) are hashed verbatim: a flag change
 # can alter compilation semantics with no .v edit, so it must force a full
@@ -33,13 +45,11 @@ import re
 
 
 def source_sha256(path):
-    """Content hash of a .v source, ignoring comments and formatting."""
+    """Content hash of a .v source, ignoring (* ... *) comments and formatting."""
     with open(path, "rb") as fh:
         raw = fh.read()
     text = raw.decode("utf-8", errors="replace")
-    # strip # comments (whole line or tail)
-    text = re.sub(r"(?m)^[^#]*#.*$|^#.*$", "", text)
-    # strip non-nested (* ... *) comments
+    # strip non-nested (* ... *) comments (non-greedy: never eats code)
     text = re.sub(r"\(\*.*?\*\)", "", text, flags=re.DOTALL)
     # normalize whitespace so formatting-only edits hash stably
     text = "\n".join(line.rstrip() for line in text.splitlines() if line.strip())

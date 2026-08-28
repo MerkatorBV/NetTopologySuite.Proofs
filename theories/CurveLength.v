@@ -23,6 +23,9 @@
      - is_curve_length_ext    : pointwise-equal curves carry the same lengths
      - is_curve_length_shift  : translated parameterizations too (t ↦ g (c+t))
        — both reparameterization invariances funext-free
+     - curve_length_upper_of_chord_modulus (+ polyline_le_of_chord_modulus,
+       chain_le) : a chord modulus F on [a,b] telescopes, so L <= F b − F a
+       — the one upper-half telescoping every Lipschitz/primitive lane uses
 
    curve_length_additive is the aggregation theorem behind LENGTH_UNIFIED's
    "CC: sum of member lengths" semantics — before this file that was a
@@ -110,6 +113,49 @@ Proof.
   induction xs as [|u xs IH]; simpl; intros lo mid ys hi H1 H2.
   - split; assumption.
   - destruct H1 as [Hlu H1]. split; [exact Hlu | apply IH; assumption].
+Qed.
+
+(* A chain's endpoints are ordered. *)
+Lemma chain_le : forall xs lo hi, chain lo xs hi -> lo <= hi.
+Proof.
+  induction xs as [|u xs IH]; simpl; intros lo hi Hch.
+  - exact Hch.
+  - destruct Hch as [Hlu Hch]. specialize (IH u hi Hch). lra.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The generic upper-half telescoping: a chord MODULUS F — every chord        *)
+(* within [a, b] bounded by its F-increment — telescopes over any inscribed   *)
+(* polyline, so every metric-length value is at most F b − F a.  Instances:  *)
+(* F = K·x for the Lipschitz lanes (circle, ellipse, Bézier control net),    *)
+(* F = the elliptic-E primitive for the conditional ellipse tier.            *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma polyline_le_of_chord_modulus :
+  forall (g : Curve) (F : R -> R) (a b : R) ts t,
+  (forall s u, a <= s -> s <= u -> u <= b -> dist (g s) (g u) <= F u - F s) ->
+  a <= t -> chain t ts b ->
+  polyline_len g t (ts ++ [b]) <= F b - F t.
+Proof.
+  intros g F a b ts; induction ts as [|u tl IH]; simpl;
+    intros t Hmod Hat Hch.
+  - pose proof (Hmod t b Hat Hch (Rle_refl b)). lra.
+  - destruct Hch as [Htu Hch].
+    pose proof (chain_le tl u b Hch) as Hub.
+    pose proof (Hmod t u Hat Htu Hub) as Hc.
+    assert (Hau : a <= u) by lra.
+    specialize (IH u Hmod Hau Hch). lra.
+Qed.
+
+Theorem curve_length_upper_of_chord_modulus :
+  forall (g : Curve) (F : R -> R) a b L,
+  (forall s t, a <= s -> s <= t -> t <= b -> dist (g s) (g t) <= F t - F s) ->
+  is_curve_length g a b L ->
+  L <= F b - F a.
+Proof.
+  intros g F a b L Hmod [_ Hlst].
+  apply Hlst. intros l (ts & Hch & Hl). subst l.
+  apply (polyline_le_of_chord_modulus g F a b ts a Hmod (Rle_refl a) Hch).
 Qed.
 
 (* A chain over [lo, hi] splits at any waypoint m of [lo, hi]. *)

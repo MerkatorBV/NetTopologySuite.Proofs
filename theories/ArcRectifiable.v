@@ -21,7 +21,11 @@
    `chord_envelope_lower`, generic in the envelope constant c: any curve
    whose chords dominate `2c·|sin(gap/2)|` has every inscribed-length upper
    bound ≥ c·(b−a).  The circle meets the envelope with equality (c = r);
-   EllipseLength.v meets it with c = Rmin rx ry.
+   EllipseLength.v meets it with c = Rmin rx ry.  Alongside it lives the
+   generic first-order-tight primitive engine `curve_length_of_primitive`:
+   a chord modulus F that is ε-tight on fine gaps has F b − F a as THE
+   metric length — the conditional-tier headline of every integral lane
+   (ellipse at F = elliptic-E, clothoid at F = id).
 
    Deliberately NOT this file: the 3-point (start/mid/end) CircularArc model
    bridge — its sweep angle lives in the atan2 / `angle_between` 4-axiom
@@ -135,11 +139,14 @@ Lemma circle_polyline_le : forall (O : Point) r ts t b,
   0 <= r -> chain t ts b ->
   polyline_len (circle_param O r) t (ts ++ [b]) <= r * (b - t).
 Proof.
-  intros O r ts; induction ts as [|u tl IH]; simpl; intros t b Hr Hch.
-  - pose proof (circle_edge_le O r t b Hr Hch). lra.
-  - destruct Hch as [Htu Hch].
-    pose proof (circle_edge_le O r t u Hr Htu).
-    specialize (IH u b Hr Hch). lra.
+  intros O r ts t b Hr Hch.
+  replace (r * (b - t)) with (r * b - r * t) by ring.
+  apply (polyline_le_of_chord_modulus (circle_param O r) (fun x => r * x)
+           t b ts t).
+  - intros s u Hts Hsu Hub. cbv beta.
+    pose proof (circle_edge_le O r s u Hr Hsu). lra.
+  - lra.
+  - exact Hch.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -331,6 +338,116 @@ Proof.
       assert (0 <= c * th) by lra. nra. }
     lra. }
   unfold dlt in Herr. lra.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The generic first-order-tight PRIMITIVE engine: if F is a chord modulus    *)
+(* on [a, b] (every chord within the window ≤ its F-increment) that is        *)
+(* first-order TIGHT on fine gaps within the window (the increment exceeds    *)
+(* the chord by at most ε·gap), then F b − F a IS the metric length — the     *)
+(* conditional-tier headline every integral lane instantiates: the ellipse    *)
+(* at F = elliptic-E, the clothoid at F = id.  Upper half: the chord-modulus  *)
+(* telescoping.  Least half: uniform partitions, instantiating the            *)
+(* tightness at ε = slack/(b−a+1) where slack is the lub gap being refuted    *)
+(* — epsilon-free of limits machinery.                                        *)
+(*                                                                            *)
+(* Both premises are deliberately WINDOWED to [a, b]: a curve can meet the    *)
+(* contract on every compact window without meeting it globally (the Euler    *)
+(* spiral wraps toward its asymptotic point, so no global δ exists for it),   *)
+(* and the proof only ever samples chords inside the window.                  *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma uniform_lower_primitive : forall (g : Curve) (F : R -> R) (a b h eps : R),
+  0 <= h ->
+  (forall t, a <= t -> t + h <= b ->
+     F (t + h) - F t - dist (g t) (g (t + h)) <= eps * h) ->
+  forall m t0,
+    a <= t0 -> t0 + INR m * h <= b ->
+    F (t0 + INR m * h) - F t0 - eps * (INR m * h)
+    <= polyline_len g t0 (uniform_tail t0 h m).
+Proof.
+  intros g F a b h eps Hh Hedge.
+  induction m as [|k IH]; intros t0 Hat0 Htop; cbn [uniform_tail polyline_len].
+  - simpl. replace (t0 + 0 * h) with t0 by ring. lra.
+  - rewrite S_INR in Htop.
+    replace (t0 + (INR k + 1) * h) with (t0 + h + INR k * h) in Htop by ring.
+    assert (Hk0 : 0 <= INR k * h) by (pose proof (pos_INR k); nra).
+    assert (Hth : t0 + h <= b) by lra.
+    assert (Ha1 : a <= t0 + h) by lra.
+    specialize (IH (t0 + h) Ha1 Htop).
+    rewrite S_INR.
+    pose proof (Hedge t0 Hat0 Hth) as He0.
+    replace (t0 + h + INR k * h) with (t0 + (INR k + 1) * h) in IH by ring.
+    lra.
+Qed.
+
+Theorem curve_length_of_primitive : forall (g : Curve) (F : R -> R) a b,
+  (forall s t, a <= s -> s <= t -> t <= b -> dist (g s) (g t) <= F t - F s) ->
+  (forall eps, 0 < eps ->
+     exists delta, 0 < delta /\
+       forall s t, a <= s -> s <= t -> t <= b -> t - s < delta ->
+         F t - F s - dist (g s) (g t) <= eps * (t - s)) ->
+  a <= b -> is_curve_length g a b (F b - F a).
+Proof.
+  intros g F a b Hchord Happrox Hab. split.
+  - intros l (ts & Hch & Hl). subst l.
+    apply (polyline_le_of_chord_modulus g F a b ts a).
+    + exact Hchord.
+    + lra.
+    + exact Hch.
+  - intros M HM.
+    destruct (Rle_dec (F b - F a) M) as [Hok | Hbad]. { exact Hok. }
+    exfalso.
+    set (dlt := F b - F a - M).
+    assert (Hdlt : 0 < dlt) by (unfold dlt; lra).
+    set (eps := dlt / (b - a + 1)).
+    assert (Heps : 0 < eps).
+    { unfold eps. apply Rdiv_lt_0_compat; lra. }
+    destruct (Happrox eps Heps) as (delta & Hdpos & Hd).
+    destruct (exists_nat_gt ((b - a) / delta)) as [n0 Hn0].
+    assert (Hnpos : 0 < INR (S n0))
+      by (rewrite S_INR; pose proof (pos_INR n0); lra).
+    assert (Hngt : (b - a) / delta < INR (S n0))
+      by (rewrite S_INR; lra).
+    set (h := (b - a) / INR (S n0)).
+    assert (Hh0 : 0 <= h) by (unfold h; apply Rle_mult_inv_pos; lra).
+    assert (Hnh : INR (S n0) * h = b - a) by (unfold h; field; lra).
+    assert (Hhd : h < delta).
+    { apply Rmult_lt_reg_l with (INR (S n0)); [lra |].
+      rewrite Hnh.
+      pose proof (Rmult_lt_compat_l delta _ _ Hdpos Hngt) as Hm.
+      replace (delta * ((b - a) / delta)) with (b - a) in Hm
+        by (field; lra).
+      lra. }
+    assert (Hedge : forall t, a <= t -> t + h <= b ->
+      F (t + h) - F t - dist (g t) (g (t + h)) <= eps * h).
+    { intros t Hat Htb.
+      assert (Ht := Hd t (t + h)).
+      replace (t + h - t) with h in Ht by ring.
+      apply Ht; lra. }
+    assert (Hins : inscribed_len g a b
+                     (polyline_len g a (uniform_tail a h n0 ++ [b]))).
+    { exists (uniform_tail a h n0). split; [| reflexivity].
+      apply uniform_tail_chain; [exact Hh0 |].
+      assert (Hb' : b = a + INR (S n0) * h) by (rewrite Hnh; ring).
+      rewrite Hb', S_INR.
+      pose proof (pos_INR n0). nra. }
+    specialize (HM _ Hins).
+    assert (Hb : b = a + INR (S n0) * h) by (rewrite Hnh; ring).
+    assert (Hval : F b - F a - eps * (b - a)
+                   <= polyline_len g a (uniform_tail a h n0 ++ [b])).
+    { replace (uniform_tail a h n0 ++ [b])
+        with (uniform_tail a h (S n0))
+        by (rewrite Hb; apply uniform_tail_snoc).
+      rewrite <- Hnh.
+      rewrite Hb at 1.
+      apply (uniform_lower_primitive g F a b h eps Hh0 Hedge (S n0) a).
+      - lra.
+      - rewrite Hnh. lra. }
+    assert (Hlt : eps * (b - a) < dlt).
+    { assert (H1 : eps * (b - a + 1) = dlt) by (unfold eps; field; lra).
+      nra. }
+    unfold dlt in Hlt. lra.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
