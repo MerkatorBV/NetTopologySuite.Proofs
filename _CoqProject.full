@@ -9,6 +9,20 @@ theories/Distance.v
 # LENGTH_UNIFIED's sum-of-members aggregation).  Arc r·θ rectifiability is the
 # next rung.  3-axiom.
 theories/CurveLength.v
+# #508 arc rung: r·θ IS the metric length — the circle parameterization
+# satisfies is_curve_length with L = r·(b−a).  Upper half telescopes chord
+# bounds; least half squeezes any upper bound with uniform partitions and the
+# lower Taylor envelope (epsilon-free, archimedean n).  Stays off the
+# atan2/angle_between lane (the 3-point CircularArc bridge is the next rung).
+# 3-axiom (Stdlib PI2_1 avoided via a local sin_le_x-derived PI >= 2).
+theories/ArcRectifiable.v
+# #508 "Also owed" bridge: the 3-point CircularArc model meets the
+# parameterized circle — the principal sweep is realized by a parameter
+# interval whose circle points are arc_start/arc_end and whose metric length
+# (is_curve_length) is arc_length r |arc_sweep_angle|.  atan2 lane, 4-axiom
+# (docs/audit-exceptions.txt); the mid-disambiguated major traversal is the
+# next rung.
+theories/ArcParamBridge.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v
