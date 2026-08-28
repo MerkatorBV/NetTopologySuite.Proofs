@@ -23,11 +23,14 @@
 #   - Artefacts and chunks of files that vanished from the project are
 #     deleted, so the audit never sees ghosts of removed files.
 #
-# CI speed optimization (2026-06 refactor): sha256_file now strips Coq
-# comments ((*...*)) and # lines (plus trims ws) before hashing. Pure
-# comment/doc changes (common in RGR, scope notes, JCT cleanups, etc.) no
-# longer force expensive .vo rebuilds of large dep graphs. Semantics are
-# unaffected; this is a deliberate speed/accuracy tradeoff documented here.
+# CI speed optimization (2026-06 refactor): source_sha256 strips Coq
+# comments ((*...*)) and trims whitespace before hashing. Pure comment/doc
+# changes (common in RGR, scope notes, JCT cleanups, etc.) no longer force
+# expensive .vo rebuilds of large dep graphs. Semantics are unaffected;
+# this is a deliberate speed/accuracy tradeoff documented here.
+# (2026-08: the additional "#-line" strip was removed — Coq has no `#`
+# comments and the pattern crossed newlines, hiding CODE between issue-
+# number mentions from the hash; see ci_vo_hash.py's HISTORY note.)
 #
 # Deliberately NOT based on git commit timestamps: rebases can backdate a
 # changed file, which would let a timestamp scheme skip rebuilding changed
