@@ -1585,3 +1585,24 @@ a new 64-a `r·θ`.
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `ArcMidSweep.v : valid_arc_sweep_nonzero` (+ `arc_mid_on_circle_param`, `arc_mid_pointset_and_sweep`) | **Sweep pin + mid point-set:** `valid_arc` excludes `arc_sweep = 0`; `arc_mid` is a parameterized circumcircle point `[exact]` | 4 |
+## Issue #508 — spec rung: monotone reparameterization invariance (`CurveLength.v`) <!-- feat:arc-len geom:cs -->
+
+The invariance kit gains its general member. It joins `is_curve_length_ext`
+(pointwise equality of two curves — orthogonal, NOT an instance of this) and
+`is_curve_length_shift` (translation — an instance only when `a ≤ b`; shift
+itself carries no ordering premise and stays independent). The new form:
+composing with any WEAKLY MONOTONE map `φ` whose target window is
+covered by EXPLICIT preimages carries metric lengths over —
+`is_curve_length g (φ a) (φ b) L → is_curve_length (g ∘ φ) a b L`. Upper
+half: a monotone image of a chain is a chain with the same polyline value
+(`polyline_len_compose`, `chain_map_mono`). Least half: preimage chains are
+built by induction with an order-repair step — a flat stretch of `φ` reuses
+the previous preimage, so weak monotonicity suffices and no IVT/continuity
+machinery is spent (`reparam_preimage_chain`). Funext-free, 3-axiom. The
+intended consumer is the conic exact tier: the golden `w = √2/2` rational
+quarter circle re-parameterized onto the angular arc, where
+`arc_r_theta_is_curve_length` already serves the length.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CurveLength.v : is_curve_length_reparam` (+ `polyline_len_compose`, `chain_map_mono`, `reparam_preimage_chain`) | **Monotone reparameterization invariance:** for `a ≤ b`, `φ` weakly monotone on `[a,b]` with every `v ∈ [φ a, φ b]` explicitly hit by some `u ∈ [a,b]`, any metric length of `g` over `[φ a, φ b]` is a metric length of `t ↦ g (φ t)` over `[a,b]` — inscribed sets correspond through `map φ` one way and preimage chains (with flat-stretch order repair) the other; no functional extensionality, no continuity `[exact]` | 3 |
