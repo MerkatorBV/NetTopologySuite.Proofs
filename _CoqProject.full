@@ -28,6 +28,14 @@ theories/ArcParamBridge.v
 # outcomes enumerated, anchors shifted by 2π-periodicity, assembled with
 # realize_sweep.  atan2 lane, 4-axiom (docs/audit-exceptions.txt).
 theories/ArcTraversalBridge.v
+# #508 ellipse rung 1: the ELLIPTICALCURVE parameterization (oracle E token)
+# against the CurveLength spec.  Tier 0 unconditional: chord/upper sandwich
+# L <= Rmax rx ry·(b−a).  Tier 1 conditional (ADR-0001 idiom): the elliptic-E
+# primitive as a Section variable under H_E_chord/H_E_approx, headline
+# is_curve_length = E b − E a.  Discharge is a Technique park item (no
+# external witness yet; the oracle's Carlson-gated quadrature is the
+# differential witness).  3-axiom — no atan2.
+theories/EllipseLength.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v
