@@ -1378,3 +1378,16 @@ spec's sense. Deliberately off the atan2/`angle_between` 4-axiom lane; the
 |---|---|---|
 | `ArcRectifiable.v : circle_chord_dist` (+ `Rabs_sin_le`, `PI_ge_2`) | **The chord of a parameter gap, exactly:** `dist(γs, γt) = 2r·\|sin((t−s)/2)\|` by `cos_minus` + half-angle; `\|sin x\| ≤ x` on `x ≥ 0`; `PI ≥ 2` derived classic-free from `sin_PI2` + the 3-axiom `sin_le_x` (Stdlib's `PI2_1` drags `Classical_Prop.classic`) `[exact]` | 3 |
 | `ArcRectifiable.v : arc_r_theta_is_curve_length` (+ `circle_polyline_le`, `uniform_tail_{snoc,chain}`, `uniform_polyline_val`, `sin_lower_taylor`, `exists_nat_gt`; corollaries `arc_rectifiable`, `arc_length_meets_spec`) | **r·θ IS the metric length.** Upper half: every chain edge is a chord `≤ r·gap`, telescoping to `r(b−a)`. Least half: the uniform n-partition is inscribed with value `n·2r·sin(θ/2n) ≥ rθ − rθ·h²/24` (lower Taylor envelope `pre_sin_bound`), and an archimedean n squeezes any upper bound up to `rθ` — epsilon-free, no limits library. Closes the definition-vs-theorem gap of the reopened M-LEN triage row for the parameterized-circle model `[exact]` | 3 |
+
+## Issue #508 — the 3-point arc meets the parameterized circle (`ArcParamBridge.v`) <!-- feat:arc-len geom:arc -->
+
+The "Also owed" bridge of #508: the engines' 3-point CircularArc model
+(start/mid/end, sweep via atan2) is connected to the parameterized-circle
+model that `ArcRectifiable.v` proved rectifiable — so `arc_length r |sweep|`,
+the number `ARC_LENGTH` emits, is a metric length in the canonical spec's
+sense. atan2 lane (4-axiom, `docs/audit-exceptions.txt`); the
+mid-disambiguated major traversal (`arc_sweep`, reflex case) is the next rung.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ArcParamBridge.v : arc_sweep_param_bridge` (+ `point_ext`) | **The principal sweep is realized on the circumscribed circle:** for a `valid_arc` there is a parameter interval of width `\|arc_sweep_angle\|` whose circle points are exactly `arc_start`/`arc_end` (in sweep orientation) and whose `is_curve_length` value is `arc_length (arc_radius a) (Rabs (arc_sweep_angle a))`. Branch-cut-free: `atan2_on_circle` anchors the start angle; `cos_plus`/`sin_plus` against `cos/sin_angle_between` rotate onto the end point via ux(ux·vx+uy·vy) − uy(ux·vy−uy·vx) = (ux²+uy²)·vx `[exact]` | 4 |
