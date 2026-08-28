@@ -48,6 +48,12 @@ theories/Bezier3Length.v
 # ArcRectifiable's generic primitive engine at F = id.  Discharge lane:
 # clothoid-halley-coq (Coquelicot).  3-axiom.
 theories/ClothoidLength.v
+# #508 NURBS rung 1: the degree-2 single-span N token (rational quadratic
+# Bezier, the conic form) against the CurveLength spec.  Equal-weights
+# degeneration as an is_curve_length iff (chained to the elevated cubic),
+# and the weight-conditioned control-net Lipschitz bound
+# L <= 2*(wmax/wmin)^2 * max(net edge) * (b−a) on [a,b] ⊆ [0,1].  3-axiom.
+theories/NurbsQuadraticLength.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v
