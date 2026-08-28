@@ -1504,3 +1504,32 @@ witness meanwhile).
 |---|---|---|
 | `ArcRectifiable.v : curve_length_of_primitive` (+ `uniform_lower_primitive`) | **The first-order-tight primitive engine:** if every chord within `[a,b]` is ≤ its `F`-increment and, on fine gaps within the window, the increment exceeds the chord by at most `ε·gap`, then `is_curve_length g a b (F b − F a)` — upper half by chord-modulus telescoping; least half by uniform partitions, instantiating the tightness at `ε = slack/(b−a+1)` where slack is the lub gap being refuted; no limits library; the conditional-tier headline of every integral lane `[exact]` | 3 |
 | `ClothoidLength.v : clothoid_arclength_is_curve_length` (+ `clothoid_length_upper`) | **The window-local unit-speed tier (named hypotheses `H_unit_chord`, `H_unit_approx` on the K token's own `[sd, ed]`):** a clothoid parameterized by arc length has metric length exactly `ed − sd` — the engine at `F = id`; the upper bound needs only the chord hypothesis (chord-modulus telescoping, not the full engine). Discharge of the windowed contract for the concrete Fresnel parameterization tracks the ADR-0001 internalisation stack / `clothoid-halley-coq` `[conditional]` | 3 |
+
+## Issue #508 — NURBS rung 1: the rational quadratic (`NurbsQuadraticLength.v`) <!-- feat:arc-len geom:cs -->
+
+The zoo's last lane opens at the degree the engines actually use: the
+degree-2 single-span `N` token is the RATIONAL QUADRATIC Bézier — the conic
+form (the oracle's golden vector pins the `w = √2/2` quarter circle at
+`π/2`; that exact value is MOTIVATION here, not a theorem — the conic exact
+tier is a later rung). Two unconditional results. First, the N ⊃ B token
+inclusion as a spec theorem: equal weights collapse the denominator
+(partition of unity), so the rational quadratic IS the polynomial quadratic
+pointwise and `is_curve_length` transfers as an iff — chaining through the
+Bézier lane's elevation exactness to the stored cubic. Second, the rational
+chord factors through the divided difference: the antisymmetrized Bernstein
+products `B_i(t)B_j(s) − B_i(s)B_j(t)` all carry the factor `(s−t)` with
+cofactors `c_01 = 2(1−s)(1−t)`, `c_02 = s+t−2st`, `c_12 = 2st` — each ≥ 0
+on `[0,1]²`. The `(0,2)` term regroups through `P2−P0 = (P1−P0)+(P2−P1)`
+with `c_01 + 2·c_02 + c_12 = 2` EXACTLY, so `nurbs2_net_max` is the max
+over CONSECUTIVE edges only (the same meaning as the Bézier row's net, and
+a free tightening: `M = 1` on the golden quarter circle where the diagonal
+is `√2`); the denominator has the least weight as a floor, so with
+`0 < wmin ≤ w_i ≤ wmax` the metric length is control-net bounded — the
+crude net bound, not the tight conic bound. General degree, knot spans,
+and the conditional exact tier (the rational arc-length primitive through
+the engine) are future rungs.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `NurbsQuadraticLength.v : nurbs2_equal_weights_cubic` (+ `nurbs2_equal_weights_length`, `nurbs2_equal_weights_pt`) | **Equal-weights degeneration (the N ⊃ B inclusion):** `nurbs2_pt p0 p1 p2 w w w = bezier2_pt p0 p1 p2` pointwise for `w ≠ 0` (a field identity — the partition of unity collapses the denominator to `w`), so `is_curve_length` transfers as an iff, composed with degree-elevation exactness onto the stored elevated cubic `[exact]` | 3 |
+| `NurbsQuadraticLength.v : nurbs2_length_upper` (+ `nurbs2_chord_le`, `nurbs2_den_lb`, `norm_pair_le`, `nurbs2_length_upper_unit`, `bezier2_length_upper`) | **The weight-conditioned control-net Lipschitz bound:** the rational chord equals `(t−s)·\|Σ c_ij·w_i·w_j·(P_j−P_i)\|/(D(s)·D(t))` (divided-difference factorization, `field`-verified), regrouped onto consecutive edges (`c_01 + 2·c_02 + c_12 = 2` exactly), triangle-bounded (`norm_pair_le`), with the denominator floored by `wmin`: every chord ≤ `2·(wmax/wmin)²·max(\|P1−P0\|,\|P2−P1\|)·(t−s)`, telescoping by chord modulus to `L ≤ 2·(wmax/wmin)²·nurbs2_net_max·(b−a)` on `[a,b] ⊆ [0,1]`; at `w = 1` this also closes the polynomial quadratic (`bezier2_length_upper`) that the elevation iff left unbounded `[exact]` | 3 |
