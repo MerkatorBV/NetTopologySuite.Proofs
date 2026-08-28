@@ -243,6 +243,11 @@ Qed.
 (* ≥ c·(b−a) − c·(b−a)·h²/24 (lower Taylor envelope), and an archimedean      *)
 (* choice of n does the rest — epsilon-free, no limits library.  The circle   *)
 (* meets the envelope with equality; the ellipse meets it with c = Rmin.      *)
+(*                                                                            *)
+(* The envelope premise is deliberately `forall s t`, NOT `s <= t`: the       *)
+(* |sin| makes it direction-free, and the squeeze instantiates it at t and    *)
+(* t + h.  A future instance that "helpfully" adds s <= t to its chord        *)
+(* lemma will not fit — keep the instance direction-free too.                 *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma chord_envelope_lower : forall (g : Curve) (c a b M : R),

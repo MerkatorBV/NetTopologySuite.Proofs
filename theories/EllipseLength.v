@@ -1,21 +1,37 @@
 (* ============================================================================
    NetTopologySuite.Proofs.EllipseLength
    ----------------------------------------------------------------------------
-   Issue #508 ellipse rung 1 (the zoo attack order's next stop after the arc
-   lane): the ELLIPTICALCURVE parameterization and its length against the
-   CurveLength spec, at two tiers.
+   Issue #508 ellipse rungs 1–3 (the zoo attack order's next stop after the
+   arc lane): the ELLIPTICALCURVE parameterization and its length against
+   the CurveLength spec — the unconditional Rmin/Rmax sandwich, the rx = ry
+   circular bridge, and the conditional elliptic-E tier.
 
    The parameterization matches the oracle's `E` token (ISO/IEC 13249-3:2016
    §5.1.67 <elliptical text> projection): centre, semi-axes rx/ry, rotation,
    PARAMETRIC angle t ↦ O + R(rot)·(rx cos t, ry sin t).
 
-   Tier 0 (UNCONDITIONAL, this file, 3-axiom):
+   Rung 1, Tier 0 (UNCONDITIONAL, 3-axiom):
      - ellipse_chord_le     every chord ≤ Rmax rx ry · gap (rotation is an
                             isometry; half-angle + the 3-axiom |sin x| ≤ x)
      - ellipse_length_upper any is_curve_length value L ≤ Rmax rx ry·(b−a)
        (the chord lower bound is CurveLength.curve_length_ge_chord, free)
 
-   Tier 1 (CONDITIONAL, ADR-0001 idiom — named Section hypotheses):
+   Rung 2 (UNCONDITIONAL, 3-axiom): the rx = ry CIRCULAR BRIDGE —
+     ellipse_circular_is_curve_length : an equal-axes ellipse is a
+     parameter-shifted circle (ellipse_pt_equal_axes), so its metric length
+     is r·(b−a) via CurveLength's ext/shift invariances and
+     ArcRectifiable.arc_r_theta_is_curve_length.  This is the oracle's
+     E-token closed form as a spec theorem.
+
+   Rung 3 (UNCONDITIONAL, 3-axiom): the Rmin LOWER SANDWICH —
+     ellipse_chord_ge (chords ≥ 2·Rmin·|sin(gap/2)|, the shared
+     ellipse_dist_sq computation bounded below) feeds
+     ArcRectifiable.chord_envelope_lower at c = Rmin rx ry, giving
+     ellipse_length_lower : Rmin rx ry·(b−a) ≤ L, assembled with Tier 0
+     into ellipse_length_sandwich : Rmin·(b−a) ≤ L ≤ Rmax·(b−a) —
+     pinching to exactly r·(b−a) at rx = ry, agreeing with rung 2.
+
+   Rung 1, Tier 1 (CONDITIONAL, ADR-0001 idiom — named Section hypotheses):
      ellipse length is an incomplete elliptic integral of the second kind;
      no in-corpus integration machinery exists (the #508 grilling fixed this
      tier's contract).  The primitive E : R → R enters as a Section variable
@@ -321,7 +337,7 @@ Theorem ellipse_circular_is_curve_length : forall Oc r rot a b,
 Proof.
   intros Oc r rot a b Hr Hab.
   apply (is_curve_length_ext (fun t => circle_param Oc r (rot + t))).
-  { intro t. cbv beta. unfold ellipse_param, circle_param.
+  { intro t. unfold ellipse_param, circle_param.
     symmetry. apply ellipse_pt_equal_axes. }
   replace (r * (b - a)) with (r * ((rot + b) - (rot + a))) by ring.
   apply (is_curve_length_shift (circle_param Oc r) rot a b).
