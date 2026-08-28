@@ -15,7 +15,7 @@
    arc first as the served member) states that its formula SATISFIES the
    spec, at whatever tier it can reach.
 
-   Proven here (the base facts every obligation leans on):
+   Proven here (the base facts every obligation leans on), all Qed:
      - curve_length_ge_chord : chord <= L      (the lower sandwich half)
      - curve_length_nonneg   : 0 <= L
      - curve_length_unique   : the spec pins L
@@ -76,6 +76,68 @@ Definition rectifiable (g : Curve) (a b : R) : Prop :=
   exists L, is_curve_length g a b L.
 
 (* -------------------------------------------------------------------------- *)
+(* Polyline and chain plumbing.                                               *)
+(* -------------------------------------------------------------------------- *)
+
+(* Splitting a polyline at a listed waypoint: an exact decomposition. *)
+Lemma polyline_len_app_mid : forall (g : Curve) xs t u ys,
+  polyline_len g t (xs ++ u :: ys)
+  = polyline_len g t (xs ++ [u]) + polyline_len g u ys.
+Proof.
+  intros g xs; induction xs as [|v xs IH]; intros t u ys; simpl.
+  - lra.
+  - rewrite IH. lra.
+Qed.
+
+(* Rerouting the final vertex from v to w costs at most dist (g v) (g w):
+   the triangle inequality lifted along the polyline. *)
+Lemma polyline_len_last_triangle : forall (g : Curve) xs t v w,
+  polyline_len g t (xs ++ [w])
+  <= polyline_len g t (xs ++ [v]) + dist (g v) (g w).
+Proof.
+  intros g xs; induction xs as [|u xs IH]; intros t v w; simpl.
+  - pose proof (dist_triangle (g t) (g v) (g w)). lra.
+  - specialize (IH u v w). lra.
+Qed.
+
+(* Chains concatenate through a shared waypoint. *)
+Lemma chain_app : forall xs lo mid ys hi,
+  chain lo xs mid -> chain mid ys hi -> chain lo (xs ++ mid :: ys) hi.
+Proof.
+  induction xs as [|u xs IH]; simpl; intros lo mid ys hi H1 H2.
+  - split; assumption.
+  - destruct H1 as [Hlu H1]. split; [exact Hlu | apply IH; assumption].
+Qed.
+
+(* A chain over [lo, hi] splits at any waypoint m of [lo, hi]. *)
+Lemma chain_split : forall xs lo m hi,
+  lo <= m -> m <= hi -> chain lo xs hi ->
+  exists ys zs, xs = ys ++ zs /\ chain lo ys m /\ chain m zs hi.
+Proof.
+  induction xs as [|u xs IH]; simpl; intros lo m hi Hlom Hmhi Hch.
+  - exists [], []. simpl. repeat split; auto.
+  - destruct Hch as [Hlu Hch].
+    destruct (Rle_dec u m) as [Hum | Hum].
+    + destruct (IH u m hi Hum Hmhi Hch) as (ys & zs & Heq & Hy & Hz).
+      exists (u :: ys), zs. subst xs. simpl. repeat split; assumption.
+    + exists [], (u :: xs). simpl.
+      repeat split; try assumption; try reflexivity; lra.
+Qed.
+
+(* The two halves of a split partition over-estimate the whole: only the
+   seam edge changes, and it changes by a triangle inequality. *)
+Lemma polyline_split_le : forall (g : Curve) ys zs a m c,
+  polyline_len g a (ys ++ zs ++ [c])
+  <= polyline_len g a (ys ++ [m]) + polyline_len g m (zs ++ [c]).
+Proof.
+  intros g ys zs a m c.
+  destruct zs as [|w zs]; simpl.
+  - pose proof (polyline_len_last_triangle g ys a m c). lra.
+  - rewrite polyline_len_app_mid.
+    pose proof (polyline_len_last_triangle g ys a m w). lra.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Base facts.                                                                *)
 (* -------------------------------------------------------------------------- *)
 
@@ -83,23 +145,34 @@ Definition rectifiable (g : Curve) (a b : R) : Prop :=
 Lemma inscribed_chord : forall (g : Curve) a b,
   a <= b -> inscribed_len g a b (dist (g a) (g b)).
 Proof.
+  intros g a b Hab. exists []. split.
+  - exact Hab.
+  - simpl. lra.
 Qed.
 
 (* Lower sandwich half: no curve is shorter than its chord. *)
 Theorem curve_length_ge_chord : forall (g : Curve) a b L,
   a <= b -> is_curve_length g a b L -> dist (g a) (g b) <= L.
 Proof.
+  intros g a b L Hab [Hub _].
+  exact (Hub _ (inscribed_chord g a b Hab)).
 Qed.
 
 Theorem curve_length_nonneg : forall (g : Curve) a b L,
   a <= b -> is_curve_length g a b L -> 0 <= L.
 Proof.
+  intros g a b L Hab HL.
+  apply Rle_trans with (dist (g a) (g b)).
+  - apply dist_nonneg.
+  - exact (curve_length_ge_chord g a b L Hab HL).
 Qed.
 
 (* The spec pins its value: lub uniqueness. *)
 Theorem curve_length_unique : forall (g : Curve) a b L1 L2,
   is_curve_length g a b L1 -> is_curve_length g a b L2 -> L1 = L2.
 Proof.
+  intros g a b L1 L2 [Hub1 Hlst1] [Hub2 Hlst2].
+  apply Rle_antisym; [apply Hlst1, Hub2 | apply Hlst2, Hub1].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -111,6 +184,33 @@ Theorem curve_length_additive : forall (g : Curve) a b c L1 L2,
   is_curve_length g a b L1 -> is_curve_length g b c L2 ->
   is_curve_length g a c (L1 + L2).
 Proof.
+  intros g a b c L1 L2 Hab Hbc [Hub1 Hlst1] [Hub2 Hlst2].
+  split.
+  - (* L1 + L2 bounds every inscribed polyline of [a, c]: split its chain
+       at b, pay one triangle inequality at the seam. *)
+    intros l (ts & Hch & Hl). subst l.
+    destruct (chain_split ts a b c Hab Hbc Hch) as (ys & zs & Heq & Hy & Hz).
+    subst ts. rewrite <- app_assoc.
+    eapply Rle_trans; [apply polyline_split_le with (m := b) |].
+    apply Rplus_le_compat.
+    + apply Hub1. exists ys. split; [exact Hy | reflexivity].
+    + apply Hub2. exists zs. split; [exact Hz | reflexivity].
+  - (* Least: any bound M of [a, c] bounds every concatenated pair, and the
+       two lub minimalities peel off L1 then L2 — no epsilon needed. *)
+    intros M HM.
+    assert (Hstep : forall l2, inscribed_len g b c l2 -> L1 <= M - l2).
+    { intros l2 (ts2 & Hc2 & Hl2). subst l2.
+      apply Hlst1. intros l1 (ts1 & Hc1 & Hl1). subst l1.
+      assert (Hin : inscribed_len g a c
+        (polyline_len g a (ts1 ++ [b]) + polyline_len g b (ts2 ++ [c]))).
+      { exists (ts1 ++ b :: ts2). split.
+        - apply chain_app; assumption.
+        - rewrite <- app_assoc. simpl. symmetry.
+          apply polyline_len_app_mid. }
+      specialize (HM _ Hin). lra. }
+    assert (HL2 : L2 <= M - L1).
+    { apply Hlst2. intros l2 Hl2m. specialize (Hstep _ Hl2m). lra. }
+    lra.
 Qed.
 
 Print Assumptions curve_length_additive.
