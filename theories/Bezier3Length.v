@@ -244,6 +244,8 @@ Proof.
   - exact Hch.
 Qed.
 
+(* WITNESS {"claimId":"bezier3length-bezier3-length-upper","topic":"metric","lemma":"bezier3_length_upper","title":"Cubic Bezier metric length <= 3 * max control-net edge * (b-a) on [0,1]","file":"theories/Bezier3Length.v"} *)
+
 Theorem bezier3_length_upper : forall p0 p1 p2 p3 a b L,
   0 <= a -> a <= b -> b <= 1 ->
   is_curve_length (bezier3_param p0 p1 p2 p3) a b L ->
