@@ -79,6 +79,7 @@ Section ClothoidUnitSpeedTier.
   Qed.
 
   (* Headline: arc-length parameterization means length = ed − sd, exactly. *)
+  (* WITNESS {"claimId":"clothoidlength-clothoid-arclength-is-curve-length","topic":"metric","lemma":"clothoid_arclength_is_curve_length","title":"Arc-length-parameterized clothoid has metric length exactly ed - sd (K-token closed form)","file":"theories/ClothoidLength.v"} *)
   Theorem clothoid_arclength_is_curve_length :
     is_curve_length g sd ed (ed - sd).
   Proof.

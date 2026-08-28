@@ -83,6 +83,8 @@ Proof.
   f_equal; field.
 Qed.
 
+(* WITNESS {"claimId":"bezier3length-bezier3-elevation-length","topic":"metric","lemma":"bezier3_elevation_length","title":"Degree elevation is exact: the elevated cubic carries the same is_curve_length values as the quadratic","file":"theories/Bezier3Length.v"} *)
+
 Theorem bezier3_elevation_length : forall p0 p1 p2 a b L,
   is_curve_length (bezier2_param p0 p1 p2) a b L <->
   is_curve_length
