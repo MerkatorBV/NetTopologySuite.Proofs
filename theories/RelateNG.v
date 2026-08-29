@@ -35,7 +35,9 @@
      - RelateNGComplete.v    leftover-decline finding (#577 / 522-j):
          completeness is FALSE (`triangle_pair_regime_incomplete_tjunction`);
          hard pairs that do classify are cited, not re-proved;
-         domain boundary for the both-CCW certificates.  Next
+         domain boundary for the both-CCW certificates.  Filtered
+         retry (#522 / 522-m): excluding the T-junction 12-tuple,
+         completeness is still FALSE (obtuse-at-v).  Next
          certificate specs (T-junction, obtuse-at-v) are not invented.
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
