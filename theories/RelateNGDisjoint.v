@@ -37,6 +37,8 @@
      Assisted-by: Cursor Agent
    ========================================================================== *)
 
+(* WITNESS {"claimId":"522-c","topic":"relate","lemma":"triangle_pair_regime_disjoint","title":"TPR_Disjoint reachable at relate bar 1 via a separating-edge certificate","file":"theories/RelateNGDisjoint.v","witness":"522-c-disjoint-bar1","board":"#571"} *)
+
 From Stdlib Require Import Reals List Lia Lra Ranalysis Bool Btauto.
 From NTS.Proofs Require Import Real.
 From NTS.Proofs Require Import DE9IM Distance Overlay Segment RelateBoundary
@@ -364,7 +366,7 @@ Proof.
 Qed.
 
 (* WITNESS topic: relate · claimId: 522-c · witness: 522-c-disjoint-bar1 *)
-(* WITNESS {"claimId":"522-c","topic":"relate","lemma":"triangle_pair_regime_disjoint","title":"TPR_Disjoint reachable at relate bar 1 via a separating-edge certificate","file":"theories/RelateNGDisjoint.v"} *)
+(* WITNESS {"claimId":"522-c","topic":"relate","lemma":"triangle_pair_regime_disjoint","title":"TPR_Disjoint reachable at relate bar 1 via a separating-edge certificate","file":"theories/RelateNGDisjoint.v","witness":"522-c-disjoint-bar1","board":"#571"} *)
 
 Theorem separated_b_partial_separated :
   forall ax ay bx by_ cx cy dx dy ex ey fx fy,
