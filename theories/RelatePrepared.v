@@ -169,16 +169,22 @@ Proof.
   intros pg g [Hc Htr] Ea.
   unfold evaluate. rewrite Hc, Ea.
   unfold evaluate_from_tri_cache. rewrite Htr.
-  destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta;
-    destruct (triangle_geometry_points g) as [tb|] eqn:Etb;
-    try reflexivity.
+  destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta.
+  2: reflexivity.
   destruct ta as [[[[[ax ay] bx] by_] cx] cy].
+  destruct (triangle_geometry_points g) as [tb|] eqn:Etb.
+  2: reflexivity.
   destruct tb as [[[[[dx dy] ex] ey] fx] fy].
   destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
-    eqn:Tr; try reflexivity.
-  rewrite (relate_extracted_triangles (pg_geom pg) g ax ay bx by_ cx cy
-             dx dy ex ey fx fy Ea Eta Etb).
-  rewrite Tr, tris_relate_disjoint_eq. reflexivity.
+    eqn:Tr.
+  - rewrite (relate_extracted_triangles (pg_geom pg) g ax ay bx by_ cx cy
+               dx dy ex ey fx fy Ea Eta Etb).
+    rewrite Tr, tris_relate_disjoint_eq. reflexivity.
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
 Qed.
 
 Theorem evaluate_coherent_agrees :
@@ -195,10 +201,14 @@ Proof.
     rewrite Eb.
     destruct bb as [[[bx0 by0] bx1] by1].
     destruct (rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1)
-      eqn:Rr; try reflexivity.
-    rewrite (relate_extracted_rects (pg_geom pg) g ax0 ay0 ax1 ay1
-               bx0 by0 bx1 by1 Ea Eb).
-    rewrite Rr, rects_relate_disjoint_eq. reflexivity.
+      eqn:Rr.
+    - rewrite (relate_extracted_rects (pg_geom pg) g ax0 ay0 ax1 ay1
+                 bx0 by0 bx1 by1 Ea Eb).
+      rewrite Rr, rects_relate_disjoint_eq. reflexivity.
+    - reflexivity.
+    - reflexivity.
+    - reflexivity.
+    - reflexivity.
   - (* A is a rect, B is not: rect arm misses. A cannot also be a
        triangle, so the tri cache is None and evaluate falls through. *)
     destruct Hc as [Hcache Htr].
