@@ -16,7 +16,11 @@
    at the end of the file (`TPR_TouchEdge` keeps its frozen shared-edge
    vocabulary and is deliberately outside that exclusivity block).
    Ray parity never appears here; it enters only via the sanctioned
-   ADR-0003 bridge (RelateNGTouchCells).
+   ADR-0003 bridge (RelateNGTouchCells).  The five names are not a
+   partition of all triangle pairs: a partial-edge kiss that is neither
+   a full shared edge nor a single shared vertex satisfies none of
+   them.  That pair is a decline (`TPR_Unsupported`), not a missing
+   sixth regime.
 
    Honest scoping: triangles only (convex, no holes). Full pointset
    satisfaction and noding bridge in RelateNG.
@@ -248,7 +252,11 @@ Definition triangles_touch_on_shared_edge (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
      CW-listed B passes the detector and fails the B-side guard here.  The
      detector -> predicate bridge (via the convexity lift, adding B's CCW
      hypothesis) is later #522 rungs' work, deliberately not claimed
-     here. *)
+     here.
+   - The five names are not a partition of all pairs.  A partial-edge
+     kiss that is not a full shared edge and not a single vertex
+     satisfies none of them; the decline path (`TPR_Unsupported`)
+     already exists. *)
 
 Definition triangles_separated (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
   tri_ccw a1 a2 a3 /\ tri_ccw b1 b2 b3 /\
@@ -290,10 +298,12 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
 (* Pairwise exclusivity.                                                      *)
 (*                                                                            *)
 (* All six pairs among {separated, overlap, contains, touch-at-vertex} are    *)
-(* mutually exclusive.  `TPR_TouchEdge` is deliberately absent: its predicate *)
-(* is the frozen shared-edge vocabulary (RelateNGTouch anchors) and its       *)
-(* exclusivity against the gtri-shaped predicates is not a cheap consequence  *)
-(* of the definitions; that is later #522 rungs' work, not #567's.            *)
+(* mutually exclusive.  That block is not a partition of all pairs: a         *)
+(* partial-edge kiss can miss every named arm and still decline.              *)
+(* `TPR_TouchEdge` is deliberately absent: its predicate is the frozen        *)
+(* shared-edge vocabulary (RelateNGTouch anchors) and its exclusivity         *)
+(* against the gtri-shaped predicates is not a cheap consequence of the       *)
+(* definitions; that is later #522 rungs' work, not #567's.                   *)
 (* -------------------------------------------------------------------------- *)
 
 Theorem separated_not_overlap : forall a1 a2 a3 b1 b2 b3,
@@ -499,8 +509,22 @@ Proof. exact dispatch_pair_separated. Qed.
 (*                                                                            *)
 (* Each new predicate holds of a concrete pair, so none is `False` in         *)
 (* disguise -- the dual of the old vacuity.  Together with the flipped        *)
-(* witnesses above, every strict/closed sign in the definitions is pinned:    *)
-(* mutating one breaks a lemma in this file (see the #567 ledger row).        *)
+(* witnesses above, every strict/closed sign in the definitions is pinned.    *)
+(*                                                                            *)
+(* Mutation replay (in-tree, #567; not an ADR-0004 mint).  Flip exactly one   *)
+(* comparison below, rebuild this file, then restore the sign.  Each flip     *)
+(* loses Qed on a named lemma here:                                           *)
+(*   1. `in_tri_interior`: `0 < gtri` → `0 <= gtri`                           *)
+(*      pin: `vertex_not_in_tri_interior`                                     *)
+(*   2. `in_tri_closure`: `0 <= gtri` → `0 < gtri`                            *)
+(*      pin: `vertex_in_tri_closure`                                          *)
+(*   3. `in_tri_exterior`: `gtri < 0` → `gtri <= 0`                           *)
+(*      pin: `in_tri_exterior_not_closure`                                    *)
+(*   4. `triangle_a_contains_b`: A's `in_tri_closure` → `in_tri_interior`     *)
+(*      pin: `contains_is_closed_containment`                                 *)
+(*   5. `triangles_touch_at_vertex`: `pt = v` uniqueness over closures;       *)
+(*      flip either closure test to interior and the closed-meet pin moves.   *)
+(*      pin: `touch_vertex_pair_touches` (closed meet at the shared vertex)   *)
 (* -------------------------------------------------------------------------- *)
 
 (* Unit triangle vs its translate by (1/4, 1/4): common interior point,
