@@ -11,8 +11,11 @@
    `TPR_Unsupported`.  Obtuse-at-v is the other leftover family named
    in Core; it is not invented as a certificate here.
 
-   Hard pairs that DO classify are cited, not re-proved: disjoint
-   (#571), overlap (#570), vertex-touch (#572), shared-edge touch.
+   Hard pairs that DO classify are cited, not re-proved.  Catalog
+   ids, not the older witness-issue shorthand: disjoint is #571 /
+   522-c (the #530 sentinel pair); overlap is #570 / 522-b (the
+   #567 overlap pair); vertex-touch is #572 / 522-i; shared-edge
+   touch is the existing `TPR_TouchEdge` pin, not a #522 subtask.
 
    Domain boundary: the three both-CCW certificates (`overlap_b`,
    `separated_b`, `touch_vertex_b`) are false when either orientation
@@ -94,8 +97,12 @@ Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Hard-pair family that does classify.  Cite existing, do not re-prove.      *)
+(* Catalog: disjoint #571 / 522-c on the #530 sentinel; overlap #570 /        *)
+(* 522-b on the #567 pair; vertex-touch #572 / 522-i; shared-edge touch       *)
+(* is the pre-#522 `TPR_TouchEdge` pin.                                       *)
 (* -------------------------------------------------------------------------- *)
 
+(* #571 / 522-c: the #530 sentinel `(0,0)(1,0)(0,1)` vs `(2,0)(3,0)(2,1)`. *)
 Lemma classified_disjoint_pair :
   triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Disjoint.
 Proof.
@@ -103,6 +110,7 @@ Proof.
            dispatch_pair_separated_b).
 Qed.
 
+(* #570 / 522-b: the #567 overlap pair. *)
 Lemma classified_overlap_pair :
   triangle_pair_regime 0 0 1 0 0 1 (1/4) (1/4) (5/4) (1/4) (1/4) (5/4)
     = TPR_Overlap.
@@ -111,6 +119,7 @@ Proof.
            (1/4) (1/4) (5/4) (1/4) (1/4) (5/4) overlap_ex_overlap_b).
 Qed.
 
+(* #572 / 522-i: ticket vertex-touch pair. *)
 Lemma classified_touchvertex_pair :
   triangle_pair_regime 0 0 2 0 0 2 0 0 (-2) 0 0 (-2) = TPR_TouchVertex.
 Proof.
@@ -118,6 +127,7 @@ Proof.
            0 0 (-2) 0 0 (-2) touchvertex_ex_touch_vertex_b).
 Qed.
 
+(* Pre-#522 shared-edge pin, not a #522 subtask. *)
 Lemma classified_touch_pair :
   triangle_pair_regime 0 0 1 0 0 1 1 0 1 1 0 1 = TPR_TouchEdge.
 Proof.
