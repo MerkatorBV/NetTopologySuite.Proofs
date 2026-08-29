@@ -315,7 +315,7 @@ Proof.
     apply Rle_lt_trans with (gsC 2 0 2 1 (mkPoint (2 / 3) 0)).
     + apply (gtri_le_gsC 2 0 3 0 2 1 (mkPoint (2 / 3) 0)).
     + rewrite HC. simpl. lra.
-  - intros Heq. injection Heq as Hx Hy. lra.
+  - intros Heq. apply (f_equal px) in Heq. simpl in Heq. lra.
 Qed.
 
 Lemma sentinel_eb_dim1 : gtri_cell_dim1 sentinel_gtri_eb.
@@ -332,7 +332,7 @@ Proof.
     + apply (gtri_le_gsB 0 0 1 0 0 1 (mkPoint (8 / 3) 0)).
     + rewrite HB. simpl. lra.
   - exists (2 / 3). repeat split; try lra; simpl; field.
-  - intros Heq. injection Heq as Hx Hy. lra.
+  - intros Heq. apply (f_equal px) in Heq. simpl in Heq. lra.
 Qed.
 
 Definition sentinel_ee_center : Point := mkPoint 0 (-1).
