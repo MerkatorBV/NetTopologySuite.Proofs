@@ -9,7 +9,8 @@
    point, and "the boundary carries dimension 1" needs two distinct
    points on a segment.  This module supplies those enablers.  It does
    not remint a matrix fill: `aa_matrix_disjoint` still has empty IE
-   (`None`).  That gap is #573 / 522-d.
+   (`None`).  Nine gtri cells of FF2FF1212 are #573 / 522-d;
+   the classifier pointer remint is #575.
 
    Green (all Qed):
      - a strict-`gtri` point has an explicit open disk of strict points
