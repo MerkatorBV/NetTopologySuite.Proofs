@@ -821,6 +821,7 @@ Proof.
     - apply both_strict_pos_b_false_fst.
       unfold vec_sum_from, side_dot. cbn [px py]. lra. }
   rewrite HA1, HA2, HA3.
+  rewrite !orb_false_r, andb_false_r.
   reflexivity.
 Qed.
 
