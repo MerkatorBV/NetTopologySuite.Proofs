@@ -202,13 +202,13 @@ Proof.
     destruct bb as [[[bx0 by0] bx1] by1].
     destruct (rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1)
       eqn:Rr.
-    - rewrite (relate_extracted_rects (pg_geom pg) g ax0 ay0 ax1 ay1
+    + rewrite (relate_extracted_rects (pg_geom pg) g ax0 ay0 ax1 ay1
                  bx0 by0 bx1 by1 Ea Eb).
       rewrite Rr, rects_relate_disjoint_eq. reflexivity.
-    - reflexivity.
-    - reflexivity.
-    - reflexivity.
-    - reflexivity.
+    + reflexivity.
+    + reflexivity.
+    + reflexivity.
+    + reflexivity.
   - (* A is a rect, B is not: rect arm misses. A cannot also be a
        triangle, so the tri cache is None and evaluate falls through. *)
     destruct Hc as [Hcache Htr].
