@@ -26,6 +26,10 @@
      - RelateNGDisjoint.v    TPR_Disjoint regime at bar 1 (#571 / 522-c)
          (`triangle_pair_regime_disjoint`; soundness
          `separated_b_triangles_separated` via a supporting edge).
+     - RelateNGTouchVertex.v TPR_TouchVertex regime at bar 1 (#572 / 522-i)
+         (`triangle_pair_regime_touchvertex`; soundness
+         `touch_vertex_b_triangles_touch` via a line through the
+         shared vertex).
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation
@@ -65,6 +69,7 @@ From NTS.Proofs Require Export
   RelateNGContains
   RelateNGOverlap
   RelateNGDisjoint
+  RelateNGTouchVertex
   RelateNGTouch
   RelateNGTouchRED
   RelateNGTouchCells

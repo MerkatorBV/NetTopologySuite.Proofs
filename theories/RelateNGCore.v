@@ -357,17 +357,90 @@ Definition separated_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
       (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   else false else false.
 
+(* Vertex-touch certificate (#572 / claimId 522-i).  A shared vertex `v`
+   plus a separating line through `v`: the normal is the sum of one
+   triangle's remaining legs (`(a2-v)+(a3-v)`), both of that triangle's
+   remaining vertices are strictly on the positive side, and both of the
+   other triangle's remaining vertices are strictly on the negative
+   side (pure `Rlt_dec` on the same affine side function the disjoint
+   certificate uses).  Exactly one A-vertex is a B-vertex, so a shared
+   edge stays on `touch_edge_b`.  Sound-but-partial: obtuse-at-`v` pairs
+   and slivers that also overlap are rejected.  Completeness is later
+   #522. *)
+Definition is_vertex_b (v p q r : Point) : bool :=
+  point_eqb v p || point_eqb v q || point_eqb v r.
+
+Definition others_fst (v p q r : Point) : Point :=
+  if point_eqb v p then q else if point_eqb v q then p else p.
+
+Definition others_snd (v p q r : Point) : Point :=
+  if point_eqb v p then r else if point_eqb v q then r else q.
+
+Definition side_dot (v n q : Point) : R :=
+  (px q - px v) * px n + (py q - py v) * py n.
+
+Definition vec_sum_from (v a b : Point) : Point :=
+  mkPoint (px a + px b - 2 * px v) (py a + py b - 2 * py v).
+
+Definition both_strict_pos_b (v n p q : Point) : bool :=
+  (if Rlt_dec 0 (side_dot v n p) then true else false)
+  && (if Rlt_dec 0 (side_dot v n q) then true else false).
+
+Definition both_strict_neg_b (v n p q : Point) : bool :=
+  (if Rlt_dec (side_dot v n p) 0 then true else false)
+  && (if Rlt_dec (side_dot v n q) 0 then true else false).
+
+Definition cone_separates_b (v a1 a2 b1 b2 : Point) : bool :=
+  let nA := vec_sum_from v a1 a2 in
+  let nB := vec_sum_from v b1 b2 in
+  (both_strict_pos_b v nA a1 a2 && both_strict_neg_b v nA b1 b2)
+  || (both_strict_pos_b v nB b1 b2 && both_strict_neg_b v nB a1 a2).
+
+Definition exactly_one_shared_from_a (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  let s1 := is_vertex_b a1 b1 b2 b3 in
+  let s2 := is_vertex_b a2 b1 b2 b3 in
+  let s3 := is_vertex_b a3 b1 b2 b3 in
+  (s1 && negb s2 && negb s3)
+  || (negb s1 && s2 && negb s3)
+  || (negb s1 && negb s2 && s3).
+
+Definition touch_vertex_from_v (v a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  is_vertex_b v a1 a2 a3
+  && is_vertex_b v b1 b2 b3
+  && cone_separates_b v
+       (others_fst v a1 a2 a3) (others_snd v a1 a2 a3)
+       (others_fst v b1 b2 b3) (others_snd v b1 b2 b3).
+
+Definition touch_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    exactly_one_shared_from_a
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && (touch_vertex_from_v (mkPoint ax ay)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || touch_vertex_from_v (mkPoint bx by_)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || touch_vertex_from_v (mkPoint cx cy)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
+  else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
-   the vertex-stab overlap certificate, and a separating-edge disjoint
-   certificate, and DECLINES on everything else.
+   the vertex-stab overlap certificate, a separating-edge disjoint
+   certificate, and a vertex-touch certificate, and DECLINES on
+   everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
    two genuinely overlapping triangles -- a supported input pair -- were
    classified disjoint and filled with `aa_matrix_disjoint`.  The default is
    TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
-   disjoint is reachable when `separated_b` fires (#571); pairs neither
-   certificate covers (pure lens, vertex-touch) still decline. *)
+   disjoint is reachable when `separated_b` fires (#571); vertex-touch is
+   reachable when `touch_vertex_b` fires (#572); pairs no certificate
+   covers (pure lens, partial-edge kiss) still decline. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -378,6 +451,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_Overlap
   else if separated_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Disjoint
+  else if touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_TouchVertex
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

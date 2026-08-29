@@ -16,8 +16,8 @@
 
    Earlier classifier branches are derived false (not assumed).  Pairs
    whose closures miss without a vertex-strict supporting edge
-   (vertex-touch, partial-edge kiss) still decline — completeness is
-   later #522.
+   (partial-edge kiss) still decline — completeness is #577.
+   Vertex-touch is #572.
 
    Frozen anchors stay untouched: `touch_int_ext_exclusion` and the
    II-guard maximality refutation.  `triangles_touch_on_shared_edge`
@@ -521,8 +521,10 @@ Proof.
   destruct (overlap_b ax ay bx by_ cx cy dx dy ex ey fx fy);
     [ discriminate | ].
   destruct (separated_b ax ay bx by_ cx cy dx dy ex ey fx fy) eqn:Hsep;
-    [ | discriminate ].
-  exact (separated_b_triangles_separated _ _ _ _ _ _ _ _ _ _ _ _ Hsep).
+    [ exact (separated_b_triangles_separated _ _ _ _ _ _ _ _ _ _ _ _ Hsep)
+    | ].
+  destruct (touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+    discriminate.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -626,55 +628,98 @@ Proof.
   rewrite E6. reflexivity.
 Qed.
 
-(* Vertex-touch pair still declines: A = (0,0)(1,0)(0,1),
-   B = (1,0)(2,0)(2,1) share only the vertex (1,0).  Completeness of
-   the vertex-touch regime is #572. *)
-Lemma vertex_touch_pair_unsupported :
-  triangle_pair_regime 0 0 1 0 0 1 1 0 2 0 2 1 = TPR_Unsupported.
+(* Partial-edge kiss / T-junction still declines: A = (0,0)(2,0)(0,1),
+   B = (1,0)(3,0)(2,1) share a boundary segment but no vertex and no
+   full edge.  Completeness of leftover declines is #577.  The former
+   vertex-touch pin now classifies as TPR_TouchVertex (#572). *)
+Lemma tjunction_no_separator :
+  some_edge_separates_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint 3 0) (mkPoint 2 1) = false.
+Proof.
+  unfold some_edge_separates_b.
+  rewrite (edge_separates_b_false_l (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+             (mkPoint 1 0) (mkPoint 3 0) (mkPoint 2 1)).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  rewrite (edge_separates_b_false_l (mkPoint 2 0) (mkPoint 0 1) (mkPoint 0 0)
+             (mkPoint 1 0) (mkPoint 3 0) (mkPoint 2 1)).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  rewrite (edge_separates_b_false_l (mkPoint 0 1) (mkPoint 0 0) (mkPoint 2 0)
+             (mkPoint 1 0) (mkPoint 3 0) (mkPoint 2 1)).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  rewrite (edge_separates_b_false_l (mkPoint 1 0) (mkPoint 3 0) (mkPoint 2 1)
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  rewrite (edge_separates_b_false_l (mkPoint 3 0) (mkPoint 2 1) (mkPoint 1 0)
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  assert (E6 : edge_separates_b (mkPoint 2 1) (mkPoint 1 0) (mkPoint 3 0)
+                 (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1) = false).
+  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
+    destruct (Rlt_dec (_ * _) 0) as [_ | Hn];
+      [ | exfalso; apply Hn; lra ].
+    destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
+      [ exfalso; lra | reflexivity ]. }
+  rewrite E6. reflexivity.
+Qed.
+
+Lemma tjunction_pair_unsupported :
+  triangle_pair_regime 0 0 2 0 0 1 1 0 3 0 2 1 = TPR_Unsupported.
 Proof.
   unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
   cbn [px py].
   repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
   unfold contains_b.
-  assert (Hcb : gtri 0 0 1 0 0 1 (mkPoint 2 0) <= 0).
+  assert (Hcb : gtri 0 0 2 0 0 1 (mkPoint 1 0) <= 0).
   { unfold gtri.
-    assert (H : gsA 0 0 1 0 (mkPoint 2 0) = 0) by (unfold gsA; simpl; ring).
+    assert (H : gsA 0 0 2 0 (mkPoint 1 0) = 0) by (unfold gsA; simpl; ring).
     rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 1 0))) as [Hlt | _];
-    [ exfalso;
-      pose proof (gtri_at_own_vertex_b_le0 0 0 1 0 0 1); lra | ].
-  unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gdbl 1 0 2 0 2 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 1 0))) as [H1 | _];
-    [ exfalso; pose proof (gtri_at_own_vertex_b_le0 0 0 1 0 0 1); lra | ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [H2 | _];
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint 1 0))) as [Hlt | _];
     [ exfalso; lra | ].
-  assert (H21 : gtri 0 0 1 0 0 1 (mkPoint 2 1) < 0).
-  { eapply Rle_lt_trans; [ apply (gtri_le_gsB 0 0 1 0 0 1 (mkPoint 2 1)) | ].
+  unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 1 0 3 0 2 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint 1 0))) as [H1 | _];
+    [ exfalso; lra | ].
+  assert (H30 : gtri 0 0 2 0 0 1 (mkPoint 3 0) <= 0).
+  { unfold gtri.
+    assert (H : gsA 0 0 2 0 (mkPoint 3 0) = 0) by (unfold gsA; simpl; ring).
+    rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint 3 0))) as [H2 | _];
+    [ exfalso; lra | ].
+  assert (H21 : gtri 0 0 2 0 0 1 (mkPoint 2 1) < 0).
+  { eapply Rle_lt_trans; [ apply (gtri_le_gsB 0 0 2 0 0 1 (mkPoint 2 1)) | ].
     unfold gsB; cbn [px py]; lra. }
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 1))) as [H3 | _];
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint 2 1))) as [H3 | _];
     [ exfalso; lra | ].
   unfold separated_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gdbl 1 0 2 0 2 1)) as [_ | Hn];
+  destruct (Rlt_dec 0 (gdbl 1 0 3 0 2 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
-  rewrite vertex_touch_no_separator. reflexivity.
+  rewrite tjunction_no_separator.
+  unfold touch_vertex_b, exactly_one_shared_from_a, is_vertex_b, point_eqb.
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 1 0 3 0 2 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  reflexivity.
 Qed.
 
-Lemma relate_vertex_touch_pair_no_predicate :
+Lemma relate_tjunction_pair_no_predicate :
   forall r : RelatePredicate,
-    ~ predicate_holds r (relate (triangle_geometry 0 0 1 0 0 1)
-                                (triangle_geometry 1 0 2 0 2 1)).
+    ~ predicate_holds r (relate (triangle_geometry 0 0 2 0 0 1)
+                                (triangle_geometry 1 0 3 0 2 1)).
 Proof.
   intros r.
   rewrite relate_on_triangles_dispatches.
-  rewrite vertex_touch_pair_unsupported.
+  rewrite tjunction_pair_unsupported.
   unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
   exact (im_unsupported_no_predicate r).
 Qed.
@@ -695,4 +740,4 @@ Print Assumptions triangle_pair_regime_disjoint.
 Print Assumptions separated_b_triangles_separated.
 Print Assumptions triangle_pair_regime_disjoint_sound.
 Print Assumptions relate_triangle_disjoint_ex.
-Print Assumptions relate_vertex_touch_pair_no_predicate.
+Print Assumptions relate_tjunction_pair_no_predicate.
