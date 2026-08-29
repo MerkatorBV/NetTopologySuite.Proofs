@@ -36,11 +36,21 @@ theories/ArcTraversalBridge.v
 # external witness yet; the oracle's Carlson-gated quadrature is the
 # differential witness).  3-axiom — no atan2.
 theories/EllipseLength.v
+# #508 ellipse P1: Technique-park discharge of H_E_chord / H_E_approx.
+# Circular slice rx=ry inhabits both hypotheses at E(t)=r·t (Taylor
+# envelope).  General elliptic-E integrand is named (speed² sandwich) and
+# remains parked.  No closed form invented.  3-axiom.
+theories/EllipseLength_E.v
 # #508 Bezier rung 1: the cubic Bezier parameterization (oracle B token)
 # against the CurveLength spec.  Degree-elevation exactness (Bible A1) as an
 # is_curve_length iff, and the control-net Lipschitz upper bound
 # L <= 3·max(net edge)·(b−a) on [a,b] ⊆ [0,1].  3-axiom.
 theories/Bezier3Length.v
+# #508 Bézier P0: tight control-polygon bound L ≤ |d0|+|d1|+|d2| via the
+# weighted modulus G (same divided-difference factorization, edges kept
+# separate).  Strictly tighter than 3·max unless the net edges are equal.
+# 3-axiom.
+theories/Bezier3Polygon.v
 # #508 clothoid rung 1: the K-token clothoid is parameterized BY arc length,
 # so its exact metric length over [sd, ed] is ed − sd.  ADR-0001 conditional
 # idiom (as ClothoidResidual.v): unit-speed contract as named Section
@@ -48,12 +58,26 @@ theories/Bezier3Length.v
 # ArcRectifiable's generic primitive engine at F = id.  Discharge lane:
 # clothoid-halley-coq (Coquelicot).  3-axiom.
 theories/ClothoidLength.v
+# #508 clothoid P1: windowed unit-speed discharge.  In-corpus inhabitant
+# is the unit-speed straight line (chord = gap).  Euler-spiral Fresnel
+# remains clothoid-halley-coq / ADR-0001 Technique park; never global.
+# 3-axiom.
+theories/ClothoidLength_unit.v
 # #508 NURBS rung 1: the degree-2 single-span N token (rational quadratic
 # Bezier, the conic form) against the CurveLength spec.  Equal-weights
 # degeneration as an is_curve_length iff (chained to the elevated cubic),
 # and the weight-conditioned control-net Lipschitz bound
 # L <= 2*(wmax/wmin)^2 * max(net edge) * (b−a) on [a,b] ⊆ [0,1].  3-axiom.
 theories/NurbsQuadraticLength.v
+# #508 NURBS P1: general degree (equal-weight rational cubic ↔ polynomial
+# cubic), knot-span additivity (curve_length_additive), and the
+# conditional exact primitive through curve_length_of_primitive.
+# Single-span oracle N.  No ExactNurbsSegment.  3-axiom.
+theories/NurbsGeneralLength.v
+# #508 arc P2 leftovers from #552: valid_arc ⇒ arc_sweep ≠ 0, and
+# arc_mid is a parameterized circumcircle point.  atan2 lane, 4-axiom
+# (docs/audit-exceptions.txt).  Does not start a new 64-a r·θ.
+theories/ArcMidSweep.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v
