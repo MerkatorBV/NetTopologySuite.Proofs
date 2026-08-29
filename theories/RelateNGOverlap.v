@@ -987,6 +987,8 @@ Proof.
   destruct (overlap_b ax ay bx by_ cx cy dx dy ex ey fx fy) eqn:Hov.
   - exact (overlap_b_partial_overlap _ _ _ _ _ _ _ _ _ _ _ _ Hov).
   - destruct (separated_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+      [ discriminate | ].
+    destruct (touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
       discriminate.
 Qed.
 
