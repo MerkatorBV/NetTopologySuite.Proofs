@@ -2769,6 +2769,11 @@ theories/RelateNGRect.v
 # both-CCW T-junction still emits TPR_Unsupported.  Cites existing
 # classified hard pairs; does not invent the next certificate.
 theories/RelateNGComplete.v
+# #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
+# neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
+# sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE
+# stays empty; that fill is #573 / 522-d).
+theories/RelateNGRingInclusion.v
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
 theories/RelatePrepared.v
