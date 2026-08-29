@@ -525,7 +525,8 @@ Proof.
         rewrite tjunction_pair_unsupported.
         unfold evaluate, evaluate_from_tri_cache. simpl.
         rewrite far_cache_regime_disjoint.
-        unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
+        unfold tris_relate.
+        try rewrite triangle_pair_fill_unsupported_eq.
         exact aa_matrix_disjoint_neq_unsupported.
       * intros [_ Htr]. cbn in Htr.
         apply (f_equal
