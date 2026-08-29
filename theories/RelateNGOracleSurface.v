@@ -55,7 +55,7 @@
 
 (* WITNESS {"claimId":"522-f","topic":"relate","lemma":"triangle_unsupported_token","title":"Triangle decline is the UNSUPPORTED wire token, not a matrix","file":"theories/RelateNGOracleSurface.v","witness":"522-f-unsupported-token","board":"#575"} *)
 
-From Stdlib Require Import Lia List.
+From Stdlib Require Import Reals Lia List.
 From NTS.Proofs Require Import DE9IM RelateMatrixTriangle
   RelateNGCore RelateNGDisjoint.
 
