@@ -455,27 +455,33 @@ Qed.
 Lemma far_cache_separated_b :
   separated_b 10 0 11 0 10 1 1 0 3 0 2 1 = true.
 Proof.
-  unfold separated_b.
+  unfold separated_b, some_edge_separates_b, edge_separates_b, opposite_sides_b.
   destruct (Rlt_dec 0 (gdbl 10 0 11 0 10 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gdbl 1 0 3 0 2 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
-  unfold some_edge_separates_b, edge_separates_b, opposite_sides_b.
   cbn [px py].
+  (* (10,0)-(11,0) does not separate (B meets y=0). *)
   destruct (Rlt_dec (cross (mkPoint 10 0) (mkPoint 11 0) (mkPoint 10 1)
                     * cross (mkPoint 10 0) (mkPoint 11 0) (mkPoint 1 0)) 0)
     as [Hbot | _];
     [ exfalso; unfold cross in Hbot; cbn [px py] in Hbot; lra | ].
+  (* (11,0)-(10,1) is same-side of B. *)
   destruct (Rlt_dec (cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 10 0)
                     * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 1 0)) 0)
+    as [Hbot | _];
+    [ exfalso; unfold cross in Hbot; cbn [px py] in Hbot; lra | ].
+  (* Vertical x=10, apex (11,0): B is strictly to the left. *)
+  destruct (Rlt_dec (cross (mkPoint 10 1) (mkPoint 10 0) (mkPoint 11 0)
+                    * cross (mkPoint 10 1) (mkPoint 10 0) (mkPoint 1 0)) 0)
     as [_ | Hn];
     [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
-  destruct (Rlt_dec (cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 10 0)
-                    * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 3 0)) 0)
+  destruct (Rlt_dec (cross (mkPoint 10 1) (mkPoint 10 0) (mkPoint 11 0)
+                    * cross (mkPoint 10 1) (mkPoint 10 0) (mkPoint 3 0)) 0)
     as [_ | Hn];
     [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
-  destruct (Rlt_dec (cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 10 0)
-                    * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 2 1)) 0)
+  destruct (Rlt_dec (cross (mkPoint 10 1) (mkPoint 10 0) (mkPoint 11 0)
+                    * cross (mkPoint 10 1) (mkPoint 10 0) (mkPoint 2 1)) 0)
     as [_ | Hn];
     [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
   reflexivity.
