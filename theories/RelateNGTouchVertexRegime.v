@@ -5,6 +5,12 @@
    headlines, and the ticket / former-decline pins.  The original name
    RelateNGTouchVertex.v is the Require Export umbrella.
 
+   Separating-line machinery is shared with disjoint as a *pattern*
+   (affine side, barycentric lift, strict-at-vertices ⇒
+   strict-on-closure), not as helpers: disjoint's line is an existing
+   edge (`cross` / `opposite_sides_b`); this line is a constructed
+   normal through `v` (`side_dot` / `vec_sum_from`).
+
    No `Admitted`, no `Axiom`, no `Parameter`.
 
    Author: NetTopologySuite.Proofs contributors
@@ -576,7 +582,7 @@ Qed.
 
 (* The headline regime theorem: touch_vertex_b forces TPR_TouchVertex, with
    touch_edge_b, contains_b, overlap_b and separated_b derived false. *)
-(* WITNESS {"claimId":"522-i","topic":"relate","lemma":"triangle_pair_regime_touchvertex","title":"TPR_TouchVertex reachable at relate bar 1 via a line-through-vertex certificate","file":"theories/RelateNGTouchVertex.v","witness":"522-i-touchvertex-bar1","board":"#572"} *)
+(* WITNESS {"claimId":"522-i","topic":"relate","lemma":"triangle_pair_regime_touchvertex","title":"TPR_TouchVertex reachable at relate bar 1 via a line-through-vertex certificate","file":"theories/RelateNGTouchVertexRegime.v","witness":"522-i-touchvertex-bar1","board":"#572"} *)
 Theorem triangle_pair_regime_touchvertex :
   forall ax ay bx by_ cx cy dx dy ex ey fx fy,
     touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy = true ->
@@ -700,11 +706,123 @@ Proof.
   exact vertex_touch_pair_touch_vertex_b.
 Qed.
 
-(* Nudge pin (comment-only; the comparison is in-tree in Core).  Replacing
-   B's third vertex (0,-2) with an interior-to-A point such as (1/2,1/2)
-   (CCW order (0,0)(1/2,1/2)(-2,0)) puts a remaining B-vertex on A's side
-   of nA = (2,2), so `both_strict_neg_b` fails and `touch_vertex_b` is
-   off.  Completeness of the resulting overlap is #570. *)
+Lemma both_strict_neg_b_false_fst : forall v n p q,
+  ~ (side_dot v n p < 0) ->
+  both_strict_neg_b v n p q = false.
+Proof.
+  intros v n p q Hn. unfold both_strict_neg_b.
+  destruct (Rlt_dec (side_dot v n p) 0) as [Hlt | _];
+    [ contradiction | reflexivity ].
+Qed.
+
+Lemma both_strict_pos_b_false_fst : forall v n p q,
+  ~ (0 < side_dot v n p) ->
+  both_strict_pos_b v n p q = false.
+Proof.
+  intros v n p q Hn. unfold both_strict_pos_b.
+  destruct (Rlt_dec 0 (side_dot v n p)) as [Hlt | _];
+    [ contradiction | reflexivity ].
+Qed.
+
+Lemma cone_separates_b_false_of_arms : forall v a1 a2 b1 b2,
+  both_strict_neg_b v (vec_sum_from v a1 a2) b1 b2 = false ->
+  both_strict_pos_b v (vec_sum_from v b1 b2) b1 b2 = false ->
+  cone_separates_b v a1 a2 b1 b2 = false.
+Proof.
+  intros v a1 a2 b1 b2 HnA HnB.
+  unfold cone_separates_b.
+  rewrite HnA, HnB.
+  rewrite andb_false_r, andb_false_l.
+  reflexivity.
+Qed.
+
+Lemma point_eqb_false_of_neq : forall p q,
+  p <> q -> point_eqb p q = false.
+Proof.
+  intros p q Hne.
+  destruct (point_eqb p q) eqn:E; [ | reflexivity ].
+  exfalso. apply Hne, point_eqb_sound, E.
+Qed.
+
+Lemma is_vertex_b_false_of_none : forall v p q r,
+  v <> p -> v <> q -> v <> r ->
+  is_vertex_b v p q r = false.
+Proof.
+  intros v p q r Hp Hq Hr.
+  unfold is_vertex_b.
+  rewrite (point_eqb_false_of_neq v p Hp).
+  rewrite (point_eqb_false_of_neq v q Hq).
+  rewrite (point_eqb_false_of_neq v r Hr).
+  reflexivity.
+Qed.
+
+Lemma mkPoint_neq_px : forall x1 y1 x2 y2,
+  x1 <> x2 -> mkPoint x1 y1 <> mkPoint x2 y2.
+Proof.
+  intros x1 y1 x2 y2 Hn Heq.
+  apply (f_equal px) in Heq. cbn in Heq. contradiction.
+Qed.
+
+Lemma mkPoint_neq_py : forall x1 y1 x2 y2,
+  y1 <> y2 -> mkPoint x1 y1 <> mkPoint x2 y2.
+Proof.
+  intros x1 y1 x2 y2 Hn Heq.
+  apply (f_equal py) in Heq. cbn in Heq. contradiction.
+Qed.
+
+(* Ticket nudge: B's third vertex moved into A's interior.  CCW order
+   (0,0)(1/2,1/2)(-2,0) so the B-CCW guard still holds; the cone fails
+   because (1/2,1/2) sits on A's side of nA = (2,2).  Completeness of
+   the resulting overlap is #570. *)
+Example touchvertex_nudge_off :
+  touch_vertex_b 0 0 2 0 0 2 0 0 (1/2) (1/2) (-2) 0 = false.
+Proof.
+  unfold touch_vertex_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 2)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 (1/2) (1/2) (-2) 0)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  assert (HA2 : touch_vertex_from_v
+            (mkPoint 2 0)
+            (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+            (mkPoint 0 0) (mkPoint (1/2) (1/2)) (mkPoint (-2) 0) = false).
+  { unfold touch_vertex_from_v.
+    rewrite (is_vertex_b_false_of_none
+               (mkPoint 2 0)
+               (mkPoint 0 0) (mkPoint (1/2) (1/2)) (mkPoint (-2) 0)).
+    - rewrite andb_false_r, andb_false_l. reflexivity.
+    - apply mkPoint_neq_px; lra.
+    - apply mkPoint_neq_px; lra.
+    - apply mkPoint_neq_px; lra. }
+  assert (HA3 : touch_vertex_from_v
+            (mkPoint 0 2)
+            (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+            (mkPoint 0 0) (mkPoint (1/2) (1/2)) (mkPoint (-2) 0) = false).
+  { unfold touch_vertex_from_v.
+    rewrite (is_vertex_b_false_of_none
+               (mkPoint 0 2)
+               (mkPoint 0 0) (mkPoint (1/2) (1/2)) (mkPoint (-2) 0)).
+    - rewrite andb_false_r, andb_false_l. reflexivity.
+    - apply mkPoint_neq_py; lra.
+    - apply mkPoint_neq_py; lra.
+    - apply mkPoint_neq_py; lra. }
+  assert (HA1 : touch_vertex_from_v
+            (mkPoint 0 0)
+            (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+            (mkPoint 0 0) (mkPoint (1/2) (1/2)) (mkPoint (-2) 0) = false).
+  { unfold touch_vertex_from_v, others_fst, others_snd.
+    rewrite (point_eqb_complete (mkPoint 0 0) (mkPoint 0 0) eq_refl).
+    rewrite (cone_separates_b_false_of_arms
+               (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+               (mkPoint (1/2) (1/2)) (mkPoint (-2) 0)).
+    - rewrite andb_false_r. reflexivity.
+    - apply both_strict_neg_b_false_fst.
+      unfold vec_sum_from, side_dot. cbn [px py]. lra.
+    - apply both_strict_pos_b_false_fst.
+      unfold vec_sum_from, side_dot. cbn [px py]. lra. }
+  rewrite HA1, HA2, HA3.
+  reflexivity.
+Qed.
 
 Example relate_triangle_touchvertex_ex :
   relate (triangle_geometry 0 0 2 0 0 2)
@@ -732,4 +850,5 @@ Qed.
 Print Assumptions triangle_pair_regime_touchvertex.
 Print Assumptions triangle_pair_regime_touchvertex_sound.
 Print Assumptions relate_triangle_touchvertex_ex.
+Print Assumptions touchvertex_nudge_off.
 

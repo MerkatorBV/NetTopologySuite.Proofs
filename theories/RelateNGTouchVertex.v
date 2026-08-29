@@ -20,6 +20,12 @@
    II-guard maximality refutation.  `triangles_touch_on_shared_edge`
    is not referenced.
 
+   The affine-side / barycentric-lift *pattern* is shared with the
+   disjoint certificate; the helpers are not.  Disjoint uses `cross` /
+   `opposite_sides_b` on an existing edge.  Vertex-touch uses `side_dot`
+   against a constructed normal through `v` — the line need not be an
+   edge.
+
    SPLIT: RelateNGTouchVertexCone.v holds the unpackers, affine cone
    uniqueness, and `touch_vertex_b_triangles_touch`.
    RelateNGTouchVertexRegime.v holds the earlier-branch exclusions,
