@@ -140,14 +140,26 @@ Lemma gsC_affine : forall ax ay cx cy P Q t,
   (1 - t) * gsC ax ay cx cy P + t * gsC ax ay cx cy Q.
 Proof. intros; unfold gsC, convex_combination; simpl; ring. Qed.
 
+Lemma Rmin_ge_both : forall x y z, x <= y -> x <= z -> x <= Rmin y z.
+Proof.
+  intros x y z Hy Hz. unfold Rmin. destruct (Rle_dec y z); lra.
+Qed.
+
 Lemma Rmin_ge_convex : forall a b c d t,
   0 <= t -> t <= 1 ->
   (1 - t) * Rmin a b + t * Rmin c d <=
   Rmin ((1 - t) * a + t * c) ((1 - t) * b + t * d).
 Proof.
-  intros a b c d t Ht0 Ht1. unfold Rmin.
-  destruct (Rle_dec a b); destruct (Rle_dec c d);
-    destruct (Rle_dec ((1 - t) * a + t * c) ((1 - t) * b + t * d)); lra.
+  intros a b c d t Ht0 Ht1.
+  apply Rmin_ge_both.
+  - pose proof (Rmin_l a b). pose proof (Rmin_l c d). nra.
+  - pose proof (Rmin_r a b). pose proof (Rmin_r c d). nra.
+Qed.
+
+Lemma Rmin_le_compat_l : forall x y z, x <= y -> Rmin x z <= Rmin y z.
+Proof.
+  intros x y z Hxy. unfold Rmin.
+  destruct (Rle_dec x z); destruct (Rle_dec y z); lra.
 Qed.
 
 Lemma gtri_concave : forall ax ay bx by_ cx cy P Q t,
@@ -160,8 +172,13 @@ Proof.
   unfold gtri.
   rewrite gsA_affine, gsB_affine, gsC_affine.
   eapply Rle_trans.
-  - apply Rmin_ge_convex; [ exact Ht0 | exact Ht1 ].
-  - apply Rmin_ge_convex; [ exact Ht0 | exact Ht1 ].
+  - apply (Rmin_ge_convex (Rmin (gsA ax ay bx by_ P) (gsB bx by_ cx cy P))
+             (gsC ax ay cx cy P)
+             (Rmin (gsA ax ay bx by_ Q) (gsB bx by_ cx cy Q))
+             (gsC ax ay cx cy Q) t Ht0 Ht1).
+  - apply Rmin_le_compat_l.
+    apply (Rmin_ge_convex (gsA ax ay bx by_ P) (gsB bx by_ cx cy P)
+             (gsA ax ay bx by_ Q) (gsB bx by_ cx cy Q) t Ht0 Ht1).
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -194,8 +211,11 @@ Proof.
   intros ax ay bx by_ cx cy.
   unfold gtri.
   rewrite gsA_centroid3, gsB_centroid3, gsC_centroid3.
-  unfold Rmin. destruct (Rle_dec (gdbl ax ay bx by_ cx cy / 3)
-                                 (gdbl ax ay bx by_ cx cy / 3)); lra.
+  rewrite (Rmin_left (gdbl ax ay bx by_ cx cy / 3)
+                     (gdbl ax ay bx by_ cx cy / 3)) by apply Rle_refl.
+  rewrite (Rmin_left (gdbl ax ay bx by_ cx cy / 3)
+                     (gdbl ax ay bx by_ cx cy / 3)) by apply Rle_refl.
+  reflexivity.
 Qed.
 
 Lemma gtri_centroid3_pos : forall ax ay bx by_ cx cy,
@@ -220,8 +240,9 @@ Proof.
   assert (HB : gsB bx by_ cx cy (mkPoint ax ay) = gdbl ax ay bx by_ cx cy)
     by (unfold gsB, gdbl; simpl; ring).
   rewrite HA, HB, HC.
-  unfold Rmin.
-  destruct (Rle_dec 0 (gdbl ax ay bx by_ cx cy)); lra.
+  rewrite (Rmin_left 0 (gdbl ax ay bx by_ cx cy)) by (apply Rlt_le; exact Hccw).
+  rewrite (Rmin_left 0 0) by apply Rle_refl.
+  reflexivity.
 Qed.
 
 Lemma gtri_at_vertex_b_eq0 : forall ax ay bx by_ cx cy,
@@ -237,8 +258,9 @@ Proof.
   assert (HC : gsC ax ay cx cy (mkPoint bx by_) = gdbl ax ay bx by_ cx cy)
     by (unfold gsC, gdbl; simpl; ring).
   rewrite HA, HB, HC.
-  unfold Rmin.
-  destruct (Rle_dec 0 0); destruct (Rle_dec 0 (gdbl ax ay bx by_ cx cy)); lra.
+  rewrite (Rmin_left 0 0) by apply Rle_refl.
+  rewrite (Rmin_left 0 (gdbl ax ay bx by_ cx cy)) by (apply Rlt_le; exact Hccw).
+  reflexivity.
 Qed.
 
 Lemma gtri_at_vertex_c_eq0 : forall ax ay bx by_ cx cy,
@@ -254,8 +276,9 @@ Proof.
   assert (HA : gsA ax ay bx by_ (mkPoint cx cy) = gdbl ax ay bx by_ cx cy)
     by (unfold gsA, gdbl; simpl; ring).
   rewrite HA, HB, HC.
-  unfold Rmin.
-  destruct (Rle_dec (gdbl ax ay bx by_ cx cy) 0); lra.
+  rewrite (Rmin_right (gdbl ax ay bx by_ cx cy) 0) by (apply Rlt_le; exact Hccw).
+  rewrite (Rmin_left 0 0) by apply Rle_refl.
+  reflexivity.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -298,11 +321,9 @@ Proof.
     by (unfold Rdiv; field; lra).
   unfold Rdiv.
   apply Rmult_lt_0_compat; [ | apply Rinv_0_lt_compat; exact Hd ].
-  assert (0 < 1 + Rabs gc + gc).
-  { destruct (Rle_dec 0 gc) as [Hge | Hlt].
-    - rewrite (Rabs_right gc) by lra. lra.
-    - rewrite (Rabs_left gc) by lra. lra. }
-  nra.
+  destruct (Rle_dec 0 gc) as [Hge | Hn].
+  - rewrite (Rabs_right gc) by lra. nra.
+  - apply Rnot_le_lt in Hn. rewrite (Rabs_left gc) by lra. nra.
 Qed.
 
 Definition slack_neg_nudge_t (sv sc : R) : R :=
@@ -329,21 +350,26 @@ Lemma slack_neg_nudge_keeps_neg : forall sv sc,
   (1 - slack_neg_nudge_t sv sc) * sv + slack_neg_nudge_t sv sc * sc < 0.
 Proof.
   intros sv sc Hsv.
-  unfold slack_neg_nudge_t.
+  unfold slack_neg_nudge_t, Rdiv.
   set (d := (- sv) + 1 + Rabs sc).
   assert (Hd : 0 < d) by (unfold d; pose proof (Rabs_pos sc); lra).
-  replace (1 - (- sv) / d) with ((1 + Rabs sc) / d)
-    by (unfold d; field; lra).
-  unfold Rdiv.
+  assert (Hdnz : d <> 0) by lra.
+  replace (1 - (- sv) * / d) with ((1 + Rabs sc) * / d)
+    by (unfold d; field; exact Hdnz).
   replace ((1 + Rabs sc) * / d * sv + (- sv) * / d * sc)
-    with (sv * (1 + Rabs sc - sc) / d)
-    by (unfold Rdiv; field; lra).
-  unfold Rdiv.
+    with (sv * (1 + Rabs sc - sc) * / d)
+    by (field; exact Hdnz).
   assert (0 < 1 + Rabs sc - sc).
-  { destruct (Rle_dec 0 sc) as [Hge | Hlt].
+  { destruct (Rle_dec 0 sc) as [Hge | Hn].
     - rewrite (Rabs_right sc) by lra. lra.
-    - rewrite (Rabs_left sc) by lra. lra. }
-  nra.
+    - apply Rnot_le_lt in Hn. rewrite (Rabs_left sc) by lra. lra. }
+  set (k := 1 + Rabs sc - sc).
+  assert (Hk : 0 < k) by (unfold k; assumption).
+  replace (sv * k * / d) with (- ((- sv) * k * / d)) by ring.
+  apply Ropp_lt_gt_0_contravar.
+  apply Rmult_lt_0_compat.
+  - apply Rmult_lt_0_compat; [ lra | exact Hk ].
+  - apply Rinv_0_lt_compat; exact Hd.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -364,7 +390,8 @@ Proof.
     as Hkeep.
   pose proof (gtri_concave ax ay bx by_ cx cy v c t (Rlt_le _ _ Ht0)
                 (Rlt_le _ _ Ht1)) as Hconc.
-  lra.
+  unfold t in *.
+  eapply Rlt_le_trans; [ exact Hkeep | exact Hconc ].
 Qed.
 
 Lemma combo_in_B_from_B_vertex_a :
@@ -382,6 +409,7 @@ Proof.
                 (centroid3 (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
                 t (Rlt_le _ _ Ht0) Ht1) as Hconc.
   rewrite Hv in Hconc.
+  eapply Rlt_le_trans; [ | exact Hconc ].
   nra.
 Qed.
 
@@ -400,6 +428,7 @@ Proof.
                 (centroid3 (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
                 t (Rlt_le _ _ Ht0) Ht1) as Hconc.
   rewrite Hv in Hconc.
+  eapply Rlt_le_trans; [ | exact Hconc ].
   nra.
 Qed.
 
@@ -418,6 +447,7 @@ Proof.
                 (centroid3 (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
                 t (Rlt_le _ _ Ht0) Ht1) as Hconc.
   rewrite Hv in Hconc.
+  eapply Rlt_le_trans; [ | exact Hconc ].
   nra.
 Qed.
 
@@ -432,11 +462,10 @@ Proof.
   subst sv.
   pose proof (slack_neg_nudge_keeps_neg (gsA ax ay bx by_ v)
                 (gsA ax ay bx by_ c) Hsv) as Hneg.
-  unfold gtri.
-  rewrite gsA_affine.
-  eapply Rle_lt_trans; [ apply Rmin_l_le | ].
-  eapply Rle_lt_trans; [ apply Rmin_l_le | ].
-  exact Hneg.
+  unfold t.
+  eapply Rle_lt_trans;
+    [ apply (gtri_le_gsA ax ay bx by_ cx cy (convex_combination v c _)) | ].
+  rewrite gsA_affine. exact Hneg.
 Qed.
 
 Lemma combo_stays_neg_of_slack_B :
@@ -450,11 +479,10 @@ Proof.
   subst sv.
   pose proof (slack_neg_nudge_keeps_neg (gsB bx by_ cx cy v)
                 (gsB bx by_ cx cy c) Hsv) as Hneg.
-  unfold gtri.
-  rewrite gsB_affine.
-  eapply Rle_lt_trans; [ apply Rmin_l_le | ].
-  eapply Rle_lt_trans; [ apply Rmin_r_le | ].
-  exact Hneg.
+  unfold t.
+  eapply Rle_lt_trans;
+    [ apply (gtri_le_gsB ax ay bx by_ cx cy (convex_combination v c _)) | ].
+  rewrite gsB_affine. exact Hneg.
 Qed.
 
 Lemma combo_stays_neg_of_slack_C :
@@ -468,10 +496,10 @@ Proof.
   subst sv.
   pose proof (slack_neg_nudge_keeps_neg (gsC ax ay cx cy v)
                 (gsC ax ay cx cy c) Hsv) as Hneg.
-  unfold gtri.
-  rewrite gsC_affine.
-  eapply Rle_lt_trans; [ apply Rmin_r_le | ].
-  exact Hneg.
+  unfold t.
+  eapply Rle_lt_trans;
+    [ apply (gtri_le_gsC ax ay bx by_ cx cy (convex_combination v c _)) | ].
+  rewrite gsC_affine. exact Hneg.
 Qed.
 
 (* A point that is interior to both, given a B-vertex interior to A. *)
@@ -697,9 +725,7 @@ Proof.
   unfold shares_edge_b.
   rewrite (point_eqb_false a1 b (not_eq_sym Hb1)).
   rewrite (point_eqb_false a2 b (not_eq_sym Hb2)).
-  rewrite (point_eqb_false a1 b (not_eq_sym Hb1)).
-  cbn [andb orb].
-  rewrite Bool.andb_false_r. reflexivity.
+  rewrite andb_false_l, andb_false_r, orb_false_l. reflexivity.
 Qed.
 
 Lemma shares_edge_b_false_of_b_ne_swap : forall a1 a2 b c,
@@ -710,7 +736,7 @@ Proof.
   unfold shares_edge_b.
   rewrite (point_eqb_false a2 b (not_eq_sym Hb2)).
   rewrite (point_eqb_false a1 b (not_eq_sym Hb1)).
-  cbn [andb orb]. reflexivity.
+  rewrite andb_false_r, andb_false_l, orb_false_r. reflexivity.
 Qed.
 
 Lemma touch_edge_b_false_of_B_interior :
@@ -722,53 +748,74 @@ Lemma touch_edge_b_false_of_B_interior :
                  (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy) = false.
 Proof.
   intros ax ay bx by_ cx cy dx dy ex ey fx fy Hvin.
-  set (A1 := mkPoint ax ay).
-  set (A2 := mkPoint bx by_).
-  set (A3 := mkPoint cx cy).
-  set (B1 := mkPoint dx dy).
-  set (B2 := mkPoint ex ey).
-  set (B3 := mkPoint fx fy).
-  assert (Hne : forall p, 0 < gtri ax ay bx by_ cx cy p ->
+  pose (A1 := mkPoint ax ay).
+  pose (A2 := mkPoint bx by_).
+  pose (A3 := mkPoint cx cy).
+  pose (B1 := mkPoint dx dy).
+  pose (B2 := mkPoint ex ey).
+  pose (B3 := mkPoint fx fy).
+  assert (NA : forall p, 0 < gtri ax ay bx by_ cx cy p ->
                   p <> A1 /\ p <> A2 /\ p <> A3).
-  { intros p Hp. subst A1 A2 A3. repeat split.
+  { intros p Hp. unfold A1, A2, A3. repeat split.
     - exact (gtri_pos_ne_vertex_a ax ay bx by_ cx cy p Hp).
     - exact (gtri_pos_ne_vertex_b ax ay bx by_ cx cy p Hp).
     - exact (gtri_pos_ne_vertex_c ax ay bx by_ cx cy p Hp). }
-  unfold touch_edge_b.
+  unfold touch_edge_b, A1, A2, A3, B1, B2, B3.
   destruct Hvin as [H1 | [H2 | H3]].
-  - pose proof (Hne B1 H1) as (N1 & N2 & N3).
-    rewrite (shares_edge_b_false_of_b_ne A1 A2 B1 B2 N1 N2).
-    rewrite (shares_edge_b_false_of_b_ne_swap A1 A2 B1 B3 N1 N2).
-    rewrite (opposite_sides_b_false_AB ax ay bx by_ cx cy B1 H1).
-    rewrite (shares_edge_b_false_of_b_ne A2 A3 B1 B2 N2 N3).
-    rewrite (shares_edge_b_false_of_b_ne_swap A2 A3 B1 B3 N2 N3).
-    rewrite (opposite_sides_b_false_BC ax ay bx by_ cx cy B1 H1).
-    rewrite (shares_edge_b_false_of_b_ne A3 A1 B1 B2 N3 N1).
-    rewrite (shares_edge_b_false_of_b_ne_swap A3 A1 B1 B3 N3 N1).
-    rewrite (opposite_sides_b_false_CA ax ay bx by_ cx cy B1 H1).
-    reflexivity.
-  - pose proof (Hne B2 H2) as (N1 & N2 & N3).
-    rewrite (shares_edge_b_false_of_b_ne_swap A1 A2 B2 B1 N1 N2).
-    rewrite (shares_edge_b_false_of_b_ne A1 A2 B2 B3 N1 N2).
-    rewrite (opposite_sides_b_false_AB ax ay bx by_ cx cy B2 H2).
-    rewrite (shares_edge_b_false_of_b_ne_swap A2 A3 B2 B1 N2 N3).
-    rewrite (shares_edge_b_false_of_b_ne A2 A3 B2 B3 N2 N3).
-    rewrite (opposite_sides_b_false_BC ax ay bx by_ cx cy B2 H2).
-    rewrite (shares_edge_b_false_of_b_ne_swap A3 A1 B2 B1 N3 N1).
-    rewrite (shares_edge_b_false_of_b_ne A3 A1 B2 B3 N3 N1).
-    rewrite (opposite_sides_b_false_CA ax ay bx by_ cx cy B2 H2).
-    reflexivity.
-  - pose proof (Hne B3 H3) as (N1 & N2 & N3).
-    rewrite (shares_edge_b_false_of_b_ne A1 A2 B3 B1 N1 N2).
-    rewrite (shares_edge_b_false_of_b_ne_swap A1 A2 B3 B2 N1 N2).
-    rewrite (opposite_sides_b_false_AB ax ay bx by_ cx cy B3 H3).
-    rewrite (shares_edge_b_false_of_b_ne A2 A3 B3 B1 N2 N3).
-    rewrite (shares_edge_b_false_of_b_ne_swap A2 A3 B3 B2 N2 N3).
-    rewrite (opposite_sides_b_false_BC ax ay bx by_ cx cy B3 H3).
-    rewrite (shares_edge_b_false_of_b_ne A3 A1 B3 B1 N3 N1).
-    rewrite (shares_edge_b_false_of_b_ne_swap A3 A1 B3 B2 N3 N1).
-    rewrite (opposite_sides_b_false_CA ax ay bx by_ cx cy B3 H3).
-    reflexivity.
+  - destruct (NA (mkPoint dx dy) H1) as (N1 & N2 & N3).
+    unfold A1, A2, A3 in N1, N2, N3.
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint ax ay) (mkPoint bx by_)
+               (mkPoint dx dy) (mkPoint ex ey) N1 N2).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint ax ay) (mkPoint bx by_)
+               (mkPoint dx dy) (mkPoint fx fy) N1 N2).
+    rewrite (opposite_sides_b_false_AB ax ay bx by_ cx cy (mkPoint dx dy) H1).
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint bx by_) (mkPoint cx cy)
+               (mkPoint dx dy) (mkPoint ex ey) N2 N3).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint bx by_) (mkPoint cx cy)
+               (mkPoint dx dy) (mkPoint fx fy) N2 N3).
+    rewrite (opposite_sides_b_false_BC ax ay bx by_ cx cy (mkPoint dx dy) H1).
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint cx cy) (mkPoint ax ay)
+               (mkPoint dx dy) (mkPoint ex ey) N3 N1).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint cx cy) (mkPoint ax ay)
+               (mkPoint dx dy) (mkPoint fx fy) N3 N1).
+    rewrite (opposite_sides_b_false_CA ax ay bx by_ cx cy (mkPoint dx dy) H1).
+    btauto.
+  - destruct (NA (mkPoint ex ey) H2) as (N1 & N2 & N3).
+    unfold A1, A2, A3 in N1, N2, N3.
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint ax ay) (mkPoint bx by_)
+               (mkPoint ex ey) (mkPoint dx dy) N1 N2).
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint ax ay) (mkPoint bx by_)
+               (mkPoint ex ey) (mkPoint fx fy) N1 N2).
+    rewrite (opposite_sides_b_false_AB ax ay bx by_ cx cy (mkPoint ex ey) H2).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint bx by_) (mkPoint cx cy)
+               (mkPoint ex ey) (mkPoint dx dy) N2 N3).
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint bx by_) (mkPoint cx cy)
+               (mkPoint ex ey) (mkPoint fx fy) N2 N3).
+    rewrite (opposite_sides_b_false_BC ax ay bx by_ cx cy (mkPoint ex ey) H2).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint cx cy) (mkPoint ax ay)
+               (mkPoint ex ey) (mkPoint dx dy) N3 N1).
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint cx cy) (mkPoint ax ay)
+               (mkPoint ex ey) (mkPoint fx fy) N3 N1).
+    rewrite (opposite_sides_b_false_CA ax ay bx by_ cx cy (mkPoint ex ey) H2).
+    btauto.
+  - destruct (NA (mkPoint fx fy) H3) as (N1 & N2 & N3).
+    unfold A1, A2, A3 in N1, N2, N3.
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint ax ay) (mkPoint bx by_)
+               (mkPoint fx fy) (mkPoint dx dy) N1 N2).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint ax ay) (mkPoint bx by_)
+               (mkPoint fx fy) (mkPoint ex ey) N1 N2).
+    rewrite (opposite_sides_b_false_AB ax ay bx by_ cx cy (mkPoint fx fy) H3).
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint bx by_) (mkPoint cx cy)
+               (mkPoint fx fy) (mkPoint dx dy) N2 N3).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint bx by_) (mkPoint cx cy)
+               (mkPoint fx fy) (mkPoint ex ey) N2 N3).
+    rewrite (opposite_sides_b_false_BC ax ay bx by_ cx cy (mkPoint fx fy) H3).
+    rewrite (shares_edge_b_false_of_b_ne (mkPoint cx cy) (mkPoint ax ay)
+               (mkPoint fx fy) (mkPoint dx dy) N3 N1).
+    rewrite (shares_edge_b_false_of_b_ne_swap (mkPoint cx cy) (mkPoint ax ay)
+               (mkPoint fx fy) (mkPoint ex ey) N3 N1).
+    rewrite (opposite_sides_b_false_CA ax ay bx by_ cx cy (mkPoint fx fy) H3).
+    btauto.
 Qed.
 
 Lemma contains_b_false_of_B_exterior :
@@ -818,10 +865,10 @@ Lemma some_vertex_strict_pos_elim : forall ax ay bx by_ cx cy p q r,
 Proof.
   intros ax ay bx by_ cx cy p q r H.
   unfold some_vertex_strict_pos in H.
-  apply orb_true_iff in H as [H | H];
-    [ | apply orb_true_iff in H as [H | H] ].
-  - left. exact (gtri_strict_pos_b_true _ _ _ _ _ _ _ H).
-  - right. left. exact (gtri_strict_pos_b_true _ _ _ _ _ _ _ H).
+  apply orb_true_iff in H as [H | H].
+  - apply orb_true_iff in H as [H | H].
+    + left. exact (gtri_strict_pos_b_true _ _ _ _ _ _ _ H).
+    + right. left. exact (gtri_strict_pos_b_true _ _ _ _ _ _ _ H).
   - right. right. exact (gtri_strict_pos_b_true _ _ _ _ _ _ _ H).
 Qed.
 
@@ -833,10 +880,10 @@ Lemma some_vertex_strict_neg_elim : forall ax ay bx by_ cx cy p q r,
 Proof.
   intros ax ay bx by_ cx cy p q r H.
   unfold some_vertex_strict_neg in H.
-  apply orb_true_iff in H as [H | H];
-    [ | apply orb_true_iff in H as [H | H] ].
-  - left. exact (gtri_strict_neg_b_true _ _ _ _ _ _ _ H).
-  - right. left. exact (gtri_strict_neg_b_true _ _ _ _ _ _ _ H).
+  apply orb_true_iff in H as [H | H].
+  - apply orb_true_iff in H as [H | H].
+    + left. exact (gtri_strict_neg_b_true _ _ _ _ _ _ _ H).
+    + right. left. exact (gtri_strict_neg_b_true _ _ _ _ _ _ _ H).
   - right. right. exact (gtri_strict_neg_b_true _ _ _ _ _ _ _ H).
 Qed.
 
