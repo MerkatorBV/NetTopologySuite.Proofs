@@ -36,6 +36,11 @@ Order of work: top-down from #64, with the freebie first.
 08 ═══════════ 09 ────────╝───────┘  #68 closed → #525 (global tier), #526
 ```
 
+**Related living map.** The #522 children (bar 1 → bar 2) have their own
+frontier: [`docs/scout/map-522.md`](../map-522.md). That map is what
+`/wayfinder 522` refreshes. Ticket 11 below still waits on those children
+plus #523 and #503; it does not own their grab order.
+
 **Frontier: empty.** Every remaining ticket waits on out-of-map execution —
 proof work, an oracle fix, and documentation corrections — not on a decision:
 

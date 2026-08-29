@@ -18,7 +18,8 @@ blocking defects are gone: **does #67 close, and where does its residue go?**
 
 Preconditions to check before re-deciding — each is a specific, checkable fact:
 
-1. **#522 fixed** — *partially met as of 2026-08-22 (#530 merged).*
+1. **#522 fixed** — *partially met as of 2026-08-22 (#530 merged); living
+   frontier is [`docs/scout/map-522.md`](../map-522.md) (charted 2026-08-29).*
    - ✔ `RelateNGCore.v:337` no longer answers `ll_matrix_disjoint`; it returns
      `DE9IM.im_unsupported`, and `im_unsupported_no_predicate` proves that
      sentinel supports none of the ten `RelatePredicate`s.
