@@ -117,6 +117,36 @@ Proof.
   - destruct p4. destruct r4; discriminate.
 Qed.
 
+(* `relate` after the extractors, so agreement does not unfold the
+   pair-match on `rect_geometry_bounds` (that match does not reduce
+   when the other side is still a variable). *)
+Lemma relate_extracted_rects :
+  forall A B ax0 ay0 ax1 ay1 bx0 by0 bx1 by1,
+    rect_geometry_bounds A = Some (ax0, ay0, ax1, ay1) ->
+    rect_geometry_bounds B = Some (bx0, by0, bx1, by1) ->
+    relate A B =
+    rects_relate ax0 ay0 ax1 ay1 bx0 by0 bx1 by1
+      (rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1).
+Proof.
+  intros A B ax0 ay0 ax1 ay1 bx0 by0 bx1 by1 HA HB.
+  unfold relate. rewrite HA, HB. reflexivity.
+Qed.
+
+Lemma relate_extracted_triangles :
+  forall A B ax ay bx by_ cx cy dx dy ex ey fx fy,
+    rect_geometry_bounds A = None ->
+    triangle_geometry_points A = Some (ax, ay, bx, by_, cx, cy) ->
+    triangle_geometry_points B = Some (dx, dy, ex, ey, fx, fy) ->
+    relate A B =
+    tris_relate ax ay bx by_ cx cy dx dy ex ey fx fy
+      (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy).
+Proof.
+  intros A B ax ay bx by_ cx cy dx dy ex ey fx fy HA Hta Htb.
+  unfold relate. rewrite HA.
+  destruct (rect_geometry_bounds B) as [bb|];
+    rewrite Hta, Htb; reflexivity.
+Qed.
+
 (* Triangle-only path: A is not a rect, so `relate` skips the rect arm. *)
 Lemma evaluate_triangle_path_agrees :
   forall pg g,
@@ -134,8 +164,9 @@ Proof.
   destruct tb as [[[[[dx dy] ex] ey] fx] fy].
   destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
     eqn:Tr; try reflexivity.
-  unfold relate. rewrite Ea, Eta, Etb, Tr.
-  rewrite tris_relate_disjoint_eq. reflexivity.
+  rewrite (relate_extracted_triangles (pg_geom pg) g ax ay bx by_ cx cy
+             dx dy ex ey fx fy Ea Eta Etb).
+  rewrite Tr, tris_relate_disjoint_eq. reflexivity.
 Qed.
 
 Theorem evaluate_coherent_agrees :
@@ -152,8 +183,9 @@ Proof.
     destruct bb as [[[bx0 by0] bx1] by1].
     destruct (rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1)
       eqn:Rr; try reflexivity.
-    unfold relate. rewrite Ea, Eb, Rr.
-    rewrite rects_relate_disjoint_eq. reflexivity.
+    rewrite (relate_extracted_rects (pg_geom pg) g ax0 ay0 ax1 ay1
+               bx0 by0 bx1 by1 Ea Eb).
+    rewrite Rr, rects_relate_disjoint_eq. reflexivity.
   - (* A is a rect, B is not: first match fails. A cannot also be a
        triangle, so the tri cache is None and evaluate falls through. *)
     destruct Hc as [Hcache Htr].
@@ -327,36 +359,47 @@ Proof.
   destruct (Rlt_dec 1 2) as [_ | Hn]; [reflexivity | exfalso; lra].
 Qed.
 
-Lemma cw_pair_regime_unsupported :
-  triangle_pair_regime 0 0 1 0 0 1 2 0 2 1 3 0 = TPR_Unsupported.
+Lemma cw_B_gdbl_nlt :
+  ~ (0 < gdbl 2 0 2 1 3 0).
+Proof. unfold gdbl; lra. Qed.
+
+Lemma cw_pair_no_touch_edge :
+  touch_edge_b (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+               (mkPoint 2 0) (mkPoint 2 1) (mkPoint 3 0) = false.
 Proof.
-  unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
+  unfold touch_edge_b, shares_edge_b, point_eqb.
   cbn [px py].
   repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+Lemma cw_pair_no_contains :
+  contains_b 0 0 1 0 0 1 2 0 2 1 3 0 = false.
+Proof.
   unfold contains_b.
   destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _].
-  { exfalso. unfold gtri in Hlt.
-    assert (H : gsA 0 0 1 0 (mkPoint 2 0) = 0) by (unfold gsA; simpl; ring).
-    rewrite H in Hlt.
-    eapply Rlt_not_le in Hlt.
-    apply Hlt. eapply Rle_trans; [apply Rmin_l_le | apply Rmin_l_le]. }
-  unfold overlap_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gdbl 2 0 2 1 3 0)) as [HB | _];
-    [ exfalso; unfold gdbl in HB; lra | ].
-  unfold separated_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gdbl 2 0 2 1 3 0)) as [HB | _];
-    [ exfalso; unfold gdbl in HB; lra | ].
-  unfold touch_vertex_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gdbl 2 0 2 1 3 0)) as [HB | _];
-    [ exfalso; unfold gdbl in HB; lra | ].
+  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _];
+    [ | reflexivity ].
+  exfalso. unfold gtri in Hlt.
+  assert (H : gsA 0 0 1 0 (mkPoint 2 0) = 0) by (unfold gsA; simpl; ring).
+  rewrite H in Hlt.
+  eapply Rlt_not_le in Hlt.
+  apply Hlt. eapply Rle_trans; [apply Rmin_l_le | apply Rmin_l_le].
+Qed.
+
+Lemma cw_pair_regime_unsupported :
+  triangle_pair_regime 0 0 1 0 0 1 2 0 2 1 3 0 = TPR_Unsupported.
+Proof.
+  unfold triangle_pair_regime.
+  rewrite cw_pair_no_touch_edge.
+  rewrite cw_pair_no_contains.
+  rewrite (overlap_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
+             (or_intror cw_B_gdbl_nlt)).
+  rewrite (separated_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
+             (or_intror cw_B_gdbl_nlt)).
+  rewrite (touch_vertex_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
+             (or_intror cw_B_gdbl_nlt)).
   reflexivity.
 Qed.
 
