@@ -984,9 +984,10 @@ Proof.
   destruct (touch_edge_b _ _ _ _ _ _) ; [ discriminate | ].
   destruct (contains_b ax ay bx by_ cx cy dx dy ex ey fx fy);
     [ discriminate | ].
-  destruct (overlap_b ax ay bx by_ cx cy dx dy ex ey fx fy) eqn:Hov;
-    [ | discriminate ].
-  exact (overlap_b_partial_overlap _ _ _ _ _ _ _ _ _ _ _ _ Hov).
+  destruct (overlap_b ax ay bx by_ cx cy dx dy ex ey fx fy) eqn:Hov.
+  - exact (overlap_b_partial_overlap _ _ _ _ _ _ _ _ _ _ _ _ Hov).
+  - destruct (separated_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+      discriminate.
 Qed.
 
 (* -------------------------------------------------------------------------- *)

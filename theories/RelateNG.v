@@ -23,6 +23,9 @@
      - RelateNGOverlap.v     TPR_Overlap regime at bar 1 (#570 / 522-b)
          (`triangle_pair_regime_overlap`; soundness
          `overlap_b_partial_overlap` via a centroid nudge).
+     - RelateNGDisjoint.v    TPR_Disjoint regime at bar 1 (#571 / 522-c)
+         (`triangle_pair_regime_disjoint`; soundness
+         `separated_b_triangles_separated` via a supporting edge).
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation
@@ -61,6 +64,7 @@ From NTS.Proofs Require Export
   RelateNGCore
   RelateNGContains
   RelateNGOverlap
+  RelateNGDisjoint
   RelateNGTouch
   RelateNGTouchRED
   RelateNGTouchCells
