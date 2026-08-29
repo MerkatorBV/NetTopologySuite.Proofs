@@ -1478,7 +1478,7 @@ are all instances.
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `Bezier3Length.v : bezier3_elevation_length` (+ `bezier3_elevation_pointwise`) | **Degree-elevation exactness (Bible A1):** `bezier3_pt p0 ((p0+2p1)/3) ((2p1+p2)/3) p2 = bezier2_pt p0 p1 p2` pointwise (a field identity — the elevated points divide by 3, so `field`, not `ring`, discharges it), hence `is_curve_length (bezier2 …) a b L ↔ is_curve_length (bezier3 elevated …) a b L` through `is_curve_length_ext` — storing quadratics as elevated cubics changes no metric length `[exact]` | 3 |
-| `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `norm_triple_le`, `scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` — the CRUDE net bound, deliberately not the control-polygon / variation-diminishing length bound (that tight bound is the named next rung) `[exact]` | 3 |
+| `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `bezier3_chord_le_combo`, `norm_triple_le`, `scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` — the CRUDE net bound, deliberately not the control-polygon / variation-diminishing length bound (that tight bound is the named next rung) `[exact]` | 3 |
 
 ## Issue #508 — clothoid rung 1: arc-length parameterization + the generic primitive engine (`ClothoidLength.v`) <!-- feat:arc-len geom:cs -->
 
@@ -1538,7 +1538,10 @@ the engine) are future rungs.
 ## Issue #508 — Bézier P0: tight control-polygon bound (`Bezier3Polygon.v`) <!-- feat:arc-len geom:cs -->
 
 The named next rung after the crude `3·max(net)·Δt` ceiling: the same
-divided-difference factorization keeps the three net-edge lengths separate
+divided-difference factorization (now literally shared —
+`Bezier3Length.bezier3_chord_le_combo` over the named weights
+`bezier3_c0/c1/c2`; both the crude and the tight chord bounds are one
+bounding step from it) keeps the three net-edge lengths separate
 inside the weighted modulus `G(t) = |d0|·(1−(1−t)³) + |d1|·(3t²−2t³) + |d2|·t³`,
 so every chord is `≤ G(t)−G(s)` and the generic chord-modulus engine yields
 `L ≤ |d0|+|d1|+|d2|` on `[0,1]`.
