@@ -25,8 +25,10 @@
      3·(max net edge)·(t−s), telescoping to
        `bezier3_length_upper` : L ≤ 3·max(|d0|,|d1|,|d2|)·(b−a)
      for any is_curve_length value over [a,b] ⊆ [0,1].  The lower bound is
-     CurveLength.curve_length_ge_chord, free.  A tight (control-polygon /
-     integral) upper bound and the conditional exact tier are future rungs.
+     CurveLength.curve_length_ge_chord, free.  The shared factorization
+     (`bezier3_chord_le_combo`, over the named weights bezier3_c0/c1/c2)
+     also feeds Bezier3Polygon.v's TIGHT control-polygon bound; the
+     conditional exact tier is a future rung.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
@@ -155,41 +157,67 @@ Proof.
   lra.
 Qed.
 
-Lemma bezier3_chord_le : forall p0 p1 p2 p3 s t,
+(* The divided-difference Bernstein-2 weights, shared with Bezier3Polygon.v:
+   B(t) - B(s) = (t-s)*(c0*d0 + c1*d1 + c2*d2) over the net edge vectors. *)
+Definition bezier3_c0 (s t : R) : R :=
+  3 - 3 * (s + t) + (s * s + s * t + t * t).
+Definition bezier3_c1 (s t : R) : R :=
+  3 * (s + t) - 2 * (s * s + s * t + t * t).
+Definition bezier3_c2 (s t : R) : R :=
+  s * s + s * t + t * t.
+
+Lemma bezier3_c_nonneg : forall s t,
+  0 <= s -> s <= t -> t <= 1 ->
+  0 <= bezier3_c0 s t /\ 0 <= bezier3_c1 s t /\ 0 <= bezier3_c2 s t.
+Proof.
+  intros s t Hs Hst Ht1.
+  unfold bezier3_c0, bezier3_c1, bezier3_c2.
+  split.
+  { replace (3 - 3 * (s + t) + (s * s + s * t + t * t))
+      with ((1 - s) * (1 - s) + (1 - s) * (1 - t) + (1 - t) * (1 - t))
+      by ring.
+    nra. }
+  split.
+  { pose proof (sqr_nonneg (s - t)) as Hsq. nra. }
+  nra.
+Qed.
+
+Lemma bezier3_c_sum : forall s t,
+  bezier3_c0 s t + bezier3_c1 s t + bezier3_c2 s t = 3.
+Proof.
+  intros s t. unfold bezier3_c0, bezier3_c1, bezier3_c2. ring.
+Qed.
+
+(* The SHARED chord bound both Bezier tiers consume: the divided-difference
+   factorization + the vector triangle inequality, with the net-edge
+   coefficients kept separate.  The crude 3*max bound (below) and the tight
+   control-polygon modulus (Bezier3Polygon.v) are one bounding step away. *)
+Lemma bezier3_chord_le_combo : forall p0 p1 p2 p3 s t,
   0 <= s -> s <= t -> t <= 1 ->
   dist (bezier3_param p0 p1 p2 p3 s) (bezier3_param p0 p1 p2 p3 t)
-  <= 3 * bezier3_net_max p0 p1 p2 p3 * (t - s).
+  <= (t - s) * (bezier3_c0 s t * dist p0 p1
+                + bezier3_c1 s t * dist p1 p2
+                + bezier3_c2 s t * dist p2 p3).
 Proof.
   intros p0 p1 p2 p3 s t Hs Hst Ht1.
-  set (c0 := 3 - 3*(s+t) + (s*s + s*t + t*t)).
-  set (c1 := 3*(s+t) - 2*(s*s + s*t + t*t)).
-  set (c2 := s*s + s*t + t*t).
+  set (c0 := bezier3_c0 s t).
+  set (c1 := bezier3_c1 s t).
+  set (c2 := bezier3_c2 s t).
   set (x0 := px p1 - px p0). set (y0 := py p1 - py p0).
   set (x1 := px p2 - px p1). set (y1 := py p2 - py p1).
   set (x2 := px p3 - px p2). set (y2 := py p3 - py p2).
-  set (M := bezier3_net_max p0 p1 p2 p3).
-  (* the symmetrized Bernstein-2 weights are nonneg and sum to 3 on [0,1]² *)
-  assert (Hc0 : 0 <= c0).
-  { unfold c0.
-    replace (3 - 3*(s+t) + (s*s + s*t + t*t))
-      with ((1-s)*(1-s) + (1-s)*(1-t) + (1-t)*(1-t)) by ring.
-    nra. }
-  assert (Hc2 : 0 <= c2) by (unfold c2; nra).
-  assert (Hc1 : 0 <= c1).
-  { unfold c1. pose proof (sqr_nonneg (s - t)) as Hsq. nra. }
-  assert (Hsum : c0 + c1 + c2 = 3) by (unfold c0, c1, c2; ring).
-  (* the chord factors through the divided difference *)
+  destruct (bezier3_c_nonneg s t Hs Hst Ht1) as (Hc0 & Hc1 & Hc2).
   assert (Hfact :
     dist (bezier3_pt p0 p1 p2 p3 s) (bezier3_pt p0 p1 p2 p3 t)
     = sqrt (((t-s) * (c0*x0 + c1*x1 + c2*x2))
               * ((t-s) * (c0*x0 + c1*x1 + c2*x2))
             + ((t-s) * (c0*y0 + c1*y1 + c2*y2))
               * ((t-s) * (c0*y0 + c1*y1 + c2*y2)))).
-  { unfold dist, dist_sq, bezier3_pt; cbn [px py].
-    f_equal. unfold c0, c1, c2, x0, y0, x1, y1, x2, y2. ring. }
+  { unfold dist, dist_sq, bezier3_pt, c0, c1, c2,
+           bezier3_c0, bezier3_c1, bezier3_c2; cbn [px py].
+    f_equal. unfold x0, y0, x1, y1, x2, y2. ring. }
   unfold bezier3_param. rewrite Hfact.
   rewrite scaled_diff_norm by lra.
-  (* the divided difference is a nonneg combination of net edges *)
   pose proof (norm_triple_le c0 c1 c2 x0 y0 x1 y1 x2 y2 Hc0 Hc1 Hc2) as Htri.
   assert (HD0 : sqrt (x0*x0 + y0*y0) = dist p0 p1).
   { unfold dist, dist_sq, x0, y0. f_equal. ring. }
@@ -198,7 +226,21 @@ Proof.
   assert (HD2 : sqrt (x2*x2 + y2*y2) = dist p2 p3).
   { unfold dist, dist_sq, x2, y2. f_equal. ring. }
   rewrite HD0, HD1, HD2 in Htri.
-  (* every net edge is below the max *)
+  eapply Rle_trans.
+  { apply Rmult_le_compat_l; [lra | exact Htri]. }
+  apply Req_le. ring.
+Qed.
+
+Lemma bezier3_chord_le : forall p0 p1 p2 p3 s t,
+  0 <= s -> s <= t -> t <= 1 ->
+  dist (bezier3_param p0 p1 p2 p3 s) (bezier3_param p0 p1 p2 p3 t)
+  <= 3 * bezier3_net_max p0 p1 p2 p3 * (t - s).
+Proof.
+  intros p0 p1 p2 p3 s t Hs Hst Ht1.
+  eapply Rle_trans; [apply bezier3_chord_le_combo; assumption |].
+  destruct (bezier3_c_nonneg s t Hs Hst Ht1) as (Hc0 & Hc1 & Hc2).
+  pose proof (bezier3_c_sum s t) as Hsum.
+  set (M := bezier3_net_max p0 p1 p2 p3).
   assert (HM0 : dist p0 p1 <= M).
   { unfold M, bezier3_net_max. apply Rmax_l. }
   assert (HM1 : dist p1 p2 <= M).
@@ -207,22 +249,14 @@ Proof.
   assert (HM2 : dist p2 p3 <= M).
   { unfold M, bezier3_net_max.
     eapply Rle_trans; [apply Rmax_r | apply Rmax_r]. }
-  assert (Hq : sqrt ((c0*x0 + c1*x1 + c2*x2) * (c0*x0 + c1*x1 + c2*x2)
-                     + (c0*y0 + c1*y1 + c2*y2) * (c0*y0 + c1*y1 + c2*y2))
-               <= 3 * M).
-  { eapply Rle_trans; [exact Htri |].
-    assert (T0 : c0 * dist p0 p1 <= c0 * M)
-      by (apply Rmult_le_compat_l; assumption).
-    assert (T1 : c1 * dist p1 p2 <= c1 * M)
-      by (apply Rmult_le_compat_l; assumption).
-    assert (T2 : c2 * dist p2 p3 <= c2 * M)
-      by (apply Rmult_le_compat_l; assumption).
-    replace (3 * M) with (c0 * M + c1 * M + c2 * M)
-      by (rewrite <- Hsum; ring).
-    lra. }
-  eapply Rle_trans.
-  { apply Rmult_le_compat_l; [lra | exact Hq]. }
-  apply Req_le. ring.
+  assert (Hcomb : bezier3_c0 s t * dist p0 p1 + bezier3_c1 s t * dist p1 p2
+                  + bezier3_c2 s t * dist p2 p3 <= 3 * M).
+  { replace (3 * M)
+      with ((bezier3_c0 s t + bezier3_c1 s t + bezier3_c2 s t) * M)
+      by (rewrite Hsum; ring).
+    nra. }
+  assert (Hts : 0 <= t - s) by lra.
+  nra.
 Qed.
 
 Lemma bezier3_polyline_le : forall p0 p1 p2 p3 ts t b,

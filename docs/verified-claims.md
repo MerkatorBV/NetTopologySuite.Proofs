@@ -1426,7 +1426,10 @@ the elliptic-E primitive. Meanwhile the oracle's `LENGTH_UNIFIED` quadrature
 ## Issue #508 — ellipse rung 2: shift invariance + the rx = ry circular bridge <!-- feat:arc-len geom:cs,arc -->
 
 Two additions. `CurveLength.v` gains the spec-level reparameterization
-invariances (pointwise extensionality and translation shift, both funext-free);
+invariances (pointwise extensionality and translation shift, both funext-free;
+the GENERAL monotone member, `is_curve_length_reparam`, arrived later — see
+the spec-rung section below — with shift staying independent because it also
+covers `a > b`);
 `EllipseLength.v` uses them to make the oracle's `E`-token closed form
 (`rx = ry → r·|sweep|`) a spec theorem: an equal-axes ellipse is a
 parameter-shifted circle, so its metric length is `r·(b−a)` unconditionally.
@@ -1478,7 +1481,7 @@ are all instances.
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `Bezier3Length.v : bezier3_elevation_length` (+ `bezier3_elevation_pointwise`) | **Degree-elevation exactness (Bible A1):** `bezier3_pt p0 ((p0+2p1)/3) ((2p1+p2)/3) p2 = bezier2_pt p0 p1 p2` pointwise (a field identity — the elevated points divide by 3, so `field`, not `ring`, discharges it), hence `is_curve_length (bezier2 …) a b L ↔ is_curve_length (bezier3 elevated …) a b L` through `is_curve_length_ext` — storing quadratics as elevated cubics changes no metric length `[exact]` | 3 |
-| `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `norm_triple_le`, `scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` — the CRUDE net bound, deliberately not the control-polygon / variation-diminishing length bound (that tight bound is the named next rung) `[exact]` | 3 |
+| `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `bezier3_chord_le_combo`, `norm_triple_le`, `scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` — the CRUDE net bound, deliberately not the control-polygon / variation-diminishing length bound (that tight bound is the named next rung) `[exact]` | 3 |
 
 ## Issue #508 — clothoid rung 1: arc-length parameterization + the generic primitive engine (`ClothoidLength.v`) <!-- feat:arc-len geom:cs -->
 
@@ -1538,7 +1541,10 @@ the engine) are future rungs.
 ## Issue #508 — Bézier P0: tight control-polygon bound (`Bezier3Polygon.v`) <!-- feat:arc-len geom:cs -->
 
 The named next rung after the crude `3·max(net)·Δt` ceiling: the same
-divided-difference factorization keeps the three net-edge lengths separate
+divided-difference factorization (now literally shared —
+`Bezier3Length.bezier3_chord_le_combo` over the named weights
+`bezier3_c0/c1/c2`; both the crude and the tight chord bounds are one
+bounding step from it) keeps the three net-edge lengths separate
 inside the weighted modulus `G(t) = |d0|·(1−(1−t)³) + |d1|·(3t²−2t³) + |d2|·t³`,
 so every chord is `≤ G(t)−G(s)` and the generic chord-modulus engine yields
 `L ≤ |d0|+|d1|+|d2|` on `[0,1]`.
@@ -1585,3 +1591,25 @@ a new 64-a `r·θ`.
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `ArcMidSweep.v : valid_arc_sweep_nonzero` (+ `arc_mid_on_circle_param`, `arc_mid_pointset_and_sweep`) | **Sweep pin + mid point-set:** `valid_arc` excludes `arc_sweep = 0`; `arc_mid` is a parameterized circumcircle point `[exact]` | 4 |
+
+## Issue #508 — spec rung: monotone reparameterization invariance (`CurveLength.v`) <!-- feat:arc-len geom:cs -->
+
+The invariance kit gains its general member. It joins `is_curve_length_ext`
+(pointwise equality of two curves — orthogonal, NOT an instance of this) and
+`is_curve_length_shift` (translation — an instance only when `a ≤ b`; shift
+itself carries no ordering premise and stays independent). The new form:
+composing with any WEAKLY MONOTONE map `φ` whose target window is
+covered by EXPLICIT preimages carries metric lengths over —
+`is_curve_length g (φ a) (φ b) L → is_curve_length (g ∘ φ) a b L`. Upper
+half: a monotone image of a chain is a chain with the same polyline value
+(`polyline_len_compose`, `chain_map_mono`). Least half: preimage chains are
+built by induction with an order-repair step — a flat stretch of `φ` reuses
+the previous preimage, so weak monotonicity suffices and no IVT/continuity
+machinery is spent (`reparam_preimage_chain`). Funext-free, 3-axiom. The
+intended consumer is the conic exact tier: the golden `w = √2/2` rational
+quarter circle re-parameterized onto the angular arc, where
+`arc_r_theta_is_curve_length` already serves the length.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CurveLength.v : is_curve_length_reparam` (+ `is_curve_length_reparam_inv`, `polyline_len_compose`, `chain_map_mono`, `reparam_preimage_chain`) | **Monotone reparameterization invariance:** for `a ≤ b`, `φ` weakly monotone on `[a,b]` with every `v ∈ [φ a, φ b]` explicitly hit by some `u ∈ [a,b]`, any metric length of `g` over `[φ a, φ b]` is a metric length of `t ↦ g (φ t)` over `[a,b]` — inscribed sets correspond through `map φ` one way and preimage chains (with flat-stretch order repair) the other, so the converse (`is_curve_length_reparam_inv`) holds under the same premises and the transfer is an equivalence; orientation-REVERSING maps are deliberately out of scope (a future lemma via reflection); no functional extensionality, no continuity `[exact]` | 3 |

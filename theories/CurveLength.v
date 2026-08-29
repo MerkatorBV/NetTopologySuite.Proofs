@@ -22,7 +22,10 @@
      - curve_length_additive  : L(a,c) = L(a,b) + L(b,c)
      - is_curve_length_ext    : pointwise-equal curves carry the same lengths
      - is_curve_length_shift  : translated parameterizations too (t ↦ g (c+t))
-       — both reparameterization invariances funext-free
+     - is_curve_length_reparam: any weakly monotone map with explicit
+       preimages carries lengths over (t ↦ g (φ t)) — the general monotone
+       form (ext stays orthogonal; shift also covers a > b)
+       — all reparameterization invariances funext-free
      - curve_length_upper_of_chord_modulus (+ polyline_le_of_chord_modulus,
        chain_le) : a chord modulus F on [a,b] telescopes, so L <= F b − F a
        — the one upper-half telescoping every Lipschitz/primitive lane uses
@@ -311,13 +314,21 @@ Proof.
   - rewrite IH. f_equal. ring.
 Qed.
 
+(* The general form: polylines compose through any parameter map. *)
+Lemma polyline_len_compose : forall (g : Curve) (phi : R -> R) ts t,
+  polyline_len (fun u => g (phi u)) t ts
+  = polyline_len g (phi t) (map phi ts).
+Proof.
+  intros g phi ts; induction ts as [|u tl IH]; intro t; simpl.
+  - reflexivity.
+  - rewrite IH. reflexivity.
+Qed.
+
 Lemma polyline_len_shift : forall (g : Curve) c ts t,
   polyline_len (fun u => g (c + u)) t ts
   = polyline_len g (c + t) (map (Rplus c) ts).
 Proof.
-  intros g c ts; induction ts as [|u tl IH]; intro t; simpl.
-  - reflexivity.
-  - rewrite IH. reflexivity.
+  intros g c ts t. exact (polyline_len_compose g (Rplus c) ts t).
 Qed.
 
 Lemma is_curve_length_shift : forall (g : Curve) c a b L,
@@ -341,3 +352,128 @@ Proof.
 Qed.
 
 Print Assumptions is_curve_length_shift.
+
+(* -------------------------------------------------------------------------- *)
+(* Monotone reparameterization invariance (#508): the spec only sees ordered  *)
+(* samples through dist, so composing with a weakly monotone map that covers  *)
+(* the target window carries metric lengths over.  With ext and shift this    *)
+(* completes the invariance kit; the intended consumer is the conic exact     *)
+(* tier (the rational quarter circle re-parameterized onto the angular arc).  *)
+(* The surjectivity premise asks for an EXPLICIT preimage (no IVT machinery); *)
+(* weak monotonicity suffices — flat stretches are handled by reusing the     *)
+(* previous preimage when consecutive samples coincide.  Both directions     *)
+(* hold under the same premises (the inscribed sets correspond both ways),   *)
+(* so the transfer is an equivalence.  Orientation-REVERSING maps (t ↦ 1−t,  *)
+(* an arc run backwards) are deliberately OUT OF SCOPE: that is a different  *)
+(* lemma (swap endpoints / compose with a reflection), not an instance.      *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma chain_map_mono : forall (phi : R -> R) a b,
+  (forall s t, a <= s -> s <= t -> t <= b -> phi s <= phi t) ->
+  forall ts lo,
+    a <= lo -> chain lo ts b ->
+    chain (phi lo) (map phi ts) (phi b).
+Proof.
+  intros phi a b Hmono ts; induction ts as [|u tl IH]; simpl;
+    intros lo Halo Hch.
+  - apply Hmono; lra.
+  - destruct Hch as [Hlu Hch].
+    pose proof (chain_le tl u b Hch) as Hub'.
+    split.
+    + apply Hmono; lra.
+    + apply IH; [lra | exact Hch].
+Qed.
+
+Lemma reparam_preimage_chain : forall (phi : R -> R) a b,
+  (forall s t, a <= s -> s <= t -> t <= b -> phi s <= phi t) ->
+  (forall v, phi a <= v -> v <= phi b ->
+     exists u, a <= u /\ u <= b /\ phi u = v) ->
+  forall us t0,
+    a <= t0 -> t0 <= b ->
+    chain (phi t0) us (phi b) ->
+    exists ts, chain t0 ts b /\ map phi ts = us.
+Proof.
+  intros phi a b Hmono Hsurj us;
+    induction us as [|v tl IH]; simpl; intros t0 Ha0 Hb0 Hch.
+  - exists []. simpl. split; [exact Hb0 | reflexivity].
+  - destruct Hch as [Hlov Hch].
+    assert (Hvb : v <= phi b) by (apply (chain_le tl); exact Hch).
+    assert (Hav : phi a <= v).
+    { assert (phi a <= phi t0) by (apply Hmono; lra). lra. }
+    destruct (Hsurj v Hav Hvb) as (t1 & Ht1a & Ht1b & Hphit1).
+    destruct (Rle_dec t0 t1) as [Hle | Hgt].
+    + (* the fresh preimage sits past t0: use it *)
+      assert (Hch1 : chain (phi t1) tl (phi b))
+        by (rewrite Hphit1; exact Hch).
+      destruct (IH t1 Ht1a Ht1b Hch1) as (ts & Hchts & Hmap).
+      exists (t1 :: ts). simpl. split.
+      * split; [exact Hle | exact Hchts].
+      * rewrite Hmap, Hphit1. reflexivity.
+    + (* flat stretch: phi t0 = v already, reuse t0 *)
+      assert (Hveq : v = phi t0).
+      { assert (phi t1 <= phi t0) by (apply Hmono; lra). lra. }
+      assert (Hch0 : chain (phi t0) tl (phi b))
+        by (rewrite <- Hveq; exact Hch).
+      destruct (IH t0 Ha0 Hb0 Hch0) as (ts & Hchts & Hmap).
+      exists (t0 :: ts). simpl. split.
+      * split; [lra | exact Hchts].
+      * rewrite Hmap, <- Hveq. reflexivity.
+Qed.
+
+(* WITNESS {"claimId":"curvelength-is-curve-length-reparam","topic":"metric","lemma":"is_curve_length_reparam","title":"Metric length is invariant under weakly monotone reparameterization with explicit preimages","file":"theories/CurveLength.v"} *)
+
+Theorem is_curve_length_reparam : forall (g : Curve) (phi : R -> R) a b L,
+  a <= b ->
+  (forall s t, a <= s -> s <= t -> t <= b -> phi s <= phi t) ->
+  (forall v, phi a <= v -> v <= phi b ->
+     exists u, a <= u /\ u <= b /\ phi u = v) ->
+  is_curve_length g (phi a) (phi b) L ->
+  is_curve_length (fun t => g (phi t)) a b L.
+Proof.
+  intros g phi a b L Hab Hmono Hsurj [Hub Hlst].
+  split.
+  - intros l (ts & Hch & Hl). subst l.
+    apply Hub.
+    exists (map phi ts). split.
+    + exact (chain_map_mono phi a b Hmono ts a (Rle_refl a) Hch).
+    + rewrite (polyline_len_compose g phi (ts ++ [b]) a), map_app.
+      reflexivity.
+  - intros M HM. apply Hlst. intros l (us & Hch & Hl). subst l.
+    destruct (reparam_preimage_chain phi a b Hmono Hsurj us a
+                (Rle_refl a) Hab Hch) as (ts & Hchts & Hmap).
+    apply HM.
+    exists ts. split; [exact Hchts |].
+    rewrite (polyline_len_compose g phi (ts ++ [b]) a), map_app, Hmap.
+    reflexivity.
+Qed.
+
+(* The converse holds under the same premises: the two inscribed-set
+   correspondences above are used with the roles swapped, so the transfer
+   is an equivalence. *)
+Corollary is_curve_length_reparam_inv : forall (g : Curve) (phi : R -> R) a b L,
+  a <= b ->
+  (forall s t, a <= s -> s <= t -> t <= b -> phi s <= phi t) ->
+  (forall v, phi a <= v -> v <= phi b ->
+     exists u, a <= u /\ u <= b /\ phi u = v) ->
+  is_curve_length (fun t => g (phi t)) a b L ->
+  is_curve_length g (phi a) (phi b) L.
+Proof.
+  intros g phi a b L Hab Hmono Hsurj [Hub Hlst].
+  split.
+  - intros l (us & Hch & Hl). subst l.
+    destruct (reparam_preimage_chain phi a b Hmono Hsurj us a
+                (Rle_refl a) Hab Hch) as (ts & Hchts & Hmap).
+    apply Hub.
+    exists ts. split; [exact Hchts |].
+    rewrite (polyline_len_compose g phi (ts ++ [b]) a), map_app, Hmap.
+    reflexivity.
+  - intros M HM. apply Hlst. intros l (ts & Hch & Hl). subst l.
+    apply HM.
+    exists (map phi ts). split.
+    + exact (chain_map_mono phi a b Hmono ts a (Rle_refl a) Hch).
+    + rewrite (polyline_len_compose g phi (ts ++ [b]) a), map_app.
+      reflexivity.
+Qed.
+
+Print Assumptions is_curve_length_reparam.
+Print Assumptions is_curve_length_reparam_inv.
