@@ -1426,7 +1426,10 @@ the elliptic-E primitive. Meanwhile the oracle's `LENGTH_UNIFIED` quadrature
 ## Issue #508 — ellipse rung 2: shift invariance + the rx = ry circular bridge <!-- feat:arc-len geom:cs,arc -->
 
 Two additions. `CurveLength.v` gains the spec-level reparameterization
-invariances (pointwise extensionality and translation shift, both funext-free);
+invariances (pointwise extensionality and translation shift, both funext-free;
+the GENERAL monotone member, `is_curve_length_reparam`, arrived later — see
+the spec-rung section below — with shift staying independent because it also
+covers `a > b`);
 `EllipseLength.v` uses them to make the oracle's `E`-token closed form
 (`rx = ry → r·|sweep|`) a spec theorem: an equal-axes ellipse is a
 parameter-shifted circle, so its metric length is `r·(b−a)` unconditionally.
@@ -1588,6 +1591,7 @@ a new 64-a `r·θ`.
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `ArcMidSweep.v : valid_arc_sweep_nonzero` (+ `arc_mid_on_circle_param`, `arc_mid_pointset_and_sweep`) | **Sweep pin + mid point-set:** `valid_arc` excludes `arc_sweep = 0`; `arc_mid` is a parameterized circumcircle point `[exact]` | 4 |
+
 ## Issue #508 — spec rung: monotone reparameterization invariance (`CurveLength.v`) <!-- feat:arc-len geom:cs -->
 
 The invariance kit gains its general member. It joins `is_curve_length_ext`
@@ -1608,4 +1612,4 @@ quarter circle re-parameterized onto the angular arc, where
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
-| `CurveLength.v : is_curve_length_reparam` (+ `polyline_len_compose`, `chain_map_mono`, `reparam_preimage_chain`) | **Monotone reparameterization invariance:** for `a ≤ b`, `φ` weakly monotone on `[a,b]` with every `v ∈ [φ a, φ b]` explicitly hit by some `u ∈ [a,b]`, any metric length of `g` over `[φ a, φ b]` is a metric length of `t ↦ g (φ t)` over `[a,b]` — inscribed sets correspond through `map φ` one way and preimage chains (with flat-stretch order repair) the other; no functional extensionality, no continuity `[exact]` | 3 |
+| `CurveLength.v : is_curve_length_reparam` (+ `is_curve_length_reparam_inv`, `polyline_len_compose`, `chain_map_mono`, `reparam_preimage_chain`) | **Monotone reparameterization invariance:** for `a ≤ b`, `φ` weakly monotone on `[a,b]` with every `v ∈ [φ a, φ b]` explicitly hit by some `u ∈ [a,b]`, any metric length of `g` over `[φ a, φ b]` is a metric length of `t ↦ g (φ t)` over `[a,b]` — inscribed sets correspond through `map φ` one way and preimage chains (with flat-stretch order repair) the other, so the converse (`is_curve_length_reparam_inv`) holds under the same premises and the transfer is an equivalence; orientation-REVERSING maps are deliberately out of scope (a future lemma via reflection); no functional extensionality, no continuity `[exact]` | 3 |

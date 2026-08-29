@@ -361,7 +361,11 @@ Print Assumptions is_curve_length_shift.
 (* tier (the rational quarter circle re-parameterized onto the angular arc).  *)
 (* The surjectivity premise asks for an EXPLICIT preimage (no IVT machinery); *)
 (* weak monotonicity suffices — flat stretches are handled by reusing the     *)
-(* previous preimage when consecutive samples coincide.                       *)
+(* previous preimage when consecutive samples coincide.  Both directions     *)
+(* hold under the same premises (the inscribed sets correspond both ways),   *)
+(* so the transfer is an equivalence.  Orientation-REVERSING maps (t ↦ 1−t,  *)
+(* an arc run backwards) are deliberately OUT OF SCOPE: that is a different  *)
+(* lemma (swap endpoints / compose with a reflection), not an instance.      *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma chain_map_mono : forall (phi : R -> R) a b,
@@ -443,4 +447,33 @@ Proof.
     reflexivity.
 Qed.
 
+(* The converse holds under the same premises: the two inscribed-set
+   correspondences above are used with the roles swapped, so the transfer
+   is an equivalence. *)
+Corollary is_curve_length_reparam_inv : forall (g : Curve) (phi : R -> R) a b L,
+  a <= b ->
+  (forall s t, a <= s -> s <= t -> t <= b -> phi s <= phi t) ->
+  (forall v, phi a <= v -> v <= phi b ->
+     exists u, a <= u /\ u <= b /\ phi u = v) ->
+  is_curve_length (fun t => g (phi t)) a b L ->
+  is_curve_length g (phi a) (phi b) L.
+Proof.
+  intros g phi a b L Hab Hmono Hsurj [Hub Hlst].
+  split.
+  - intros l (us & Hch & Hl). subst l.
+    destruct (reparam_preimage_chain phi a b Hmono Hsurj us a
+                (Rle_refl a) Hab Hch) as (ts & Hchts & Hmap).
+    apply Hub.
+    exists ts. split; [exact Hchts |].
+    rewrite (polyline_len_compose g phi (ts ++ [b]) a), map_app, Hmap.
+    reflexivity.
+  - intros M HM. apply Hlst. intros l (ts & Hch & Hl). subst l.
+    apply HM.
+    exists (map phi ts). split.
+    + exact (chain_map_mono phi a b Hmono ts a (Rle_refl a) Hch).
+    + rewrite (polyline_len_compose g phi (ts ++ [b]) a), map_app.
+      reflexivity.
+Qed.
+
 Print Assumptions is_curve_length_reparam.
+Print Assumptions is_curve_length_reparam_inv.
