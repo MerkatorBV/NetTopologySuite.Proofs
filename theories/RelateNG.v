@@ -39,6 +39,11 @@
          retry (#522 / 522-m): excluding the T-junction 12-tuple,
          completeness is still FALSE (obtuse-at-v).  Next
          certificate specs (T-junction, obtuse-at-v) are not invented.
+     - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
+         (#568 / 522-g): a strict-`gtri` point has an explicit open
+         disk of strict points; a nondegenerate segment carries dim-1;
+         the #530 sentinel IE cell has dim-2 content.  Does not remint
+         `aa_matrix_disjoint` (empty IE is #573 / 522-d).
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation
@@ -83,4 +88,5 @@ From NTS.Proofs Require Export
   RelateNGTouchRED
   RelateNGTouchCells
   RelateNGRect
-  RelateNGComplete.
+  RelateNGComplete
+  RelateNGRingInclusion.
