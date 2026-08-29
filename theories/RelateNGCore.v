@@ -292,24 +292,60 @@ Definition contains_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
   if Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint fx fy)) then true
   else false else false else false else false.
 
-(* Triangle regime classifier.  DETECTS the shared-edge touch regime (the
-   `touch_edge_b` decision, proven correct on the `triangles_touch_on_shared_edge`
-   inputs by `triangle_pair_regime_touch` below) and the containment regime
-   (the `contains_b` decision, proven correct by `triangle_pair_regime_contains`
-   below), and DECLINING on everything else.
+(* Strict gtri-sign probes used by the overlap certificate.  Pure `Rlt_dec`. *)
+Definition gtri_strict_pos_b (ax ay bx by_ cx cy : R) (p : Point) : bool :=
+  if Rlt_dec 0 (gtri ax ay bx by_ cx cy p) then true else false.
+
+Definition gtri_strict_neg_b (ax ay bx by_ cx cy : R) (p : Point) : bool :=
+  if Rlt_dec (gtri ax ay bx by_ cx cy p) 0 then true else false.
+
+Definition some_vertex_strict_pos (ax ay bx by_ cx cy : R)
+    (p q r : Point) : bool :=
+  gtri_strict_pos_b ax ay bx by_ cx cy p
+  || gtri_strict_pos_b ax ay bx by_ cx cy q
+  || gtri_strict_pos_b ax ay bx by_ cx cy r.
+
+Definition some_vertex_strict_neg (ax ay bx by_ cx cy : R)
+    (p q r : Point) : bool :=
+  gtri_strict_neg_b ax ay bx by_ cx cy p
+  || gtri_strict_neg_b ax ay bx by_ cx cy q
+  || gtri_strict_neg_b ax ay bx by_ cx cy r.
+
+(* Sound-but-partial overlap certificate (#570 / claimId 522-b).
+   Both triangles CCW, a vertex of B strictly interior to A, a vertex of B
+   strictly exterior to A, and a vertex of A strictly exterior to B.
+   `triangle_pair_regime_overlap` (RelateNGOverlap) derives the earlier
+   branches false and lifts the flag to `triangles_partial_overlap` via a
+   convexity nudge toward B's centroid.  Lens pairs whose interiors meet
+   without a B-vertex in A still decline -- completeness is later #522. *)
+Definition overlap_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_vertex_strict_pos ax ay bx by_ cx cy
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && some_vertex_strict_neg ax ay bx by_ cx cy
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && some_vertex_strict_neg dx dy ex ey fx fy
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+  else false else false.
+
+(* Triangle regime classifier.  DETECTS shared-edge touch, containment, and
+   the vertex-stab overlap certificate, and DECLINES on everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
    two genuinely overlapping triangles -- a supported input pair -- were
    classified disjoint and filled with `aa_matrix_disjoint`.  The default is
-   now TPR_Unsupported, whose fill is the sentinel.  Recovering the real
-   verdict for the overlap regime needs a sound cheap test (issue #522). *)
+   TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
+   pairs the certificate misses (pure lens, vertex-touch) still decline. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   then TPR_TouchEdge
   else if contains_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Contains
+  else if overlap_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Overlap
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the
@@ -393,10 +429,30 @@ Proof.
     { unfold gtri.
       assert (H : gsA 0 0 1 0 (mkPoint 2 0) = 0) by (unfold gsA; simpl; ring).
       rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
-    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn].
-    - destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _];
-        [ exfalso; lra | reflexivity ].
-    - exfalso. apply Hn. unfold gdbl. lra. }
+    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _];
+      [ exfalso; lra | ].
+    (* contains_b is false; overlap_b is also false: no B-vertex is interior
+       to A (the #530 pair is separated).  Disjoint emit is #571. *)
+    unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
+    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gdbl 2 0 3 0 2 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [H2 | _];
+      [ exfalso; lra | ].
+    assert (H3 : gtri 0 0 1 0 0 1 (mkPoint 3 0) <= 0).
+    { unfold gtri.
+      assert (H : gsA 0 0 1 0 (mkPoint 3 0) = 0) by (unfold gsA; simpl; ring).
+      rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 3 0))) as [H3lt | _];
+      [ exfalso; lra | ].
+    assert (H21 : gtri 0 0 1 0 0 1 (mkPoint 2 1) < 0).
+    { eapply Rle_lt_trans; [ apply (gtri_le_gsB 0 0 1 0 0 1 (mkPoint 2 1)) | ].
+      unfold gsB; cbn [px py]; lra. }
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 1))) as [H21lt | _];
+      [ exfalso; lra | reflexivity ]. }
   rewrite Hreg. reflexivity.
 Qed.
 
