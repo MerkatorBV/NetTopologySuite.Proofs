@@ -19,6 +19,16 @@ FILL_API RelateMatrixRect rect_pair_fill RPR_Contains    => aa_matrix_contains
 FILL_API RelateMatrixRect rect_pair_fill RPR_TouchVert   => aa_matrix_touch_vertical
 # Oracle: oracle/de9im_area_area_vectors.txt
 #
+# Triangle×triangle (theories/RelateMatrixTriangle.v / RelateNGOracleSurface.v):
+# classified fills mirror the rect aliases.  TPR_Unsupported is the result
+# token UNSUPPORTED (not a FILL matrix; not a catalog key).
+FILL_API RelateMatrixTriangle triangle_pair_fill TPR_Disjoint    => aa_matrix_disjoint
+FILL_API RelateMatrixTriangle triangle_pair_fill TPR_Overlap     => aa_matrix_partial_overlap
+FILL_API RelateMatrixTriangle triangle_pair_fill TPR_Contains    => aa_matrix_contains
+FILL_API RelateMatrixTriangle triangle_pair_fill TPR_TouchEdge   => aa_matrix_touch_vertical
+FILL_API RelateMatrixTriangle triangle_pair_fill TPR_TouchVertex => aa_matrix_touch_vertical
+# Oracle: oracle/de9im_triangle_vectors.txt
+#
 # Line×line (theories/RelateMatrixLineLine.v):
 FILL_API RelateMatrixLineLine line_pair_fill LPR_Disjoint         => ll_matrix_disjoint
 FILL_API RelateMatrixLineLine line_pair_fill LPR_ProperCross      => ll_matrix_point_ii

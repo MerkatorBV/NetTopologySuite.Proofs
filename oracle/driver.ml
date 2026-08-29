@@ -4452,7 +4452,9 @@ let run_snap_scaled () =
 
 let run_relate_matrix () =
   let key = String.trim (input_line stdin) in
-  print_endline (Relate_matrix.resolve_matrix_input key)
+  match Relate_matrix.lookup_result key with
+  | Relate_matrix.Unsupported -> print_endline "UNSUPPORTED"
+  | Relate_matrix.Matrix m -> print_endline m
 
 let run_relate_predicate () =
   let matrix_key = String.trim (input_line stdin) in

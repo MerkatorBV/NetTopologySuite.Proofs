@@ -22,8 +22,8 @@
      - `~ im_disjoint aa_matrix_disjoint_ogc`
        DE9IM.v `pat_disjoint` forces EI=EB=F, so the true areal matrix
        is not a `Disjoint` witness.  That is why the classifier pointer
-       stays on FFFFFFFFF.  Rewiring it is the #575 / 522-f half of the
-       fill upgrade (oracle token + `relate_dispatch_pair_disjoint`).
+       stays on FFFFFFFFF.  Rewiring the pointer is later.  #575 / 522-f
+       is the oracle wire token (`UNSUPPORTED`), not this remint.
 
    Not claimed:
      - `geom_de9im_pointset` / `cell_ok` on `point_set` (ADR-0003: do
