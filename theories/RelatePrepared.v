@@ -241,10 +241,6 @@ Proof.
   - reflexivity.
 Qed.
 
-Print Assumptions prepared_evaluate_agrees.
-Print Assumptions evaluate_coherent_agrees.
-Print Assumptions prepare_cache_coherent.
-
 (* -------------------------------------------------------------------------- *)
 (* Witness: a separated pair through the cache path equals one-shot relate,   *)
 (* and the proof of evaluate = disjoint actually takes the short-circuit.     *)
@@ -307,8 +303,6 @@ Proof.
     rewrite rects_relate_disjoint_eq. reflexivity.
 Qed.
 
-Print Assumptions prepared_evaluate_cache_short_circuit.
-
 (* -------------------------------------------------------------------------- *)
 (* Stub-era corollaries, restated over the real evaluate.                     *)
 (* -------------------------------------------------------------------------- *)
@@ -365,12 +359,6 @@ Example prepared_triangle_has_points_cache :
 Proof.
   reflexivity.
 Qed.
-
-Print Assumptions prepared_rect_evaluate_agrees.
-Print Assumptions prepared_triangle_evaluate_agrees.
-Print Assumptions prepared_identity.
-Print Assumptions prepared_rect_touch_cached.
-Print Assumptions prepared_triangle_touch_cached.
 
 (* -------------------------------------------------------------------------- *)
 (* Qex: naive "boxes apart ⇒ disjoint" is unsound.  A CCW/CW pair can have    *)
@@ -457,97 +445,46 @@ Proof.
     unfold tris_relate. apply triangle_pair_fill_unsupported_eq.
 Qed.
 
-Print Assumptions naive_box_disjoint_is_unsound.
-
 (* -------------------------------------------------------------------------- *)
 (* Mutation: a hand-corrupted triangle cache short-circuits to disjoint       *)
 (* while one-shot relate declines.  `cache_coherent` is what catches it.      *)
 (* -------------------------------------------------------------------------- *)
 
+(* Far cache vs the #577 T-junction B.  Relate of that pair is the landed
+   decline `tjunction_pair_unsupported`; evaluate still short-circuits. *)
 Lemma far_cache_separated_b :
-  separated_b 10 0 11 0 10 1 0 0 1 0 0 1 = true.
+  separated_b 10 0 11 0 10 1 1 0 3 0 2 1 = true.
 Proof.
   unfold separated_b.
   destruct (Rlt_dec 0 (gdbl 10 0 11 0 10 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+  destruct (Rlt_dec 0 (gdbl 1 0 3 0 2 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   unfold some_edge_separates_b, edge_separates_b, opposite_sides_b.
   cbn [px py].
   destruct (Rlt_dec (cross (mkPoint 10 0) (mkPoint 11 0) (mkPoint 10 1)
-                    * cross (mkPoint 10 0) (mkPoint 11 0) (mkPoint 0 0)) 0)
+                    * cross (mkPoint 10 0) (mkPoint 11 0) (mkPoint 1 0)) 0)
     as [Hbot | _];
     [ exfalso; unfold cross in Hbot; cbn [px py] in Hbot; lra | ].
-  destruct (Rlt_dec (cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 10 0)
-                    * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 0 0)) 0)
-    as [_ | Hn];
-    [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
   destruct (Rlt_dec (cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 10 0)
                     * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 1 0)) 0)
     as [_ | Hn];
     [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
   destruct (Rlt_dec (cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 10 0)
-                    * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 0 1)) 0)
+                    * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 3 0)) 0)
+    as [_ | Hn];
+    [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
+  destruct (Rlt_dec (cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 10 0)
+                    * cross (mkPoint 11 0) (mkPoint 10 1) (mkPoint 2 1)) 0)
     as [_ | Hn];
     [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
   reflexivity.
 Qed.
 
 Lemma far_cache_regime_disjoint :
-  triangle_pair_regime 10 0 11 0 10 1 0 0 1 0 0 1 = TPR_Disjoint.
+  triangle_pair_regime 10 0 11 0 10 1 1 0 3 0 2 1 = TPR_Disjoint.
 Proof.
   apply triangle_pair_regime_disjoint, far_cache_separated_b.
-Qed.
-
-Lemma unit_self_regime_unsupported :
-  triangle_pair_regime 0 0 1 0 0 1 0 0 1 0 0 1 = TPR_Unsupported.
-Proof.
-  unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb,
-         opposite_sides_b.
-  cbn [px py].
-  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-  repeat (destruct (Rlt_dec (_ * _) 0) as [?lt | ?n];
-          try (exfalso; unfold cross in *; cbn [px py] in *; lra)).
-  unfold contains_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 0 0))) as [Hlt | _].
-  { exfalso. unfold gtri in Hlt.
-    assert (H : gsA 0 0 1 0 (mkPoint 0 0) = 0) by (unfold gsA; simpl; ring).
-    rewrite H in Hlt.
-    eapply Rlt_not_le in Hlt.
-    apply Hlt. eapply Rle_trans; [apply Rmin_l_le | apply Rmin_l_le]. }
-  unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 0 0))) as [H2 | _];
-    [ exfalso; unfold gtri in H2;
-      assert (H : gsA 0 0 1 0 (mkPoint 0 0) = 0) by (unfold gsA; simpl; ring);
-      rewrite H in H2; eapply Rlt_not_le in H2;
-      apply H2; eapply Rle_trans; [apply Rmin_l_le | apply Rmin_l_le] | ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 1 0))) as [H3 | _];
-    [ exfalso; unfold gtri in H3;
-      assert (H : gsA 0 0 1 0 (mkPoint 1 0) = 0) by (unfold gsA; simpl; ring);
-      rewrite H in H3; eapply Rlt_not_le in H3;
-      apply H3; eapply Rle_trans; [apply Rmin_l_le | apply Rmin_l_le] | ].
-  destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 0 1))) as [H4 | _];
-    [ exfalso; unfold gtri in H4;
-      assert (H : gsA 0 0 1 0 (mkPoint 0 1) = 0) by (unfold gsA; simpl; ring);
-      rewrite H in H4; eapply Rlt_not_le in H4;
-      apply H4; eapply Rle_trans; [apply Rmin_l_le | apply Rmin_l_le] | ].
-  unfold separated_b.
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  unfold some_edge_separates_b, edge_separates_b, opposite_sides_b.
-  cbn [px py].
-  repeat (destruct (Rlt_dec (_ * _) 0) as [?lt | ?n];
-          try (exfalso; unfold cross in *; cbn [px py] in *; lra)).
-  unfold touch_vertex_b, exactly_one_shared_from_a, is_vertex_b, point_eqb.
-  cbn [px py].
-  destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gdbl; lra ].
-  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-  reflexivity.
 Qed.
 
 Lemma aa_matrix_disjoint_neq_unsupported :
@@ -560,8 +497,8 @@ Proof.
 Qed.
 
 Theorem corrupted_cache_disagrees :
-  let A := triangle_geometry 0 0 1 0 0 1 in
-  let B := triangle_geometry 0 0 1 0 0 1 in
+  let A := triangle_geometry 0 0 2 0 0 1 in
+  let B := triangle_geometry 1 0 3 0 2 1 in
   let pg := {| pg_geom := A;
                pg_cache := None;
                pg_tri_cache := Some (10, 0, 11, 0, 10, 1) |} in
@@ -575,11 +512,11 @@ Proof.
     rewrite far_cache_regime_disjoint. reflexivity.
   - split.
     + rewrite relate_on_triangles_dispatches.
-      rewrite unit_self_regime_unsupported.
+      rewrite tjunction_pair_unsupported.
       unfold tris_relate. apply triangle_pair_fill_unsupported_eq.
     + split.
       * rewrite relate_on_triangles_dispatches.
-        rewrite unit_self_regime_unsupported.
+        rewrite tjunction_pair_unsupported.
         unfold evaluate, evaluate_from_tri_cache. simpl.
         rewrite far_cache_regime_disjoint.
         unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
@@ -594,4 +531,10 @@ Proof.
         cbn in Htr. lra.
 Qed.
 
+(* Footers last so a mid-file failure is not buried under axiom dumps. *)
+Print Assumptions prepared_evaluate_agrees.
+Print Assumptions evaluate_coherent_agrees.
+Print Assumptions prepare_cache_coherent.
+Print Assumptions prepared_evaluate_cache_short_circuit.
+Print Assumptions naive_box_disjoint_is_unsound.
 Print Assumptions corrupted_cache_disagrees.
