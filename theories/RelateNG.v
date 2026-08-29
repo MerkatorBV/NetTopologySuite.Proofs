@@ -27,7 +27,8 @@
          (`triangle_pair_regime_disjoint`; soundness
          `separated_b_triangles_separated` via a supporting edge).
      - RelateNGTouchVertex.v TPR_TouchVertex regime at bar 1 (#572 / 522-i)
-         (`triangle_pair_regime_touchvertex`; soundness
+         (umbrella over RelateNGTouchVertexCone + RelateNGTouchVertexRegime;
+         `triangle_pair_regime_touchvertex`; soundness
          `touch_vertex_b_triangles_touch` via a line through the
          shared vertex).
      - RelateNGTouch.v       shared-edge touch regime

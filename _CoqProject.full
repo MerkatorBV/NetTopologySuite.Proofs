@@ -2750,13 +2750,16 @@ theories/RelateNGBoundaryGraph.v
 # 3-axiom classical-reals base.  No Admitted.
 theories/RelateNGMatrixEqual.v
 # S13: RelateNG pipeline (strata, relate, dim, MOD2+area integration).
-# Split (2026-08) into six layered modules + re-export umbrella; the
+# Split (2026-08) into layered modules + re-export umbrella; the
 # meso-audit B6 untangle (rect vs triangle lanes) is executed by the Core
-# layout.  Register the seven modules before the umbrella.
+# layout.  Register the leaf modules before the umbrellas.
+# RelateNGTouchVertex is itself an umbrella over Cone + Regime (#572).
 theories/RelateNGCore.v
 theories/RelateNGContains.v
 theories/RelateNGOverlap.v
 theories/RelateNGDisjoint.v
+theories/RelateNGTouchVertexCone.v
+theories/RelateNGTouchVertexRegime.v
 theories/RelateNGTouchVertex.v
 theories/RelateNGTouch.v
 theories/RelateNGTouchRED.v
