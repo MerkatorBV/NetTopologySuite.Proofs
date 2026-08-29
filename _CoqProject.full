@@ -2756,6 +2756,10 @@ theories/RelateNGMatrixEqual.v
 # RelateNGTouchVertex is itself an umbrella over Cone + Regime (#572).
 theories/RelateNGCore.v
 theories/RelateNGContains.v
+# #567 / 522-a remaining core slice: detector→predicate bridge.
+# contains_b + B CCW ⇒ triangle_a_contains_b.  Honesty pin: contains_b
+# alone is not enough (CW-listed B).  Same claimId as #579; not a remint.
+theories/RelateNGContainsBridge.v
 theories/RelateNGOverlap.v
 theories/RelateNGDisjoint.v
 theories/RelateNGTouchVertexCone.v

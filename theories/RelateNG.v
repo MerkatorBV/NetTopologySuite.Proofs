@@ -20,6 +20,10 @@
          (`triangle_pair_regime_contains`; whole-boundary containment
          `contains_b_ring_inside` / `contains_b_ring_strictly_inside`
          via TriangleContainmentConvex).
+     - RelateNGContainsBridge.v  #567 / 522-a detector→predicate bridge
+         (`contains_b_ccw_implies_closed_containment`): `contains_b`
+         plus B CCW lifts to closed `triangle_a_contains_b`.  Honesty
+         pin: `contains_b` alone is not enough (CW-listed B).
      - RelateNGOverlap.v     TPR_Overlap regime at bar 1 (#570 / 522-b)
          (`triangle_pair_regime_overlap`; soundness
          `overlap_b_partial_overlap` via a centroid nudge).
@@ -81,6 +85,7 @@
 From NTS.Proofs Require Export
   RelateNGCore
   RelateNGContains
+  RelateNGContainsBridge
   RelateNGOverlap
   RelateNGDisjoint
   RelateNGTouchVertex

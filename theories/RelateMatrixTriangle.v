@@ -255,10 +255,10 @@ Definition triangles_touch_on_shared_edge (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
      and boundary contact), with BOTH triangles guarded CCW.  NB the strict
      vertex detector `contains_b` (RelateNGCore) guards only A's
      orientation, so it does not by itself entail this predicate -- a
-     CW-listed B passes the detector and fails the B-side guard here.  The
-     detector -> predicate bridge (via the convexity lift, adding B's CCW
-     hypothesis) is later #522 rungs' work, deliberately not claimed
-     here.
+     CW-listed B passes the detector and fails the B-side guard here.
+     The detector -> predicate bridge (barycentric / convexity lift,
+     adding B's CCW hypothesis) is RelateNGContainsBridge
+     (`contains_b_ccw_implies_closed_containment`), still #522 / 522-a.
    - The five names are not a partition of all pairs.  A partial-edge
      kiss that is not a full shared edge and not a single vertex
      satisfies none of them; the decline path (`TPR_Unsupported`)
