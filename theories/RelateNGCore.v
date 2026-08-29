@@ -622,8 +622,10 @@ Proof. exact (relate_unsupported_no_predicate RDisjoint). Qed.
 
 (* The #530 sentinel pair now classifies disjoint (#571): the designated
    fill is `aa_matrix_disjoint`, which satisfies `im_disjoint`.  Bar 1 is
-   the geometric verdict plus this designated witness; the OGC areal
-   string FF2FF1212 is the later #573 / #575 fill upgrade. *)
+   the geometric verdict plus this designated witness.  The nine gtri
+   cells of OGC FF2FF1212 live in RelateNGDisjointCells (#573 / 522-d);
+   the classifier pointer stays on FFFFFFFFF because `pat_disjoint`
+   rejects EI=2.  Rewiring the pointer is the #575 / 522-f half. *)
 Lemma relate_dispatch_pair_disjoint :
   im_disjoint (relate (triangle_geometry 0 0 1 0 0 1)
                       (triangle_geometry 2 0 3 0 2 1)).
