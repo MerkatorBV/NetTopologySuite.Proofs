@@ -329,15 +329,45 @@ Definition overlap_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
       (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
   else false else false.
 
-(* Triangle regime classifier.  DETECTS shared-edge touch, containment, and
-   the vertex-stab overlap certificate, and DECLINES on everything else.
+(* Separating-edge certificate (#571 / claimId 522-c).  An oriented edge of
+   one triangle is a strict supporting line: the owner's remaining vertex
+   and the other triangle's three vertices have opposite `cross` signs
+   (pure `Rlt_dec`).  Six candidates — three edges of A, three of B.
+   Sound-but-partial: pairs whose closures miss each other without a
+   vertex-strict supporting edge (vertex-touch, partial-edge kiss) still
+   decline.  Completeness is later #522. *)
+Definition edge_separates_b (p1 p2 apex q1 q2 q3 : Point) : bool :=
+  opposite_sides_b p1 p2 apex q1
+  && opposite_sides_b p1 p2 apex q2
+  && opposite_sides_b p1 p2 apex q3.
+
+Definition some_edge_separates_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  edge_separates_b a1 a2 a3 b1 b2 b3 ||
+  edge_separates_b a2 a3 a1 b1 b2 b3 ||
+  edge_separates_b a3 a1 a2 b1 b2 b3 ||
+  edge_separates_b b1 b2 b3 a1 a2 a3 ||
+  edge_separates_b b2 b3 b1 a1 a2 a3 ||
+  edge_separates_b b3 b1 b2 a1 a2 a3.
+
+Definition separated_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_edge_separates_b
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+  else false else false.
+
+(* Triangle regime classifier.  DETECTS shared-edge touch, containment,
+   the vertex-stab overlap certificate, and a separating-edge disjoint
+   certificate, and DECLINES on everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
    two genuinely overlapping triangles -- a supported input pair -- were
    classified disjoint and filled with `aa_matrix_disjoint`.  The default is
    TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
-   pairs the certificate misses (pure lens, vertex-touch) still decline. *)
+   disjoint is reachable when `separated_b` fires (#571); pairs neither
+   certificate covers (pure lens, vertex-touch) still decline. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -346,6 +376,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_Contains
   else if overlap_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Overlap
+  else if separated_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Disjoint
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the
@@ -407,23 +439,18 @@ Proof.
 Qed.
 
 (* Basic example of triangle dispatch reducing.  These two triangles share no
-   edge and neither contains the other, so the classifier DECLINES: it returns
-   TPR_Unsupported, not TPR_Disjoint.  Note that these two triangles happen to
-   be genuinely disjoint -- but the classifier never established that, and the
-   whole point of #522 is that it must not claim what it did not test. *)
+   edge, neither contains the other, and A's hypotenuse (1,0)--(0,1) is a
+   strict supporting line for B, so the classifier now answers TPR_Disjoint
+   (#571).  The pair is the #530 sentinel that used to decline. *)
 Example relate_triangle_dispatch_ex :
   relate (triangle_geometry 0 0 1 0 0 1) (triangle_geometry 2 0 3 0 2 1) =
-  tris_relate 0 0 1 0 0 1 2 0 3 0 2 1 TPR_Unsupported.
+  tris_relate 0 0 1 0 0 1 2 0 3 0 2 1 TPR_Disjoint.
 Proof.
   rewrite relate_on_triangles_dispatches.
-  assert (Hreg : triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Unsupported).
+  assert (Hreg : triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Disjoint).
   { unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
     cbn [px py].
     repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-    (* touch_edge_b is now pinned to `false`; the containment branch remains:
-       the two triangles don't even share an x-range, so gtri of the first
-       triangle at the second triangle's first vertex (2,0) is already
-       non-positive (its gsA slack is exactly 0 there). *)
     unfold contains_b.
     assert (Hcb : gtri 0 0 1 0 0 1 (mkPoint 2 0) <= 0).
     { unfold gtri.
@@ -433,8 +460,6 @@ Proof.
       [ | exfalso; apply Hn; unfold gdbl; lra ].
     destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _];
       [ exfalso; lra | ].
-    (* contains_b is false; overlap_b is also false: no B-vertex is interior
-       to A (the #530 pair is separated).  Disjoint emit is #571. *)
     unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
     destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
       [ | exfalso; apply Hn; unfold gdbl; lra ].
@@ -452,7 +477,33 @@ Proof.
     { eapply Rle_lt_trans; [ apply (gtri_le_gsB 0 0 1 0 0 1 (mkPoint 2 1)) | ].
       unfold gsB; cbn [px py]; lra. }
     destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 1))) as [H21lt | _];
-      [ exfalso; lra | reflexivity ]. }
+      [ exfalso; lra | ].
+    (* separated_b: both CCW; A's hypotenuse (1,0)--(0,1) strictly separates. *)
+    unfold separated_b, some_edge_separates_b, edge_separates_b, opposite_sides_b.
+    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gdbl 2 0 3 0 2 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    cbn [px py].
+    (* First candidate (bottom edge) is not strict: B's (2,0) is collinear. *)
+    destruct (Rlt_dec (cross (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                      * cross (mkPoint 0 0) (mkPoint 1 0) (mkPoint 2 0)) 0)
+      as [Hbot | _];
+      [ exfalso; unfold cross in Hbot; cbn [px py] in Hbot; lra | ].
+    (* Second candidate: hypotenuse (1,0)--(0,1), apex (0,0). *)
+    destruct (Rlt_dec (cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 0 0)
+                      * cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 2 0)) 0)
+      as [_ | Hn];
+      [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
+    destruct (Rlt_dec (cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 0 0)
+                      * cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 3 0)) 0)
+      as [_ | Hn];
+      [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
+    destruct (Rlt_dec (cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 0 0)
+                      * cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 2 1)) 0)
+      as [_ | Hn];
+      [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
+    reflexivity. }
   rewrite Hreg. reflexivity.
 Qed.
 
@@ -493,34 +544,25 @@ Lemma relate_unsupported_not_disjoint :
   ~ im_disjoint (relate [] []).
 Proof. exact (relate_unsupported_no_predicate RDisjoint). Qed.
 
-(* The second half of #522, and the sharper one: an unclassified *triangle*
-   pair is a SUPPORTED input on which the classifier has no verdict.  It used
-   to be filled with `aa_matrix_disjoint`; it now declines.  Stated on the
-   concrete pair of `relate_triangle_dispatch_ex` -- which happens to be
-   genuinely disjoint, making the point exactly: even when the answer would
-   have been right, the dispatch had not earned it. *)
-Lemma relate_unclassified_triangles_no_predicate :
-  forall r : RelatePredicate,
-    ~ predicate_holds r (relate (triangle_geometry 0 0 1 0 0 1)
-                                (triangle_geometry 2 0 3 0 2 1)).
-Proof.
-  intros r. rewrite relate_triangle_dispatch_ex.
-  unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
-  exact (im_unsupported_no_predicate r).
-Qed.
-
-Lemma relate_unclassified_triangles_not_disjoint :
-  ~ im_disjoint (relate (triangle_geometry 0 0 1 0 0 1)
-                        (triangle_geometry 2 0 3 0 2 1)).
-Proof. exact (relate_unclassified_triangles_no_predicate RDisjoint). Qed.
-
-Lemma relate_unclassified_triangles_not_ok :
-  ~ matrix_ok (relate (triangle_geometry 0 0 1 0 0 1)
+(* The #530 sentinel pair now classifies disjoint (#571): the designated
+   fill is `aa_matrix_disjoint`, which satisfies `im_disjoint`.  Bar 1 is
+   the geometric verdict plus this designated witness; the OGC areal
+   string FF2FF1212 is the later #573 / #575 fill upgrade. *)
+Lemma relate_dispatch_pair_disjoint :
+  im_disjoint (relate (triangle_geometry 0 0 1 0 0 1)
                       (triangle_geometry 2 0 3 0 2 1)).
 Proof.
   rewrite relate_triangle_dispatch_ex.
-  unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
-  exact im_unsupported_not_ok.
+  unfold tris_relate. rewrite triangle_pair_fill_disjoint_eq.
+  exact aa_matrix_disjoint_witness.
+Qed.
+
+Lemma relate_dispatch_pair_predicate_disjoint :
+  predicate_holds RDisjoint
+    (relate (triangle_geometry 0 0 1 0 0 1)
+            (triangle_geometry 2 0 3 0 2 1)).
+Proof.
+  unfold predicate_holds. exact relate_dispatch_pair_disjoint.
 Qed.
 
 
