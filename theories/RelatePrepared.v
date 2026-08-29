@@ -96,48 +96,46 @@ Proof.
   intros. unfold tris_relate. apply triangle_pair_fill_disjoint_eq.
 Qed.
 
-(* Local: walk the triangle short-circuit when at least one input is not
-   a rect (so `relate` itself takes the triangle branch). *)
-Lemma evaluate_tri_branch_agrees :
+(* A 5-point rect ring cannot also be a 4-point triangle ring. *)
+Lemma extractors_not_both_some :
+  forall g b t,
+    rect_geometry_bounds g = Some b ->
+    triangle_geometry_points g = Some t ->
+    False.
+Proof.
+  intros g b t Hr Ht.
+  unfold rect_geometry_bounds, triangle_geometry_points in *.
+  destruct g as [|poly gtl]; [discriminate|].
+  destruct gtl; [|discriminate].
+  destruct (hole_rings poly); [|discriminate].
+  destruct (outer_ring poly) as [|p0 r0]; [discriminate|].
+  destruct p0. destruct r0 as [|p1 r1]; [discriminate|].
+  destruct p1. destruct r1 as [|p2 r2]; [discriminate|].
+  destruct p2. destruct r2 as [|p3 r3]; [discriminate|].
+  destruct p3. destruct r3 as [|p4 r4].
+  - discriminate.
+  - destruct p4. destruct r4; discriminate.
+Qed.
+
+(* Triangle-only path: A is not a rect, so `relate` skips the rect arm. *)
+Lemma evaluate_triangle_path_agrees :
   forall pg g,
     cache_coherent pg ->
-    (rect_geometry_bounds (pg_geom pg) = None \/
-     rect_geometry_bounds g = None) ->
+    rect_geometry_bounds (pg_geom pg) = None ->
     evaluate pg g = relate (pg_geom pg) g.
 Proof.
-  intros pg g [Hc Htr] Hskip.
+  intros pg g [Hc Htr] Ea.
   unfold evaluate.
-  rewrite Hc, Htr.
-  destruct (rect_geometry_bounds (pg_geom pg)) as [ab|] eqn:Ea;
-    destruct (rect_geometry_bounds g) as [bb|] eqn:Eb.
-  - destruct Hskip as [H|H]; discriminate.
-  - destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta;
-      destruct (triangle_geometry_points g) as [tb|] eqn:Etb;
-      try reflexivity.
-    destruct ta as [[[[[ax ay] bx] by_] cx] cy].
-    destruct tb as [[[[[dx dy] ex] ey] fx] fy].
-    destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
-      eqn:Tr; try reflexivity.
-    unfold relate. rewrite Ea, Eb, Eta, Etb, Tr.
-    apply tris_relate_disjoint_eq.
-  - destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta;
-      destruct (triangle_geometry_points g) as [tb|] eqn:Etb;
-      try reflexivity.
-    destruct ta as [[[[[ax ay] bx] by_] cx] cy].
-    destruct tb as [[[[[dx dy] ex] ey] fx] fy].
-    destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
-      eqn:Tr; try reflexivity.
-    unfold relate. rewrite Ea, Eta, Etb, Tr.
-    apply tris_relate_disjoint_eq.
-  - destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta;
-      destruct (triangle_geometry_points g) as [tb|] eqn:Etb;
-      try reflexivity.
-    destruct ta as [[[[[ax ay] bx] by_] cx] cy].
-    destruct tb as [[[[[dx dy] ex] ey] fx] fy].
-    destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
-      eqn:Tr; try reflexivity.
-    unfold relate. rewrite Ea, Eta, Etb, Tr.
-    apply tris_relate_disjoint_eq.
+  rewrite Hc, Ea, Htr.
+  destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta;
+    destruct (triangle_geometry_points g) as [tb|] eqn:Etb;
+    try reflexivity.
+  destruct ta as [[[[[ax ay] bx] by_] cx] cy].
+  destruct tb as [[[[[dx dy] ex] ey] fx] fy].
+  destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
+    eqn:Tr; try reflexivity.
+  unfold relate. rewrite Ea, Eta, Etb, Tr.
+  apply tris_relate_disjoint_eq.
 Qed.
 
 Theorem evaluate_coherent_agrees :
@@ -156,9 +154,14 @@ Proof.
       eqn:Rr; try reflexivity.
     unfold relate. rewrite Ea, Eb, Rr.
     apply rects_relate_disjoint_eq.
-  - apply evaluate_tri_branch_agrees; [exact Hc | right; exact Eb].
-  - apply evaluate_tri_branch_agrees; [exact Hc | left; exact Ea].
-  - apply evaluate_tri_branch_agrees; [exact Hc | left; exact Ea].
+  - (* A is a rect, B is not: first match fails. A cannot also be a
+       triangle, so the tri cache is None and evaluate falls through. *)
+    destruct Hc as [Hcache Htr].
+    destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta.
+    + exfalso. eapply extractors_not_both_some; [exact Ea | exact Eta].
+    + unfold evaluate. rewrite Hcache, Ea, Eb, Htr, Eta. reflexivity.
+  - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
+  - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
 Qed.
 
 (* WITNESS {"claimId":"522-e","topic":"relate","lemma":"prepared_evaluate_agrees","title":"Prepared evaluate agrees with relate when the cache is coherent","file":"theories/RelatePrepared.v","witness":"522-e-cache-consult","board":"#574"} *)
