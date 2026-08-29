@@ -27,7 +27,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra.
-From NTS.Proofs Require Import Real DE9IM Overlay RelateNG RelateAreaArea RelateMatrixRect RelateMatrixTriangle RelateAreaPoint.
+From NTS.Proofs Require Import Real DE9IM Overlay RelateNG RelateAreaArea RelateMatrixRect RelateMatrixTriangle RelateAreaPoint GeneralTriangleSeparation.
 
 Open Scope R_scope.
 
