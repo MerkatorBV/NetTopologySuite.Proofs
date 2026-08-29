@@ -2755,6 +2755,7 @@ theories/RelateNGMatrixEqual.v
 # layout.  Register the six modules before the umbrella.
 theories/RelateNGCore.v
 theories/RelateNGContains.v
+theories/RelateNGOverlap.v
 theories/RelateNGTouch.v
 theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v

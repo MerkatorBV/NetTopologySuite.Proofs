@@ -3,7 +3,7 @@
    ----------------------------------------------------------------------------
    Issue #67 S13: full RelateNG pipeline integration — re-export umbrella.
 
-   The former 1 750-line monolith was split (2026-08) into six layered
+   The former 1 750-line monolith was split (2026-08) into layered
    modules; this file re-exports them all, so existing
    `Require Import RelateNG` clients (RelatePrepared.v) are unaffected.
    The original section banners are preserved inside the split files, and
@@ -20,6 +20,9 @@
          (`triangle_pair_regime_contains`; whole-boundary containment
          `contains_b_ring_inside` / `contains_b_ring_strictly_inside`
          via TriangleContainmentConvex).
+     - RelateNGOverlap.v     TPR_Overlap regime at bar 1 (#570 / 522-b)
+         (`triangle_pair_regime_overlap`; soundness
+         `overlap_b_partial_overlap` via a centroid nudge).
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation
@@ -57,6 +60,7 @@
 From NTS.Proofs Require Export
   RelateNGCore
   RelateNGContains
+  RelateNGOverlap
   RelateNGTouch
   RelateNGTouchRED
   RelateNGTouchCells
