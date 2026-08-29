@@ -65,7 +65,7 @@ Opens the door to:
 See:
 - theories/RelateNG.v (touch section)
 - theories/RelatePrepared.v (tri cache)
-- docs/issue-67-relateng-triage.md + verified-claims.md
+- docs/relate-ng-status.md + verified-claims.md
 - docs/rect-triangle-touch-milestone.md (this file)
 
 Next options on the table: consumption XUnit sketch, #64 arc momentum, #66 overlay gaps, or composition lemmas.

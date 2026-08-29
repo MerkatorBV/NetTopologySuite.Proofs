@@ -36,7 +36,7 @@
      classical exterior sample o = (1/2, −1)
 
    Refs: issue #67 ask #1–#2; OGC 06-103r4 equal DE-9IM;
-   docs/issue-67-relateng-triage.md; twin 67-b RelateNGBoundaryGraph.
+   docs/relate-ng-status.md; twin 67-b RelateNGBoundaryGraph.
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.

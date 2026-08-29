@@ -3,7 +3,8 @@
 2026-06-20. Four slices on branch `claude/issue-67-s15k-pipeline-capstone`.
 Commits `c32977a` (S15h), `0e545ea` (S15i), `83cab3e` (S15j), `1890298` (S15k);
 docs prose `86ac426`. Living triage:
-[`docs/issue-67-relateng-triage.md`](../../issue-67-relateng-triage.md).
+[`docs/history/issue-67-relateng-triage.md`](../issue-67-relateng-triage.md)
+(archived; living status [`docs/relate-ng-status.md`](../../relate-ng-status.md)).
 
 ## What landed
 

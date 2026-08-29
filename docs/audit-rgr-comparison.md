@@ -618,7 +618,7 @@ the next-investment decision again rests on current facts.
 | P5 | `JCTSeamAssembly.v` residual; `JCTWalkKit.v`/`JCTCornerClear.v` rung markers | **H1 residual `even_parity_escapes`** — the escape construction for even-parity points of simple rings (descent rungs 4/5b in flight: touch-freedom, wall choice) |
 | P6 | `verified-claims.md` Phase-2 caveats; §5 above | **C1 width extension to `2²⁵`** — needs the exact integer-determinant comparison (forward-error bound provably insufficient at full width) |
 | P7 | issue #64 verdict 2026-06-10 | **Arc-arc intersection & sweep/point-on-arc rounding contracts** — the remaining `Immediate` justification on #64 |
-| P8 | `issue-67-relateng-triage.md` "still open" | **#67 RelateNG S4+** — full arrangement classifier (point/line/area/collection), "comparable to Phase 3 overlay in scope"; plus the narrowed general-polygon Contains JCT seam |
+| P8 | `relate-ng-status.md` "still open" | **#67 RelateNG S4+** — full arrangement classifier (point/line/area/collection), "comparable to Phase 3 overlay in scope"; plus the narrowed general-polygon Contains JCT seam |
 | P9 | issue #68 / #69 table | **#68 Delaunay empty-circle theory** — unblocked by `b64_inCircle_exact_sound`, no theory yet |
 | P10 | (implicit; `oracle/` has no curve-offset modes) | **Curve-offset oracle extraction** — the rung 1–8 machinery is rational arithmetic plus two sqrt sites; extraction + golden vectors would give JTS/NTS's curve RGR its differential oracle (the original #64/#65 ask) |
 | P11–13 | pivot doc / counterexample registry (unchanged) | **Parked:** C2 rounded-filter completeness; SD re-scoped expansion-sum (optimization only); arc-Hobby analog (no published true statement) |

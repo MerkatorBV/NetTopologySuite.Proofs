@@ -14,7 +14,7 @@ and `RelateNGTouch.v:166/200 touch_int_ext_exclusion`; the JCT seam lift
 `gtri_point_in_ring_imp_pos` annotated **DISCHARGED (was Admitted)**, with the
 guard-free form refuted by `touch_triangle_ii_separation_not_unconditional`; the
 regime→cell triple `touch_triangles_regime_cells_ii_bb_ee` (2026-07-20,
-`docs/issue-67-relateng-triage.md` §S15l); asks 1/2/3a green via `DE9IM.v` and
+`docs/relate-ng-status.md` and the archived triage §S15l); asks 1/2/3a green via `DE9IM.v` and
 `RelateLineLine.v`; oracle `RELATE_MATRIX`, `RELATE_PREDICATE`,
 `CURVE_RELATE_MATRIX` present. `RelateNG.v` split into six layers 2026-08-15
 (`docs/audit-meso-sample-2026-08.md` B6 = DONE).
@@ -23,7 +23,7 @@ Residue to place:
 
 1. The full nine-cell `geom_de9im_pointset` capstone — BI and side-E\* cells
    mismatch the hand-specified F values because of half-open ring inclusion on
-   shared edges; still marked DEFERRED in `docs/issue-67-relateng-triage.md`. Is
+   shared edges; still recorded as open on `docs/relate-ng-status.md`. Is
    this one issue or several? (This is the fog patch the map names.)
 2. `TPR_Overlap` and the remaining regimes — defined in
    `RelateMatrixTriangle.v:28/100`, no sound cheap test yet.

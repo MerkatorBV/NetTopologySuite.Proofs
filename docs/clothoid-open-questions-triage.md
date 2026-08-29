@@ -3,7 +3,9 @@
 > **Status:** living triage for the three "Open Questions (Honest)" carried
 > over from the clothoid lane (the `clothoid-halley-coq` bridge of
 > [`audit-phase4-curves.md`](audit-phase4-curves.md) §6.1–6.2 and the S10b
-> chord seed of [`issue-67-relateng-triage.md`](issue-67-relateng-triage.md)).
+> chord seed of the archived RelateNG triage
+> [`history/issue-67-relateng-triage.md`](history/issue-67-relateng-triage.md);
+> living status is [`relate-ng-status.md`](relate-ng-status.md)).
 > Q1 and Q3 are scope decisions, not proof gaps; Q2's cheap Qed terminal —
 > route (A) — **landed 2026-06-12** as `theories/ClothoidDegenerate.v`
 > (see §6/§8). Refresh when a session closes any route below.
@@ -101,8 +103,9 @@ only (typeclass sketch + porting-cost notes).
 the 9,058-record `data/golden_vectors.json` is public in the companion repo
 under CC BY 4.0 (derived from ProRail Spoorgeometrie).
 
-**Docs:** `audit-phase4-curves.md` §6.1–6.3; `issue-67-relateng-triage.md`
-§7 S10b; `verified-claims.md` clothoid rows.
+**Docs:** `audit-phase4-curves.md` §6.1–6.3; archived RelateNG triage
+`history/issue-67-relateng-triage.md` §7 S10b (chronology);
+`relate-ng-status.md`; `verified-claims.md` clothoid rows.
 
 ## 5. The genuine gaps, by nature
 

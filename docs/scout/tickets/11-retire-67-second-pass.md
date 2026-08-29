@@ -45,8 +45,12 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
    `F` (proven empty) from not-computed, or the epic records that its one
    geometry-compute mode cannot yet be used as a differential reference.
 4. **The four documentation defects** from #503 corrected, since two of them
-   (`issue-67-relateng-triage.md:296`, `verified-claims.md:851`) *understate* what
-   is proven and would make the closure evidence look thinner than it is.
+   *understated* what is proven and would make the closure evidence look
+   thinner than it is. The stale S15l+ "regime DEFERRED" row lived in the
+   pre-#530 triage; that file is archived (`docs/history/issue-67-relateng-triage.md`)
+   and the living citation is `touch_triangles_regime_cells_ii_bb_ee` on
+   [`docs/relate-ng-status.md`](../../relate-ng-status.md). The other register
+   defects remain #503's.
 
 Residue that will still need placing at that point, none of it blocking:
 
