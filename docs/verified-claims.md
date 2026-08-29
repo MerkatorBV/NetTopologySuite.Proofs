@@ -888,7 +888,7 @@ computation — full RelateNG noding remains S13+.
 
 Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE cell + prepared tri cache + registry entries added. Full capstone (strict-II/BB/satisfy_pointset) + regime DEFERRED (registered). See docs/rect-triangle-touch-milestone.md.
 
-**NTS RGR Board catalog (#522 subtasks).** `522-a` = #567 / #579 · `522-b` = #570 / #580 · `522-c` = #571 / #581 · `522-i` = #572 / #582 · `522-j` = #577 / #583 · `522-m` = filtered-completeness retry. Each is the existing ticket id, not an ADR-0004 remint. `522-i` is the vertex-touch bar-1 rung (witness `522-i-touchvertex-bar1`, green / proofs / subtask). `522-j` is the leftover-decline finding (witness `522-j-sentinel-cex`): completeness is false. `522-m` retries CCW-completeness with the T-junction 12-tuple filtered out (witness `522-m-complete-filtered`): still false (obtuse-at-v).
+**NTS RGR Board catalog (#522 subtasks).** `522-a` = #567 / #579 · `522-b` = #570 / #580 · `522-c` = #571 / #581 · `522-i` = #572 / #582 · `522-j` = #577 / #583 · `522-m` = filtered-completeness retry / #584. Each is the existing ticket id, not an ADR-0004 remint. `522-i` is the vertex-touch bar-1 rung (witness `522-i-touchvertex-bar1`, green / proofs / subtask). `522-j` is the leftover-decline finding (witness `522-j-sentinel-cex`): completeness is false. `522-m` retries CCW-completeness with the T-junction 12-tuple filtered out (witness `522-m-complete-filtered`): still false (obtuse-at-v).
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
