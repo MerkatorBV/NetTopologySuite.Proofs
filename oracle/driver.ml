@@ -237,10 +237,13 @@
                       circumcentre + radius "<ox> <oy> <r2> <0|1>" (last =
                       centre-on-grid flag), or DEGEN / NAN.
 
-     RELATE_MATRIX -- pinned DE-9IM matrix lookup (issue #67 S11).
-        line 2:       <key>  -- COQ witness name, FILL alias, or raw 9-char
-                      matrix (II IB IE / BI BB BE / EI EB EE row-major).
-        output:       single 9-char matrix string (F/0/1/2 cells).
+     RELATE_MATRIX -- pinned DE-9IM matrix lookup (issue #67 S11 / #575).
+        line 2:       <key>  -- COQ witness name, FILL alias, raw 9-char
+                      matrix (II IB IE / BI BB BE / EI EB EE row-major),
+                      or a decline key (UNSUPPORTED / im_unsupported /
+                      triangle_pair_fill TPR_Unsupported).
+        output:       a 9-char matrix (F/0/1/2) or the token UNSUPPORTED.
+                      Decline is never a matrix key.
         Coq mirror:   witness matrices in RelateLineLine.v, RelateAreaArea.v,
                       RelateAreaLine.v, RelateBoundary.v, RelateArcChord.v,
                       RelateClothoid.v, RelateCurveAreaPoint.v; predicate

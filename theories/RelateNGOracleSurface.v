@@ -18,6 +18,13 @@
      - `triangle_pair_wire TPR_Unsupported = RWR_Unsupported`
      - classified regimes encode as the current designated fills
        (FFFFFFFFF / 2FFF1FFF2 / 2FFFFFFF2 / FFFF1FFF2)
+     - `relate` of the leftover T-junction encodes as `RWR_Unsupported`
+
+   Finding (Qex):
+     - the #575 ticket witness "#530 declined pair returns UNSUPPORTED"
+       is false.  That pair classifies disjoint (#571) and encodes as
+       `RWR_Matrix wm_disjoint`.  The decline pin is the T-junction
+       (`#577` / 522-j).
 
    Not claimed:
      - remint of `aa_matrix_disjoint` or `triangle_pair_fill TPR_Disjoint`
@@ -48,8 +55,12 @@
 
 (* WITNESS {"claimId":"522-f","topic":"relate","lemma":"triangle_unsupported_token","title":"Triangle decline is the UNSUPPORTED wire token, not a matrix","file":"theories/RelateNGOracleSurface.v","witness":"522-f-unsupported-token","board":"#575"} *)
 
-From Stdlib Require Import Lia.
-From NTS.Proofs Require Import DE9IM RelateMatrixTriangle.
+From Stdlib Require Import Lia List.
+From NTS.Proofs Require Import DE9IM RelateMatrixTriangle
+  RelateNGCore RelateNGDisjoint.
+
+Import ListNotations.
+Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
 (* Wire cells.  Legal DE-9IM characters only; `Some n` with n > 2 is not a    *)
@@ -324,9 +335,64 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
+(* `relate` on the wire.  Empty-pair and leftover-decline are tokens; the     *)
+(* #530 / #571 sentinel is a matrix (ticket witness is stale).                *)
+(* -------------------------------------------------------------------------- *)
+
+Theorem relate_unsupported_pair_wire :
+  encode_wire (relate [] []) = RWR_Unsupported.
+Proof.
+  rewrite relate_unsupported_pair. exact encode_wire_unsupported.
+Qed.
+
+(* WITNESS {"claimId":"522-f","topic":"relate","lemma":"relate_tjunction_wire_unsupported","title":"relate of the leftover T-junction is UNSUPPORTED on the wire","file":"theories/RelateNGOracleSurface.v","witness":"522-f-unsupported-token","board":"#575"} *)
+Theorem relate_tjunction_wire_unsupported :
+  encode_wire (relate (triangle_geometry 0 0 2 0 0 1)
+                      (triangle_geometry 1 0 3 0 2 1))
+  = RWR_Unsupported.
+Proof.
+  rewrite relate_on_triangles_dispatches.
+  rewrite tjunction_pair_unsupported.
+  unfold tris_relate.
+  exact triangle_unsupported_token.
+Qed.
+
+Theorem relate_tjunction_not_a_matrix : forall w,
+  encode_wire (relate (triangle_geometry 0 0 2 0 0 1)
+                      (triangle_geometry 1 0 3 0 2 1))
+  <> RWR_Matrix w.
+Proof.
+  intros w. rewrite relate_tjunction_wire_unsupported.
+  apply wire_unsupported_neq_matrix.
+Qed.
+
+Theorem relate_sentinel_wire_disjoint :
+  encode_wire (relate (triangle_geometry 0 0 1 0 0 1)
+                      (triangle_geometry 2 0 3 0 2 1))
+  = RWR_Matrix wm_disjoint.
+Proof.
+  rewrite relate_triangle_dispatch_ex.
+  unfold tris_relate.
+  exact triangle_disjoint_wire.
+Qed.
+
+(* Qex: #575 ticket witness "#530 declined pair returns UNSUPPORTED" is
+   false.  That pair classifies disjoint (#571) and is a 9-cell on the
+   wire.  The decline pin is the T-junction above. *)
+Theorem relate_sentinel_not_unsupported :
+  encode_wire (relate (triangle_geometry 0 0 1 0 0 1)
+                      (triangle_geometry 2 0 3 0 2 1))
+  <> RWR_Unsupported.
+Proof.
+  rewrite relate_sentinel_wire_disjoint. discriminate.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
 (* Audit footprint.                                                           *)
 (* -------------------------------------------------------------------------- *)
 
 Print Assumptions triangle_unsupported_token.
 Print Assumptions encode_matrix_iff_ok.
 Print Assumptions classified_triangle_is_matrix.
+Print Assumptions relate_tjunction_wire_unsupported.
+Print Assumptions relate_sentinel_not_unsupported.
