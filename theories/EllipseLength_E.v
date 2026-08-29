@@ -55,7 +55,10 @@ Lemma ellipse_speed_sq_circular : forall r t,
   ellipse_speed_sq r r t = r * r.
 Proof.
   intros r t. unfold ellipse_speed_sq.
-  pose proof (sin2_cos2 t) as H. unfold Rsqr in H. lra.
+  pose proof (sin2_cos2 t) as H. unfold Rsqr in H.
+  replace (r * r * (sin t * sin t) + r * r * (cos t * cos t))
+    with (r * r * (sin t * sin t + cos t * cos t)) by ring.
+  rewrite H. ring.
 Qed.
 
 Lemma ellipse_speed_sq_sandwich : forall rx ry t,
@@ -69,9 +72,11 @@ Proof.
   unfold Rsqr in Hs, Hc.
   set (a := rx * rx). set (b := ry * ry).
   set (w := sin t * sin t).
-  assert (Hw : 0 <= w <= 1) by (unfold w; nra).
+  assert (Hw0 : 0 <= w) by (unfold w; exact Hs).
+  assert (Hw1 : w <= 1).
+  { unfold w. rewrite <- Hsc. lra. }
   assert (Hcomb : a * w + b * (1 - w) = a * w + b * (cos t * cos t)).
-  { unfold w. nra. }
+  { unfold w. rewrite <- Hsc. ring. }
   rewrite <- Hcomb.
   destruct (Rle_dec a b) as [Hab | Hba].
   - rewrite Rmin_left, Rmax_right by lra.
@@ -113,8 +118,11 @@ Proof.
     rewrite Rmax_left in Hch by lra.
     pose proof (dist_nonneg
                   (ellipse_param Oc 0 0 rot s)
-                  (ellipse_param Oc 0 0 rot t)).
-    lra.
+                  (ellipse_param Oc 0 0 rot t)) as Hnn.
+    replace (0 * (t - s)) with 0 in Hch by ring.
+    assert (Hd0 : dist (ellipse_param Oc 0 0 rot s)
+                       (ellipse_param Oc 0 0 rot t) = 0) by lra.
+    rewrite Hd0. nra.
   - assert (Hrpos : 0 < r) by lra.
     (* gap² ≤ 24·eps/r  ⇒  r·gap³/24 ≤ eps·gap; cap at 2 so gap/2 ≤ 1 ≤ 4. *)
     set (delta := Rmin 2 (sqrt (24 * eps / r))).
@@ -131,14 +139,15 @@ Proof.
       unfold delta. apply Rmin_l. }
     pose proof (ellipse_chord_ge Oc r r rot s t Hr Hr) as Hlo.
     rewrite Rmin_left in Hlo by lra.
-    assert (Hsinpos : 0 <= sin (gap / 2)).
-    { apply sin_ge_0; [lra |]. pose proof PI_RGT_0. lra. }
-    rewrite (Rabs_right (sin (gap / 2))) in Hlo by lra.
+    assert (Hsinpos : 0 <= sin ((t - s) / 2)).
+    { unfold gap in Hgap0, Hgap2.
+      apply sin_ge_0; [lra |]. pose proof PI_ge_2. lra. }
+    rewrite (Rabs_right (sin ((t - s) / 2))) in Hlo by lra.
     unfold ellipse_param in Hlo.
     assert (Hdiff :
       r * t - r * s
       - dist (ellipse_param Oc r r rot s) (ellipse_param Oc r r rot t)
-      <= r * gap - 2 * r * sin (gap / 2)).
+      <= r * gap - 2 * r * sin ((t - s) / 2)).
     { unfold ellipse_param, gap. lra. }
     eapply Rle_trans; [exact Hdiff |].
     assert (Hx : 0 <= gap / 2) by lra.
@@ -151,16 +160,18 @@ Proof.
       apply Rmult_le_compat_l; [lra | exact Htaylor]. }
     eapply Rle_trans; [exact Hcalc |].
     replace (r * gap - 2 * r * (gap / 2 - (gap / 2) ^ 3 / 6))
-      with (r * (gap ^ 3 / 24)) by (unfold Rdiv; ring).
+      with (r * (gap * gap * gap) / 24) by (unfold Rdiv; simpl; field).
     destruct (Req_dec gap 0) as [Hg0 | Hgnz].
     { rewrite Hg0. nra. }
     assert (Hgappos : 0 < gap) by lra.
     (* r·gap³/24 ≤ eps·gap  iff  r·gap²/24 ≤ eps *)
     apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; exact Hgappos |].
-    replace (r * (gap ^ 3 / 24) * / gap)
+    replace (r * (gap * gap * gap) / 24 * / gap)
       with (r * (gap * gap) / 24) by (unfold Rdiv; field; lra).
     replace (eps * gap * / gap) with eps by (field; lra).
-    assert (Hgapsq : gap * gap < delta * delta) by nra.
+    assert (Hgd : gap < delta) by (unfold gap; exact Hdlt).
+    assert (Hgapsq : gap * gap < delta * delta).
+    { nra. }
     assert (Hbound : delta * delta <= 24 * eps / r).
     { unfold delta.
       pose proof (Rmin_r 2 (sqrt (24 * eps / r))) as Hm.

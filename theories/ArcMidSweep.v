@@ -54,18 +54,32 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Lemma arc_sweep_zero_iff_angle : forall a : CircularArc,
+  valid_arc a ->
   arc_sweep a = 0 <-> arc_sweep_angle a = 0.
 Proof.
-  intro a.
-  unfold arc_sweep; cbv zeta.
-  destruct (Rgt_dec (arc_sweep_angle a) 0) as [Hgt | Hngt];
-    destruct (Rgt_dec _ 0);
-    try destruct (Rlt_dec _ _);
-    try destruct (Rlt_dec (arc_sweep_angle a) 0);
-    try destruct (Rlt_dec _ 0);
-    try destruct (Rlt_dec (arc_sweep_angle a) _);
-    try split; intro H;
-    try lra.
+  intros a Hva. split.
+  - intro Hsw.
+    pose proof (arc_sweep_principal_range a Hva) as Hrng.
+    pose proof PI_ge_2 as HPI.
+    unfold arc_sweep in Hsw; cbv zeta in Hsw.
+    set (theta := arc_sweep_angle a) in *.
+    set (phi := angle_between
+                  (px (arc_start a) - px (arc_center a))
+                  (py (arc_start a) - py (arc_center a))
+                  (px (arc_mid a) - px (arc_center a))
+                  (py (arc_mid a) - py (arc_center a))) in *.
+    destruct (Rgt_dec theta 0) as [Hgt | Hngt].
+    + destruct (Rgt_dec phi 0); try destruct (Rlt_dec phi theta);
+        first [lra | unfold theta in *; lra].
+    + destruct (Rlt_dec theta 0) as [Hlt | Hnlt].
+      * destruct (Rlt_dec phi 0); try destruct (Rlt_dec theta phi);
+          first [lra | unfold theta in *; lra].
+      * unfold theta in *; lra.
+  - intro Hz.
+    unfold arc_sweep; cbv zeta.
+    rewrite Hz.
+    destruct (Rgt_dec 0 0); [lra |].
+    destruct (Rlt_dec 0 0); [lra | reflexivity].
 Qed.
 
 Lemma arc_center_mid_vector_nonzero : forall a : CircularArc,
@@ -77,10 +91,11 @@ Proof.
   destruct (arc_center_equidistant a Hva) as [Hsm _].
   pose proof (arc_start_center_dist_sq_pos a Hva) as Hpos.
   assert (Hmid0 :
-    dist_sq (arc_center a) (arc_mid a) = 0).
+    dist_sq (arc_mid a) (arc_center a) = 0).
   { unfold dist_sq. rewrite Hx, Hy. ring. }
-  rewrite dist_sq_sym in Hsm.
-  unfold dist_sq in Hpos, Hsm, Hmid0.
+  rewrite (dist_sq_sym (arc_mid a) (arc_center a)) in Hmid0.
+  rewrite <- Hsm in Hmid0.
+  rewrite (dist_sq_sym (arc_start a) (arc_center a)) in Hpos.
   lra.
 Qed.
 
@@ -90,7 +105,7 @@ Theorem valid_arc_sweep_nonzero : forall a : CircularArc,
   valid_arc a -> arc_sweep a <> 0.
 Proof.
   intros a Hva Hsw.
-  apply arc_sweep_zero_iff_angle in Hsw.
+  apply (arc_sweep_zero_iff_angle a Hva) in Hsw.
   destruct (arc_center_vectors_nonzero a Hva) as [Hu Hv].
   destruct (arc_center_equidistant a Hva) as [_ Hse].
   set (ux := px (arc_start a) - px (arc_center a)).
@@ -110,7 +125,10 @@ Proof.
   { unfold r, arc_radius. rewrite dist_mul_self.
     unfold dist_sq, ux, uy. ring. }
   assert (Hupos : 0 < ux * ux + uy * uy) by (apply sum_sq_pos; exact Hu).
-  assert (Hrpos : 0 < r) by (unfold r, arc_radius; nra).
+  assert (Hr0 : 0 <= r) by (unfold r, arc_radius; apply dist_nonneg).
+  assert (Hrpos : 0 < r).
+  { destruct (Req_dec r 0) as [Hz | Hnz]; [| lra].
+    rewrite Hz in Hr2. lra. }
   pose proof (sin_angle_between ux uy vx vy Hu Hv) as Hsin.
   pose proof (cos_angle_between ux uy vx vy Hu Hv) as Hcos.
   unfold arc_sweep_angle in Hsw.
@@ -120,7 +138,8 @@ Proof.
             (px (arc_end a) - px (arc_center a))
             (py (arc_end a) - py (arc_center a)))
     with (angle_between ux uy vx vy) in Hsw.
-  rewrite Hsw, sin_0, cos_0 in Hsin, Hcos.
+  rewrite Hsw, sin_0 in Hsin.
+  rewrite Hsw, cos_0 in Hcos.
   assert (Hsqu : sqrt (ux * ux + uy * uy) = r).
   { rewrite <- Hr2. replace (r * r) with (Rsqr r) by (unfold Rsqr; ring).
     apply sqrt_Rsqr; lra. }
@@ -143,8 +162,15 @@ Proof.
   { replace ((ux - vx) * (ux - vx) + (uy - vy) * (uy - vy))
       with ((ux * ux + uy * uy) + (vx * vx + vy * vy)
             - 2 * (ux * vx + uy * vy)) by ring.
-    rewrite <- Hr2, <- Huv2, Hdot. ring. }
-  assert (Heq : ux = vx /\ uy = vy) by nra.
+    rewrite <- Hr2, <- Huv2, Hdot, <- Hr2. ring. }
+  assert (Heq : ux = vx /\ uy = vy).
+  { pose proof (Rle_0_sqr (ux - vx)) as Ax.
+    pose proof (Rle_0_sqr (uy - vy)) as Ay.
+    unfold Rsqr in Ax, Ay.
+    assert (Hxz : Rsqr (ux - vx) = 0) by (unfold Rsqr; lra).
+    assert (Hyz : Rsqr (uy - vy) = 0) by (unfold Rsqr; lra).
+    apply Rsqr_eq_0 in Hxz. apply Rsqr_eq_0 in Hyz.
+    split; lra. }
   destruct Heq as [Hx Hy].
   apply (valid_arc_start_neq_end a Hva).
   apply point_ext; unfold ux, uy, vx, vy in Hx, Hy; lra.
@@ -172,14 +198,9 @@ Proof.
   set (mx := px (arc_mid a) - px (arc_center a)).
   set (my := py (arc_mid a) - py (arc_center a)).
   set (r := arc_radius a).
-  assert (Hmd : dist_sq (arc_center a) (arc_mid a)
-                = dist_sq (arc_center a) (arc_start a)).
-  { rewrite (dist_sq_sym (arc_center a) (arc_mid a)).
-    rewrite (dist_sq_sym (arc_center a) (arc_start a)).
-    exact Hsm. }
   assert (Hr2 : r * r = mx * mx + my * my).
   { unfold r, arc_radius. rewrite dist_mul_self.
-    rewrite Hmd. unfold dist_sq, mx, my. ring. }
+    rewrite Hsm. unfold dist_sq, mx, my. ring. }
   assert (Hmpos : 0 < mx * mx + my * my) by (apply sum_sq_pos; exact Hm).
   assert (Hr0 : 0 <= r) by (unfold r, arc_radius; apply dist_nonneg).
   assert (Hsqu : sqrt (mx * mx + my * my) = r).
