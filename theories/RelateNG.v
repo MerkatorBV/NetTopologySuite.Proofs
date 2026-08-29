@@ -31,7 +31,12 @@
          `triangle_pair_regime_touchvertex`; soundness
          `touch_vertex_b_triangles_touch` via a line through the
          shared vertex).  Expected re-export blast (hub, not extra
-         leaf fan-out).  Leftover declines are #577.
+         leaf fan-out).  Leftover declines are #577 / 522-j.
+     - RelateNGComplete.v    leftover-decline finding (#577 / 522-j):
+         completeness is FALSE (`triangle_pair_regime_incomplete_tjunction`);
+         hard pairs that do classify are cited, not re-proved;
+         domain boundary for the both-CCW certificates.  Next
+         certificate specs (T-junction, obtuse-at-v) are not invented.
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation
@@ -75,4 +80,5 @@ From NTS.Proofs Require Export
   RelateNGTouch
   RelateNGTouchRED
   RelateNGTouchCells
-  RelateNGRect.
+  RelateNGRect
+  RelateNGComplete.

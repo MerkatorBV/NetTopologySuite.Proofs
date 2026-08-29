@@ -2765,6 +2765,10 @@ theories/RelateNGTouch.v
 theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v
 theories/RelateNGRect.v
+# #577 / 522-j: leftover-decline finding.  Completeness is false — a
+# both-CCW T-junction still emits TPR_Unsupported.  Cites existing
+# classified hard pairs; does not invent the next certificate.
+theories/RelateNGComplete.v
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
 theories/RelatePrepared.v

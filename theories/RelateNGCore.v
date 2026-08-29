@@ -441,7 +441,7 @@ Definition touch_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    disjoint is reachable when `separated_b` fires (#571); vertex-touch is
    reachable when `touch_vertex_b` fires (#572); pairs no certificate
    covers (pure lens, T-junction / partial-edge kiss) still decline —
-   completeness of those leftovers is #577. *)
+   leftover-decline finding is #577 / 522-j (`RelateNGComplete`). *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
