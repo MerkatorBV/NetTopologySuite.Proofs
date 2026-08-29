@@ -135,7 +135,7 @@ Proof.
   destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
     eqn:Tr; try reflexivity.
   unfold relate. rewrite Ea, Eta, Etb, Tr.
-  apply tris_relate_disjoint_eq.
+  rewrite tris_relate_disjoint_eq. reflexivity.
 Qed.
 
 Theorem evaluate_coherent_agrees :
@@ -153,7 +153,7 @@ Proof.
     destruct (rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1)
       eqn:Rr; try reflexivity.
     unfold relate. rewrite Ea, Eb, Rr.
-    apply rects_relate_disjoint_eq.
+    rewrite rects_relate_disjoint_eq. reflexivity.
   - (* A is a rect, B is not: first match fails. A cannot also be a
        triangle, so the tri cache is None and evaluate falls through. *)
     destruct Hc as [Hcache Htr].
@@ -209,7 +209,7 @@ Proof.
     rewrite dispatch_pair_regime_disjoint. reflexivity.
   - rewrite relate_on_triangles_dispatches.
     rewrite dispatch_pair_regime_disjoint.
-    apply tris_relate_disjoint_eq.
+    rewrite tris_relate_disjoint_eq. reflexivity.
 Qed.
 
 Lemma rect_pair_regime_unit_vs_shifted_disjoint :
@@ -238,7 +238,7 @@ Proof.
     rewrite rect_pair_regime_unit_vs_shifted_disjoint. reflexivity.
   - rewrite relate_on_rects_dispatches.
     rewrite rect_pair_regime_unit_vs_shifted_disjoint.
-    apply rects_relate_disjoint_eq.
+    rewrite rects_relate_disjoint_eq. reflexivity.
 Qed.
 
 Print Assumptions prepared_evaluate_cache_short_circuit.
