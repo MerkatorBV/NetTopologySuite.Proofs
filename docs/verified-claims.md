@@ -1533,3 +1533,55 @@ the engine) are future rungs.
 |---|---|---|
 | `NurbsQuadraticLength.v : nurbs2_equal_weights_cubic` (+ `nurbs2_equal_weights_length`, `nurbs2_equal_weights_pt`) | **Equal-weights degeneration (the N ⊃ B inclusion):** `nurbs2_pt p0 p1 p2 w w w = bezier2_pt p0 p1 p2` pointwise for `w ≠ 0` (a field identity — the partition of unity collapses the denominator to `w`), so `is_curve_length` transfers as an iff, composed with degree-elevation exactness onto the stored elevated cubic `[exact]` | 3 |
 | `NurbsQuadraticLength.v : nurbs2_length_upper` (+ `nurbs2_chord_le`, `nurbs2_den_lb`, `norm_pair_le`, `nurbs2_length_upper_unit`, `bezier2_length_upper`) | **The weight-conditioned control-net Lipschitz bound:** the rational chord equals `(t−s)·\|Σ c_ij·w_i·w_j·(P_j−P_i)\|/(D(s)·D(t))` (divided-difference factorization, `field`-verified), regrouped onto consecutive edges (`c_01 + 2·c_02 + c_12 = 2` exactly), triangle-bounded (`norm_pair_le`), with the denominator floored by `wmin`: every chord ≤ `2·(wmax/wmin)²·max(\|P1−P0\|,\|P2−P1\|)·(t−s)`, telescoping by chord modulus to `L ≤ 2·(wmax/wmin)²·nurbs2_net_max·(b−a)` on `[a,b] ⊆ [0,1]`; at `w = 1` this also closes the polynomial quadratic (`bezier2_length_upper`) that the elevation iff left unbounded `[exact]` | 3 |
+
+
+## Issue #508 — Bézier P0: tight control-polygon bound (`Bezier3Polygon.v`) <!-- feat:arc-len geom:cs -->
+
+The named next rung after the crude `3·max(net)·Δt` ceiling: the same
+divided-difference factorization keeps the three net-edge lengths separate
+inside the weighted modulus `G(t) = |d0|·(1−(1−t)³) + |d1|·(3t²−2t³) + |d2|·t³`,
+so every chord is `≤ G(t)−G(s)` and the generic chord-modulus engine yields
+`L ≤ |d0|+|d1|+|d2|` on `[0,1]`.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `Bezier3Polygon.v : bezier3_length_le_polygon` (+ `bezier3_chord_le_mod`, `bezier3_poly_mod`, `bezier3_tight_le_crude`) | **Tight control-polygon bound:** `L ≤ bezier3_polygon` on `[0,1]`, and the polygon is `≤ 3·bezier3_net_max` (crude ceiling) `[exact]` | 3 |
+
+## Issue #508 — ellipse P1: elliptic-E Technique-park discharge (`EllipseLength_E.v`) <!-- feat:arc-len geom:cs,arc -->
+
+No closed form invented.  The circular slice `rx = ry` inhabits both
+named hypotheses at `E(t) = r·t`.  The general integrand `σ² = rx²sin²+ry²cos²`
+is named and sandwiched; the missing method remains the integral of `√σ²`.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `EllipseLength_E.v : ellipse_circular_E_discharges` (+ `ellipse_circular_E_chord`, `ellipse_circular_E_approx`, `ellipse_speed_sq_sandwich`) | **Circular discharge + parked integrand:** `is_curve_length` at `E b − E a = r·(b−a)` from the #553 engine; `σ²` sandwiched between `Rmin/Rmax` of the squared semi-axes `[exact]` / `[conditional]` | 3 |
+
+## Issue #508 — clothoid P1: windowed unit-speed discharge (`ClothoidLength_unit.v`) <!-- feat:arc-len geom:cs -->
+
+The `[sd, ed]` contract is inhabited in-corpus by a unit-speed straight
+line (chord = gap).  The Euler spiral remains an external witness in
+`clothoid-halley-coq`.  Tightness is never quantified over all of `R`.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ClothoidLength_unit.v : unit_line_discharges_window` (+ `unit_line_chord`) | **In-corpus inhabitant:** `|u|=1` straight line discharges `H_unit_chord` / `H_unit_approx` on every window, so `is_curve_length g sd ed (ed−sd)` `[exact]` | 3 |
+
+## Issue #508 — NURBS P1: general degree, knot spans, exact primitive (`NurbsGeneralLength.v`) <!-- feat:arc-len geom:cs -->
+
+Degree-3 rational Bézier (next stored form after the conic), knot-span
+additivity as the named multi-span obligation, and the ADR-0001
+conditional primitive.  Oracle `N` stays single-span.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `NurbsGeneralLength.v : nurbs3_equal_weights_length` (+ `nurbs_knot_span_additive`, `nurbs_conditional_is_curve_length`) | **General degree + knot spans + parked primitive:** equal-weight rational cubic iff polynomial cubic; abutting windows add; `curve_length_of_primitive` at an abstract `F` `[exact]` / `[conditional]` | 3 |
+
+## Issue #508 — arc P2: through-mid point-set + valid_arc sweep pin (`ArcMidSweep.v`) <!-- feat:arc-len geom:arc -->
+
+Leftovers from #552.  Category C (atan2 / AngleBetween).  Does not start
+a new 64-a `r·θ`.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ArcMidSweep.v : valid_arc_sweep_nonzero` (+ `arc_mid_on_circle_param`, `arc_mid_pointset_and_sweep`) | **Sweep pin + mid point-set:** `valid_arc` excludes `arc_sweep = 0`; `arc_mid` is a parameterized circumcircle point `[exact]` | 4 |
