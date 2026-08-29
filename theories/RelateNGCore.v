@@ -334,8 +334,8 @@ Definition overlap_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    and the other triangle's three vertices have opposite `cross` signs
    (pure `Rlt_dec`).  Six candidates — three edges of A, three of B.
    Sound-but-partial: pairs whose closures miss each other without a
-   vertex-strict supporting edge (vertex-touch, partial-edge kiss) still
-   decline.  Completeness is later #522. *)
+   vertex-strict supporting edge (partial-edge kiss) still decline.
+   Vertex-touch is #572.  Completeness of leftover declines is #577. *)
 Definition edge_separates_b (p1 p2 apex q1 q2 q3 : Point) : bool :=
   opposite_sides_b p1 p2 apex q1
   && opposite_sides_b p1 p2 apex q2
@@ -365,8 +365,8 @@ Definition separated_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    side (pure `Rlt_dec` on the same affine side function the disjoint
    certificate uses).  Exactly one A-vertex is a B-vertex, so a shared
    edge stays on `touch_edge_b`.  Sound-but-partial: obtuse-at-`v` pairs
-   and slivers that also overlap are rejected.  Completeness is later
-   #522. *)
+   and slivers that also overlap are rejected.  Completeness of leftover
+   declines (obtuse-at-`v`, T-junction / partial-edge kiss) is #577. *)
 Definition is_vertex_b (v p q r : Point) : bool :=
   point_eqb v p || point_eqb v q || point_eqb v r.
 
@@ -440,7 +440,8 @@ Definition touch_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
    disjoint is reachable when `separated_b` fires (#571); vertex-touch is
    reachable when `touch_vertex_b` fires (#572); pairs no certificate
-   covers (pure lens, partial-edge kiss) still decline. *)
+   covers (pure lens, T-junction / partial-edge kiss) still decline —
+   completeness of those leftovers is #577. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)

@@ -30,7 +30,8 @@
          (umbrella over RelateNGTouchVertexCone + RelateNGTouchVertexRegime;
          `triangle_pair_regime_touchvertex`; soundness
          `touch_vertex_b_triangles_touch` via a line through the
-         shared vertex).
+         shared vertex).  Expected re-export blast (hub, not extra
+         leaf fan-out).  Leftover declines are #577.
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation

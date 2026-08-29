@@ -13,8 +13,8 @@
    at the shared vertex.
 
    Earlier classifier branches are derived false (not assumed).  Obtuse-
-   at-v pairs and partial-edge kisses still decline — completeness is
-   later #522.
+   at-v pairs and partial-edge kisses still decline — completeness of
+   leftover declines is #577.
 
    Frozen anchors stay untouched: `touch_int_ext_exclusion` and the
    II-guard maximality refutation.  `triangles_touch_on_shared_edge`

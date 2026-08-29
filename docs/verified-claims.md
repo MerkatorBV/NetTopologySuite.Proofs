@@ -888,6 +888,8 @@ computation — full RelateNG noding remains S13+.
 
 Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE cell + prepared tri cache + registry entries added. Full capstone (strict-II/BB/satisfy_pointset) + regime DEFERRED (registered). See docs/rect-triangle-touch-milestone.md.
 
+**NTS RGR Board catalog (#522 subtasks).** `522-a` = #567 / #579 · `522-b` = #570 / #580 · `522-c` = #571 / #581 · `522-i` = #572 / #582. Each is the existing ticket id, not an ADR-0004 remint. `522-i` is the vertex-touch bar-1 rung (witness `522-i-touchvertex-bar1`, green / proofs / subtask). Leftover-decline completeness is `522-j` / #577.
+
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `RelateCurveMatrix.v : ii_cell_dim2_sound_gtri` | **Jordan cell dim (general triangle):** under `geom_de9im_pointset` for gtri self-geometry, `im_ii = Some 2` implies existence of interior point (`ii_has_dim2`) `[exact]` | 3 |
