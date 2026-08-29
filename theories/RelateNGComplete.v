@@ -39,12 +39,21 @@
 
 (* WITNESS {"claimId":"522-j","topic":"relate","lemma":"triangle_pair_regime_incomplete_tjunction","title":"Classifier completeness is false: a both-CCW T-junction still emits TPR_Unsupported","file":"theories/RelateNGComplete.v","witness":"522-j-sentinel-cex","board":"#577"} *)
 
-From Stdlib Require Import Reals Lra.
+From Stdlib Require Import Reals List Lia Lra Ranalysis Bool Btauto.
 From NTS.Proofs Require Import Real.
-From NTS.Proofs Require Import RelateNGCore
-  RelateNGContains RelateNGOverlap RelateNGDisjoint
-  RelateNGTouchVertex RelateNGTouch.
+From NTS.Proofs Require Import DE9IM Distance Overlay Segment RelateBoundary
+  RelateLineLine RelateAreaPoint RelateAreaLine RelateAreaArea
+  RelateMatrixLineLine RelateMatrixAreaLine RelateMatrixRect RelateMatrixTriangle
+  RelateCurveMatrix RectangleJCT Intersect Orientation Convex Lattice Centroid.
+From NTS.Proofs Require Import GeneralTriangleSeparation GeneralTriangleParity
+  RectangleSeparation.
+From NTS.Proofs Require Import GeneralTriangleJCT GeneralTriangleExterior
+  TriangleValidPolygon JCTSeamAssembly PointInRingCorrect PointInRingTangents
+  JordanCurveSeam TriangleContainmentConvex.
+From NTS.Proofs Require Import RelateNGCore RelateNGContains RelateNGOverlap
+  RelateNGDisjoint RelateNGTouchVertex RelateNGTouch.
 
+Import ListNotations.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
