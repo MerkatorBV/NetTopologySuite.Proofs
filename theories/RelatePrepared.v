@@ -78,6 +78,14 @@ Definition evaluate (pg : PreparedGeometry) (g : Geometry) : IntersectionMatrix 
   | None => evaluate_from_tri_cache pg g
   end.
 
+Lemma evaluate_from_tri_cache_none :
+  forall pg g,
+    pg_tri_cache pg = None ->
+    evaluate_from_tri_cache pg g = relate (pg_geom pg) g.
+Proof.
+  intros pg g H. unfold evaluate_from_tri_cache. rewrite H. reflexivity.
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Coherence: the stored bounds really are the extractors' results.           *)
 (* -------------------------------------------------------------------------- *)
@@ -216,7 +224,8 @@ Proof.
     + exfalso. eapply extractors_not_both_some; [exact Ea | exact Eta].
     + destruct ab as [[[ax0 ay0] ax1] ay1].
       unfold evaluate. rewrite Hcache, Ea, Eb.
-      unfold evaluate_from_tri_cache. rewrite Htr, Eta. reflexivity.
+      apply evaluate_from_tri_cache_none.
+      rewrite Htr. exact Eta.
   - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
   - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
 Qed.
