@@ -25,6 +25,12 @@
    Honest scoping: triangles only (convex, no holes). Full pointset
    satisfaction and noding bridge in RelateNG.
 
+   WITNESS topic: relate · claimId: 522-a · witness: 522-a-regime-exclusive
+   macro: relate
+   lane: proofs
+   issue: #567 / #522
+   ADR-0004: not a remint.  522-a is the existing #567 ticket id.
+
    No `Admitted`, no `Axiom`, no `Parameter`.
    ========================================================================== *)
 
@@ -373,6 +379,7 @@ Proof.
   lra.
 Qed.
 
+(* WITNESS topic: relate · claimId: 522-a · witness: 522-a-regime-exclusive *)
 (* WITNESS {"claimId":"522-a","topic":"relate","lemma":"regime_predicates_pairwise_exclusive","title":"Triangle regime predicates are real geometry and pairwise exclusive","file":"theories/RelateMatrixTriangle.v"} *)
 
 Theorem regime_predicates_pairwise_exclusive : forall a1 a2 a3 b1 b2 b3,
