@@ -9,14 +9,34 @@
    Witnesses reuse the aa_* shapes from RelateAreaArea.v for now
    (touch has same BB=1 / EE=2 shape).
 
+   The five classifier predicates are real geometry (#522 / #567): stated
+   against the SPECIFIED interior of ADR-0003 -- strict `0 < gtri` for
+   interior facts, closed `0 <= gtri` for closure facts.  The four
+   gtri-shaped predicates get pairwise exclusivity and per-regime witnesses
+   at the end of the file (`TPR_TouchEdge` keeps its frozen shared-edge
+   vocabulary and is deliberately outside that exclusivity block).
+   Ray parity never appears here; it enters only via the sanctioned
+   ADR-0003 bridge (RelateNGTouchCells).  The five names are not a
+   partition of all triangle pairs: a partial-edge kiss that is neither
+   a full shared edge nor a single shared vertex satisfies none of
+   them.  That pair is a decline (`TPR_Unsupported`), not a missing
+   sixth regime.
+
    Honest scoping: triangles only (convex, no holes). Full pointset
    satisfaction and noding bridge in RelateNG.
+
+   WITNESS topic: relate · claimId: 522-a · witness: 522-a-regime-exclusive
+   macro: relate
+   lane: proofs
+   issue: #567 / #522
+   ADR-0004: not a remint.  522-a is the existing #567 ticket id.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
    ========================================================================== *)
 
-From Stdlib Require Import Reals.
-From NTS.Proofs Require Import DE9IM Distance RelateAreaArea Orientation.
+From Stdlib Require Import Reals Lra.
+From NTS.Proofs Require Import DE9IM Distance RelateAreaArea Orientation Real.
+From NTS.Proofs Require Import GeneralTriangleSeparation.
 Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
@@ -75,13 +95,131 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Classifier (geometry predicates).                                          *)
-(* These name the intended configuration; proved later in RelateNG.           *)
-(* For now, opaque for dispatch.                                              *)
+(* Point-in-triangle vocabulary (ADR-0003 signs over `gtri`).                 *)
+(*                                                                            *)
+(* `gtri` (GeneralTriangleSeparation) is the min of the three inward edge     *)
+(* slacks: > 0 strictly inside, = 0 exactly on the edge skeleton, < 0         *)
+(* outside -- MEANINGFUL FOR CCW INPUT (0 < gdbl), hence the explicit CCW     *)
+(* guards on the closure-shaped predicates below.  Names are `in_tri_*` to    *)
+(* stay clear of the coordinate-style `tri_interior` in RelateNGTouchCells.   *)
 (* -------------------------------------------------------------------------- *)
 
-(* Placeholder geometry predicates; will be defined with between/cross/gtri
-   in RelateNG and proved to classify the regimes. *)
+Definition tri_ccw (a1 a2 a3 : Point) : Prop :=
+  0 < gdbl (px a1) (py a1) (px a2) (py a2) (px a3) (py a3).
+
+Definition in_tri_interior (a1 a2 a3 pt : Point) : Prop :=
+  0 < gtri (px a1) (py a1) (px a2) (py a2) (px a3) (py a3) pt.
+
+Definition in_tri_closure (a1 a2 a3 pt : Point) : Prop :=
+  0 <= gtri (px a1) (py a1) (px a2) (py a2) (px a3) (py a3) pt.
+
+Definition in_tri_exterior (a1 a2 a3 pt : Point) : Prop :=
+  gtri (px a1) (py a1) (px a2) (py a2) (px a3) (py a3) pt < 0.
+
+Definition is_vertex_of (v a1 a2 a3 : Point) : Prop :=
+  v = a1 \/ v = a2 \/ v = a3.
+
+Lemma in_tri_interior_closure : forall a1 a2 a3 pt,
+  in_tri_interior a1 a2 a3 pt -> in_tri_closure a1 a2 a3 pt.
+Proof. unfold in_tri_interior, in_tri_closure; intros; lra. Qed.
+
+Lemma in_tri_exterior_not_closure : forall a1 a2 a3 pt,
+  in_tri_exterior a1 a2 a3 pt -> ~ in_tri_closure a1 a2 a3 pt.
+Proof. unfold in_tri_exterior, in_tri_closure; intros; lra. Qed.
+
+(* Closed analogue of GeneralTriangleSeparation.Rmin_pos_iff / gtri_pos_iff. *)
+Lemma Rmin_nonneg_iff : forall a b, 0 <= Rmin a b <-> 0 <= a /\ 0 <= b.
+Proof.
+  intros a b; split.
+  - intros H; split.
+    + exact (Rle_trans _ _ _ H (Rmin_l_le a b)).
+    + exact (Rle_trans _ _ _ H (Rmin_r_le a b)).
+  - intros [Ha Hb]; apply Rmin_glb; assumption.
+Qed.
+
+Lemma gtri_nonneg_iff : forall ax ay bx by_ cx cy pt,
+  0 <= gtri ax ay bx by_ cx cy pt <->
+  (0 <= gsA ax ay bx by_ pt /\ 0 <= gsB bx by_ cx cy pt /\ 0 <= gsC ax ay cx cy pt).
+Proof. intros; unfold gtri; rewrite !Rmin_nonneg_iff; tauto. Qed.
+
+(* `gtri` is bounded by each individual edge slack (min of the three). *)
+Lemma gtri_le_gsA : forall ax ay bx by_ cx cy pt,
+  gtri ax ay bx by_ cx cy pt <= gsA ax ay bx by_ pt.
+Proof.
+  intros; unfold gtri.
+  exact (Rle_trans _ _ _ (Rmin_l_le _ _) (Rmin_l_le _ _)).
+Qed.
+
+Lemma gtri_le_gsB : forall ax ay bx by_ cx cy pt,
+  gtri ax ay bx by_ cx cy pt <= gsB bx by_ cx cy pt.
+Proof.
+  intros; unfold gtri.
+  exact (Rle_trans _ _ _ (Rmin_l_le _ _) (Rmin_r_le _ _)).
+Qed.
+
+Lemma gtri_le_gsC : forall ax ay bx by_ cx cy pt,
+  gtri ax ay bx by_ cx cy pt <= gsC ax ay cx cy pt.
+Proof. intros; unfold gtri; exact (Rmin_r_le _ _). Qed.
+
+(* An interior point forces CCW: the three positive slacks sum to gdbl. *)
+Lemma in_tri_interior_ccw : forall a1 a2 a3 pt,
+  in_tri_interior a1 a2 a3 pt -> tri_ccw a1 a2 a3.
+Proof.
+  intros a1 a2 a3 pt H. unfold in_tri_interior in H. unfold tri_ccw.
+  apply gtri_pos_iff in H. destruct H as [HA [HB HC]].
+  pose proof (g_sum (px a1) (py a1) (px a2) (py a2) (px a3) (py a3) pt). lra.
+Qed.
+
+(* Each edge slack vanishes at its own two endpoints, so no vertex is a
+   specified-interior point of its own triangle. *)
+Lemma vertex_not_in_tri_interior : forall a1 a2 a3 v,
+  is_vertex_of v a1 a2 a3 -> ~ in_tri_interior a1 a2 a3 v.
+Proof.
+  intros a1 a2 a3 v Hv H. unfold in_tri_interior in H.
+  apply gtri_pos_iff in H. destruct H as [HA [HB HC]].
+  destruct Hv as [-> | [-> | ->]].
+  - assert (E : gsA (px a1) (py a1) (px a2) (py a2) a1 = 0) by (unfold gsA; ring).
+    lra.
+  - assert (E : gsA (px a1) (py a1) (px a2) (py a2) a2 = 0) by (unfold gsA; ring).
+    lra.
+  - assert (E : gsB (px a2) (py a2) (px a3) (py a3) a3 = 0) by (unfold gsB; ring).
+    lra.
+Qed.
+
+(* Under the CCW guard every vertex lies in its own triangle's closure: two
+   edge slacks vanish there and the third equals gdbl. *)
+Lemma vertex_in_tri_closure : forall a1 a2 a3 v,
+  tri_ccw a1 a2 a3 -> is_vertex_of v a1 a2 a3 -> in_tri_closure a1 a2 a3 v.
+Proof.
+  intros a1 a2 a3 v Hccw Hv. unfold tri_ccw in Hccw. unfold in_tri_closure.
+  apply gtri_nonneg_iff.
+  destruct Hv as [-> | [-> | ->]].
+  - assert (EA : gsA (px a1) (py a1) (px a2) (py a2) a1 = 0) by (unfold gsA; ring).
+    assert (EB : gsB (px a2) (py a2) (px a3) (py a3) a1
+                 = gdbl (px a1) (py a1) (px a2) (py a2) (px a3) (py a3))
+      by (unfold gsB, gdbl; ring).
+    assert (EC : gsC (px a1) (py a1) (px a3) (py a3) a1 = 0) by (unfold gsC; ring).
+    lra.
+  - assert (EA : gsA (px a1) (py a1) (px a2) (py a2) a2 = 0) by (unfold gsA; ring).
+    assert (EB : gsB (px a2) (py a2) (px a3) (py a3) a2 = 0) by (unfold gsB; ring).
+    assert (EC : gsC (px a1) (py a1) (px a3) (py a3) a2
+                 = gdbl (px a1) (py a1) (px a2) (py a2) (px a3) (py a3))
+      by (unfold gsC, gdbl; ring).
+    lra.
+  - assert (EA : gsA (px a1) (py a1) (px a2) (py a2) a3
+                 = gdbl (px a1) (py a1) (px a2) (py a2) (px a3) (py a3))
+      by (unfold gsA, gdbl; ring).
+    assert (EB : gsB (px a2) (py a2) (px a3) (py a3) a3 = 0) by (unfold gsB; ring).
+    assert (EC : gsC (px a1) (py a1) (px a3) (py a3) a3 = 0) by (unfold gsC; ring).
+    lra.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Classifier (geometry predicates).                                          *)
+(* -------------------------------------------------------------------------- *)
+
+(* Shared-edge touch vocabulary (frozen: do not disturb -- RelateNGTouch's
+   anchors are stated over these). *)
 Definition shares_edge (p1 p2 q1 q2 : Point) : Prop :=
   (p1 = q1 /\ p2 = q2) \/ (p1 = q2 /\ p2 = q1).
 
@@ -101,23 +239,52 @@ Definition triangles_touch_on_shared_edge (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
   (shares_edge a3 a1 b2 b3 /\ opposite_sides a3 a1 a2 b1) \/
   (shares_edge a3 a1 b3 b1 /\ opposite_sides a3 a1 a2 b2).
 
-(* WARNING -- four of the five below are `True`, i.e. they carry NO content.
-   Only `triangles_touch_on_edge` names a real configuration.  The vacuity
-   witnesses at the end of this file make that machine-checked, so a result
-   cannot cite one of these as if it classified anything.
+(* The four regime predicates, for real (#567; formerly `Prop := True` with
+   machine-checked vacuity witnesses -- those witnesses return, flipped into
+   their negations, at the end of this file).
 
-   Strengthening them needs `gtri` (triangle interior sign), which lives in
-   `GeneralTriangleSeparation.v`.  That module does NOT import this one -- the
-   only importers of this file are `RelateNGCore.v`, `RelatePrepared.v` and
-   `DelaunayFlipGeometric.v`, all strictly above it -- so the import can be
-   added here with no cycle.  Doing it is real geometry work (issue #522
-   item 2), not a layering obstruction. *)
-Definition triangles_separated (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
-Definition triangles_partial_overlap (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
-Definition triangle_a_contains_b (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
+   Conventions:
+   - "closed region" of a CCW triangle is `{ pt | 0 <= gtri pt }`, its
+     specified interior is `{ pt | 0 < gtri pt }` (ADR-0003).
+   - Predicates whose content lives in the CLOSED region carry explicit CCW
+     guards: for CW input `{ 0 <= gtri }` is empty and a guard-free
+     definition would hold of garbage.  `triangles_partial_overlap` needs no
+     guard -- a common specified-interior point already forces both
+     orientations (`in_tri_interior_ccw`).
+   - `triangle_a_contains_b` is CLOSED containment (admits equal triangles
+     and boundary contact), with BOTH triangles guarded CCW.  NB the strict
+     vertex detector `contains_b` (RelateNGCore) guards only A's
+     orientation, so it does not by itself entail this predicate -- a
+     CW-listed B passes the detector and fails the B-side guard here.  The
+     detector -> predicate bridge (via the convexity lift, adding B's CCW
+     hypothesis) is later #522 rungs' work, deliberately not claimed
+     here.
+   - The five names are not a partition of all pairs.  A partial-edge
+     kiss that is not a full shared edge and not a single vertex
+     satisfies none of them; the decline path (`TPR_Unsupported`)
+     already exists. *)
+
+Definition triangles_separated (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
+  tri_ccw a1 a2 a3 /\ tri_ccw b1 b2 b3 /\
+  forall pt, ~ (in_tri_closure a1 a2 a3 pt /\ in_tri_closure b1 b2 b3 pt).
+
+Definition triangles_partial_overlap (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
+  (exists pt, in_tri_interior a1 a2 a3 pt /\ in_tri_interior b1 b2 b3 pt) /\
+  (exists pt, in_tri_interior a1 a2 a3 pt /\ in_tri_exterior b1 b2 b3 pt) /\
+  (exists pt, in_tri_interior b1 b2 b3 pt /\ in_tri_exterior a1 a2 a3 pt).
+
+Definition triangle_a_contains_b (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
+  tri_ccw a1 a2 a3 /\ tri_ccw b1 b2 b3 /\
+  forall pt, in_tri_closure b1 b2 b3 pt -> in_tri_closure a1 a2 a3 pt.
+
 Definition triangles_touch_on_edge (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
   triangles_touch_on_shared_edge a1 a2 a3 b1 b2 b3.
-Definition triangles_touch_at_vertex (a1 a2 a3 b1 b2 b3 : Point) : Prop := True.
+
+Definition triangles_touch_at_vertex (a1 a2 a3 b1 b2 b3 : Point) : Prop :=
+  tri_ccw a1 a2 a3 /\ tri_ccw b1 b2 b3 /\
+  exists v, is_vertex_of v a1 a2 a3 /\ is_vertex_of v b1 b2 b3 /\
+    forall pt, in_tri_closure a1 a2 a3 pt -> in_tri_closure b1 b2 b3 pt ->
+      pt = v.
 
 Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
     (r : TrianglePairRegime) : Prop :=
@@ -129,47 +296,326 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
   | TPR_TouchVertex => triangles_touch_at_vertex a1 a2 a3 b1 b2 b3
   (* `TPR_Unsupported` names no configuration -- it records that the
      classifier made no claim.  `True` is the correct denotation of "no
-     claim", and unlike the four arms below it is not pretending to be a
-     geometric predicate awaiting a definition. *)
+     claim"; unlike the five arms above it is not a geometric predicate. *)
   | TPR_Unsupported => True
   end.
 
 (* -------------------------------------------------------------------------- *)
-(* Vacuity witnesses (honesty).                                               *)
+(* Pairwise exclusivity.                                                      *)
 (*                                                                            *)
-(* Four of the five classifier arms are `True`, so `classify_triangle_pair`   *)
-(* holds of ANY six points at those regimes.  Stating that as theorems is the *)
-(* point: a downstream result that appeals to one of these has proven nothing *)
-(* about the configuration, and these lemmas are the citation that says so.   *)
-(*                                                                            *)
-(* `TPR_TouchEdge` is deliberately absent from the list -- it delegates to    *)
-(* `triangles_touch_on_shared_edge`, which is real, and is the one regime      *)
-(* whose classification is used soundly (see `RelateNGCore` and               *)
-(* `RelateNGTouch`).                                                          *)
+(* All six pairs among {separated, overlap, contains, touch-at-vertex} are    *)
+(* mutually exclusive.  That block is not a partition of all pairs: a         *)
+(* partial-edge kiss can miss every named arm and still decline.              *)
+(* `TPR_TouchEdge` is deliberately absent: its predicate is the frozen        *)
+(* shared-edge vocabulary (RelateNGTouch anchors) and its exclusivity         *)
+(* against the gtri-shaped predicates is not a cheap consequence of the       *)
+(* definitions; that is later #522 rungs' work, not #567's.                   *)
 (* -------------------------------------------------------------------------- *)
 
-Lemma classify_disjoint_vacuous :
-  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_Disjoint.
-Proof. intros; exact I. Qed.
+Theorem separated_not_overlap : forall a1 a2 a3 b1 b2 b3,
+  triangles_separated a1 a2 a3 b1 b2 b3 ->
+  ~ triangles_partial_overlap a1 a2 a3 b1 b2 b3.
+Proof.
+  intros a1 a2 a3 b1 b2 b3 (_ & _ & Hsep) ([pt [HiA HiB]] & _ & _).
+  exact (Hsep pt (conj (in_tri_interior_closure _ _ _ _ HiA)
+                       (in_tri_interior_closure _ _ _ _ HiB))).
+Qed.
 
-Lemma classify_overlap_vacuous :
-  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_Overlap.
-Proof. intros; exact I. Qed.
+Theorem contains_not_overlap : forall a1 a2 a3 b1 b2 b3,
+  triangle_a_contains_b a1 a2 a3 b1 b2 b3 ->
+  ~ triangles_partial_overlap a1 a2 a3 b1 b2 b3.
+Proof.
+  intros a1 a2 a3 b1 b2 b3 (_ & _ & Hsub) (_ & _ & [pt [HiB HeA]]).
+  apply (in_tri_exterior_not_closure a1 a2 a3 pt HeA).
+  apply Hsub. apply in_tri_interior_closure. exact HiB.
+Qed.
 
-Lemma classify_contains_vacuous :
-  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_Contains.
-Proof. intros; exact I. Qed.
+Theorem contains_not_separated : forall a1 a2 a3 b1 b2 b3,
+  triangle_a_contains_b a1 a2 a3 b1 b2 b3 ->
+  ~ triangles_separated a1 a2 a3 b1 b2 b3.
+Proof.
+  intros a1 a2 a3 b1 b2 b3 (_ & HccwB & Hsub) (_ & _ & Hsep).
+  assert (Hb1 : in_tri_closure b1 b2 b3 b1)
+    by (apply vertex_in_tri_closure; [ exact HccwB | left; reflexivity ]).
+  exact (Hsep b1 (conj (Hsub b1 Hb1) Hb1)).
+Qed.
 
-Lemma classify_touch_vertex_vacuous :
-  forall a1 a2 a3 b1 b2 b3, classify_triangle_pair a1 a2 a3 b1 b2 b3 TPR_TouchVertex.
-Proof. intros; exact I. Qed.
+Theorem touch_vertex_not_separated : forall a1 a2 a3 b1 b2 b3,
+  triangles_touch_at_vertex a1 a2 a3 b1 b2 b3 ->
+  ~ triangles_separated a1 a2 a3 b1 b2 b3.
+Proof.
+  intros a1 a2 a3 b1 b2 b3 (HccwA & HccwB & [v (HvA & HvB & _)]) (_ & _ & Hsep).
+  exact (Hsep v (conj (vertex_in_tri_closure _ _ _ _ HccwA HvA)
+                      (vertex_in_tri_closure _ _ _ _ HccwB HvB))).
+Qed.
 
-(* The sharpest form: two triangles that are provably NOT partially
-   overlapping still satisfy the overlap arm, because the arm is `True`.
-   Instantiated on a separated pair for concreteness. *)
-Lemma classify_overlap_holds_of_a_separated_pair :
+Theorem touch_vertex_not_overlap : forall a1 a2 a3 b1 b2 b3,
+  triangles_touch_at_vertex a1 a2 a3 b1 b2 b3 ->
+  ~ triangles_partial_overlap a1 a2 a3 b1 b2 b3.
+Proof.
+  intros a1 a2 a3 b1 b2 b3 (_ & _ & [v (HvA & _ & Huniq)]) ([pt [HiA HiB]] & _ & _).
+  assert (Hpt : pt = v)
+    by (apply Huniq; apply in_tri_interior_closure; assumption).
+  subst pt.
+  exact (vertex_not_in_tri_interior a1 a2 a3 v HvA HiA).
+Qed.
+
+Theorem touch_vertex_not_contains : forall a1 a2 a3 b1 b2 b3,
+  triangles_touch_at_vertex a1 a2 a3 b1 b2 b3 ->
+  ~ triangle_a_contains_b a1 a2 a3 b1 b2 b3.
+Proof.
+  intros a1 a2 a3 b1 b2 b3 (_ & HccwB & [v (_ & _ & Huniq)]) (_ & _ & Hsub).
+  (* Contained closure meets A's closure everywhere, so B's closure collapses
+     to the single point v -- flattening B against its CCW guard. *)
+  assert (Hb1c : in_tri_closure b1 b2 b3 b1)
+    by (apply vertex_in_tri_closure; [ exact HccwB | left; reflexivity ]).
+  assert (Hb2c : in_tri_closure b1 b2 b3 b2)
+    by (apply vertex_in_tri_closure; [ exact HccwB | right; left; reflexivity ]).
+  assert (Hb1 : b1 = v) by (apply Huniq; [ apply Hsub; exact Hb1c | exact Hb1c ]).
+  assert (Hb2 : b2 = v) by (apply Huniq; [ apply Hsub; exact Hb2c | exact Hb2c ]).
+  subst b1 b2. unfold tri_ccw in HccwB.
+  assert (E : gdbl (px v) (py v) (px v) (py v) (px b3) (py b3) = 0)
+    by (unfold gdbl; ring).
+  lra.
+Qed.
+
+(* WITNESS topic: relate · claimId: 522-a · witness: 522-a-regime-exclusive *)
+(* WITNESS {"claimId":"522-a","topic":"relate","lemma":"regime_predicates_pairwise_exclusive","title":"Triangle regime predicates are real geometry and pairwise exclusive","file":"theories/RelateMatrixTriangle.v"} *)
+
+Theorem regime_predicates_pairwise_exclusive : forall a1 a2 a3 b1 b2 b3,
+  (triangles_separated a1 a2 a3 b1 b2 b3 ->
+     ~ triangles_partial_overlap a1 a2 a3 b1 b2 b3) /\
+  (triangle_a_contains_b a1 a2 a3 b1 b2 b3 ->
+     ~ triangles_partial_overlap a1 a2 a3 b1 b2 b3) /\
+  (triangle_a_contains_b a1 a2 a3 b1 b2 b3 ->
+     ~ triangles_separated a1 a2 a3 b1 b2 b3) /\
+  (triangles_touch_at_vertex a1 a2 a3 b1 b2 b3 ->
+     ~ triangles_separated a1 a2 a3 b1 b2 b3) /\
+  (triangles_touch_at_vertex a1 a2 a3 b1 b2 b3 ->
+     ~ triangles_partial_overlap a1 a2 a3 b1 b2 b3) /\
+  (triangles_touch_at_vertex a1 a2 a3 b1 b2 b3 ->
+     ~ triangle_a_contains_b a1 a2 a3 b1 b2 b3).
+Proof.
+  intros a1 a2 a3 b1 b2 b3.
+  repeat split.
+  - apply separated_not_overlap.
+  - apply contains_not_overlap.
+  - apply contains_not_separated.
+  - apply touch_vertex_not_separated.
+  - apply touch_vertex_not_overlap.
+  - apply touch_vertex_not_contains.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Vacuity witnesses, FLIPPED (honesty, #567).                                *)
+(*                                                                            *)
+(* The four arms used to be `True`; the vacuity witnesses proved that any six *)
+(* points satisfied them.  Each witness now returns as its own negation, on   *)
+(* the #530 dispatch pair (RelateNGCore.relate_triangle_dispatch_ex): two     *)
+(* genuinely separated CCW triangles.  The dual failure mode -- a predicate   *)
+(* that is `False` in disguise -- is ruled out by the satisfiability          *)
+(* witnesses that follow.                                                     *)
+(* -------------------------------------------------------------------------- *)
+
+(* The #530 dispatch pair provably satisfies the new `triangles_separated`:
+   A's closed region forces px <= 1, B's forces px >= 2. *)
+Lemma dispatch_pair_separated :
+  triangles_separated (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                      (mkPoint 2 0) (mkPoint 3 0) (mkPoint 2 1).
+Proof.
+  split; [ | split ].
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - intros pt [HA HB].
+    unfold in_tri_closure in HA, HB.
+    apply gtri_nonneg_iff in HA; apply gtri_nonneg_iff in HB.
+    destruct HA as [HA1 [HA2 HA3]]; destruct HB as [HB1 [HB2 HB3]].
+    unfold gsA, gsB, gsC in *; cbn [px py] in *; lra.
+Qed.
+
+(* Was `classify_disjoint_vacuous` (any six points): the disjoint arm now
+   FAILS where it must -- e.g. on the unit triangle against itself. *)
+Theorem classify_disjoint_fails_of_a_shared_pair :
+  ~ classify_triangle_pair (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                           (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                           TPR_Disjoint.
+Proof.
+  intros (HccwA & _ & Hsep).
+  assert (Hv : in_tri_closure (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                              (mkPoint 0 0))
+    by (apply vertex_in_tri_closure; [ exact HccwA | left; reflexivity ]).
+  exact (Hsep (mkPoint 0 0) (conj Hv Hv)).
+Qed.
+
+(* Was `classify_overlap_vacuous` / `classify_overlap_holds_of_a_separated_pair`
+   (the sharpest vacuity witness): the overlap arm held of a provably
+   separated pair.  Now it provably fails on one. *)
+Theorem classify_overlap_fails_of_a_separated_pair :
+  ~ classify_triangle_pair (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                           (mkPoint 2 0) (mkPoint 3 0) (mkPoint 2 1)
+                           TPR_Overlap.
+Proof.
+  exact (separated_not_overlap _ _ _ _ _ _ dispatch_pair_separated).
+Qed.
+
+(* The ORIGINAL sharpest-witness pair, (9,9)(10,9)(9,10): the pre-#567
+   witness showed the overlap arm holding of exactly this separated pair,
+   so its negation is proven on exactly this pair too -- the flip is
+   literal, not just in spirit. *)
+Lemma original_pair_separated :
+  triangles_separated (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                      (mkPoint 9 9) (mkPoint 10 9) (mkPoint 9 10).
+Proof.
+  split; [ | split ].
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - intros pt [HA HB].
+    unfold in_tri_closure in HA, HB.
+    apply gtri_nonneg_iff in HA; apply gtri_nonneg_iff in HB.
+    destruct HA as [HA1 [HA2 HA3]]; destruct HB as [HB1 [HB2 HB3]].
+    unfold gsA, gsB, gsC in *; cbn [px py] in *; lra.
+Qed.
+
+Theorem classify_overlap_fails_of_the_original_pair :
+  ~ classify_triangle_pair (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                           (mkPoint 9 9) (mkPoint 10 9) (mkPoint 9 10)
+                           TPR_Overlap.
+Proof.
+  exact (separated_not_overlap _ _ _ _ _ _ original_pair_separated).
+Qed.
+
+(* Was `classify_contains_vacuous`. *)
+Theorem classify_contains_fails_of_a_separated_pair :
+  ~ classify_triangle_pair (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                           (mkPoint 2 0) (mkPoint 3 0) (mkPoint 2 1)
+                           TPR_Contains.
+Proof.
+  intros Hcont.
+  exact (contains_not_separated _ _ _ _ _ _ Hcont dispatch_pair_separated).
+Qed.
+
+(* Was `classify_touch_vertex_vacuous`. *)
+Theorem classify_touch_vertex_fails_of_a_separated_pair :
+  ~ classify_triangle_pair (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                           (mkPoint 2 0) (mkPoint 3 0) (mkPoint 2 1)
+                           TPR_TouchVertex.
+Proof.
+  intros Htv.
+  exact (touch_vertex_not_separated _ _ _ _ _ _ Htv dispatch_pair_separated).
+Qed.
+
+(* And positively: the dispatch pair satisfies exactly the regime it is in. *)
+Theorem classify_disjoint_holds_of_the_dispatch_pair :
   classify_triangle_pair (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
-                         (mkPoint 9 9) (mkPoint 10 9) (mkPoint 9 10) TPR_Overlap.
-Proof. exact I. Qed.
+                         (mkPoint 2 0) (mkPoint 3 0) (mkPoint 2 1)
+                         TPR_Disjoint.
+Proof. exact dispatch_pair_separated. Qed.
 
-Print Assumptions classify_overlap_holds_of_a_separated_pair.
+(* -------------------------------------------------------------------------- *)
+(* Satisfiability witnesses.                                                  *)
+(*                                                                            *)
+(* Each new predicate holds of a concrete pair, so none is `False` in         *)
+(* disguise -- the dual of the old vacuity.  Together with the flipped        *)
+(* witnesses above, every strict/closed sign in the definitions is pinned.    *)
+(*                                                                            *)
+(* Mutation replay (in-tree, #567; not an ADR-0004 mint).  Flip exactly one   *)
+(* comparison below, rebuild this file, then restore the sign.  Each flip     *)
+(* loses Qed on a named lemma here:                                           *)
+(*   1. `in_tri_interior`: `0 < gtri` → `0 <= gtri`                           *)
+(*      pin: `vertex_not_in_tri_interior`                                     *)
+(*   2. `in_tri_closure`: `0 <= gtri` → `0 < gtri`                            *)
+(*      pin: `vertex_in_tri_closure`                                          *)
+(*   3. `in_tri_exterior`: `gtri < 0` → `gtri <= 0`                           *)
+(*      pin: `in_tri_exterior_not_closure`                                    *)
+(*   4. `triangle_a_contains_b`: A's `in_tri_closure` → `in_tri_interior`     *)
+(*      pin: `contains_is_closed_containment`                                 *)
+(*   5. `triangles_touch_at_vertex`: `pt = v` uniqueness over closures;       *)
+(*      flip either closure test to interior and the closed-meet pin moves.   *)
+(*      pin: `touch_vertex_pair_touches` (closed meet at the shared vertex)   *)
+(* -------------------------------------------------------------------------- *)
+
+(* Unit triangle vs its translate by (1/4, 1/4): common interior point,
+   and each has interior points strictly outside the other. *)
+Lemma overlap_pair_overlaps :
+  triangles_partial_overlap
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint (1/4) (1/4)) (mkPoint (5/4) (1/4)) (mkPoint (1/4) (5/4)).
+Proof.
+  split; [ | split ].
+  - exists (mkPoint (3/8) (3/8)).
+    split; unfold in_tri_interior; apply gtri_pos_iff;
+      unfold gsA, gsB, gsC; cbn [px py]; repeat split; lra.
+  - exists (mkPoint (1/8) (1/8)).
+    split.
+    + unfold in_tri_interior; apply gtri_pos_iff;
+        unfold gsA, gsB, gsC; cbn [px py]; repeat split; lra.
+    + unfold in_tri_exterior.
+      eapply Rle_lt_trans; [ apply gtri_le_gsC | ].
+      unfold gsC; cbn [px py]; lra.
+  - exists (mkPoint (3/4) (1/2)).
+    split.
+    + unfold in_tri_interior; apply gtri_pos_iff;
+        unfold gsA, gsB, gsC; cbn [px py]; repeat split; lra.
+    + unfold in_tri_exterior.
+      eapply Rle_lt_trans; [ apply gtri_le_gsB | ].
+      unfold gsB; cbn [px py]; lra.
+Qed.
+
+(* Closed containment of a strictly interior triangle. *)
+Lemma contains_pair_contains :
+  triangle_a_contains_b
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint (1/4) (1/4)) (mkPoint (1/2) (1/4)) (mkPoint (1/4) (1/2)).
+Proof.
+  split; [ | split ].
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - intros pt HB. unfold in_tri_closure in *.
+    apply gtri_nonneg_iff in HB. apply gtri_nonneg_iff.
+    destruct HB as [H1 [H2 H3]].
+    unfold gsA, gsB, gsC in *; cbn [px py] in *.
+    repeat split; lra.
+Qed.
+
+(* Closed containment admits equal triangles -- the regression that pins the
+   CLOSED conclusion (a strict-conclusion mutation breaks exactly here). *)
+Lemma contains_is_closed_containment :
+  triangle_a_contains_b
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1).
+Proof.
+  split; [ | split ].
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - intros pt H; exact H.
+Qed.
+
+(* Unit triangle vs its reflection through the origin: the closed regions
+   meet exactly at the shared vertex (0,0). *)
+Lemma touch_vertex_pair_touches :
+  triangles_touch_at_vertex
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint 0 0) (mkPoint (-1) 0) (mkPoint 0 (-1)).
+Proof.
+  split; [ | split ].
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - unfold tri_ccw, gdbl; cbn [px py]; lra.
+  - exists (mkPoint 0 0).
+    split; [ left; reflexivity | split; [ left; reflexivity | ] ].
+    intros pt HA HB. destruct pt as [x y].
+    unfold in_tri_closure in HA, HB.
+    apply gtri_nonneg_iff in HA; apply gtri_nonneg_iff in HB.
+    destruct HA as [HA1 [HA2 HA3]]; destruct HB as [HB1 [HB2 HB3]].
+    unfold gsA, gsB, gsC in *; cbn [px py] in *.
+    f_equal; lra.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Audit footprint.                                                           *)
+(* -------------------------------------------------------------------------- *)
+
+Print Assumptions regime_predicates_pairwise_exclusive.
+Print Assumptions dispatch_pair_separated.
+Print Assumptions overlap_pair_overlaps.
+Print Assumptions contains_pair_contains.
+Print Assumptions touch_vertex_pair_touches.

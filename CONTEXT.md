@@ -174,6 +174,24 @@ The guarded route from computed to specified interior
 Qed refutation of the guard-free form.
 _Avoid_: deferral, side condition (both imply temporary)
 
+### Relate regimes
+
+**Regime**:
+A named coarse configuration of a geometry pair — separated, partial overlap,
+containment, edge touch, vertex touch — that selects one witness DE-9IM matrix.
+The classifier arms are real `gtri`-shaped predicates with pairwise
+exclusivity (`RelateMatrixTriangle.v`); `TPR_Unsupported` is a decline record,
+not a regime verdict.
+_Avoid_: case, mode
+
+**Relate bar level**:
+How much of a relate claim is proven. Bar 1: the classification itself is
+proven true geometry against the specified interior, the fill being the
+designated witness matrix. Bar 2: every one of the nine DE-9IM cells is
+individually proven true. Spell the bar out in prose; "RBL" is WIP shorthand
+only.
+_Avoid_: level (unqualified), RBL (in prose)
+
 ### Roadmap
 
 **Sequencing park**:
