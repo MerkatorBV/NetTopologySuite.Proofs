@@ -46,24 +46,36 @@ Definition prepare (g : Geometry) : PreparedGeometry :=
 (* Cache-consulting evaluate.  A's coords come from `pg_cache` /
    `pg_tri_cache`, not a re-extraction from `pg_geom`.  The short-circuit
    fires only when the existing classifier says Disjoint, so a CW pair
-   whose boxes happen to be apart still declines — same as `relate`. *)
-Definition evaluate (pg : PreparedGeometry) (g : Geometry) : IntersectionMatrix :=
-  match pg_cache pg, rect_geometry_bounds g with
-  | Some (ax0, ay0, ax1, ay1), Some (bx0, by0, bx1, by1) =>
-      match rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1 with
-      | RPR_Disjoint => aa_matrix_disjoint
-      | _ => relate (pg_geom pg) g
-      end
-  | _, _ =>
-      match pg_tri_cache pg, triangle_geometry_points g with
-      | Some (ax, ay, bx, by_, cx, cy),
-        Some (dx, dy, ex, ey, fx, fy) =>
+   whose boxes happen to be apart still declines — same as `relate`.
+   Nested matches (not a pair-match) so `None` reduces without
+   inspecting the other discriminee. *)
+Definition evaluate_from_tri_cache
+  (pg : PreparedGeometry) (g : Geometry) : IntersectionMatrix :=
+  match pg_tri_cache pg with
+  | Some (ax, ay, bx, by_, cx, cy) =>
+      match triangle_geometry_points g with
+      | Some (dx, dy, ex, ey, fx, fy) =>
           match triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy with
           | TPR_Disjoint => aa_matrix_disjoint
           | _ => relate (pg_geom pg) g
           end
-      | _, _ => relate (pg_geom pg) g
+      | None => relate (pg_geom pg) g
       end
+  | None => relate (pg_geom pg) g
+  end.
+
+Definition evaluate (pg : PreparedGeometry) (g : Geometry) : IntersectionMatrix :=
+  match pg_cache pg with
+  | Some (ax0, ay0, ax1, ay1) =>
+      match rect_geometry_bounds g with
+      | Some (bx0, by0, bx1, by1) =>
+          match rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1 with
+          | RPR_Disjoint => aa_matrix_disjoint
+          | _ => relate (pg_geom pg) g
+          end
+      | None => evaluate_from_tri_cache pg g
+      end
+  | None => evaluate_from_tri_cache pg g
   end.
 
 (* -------------------------------------------------------------------------- *)
@@ -147,7 +159,7 @@ Proof.
     rewrite Hta, Htb; reflexivity.
 Qed.
 
-(* Triangle-only path: A is not a rect, so `relate` skips the rect arm. *)
+(* Triangle-only path: A is not a rect, so evaluate goes to the tri cache. *)
 Lemma evaluate_triangle_path_agrees :
   forall pg g,
     cache_coherent pg ->
@@ -155,8 +167,8 @@ Lemma evaluate_triangle_path_agrees :
     evaluate pg g = relate (pg_geom pg) g.
 Proof.
   intros pg g [Hc Htr] Ea.
-  unfold evaluate.
-  rewrite Hc, Ea, Htr.
+  unfold evaluate. rewrite Hc, Ea.
+  unfold evaluate_from_tri_cache. rewrite Htr.
   destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta;
     destruct (triangle_geometry_points g) as [tb|] eqn:Etb;
     try reflexivity.
@@ -178,20 +190,23 @@ Proof.
   destruct (rect_geometry_bounds (pg_geom pg)) as [ab|] eqn:Ea;
     destruct (rect_geometry_bounds g) as [bb|] eqn:Eb.
   - destruct Hc as [Hcache Htr].
-    unfold evaluate. rewrite Hcache, Ea, Eb.
+    unfold evaluate. rewrite Hcache, Ea.
     destruct ab as [[[ax0 ay0] ax1] ay1].
+    rewrite Eb.
     destruct bb as [[[bx0 by0] bx1] by1].
     destruct (rect_pair_regime ax0 ay0 ax1 ay1 bx0 by0 bx1 by1)
       eqn:Rr; try reflexivity.
     rewrite (relate_extracted_rects (pg_geom pg) g ax0 ay0 ax1 ay1
                bx0 by0 bx1 by1 Ea Eb).
     rewrite Rr, rects_relate_disjoint_eq. reflexivity.
-  - (* A is a rect, B is not: first match fails. A cannot also be a
+  - (* A is a rect, B is not: rect arm misses. A cannot also be a
        triangle, so the tri cache is None and evaluate falls through. *)
     destruct Hc as [Hcache Htr].
     destruct (triangle_geometry_points (pg_geom pg)) as [ta|] eqn:Eta.
     + exfalso. eapply extractors_not_both_some; [exact Ea | exact Eta].
-    + unfold evaluate. rewrite Hcache, Ea, Eb, Htr, Eta. reflexivity.
+    + destruct ab as [[[ax0 ay0] ax1] ay1].
+      unfold evaluate. rewrite Hcache, Ea, Eb.
+      unfold evaluate_from_tri_cache. rewrite Htr, Eta. reflexivity.
   - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
   - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
 Qed.
@@ -237,7 +252,7 @@ Proof.
   split; [reflexivity|].
   split; [exact dispatch_pair_regime_disjoint|].
   split.
-  - unfold evaluate, prepare. simpl.
+  - unfold evaluate, evaluate_from_tri_cache, prepare. simpl.
     rewrite dispatch_pair_regime_disjoint. reflexivity.
   - rewrite relate_on_triangles_dispatches.
     rewrite dispatch_pair_regime_disjoint.
@@ -537,7 +552,7 @@ Theorem corrupted_cache_disagrees :
   ~ cache_coherent pg.
 Proof.
   split.
-  - unfold evaluate. simpl.
+  - unfold evaluate, evaluate_from_tri_cache. simpl.
     rewrite far_cache_regime_disjoint. reflexivity.
   - split.
     + rewrite relate_on_triangles_dispatches.
@@ -546,7 +561,7 @@ Proof.
     + split.
       * rewrite relate_on_triangles_dispatches.
         rewrite unit_self_regime_unsupported.
-        unfold evaluate. simpl.
+        unfold evaluate, evaluate_from_tri_cache. simpl.
         rewrite far_cache_regime_disjoint.
         unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
         exact aa_matrix_disjoint_neq_unsupported.
