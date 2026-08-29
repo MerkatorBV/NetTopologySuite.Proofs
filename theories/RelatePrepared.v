@@ -225,7 +225,7 @@ Proof.
     + destruct ab as [[[ax0 ay0] ax1] ay1].
       unfold evaluate. rewrite Hcache, Ea, Eb.
       apply evaluate_from_tri_cache_none.
-      rewrite Htr. exact Eta.
+      exact Htr.
   - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
   - apply evaluate_triangle_path_agrees; [exact Hc | exact Ea].
 Qed.
