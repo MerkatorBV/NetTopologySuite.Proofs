@@ -20,7 +20,9 @@ Most other actors (GIS Gus, Newbie Nate, Maintainer Max, Product-Owner Pat, etc.
 
 ## Layout
 - `sessions/` — raw per-session transcripts, prompts, collapses, and design-session notes from specific routes (plus legacy completion/retro summaries from pruning passes).
-- Individual files directly under `history/` for one-off scouting or tangent work.
+- Individual files directly under `history/` for one-off scouting or tangent work
+  (including the pre-#530 RelateNG triage, `issue-67-relateng-triage.md`; living
+  successor is [`docs/relate-ng-status.md`](../relate-ng-status.md)).
 
 These files are retained in git history. They are moved out of the top-level `docs/` listing so that the directory remains scannable for the consolidated actor roles (lightly collapsed from the original 17 for overlap). See the pruning plan (in the session plan.md) for the process, git-audit requirements, and stop-condition rule that governed recent moves. Joost the BDFL has final authority on borderline archive decisions.
 

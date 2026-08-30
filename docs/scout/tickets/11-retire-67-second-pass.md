@@ -18,7 +18,8 @@ blocking defects are gone: **does #67 close, and where does its residue go?**
 
 Preconditions to check before re-deciding — each is a specific, checkable fact:
 
-1. **#522 fixed** — *partially met as of 2026-08-22 (#530 merged).*
+1. **#522 fixed** — *partially met as of 2026-08-22 (#530 merged); living
+   frontier is [`docs/scout/map-522.md`](../map-522.md) (charted 2026-08-29).*
    - ✔ `RelateNGCore.v:337` no longer answers `ll_matrix_disjoint`; it returns
      `DE9IM.im_unsupported`, and `im_unsupported_no_predicate` proves that
      sentinel supports none of the ten `RelatePredicate`s.
@@ -44,8 +45,12 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
    `F` (proven empty) from not-computed, or the epic records that its one
    geometry-compute mode cannot yet be used as a differential reference.
 4. **The four documentation defects** from #503 corrected, since two of them
-   (`issue-67-relateng-triage.md:296`, `verified-claims.md:851`) *understate* what
-   is proven and would make the closure evidence look thinner than it is.
+   *understated* what is proven and would make the closure evidence look
+   thinner than it is. The stale S15l+ "regime DEFERRED" row lived in the
+   pre-#530 triage; that file is archived (`docs/history/issue-67-relateng-triage.md`)
+   and the living citation is `touch_triangles_regime_cells_ii_bb_ee` on
+   [`docs/relate-ng-status.md`](../../relate-ng-status.md). The other register
+   defects remain #503's.
 
 Residue that will still need placing at that point, none of it blocking:
 

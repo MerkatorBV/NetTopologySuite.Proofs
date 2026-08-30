@@ -39,7 +39,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** Research formal methods / mechanised geometry and evaluate the corpus methodology (including independent trust-chain audits).
 
-**OPEN** [`slice-a-retro.md`](slice-a-retro.md) + [`slice-a-piece-5b-retro.md`](slice-a-piece-5b-retro.md) + the four registries + `scripts/audit_axioms.sh /tmp/full-build.log`.
+**OPEN** [`slice-a-retro.md`](slice-a-retro.md) + [`slice-a-piece-5b-retro.md`](slice-a-piece-5b-retro.md) + [`relate-ng-status.md`](relate-ng-status.md) (RelateNG / DE-9IM) + the four registries + `scripts/audit_axioms.sh /tmp/full-build.log`.
 
 **CITE** Conditional headline + named-hypothesis pattern (two current instances: `hobby_theorem_4_1_conditional`, `overlay_ng_correct_conditional`).
 

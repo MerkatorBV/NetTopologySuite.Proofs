@@ -1,6 +1,26 @@
+# Archive — Issue #67 RelateNG / DE-9IM research & gap triage
+
+> **Tombstone (2026-08-29, #569 / 522-k).** This file is chronology, not a
+> living status surface. It predates the #530 honesty sentinel and understates
+> later landings (the S15l+ milestone row still said "regime DEFERRED" after
+> `touch_triangles_regime_cells_ii_bb_ee` was Qed). Do not cite it for what
+> is proven or what is next.
+>
+> **Successor surfaces**
+> - Theorems, by name: [`docs/verified-claims.md`](../verified-claims.md) (the
+>   `#67` and `#522` sections; `validate-claims` gates the names)
+> - Scholar Sam on-ramp: [`docs/relate-ng-status.md`](../relate-ng-status.md)
+> - #522 live gate: [`docs/scout/map-522.md`](../scout/map-522.md)
+> - Second pass at #67: [`docs/scout/tickets/11-retire-67-second-pass.md`](../scout/tickets/11-retire-67-second-pass.md)
+> - Interior convention: [`docs/adr/ADR-0003-two-tier-interior-spec-parity-computation.md`](../adr/ADR-0003-two-tier-interior-spec-parity-computation.md)
+>
+> The body below is the 2026-07-era triage, retained for institutional memory.
+
+---
+
 # Issue #67 — RelateNG / DE-9IM predicates: research & gap triage
 
-> **Status:** living triage — S0–**S15k** complete; rect/triangle S15l landed;
+> **Status (historical):** living triage — S0–**S15k** complete; rect/triangle S15l landed;
 > **line×line exterior-row true-dimension pinning** landed
 > (`RelateNodingLineLineExtPinned.v`). Full 9-cell pointset wiring and the
 > Touches-vs-Share fill split remain. Refresh when a new session closes.

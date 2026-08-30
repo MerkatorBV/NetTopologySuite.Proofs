@@ -31,7 +31,8 @@
 > recorded deferred frontier (see `docs/oracle-handrolled-allowlist.txt`). This
 > file is the cross-cutting overview; the per-area detail lives in the GitHub
 > issues and the sibling docs `docs/issue-64-arc-primitives-triage.md` and
-> `docs/issue-67-relateng-triage.md`.
+> `docs/relate-ng-status.md` (RelateNG living status; the pre-#530 triage
+> is archived at `docs/history/issue-67-relateng-triage.md`).
 
 ## Scope
 
@@ -213,7 +214,8 @@ witness: <fixture or none>
 1. **This file exists and is the source of record.** Cited by every batch issue;
    created 2026-06-08, refreshed 2026-06-09. Per-area detail now lives in the
    sibling docs `docs/issue-64-arc-primitives-triage.md` and
-   `docs/issue-67-relateng-triage.md` (the umbrella/detail split #69 describes).
+   `docs/relate-ng-status.md` (the umbrella/detail split #69 describes;
+   the pre-#530 RelateNG triage is archived).
 2. **Stale upstream refs.** JTS#1175 is fixed (jts#1200) and is struck through
    with the PR ref in #64, #66, #67. The buffer/overlay "summary of failures"
    refs (JTS#1102, #1000, etc.) should still be re-checked against current JTS

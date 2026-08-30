@@ -2,7 +2,8 @@
 
 2026-06-20. Three slices on branch `claude/issue-67-s14-prepared-cache-al`.
 Commits `39a9017` (S15e–f), `7b92a5d` (S15g). Living triage:
-[`docs/issue-67-relateng-triage.md`](../../issue-67-relateng-triage.md).
+[`docs/history/issue-67-relateng-triage.md`](../issue-67-relateng-triage.md)
+(archived; living status [`docs/relate-ng-status.md`](../../relate-ng-status.md)).
 
 ## What landed
 

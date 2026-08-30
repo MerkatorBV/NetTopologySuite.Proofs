@@ -216,7 +216,9 @@ sessions, plans cadence, and retrospects on how the work actually went.
   5. [`../TRIAGE_NTS_JTS_ISSUES.md`](../TRIAGE_NTS_JTS_ISSUES.md) — the curve-awareness proof
      batch (#64–#69) triage + order of attack; per-area detail in
      [`issue-64-arc-primitives-triage.md`](issue-64-arc-primitives-triage.md),
-     [`issue-67-relateng-triage.md`](issue-67-relateng-triage.md), and
+     [`relate-ng-status.md`](relate-ng-status.md) (living; archive:
+     [`history/issue-67-relateng-triage.md`](history/issue-67-relateng-triage.md)),
+     and
      [`clothoid-open-questions-triage.md`](clothoid-open-questions-triage.md).
 
 **Skip.** (Nothing major — this combined role owns the meta layer.)
@@ -412,7 +414,7 @@ completion docs ([`phase0-completion.md`](phase0-completion.md), [`phase1-comple
        (in-circle exact at `|coord| <= 2^11`; arc-line Scope A).
      - RelateNG / DE-9IM predicates → [`theories/DE9IM.v`](../theories/DE9IM.v),
        [`theories/RelateLineLine.v`](../theories/RelateLineLine.v), [`theories/RelateIntDetBound.v`](../theories/RelateIntDetBound.v)
-       (#67; see [`issue-67-relateng-triage.md`](issue-67-relateng-triage.md)).
+       (#67; see [`relate-ng-status.md`](relate-ng-status.md)).
   2. Read the soundness theorem statement (not its proof) for the
      algorithm you're touching.
 
