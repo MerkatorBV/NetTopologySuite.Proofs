@@ -44,7 +44,8 @@
    [apply Rplus_le_compat; apply Rabs_le; assumption] leaves evars
    because flocq [1+1] is not convertible to [2] (67541e1 L282,
    "No such assumption"). [replace 2 with (1+1) by ring], then
-   [exact HtB].
+   [exact HtB]. Do not nest [+] under [+] (b233899 L288 Focus).
+   Inner [Rplus_le_compat] arms use [*].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
