@@ -98,6 +98,13 @@ Qed.
 Lemma tan_PI4 : tan (PI / 4) = 1.
 Proof. rewrite <- atan_1. apply tan_atan. Qed.
 
+Lemma cos_atan_pos : forall x, 0 < cos (atan x).
+Proof.
+  intro x. rewrite cos_atan.
+  apply Rinv_0_lt_compat, sqrt_lt_R0.
+  apply Rplus_lt_le_0_compat; [lra | apply Rle_0_sqr].
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Windowed extensionality: the spec only samples [a,b].                      *)
 (* -------------------------------------------------------------------------- *)
@@ -192,9 +199,7 @@ Proof.
   intro x.
   set (a := atan x).
   assert (Htan : tan a = x) by (unfold a; apply tan_atan).
-  assert (Hcos : 0 < cos a).
-  { unfold a. pose proof (atan_bound x) as [Hb1 Hb2].
-    apply cos_gt_0; assumption. }
+  assert (Hcos : 0 < cos a) by (unfold a; apply cos_atan_pos).
   assert (Hcos0 : cos a <> 0) by lra.
   rewrite cos_2a.
   replace (cos a * cos a - sin a * sin a)
@@ -213,9 +218,7 @@ Proof.
   intro x.
   set (a := atan x).
   assert (Htan : tan a = x) by (unfold a; apply tan_atan).
-  assert (Hcos : 0 < cos a).
-  { unfold a. pose proof (atan_bound x) as [Hb1 Hb2].
-    apply cos_gt_0; assumption. }
+  assert (Hcos : 0 < cos a) by (unfold a; apply cos_atan_pos).
   assert (Hcos0 : cos a <> 0) by lra.
   rewrite sin_2a.
   replace (2 * sin a * cos a)
