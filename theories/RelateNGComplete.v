@@ -452,9 +452,8 @@ Qed.
 (* base of A.  Not mutual (`touch_partial_edge_b` = false).  No shared        *)
 (* vertex.  Interiors opposite across y = 0, so II is empty (BB dim 0).       *)
 (* Classifier emits TPR_TouchOnesided (ticket 22).  Fill stays                 *)
-(* im_unsupported.                                                            *)
-(* Do not invent a detector here (ticket 22).  Do not remint leftover Ⅰ.      *)
-(* Completeness stays false on leftover ⅠⅠ.                                   *)
+(* im_unsupported.  Detector lives in RelateNGTouchOnesided.  Do not          *)
+(* remint leftover Ⅰ.  Completeness stays false on leftover ⅠⅠ.               *)
 (* -------------------------------------------------------------------------- *)
 
 Definition onesided_t_pair_coords

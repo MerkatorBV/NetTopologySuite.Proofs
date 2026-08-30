@@ -89,8 +89,6 @@ Value and priority are orthogonal.
 - **Remint order** if asked: disjoint is the sharpest (Qex already
   compiled); contains / touch / overlap follow the same pointer pattern
   and the same shared-pin caution.
-- **Two certificates are two leftovers.** T-junction is `Ⅰ`. Obtuse-at-v
-  is `ⅠⅠ`.
 - **`ⅠⅠⅠ`** is compiled as an exterior-side stem
   (`RelateNGComplete.v : onesided_t_pair_inhabits`) and classified
   (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). Fill
