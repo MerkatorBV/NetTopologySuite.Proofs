@@ -44,9 +44,10 @@ rejects FF2FF1212 (`RelateNGDisjointCells.v : ogc_disjoint_fill_not_im_disjoint`
 **#589.** Closed / red. Do not merge or reopen. This file is the leftovers
 chart; `map-522.md` stays the child-ticket freshness layer.
 
-**Leftover ids.** Roman numerals. `Ⅰ` is the T-junction / partial-edge-kiss
-certificate. Do not give `Ⅰ` to obtuse-at-v, fill remints, or TouchEdge
-exclusivity. Next unused numeral is `Ⅱ` — do not assign it here.
+**Leftover ids.** Repeated `Ⅰ` marks (`Ⅰ`, `ⅠⅠ`, `ⅠⅠⅠ`, …), not
+`522-*` letters. `Ⅰ` is the T-junction / partial-edge kiss. `ⅠⅠ` is
+the obtuse-at-v certificate. Do not swap them. Next unused is `ⅠⅠⅠ`
+— do not assign it here.
 
 ## Leftover table
 
@@ -58,7 +59,7 @@ Value and priority are orthogonal.
 | `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Named. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Finding `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. | invent the detector; steal `522-j` / `522-m`; bucket obtuse under `Ⅰ` |
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
-| — | Obtuse-at-v certificate | #522-adjacent | research | Unnamed. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. | bucket with T-junction under `Ⅰ` |
+| `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -74,8 +75,8 @@ Value and priority are orthogonal.
 - Wrap-up — #596. Owner sign-off still required.
 - #567 DoD met; TouchEdge exclusivity carved (ready #597), not proved.
 - #589 wayfinder PR stays closed.
-- Leftover ids switch to Roman numerals. `Ⅰ` = T-junction kiss. `522-n`
-  is not minted.
+- Leftover ids switch to repeated `Ⅰ` marks. `Ⅰ` = T-junction kiss.
+  `ⅠⅠ` = obtuse-at-v. `522-n` is not minted.
 
 ## Fog
 
@@ -85,26 +86,26 @@ Value and priority are orthogonal.
   compiled); contains / touch / overlap follow the same pointer pattern
   and the same shared-pin caution.
 - **Two certificates are two leftovers.** T-junction is `Ⅰ`. Obtuse-at-v
-  is not `Ⅰ`.
-- **`Ⅱ`** is unused. Ask before assigning it.
+  is `ⅠⅠ`.
+- **`ⅠⅠⅠ`** is unused. Ask before assigning it.
 
 ## Frontier
 
-Leftover `Ⅰ` is named (T-junction / partial-edge kiss). This map does
-not invent the detector. `/implement` of `Ⅰ` is a later letter.
+Leftovers `Ⅰ` and `ⅠⅠ` are named. This map does not invent either
+detector. `/implement` of either is a later letter.
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
 
 Ⅰ ──────── T-junction / partial-edge kiss ── research ── finding #577
+ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 ready
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
-unnamed ── obtuse-at-v certificate ── research ── finding #584
 
 #67 / 11 ── geom_de9im_pointset · noding · Touches-vs-Share
 #523 ────── F vs not-computed
 parked ──── empty/empty
 
 522-n ── not minted
-Ⅱ ────── unused ── ask before assigning
+ⅠⅠⅠ ──── unused ── ask before assigning
 ```

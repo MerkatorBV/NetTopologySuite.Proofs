@@ -39,8 +39,8 @@ Order of work: top-down from #64, with the freebie first.
 **Related living map.** The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
-`/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ`
-is the T-junction / partial-edge kiss. Ticket 11 still waits on
+`/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss. Leftover `ⅠⅠ` is
+the obtuse-at-v certificate. Ticket 11 still waits on
 ADR-0003 / #523 / #503; it does not own leftover grab order and does
 not receive a closed `522-*` letter.
 

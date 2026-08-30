@@ -100,9 +100,9 @@ disguised as disjointness — that was #530.
   `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`.
   Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
   Do **not** mint `522-n`.
-- **Obtuse-at-v certificate** — unnamed, **separate**. Finding:
+- **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding:
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
-  Do not bucket with T-junction under `Ⅰ`.
+  Do not bucket with T-junction under `Ⅰ`. Detector not invented.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 

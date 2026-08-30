@@ -51,7 +51,9 @@ Roman numerals. Do **not** mint `522-n`.
 - **T-junction / partial-edge kiss** — leftover `Ⅰ`. Completeness
   recorded the finding (`RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`)
   and stopped.
-- **Obtuse-at-v certificate** — unnamed, separate leftover.
+- **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding
+  `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
+  Separate from `Ⅰ`. Detector not invented.
 - **Nine-cell `geom_de9im_pointset`**, full noding, Touches-vs-Share —
   #67 / ticket 11, not #522 children.
 - **`#523` `F` vs not-computed** — sibling.
