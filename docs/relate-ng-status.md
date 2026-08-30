@@ -112,9 +112,10 @@ disguised as disjointness — that was #530.
   Do **not** mint `522-n`.
 - **Obtuse-at-v certificate** — leftover `Ⅱ` classified.
   Headline `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`.
-  Fill stays `im_unsupported`. Completeness is mixed-cone
-  (`RelateNGComplete.v : mixed_cone_pair_unsupported`). Do not
-  bucket with leftover `Ⅰ`. Do not mint leftover `Ⅴ`.
+  Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
+  (`RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop`),
+  discharged QEX on mixed-cone. Do not bucket with leftover `Ⅰ`.
+  Do not mint leftover `Ⅴ`.
 - **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with two
   witnesses. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token

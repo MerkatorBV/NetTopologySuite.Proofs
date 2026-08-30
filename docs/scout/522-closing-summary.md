@@ -24,7 +24,7 @@ the oracle wire. Never a confident `FFFFFFFFF` for an unclassified pair.
 | Disjoint bar 1 | classified | `RelateNGDisjoint.v : triangle_pair_regime_disjoint` |
 | Vertex-touch bar 1 | classified | `RelateNGTouchVertexRegime.v : triangle_pair_regime_touchvertex` |
 | Contains bar 1 | detector → closed containment | `RelateNGContainsBridge.v : contains_b_ccw_implies_closed_containment` |
-| Completeness | **false** (mixed-cone) | `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete` |
+| Completeness | **false** (mixed-cone); stop is QED ∨ QEX | `RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop` |
 | Disjoint bar 2 gtri | FF2FF1212 | `RelateNGDisjointCells.v : sentinel_disjoint_ogc_gtri_cells` |
 | Contains bar 2 gtri | 212FF1FF2 | `RelateNGContainsCells.v : contains_pair_ogc_gtri_cells` |
 | Touch-edge bar 2 gtri | FF2F11212 | `RelateNGTouchEdgeCells.v : touch_edge_pair_ogc_gtri_cells` |

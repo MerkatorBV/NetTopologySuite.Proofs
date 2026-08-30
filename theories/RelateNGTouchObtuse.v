@@ -17,6 +17,9 @@
    `classified_hard_pairs`, leftover Ⅰ, leftover Ⅲ, leftover Ⅳ,
    and the #567 contains pair. Completeness stays false on an
    unnamed mixed-cone shared-vertex pair (not leftover `Ⅴ`).
+   #577 Green is completeness (QED) or a documented cex (QEX).
+   `triangle_pair_regime_ccw_stop` is that disjunction, discharged
+   QEX. Leftover `Ⅱ` itself is QED (`leftover_ii_qed_or_qex`).
    `classify_triangle_pair` arm is `True` — leftover Ⅰ honesty,
    not CONTEXT Bar 1. Nothing that mentions `TPR_TouchObtuse` may
    be proved through `classify_triangle_pair`. Do not steal 522-j /
@@ -255,6 +258,58 @@ Proof.
   exact mixed_cone_pair_unsupported.
 Qed.
 
+(* Epic #522 / #577 stop: completeness (QED) or a documented CCW
+   unsupported pair (QEX). Discharged QEX — mixed-cone, not leftover
+   `Ⅴ`. Leftover-Ⅱ classify does not take the left. Not a 522-j
+   remint. *)
+(* WITNESS {"claimId":"Ⅱ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on mixed-cone","file":"theories/RelateNGTouchObtuse.v","witness":"Ⅱ-obtuse-cex","board":"leftover-Ⅱ"} *)
+Theorem triangle_pair_regime_ccw_stop :
+  (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
+     0 < gdbl ax ay bx by_ cx cy ->
+     0 < gdbl dx dy ex ey fx fy ->
+     triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
+       <> TPR_Unsupported)
+  \/
+  (exists ax ay bx by_ cx cy dx dy ex ey fx fy : R,
+     0 < gdbl ax ay bx by_ cx cy /\
+     0 < gdbl dx dy ex ey fx fy /\
+     triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
+       = TPR_Unsupported).
+Proof.
+  right.
+  exact triangle_pair_regime_ccw_incomplete.
+Qed.
+
+Theorem triangle_pair_regime_ccw_stop_not_tjunction :
+  (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
+     0 < gdbl ax ay bx by_ cx cy ->
+     0 < gdbl dx dy ex ey fx fy ->
+     ~ tjunction_pair_coords ax ay bx by_ cx cy dx dy ex ey fx fy ->
+     triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
+       <> TPR_Unsupported)
+  \/
+  (exists ax ay bx by_ cx cy dx dy ex ey fx fy : R,
+     0 < gdbl ax ay bx by_ cx cy /\
+     0 < gdbl dx dy ex ey fx fy /\
+     ~ tjunction_pair_coords ax ay bx by_ cx cy dx dy ex ey fx fy /\
+     triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
+       = TPR_Unsupported).
+Proof.
+  right.
+  exact triangle_pair_regime_ccw_incomplete_not_tjunction.
+Qed.
+
+(* Leftover Ⅱ Green: classify (QED) or remain the documented
+   unsupported (QEX). This letter is QED. *)
+Theorem leftover_ii_qed_or_qex :
+  triangle_pair_regime 0 0 2 0 0 2 0 0 (-2) 0 1 (-1) = TPR_TouchObtuse
+  \/
+  triangle_pair_regime 0 0 2 0 0 2 0 0 (-2) 0 1 (-1) = TPR_Unsupported.
+Proof.
+  left.
+  exact triangle_pair_regime_obtuse.
+Qed.
+
 Theorem obtuse_fill_still_unsupported :
   triangle_pair_fill TPR_TouchObtuse = im_unsupported.
 Proof.
@@ -273,4 +328,7 @@ Print Assumptions leftover_I_still_partial.
 Print Assumptions leftover_III_still_onesided.
 Print Assumptions leftover_IV_still_onesided.
 Print Assumptions mixed_cone_still_unsupported.
+Print Assumptions triangle_pair_regime_ccw_stop.
+Print Assumptions triangle_pair_regime_ccw_stop_not_tjunction.
+Print Assumptions leftover_ii_qed_or_qex.
 Print Assumptions obtuse_fill_still_unsupported.

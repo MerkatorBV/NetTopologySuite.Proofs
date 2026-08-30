@@ -51,7 +51,9 @@
      - RelateNGTouchObtuse.v leftover `Ⅱ`: closed-cone detector
          `touch_obtuse_vertex_b` reaches `TPR_TouchObtuse`
          (fill stays `im_unsupported`; not CONTEXT Bar 1).
-         Completeness is mixed-cone (not leftover `Ⅴ`).
+         #577 stop is QED ∨ QEX (`triangle_pair_regime_ccw_stop`);
+         leftover `Ⅱ` is QED. Completeness is mixed-cone
+         (not leftover `Ⅴ`).
      - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
          (#568 / 522-g): a strict-`gtri` point has an explicit open
          disk of strict points; a nondegenerate segment carries dim-1;
