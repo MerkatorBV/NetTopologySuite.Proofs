@@ -49,7 +49,7 @@ Inductive TrianglePairRegime : Type :=
 | TPR_Contains
 | TPR_TouchEdge
 | TPR_TouchVertex   (* vertex contact; matrix shape can be adjusted later *)
-| TPR_TouchPartialEdge (* leftover Ⅰ: collinear partial-edge kiss; no fill yet *)
+| TPR_TouchPartialEdge (* leftover Ⅰ: mutual vertex-in-open-edge; fill is the token *)
 | TPR_Unsupported.  (* the classifier declined -- NOT a geometric verdict *)
 
 Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
@@ -300,9 +300,12 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
   | TPR_Contains    => triangle_a_contains_b a1 a2 a3 b1 b2 b3
   | TPR_TouchEdge   => triangles_touch_on_edge a1 a2 a3 b1 b2 b3
   | TPR_TouchVertex => triangles_touch_at_vertex a1 a2 a3 b1 b2 b3
-  (* Leftover Ⅰ: bar 1 names the regime. Fill is still `im_unsupported`;
-     the geometric denotation is the mutual open-edge detector, not a
-     reminted `aa_matrix_*` pin. *)
+  (* Leftover Ⅰ: #567 placeholder returning. [True] is not a
+     denotation. Do not prove [classify_triangle_pair] facts about
+     this constructor. Fill stays [im_unsupported]. A later letter
+     needs a real predicate, or this arm stays off
+     [classify_triangle_pair]. Do not remint to a Touches fill —
+     the compiled pair is sliver overlap (II nonempty). *)
   | TPR_TouchPartialEdge => True
   (* `TPR_Unsupported` names no configuration -- it records that the
      classifier made no claim.  `True` is the correct denotation of "no

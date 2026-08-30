@@ -729,8 +729,8 @@ Proof.
   reflexivity.
 Qed.
 
-(* Historical name: the pair used to emit TPR_Unsupported (522-j).
-   Leftover Ⅰ classifies it; the fill is still im_unsupported. *)
+(** The leftover-Ⅰ pair's fill is still [im_unsupported]
+    (historical name: the regime used to be [TPR_Unsupported]). *)
 Lemma tjunction_pair_unsupported :
   triangle_pair_fill
     (triangle_pair_regime 0 0 2 0 0 1 1 0 3 0 2 1) = im_unsupported.

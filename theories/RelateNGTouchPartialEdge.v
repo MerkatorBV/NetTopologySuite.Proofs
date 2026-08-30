@@ -1,16 +1,18 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNGTouchPartialEdge
    ----------------------------------------------------------------------------
-   Leftover Ⅰ: T-junction / partial-edge kiss at relate bar 1.
+   Leftover Ⅰ: mutual vertex-in-open-edge at relate bar 1.
 
    Map: docs/scout/map-tjunction-cert.md. Compiled pair
-   A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1). Detector
-   `touch_partial_edge_b` is mutual vertex-in-open-edge (not a widening
-   of `shares_edge_b`). Constructor `TPR_TouchPartialEdge` stays on
-   `im_unsupported` until a fill is named. After `touch_edge_b`. False
-   on `classified_hard_pairs`. Completeness stays false (obtuse / ⅠⅠ).
+   A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1) is sliver overlap
+   (II nonempty), not a kiss. Detector `touch_partial_edge_b` is
+   mutual vertex-in-open-edge (not a widening of `shares_edge_b`).
+   Constructor `TPR_TouchPartialEdge` stays on `im_unsupported`
+   (load-bearing; do not remint to a Touches fill). After
+   `touch_edge_b`. False on `classified_hard_pairs` and the #567
+   contains pair. Completeness stays false (obtuse / ⅠⅠ).
    Do not steal 522-j / 522-m / 522-f. Do not mint 522-n. Do not
-   remint aa_matrix_*. Do not invent leftover ⅠⅠ.
+   remint aa_matrix_*. Do not invent leftover ⅠⅠ / ⅠⅠⅠ.
 
    WITNESS topic: relate · claimId: Ⅰ · witness: Ⅰ-partial-edge-bar1
    macro: relate
@@ -86,6 +88,20 @@ Proof.
   reflexivity.
 Qed.
 
+Lemma hard_contains_no_partial_edge :
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint (1/4) (1/4)) (mkPoint (1/2) (1/4)) (mkPoint (1/4) (1/2))
+  = false.
+Proof.
+  unfold touch_partial_edge_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
 Lemma obtuse_no_partial_edge :
   touch_partial_edge_b
     (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
@@ -112,12 +128,17 @@ Lemma classified_hard_pairs_no_partial_edge :
     (mkPoint 0 0) (mkPoint (-2) 0) (mkPoint 0 (-2)) = false /\
   touch_partial_edge_b
     (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
-    (mkPoint 1 0) (mkPoint 1 1) (mkPoint 0 1) = false.
+    (mkPoint 1 0) (mkPoint 1 1) (mkPoint 0 1) = false /\
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint (1/4) (1/4)) (mkPoint (1/2) (1/4)) (mkPoint (1/4) (1/2))
+  = false.
 Proof.
   split; [exact hard_disjoint_no_partial_edge|].
   split; [exact hard_overlap_no_partial_edge|].
   split; [exact hard_touchvertex_no_partial_edge|].
-  exact hard_touchedge_no_partial_edge.
+  split; [exact hard_touchedge_no_partial_edge|].
+  exact hard_contains_no_partial_edge.
 Qed.
 
 (* WITNESS {"claimId":"Ⅰ","topic":"relate","lemma":"triangle_pair_regime_touchpartial","title":"TPR_TouchPartialEdge reachable at relate bar 1 on the compiled leftover-Ⅰ kiss","file":"theories/RelateNGTouchPartialEdge.v","witness":"Ⅰ-partial-edge-bar1","board":"leftover-Ⅰ"} *)
@@ -164,4 +185,5 @@ Qed.
 
 Print Assumptions triangle_pair_regime_touchpartial.
 Print Assumptions classified_hard_pairs_no_partial_edge.
+Print Assumptions hard_contains_no_partial_edge.
 Print Assumptions obtuse_no_partial_edge.

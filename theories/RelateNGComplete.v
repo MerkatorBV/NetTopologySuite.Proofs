@@ -75,9 +75,10 @@ Lemma tjunction_pair_both_ccw :
   0 < gdbl 0 0 2 0 0 1 /\ 0 < gdbl 1 0 3 0 2 1.
 Proof. unfold gdbl; split; lra. Qed.
 
-(* Historical name. 522-j recorded this pair as Unsupported. Leftover Ⅰ
-   classifies it. Live 522-j / 522-m seed is
-   triangle_pair_regime_ccw_incomplete (obtuse). *)
+(** The leftover-Ⅰ pair classifies as [TPR_TouchPartialEdge]
+    (historical name: 522-j recorded [TPR_Unsupported]). Live
+    completeness cex is [triangle_pair_regime_ccw_incomplete]
+    (obtuse / leftover ⅠⅠ). *)
 Theorem triangle_pair_regime_incomplete_tjunction :
   0 < gdbl 0 0 2 0 0 1 /\
   0 < gdbl 1 0 3 0 2 1 /\
