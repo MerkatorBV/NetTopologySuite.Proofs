@@ -249,9 +249,11 @@ Proof.
   intros σ F a b eps d h Hsq Huc Hh0 Hhd.
   induction m as [|k IH]; intros t0 Hat0 Htop.
   - cbn [uniform_tail left_tags riemann_sum].
-    replace (t0 + 0 * h) with t0 by (simpl; ring).
+    change (INR 0) with 0.
+    replace (t0 + 0 * h) with t0 by ring.
     replace (σ t0 * (t0 - t0)) with 0 by ring.
-    lra.
+    replace (F t0 - F t0 + eps * (0 * h)) with 0 by ring.
+    apply Rle_refl.
   - cbn [uniform_tail left_tags riemann_sum].
     rewrite S_INR in Htop.
     replace (t0 + (INR k + 1) * h) with (t0 + h + INR k * h) in Htop by ring.
@@ -283,8 +285,10 @@ Proof.
   intros g σ a b eps d h Hrate Hh0 Hhd.
   induction m as [|k IH]; intros t0 Hat0 Htop.
   - cbn [uniform_tail left_tags riemann_sum polyline_len].
-    replace (t0 + 0 * h) with t0 by (simpl; ring).
+    change (INR 0) with 0.
+    replace (t0 + 0 * h) with t0 by ring.
     replace (σ t0 * (t0 - t0)) with 0 by ring.
+    replace (eps * (0 * h)) with 0 by ring.
     lra.
   - cbn [uniform_tail left_tags riemann_sum polyline_len].
     rewrite S_INR in Htop.
