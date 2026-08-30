@@ -526,7 +526,7 @@ Proof.
         with ((8 * / 24) * (M * (xv * xv * xv))) by ring.
       replace (8 * / 24) with (2 * / 6).
       2:{ replace 24 with (4 * 6) by ring.
-          rewrite Rinv_mult_distr; [| lra | lra].
+          rewrite Rinv_mult; [| lra | lra].
           replace 8 with (2 * 4) by ring.
           rewrite <- Rmult_assoc.
           rewrite (Rmult_assoc 2 4 (/ 4)).
@@ -552,9 +552,11 @@ Proof.
       rewrite Rmult_plus_distr_r.
       replace ((s + t) * / 2 * 2) with (s + t).
       2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. ring. }
-      replace (- s * 2) with (- (s * 2)) by ring.
       replace ((t - s) * / 2 * 2) with (t - s).
       2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. ring. }
+      replace (- s * 2) with (- s + - s).
+      2:{ replace 2 with (1 + 1) by ring.
+          rewrite Rmult_plus_distr_l. rewrite Rmult_1_r. reflexivity. }
       ring. }
     assert (Hs_mid : s <= mid).
     { apply (Rplus_le_reg_r (- s)).
