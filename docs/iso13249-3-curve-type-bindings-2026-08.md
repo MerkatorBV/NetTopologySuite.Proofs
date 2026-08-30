@@ -179,8 +179,15 @@ control-polyline value 2√2 is the length of a different point set, so returnin
 it would not be "the length of SELF" under any reading. The spec nowhere gives
 an arc-length formula (r·θ is our derivation from the locus definition, not a
 quoted rule) — the test's `Within(1e-9)` tolerance is a quality bar, not a
-clause. Branch today: `CircularString.Length` throws
-(`Curves/CircularString.cs:139-140`) — fail-closed, red-marked.
+clause.
+
+**Landed (2026-08-30, branch commit `2ccd353`, ticket `615-d`):** `Length` is
+exact over the locus — r·θ per segment via the new `CircularArcGeometry` seam
+(circumcentre + orientation-directed sweep, so major arcs are right), collinear
+→ chord per Desc 8b, CompoundCurve = component sum. The Red contract flipped
+green and moved to `CurveMetricsTests`. Differential pin: all ARC_LENGTH and
+LENGTH_UNIFIED golden vectors agree with the oracle at rel < 1e-9 (run
+provenance below, §5a).
 
 ### 3.2 Distance — `Red_Distance_PointToCircularString_CentreOfUnitSemicircle_IsRadius` (:68) and `..._Endpoint_IsZero` (:85)
 
@@ -314,12 +321,21 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 | CC empty components (spec silent; only null forbidden, §7.10.1 Desc 5) | rejected (`CompoundCurve.cs:64-68`) | stricter than spec, harmless |
 | CP rings are rings = closed ∧ simple, any ST_Curve (§8.2.1 Desc 2–3) | ctor: closed only (`CurvePolygon.cs:96-108`); simplicity deferred | partial; red-marked via IsSimple |
 | CP ring intersection ≤ 1 point, no spikes/cuts, connected interior (§8.2.1 Desc 11–14) | not evaluated (IsValid fail-closed) | known gap (IsValid work) |
-| ST_Length on curves (§7.1.2 Desc 2; operand = arc locus §7.3.1 Desc 8) | throws (`CircularString.cs:139-140`, `CompoundCurve.cs:188-189`) | red: `Red_Length_UnitSemicircle_IsPi` |
+| ST_Length on curves (§7.1.2 Desc 2; operand = arc locus §7.3.1 Desc 8) | exact r·θ over the locus since `2ccd353` (`CircularArcGeometry` seam; collinear → chord per Desc 8b; CC = component sum) | ok — landed 2026-08-30 (`615-d`); oracle-pinned, see §5a |
 | ST_Distance: intersect → 0; else min distance (§5.1.41 Desc 2a) | `DistanceOp` fails closed (`DistanceOp.cs:98-99`) | red: `Red_Distance_..._Endpoint_IsZero` (Desc 2a-iii), `Red_Distance_..._CentreOfUnitSemicircle_IsRadius` (Desc 2a-iv + §7.3.1 Desc 8a) |
 | ST_Envelope: extremes over the value's point set (§5.1.19 Desc 2b) | `ComputeEnvelopeInternal` throws (`CircularString.cs:165-169`) | red: `Red_Envelope_IncludesAxisExtremeBeyondControls` |
 | ST_CurveToLine / ST_CurvePolyToPoly explicit approximation (§7.1.10, §8.2.7) | `Linearize()` (`CircularString.cs:284-291`); tolerance overload throws (`CircularString.cs:303-306`) | ok as chainsaw; tolerance form pending |
 | WKT grammar incl. bare linestring bodies, EMPTY, Z/M (§5.1.67) | reader/writer (`WKTReader.cs:768-773,1061-1204`, `WKTWriter.cs:1002-1096`) | ok; input-side tagged-LINESTRING extension (GEOS/PostGIS compat) |
 | WKB Table 15 codes + Z/M offsets (§5.1.68) | `WKBGeometryTypes.cs:63-83`, `WKBReader.cs:283,297` | ok; alternate 100000x codes unsupported |
+
+### 5a. Metric-landing oracle runs (provenance)
+
+| Run | Oracle | NTS | Result |
+|---|---|---|---|
+| 2026-08-30, ticket `615-d` | `oracle_bin` rebuilt in-container via `make -C oracle` from this repo at `4e33e2c` (extraction unchanged) | fork branch at `2ccd353` | `SUMMARY ok=24 warn=7 bug_or_fail=0` — 7 legacy ARC_LENGTH + 5 new LENGTH_UNIFIED vectors all `rel < 1e-9` (several bit-exact); the 7 WARNs are the honest fail-closed pendings for Envelope/Distance (`615-e/f`), flipped when those land |
+
+Harness: `ORACLE=oracle/oracle_bin dotnet run --project tests/CurveOracleBugHunt`
+(now platform-portable: direct exec off Windows; WSL path preserved on it).
 
 ---
 
