@@ -30,28 +30,27 @@ the mathematics.
 
 **Honesty / decline**
 
-- `im_unsupported_no_predicate` — sentinel supports no `RelatePredicate`
-- `relate_unsupported_no_predicate` — general-case fallthrough declines
-- `relate_tjunction_pair_no_predicate` — leftover decline pin is the T-junction
-- `triangle_unsupported_token` / `relate_tjunction_wire_unsupported` — wire token `UNSUPPORTED` (draft #588 / `522-f`; not necessarily on `main` yet)
+- `RelateNGCore.v : relate_unsupported_no_predicate` — general-case fallthrough declines
+- `RelateNGDisjoint.v : relate_tjunction_pair_no_predicate` — leftover decline pin is the T-junction
+- `RelateNGOracleSurface.v : triangle_unsupported_token` — wire token `UNSUPPORTED` (#588 + #595 / `522-f`)
 
 **Regime predicates and bar 1**
 
-- `regime_predicates_pairwise_exclusive` — the four former `True` arms are geometry
-- `contains_b_ccw_implies_closed_containment` — detector → closed containment
-- `triangle_pair_regime_overlap` / `triangle_pair_regime_disjoint` / `triangle_pair_regime_touchvertex`
+- `RelateMatrixTriangle.v : regime_predicates_pairwise_exclusive` — the four former `True` arms are geometry
+- `RelateNGContainsBridge.v : contains_b_ccw_implies_closed_containment` — detector → closed containment
+- `RelateNGOverlap.v : triangle_pair_regime_overlap` / `RelateNGDisjoint.v : triangle_pair_regime_disjoint` / `RelateNGTouchVertexRegime.v : triangle_pair_regime_touchvertex`
 - `triangles_touch_on_shared_edge` — frozen shared-edge predicate (not reminted)
 
-**Bar 2 beachhead and ring inclusion**
+**Bar 2 gtri cells (specified interior; classifier pins not reminted)**
 
-- `gtri_strict_pos_open_disk` / `dim1_on_nondeg_segment` / `sentinel_ie_has_dim2`
-- `sentinel_disjoint_ogc_gtri_cells` — nine specified-interior cells of FF2FF1212
-- `ogc_disjoint_fill_not_im_disjoint` — Qex: `pat_disjoint` rejects that fill
+- `RelateNGDisjointCells.v : sentinel_disjoint_ogc_gtri_cells` — FF2FF1212
+- `RelateNGContainsCells.v : contains_pair_ogc_gtri_cells` — 212FF1FF2
+- `RelateNGTouchEdgeCells.v : touch_edge_pair_ogc_gtri_cells` — FF2F11212
+- `RelateNGOverlapCells.v : overlap_pair_ogc_gtri_cells` — 212101212
 
 **Completeness is false**
 
-- `triangle_pair_regime_incomplete_tjunction`
-- `triangle_pair_regime_ccw_incomplete_not_tjunction`
+- `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`
 
 **Touch cells (the row the archive understated)**
 
@@ -67,10 +66,9 @@ the mathematics.
 - `line_pair_fill_disjoint_ie_not_true_dim` — S8 fill honesty gap
 - Exterior-row true-dim pin lives in `RelateNodingLineLineExtPinned.v` (ledger #67-c)
 
-**Prepared hook (still a stub)**
+**Prepared hook**
 
-- `prepared_evaluate_agrees` — holds of the stub
-- `evaluate_ignores_cache` — tripwire; #574 / `522-e` is the real evaluate
+- `RelatePrepared.v : prepared_evaluate_cache_short_circuit` — cache-consulting `evaluate` (#591 / `522-e`)
 
 **Curve-polygon × point / S10b–S12**
 
@@ -88,11 +86,10 @@ disguised as disjointness — that was #530.
   Not a #522 child.
 - **Nine-cell `geom_de9im_pointset` capstone** — BI and side-E\* vs hand-specified
   `F`, because parity `point_set` is half-open. ADR-0003 is the convention;
-  #576 / `522-h` is the remaining triangle bar-2 work; ticket 11 tracks
+  triangle bar-2 gtri cells are on `main` (#592–#594). Ticket 11 tracks
   whether the capstone consumed the ADR.
 - **Touches-vs-Share `LPR_Touches` fill split** (line×line). Companion of
   `line_pair_fill_share_ii_not_pinned_int_bnd_only`.
-- **Cache-consulting `evaluate`** — #574 / `522-e`.
 - **`F` vs not-computed** on `CURVE_RELATE_MATRIX` — sibling #523, not a #522 child.
 - **Empty/empty `relate`** — parked on the #522 epic (declines; ISO 13249-3
   if revisited).
@@ -104,8 +101,9 @@ disguised as disjointness — that was #530.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 
-Volatile counts (how many cells, how many S-rungs) stay in the archive or
-wait for the #578 prose gate. This page names theorems and tickets only.
+Volatile counts (how many cells, how many S-rungs) stay in the archive.
+This page names theorems and tickets only. The prose gate is
+`scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`.
 
 ## External pins the archive still got right
 
@@ -113,5 +111,5 @@ wait for the #578 prose gate. This page names theorems and tickets only.
   fixed upstream (JTS#1200). The corpus pin is the JTS#1175 class in
   `RelateBoundary.v` / `jts1175_*` ledger rows.
 - NTS#819 prepared A-L cache is a performance issue; the proof obligation
-  is result-independence of the cache path (`evaluate_ignores_cache` today,
-  #574 tomorrow).
+  is result-independence of the cache path
+  (`RelatePrepared.v : prepared_evaluate_cache_short_circuit`).
