@@ -291,12 +291,31 @@ constructor, §6.1) as it always did for COMPOUNDCURVE as a
 CURVEPOLYGON/MULTICURVE ring or member (`WKTReader.cs:1188-1204` at
 e84458e, matching `<ring text>`). It additionally accepts a **tagged** `LINESTRING` component
 (`WKTReader.cs:1071-1075`) — an input-side extension beyond the ISO grammar,
-documented in-code as GEOS/PostGIS compatibility; the writer emits conformant
-bare bodies for LineString components and tags for CircularString
-(`IO/WKTWriter.cs:1046-1070`), so output is grammar-clean. Keyword matching is
-case-insensitive on input (`OrdinalIgnoreCase`), uppercase on output —
-consistent with the safe posture above. EMPTY round-trips for all three types
-(`CurveWktTest.cs:23,26,30`).
+documented in-code as a deliberate deviation (GEOS/PostGIS compatibility) and
+pinned by an accept-test since branch commit `ed40bf3` (ticket `615-i`); the
+writer emits conformant bare bodies for LineString components and tags for
+CircularString (`IO/WKTWriter.cs:1046-1070`), so output is grammar-clean.
+
+**Nested `<z m>` consistency is enforced on read since `ed40bf3` (`615-i`).**
+The audit behind it (closing the §8 ledger item): the reader used to discard a
+curve component's own `Z`/`M`/`ZM` tag silently (the skip in
+`GetNextEmptyOrOpener`), so `COMPOUNDCURVE Z (CIRCULARSTRING M ...)` coerced
+the declared M into Z without a word, and a plain 2D body under a `Z` outer
+died on an accidental arity error naming neither rule nor clause. Now a
+component's tag (joined or separate) is consumed and checked in
+`ReadCurveText` / `ReadMultiSurfaceText`: an untagged component inherits the
+outer dimension (the grammar's own shape), a conflicting tag is rejected
+citing §5.1.67, and a body that fails to parse under a non-XY outer tag
+reports the dimension-consistency rule with the original error preserved.
+Out of the curve lane's scope: GEOMETRYCOLLECTION members (full tagged texts,
+classical reader path) and the reader-wide legacy `XY + optional third number`
+coordinate syntax (`_isAllowOldNtsCoordinateSyntax`, on by default), which can
+still absorb an extra ordinate under an untagged outer — a global,
+user-disableable compatibility knob, not a curve-path coercion. Keyword
+matching is case-insensitive on input (`OrdinalIgnoreCase`), uppercase on
+output — consistent with the safe posture above. EMPTY and Z/M/ZM round-trips
+for all three curve types are pinned in one place
+(`CurveWktTest.EmptyAndZmFormsRoundTripThroughFullOrdinateWriter`).
 
 ### 4.2 WKB (§5.1.68)
 
@@ -317,9 +336,13 @@ Byte-order bytes: 0 = big endian, 1 = little endian (§5.1.68 items fz–ga).
 
 Branch: base codes 8–12 in `IO/WKBGeometryTypes.cs:63-83`; the +1000/+2000/+3000
 Z/M offsets are decoded generically (`IO/WKBReader.cs:283,297`). The alternate
-`100000x` code series that Table 15 lists as a second legal encoding is **not**
-decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
-(no known producer), recorded here for completeness.
+`100000x` code series that Table 15 lists as a second legal encoding is
+**accepted on read since branch commit `ed40bf3`** (ticket `615-i`): a
+dedicated decode path maps 1000001–1000005 to the base curved types 8–12
+before the `(type & 0xffff) % 1000` masking (which cannot recover them —
+`1000001 & 0xffff == 16961`); the writer emits base codes only, and both
+halves are round-trip-pinned
+(`CurveWkbWktGeosTest.WkbAlternateTable15CodesReadAsBaseTypes`).
 
 ---
 
@@ -342,8 +365,8 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 | ST_Distance: intersect → 0; else min distance (§5.1.41 Desc 2a) | exact point-to-curve since `b829d42` (`CurveDistance` dispatch off `DistanceOp.Distance`; curve×curve + NearestPoints/IsWithinDistance stay fail-closed) | ok — landed 2026-08-30 (`615-f`); oracle-pinned via ARC_DISTANCE, see §5a |
 | ST_Envelope: extremes over the value's point set (§5.1.19 Desc 2b) | exact over the locus since `9111983` (endpoints + centre±r on crossed axes; CS + CC; CP still fail-closed) | ok — landed 2026-08-30 (`615-e`); oracle-pinned via `ENVELOPE_UNIFIED`, see §5a |
 | ST_CurveToLine / ST_CurvePolyToPoly explicit approximation (§7.1.10, §8.2.7) | `Linearize()` (`CircularString.cs:284-291`); tolerance overload throws (`CircularString.cs:303-306`) | ok as chainsaw; tolerance form pending |
-| WKT grammar incl. bare linestring bodies, EMPTY, Z/M (§5.1.67) | reader/writer (`WKTReader.cs:768-773,1061-1204`, `WKTWriter.cs:1002-1096`) | ok; input-side tagged-LINESTRING extension (GEOS/PostGIS compat) |
-| WKB Table 15 codes + Z/M offsets (§5.1.68) | `WKBGeometryTypes.cs:63-83`, `WKBReader.cs:283,297` | ok; alternate 100000x codes unsupported |
+| WKT grammar incl. bare linestring bodies, EMPTY, Z/M (§5.1.67) | reader/writer (`WKTReader.cs:768-773`, `ReadCurveText`/`ReadMultiSurfaceText`, `WKTWriter.cs:1002-1096`); nested `<z m>` consistency enforced on read since `ed40bf3` | ok — landed 2026-08-30 (`615-i`); tagged-LINESTRING extension documented + deviation-pinned |
+| WKB Table 15 codes + Z/M offsets (§5.1.68) | `WKBGeometryTypes.cs:63-83`, `WKBReader.cs:283,297`; alternate 100000x codes decoded to base types since `ed40bf3` | ok — landed 2026-08-30 (`615-i`); writer emits base codes, round-trip-pinned |
 
 ### 5a. Metric-landing oracle runs (provenance)
 
@@ -495,12 +518,15 @@ spec-adjacent statements, checked:
   precision. The metric tests' numeric expectations (formerly the Red
   contracts') are quality bars.
 - **Nested-tag `<z m>` consistency enforcement in the NTS reader** (spec rule
-  in §5.1.67): not audited on the branch; only outer-tag Z round-trip is
-  test-covered (`CurveWktTest.ReadSupportsZOrdinates`).
+  in §5.1.67): **closed 2026-08-30** (ticket `615-i`). Audit finding: the
+  reader silently discarded a component's own tag (silent coercion), and a 2D
+  body under a `Z` outer failed only by an accidental arity error. Enforced on
+  read since branch commit `ed40bf3` with clause-citing rejections; details in
+  §4.1, reject/accept pins in `CurveWktTest`.
 - **Published-IS wording**: citations are from the DIS ballot text of the 5th
   edition (N 2593). No claim here was found only in ballot-specific front
   matter, but clause-item numbering in the published 2016 IS could differ.
 
 ---
 
-SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Envelope is exact over the locus since `9111983` (ticket `615-e`) and point-to-curve Distance since `b829d42` (ticket `615-f`) — all four original Red metric contracts are green and the oracle differential runs `ok=49 warn=0 bug_or_fail=0`. The remaining divergence is the simplicity half of validity and its arc-arc dependents (§4.2.4 / §8.2.1; curve×curve distance, NearestPoints — ticket `615-h`).
+SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Envelope is exact over the locus since `9111983` (ticket `615-e`) and point-to-curve Distance since `b829d42` (ticket `615-f`) — all four original Red metric contracts are green and the oracle differential runs `ok=49 warn=0 bug_or_fail=0`. The WKT/WKB small print landed with `ed40bf3` (ticket `615-i`): nested `<z m>` consistency enforced on read (the silent-coercion audit finding closed, §8 ledger), Table 15 alternate WKB codes accepted on read, and the tagged-LINESTRING tolerance documented as a deliberate deviation. The remaining divergence is the simplicity half of validity and its arc-arc dependents (§4.2.4 / §8.2.1; curve×curve distance, NearestPoints — ticket `615-h`).
