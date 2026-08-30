@@ -53,21 +53,20 @@ leftover `Ⅲ`'s opposite-side II emptiness.
 | `Ⅳ` | one-sided | same side | typically nonempty |
 
 The xor (`RelateNGCore.v : touch_onesided_t_b`) is true on leftover
-`Ⅲ` and would be true on leftover `Ⅳ`. It does not distinguish the
-rows. Classifier order
+`Ⅲ` and leftover `Ⅳ`
+(`RelateNGComplete.v : interior_side_onesided_true`). It does not
+distinguish the rows. Classifier order
 (`RelateNGCore.v : triangle_pair_regime`) emits
 `TPR_TouchOnesided` for any xor-true pair that missed the earlier
 arms. Fill stays `im_unsupported`
 (`RelateNGTouchOnesided.v : onesided_fill_still_unsupported`).
 
-This map does not draw coordinates. Minting a pair here and calling it
-the spec would invent leftover `Ⅳ`'s input.
+Residue pair: A = `(0,0)(2,0)(0,1)`, B = `(1,0)(5/4,1/4)(3/4,1/4)`
+(`RelateNGComplete.v : interior_side_pair_inhabits`).
 
-Whether a same-side one-sided T **reaches** `TPR_TouchOnesided` is
-**open**. `overlap_b` sits earlier in the classifier
-(`RelateNGCore.v : overlap_b`). A same-side stem with one remaining
-vertex strictly interior and another strictly exterior is leftover
-`522-b`, not this leftover.
+A same-side stem with one remaining vertex strictly interior and
+another strictly exterior is leftover `522-b`
+(`RelateNGCore.v : overlap_b`), not this leftover.
 
 ## Why leftover `Ⅰ`, leftover `Ⅱ`, and leftover `Ⅲ` exclude it
 
