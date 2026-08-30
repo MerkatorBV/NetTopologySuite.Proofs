@@ -194,6 +194,44 @@ Proof. intros t Ht0 Ht1. apply Rgt_not_eq, golden_uden_pos; assumption. Qed.
 (* Double-angle identities for atan.                                          *)
 (* -------------------------------------------------------------------------- *)
 
+Lemma one_plus_sq_pos : forall x, 0 < 1 + x * x.
+Proof.
+  intro x. apply Rplus_lt_le_0_compat; [lra | apply Rle_0_sqr].
+Qed.
+
+Lemma one_plus_sq_neq : forall x, 1 + x * x <> 0.
+Proof. intro x. apply Rgt_not_eq, one_plus_sq_pos. Qed.
+
+Lemma one_plus_tan2 : forall a,
+  cos a <> 0 ->
+  1 + tan a * tan a = / (cos a * cos a).
+Proof.
+  intros a Hc.
+  unfold tan, Rdiv.
+  assert (Hc2 : cos a * cos a <> 0)
+    by (apply Rmult_integral_contrapositive_currified; exact Hc).
+  replace ((sin a * / cos a) * (sin a * / cos a))
+    with (sin a * sin a * / (cos a * cos a))
+    by (field; exact Hc).
+  rewrite <- (Rinv_r (cos a * cos a) Hc2) at 1.
+  rewrite <- Rmult_plus_distr_r.
+  replace (cos a * cos a + sin a * sin a) with 1.
+  2: { pose proof (sin2_cos2 a) as Hsc. unfold Rsqr in Hsc. lra. }
+  rewrite Rmult_1_l. reflexivity.
+Qed.
+
+Lemma cos2_of_atan : forall x,
+  cos (atan x) * cos (atan x) = / (1 + x * x).
+Proof.
+  intro x.
+  assert (Hc : cos (atan x) <> 0) by (apply Rgt_not_eq, cos_atan_pos).
+  pose proof (one_plus_tan2 (atan x) Hc) as Hsec.
+  rewrite tan_atan in Hsec.
+  apply (f_equal Rinv) in Hsec.
+  rewrite Rinv_inv in Hsec.
+  symmetry. exact Hsec.
+Qed.
+
 Lemma cos_2_atan : forall x,
   cos (2 * atan x) = (1 - x * x) / (1 + x * x).
 Proof.
@@ -207,10 +245,8 @@ Proof.
     with (cos a * cos a * (1 - tan a * tan a))
     by (unfold tan; field; exact Hcos0).
   rewrite Htan.
-  assert (Hsec : 1 + x * x = / (cos a * cos a)).
-  { rewrite <- Htan. unfold tan. field. exact Hcos0. }
-  rewrite Hsec. field.
-  split; [nra | apply Rinv_neq_0_compat; nra].
+  unfold a. rewrite cos2_of_atan.
+  unfold Rdiv. ring.
 Qed.
 
 Lemma sin_2_atan : forall x,
@@ -226,10 +262,8 @@ Proof.
     with (2 * tan a * (cos a * cos a))
     by (unfold tan; field; exact Hcos0).
   rewrite Htan.
-  assert (Hsec : 1 + x * x = / (cos a * cos a)).
-  { rewrite <- Htan. unfold tan. field. exact Hcos0. }
-  rewrite Hsec. field.
-  split; [nra | apply Rinv_neq_0_compat; nra].
+  unfold a. rewrite cos2_of_atan.
+  unfold Rdiv. ring.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
