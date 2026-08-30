@@ -4,7 +4,7 @@
 **Blocked by:** — · **Spec:** [`spec-523.md`](../../spec-523.md) slice B
 **claimId:** `523-b` · **GitHub:** [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) · **witness:** `523-b-cell-unknown`
 
-> Umbrella: ticket 523 / #604. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
+> Umbrella: ticket 523 / #604. Does not retire that issue. Not leftover `Ⅲ`.
 > Not a remint of `522-f`.
 
 ## Question
@@ -60,8 +60,8 @@ is `523-c`, and it waits on this one.
 
 ## Non-goals
 
-Do not remint `522-f`. Do not implement leftover `Ⅰ` / `ⅠⅠ`. Do not
-mint `ⅠⅠⅠ`. Do not emit `?` from the driver here. Do not comment on
+Do not remint `522-f`. Do not implement leftover `Ⅰ` / `Ⅱ`. Do not
+mint `Ⅲ`. Do not emit `?` from the driver here. Do not comment on
 GitHub issue 523 unless the user says `comment`.
 
 ## Resolution

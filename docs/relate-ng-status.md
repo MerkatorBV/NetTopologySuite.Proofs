@@ -105,14 +105,22 @@ disguised as disjointness — that was #530.
 - **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not
   proved. Carved on `main` via #597. Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
 - **Disjoint fill remint** (FFFFFFFFF → FF2FF1212) — unnamed. Not `522-f`.
-- **T-junction / partial-edge kiss** — leftover `Ⅰ` bar 1 landed.
+- **Mutual vertex-in-open-edge sliver** — leftover `Ⅰ` bar 1 landed.
   Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
-  Fill stays `im_unsupported`. Chart:
+  Compiled pair is II = 2, BB = 1. Fill stays `im_unsupported`. Chart:
   [`scout/map-tjunction-cert.md`](scout/map-tjunction-cert.md).
   Do **not** mint `522-n`.
-- **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding:
+- **Obtuse-at-v certificate** — leftover `Ⅱ`. Finding:
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
-  Do not bucket with T-junction under `Ⅰ`. Detector not invented.
+  Do not bucket with leftover `Ⅰ`. Detector not invented. Completeness
+  still `Ⅱ`.
+- **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with one
+  exterior witness. Headline
+  `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token
+  is load-bearing (`im_unsupported`). Not CONTEXT Bar 1.
+- **Interior-side stem** — leftover `Ⅳ`. Named only. The xor would
+  classify it as `TPR_TouchOnesided` the moment someone writes the
+  coords. Do not compile.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 

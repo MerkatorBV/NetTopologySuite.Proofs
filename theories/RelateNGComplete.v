@@ -9,7 +9,7 @@
    was FALSE on the compiled T-junction / partial-edge kiss
    `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` (522-j). Leftover `Ⅰ`
    classifies that pair as `TPR_TouchPartialEdge`. Completeness is
-   still FALSE: obtuse-at-v (leftover `ⅠⅠ`, 522-m) still emits
+   still FALSE: obtuse-at-v (leftover `Ⅱ`, 522-m) still emits
    `TPR_Unsupported`.  Do not invent the obtuse certificate here.
 
    Hard pairs that DO classify are cited, not re-proved.  Catalog
@@ -25,13 +25,20 @@
 
    Five names are not a partition.  Leftover `Ⅰ` classifies the
    T-junction in `RelateNGTouchPartialEdge`.  Do not invent the
-   obtuse-at-v certificate in this file.  Not an ADR-0004 remint.
+   obtuse-at-v certificate in this file.     Leftover `Ⅲ` is compiled
+   below as an exterior-side stem (`onesided_t_pair_inhabits`); the
+   xor emits `TPR_TouchOnesided` (ticket 22) — a Ⅲ∨Ⅳ configuration
+   class with one exterior witness, not a leftover-Ⅲ detector.  Fill
+   stays `im_unsupported`.  Leftover `Ⅳ` is the interior-side stem
+   (named only; the xor would fire if coords existed). Completeness
+   still Ⅱ. Not an ADR-0004 remint.
    `522-j` is the existing #577 ticket id.  The filtered-completeness
    retry (`522-m`) lives below: excluding the T-junction 12-tuple,
    completeness is still FALSE (obtuse-at-v).
 
    WITNESS topic: relate · claimId: 522-j · witness: 522-j-sentinel-cex
    WITNESS topic: relate · claimId: 522-m · witness: 522-m-complete-filtered
+   WITNESS topic: relate · claimId: Ⅲ · witness: Ⅲ-onesided-t-cex
    macro: relate
    lane: proofs
    issue: #577 / #522
@@ -68,7 +75,7 @@ Local Open Scope R_scope.
 (*                                                                            *)
 (* A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1).  Both gdbl = 2.  Leftover `Ⅰ`   *)
 (* classifies this pair as `TPR_TouchPartialEdge`.  The live completeness    *)
-(* cex is obtuse-at-v (leftover `ⅠⅠ` / 522-m) below.                          *)
+(* cex is obtuse-at-v (leftover `Ⅱ` / 522-m) below.                          *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma tjunction_pair_both_ccw :
@@ -78,7 +85,7 @@ Proof. unfold gdbl; split; lra. Qed.
 (** The leftover-Ⅰ pair classifies as [TPR_TouchPartialEdge]
     (historical name: 522-j recorded [TPR_Unsupported]). Live
     completeness cex is [triangle_pair_regime_ccw_incomplete]
-    (obtuse / leftover ⅠⅠ). *)
+    (obtuse / leftover Ⅱ). *)
 Theorem triangle_pair_regime_incomplete_tjunction :
   0 < gdbl 0 0 2 0 0 1 /\
   0 < gdbl 1 0 3 0 2 1 /\
@@ -207,7 +214,7 @@ Proof.
   exact (touch_vertex_b_false_of_non_ccw _ _ _ _ _ _ _ _ _ _ _ _ H).
 Qed.
 
-(* Leftover Ⅰ classified the T-junction. Obtuse-at-v (leftover ⅠⅠ)
+(* Leftover Ⅰ classified the T-junction. Obtuse-at-v (leftover Ⅱ)
    is still not invented. Five names remain not a partition. *)
 
 (* -------------------------------------------------------------------------- *)
@@ -386,6 +393,11 @@ Proof.
   cbn [px py].
   repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
   repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  unfold touch_onesided_t_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
   reflexivity.
 Qed.
 
@@ -435,9 +447,288 @@ Proof.
   exact Hreg.
 Qed.
 
+(* -------------------------------------------------------------------------- *)
+(* Leftover Ⅲ — exterior-side one-sided T.                                  *)
+(*                                                                            *)
+(* Exterior-side stem (ticket 21).  A = (0,0)(2,0)(0,1),                      *)
+(* B = (1,0)(1/2,-1)(3/2,-1).  Both CCW.  B-vertex (1,0) sits in the open     *)
+(* base of A (collinear with y = 0).  Not mutual (`touch_partial_edge_b`      *)
+(* = false).  No shared vertex.  Interiors opposite across y = 0, so II      *)
+(* is empty (`onesided_t_ii_empty`).  There is no `onesided_t_bb_dim0`.       *)
+(* Xor emits TPR_TouchOnesided (ticket 22) — Ⅲ∨Ⅳ with one exterior         *)
+(* witness, not a leftover-Ⅲ detector.  Fill stays im_unsupported.           *)
+(* Do not remint leftover Ⅰ.  Completeness stays false on leftover Ⅱ.       *)
+(* Leftover Ⅳ is the interior-side stem (named only).                         *)
+(* -------------------------------------------------------------------------- *)
+
+Definition onesided_t_pair_coords
+    (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Prop :=
+  ax = 0 /\ ay = 0 /\ bx = 2 /\ by_ = 0 /\ cx = 0 /\ cy = 1 /\
+  dx = 1 /\ dy = 0 /\ ex = (1/2) /\ ey = (-1) /\ fx = (3/2) /\ fy = (-1).
+
+Lemma onesided_t_pair_both_ccw :
+  0 < gdbl 0 0 2 0 0 1 /\ 0 < gdbl 1 0 (1/2) (-1) (3/2) (-1).
+Proof. unfold gdbl; split; lra. Qed.
+
+Lemma onesided_t_not_tjunction :
+  ~ tjunction_pair_coords 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1).
+Proof.
+  intros [Hax [Hay [Hbx [Hby [Hcx [Hcy [Hdx [Hdy [Hex _]]]]]]]]].
+  lra.
+Qed.
+
+Lemma onesided_t_B_gsA_plus_gsC : forall p,
+  gsA 1 0 (1/2) (-1) p + gsC 1 0 (3/2) (-1) p = - py p.
+Proof. intros p; unfold gsA, gsC; cbn [px py]; lra. Qed.
+
+(* Exterior-side stem: A's interior is y > 0, B's slacks on the two
+   apex edges sum to -y, so II is empty. *)
+Lemma onesided_t_ii_empty : forall p,
+  ~ (0 < gtri 0 0 2 0 0 1 p /\
+     0 < gtri 1 0 (1/2) (-1) (3/2) (-1) p).
+Proof.
+  intros p [HA HB].
+  assert (Hy : 0 < py p).
+  { pose proof (gtri_le_gsA 0 0 2 0 0 1 p) as Hle.
+    unfold gsA in Hle; cbn [px py] in Hle. lra. }
+  pose proof (onesided_t_B_gsA_plus_gsC p) as Hsum.
+  pose proof (gtri_le_gsA 1 0 (1/2) (-1) (3/2) (-1) p) as HleA.
+  pose proof (gtri_le_gsC 1 0 (1/2) (-1) (3/2) (-1) p) as HleC.
+  lra.
+Qed.
+
+(* Ticket 21 filter: B-vertex (1, 0) sits in the open interior of
+   A's base (0,0)--(2,0). *)
+Lemma onesided_t_B_on_open_base :
+  on_open_seg_b (mkPoint 0 0) (mkPoint 2 0) (mkPoint 1 0) = true.
+Proof.
+  unfold on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+(* One-sided: some B-vertex on an open A-edge, no A-vertex on an
+   open B-edge. Mutual leftover Ⅰ stays false. *)
+Lemma onesided_t_one_sided :
+  some_vertex_on_open_edges
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = true /\
+  some_vertex_on_open_edges
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1) = false.
+Proof.
+  split.
+  { unfold some_vertex_on_open_edges, vertex_on_open_edges.
+    rewrite onesided_t_B_on_open_base.
+    reflexivity. }
+  { unfold some_vertex_on_open_edges, vertex_on_open_edges,
+           on_open_seg_b, cross.
+    cbn [px py].
+    repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+    repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+    reflexivity. }
+Qed.
+
+(* Ticket 21 filter: no shared vertex (also distinguishes leftover Ⅱ). *)
+Lemma onesided_t_no_shared_vertex :
+  is_vertex_b (mkPoint 0 0)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false /\
+  is_vertex_b (mkPoint 2 0)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false /\
+  is_vertex_b (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false.
+Proof.
+  split.
+  { apply is_vertex_b_false_of_none;
+      (apply mkPoint_neq_px; lra). }
+  split.
+  { apply is_vertex_b_false_of_none.
+    - apply mkPoint_neq_px; lra.
+    - apply mkPoint_neq_py; lra.
+    - apply mkPoint_neq_py; lra. }
+  { apply is_vertex_b_false_of_none;
+      (apply mkPoint_neq_py; lra). }
+Qed.
+
+Lemma onesided_t_no_separator :
+  some_edge_separates_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false.
+Proof.
+  unfold some_edge_separates_b.
+  rewrite (edge_separates_b_false_l (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+             (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  rewrite (edge_separates_b_false_l (mkPoint 2 0) (mkPoint 0 1) (mkPoint 0 0)
+             (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  rewrite (edge_separates_b_false_l (mkPoint 0 1) (mkPoint 0 0) (mkPoint 2 0)
+             (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))).
+  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  (* B's (1,0)–(1/2,-1): A's (0,0) is opposite the apex. Pin the
+     mid vertex (2,0) so lra never sees a 12-hypothesis Rlt_dec goal. *)
+  assert (E4 : edge_separates_b (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))
+                 (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1) = false).
+  { unfold edge_separates_b.
+    assert (Hprod : cross (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))
+                        * cross (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint 2 0) >= 0).
+    { unfold cross; cbn [px py]; lra. }
+    assert (Hmid : opposite_sides_b
+                     (mkPoint 1 0) (mkPoint (1/2) (-1))
+                     (mkPoint (3/2) (-1)) (mkPoint 2 0) = false).
+    { apply opposite_sides_b_false_of_nlt. intros Hlt. lra. }
+    rewrite Hmid.
+    destruct (opposite_sides_b (mkPoint 1 0) (mkPoint (1/2) (-1))
+                (mkPoint (3/2) (-1)) (mkPoint 0 0)); reflexivity. }
+  rewrite E4.
+  rewrite (edge_separates_b_false_l (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) (mkPoint 1 0)
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)).
+  2: {
+    apply opposite_sides_b_false_of_nlt.
+    assert (Hprod : cross (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) (mkPoint 1 0)
+                        * cross (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) (mkPoint 0 0) >= 0).
+    { unfold cross; cbn [px py]; lra. }
+    intros Hlt. lra. }
+  rewrite (edge_separates_b_false_l (mkPoint (3/2) (-1)) (mkPoint 1 0) (mkPoint (1/2) (-1))
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)).
+  2: {
+    apply opposite_sides_b_false_of_nlt.
+    assert (Hprod : cross (mkPoint (3/2) (-1)) (mkPoint 1 0) (mkPoint (1/2) (-1))
+                        * cross (mkPoint (3/2) (-1)) (mkPoint 1 0) (mkPoint 0 0) >= 0).
+    { unfold cross; cbn [px py]; lra. }
+    intros Hlt. lra. }
+  reflexivity.
+Qed.
+
+Lemma onesided_t_no_partial_edge :
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false.
+Proof.
+  unfold touch_partial_edge_b.
+  destruct onesided_t_one_sided as [HA HB].
+  rewrite HA, HB.
+  reflexivity.
+Qed.
+
+Lemma onesided_t_onesided_true :
+  touch_onesided_t_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = true.
+Proof.
+  unfold touch_onesided_t_b.
+  destruct onesided_t_one_sided as [HA HB].
+  rewrite HA, HB.
+  reflexivity.
+Qed.
+
+Lemma onesided_t_pair_onesided :
+  triangle_pair_regime 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1)
+    = TPR_TouchOnesided.
+Proof.
+  unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  unfold contains_b.
+  assert (Hcb : gtri 0 0 2 0 0 1 (mkPoint 1 0) <= 0).
+  { unfold gtri.
+    assert (H : gsA 0 0 2 0 (mkPoint 1 0) = 0) by (unfold gsA; simpl; ring).
+    rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint 1 0))) as [Hlt | _];
+    [ exfalso; lra | ].
+  unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 1 0 (1/2) (-1) (3/2) (-1))) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint 1 0))) as [H1 | _];
+    [ exfalso; lra | ].
+  assert (H20 : gtri 0 0 2 0 0 1 (mkPoint (1/2) (-1)) < 0).
+  { eapply Rle_lt_trans; [ apply (gtri_le_gsA 0 0 2 0 0 1 (mkPoint (1/2) (-1))) | ].
+    unfold gsA; cbn [px py]; lra. }
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint (1/2) (-1)))) as [H2 | _];
+    [ exfalso; lra | ].
+  assert (H3n : gtri 0 0 2 0 0 1 (mkPoint (3/2) (-1)) < 0).
+  { eapply Rle_lt_trans; [ apply (gtri_le_gsA 0 0 2 0 0 1 (mkPoint (3/2) (-1))) | ].
+    unfold gsA; cbn [px py]; lra. }
+  destruct (Rlt_dec 0 (gtri 0 0 2 0 0 1 (mkPoint (3/2) (-1)))) as [H3 | _];
+    [ exfalso; lra | ].
+  unfold separated_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 1 0 (1/2) (-1) (3/2) (-1))) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  rewrite onesided_t_no_separator.
+  unfold touch_vertex_b, exactly_one_shared_from_a, is_vertex_b, point_eqb.
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 1 0 (1/2) (-1) (3/2) (-1))) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  rewrite onesided_t_no_partial_edge.
+  rewrite onesided_t_onesided_true.
+  reflexivity.
+Qed.
+
+(* WITNESS {"claimId":"Ⅲ","topic":"relate","lemma":"onesided_t_pair_onesided","title":"Leftover Ⅲ exterior-side stem classifies as TPR_TouchOnesided","file":"theories/RelateNGComplete.v","witness":"Ⅲ-onesided-t-cex","board":"leftover-Ⅲ"} *)
+Theorem onesided_t_pair_inhabits :
+  onesided_t_pair_coords 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1) /\
+  0 < gdbl 0 0 2 0 0 1 /\
+  0 < gdbl 1 0 (1/2) (-1) (3/2) (-1) /\
+  on_open_seg_b (mkPoint 0 0) (mkPoint 2 0) (mkPoint 1 0) = true /\
+  some_vertex_on_open_edges
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = true /\
+  some_vertex_on_open_edges
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1) = false /\
+  ~ tjunction_pair_coords 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1) /\
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false /\
+  is_vertex_b (mkPoint 0 0)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false /\
+  is_vertex_b (mkPoint 2 0)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false /\
+  is_vertex_b (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false /\
+  (forall p, ~ (0 < gtri 0 0 2 0 0 1 p /\
+                0 < gtri 1 0 (1/2) (-1) (3/2) (-1) p)) /\
+  triangle_pair_regime 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1)
+    = TPR_TouchOnesided.
+Proof.
+  split; [repeat split; reflexivity|].
+  split; [unfold gdbl; lra|].
+  split; [unfold gdbl; lra|].
+  split; [exact onesided_t_B_on_open_base|].
+  destruct onesided_t_one_sided as [Hone Hrev].
+  split; [exact Hone|].
+  split; [exact Hrev|].
+  split; [exact onesided_t_not_tjunction|].
+  split; [exact onesided_t_no_partial_edge|].
+  destruct onesided_t_no_shared_vertex as [Hv1 [Hv2 Hv3]].
+  split; [exact Hv1|].
+  split; [exact Hv2|].
+  split; [exact Hv3|].
+  split; [exact onesided_t_ii_empty|].
+  exact onesided_t_pair_onesided.
+Qed.
+
 Print Assumptions triangle_pair_regime_incomplete_tjunction.
 Print Assumptions triangle_pair_regime_ccw_incomplete.
 Print Assumptions classified_hard_pairs.
 Print Assumptions non_ccw_pair_no_overlap_disjoint_vertex.
 Print Assumptions triangle_pair_regime_ccw_incomplete_not_tjunction.
 Print Assumptions ccw_complete_except_tjunction_false.
+Print Assumptions onesided_t_pair_onesided.
+Print Assumptions onesided_t_pair_inhabits.
+Print Assumptions onesided_t_onesided_true.
+Print Assumptions onesided_t_ii_empty.
+Print Assumptions onesided_t_B_on_open_base.
+Print Assumptions onesided_t_one_sided.
+Print Assumptions onesided_t_no_shared_vertex.

@@ -200,8 +200,8 @@ Done when:
   `pat_disjoint` still rejects FF2FF1212.
 - Do not turn the #522 harness decline golden into a confident
   `FFFFFFFFF`.
-- Do not implement leftover `Ⅰ` (T-junction) or `ⅠⅠ` (obtuse-at-v).
-  Do not mint `ⅠⅠⅠ` for this sibling.
+- Do not implement leftover `Ⅰ` (T-junction) or `Ⅱ` (obtuse-at-v).
+  Do not mint `Ⅲ` for this sibling.
 - Do not steal `522-h` / `522-l` / closed `522-a`…`522-m`.
 - Do not remint ADR-0004. Do not extend `CurveSegment`. Do not start
   64-a r·θ.
@@ -215,7 +215,7 @@ Done when:
 ## Not this leftover
 
 - #522 honesty / bar-1 / bar-2 — wrong matrix, not dishonest alphabet.
-- Leftover `Ⅰ` / `ⅠⅠ` — triangle classifier residue
+- Leftover `Ⅰ` / `Ⅱ` — triangle classifier residue
   (`RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`).
 - ADR-0003 capstone — specified vs computed interior.
 - #511 — sibling shape, different modes.

@@ -18,7 +18,7 @@
 #   TOUCH_EDGE    frozen shared-edge pin (RelateNGTouch.ex_triangles_touch_on_shared_edge)
 #   TOUCH_VERTEX  #572 / 522-i pair
 #   TOUCH_PARTIAL leftover Ⅰ kiss — classified, fill still UNSUPPORTED
-#   DECLINE       obtuse-at-v leftover ⅠⅠ — NOT the T-junction (now classified)
+#   DECLINE       obtuse-at-v leftover Ⅱ — NOT the T-junction (now classified)
 #
 # Oracle mode: RELATE_MATRIX now prints UNSUPPORTED for decline keys.
 
@@ -74,4 +74,4 @@ TRI_A 0 0  2 0  0 2
 TRI_B 0 0  -2 0  1 -1
 TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_Unsupported
-NOTES Obtuse-at-v leftover ⅠⅠ. Not a matrix. The T-junction pair classifies leftover Ⅰ.
+NOTES Obtuse-at-v leftover Ⅱ. Not a matrix. The T-junction pair classifies leftover Ⅰ.

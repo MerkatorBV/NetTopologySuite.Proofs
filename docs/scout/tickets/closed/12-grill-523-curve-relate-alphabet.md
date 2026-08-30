@@ -43,6 +43,6 @@ Residue that stays on ticket 523 (sequencing park, ADR-0002):
 3. Name what a not-computed token from an exhausted probe means, once
    that token exists.
 
-Do **not** implement those here. Do **not** mint leftover `ⅠⅠⅠ`.
+Do **not** implement those here. Do **not** mint leftover `Ⅲ`.
 Do **not** remint classifier pins. Ticket 11 precondition 3 remains
 unmet.
