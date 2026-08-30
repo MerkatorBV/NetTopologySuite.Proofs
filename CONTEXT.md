@@ -52,6 +52,26 @@ naming a type no engine has. Say Multi (for member recursion) or CC
 (for CompoundCurve), whichever the evidence actually covers.
 _Avoid_: CC, curve collection, collection of curves
 
+### Curve conformance
+
+Per **ADR-0005**, the SQL/MM curve types conform at the boundary and
+normalize inside: say which side of the intake/validity line a check lives on.
+
+**Intake**:
+What constructors and readers reject: only what makes a value
+unrepresentable — point-count shape, component contiguity, ring closure.
+Everything accepted is representable; everything rejected carries a clause
+citation. A value can pass intake and still be invalid.
+_Avoid_: validation, well formed (as a constructor claim)
+
+**ISO validity**:
+Every spec "shall" beyond representability, owned by arc-aware `ST_IsValid`:
+implemented rules answer definite-false naming their clause; unimplemented
+rules fail closed (throw naming the missing rung) — never an unchecked
+`true`.
+_Avoid_: invalid (for merely un-checked values), IsValid returns true (until
+the rung that checks it lands)
+
 ### Exact curves
 
 **Bible**:

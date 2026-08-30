@@ -73,14 +73,23 @@ static class Program
             {
                 new Coordinate(a2x, a2y), new Coordinate(b2x, b2y), new Coordinate(c2x, c2y)
             }), gf);
-            var env2 = cs2.EnvelopeInternal;
-            const double trueMaxX = 1.0; // angle 0° on unit circle lies on arc
-            if (env2.MaxX + 1e-12 < trueMaxX)
-                Hit("BUG", "ENV/axis_extreme",
-                    $"control-point envelope MaxX={env2.MaxX:G17} < true arc MaxX={trueMaxX:G17} " +
-                    $"(unit circle arc −30°…50°; GEOS uses analytical envelope)");
-            else
-                Hit("OK", "ENV/axis_extreme", $"MaxX={env2.MaxX:G17}");
+            try
+            {
+                var env2 = cs2.EnvelopeInternal;
+                const double trueMaxX = 1.0; // angle 0° on unit circle lies on arc
+                if (env2.MaxX + 1e-12 < trueMaxX)
+                    Hit("BUG", "ENV/axis_extreme",
+                        $"control-point envelope MaxX={env2.MaxX:G17} < true arc MaxX={trueMaxX:G17} " +
+                        $"(unit circle arc −30°…50°; GEOS uses analytical envelope)");
+                else
+                    Hit("OK", "ENV/axis_extreme", $"MaxX={env2.MaxX:G17}");
+            }
+            catch (NotSupportedException)
+            {
+                // Honest decline, not a wrong answer: arc-aware Envelope is
+                // Proofs #615 ticket 615-e; this WARN flips when it lands.
+                Hit("WARN", "ENV/axis_extreme", "NTS Envelope fail-closed (pending 615-e)");
+            }
         }
 
         Console.WriteLine("=== ARC_DISTANCE vs NTS Distance(Point, CircularString) ===");
@@ -97,7 +106,18 @@ static class Program
                 new Coordinate(a.Ax, a.Ay), new Coordinate(a.Bx, a.By), new Coordinate(a.Cx, a.Cy)
             }), gf);
             var pt = gf.CreatePoint(new Coordinate(q.Px, q.Py));
-            double ntsDist = DistanceOp.Distance(pt, cs);
+            double ntsDist;
+            try
+            {
+                ntsDist = DistanceOp.Distance(pt, cs);
+            }
+            catch (NotSupportedException)
+            {
+                // Honest decline, not a wrong answer: arc-aware Distance is
+                // Proofs #615 ticket 615-f; these WARNs flip when it lands.
+                Hit("WARN", $"DIST/{q.Name}", "NTS DistanceOp fail-closed (pending 615-f)");
+                continue;
+            }
 
             if (oOut is "DEGENERATE" or "NAN")
             {
@@ -112,6 +132,33 @@ static class Program
             else
                 Hit("BUG", $"DIST/{q.Name}",
                     $"nts={ntsDist:G17} oracle={oracleDist:G17} abs={abs:G17} (chord DistanceOp)");
+        }
+
+        Console.WriteLine("=== LENGTH_UNIFIED golden vectors (615-d) ===");
+        // NTS exact Length (arc locus, r·θ; ISO/IEC 13249-3 §7.3.1 Desc 8)
+        // against the oracle's LENGTH_UNIFIED lane, on the same cases the
+        // NUnit contracts pin (CurveMetricsTests). Segments: "C x1 y1 x2 y2"
+        // chord, "A x1 y1 x2 y2 x3 y3" 3-point arc.
+        foreach (var v in Cases.LengthUnified)
+        {
+            string stdin = $"LENGTH_UNIFIED\n{v.Segs.Length}\n" + string.Join("\n", v.Segs) + "\n";
+            string oOut;
+            try { oOut = Oracle.Run(stdin); }
+            catch (Exception ex) { Hit("FAIL", $"LENU/{v.Name}", $"oracle: {ex.Message}"); continue; }
+
+            string firstLine = oOut.Split('\n')[0].Trim();
+            if (firstLine is "DEGENERATE" or "NAN")
+            {
+                Hit("WARN", $"LENU/{v.Name}", $"oracle={firstLine}");
+                continue;
+            }
+            double oracleLen = Oracle.ParseHexFloat(firstLine);
+            double ntsLen = v.Geometry(gf).Length;
+            double rel = Math.Abs(ntsLen - oracleLen) / Math.Max(Math.Abs(oracleLen), 1e-30);
+            if (rel < 1e-9 || Math.Abs(ntsLen - oracleLen) < 1e-12)
+                Hit("OK", $"LENU/{v.Name}", $"nts={ntsLen:G17} oracle={oracleLen:G17}");
+            else
+                Hit("BUG", $"LENU/{v.Name}", $"nts={ntsLen:G17} oracle={oracleLen:G17} rel={rel:G6}");
         }
 
         Console.WriteLine("=== WKT/WKB structural ===");
@@ -241,19 +288,33 @@ static class Oracle
 {
     public static string Run(string modeInput)
     {
-        // Same contract as tests/GeosOracleBugHunt/hunt.py: ORACLE overrides,
-        // default is the downloaded CI artifact (WSL path).
-        string wslBin = Environment.GetEnvironmentVariable("ORACLE")
-            ?? "/mnt/c/com/github/grootstebozewolf/NetTopologySuite.Proofs/.ci-artifacts/oracle-bin-linux/oracle_bin";
-        var psi = new ProcessStartInfo
-        {
-            FileName = "wsl",
-            Arguments = "-e " + wslBin,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-        };
+        // Same contract as tests/GeosOracleBugHunt/hunt.py: ORACLE overrides.
+        // On Windows the default is the downloaded CI artifact run through WSL;
+        // elsewhere the in-repo build (`make -C oracle`), resolved from the
+        // repo root -- run via `dotnet run --project tests/CurveOracleBugHunt`
+        // from the root, or set ORACLE.
+        string bin = Environment.GetEnvironmentVariable("ORACLE")
+            ?? (OperatingSystem.IsWindows()
+                ? "/mnt/c/com/github/grootstebozewolf/NetTopologySuite.Proofs/.ci-artifacts/oracle-bin-linux/oracle_bin"
+                : "oracle/oracle_bin");
+        var psi = OperatingSystem.IsWindows()
+            ? new ProcessStartInfo
+            {
+                FileName = "wsl",
+                Arguments = "-e " + bin,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            }
+            : new ProcessStartInfo
+            {
+                FileName = bin,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
         using var p = Process.Start(psi)!;
         p.StandardInput.Write(modeInput);
         p.StandardInput.Close();
@@ -332,6 +393,40 @@ static class Cases
         ("off_centre", 3, 4, 5, 4, 4, 5),
         ("tiny_arc", 0, 0, 1e-3, 1e-6, 2e-3, 0),
     };
+
+    /// <summary>
+    /// LENGTH_UNIFIED golden vectors (Proofs #615 ticket 615-d): oracle segment
+    /// lines paired with the NTS geometry whose exact <c>Length</c> must agree.
+    /// Mirrors the NUnit contracts in the fork's <c>CurveMetricsTests</c>.
+    /// </summary>
+    public static readonly (string Name, string[] Segs, Func<GeometryFactory, Geometry> Geometry)[] LengthUnified =
+    {
+        ("unit_semicircle", new[] { "A 1 0 0 1 -1 0" },
+            gf => Cs(gf, (1, 0), (0, 1), (-1, 0))),
+        ("major_arc_3pi_over_2", new[] { "A 1 0 0 1 0 -1" },
+            gf => Cs(gf, (1, 0), (0, 1), (0, -1))),
+        ("cw_semicircle_witness", new[] { "A -1 0 0 1 1 0" },
+            gf => Cs(gf, (-1, 0), (0, 1), (1, 0))),
+        ("multiseg_unequal_radii", new[] { "A 0 0 1 1 2 0", "A 2 0 4 2 6 0" },
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (4, 2), (6, 0))),
+        ("collinear_chord", new[] { "A 0 0 1 1 2 2" },
+            gf => Cs(gf, (0, 0), (1, 1), (2, 2))),
+        ("full_circle_5pt", new[] { "A 0 0 1 1 2 0", "A 2 0 1 -1 0 0" },
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (1, -1), (0, 0))),
+        ("compound_line_plus_semi", new[] { "C 0 0 1 0", "A 1 0 2 1 3 0" },
+            gf => new CompoundCurve(new Curve[]
+            {
+                gf.CreateLineString(new[] { new Coordinate(0, 0), new Coordinate(1, 0) }),
+                Cs(gf, (1, 0), (2, 1), (3, 0)),
+            }, gf)),
+    };
+
+    private static CircularString Cs(GeometryFactory gf, params (double x, double y)[] pts)
+    {
+        var coords = new Coordinate[pts.Length];
+        for (int i = 0; i < pts.Length; i++) coords[i] = new Coordinate(pts[i].x, pts[i].y);
+        return new CircularString(gf.CoordinateSequenceFactory.Create(coords), gf);
+    }
 
     public static readonly (string Name, int ArcIdx, double Px, double Py)[] DistQueries =
     {
