@@ -134,20 +134,6 @@ Proof.
            ex_triangles_touch_on_shared_edge).
 Qed.
 
-(* Swap: same shared edge, so exclusion runs B → A. *)
-Lemma ex_triangles_touch_on_shared_edge_swap :
-  triangles_touch_on_shared_edge
-    (mkPoint 1 0) (mkPoint 1 1) (mkPoint 0 1)
-    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1).
-Proof.
-  unfold triangles_touch_on_shared_edge, shares_edge, opposite_sides, cross.
-  do 7 right.
-  left.
-  split.
-  + right. split; reflexivity.
-  + simpl; lra.
-Qed.
-
 Lemma touch_B_gs :
   forall q,
     gsA 1 0 1 1 q = 1 - px q /\
@@ -208,9 +194,15 @@ Qed.
 Lemma touch_bi_empty : gtri_cell_empty touch_gtri_bi.
 Proof.
   intros p [HA0 HB].
-  pose proof (touch_int_ext_exclusion
-                1 0 1 1 0 1 0 0 1 0 0 1 p
-                ex_triangles_touch_on_shared_edge_swap HB).
+  apply gtri_pos_iff in HB.
+  destruct HB as [_ [_ HBc]].
+  destruct (touch_B_gs p) as [_ [_ HBc']].
+  rewrite HBc' in HBc.
+  assert (HA_nn : 0 <= gtri 0 0 1 0 0 1 p) by lra.
+  apply gtri_nonneg_iff in HA_nn.
+  destruct HA_nn as [_ [HAb _]].
+  destruct (sentinel_A_gs p) as [_ [HAb' _]].
+  rewrite HAb' in HAb.
   lra.
 Qed.
 
