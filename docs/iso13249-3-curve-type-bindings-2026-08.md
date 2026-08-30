@@ -202,8 +202,15 @@ geometries", with the point-to-point distance algorithm implementation-defined
 (Desc 2a-iv). The centre-of-semicircle expectation (distance = r = 1) follows
 from §7.3.1 Desc 8a: every point of the locus is at distance R from the centre,
 so the geometry-to-geometry minimum is exactly R — the clause delegates the
-*algorithm*, not *which point set* is measured. Branch today: `DistanceOp`
-fails closed for curved inputs (`Operation/Distance/DistanceOp.cs:98-99`).
+*algorithm*, not *which point set* is measured.
+
+**Landed (2026-08-30, branch commit `b829d42`, ticket `615-f`):** point-to-curve
+distance is exact over the locus via `DistanceOp.Distance` (project onto the
+circle, clamp to the sweep; on-locus → 0 exactly per Desc 2a-iii; collinear →
+segment distance). Both Red contracts flipped green; the emptied Red fixture is
+deleted — all four original planted metric contracts are green. Curve×curve and
+the constructor surfaces (`NearestPoints`, `IsWithinDistance`) stay fail-closed
+pending arc-arc machinery (`615-h` lane).
 
 ### 3.3 Envelope — formerly `Red_Envelope_IncludesAxisExtremeBeyondControls`, flipped green as `Envelope_IncludesAxisExtremeBeyondControls` (`CurveMetricsTests`)
 
@@ -331,7 +338,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 | CP rings are rings = closed ∧ simple, any ST_Curve (§8.2.1 Desc 2–3) | ctor: closed only (`CurvePolygon.cs:96-108`); simplicity deferred | partial; red-marked via IsSimple |
 | CP ring intersection ≤ 1 point, no spikes/cuts, connected interior (§8.2.1 Desc 11–14) | not evaluated (IsValid fail-closed) | known gap (IsValid work) |
 | ST_Length on curves (§7.1.2 Desc 2; operand = arc locus §7.3.1 Desc 8) | exact r·θ over the locus since `2ccd353` (`CircularArcGeometry` seam; collinear → chord per Desc 8b; CC = component sum) | ok — landed 2026-08-30 (`615-d`); oracle-pinned, see §5a |
-| ST_Distance: intersect → 0; else min distance (§5.1.41 Desc 2a) | `DistanceOp` fails closed (`DistanceOp.cs:98-99`) | red: `Red_Distance_..._Endpoint_IsZero` (Desc 2a-iii), `Red_Distance_..._CentreOfUnitSemicircle_IsRadius` (Desc 2a-iv + §7.3.1 Desc 8a) |
+| ST_Distance: intersect → 0; else min distance (§5.1.41 Desc 2a) | exact point-to-curve since `b829d42` (`CurveDistance` dispatch off `DistanceOp.Distance`; curve×curve + NearestPoints/IsWithinDistance stay fail-closed) | ok — landed 2026-08-30 (`615-f`); oracle-pinned via ARC_DISTANCE, see §5a |
 | ST_Envelope: extremes over the value's point set (§5.1.19 Desc 2b) | exact over the locus since `9111983` (endpoints + centre±r on crossed axes; CS + CC; CP still fail-closed) | ok — landed 2026-08-30 (`615-e`); oracle-pinned via `ENVELOPE_UNIFIED`, see §5a |
 | ST_CurveToLine / ST_CurvePolyToPoly explicit approximation (§7.1.10, §8.2.7) | `Linearize()` (`CircularString.cs:284-291`); tolerance overload throws (`CircularString.cs:303-306`) | ok as chainsaw; tolerance form pending |
 | WKT grammar incl. bare linestring bodies, EMPTY, Z/M (§5.1.67) | reader/writer (`WKTReader.cs:768-773,1061-1204`, `WKTWriter.cs:1002-1096`) | ok; input-side tagged-LINESTRING extension (GEOS/PostGIS compat) |
@@ -343,6 +350,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 |---|---|---|---|
 | 2026-08-30, ticket `615-d` | `oracle_bin` rebuilt in-container via `make -C oracle` from this repo at `4e33e2c` (extraction unchanged) | fork branch at `2ccd353` + review follow-up `df5ba57` (CW-witness + unequal-radii vectors) | `SUMMARY ok=26 warn=7 bug_or_fail=0` — 7 legacy ARC_LENGTH + 7 LENGTH_UNIFIED vectors all `rel < 1e-9` (several bit-exact); the 7 WARNs are the honest fail-closed pendings for Envelope/Distance (`615-e/f`), flipped when those land |
 | 2026-08-30, ticket `615-e` | `oracle_bin` rebuilt with the new `ENVELOPE_UNIFIED` lane (exact-Q axis-crossing decisions, one float step on the extremes; allowlisted INTERFACE-BOUNDARY kernel `run_envelope_unified`) | fork branch at `9111983` | `SUMMARY ok=43 warn=6 bug_or_fail=0` — 5 ENVELOPE_UNIFIED vectors plus the legacy ENV probe all within `1e-12`/`rel < 1e-9` (axis extremes agree to the last ulp); the 6 WARNs are the Distance pendings (`615-f`) |
+| 2026-08-30, ticket `615-f` | same `oracle_bin` (the pre-existing ARC_DISTANCE lane pins this landing) | fork branch at `b829d42` | `SUMMARY ok=49 warn=0 bug_or_fail=0` — all six ARC_DISTANCE queries flipped WARN→OK (five bit-exact, one at `rel ≈ 1e-16`); **the curve differential harness is now fully green: zero warnings, zero bugs** |
 
 Harness: `ORACLE=oracle/oracle_bin dotnet run --project tests/CurveOracleBugHunt`
 (now platform-portable: direct exec off Windows; WSL path preserved on it).
@@ -425,11 +433,11 @@ belongs there, not in `Envelope`.
 ### 6.5 Fail-closed metrics vs. spec-required answers
 
 ST_Length, ST_Distance, ST_Envelope are total over non-empty values in the
-spec. **ST_Length is exact over the locus since `2ccd353`** (`615-d`, §3.1)
-**and ST_Envelope since `9111983`** (`615-e`, §3.3); ST_Distance still throws
-`NotSupportedException` — a deliberate, documented, red-test-marked interim
-(the two remaining Red tests in `CurveMetricsContractTests.cs`, ticket
-`615-f`), preferred over
+spec. **All three are exact over the locus now: ST_Length since `2ccd353`
+(`615-d`, §3.1), ST_Envelope since `9111983` (`615-e`, §3.3), and
+point-to-curve ST_Distance since `b829d42` (`615-f`, §3.2).** What still
+throws is the frontier that needs arc-arc machinery (curve×curve distance,
+NearestPoints/IsWithinDistance, simplicity — the `615-h` lane), preferred over
 silently returning chord-approx numbers — which would satisfy the type
 signature while violating §7.3.1 Desc 8's definition of the value being
 measured. The remaining Red tests are the spec's side of that contract.
@@ -491,4 +499,4 @@ spec-adjacent statements, checked:
 
 ---
 
-SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Envelope is exact over the locus since `9111983` (ticket `615-e`, oracle-pinned via the new `ENVELOPE_UNIFIED` lane). Remaining divergences are either the red-test-marked fail-closed Distance gap (§5.1.41 — the two Red tests in `CurveMetricsContractTests.cs`, ticket `615-f`) or the simplicity half of validity (§4.2.4 / §8.2.1 — arc-arc intersection, ticket `615-h`).
+SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Envelope is exact over the locus since `9111983` (ticket `615-e`) and point-to-curve Distance since `b829d42` (ticket `615-f`) — all four original Red metric contracts are green and the oracle differential runs `ok=49 warn=0 bug_or_fail=0`. The remaining divergence is the simplicity half of validity and its arc-arc dependents (§4.2.4 / §8.2.1; curve×curve distance, NearestPoints — ticket `615-h`).
