@@ -585,7 +585,9 @@ Proof.
   - apply golden_phi_mono.
   - apply golden_phi_surj.
   - rewrite golden_phi_0, golden_phi_1.
-    replace (PI / 2) with (1 * (PI / 2 - 0)) by lra.
+    (* Two PI/2 after the rewrite: the endpoint and the length.
+       Only the length must become r·(b−a) = 1·(π/2 − 0). *)
+    replace (PI / 2) with (1 * (PI / 2 - 0)) at 2 by ring.
     apply arc_r_theta_is_curve_length; pose proof PI_RGT_0; lra.
 Qed.
 
