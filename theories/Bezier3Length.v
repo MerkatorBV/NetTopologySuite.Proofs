@@ -33,6 +33,11 @@
      exact tier is a future rung.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
+   Do not rewrite elevate_start/end through a goal that still has
+   quadratic [px p0]/[px p2]: flocq does not convert
+   [elevate_ctrl 2 P 0] to [P 0], so [apply bern_elevate_2] fails
+   (001be7e L193). Rewrite the quadratic side to [ctrl_x] first.
+   No [nra].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -186,6 +191,11 @@ Proof.
     px (bezier3_pt p0 (elevate_mid1 p0 p1) (elevate_mid2 p1 p2) p2 t)
     = px (bezier2_pt p0 p1 p2 t)).
   { rewrite bezier3_px_bern, bezier2_px_bern.
+    replace (bern2_0 t * px p0 + bern2_1 t * px p1 + bern2_2 t * px p2)
+      with (bern2_0 t * ctrl_x p0 p1 p2 0%nat
+            + bern2_1 t * ctrl_x p0 p1 p2 1%nat
+            + bern2_2 t * ctrl_x p0 p1 p2 2%nat)
+      by (unfold ctrl_x; reflexivity).
     rewrite (elevate_start_px_ctrl p0 p1 p2).
     rewrite (elevate_mid1_px_ctrl p0 p1 p2).
     rewrite (elevate_mid2_px_ctrl p0 p1 p2).
@@ -195,6 +205,11 @@ Proof.
     py (bezier3_pt p0 (elevate_mid1 p0 p1) (elevate_mid2 p1 p2) p2 t)
     = py (bezier2_pt p0 p1 p2 t)).
   { rewrite bezier3_py_bern, bezier2_py_bern.
+    replace (bern2_0 t * py p0 + bern2_1 t * py p1 + bern2_2 t * py p2)
+      with (bern2_0 t * ctrl_y p0 p1 p2 0%nat
+            + bern2_1 t * ctrl_y p0 p1 p2 1%nat
+            + bern2_2 t * ctrl_y p0 p1 p2 2%nat)
+      by (unfold ctrl_y; reflexivity).
     rewrite (elevate_start_py_ctrl p0 p1 p2).
     rewrite (elevate_mid1_py_ctrl p0 p1 p2).
     rewrite (elevate_mid2_py_ctrl p0 p1 p2).
@@ -297,9 +312,16 @@ Proof.
   { replace (3 * M)
       with ((bezier3_c0 s t + bezier3_c1 s t + bezier3_c2 s t) * M)
       by (rewrite Hsum; ring).
-    nra. }
+    rewrite Rmult_plus_distr_r.
+    rewrite Rmult_plus_distr_r.
+    apply Rplus_le_compat.
+    - apply Rplus_le_compat.
+      + apply Rmult_le_compat_l; [exact Hc0 | exact HM0].
+      + apply Rmult_le_compat_l; [exact Hc1 | exact HM1].
+    - apply Rmult_le_compat_l; [exact Hc2 | exact HM2]. }
   assert (Hts : 0 <= t - s) by lra.
-  nra.
+  rewrite (Rmult_comm (3 * M)).
+  apply Rmult_le_compat_l; [exact Hts | exact Hcomb].
 Qed.
 
 Lemma bezier3_polyline_le : forall p0 p1 p2 p3 ts t b,
