@@ -96,9 +96,13 @@ disguised as disjointness — that was #530.
 - **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not
   proved. Carve ready as #597. Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
 - **Disjoint fill remint** (FFFFFFFFF → FF2FF1212) — unnamed. Not `522-f`.
-- **T-junction / obtuse certificates** — unnamed, two leftovers.
-  Completeness tickets recorded the findings and stopped.
-  `522-n` is one unused letter; ask before assigning it to exactly one.
+- **T-junction / partial-edge kiss** — leftover `Ⅰ`. Finding:
+  `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`.
+  Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
+  Do **not** mint `522-n`.
+- **Obtuse-at-v certificate** — unnamed, **separate**. Finding:
+  `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
+  Do not bucket with T-junction under `Ⅰ`.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 

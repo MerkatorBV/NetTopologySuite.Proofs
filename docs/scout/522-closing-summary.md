@@ -41,15 +41,17 @@ pair is classified disjoint).
 ## Named, not proved / not a #522 child
 
 These are not holes in the original honesty ask. Chart:
-[`map-522-leftovers.md`](map-522-leftovers.md). `522-n` is one unused
-letter — ask before assigning it to exactly one leftover.
+[`map-522-leftovers.md`](map-522-leftovers.md). New leftover ids are
+Roman numerals. Do **not** mint `522-n`.
 
 - **TouchEdge exclusivity** vs the four gtri predicates — named, not
   proved. Carve ready as #597.
 - **Fill remints** (classifier pointer → OGC `*_ogc`). Unnamed. Shared
   with the rect lane. Not `522-f`.
-- **T-junction certificate** and **obtuse-at-v certificate** — two
-  leftovers. Completeness recorded the findings and stopped.
+- **T-junction / partial-edge kiss** — leftover `Ⅰ`. Completeness
+  recorded the finding (`RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`)
+  and stopped.
+- **Obtuse-at-v certificate** — unnamed, separate leftover.
 - **Nine-cell `geom_de9im_pointset`**, full noding, Touches-vs-Share —
   #67 / ticket 11, not #522 children.
 - **`#523` `F` vs not-computed** — sibling.

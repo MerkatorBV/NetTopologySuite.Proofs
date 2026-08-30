@@ -899,7 +899,7 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#567 / `522-a` leftover carve** (own paragraph). Ticket DoD is met (#579 exclusivity + #586 contains bridge). `TPR_TouchEdge` exclusivity vs the four gtri predicates is named and not proved — the frozen shared-edge anchors stay untouched. Witness `522-a-touch-edge-carve`.
 
-**#522 leftovers wayfinder** (own paragraph). [`docs/scout/map-522-leftovers.md`](scout/map-522-leftovers.md) charts unnamed residue after wrap-up. `522-n` is one unused letter — ask before assigning it to exactly one leftover. Does not mint children. Does not remint fills. Does not retire epic 522. claimId none. #589 stays closed.
+**#522 leftovers wayfinder** (own paragraph). [`docs/scout/map-522-leftovers.md`](scout/map-522-leftovers.md) charts residue after wrap-up. New leftover ids are Roman numerals. `Ⅰ` is the T-junction / partial-edge kiss. Does not mint `522-n`. Does not mint children. Does not remint fills. Does not retire epic 522. claimId none. #589 stays closed.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|

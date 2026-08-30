@@ -39,9 +39,10 @@ Order of work: top-down from #64, with the freebie first.
 **Related living map.** The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
-`/wayfinder 522 leftovers` refreshes the leftovers chart. Ticket 11
-still waits on ADR-0003 / #523 / #503; it does not own leftover grab
-order and does not receive `522-n`.
+`/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ`
+is the T-junction / partial-edge kiss. Ticket 11 still waits on
+ADR-0003 / #523 / #503; it does not own leftover grab order and does
+not receive a closed `522-*` letter.
 
 **Frontier: empty.** Every remaining ticket waits on out-of-map execution —
 proof work, an oracle fix, and documentation corrections — not on a decision:
