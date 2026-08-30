@@ -33,6 +33,8 @@
    identity, expand the square, then rewrite.
    [rewrite <- sqrt_square] without [at 1] rewrites the [y] inside
    [sqrt y] (082ef13 L102, no subterm [sqrt x * sqrt y]).
+   [rewrite <- Hmin2 in Hlo] looks for the product; Hlo has
+   [Rmin (rx²,ry²)] (216ebce L153). Rewrite forward.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -150,13 +152,13 @@ Proof.
         [ring | apply Rmult_le_compat; lra]. }
   split.
   - rewrite <- (sqrt_square (Rmin rx ry) Hmn0).
-    rewrite <- Hmin2 in Hlo.
+    rewrite Hmin2 in Hlo.
     apply sqrt_le_1.
     + apply Rmult_le_pos; exact Hmn0.
     + apply ellipse_speed_sq_nonneg.
     + exact Hlo.
   - rewrite <- (sqrt_square (Rmax rx ry) Hmx0).
-    rewrite <- Hmax2 in Hhi.
+    rewrite Hmax2 in Hhi.
     apply sqrt_le_1.
     + apply ellipse_speed_sq_nonneg.
     + apply Rmult_le_pos; exact Hmx0.
