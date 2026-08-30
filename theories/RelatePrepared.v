@@ -184,17 +184,11 @@ Proof.
   2: reflexivity.
   destruct tb as [[[[[dx dy] ex] ey] fx] fy].
   destruct (triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy)
-    eqn:Tr.
-  - rewrite (relate_extracted_triangles (pg_geom pg) g ax ay bx by_ cx cy
-               dx dy ex ey fx fy Ea Eta Etb).
-    rewrite Tr, tris_relate_disjoint_eq. reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
-  - reflexivity.
+    eqn:Tr;
+    [ rewrite (relate_extracted_triangles (pg_geom pg) g ax ay bx by_ cx cy
+                 dx dy ex ey fx fy Ea Eta Etb);
+      rewrite Tr, tris_relate_disjoint_eq; reflexivity
+    | reflexivity .. ].
 Qed.
 
 Theorem evaluate_coherent_agrees :
