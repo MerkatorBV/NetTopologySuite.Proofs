@@ -506,7 +506,9 @@ Proof.
   replace (r * (PI / 2 - 0)) with (r * PI / 2) in HL by field.
   apply is_curve_length_reflect in HL.
   eapply is_curve_length_ext; [| exact HL].
-  intros t. unfold circle_param. f_equal. ring.
+  intros t. unfold circle_param.
+  replace (0 + PI / 2 - t) with (PI / 2 - t) by ring.
+  reflexivity.
 Qed.
 
 Print Assumptions arc_quarter_reflect_length.

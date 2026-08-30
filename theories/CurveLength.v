@@ -655,7 +655,9 @@ Proof.
     exact HL. }
   apply is_curve_length_reflect in Hpsi.
   eapply is_curve_length_ext; [| exact Hpsi].
-  intros t. unfold psi, rho. f_equal. ring.
+  intros t. unfold psi, rho.
+    replace (a + b - (a + b - t)) with t by ring.
+    reflexivity.
 Qed.
 
 Print Assumptions is_curve_length_reflect.
