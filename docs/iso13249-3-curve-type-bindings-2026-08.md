@@ -68,16 +68,16 @@ ST_Curve semantics that bind every curve subtype (§4.2.4):
 Branch: `Curve.IsClosed` / `Curve.IsRing = IsClosed & IsSimple` mirror this
 exactly (`Geometries/Curve.cs:40,46`); the Mod-2 boundary is implemented per
 type (`Curves/CircularString.cs:152-162`, `Curves/CompoundCurve.cs:195-205`).
-Note: `IsSimple` is decided for `CircularString` at every segment count
-since branch commit `8ffd90a` (ticket `615-h`: rung 1 `b392590` #624, rung 2
-#630 — the pairwise contact kernel), with three fail-closed residues named
-in the throws (degenerate closed segment; nearly-cocircular ambiguity band;
-the large-circumradius conditioning guard added by review follow-up
-`5372346`), so
-`IsRing` now answers checked verdicts — the five-point full-circle idiom is
-a simple ring. `IsSimpleOp` routes CircularString (collection members
-included) to the decided override; CompoundCurve/CurvePolygon simplicity
-stay fail-closed, continued at Proofs #634 — see §5.
+Note: `IsSimple` is decided for `CircularString`, `CompoundCurve` and
+`CurvePolygon` rings since branch commit `66265ed` (ticket `615-h`: rung 1
+`b392590` #624, rung 2 `8ffd90a` #630, rung 3 #634 — the pairwise contact
+kernel over generic arc/chord chains), with three fail-closed residues named
+in the throws (degenerate closed arc segment; nearly-cocircular ambiguity
+band; the large-circumradius conditioning guard `5372346`), so `IsRing`
+answers checked verdicts — the five-point idiom and the semicircle-plus-
+diameter compound are simple rings. `IsSimpleOp` routes all three types
+(collection members included); MultiCurve/MultiSurface stay fail-closed,
+continued at Proofs #639 — see §5.
 
 ---
 
@@ -117,9 +117,15 @@ per-segment start≠end distinctness (Desc 6): `CIRCULARSTRING (0 0, 1 1, 0 0)`
 constructs — deliberately, per ADR-0005's lenient intake. ST_IsValid ("tests
 if … well formed", §4.2.1.1 item 9) is the designated checker, and since
 `359b334` (ticket `615-g`) it answers a definite `false` for exactly this
-Desc-6 violation; values passing every rung-1 rule stay fail-closed (§6.2).
-No bulge/centre-angle representation exists on the branch (untracked gap;
-SQL-level API, low priority for a geometry library).
+Desc-6 violation; since `66265ed` (ticket `615-h` rung 3, #634) a clean value
+is **checked-valid**. **Reading of record (#634):** Desc 6 and Desc 7 are
+§7.3.1's complete validity obligations — simplicity is NOT among them
+("simple ∧ closed = circular ring", Desc 9–10, defines a term; a
+self-intersecting CircularString is valid-but-not-simple, exactly like a
+classical LineString). Non-finite coordinates are definite-false for
+classical `IsValidOp` parity. No bulge/centre-angle representation exists on
+the branch (untracked gap; SQL-level API, low priority for a geometry
+library).
 
 ### 2.2 ST_CompoundCurve (§4.2.13, §7.10.1)
 
@@ -145,7 +151,10 @@ drop; the former stricter-than-spec rejection is gone, per ADR-0005.
 commit `2c4c7bc`** (2026-08-30, ticket `615-b`) — constructor and reader
 accept them per §7.10.1 and flatten into the component list, with
 contiguity checked across splice boundaries; the former rejection
-contradicted the spec (§6.1, retained as history).
+contradicted the spec (§6.1, retained as history). **Reading of record
+(#634):** contiguity (Desc 7) and component well-formedness (Desc 3) are
+§7.10.1's complete validity obligations ("simple ∧ closed ⇒ ring", Desc 8,
+defines a term), so a clean CompoundCurve is checked-valid since `66265ed`.
 
 ### 2.3 ST_CurvePolygon (§4.2.15, §8.2.1)
 
@@ -363,16 +372,16 @@ halves are round-trip-pinned
 | ISO rule (clause) | Branch behaviour (file:line) | Status |
 |---|---|---|
 | ST_Curve / ST_Surface not instantiable (§7.1.1, §8.1.1) | `Curve`, `Surface<T>` abstract (`Geometries/Curve.cs:10`, `Geometries/Surface.cs:16`) | ok |
-| ring = closed ∧ simple (§4.2.4) | `Curve.IsRing` (`Curve.cs:40`); `IsSimple` decided for CS at every segment count since `8ffd90a` (rung 1 `b392590`: single segment; rung 2: pairwise contact kernel — arc-arc radical line, exact-cocircular intervals, arc-chord, chord-chord — with consecutive/closing shared vertices permitted); fail-closed residues: degenerate closed segment, nearly-cocircular band, large-circumradius conditioning (`5372346`). Note the exact-cocircular arm needs bit-equal circumcentres: asymmetric/rotated closed two-arc rings can land in the ambiguity band (fail-closed; canonicalizing the triple before `Circumcentre` is #634 scope). CC/CP simplicity still fail closed | ok (CS) — landed 2026-08-30 (`615-h`, #624 + #630); CC/CP + IsValid wiring continue at #634; oracle-pinned via `RING_SIMPLE`, see §5a |
+| ring = closed ∧ simple (§4.2.4) | `Curve.IsRing` (`Curve.cs:40`); `IsSimple` decided for CS at every segment count since `8ffd90a` (rung 1 `b392590`: single segment; rung 2: pairwise contact kernel — arc-arc radical line, exact-cocircular intervals, arc-chord, chord-chord — with consecutive/closing shared vertices permitted); fail-closed residues: degenerate closed segment, nearly-cocircular band, large-circumradius conditioning (`5372346`). Since `66265ed` (rung 3, #634) `TryCircle` canonicalizes the triple, so same-triple cocircular pairs decide regardless of traversal order (genuinely distinct near-equal circles still fail closed), and the chain composition serves CompoundCurve (LineString components as chords) and CurvePolygon rings | ok (CS + CC + CP rings) — landed 2026-08-30 (`615-h`, #624 + #630 + #634); MultiCurve/MultiSurface continue at #639; oracle-pinned via `RING_SIMPLE`, see §5a |
 | CS well-formed ⇔ 2n+1 points, ≥3 (§7.3.1 Desc 7) | ctor enforces 0 or odd ≥3 (`CircularString.cs:56-70`) | ok |
-| CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | definite-false via `CurveValidity` rung 1 since `359b334` (constructs at intake per ADR-0005; IsValid returns false) | ok — landed 2026-08-30 (`615-g`); clean values stay fail-closed pending rung 2 (the `615-h` lane, #634) |
+| CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | definite-false via `CurveValidity` rung 1 since `359b334` (constructs at intake per ADR-0005; IsValid returns false) | ok — landed 2026-08-30 (`615-g`); clean CS/CC values are checked-valid since `66265ed` (`615-h` rung 3, #634 — Desc 6+7 / Desc 3+7 are those types' complete obligations, §2) |
 | CS collinear triple → straight-line segment (§7.3.1 Desc 8b) | `CircularArcGeometry.SegmentLength` maps a collinear triple to its start–end chord since `2ccd353`; pinned by `Length_CollinearTriple_IsChord` and the `collinear_chord` oracle vector | ok — landed 2026-08-30 (`615-d`) |
 | CS bulge / centre-radius-angle representations (§7.3.1 Desc 13–15) | absent | untracked gap (SQL API surface; optional for NTS) |
 | CC components: **all** ST_Curve subtypes, nested CC included (§7.10.1 Desc 7; §5.1.67 `<curve text>`) | accepted and spliced flat, ctor + reader, since `2c4c7bc` (flatten tests in `CompoundCurveTest`/`CurveWktTest`) | ok — ADR-0005 Decision 2, landed 2026-08-30 (`615-b`) |
 | CC contiguity: end = next start (§7.10.1 Desc 7) | `Equals2D` check in ctor (`CompoundCurve.cs:75-86`) | ok (2D reading; spec default closedness is 2D, §4.2.4.1) |
 | CC empty components (spec silent; only null forbidden, §7.10.1 Desc 5) | dropped at intake since `4c787c2` (normalize inside; contiguity checked across the drop) | ok — ADR-0005 Decision 1, landed 2026-08-30 (`615-c`); every surviving intake check now carries its clause citation in-code |
-| CP rings are rings = closed ∧ simple, any ST_Curve (§8.2.1 Desc 2–3) | ctor: closed only (`CurvePolygon.cs:96-108`); a pure-CS ring's simplicity is now decidable in principle (the kernel serves closed chains), but CP ring evaluation itself stays fail-closed pending the CP/CC wiring | partial; CP ring simplicity + compound components are #634 |
-| CP ring intersection ≤ 1 point, no spikes/cuts, connected interior (§8.2.1 Desc 11–14) | not evaluated (IsValid fail-closed) | known gap (IsValid work) |
+| CP rings are rings = closed ∧ simple, any ST_Curve (§8.2.1 Desc 2–3) | ctor: closed only (`CurvePolygon.cs:96-108`); ring simplicity evaluated since `66265ed` — `CurvePolygon.IsSimple` = every ring simple, and `IsValid` answers definite `false` for a provably non-simple ring | ok — landed 2026-08-30 (`615-h` rung 3, #634); ring-pair conditions stay fail-closed (row below) |
+| CP ring intersection ≤ 1 point, no spikes/cuts, connected interior (§8.2.1 Desc 11–14) | not evaluated — the only remaining `IsValid` pending for CP, thrown with the clause named | known gap — #639 (the `615-h` lane) |
 | ST_Length on curves (§7.1.2 Desc 2; operand = arc locus §7.3.1 Desc 8) | exact r·θ over the locus since `2ccd353` (`CircularArcGeometry` seam; collinear → chord per Desc 8b; CC = component sum) | ok — landed 2026-08-30 (`615-d`); oracle-pinned, see §5a |
 | ST_Distance: intersect → 0; else min distance (§5.1.41 Desc 2a) | exact point-to-curve since `b829d42` (`CurveDistance` dispatch off `DistanceOp.Distance`; curve×curve + NearestPoints/IsWithinDistance stay fail-closed) | ok — landed 2026-08-30 (`615-f`); oracle-pinned via ARC_DISTANCE, see §5a |
 | ST_Envelope: extremes over the value's point set (§5.1.19 Desc 2b) | exact over the locus since `9111983` (endpoints + centre±r on crossed axes; CS + CC; CP still fail-closed) | ok — landed 2026-08-30 (`615-e`); oracle-pinned via `ENVELOPE_UNIFIED`, see §5a |
@@ -389,6 +398,7 @@ halves are round-trip-pinned
 | 2026-08-30, ticket `615-f` | same `oracle_bin` (the pre-existing ARC_DISTANCE lane pins this landing) | fork branch at `b829d42` + review follow-up `61f4981` (collinear-overshoot chord pin, Desc 8b) | `SUMMARY ok=49 warn=0 bug_or_fail=0` — all six ARC_DISTANCE queries flipped WARN→OK (five bit-exact, one at `rel ≈ 1e-16`); **the curve differential harness is now fully green: zero warnings, zero bugs** |
 | 2026-08-30, ticket `615-h` rung 1 (#624) | same `oracle_bin` (the pre-existing `RING_SIMPLE` lane; proof companion `theories/CurveRingSimple.v`) | fork branch at `b392590` + review follow-up `e00c00b` (endpoint equality is *tested* before any float orientation step and routes the start==end triple to the fail-closed throw — no verdict; the review demonstrated an overflow counterexample where the orientation cross is NaN, not 0, and the closed degenerate segment briefly got an unchecked `true`; pinned. NTS still throws on a Desc-6 triple — the harness row below pins exactly that) | `SUMMARY ok=55 warn=0 bug_or_fail=0` — six new RING_SIMPLE rows: three decided single-segment values agree (SIMPLE ↔ `IsSimple == true`; the collinear one sent as its Desc-8b chord), the classical bowtie ring agrees on NOT_SIMPLE (witness `(1,1)` bit-exact as observed, first token asserted), and the two fail-closed contract rows pin that NTS throws where the oracle decides (the two-segment frontier) or itself declines (DEGENERATE for the degenerate closed segment) |
 | 2026-08-30, ticket `615-h` rung 2 (#630) | same `oracle_bin` (`RING_SIMPLE`) | fork branch at `8ffd90a` (pairwise contact kernel: arc-arc radical line, exact-cocircular intervals, arc-chord quadratic, chord-chord via `RobustLineIntersector`) + review follow-up `5372346` (conditioning guard: the review demonstrated silently wrong verdicts both ways for circumradii ≈2e8 at unit scale — eps·r² swamps the match tolerance — so the kernel now refuses that regime; flat-arc contract vector added, re-run `ok=59`) | `SUMMARY ok=58 warn=0 bug_or_fail=0` — the two-segment frontier row flipped to decided (SIMPLE ↔ `true`), plus three new rows: the five-point full-circle idiom is a checked simple ring, the there-and-back cocircular overlap agrees on NOT_SIMPLE, and a 3-segment non-adjacent touch agrees on NOT_SIMPLE. Open-chain vectors appear only where the lane's ring semantics cannot bite (see the harness section comment); the degenerate closed segment stays a fail-closed contract row. The flat-arc follow-up vector shows the split exactly: the exact-rational oracle even finds the second crossing 2.8e-8 from the shared vertex (NOT_SIMPLE), while the double kernel refuses |
+| 2026-08-30, ticket `615-h` rung 3 (#634) | same `oracle_bin` (`RING_SIMPLE` serves mixed chains: LineString components map to `C` segments) | fork branch at `66265ed` (CompoundCurve/CurvePolygon-ring chains; IsValid verdict wiring; canonical `TryCircle`) | `SUMMARY ok=61 warn=0 bug_or_fail=0` — two CompoundCurve rows: the semicircle-plus-diameter ring agrees on SIMPLE ↔ `true`, and a compound whose LineString runs tangent along the first arc agrees on NOT_SIMPLE ↔ `false` |
 
 Harness: `ORACLE=oracle/oracle_bin dotnet run --project tests/CurveOracleBugHunt`
 (now platform-portable: direct exec off Windows; WSL path preserved on it).
@@ -455,21 +465,33 @@ Decision 1; #615 tickets `615-c` (intake contract) and `615-g` (rung 1).
 **Landed (2026-08-30, branch commit `359b334`, ticket `615-g`):** the three
 curve classes override `IsValid` to the rung-1 `CurveValidity` check —
 definite `false` for the implemented rules (Desc 6, Desc 7 count shape,
-§7.10.1 Desc 3/7, §8.2.1 closure), fail-closed throw naming rung 2
-(ticket `615-h`) for everything cleaner; an unchecked `true` is never
-returned, the empty value stays `true`. The single-segment closed arc is
-now definitely invalid; the five-point full-circle idiom stays fail-closed
-until simplicity lands. The definite-false verdict carries its clause
+§7.10.1 Desc 3/7, §8.2.1 closure), fail-closed throw for everything cleaner;
+an unchecked `true` is never returned, the empty value stays `true`. The
+definite-false verdict carries its clause
 (`CurveValidity.TryFindDefiniteInvalidity`, review follow-up `505ffaa`).
-MultiCurve/MultiSurface have no rung-1 override: their members reach
-`IsValidOp`'s default fail-closed throw — no silent-true path, wiring them
-through the rung is `615-h`-lane work.
+
+**Verdict wiring landed (2026-08-30, branch commit `66265ed`, ticket
+`615-h` rung 3, #634):** clean CircularString and CompoundCurve values
+return a checked `true` — Desc 6+7 and Desc 3+7 are those types' complete
+validity obligations (the reading of record, §2.1/§2.2); non-finite
+coordinates are definite-false (classical `IsValidOp` parity); a
+CurvePolygon with a provably non-simple ring is definite `false`
+(§8.2.1 Desc 2–3), and a CP passing everything throws naming the ring-pair
+conditions (Desc 11–14, #639). The five-point full-circle idiom is now
+checked-valid and a checked simple ring. MultiCurve/MultiSurface still have
+no override: their members reach `IsValidOp`'s default fail-closed throw —
+no silent-true path, wiring them through is #639.
 
 ### 6.3 Ring simplicity for CurvePolygon — spec stricter than the constructor
 
-§8.2.1 Desc 2–3 require rings (closed **and simple**); the branch checks closed
-only (`CurvePolygon.cs:96-108`). Same posture as 6.2: fine while IsValid fails
-closed, must not be forgotten when it stops failing closed.
+§8.2.1 Desc 2–3 require rings (closed **and simple**); the constructor checks
+closed only (`CurvePolygon.cs:96-108`), per lenient intake.
+
+**Landed (2026-08-30, branch commit `66265ed`, ticket `615-h` rung 3, #634):**
+the simple half is enforced by the designated checker — `CurvePolygon.IsSimple`
+evaluates every ring through the chain kernel (LineString rings classically),
+and `IsValid` answers a definite `false` for a provably non-simple ring. The
+ring-pair conditions (Desc 11–14) remain the fail-closed remainder (#639).
 
 ### 6.4 Envelope of degenerate extents — SQL-level rule, note only
 
@@ -487,10 +509,11 @@ spec. **All three are exact over the locus now: ST_Length since `2ccd353`
 point-to-curve ST_Distance since `b829d42` (`615-f`, §3.2). IsSimple climbed
 the rung ladder to full CircularString coverage: rung 1 `b392590` (#624),
 rung 2 `8ffd90a` + guard `5372346` (#630).** What still throws is the
-frontier that needs arc-arc machinery (curve×curve distance,
-NearestPoints/IsWithinDistance, compound/CurvePolygon simplicity and the
-IsValid wiring — the `615-h` lane, continued at #634) plus the kernel's own
-named residues, preferred over
+frontier that needs machinery still unbuilt (curve×curve distance,
+NearestPoints/IsWithinDistance, MultiCurve/MultiSurface simplicity and
+validity, the CurvePolygon ring-pair conditions §8.2.1 Desc 11–14 — the
+`615-h` lane, continued at #639) plus the kernel's own named residues,
+preferred over
 silently returning chord-approx numbers — which would satisfy the type
 signature while violating §7.3.1 Desc 8's definition of the value being
 measured. With the Red fixture emptied and deleted, the spec's side of that
@@ -558,4 +581,4 @@ spec-adjacent statements, checked:
 
 ---
 
-SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Envelope is exact over the locus since `9111983` (ticket `615-e`) and point-to-curve Distance since `b829d42` (ticket `615-f`) — all four original Red metric contracts are green and the oracle differential ran `ok=49 warn=0 bug_or_fail=0` at that landing (the wrap-up run is `ok=55`, §5b). The WKT/WKB small print landed with `ed40bf3` (ticket `615-i`): nested `<z m>` consistency enforced on read (the silent-coercion audit finding closed, §8 ledger), Table 15 alternate WKB codes accepted on read, and the tagged-LINESTRING tolerance documented as a deliberate deviation. The simplicity lane opened with `b392590` (ticket `615-h` rung 1, #624): single-segment CircularString `IsSimple` decided over the locus and RING_SIMPLE-pinned (`ok=55 warn=0 bug_or_fail=0`); rung 1 was hardened by review follow-up `e00c00b` (endpoint equality tested before any float orientation step; overflow counterexample pinned). Rung 2 landed with `8ffd90a` (#630): multi-segment CircularString decided via the pairwise contact kernel — the five-point full-circle idiom is now a checked simple ring — with three honest fail-closed residues (degenerate closed segments; the nearly-cocircular ambiguity band; the large-circumradius conditioning guard added by review follow-up `5372346`, which killed a demonstrated wrong-both-ways verdict at eps·r² scale) and the differential at `ok=59 warn=0 bug_or_fail=0`. The remaining divergence is CompoundCurve/CurvePolygon simplicity, the IsValid rung-2 wiring, and the arc-arc dependents (curve×curve distance, NearestPoints) — the `615-h` lane, continued at #634. **Epic A+B scope wrapped 2026-08-30 (ticket `615-j`): all four gates re-run green end to end at fork `e00c00b` (§5b) — this document is the single source of truth for what is now true on the branch.**
+SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid landed rung 1 with `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included) and its verdicts wired with `66265ed` (ticket `615-h` rung 3, #634): clean CircularString/CompoundCurve values are checked-valid per the §2 readings of record, a CurvePolygon with a non-simple ring is definite-false, and only the CP ring-pair conditions (§8.2.1 Desc 11–14) still throw. Envelope is exact over the locus since `9111983` (ticket `615-e`) and point-to-curve Distance since `b829d42` (ticket `615-f`) — all four original Red metric contracts are green and the oracle differential ran `ok=49 warn=0 bug_or_fail=0` at that landing (the wrap-up run is `ok=55`, §5b). The WKT/WKB small print landed with `ed40bf3` (ticket `615-i`): nested `<z m>` consistency enforced on read (the silent-coercion audit finding closed, §8 ledger), Table 15 alternate WKB codes accepted on read, and the tagged-LINESTRING tolerance documented as a deliberate deviation. The simplicity lane opened with `b392590` (ticket `615-h` rung 1, #624): single-segment CircularString `IsSimple` decided over the locus and RING_SIMPLE-pinned (`ok=55 warn=0 bug_or_fail=0`); rung 1 was hardened by review follow-up `e00c00b` (endpoint equality tested before any float orientation step; overflow counterexample pinned). Rung 2 landed with `8ffd90a` (#630): multi-segment CircularString decided via the pairwise contact kernel — the five-point full-circle idiom is now a checked simple ring — with three honest fail-closed residues (degenerate closed segments; the nearly-cocircular ambiguity band; the large-circumradius conditioning guard added by review follow-up `5372346`, which killed a demonstrated wrong-both-ways verdict at eps·r² scale) and the differential at `ok=59 warn=0 bug_or_fail=0`. Rung 3 landed with `66265ed` (#634): CompoundCurve and CurvePolygon-ring simplicity decided over generic arc/chord chains (the semicircle-plus-diameter compound is a checked simple ring), `TryCircle` canonicalized so same-triple cocircular pairs decide, and the IsValid verdicts wired — differential at `ok=61 warn=0 bug_or_fail=0`. The remaining divergence is MultiCurve/MultiSurface simplicity and validity, the CP ring-pair conditions (§8.2.1 Desc 11–14), and the arc-arc dependents (curve×curve distance, NearestPoints) — the `615-h` lane, continued at #639. **Epic A+B scope wrapped 2026-08-30 (ticket `615-j`): all four gates re-run green end to end at fork `e00c00b` (§5b) — this document is the single source of truth for what is now true on the branch.**

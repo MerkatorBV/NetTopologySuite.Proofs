@@ -550,6 +550,23 @@ static class Cases
         // closing-pair allowance is (0,0), not (1,1)).
         ("non_adjacent_touch", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0", "C 4 0 1 1" }, "NOT_SIMPLE", false,
             gf => Cs(gf, (0, 0), (1, 1), (2, 0), (3, -1), (4, 0), (2.5, 0.5), (1, 1))),
+        // CompoundCurve chains (615-h rung 3, #634): the same lane serves
+        // mixed arc/chord chains; LineString components map to "C" segments.
+        ("cc_semicircle_diameter_ring", new[] { "A 0 0 1 1 2 0", "C 2 0 0 0" }, "SIMPLE", true,
+            gf => new CompoundCurve(new Curve[]
+            {
+                Cs(gf, (0, 0), (1, 1), (2, 0)),
+                gf.CreateLineString(new[] { new Coordinate(2, 0), new Coordinate(0, 0) }),
+            }, gf)),
+        ("cc_line_tangent_arc", new[] { "A 0 0 1 1 2 0", "C 2 0 2 1", "C 2 1 0 1" }, "NOT_SIMPLE", false,
+            gf => new CompoundCurve(new Curve[]
+            {
+                Cs(gf, (0, 0), (1, 1), (2, 0)),
+                gf.CreateLineString(new[]
+                {
+                    new Coordinate(2, 0), new Coordinate(2, 1), new Coordinate(0, 1),
+                }),
+            }, gf)),
         // The exact/double split (615-h rung-2 review): the flat arc's
         // circumradius (~2e8) is beyond double precision for contact
         // decisions, so NTS refuses (conditioning guard) while the
