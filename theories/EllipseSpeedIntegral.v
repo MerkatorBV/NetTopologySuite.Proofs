@@ -57,6 +57,9 @@
    [holder_window_lt] first arm [lra] cannot witness
    [K*gap < (K+1)*gap] when [gap] may be 0 (1480ac6 L335).
    Split [gap = 0]; cancel [/(K+1)] with [Rinv_r].
+   Flocq [sqrt_Rsqr] is [0 <= x -> sqrt (Rsqr x) = x], so
+   [rewrite sqrt_Rsqr] already yields [2], not [Rabs 2]
+   (84b2036 L419). [sqrt_Rsqr 2] by [lra]; [sqrt_Rsqr_abs] for [su].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -415,10 +418,9 @@ Proof.
     [| apply Rmult_le_pos; [exact H4 | exact Hsu] | exact Hq].
   rewrite (sqrt_mult 4 (su * su)); [| exact H4 | exact Hsu].
   replace 4 with (Rsqr 2) by (unfold Rsqr; ring).
-  rewrite sqrt_Rsqr.
-  rewrite (Rabs_right 2) by lra.
+  rewrite (sqrt_Rsqr 2) by lra.
   replace (su * su) with (Rsqr su) by (unfold Rsqr; reflexivity).
-  rewrite sqrt_Rsqr.
+  rewrite sqrt_Rsqr_abs.
   ring.
 Qed.
 
