@@ -52,7 +52,15 @@
          OGC FF2FF1212 on the #571 sentinel (`sentinel_disjoint_ogc_gtri_cells`).
          Names `aa_matrix_disjoint_ogc`; Qex `~ im_disjoint` of that fill
          (`pat_disjoint` forces EI=EB=F).  Does not remint
-         `aa_matrix_disjoint` or `triangle_pair_fill` (pointer is #575).
+         `aa_matrix_disjoint` or `triangle_pair_fill`.
+     - RelateNGOracleSurface.v  #575 / 522-f: oracle wire token
+         (`triangle_unsupported_token`): a decline is
+         `RWR_Unsupported`, not a 9-cell matrix.  Classified triangle
+         fills pin as they stand (FFFFFFFFF / 2FFF1FFF2 / 2FFFFFFF2 /
+         FFFF1FFF2).  `relate` of the T-junction is the token
+         (`relate_tjunction_wire_unsupported`); Qex: the #530 pair
+         is a disjoint matrix, not UNSUPPORTED.  Does not remint
+         `aa_matrix_disjoint`.
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation
@@ -100,4 +108,5 @@ From NTS.Proofs Require Export
   RelateNGRect
   RelateNGComplete
   RelateNGRingInclusion
-  RelateNGDisjointCells.
+  RelateNGDisjointCells
+  RelateNGOracleSurface.

@@ -68,6 +68,41 @@ let () =
   assert_pred "aa_matrix_touch_vertical" "Touches" true;
   assert_pred "aa_matrix_disjoint" "Disjoint" true;
 
+  (* triangle fills (#575 / 522-f): same 9-char pins as the rect aliases *)
+  assert_matrix "triangle_pair_fill TPR_Disjoint" "FFFFFFFFF";
+  assert_matrix "triangle_pair_fill TPR_Overlap" "2FFF1FFF2";
+  assert_matrix "triangle_pair_fill TPR_Contains" "2FFFFFFF2";
+  assert_matrix "triangle_pair_fill TPR_TouchEdge" "FFFF1FFF2";
+  assert_matrix "triangle_pair_fill TPR_TouchVertex" "FFFF1FFF2";
+  assert_matrix "FILL triangle_pair_fill TPR_Overlap" "2FFF1FFF2";
+  assert_pred "triangle_pair_fill TPR_Overlap" "Overlaps" true;
+  assert_pred "triangle_pair_fill TPR_Contains" "Contains" true;
+  assert_pred "triangle_pair_fill TPR_TouchEdge" "Touches" true;
+  assert_pred "triangle_pair_fill TPR_Disjoint" "Disjoint" true;
+
+  (* decline is a result token, not a 9-char matrix *)
+  (match lookup_result "UNSUPPORTED" with
+   | Unsupported -> ()
+   | Matrix m ->
+       Printf.eprintf "FAIL UNSUPPORTED token: got matrix %S\n" m; exit 1);
+  (match lookup_result "triangle_pair_fill TPR_Unsupported" with
+   | Unsupported -> ()
+   | Matrix m ->
+       Printf.eprintf "FAIL TPR_Unsupported: got matrix %S\n" m; exit 1);
+  (match lookup_result "im_unsupported" with
+   | Unsupported -> ()
+   | Matrix m ->
+       Printf.eprintf "FAIL im_unsupported: got matrix %S\n" m; exit 1);
+  (match lookup_result "triangle_pair_fill TPR_Disjoint" with
+   | Matrix m -> assert_eq "lookup_result disjoint" m "FFFFFFFFF"
+   | Unsupported ->
+       Printf.eprintf "FAIL classified fill must be a matrix\n"; exit 1);
+  (try
+     ignore (lookup_matrix "UNSUPPORTED");
+     Printf.eprintf "FAIL lookup_matrix accepted UNSUPPORTED as a matrix key\n";
+     exit 1
+   with Invalid_argument _ -> ());
+
   (* additional TOUCH from first batch (consumption of rect oracles) *)
   assert_pred "aa_matrix_touch_vertical" "Touches" true;
   assert_pred "aa_matrix_touch_vertical" "Intersects" true; (* since touch intersects *)

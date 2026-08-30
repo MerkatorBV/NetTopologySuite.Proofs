@@ -1,0 +1,68 @@
+# Triangle-pair DE-9IM oracle vectors — #575 / 522-f core slice.
+# Coq pins: theories/RelateNGOracleSurface.v (`triangle_pair_wire`).
+# Fill aliases: theories/RelateMatrixTriangle.v (`triangle_pair_fill`).
+#
+# A decline is the result token UNSUPPORTED, never a 9-char matrix.
+# Classified fills are the current designated pins (not reminted):
+#   TPR_Disjoint    FFFFFFFFF   (aa_matrix_disjoint; not OGC FF2FF1212)
+#   TPR_Overlap     2FFF1FFF2
+#   TPR_Contains    2FFFFFFF2
+#   TPR_TouchEdge   FFFF1FFF2
+#   TPR_TouchVertex FFFF1FFF2   (same starter as edge touch)
+#
+# Provenance (classifier witness pairs, not geometry computation):
+#   DISJOINT      #571 / 522-c sentinel (the #530 pair, now classified)
+#   OVERLAP       #567 / 522-b pair (RelateMatrixTriangle.overlap_pair_overlaps)
+#   CONTAINS      RelateMatrixTriangle.contains_pair_contains
+#   TOUCH_EDGE    frozen shared-edge pin (RelateNGTouch.ex_triangles_touch_on_shared_edge)
+#   TOUCH_VERTEX  #572 / 522-i pair
+#   DECLINE       T-junction #577 / 522-j — NOT the #530 pair
+#
+# Oracle mode: RELATE_MATRIX now prints UNSUPPORTED for decline keys.
+
+REGIME DISJOINT
+TRI_A 0 0  1 0  0 1
+TRI_B 2 0  3 0  2 1
+COQ aa_matrix_disjoint
+FILL triangle_pair_fill TPR_Disjoint
+WIRE FFFFFFFFF
+NOTES #571 / 522-c sentinel. Classifier fill, not OGC FF2FF1212.
+
+REGIME OVERLAP
+TRI_A 0 0  1 0  0 1
+TRI_B 0.25 0.25  1.25 0.25  0.25 1.25
+COQ aa_matrix_partial_overlap
+FILL triangle_pair_fill TPR_Overlap
+WIRE 2FFF1FFF2
+NOTES #567 / 522-b overlap pair (1/4 translate).
+
+REGIME CONTAINS
+TRI_A 0 0  1 0  0 1
+TRI_B 0.25 0.25  0.5 0.25  0.25 0.5
+COQ aa_matrix_contains
+FILL triangle_pair_fill TPR_Contains
+WIRE 2FFFFFFF2
+NOTES RelateMatrixTriangle.contains_pair_contains.
+
+REGIME TOUCH_EDGE
+TRI_A 0 0  1 0  0 1
+TRI_B 1 0  1 1  0 1
+COQ aa_matrix_touch_vertical
+FILL triangle_pair_fill TPR_TouchEdge
+WIRE FFFF1FFF2
+NOTES Frozen shared-edge pin (RelateNGTouch).
+
+REGIME TOUCH_VERTEX
+TRI_A 0 0  2 0  0 2
+TRI_B 0 0  -2 0  0 -2
+COQ aa_matrix_touch_vertical
+FILL triangle_pair_fill TPR_TouchVertex
+WIRE FFFF1FFF2
+NOTES #572 / 522-i pair. Same starter fill as edge touch.
+
+REGIME DECLINE
+TRI_A 0 0  2 0  0 1
+TRI_B 1 0  3 0  2 1
+TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_Unsupported
+NOTES T-junction leftover (#577 / 522-j). Not a matrix. The #530 pair classifies disjoint.

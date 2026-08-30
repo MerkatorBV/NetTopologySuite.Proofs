@@ -165,6 +165,14 @@ let catalog =
     "rect_pair_fill RPR_Overlap", "2FFF1FFF2";
     "rect_pair_fill RPR_Contains", "2FFFFFFF2";
     "rect_pair_fill RPR_TouchVert", "FFFF1FFF2";
+    (* triangle fills (RelateMatrixTriangle.v / RelateNGOracleSurface.v).
+       Same 9-char pins as the rect aliases.  TPR_Unsupported is NOT a
+       catalog matrix — it is the result token UNSUPPORTED. *)
+    "triangle_pair_fill TPR_Disjoint", "FFFFFFFFF";
+    "triangle_pair_fill TPR_Overlap", "2FFF1FFF2";
+    "triangle_pair_fill TPR_Contains", "2FFFFFFF2";
+    "triangle_pair_fill TPR_TouchEdge", "FFFF1FFF2";
+    "triangle_pair_fill TPR_TouchVertex", "FFFF1FFF2";
     "line_pair_fill LPR_Disjoint", "FFFFFFFFF";
     "line_pair_fill LPR_ProperCross", "0FFFFFFFF";
     "line_pair_fill LPR_Share", "0FFFFFFFF";
@@ -222,8 +230,26 @@ let lookup_matrix key =
     | Some m -> m
     | None -> invalid_arg ("relate_matrix: unknown key: " ^ k)
 
+(* Result token, structurally distinct from any 9-char matrix.
+   Legal in result position only; never a catalog matrix key.
+   Mirrors theories/RelateNGOracleSurface.v RelateWireResult. *)
+type relate_result = Matrix of string | Unsupported
+
+let is_unsupported_key key =
+  let k = normalize_key key in
+  k = "UNSUPPORTED"
+  || k = "triangle_pair_fill TPR_Unsupported"
+  || k = "im_unsupported"
+
+let lookup_result key =
+  if is_unsupported_key key then Unsupported
+  else Matrix (lookup_matrix key)
+
 let resolve_matrix_input key =
   lookup_matrix key
+
+let resolve_result_input key =
+  lookup_result key
 
 let check_predicate matrix_key predicate =
   let m = lookup_matrix matrix_key in

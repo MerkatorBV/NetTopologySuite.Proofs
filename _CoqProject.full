@@ -2781,8 +2781,13 @@ theories/RelateNGRingInclusion.v
 # #573 / 522-d: nine gtri cells of OGC FF2FF1212 on the #571 sentinel.
 # Names aa_matrix_disjoint_ogc; does not remint aa_matrix_disjoint
 # (shared FFFFFFFFF pin).  Qex: ~ im_disjoint of the OGC fill
-# (DE9IM.v pat_disjoint forces EI=EB=F).  Pointer remint is #575.
+# (DE9IM.v pat_disjoint forces EI=EB=F).  Pointer remint is later;
+# #575 / 522-f is the oracle wire token, not that remint.
 theories/RelateNGDisjointCells.v
+# #575 / 522-f: UNSUPPORTED wire token + triangle fill pins.
+# Decline encodes as RWR_Unsupported (not a 9-cell).  Does not remint
+# aa_matrix_disjoint / triangle_pair_fill TPR_Disjoint.
+theories/RelateNGOracleSurface.v
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
 theories/RelatePrepared.v
