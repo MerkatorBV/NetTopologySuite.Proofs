@@ -1643,4 +1643,32 @@ quarter circle re-parameterized onto the angular arc, where
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
-| `CurveLength.v : is_curve_length_reparam` (+ `is_curve_length_reparam_inv`, `polyline_len_compose`, `chain_map_mono`, `reparam_preimage_chain`) | **Monotone reparameterization invariance:** for `a ≤ b`, `φ` weakly monotone on `[a,b]` with every `v ∈ [φ a, φ b]` explicitly hit by some `u ∈ [a,b]`, any metric length of `g` over `[φ a, φ b]` is a metric length of `t ↦ g (φ t)` over `[a,b]` — inscribed sets correspond through `map φ` one way and preimage chains (with flat-stretch order repair) the other, so the converse (`is_curve_length_reparam_inv`) holds under the same premises and the transfer is an equivalence; orientation-REVERSING maps are deliberately out of scope (a future lemma via reflection); no functional extensionality, no continuity `[exact]` | 3 |
+| `CurveLength.v : is_curve_length_reparam` (+ `is_curve_length_reparam_inv`, `polyline_len_compose`, `chain_map_mono`, `reparam_preimage_chain`) | **Monotone reparameterization invariance:** for `a ≤ b`, `φ` weakly monotone on `[a,b]` with every `v ∈ [φ a, φ b]` explicitly hit by some `u ∈ [a,b]`, any metric length of `g` over `[φ a, φ b]` is a metric length of `t ↦ g (φ t)` over `[a,b]` — inscribed sets correspond through `map φ` one way and preimage chains (with flat-stretch order repair) the other, so the converse (`is_curve_length_reparam_inv`) holds under the same premises and the transfer is an equivalence; orientation-REVERSING maps are the next section (`is_curve_length_reflect`); no functional extensionality, no continuity `[exact]` | 3 |
+
+## Issue #508 — spec rung: orientation-reversing reparameterization (`CurveLength.v`) <!-- feat:arc-len geom:arc,cs -->
+
+The invariance kit's missing reflection half (#560 / claimId `508-b`).
+`is_curve_length_reparam` covers weakly non-decreasing `φ` only.
+`is_curve_length_reflect` sends `g` to `t ↦ g (a+b−t)`: a partition
+chain of `[a,b]` becomes the reversed chain, and `polyline_len` of a
+reversed visit equals the original by `dist_sym` (`polyline_len_rev`).
+Inscribed sets therefore coincide, so the lub is the same. A weakly
+non-increasing `φ` is reflection of the non-decreasing
+`ψ(t) := φ(a+b−t)`, and `is_curve_length_reparam_anti` is that
+composition — it reuses `reparam_preimage_chain`'s order-repair rather
+than a new induction. `ext` and `shift` stay independent. Funext-free,
+3-axiom. Instance: the quarter circle run backwards
+(`fun t => circle_param O r (π/2 − t)` on `[0, π/2]`) has length
+`r·π/2`. This letter does not retire epic 508 (that is #566).
+
+**NTS RGR Board catalog (#508 children).** `508-b` = #560 /
+orientation-reversing reparam (witness `508-b-reflect`). Headline
+`CurveLength.v : is_curve_length_reflect`. Instance
+`ArcRectifiable.v : arc_quarter_reflect_length`. Does not retire
+epic 508. Sibling `508-a` = #559 is a separate letter (not this
+branch). Remaining children `508-c`…`508-h` are not this letter.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `CurveLength.v : is_curve_length_reflect` (+ `is_curve_length_reparam_anti`, `inscribed_len_reflect`, `polyline_len_rev`, `chain_map_anti`, `chain_snoc`) | **Reflection invariance (#508/#560, claimId: 508-b, witness: 508-b-reflect):** `is_curve_length g a b L` transfers to `t ↦ g (a+b−t)` over the same `[a,b]` — inscribed polylines reverse by `dist_sym`; anti-monotone `φ` is then reflect ∘ reparam, so `is_curve_length_reparam_anti` spends no new preimage induction. `ext` and `shift` stay independent. Does not retire epic 508 `[exact]` | 3 |
+| `ArcRectifiable.v : arc_quarter_reflect_length` | **Quarter circle backwards:** `circle_param O r` on `[0, π/2]` reflected as `t ↦ circle_param O r (π/2 − t)` still has metric length `r·π/2` `[exact]` | 3 |
