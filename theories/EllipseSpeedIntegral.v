@@ -74,6 +74,8 @@
    (bfa07f0 L560 / 295a15b L567): leftover
    [(s+t)+(-s+-s) = t-s] is not a flocq ring equation.
    Close with [Rplus_comm] / [Rplus_assoc] / [Rplus_opp_r].
+   [apply Rmult_1_r] needs [?r*1 = ?r]; after [/2*2] cancel the
+   replace-witness is [s+t = (s+t)*1] (7ff799a L247). [rewrite].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -244,9 +246,11 @@ Proof.
   apply (Rmult_eq_reg_r 2); [| lra].
   rewrite Rmult_plus_distr_r.
   replace ((s + t) * / 2 * 2) with (s + t).
-  2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. apply Rmult_1_r. }
+  2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra.
+      rewrite Rmult_1_r. reflexivity. }
   replace ((t + - s) * / 2 * 2) with (t + - s).
-  2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. apply Rmult_1_r. }
+  2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra.
+      rewrite Rmult_1_r. reflexivity. }
   replace ((- s) * 2) with (- s + - s).
   2:{ replace 2 with (1 + 1) by ring.
       rewrite Rmult_plus_distr_l. rewrite Rmult_1_r. reflexivity. }
