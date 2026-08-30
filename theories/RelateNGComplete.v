@@ -935,15 +935,23 @@ Proof.
     { unfold cross; cbn [px py]; lra. }
     intros Hlt. lra. }
   (* B's (3/4,1/4)–(1,0): A's (0,0) is opposite the apex. Pin (2,0)
-     so lra never sees a true opposite-sides goal. *)
-  rewrite (edge_separates_b_false_l (mkPoint (3/4) (1/4)) (mkPoint 1 0) (mkPoint (5/4) (1/4))
-             (mkPoint 2 0) (mkPoint 0 0) (mkPoint 0 1)).
-  2: {
-    apply opposite_sides_b_false_of_nlt.
+     so lra never sees a true opposite-sides goal. Vertex order
+     stays (0,0)(2,0)(0,1) — do not reorder q1. *)
+  assert (E6 : edge_separates_b
+                 (mkPoint (3/4) (1/4)) (mkPoint 1 0) (mkPoint (5/4) (1/4))
+                 (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1) = false).
+  { unfold edge_separates_b.
     assert (Hprod : cross (mkPoint (3/4) (1/4)) (mkPoint 1 0) (mkPoint (5/4) (1/4))
                         * cross (mkPoint (3/4) (1/4)) (mkPoint 1 0) (mkPoint 2 0) >= 0).
     { unfold cross; cbn [px py]; lra. }
-    intros Hlt. lra. }
+    assert (Hmid : opposite_sides_b
+                     (mkPoint (3/4) (1/4)) (mkPoint 1 0)
+                     (mkPoint (5/4) (1/4)) (mkPoint 2 0) = false).
+    { apply opposite_sides_b_false_of_nlt. intros Hlt. lra. }
+    rewrite Hmid.
+    destruct (opposite_sides_b (mkPoint (3/4) (1/4)) (mkPoint 1 0)
+                (mkPoint (5/4) (1/4)) (mkPoint 0 0)); reflexivity. }
+  rewrite E6.
   reflexivity.
 Qed.
 
