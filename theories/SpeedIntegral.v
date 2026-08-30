@@ -235,9 +235,11 @@ Lemma plus_nonneg_tail_le : forall t0 h (k : nat) b,
   t0 + h <= b.
 Proof.
   intros t0 h k b Hh Htop.
+  pose proof (Rmult_le_pos (INR k) h (pos_INR k) Hh) as Hkh.
   apply (Rle_trans (t0 + h) (t0 + h + INR k * h) b); [| exact Htop].
+  rewrite <- (Rplus_0_r (t0 + h)) at 1.
   apply Rplus_le_compat_l.
-  apply Rmult_le_pos; [apply pos_INR | exact Hh].
+  exact Hkh.
 Qed.
 
 Lemma twenty_four_eps_pos : forall eps, 0 < eps -> 0 < 24 * eps.
@@ -287,7 +289,7 @@ Proof.
     (r2 := r * gap - 2 * r * (gap / 2 - (gap / 2) ^ 3 / 6)).
   - apply Rplus_le_compat_l.
     apply Ropp_le_contravar.
-    apply Rmult_le_compat_l; [lra | exact Htaylor].
+    apply Rmult_le_compat_l; [apply Rmult_le_pos; lra | exact Htaylor].
   - apply Req_le.
     replace ((gap / 2) ^ 3) with (gap * gap * gap / 8)
       by (unfold Rdiv; simpl; field).
@@ -668,7 +670,7 @@ Proof.
     assert (Hsinpos : 0 <= sin ((t - s) / 2)).
     { apply sin_ge_0; [lra |]. pose proof PI_ge_2. lra. }
     rewrite (Rabs_right (sin ((t - s) / 2))) by exact Hsinpos.
-    replace (t - s) with gap by (unfold gap; reflexivity).
+    fold gap.
     assert (Hx4 : gap / 2 <= 4) by lra.
     pose proof (circle_chord_taylor_slack r gap Hr Hgap0 Hx4) as Hcalc.
     eapply Rle_trans; [exact Hcalc |].
