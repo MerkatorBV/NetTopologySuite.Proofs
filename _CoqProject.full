@@ -2791,9 +2791,16 @@ theories/RelateNGTouchPartialEdge.v
 # Leftover Ⅲ: exterior-side one-sided T. Ⅲ∨Ⅳ xor
 # touch_onesided_t_b; one exterior witness; constructor
 # TPR_TouchOnesided stays on im_unsupported (fill token). After
-# leftover Ⅰ. Completeness still Ⅱ. Not CONTEXT Bar 1. Does not
-# remint fills. Leftover Ⅳ is the interior-side stem (named only).
+# leftover Ⅰ. Completeness is mixed-cone (not leftover Ⅴ). Not
+# CONTEXT Bar 1. Does not remint fills. Leftover Ⅳ is the
+# interior-side stem (compiled residue pair).
 theories/RelateNGTouchOnesided.v
+# Leftover Ⅱ: closed-cone vertex kiss. Detector
+# touch_obtuse_vertex_b; constructor TPR_TouchObtuse stays on
+# im_unsupported. After leftover Ⅰ and leftover Ⅲ∨Ⅳ. Completeness
+# is mixed-cone (not leftover Ⅴ). Not CONTEXT Bar 1. Does not
+# remint cone_separates_b / aa_matrix_*.
+theories/RelateNGTouchObtuse.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE

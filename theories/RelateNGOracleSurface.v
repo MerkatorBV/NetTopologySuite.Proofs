@@ -11,8 +11,9 @@
    (`WireCell` / `WireMatrix`), encodes a well-formed matrix or declines
    (`RelateWireResult`), and proves the triangle classifier's fills
    land on the right side of that cut. Leftover `Ⅰ`
-   (`TPR_TouchPartialEdge`) and leftover `Ⅲ`
-   (`TPR_TouchOnesided`) stay on the token side.
+   (`TPR_TouchPartialEdge`), leftover `Ⅲ`
+   (`TPR_TouchOnesided`), and leftover `Ⅱ`
+   (`TPR_TouchObtuse`) stay on the token side.
 
    Green (Qed):
      - `encode_matrix m <> None` iff `matrix_ok m`
@@ -332,16 +333,25 @@ Proof.
   exact encode_wire_unsupported.
 Qed.
 
-(* TPR_TouchPartialEdge / TPR_TouchOnesided are classified but fill
-   is still the token. Keep them excluded so a matrix decode cannot
-   swallow leftover Ⅰ / leftover Ⅲ. *)
+Theorem triangle_touch_obtuse_wire :
+  triangle_pair_wire TPR_TouchObtuse = RWR_Unsupported.
+Proof.
+  unfold triangle_pair_wire.
+  rewrite triangle_pair_fill_touch_obtuse_eq.
+  exact encode_wire_unsupported.
+Qed.
+
+(* TPR_TouchPartialEdge / TPR_TouchOnesided / TPR_TouchObtuse are
+   classified but fill is still the token. Keep them excluded so a
+   matrix decode cannot swallow leftover Ⅰ / leftover Ⅲ / leftover Ⅱ. *)
 Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_Unsupported ->
   r <> TPR_TouchPartialEdge ->
   r <> TPR_TouchOnesided ->
+  r <> TPR_TouchObtuse ->
   exists w, triangle_pair_wire r = RWR_Matrix w.
 Proof.
-  intros r H Hu Ho.
+  intros r H Hu Ho Hob.
   destruct r.
   - exists wm_disjoint; exact triangle_disjoint_wire.
   - exists wm_overlap; exact triangle_overlap_wire.
@@ -350,6 +360,7 @@ Proof.
   - exists wm_touch; exact triangle_touch_vertex_wire.
   - contradiction Hu; reflexivity.
   - contradiction Ho; reflexivity.
+  - contradiction Hob; reflexivity.
   - contradiction H; reflexivity.
 Qed.
 

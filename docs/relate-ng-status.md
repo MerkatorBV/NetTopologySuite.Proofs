@@ -110,10 +110,12 @@ disguised as disjointness — that was #530.
   Compiled pair is II = 2, BB = 1. Fill stays `im_unsupported`. Chart:
   [`scout/map-tjunction-cert.md`](scout/map-tjunction-cert.md).
   Do **not** mint `522-n`.
-- **Obtuse-at-v certificate** — leftover `Ⅱ`. Finding:
-  `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
-  Do not bucket with leftover `Ⅰ`. Detector not invented. Completeness
-  still `Ⅱ`.
+- **Obtuse-at-v certificate** — leftover `Ⅱ` classified.
+  Headline `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`.
+  Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
+  (`RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop`),
+  discharged QEX on mixed-cone. Do not bucket with leftover `Ⅰ`.
+  Do not mint leftover `Ⅴ`.
 - **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with two
   witnesses. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token

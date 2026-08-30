@@ -14,7 +14,7 @@ side-distinguishing detector. It does **not** remint
 > compiled witnesses (one constructor, one fill token, one `True`
 > arm — not a side-aware detector). `overlap_b` may steal other
 > same-side stems. CONTEXT Bar 1 is not met. It does not write a
-> second detector. Completeness still `Ⅱ`.
+> second detector. Completeness is mixed-cone.
 
 topics: relate
 claimId: Ⅳ
@@ -128,7 +128,7 @@ There is no leftover-`Ⅳ` matrix. The constructor is already on
 `im_unsupported`. `classify_triangle_pair` arm for
 `TPR_TouchOnesided` is `True` — leftover `Ⅰ` honesty, not CONTEXT
 Bar 1. Nothing that mentions `TPR_TouchOnesided` may be proved
-through `classify_triangle_pair`. Decline golden is leftover `Ⅱ`.
+through `classify_triangle_pair`. Decline golden is mixed-cone.
 Do not emit `FFFFFFFFF`. Do not emit `FFFF1FFF2` or `FF2F11212` on
 `TPR_TouchOnesided` — leftover `Ⅲ` looks like areal Touches,
 leftover `Ⅳ` looks like overlap. The fill token is the only thing
@@ -165,7 +165,7 @@ steal `522-j` / `522-m` / `522-f` / `522-i` / `522-b`.
 
 Ticket 26 compiled the residue. Do not remint the xor. Do not remint
 the fill. Do not call regime reachability CONTEXT Bar 1.
-Completeness stays false on leftover `Ⅱ`. This letter does not
+Completeness stays false on mixed-cone. This letter does not
 move that theorem.
 
 ## Decisions so far
@@ -173,7 +173,7 @@ move that theorem.
 - Family named — #629 / [`map-interior-side-cert.md`](map-interior-side-cert.md).
 - Leftover `Ⅲ` compile — #628 /
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`.
-  `Ⅲ∨Ⅳ` xor, two witnesses, fill token, completeness still `Ⅱ`.
+  `Ⅲ∨Ⅳ` xor, two witnesses, fill token, completeness mixed-cone.
 - This grill — named; Bar 1 not applicable (no matrix).
 - Ticket 26 — residue pair
   `RelateNGComplete.v : interior_side_pair_inhabits`.
@@ -192,7 +192,7 @@ family named ── #629 ── map-interior-side-cert.md
      xor already Ⅲ∨Ⅳ ── do not invent a detector
 
 Ⅰ ── mutual same-side sliver ── #609 ── not this leftover
-Ⅱ ── obtuse-at-v ── #611 ── live completeness cex
+Ⅱ ── obtuse-at-v ── TPR_TouchObtuse ── not this leftover
 Ⅲ ── exterior-side stem ── #628 ── Ⅲ∨Ⅳ xor, two witnesses
 
 522-n ── not minted

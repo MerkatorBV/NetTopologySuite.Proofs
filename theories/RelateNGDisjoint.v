@@ -529,6 +529,8 @@ Proof.
   destruct (touch_partial_edge_b _ _ _ _ _ _);
     [ discriminate | ].
   destruct (touch_onesided_t_b _ _ _ _ _ _);
+    [ discriminate | ].
+  destruct (touch_obtuse_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
     discriminate.
 Qed.
 

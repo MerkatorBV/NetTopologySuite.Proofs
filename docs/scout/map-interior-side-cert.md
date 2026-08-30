@@ -75,7 +75,7 @@ another strictly exterior is leftover `522-b`
 | Leftover | Why it is not `Ⅳ` |
 |---|---|
 | `Ⅰ` | Mutual. Both bottoms share a positive-length open-closed segment. Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. Same-side sliver; II nonempty. The detector is `touch_partial_edge_b`, not the xor. |
-| `Ⅱ` | Shared vertex; cone `side_dot = 0`. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Not a vertex-in-open-edge T. Detector not invented. |
+| `Ⅱ` | Shared vertex; cone `side_dot = 0`. Classified `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`. Not a vertex-in-open-edge T. |
 | `Ⅲ` | One-sided, **opposite** sides. Compiled pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. B-vertex `(1,0)` sits in A's open base (`RelateNGComplete.v : onesided_t_B_on_open_base`). II empty because `gsA + gsC` of B equals `-py` (`RelateNGComplete.v : onesided_t_ii_empty`). Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. |
 
 On the leftover-`Ⅲ` compile letter every earlier wired detector is
@@ -96,7 +96,7 @@ built for a different contact:
 | Pair / object | What it is | Do not |
 |---|---|---|
 | `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` | Leftover `Ⅰ` sliver. Mutual. Same-side. II = 2, BB = 1. `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. | steal leftover `Ⅰ` |
-| `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)` | Leftover `Ⅱ` obtuse-at-v. Shared vertex. `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. | invent leftover `Ⅱ` |
+| `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)` | Leftover `Ⅱ` obtuse-at-v. Shared vertex. `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`. | remint leftover `Ⅱ` |
 | `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)` | Leftover `Ⅲ` exterior-side stem. Opposite sides. II empty. `RelateNGComplete.v : onesided_t_pair_inhabits`. | steal leftover `Ⅲ` |
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(0,-2)` | #572 / `522-i`. Classified **`TPR_TouchVertex`**. `RelateNGComplete.v : classified_touchvertex_pair`. | remint `cone_separates_b` / steal `522-i` |
 | `(0,0)(1,0)(0,1)` vs `(2,0)(3,0)(2,1)` | #530 / #571 sentinel. Classified **disjoint**. `RelateNGComplete.v : classified_disjoint_pair`. | treat as the decline golden |
@@ -138,7 +138,7 @@ Park: **research** (ADR-0002). Residue pair compiled
    the token.
 5. **Bar 1 first, if inhabited.** Do not claim bar-2 nine-cell gtri
    in the first letter unless asked.
-6. **Harness golden.** Decline is leftover `Ⅱ`. Wiring leftover `Ⅳ`
+6. **Harness golden.** Decline is mixed-cone. Wiring leftover `Ⅳ`
    (if inhabited) does not move that golden. Do not assume
    completeness.
 7. **Classifier order.** After leftover `Ⅲ`'s xor arm if a new
@@ -152,7 +152,7 @@ Park: **research** (ADR-0002). Residue pair compiled
 
 ## Decisions so far
 
-- Completeness false on leftover `Ⅱ` — #583 / #584 / `522-j` /
+- Completeness false on mixed-cone — #583 / #584 / `522-j` /
   `522-m`.
 - Leftover `Ⅰ` bar 1 — #609 /
   `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
@@ -197,7 +197,7 @@ family named ── same-side one-sided vertex-in-open-edge T
      grill ── map-interior-side-grill.md ── ticket 26 closed
 
 Ⅰ ── mutual same-side sliver ── map-tjunction-cert.md ── not this leftover
-Ⅱ ── obtuse-at-v ── 522-m finding ── not this leftover
+Ⅱ ── obtuse-at-v ── TPR_TouchObtuse ── not this leftover
 Ⅲ ── opposite-side stem ── TPR_TouchOnesided (fill token) ── not this leftover
 not this leftover ── #570 overlap ── classified_overlap_pair
 not this leftover ── #572 TouchVertex ── classified_touchvertex_pair
