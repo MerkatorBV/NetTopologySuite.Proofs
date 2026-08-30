@@ -193,6 +193,7 @@ Proof.
   - reflexivity.
   - reflexivity.
   - reflexivity.
+  - reflexivity.
 Qed.
 
 Theorem evaluate_coherent_agrees :
