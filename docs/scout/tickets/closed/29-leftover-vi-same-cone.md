@@ -24,10 +24,12 @@ both-strict-pos plus `negb` of both cones and of
 stays `im_unsupported`. `classify_triangle_pair` arm is `True`.
 Epic #522 stop is QED ∨ QEX
 (`RelateNGTouchSameCone.v : triangle_pair_regime_ccw_stop`),
-discharged QEX on an unnamed lens
+discharged QEX on an unnamed inside pair after leftover `Ⅶ`
 (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Leftover
 `Ⅵ` itself is QED (`RelateNGTouchSameCone.v : leftover_vi_qed_or_qex`).
+Leftover `Ⅶ` classified the lens
+(`RelateNGTouchLens.v : triangle_pair_regime_lens`).
 
 Do not remint leftover
 `Ⅰ` / `Ⅱ` / `Ⅲ` / `Ⅳ` / `Ⅴ` / `522-j` / `522-m` / `522-f` /
-`522-i`. Do not mint `522-n` / `Ⅶ`.
+`522-i`. Do not mint `522-n` / leftover `Ⅷ`.

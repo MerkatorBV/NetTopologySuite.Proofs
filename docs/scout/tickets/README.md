@@ -49,7 +49,7 @@ Order of work: top-down from #64, with the freebie first.
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the mutual vertex-in-open-edge sliver. Leftover `Ⅱ` is
-the obtuse-at-v certificate ([`map-obtuse-cert.md`](../map-obtuse-cert.md); ticket [27](closed/27-leftover-ii-obtuse.md) closed — `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`; fill token). Leftover `Ⅲ` is the exterior-side one-sided T (`Ⅲ∨Ⅳ` xor, two compiled witnesses, one constructor / one fill token / one `True` arm). Leftover `Ⅳ` is the interior-side stem ([`map-interior-side-cert.md`](../map-interior-side-cert.md); grill [`map-interior-side-grill.md`](../map-interior-side-grill.md); ticket [26](closed/26-leftover-iv-compile-or-empty.md) closed — `RelateNGComplete.v : interior_side_pair_inhabits`; not CONTEXT Bar 1). Leftover `Ⅴ` is mixed-cone ([`map-mixed-cone-cert.md`](../map-mixed-cone-cert.md); ticket [28](closed/28-leftover-v-mixed-cone.md) closed — `RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`; fill token). Leftover `Ⅵ` is same-cone ([`map-same-cone-cert.md`](../map-same-cone-cert.md); ticket [29](closed/29-leftover-vi-same-cone.md) closed — `RelateNGTouchSameCone.v : triangle_pair_regime_samecone`; fill token; #522 stop QED ∨ QEX on `triangle_pair_regime_ccw_stop`). Sibling #523 alphabet grill:
+the obtuse-at-v certificate ([`map-obtuse-cert.md`](../map-obtuse-cert.md); ticket [27](closed/27-leftover-ii-obtuse.md) closed — `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`; fill token). Leftover `Ⅲ` is the exterior-side one-sided T (`Ⅲ∨Ⅳ` xor, two compiled witnesses, one constructor / one fill token / one `True` arm). Leftover `Ⅳ` is the interior-side stem ([`map-interior-side-cert.md`](../map-interior-side-cert.md); grill [`map-interior-side-grill.md`](../map-interior-side-grill.md); ticket [26](closed/26-leftover-iv-compile-or-empty.md) closed — `RelateNGComplete.v : interior_side_pair_inhabits`; not CONTEXT Bar 1). Leftover `Ⅴ` is mixed-cone ([`map-mixed-cone-cert.md`](../map-mixed-cone-cert.md); ticket [28](closed/28-leftover-v-mixed-cone.md) closed — `RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`; fill token). Leftover `Ⅵ` is same-cone ([`map-same-cone-cert.md`](../map-same-cone-cert.md); ticket [29](closed/29-leftover-vi-same-cone.md) closed — `RelateNGTouchSameCone.v : triangle_pair_regime_samecone`; fill token). Leftover `Ⅶ` is the lens ([`map-lens-cert.md`](../map-lens-cert.md); ticket [30](closed/30-leftover-vii-lens.md) closed — `RelateNGTouchLens.v : triangle_pair_regime_lens`; fill token; #522 stop QED ∨ QEX on `triangle_pair_regime_ccw_stop`). Sibling #523 alphabet grill:
 [`docs/scout/map-523.md`](../map-523.md). Takeable spec:
 [`docs/scout/spec-523.md`](../spec-523.md). Alphabet letter landed:
 [`15`](closed/15-523-a-eb-refuse.md) `523-a`, [`16`](closed/16-523-b-cell-unknown.md)
@@ -72,7 +72,8 @@ accept ticket 523.
 The next useful session is not another #523 letter. Owner resolve-or-accept
 is the gate for ticket 11 precondition 3. Leftover `Ⅰ` / `Ⅱ` / `Ⅲ` / `Ⅳ`
 are compiled. Leftover `Ⅴ` is compiled. Leftover `Ⅵ` is compiled.
-Completeness is an unnamed lens pair (not leftover `Ⅶ`).
+Leftover `Ⅶ` is compiled. Completeness is an unnamed inside pair
+(not leftover `Ⅷ`).
 
 Three epics retired on evidence, one deliberately not: **an epic closes only when
 its closure comment would be true.**

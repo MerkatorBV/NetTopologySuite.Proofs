@@ -535,6 +535,8 @@ Proof.
   destruct (mixed_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
     [ discriminate | ].
   destruct (same_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+    [ discriminate | ].
+  destruct (lens_edges_cross_b ax ay bx by_ cx cy dx dy ex ey fx fy);
     discriminate.
 Qed.
 

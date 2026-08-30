@@ -597,6 +597,35 @@ Definition same_cone_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
           (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
   else false else false.
 
+(* Leftover Ⅶ: proper open-segment crossing of some A-edge with
+   some B-edge. Boolean, not a remint of the noding-lane Prop
+   `segments_proper_cross`. Endpoints of each segment sit strictly
+   on opposite sides of the other (`opposite_sides_b` / `Rlt_dec`).
+   Shared-edge / T-junction / one-sided T contacts are collinear or
+   T-meets (product 0), so they miss. Classifier order already
+   protects leftover Ⅰ–Ⅵ. *)
+Definition segments_proper_cross_b (a1 a2 b1 b2 : Point) : bool :=
+  opposite_sides_b a1 a2 b1 b2 && opposite_sides_b b1 b2 a1 a2.
+
+Definition some_edges_proper_cross_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  segments_proper_cross_b a1 a2 b1 b2
+  || segments_proper_cross_b a1 a2 b2 b3
+  || segments_proper_cross_b a1 a2 b3 b1
+  || segments_proper_cross_b a2 a3 b1 b2
+  || segments_proper_cross_b a2 a3 b2 b3
+  || segments_proper_cross_b a2 a3 b3 b1
+  || segments_proper_cross_b a3 a1 b1 b2
+  || segments_proper_cross_b a3 a1 b2 b3
+  || segments_proper_cross_b a3 a1 b3 b1.
+
+Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_edges_proper_cross_b
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+  else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
    certificate, a vertex-touch certificate, leftover Ⅰ's collinear
@@ -605,8 +634,10 @@ Definition same_cone_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    leftover Ⅱ (`touch_obtuse_vertex_b`, after `touch_vertex_b` so
    the strict cone still wins), leftover Ⅴ
    (`mixed_cone_vertex_b`, after leftover Ⅱ so a closed cone still
-   wins), and leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
-   so opposite-sign still wins).  DECLINES on everything else.
+   wins), leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
+   so opposite-sign still wins), and leftover Ⅶ
+   (`lens_edges_cross_b`, after leftover Ⅵ).  DECLINES on
+   everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
@@ -619,8 +650,9 @@ Definition same_cone_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    when `touch_onesided_t_b` fires (after leftover Ⅰ). Leftover Ⅱ
    is reachable when `touch_obtuse_vertex_b` fires. Leftover Ⅴ is
    reachable when `mixed_cone_vertex_b` fires. Leftover Ⅵ is
-   reachable when `same_cone_vertex_b` fires. Completeness stays
-   false on an unnamed lens pair (not leftover `Ⅶ`).
+   reachable when `same_cone_vertex_b` fires. Leftover Ⅶ is
+   reachable when `lens_edges_cross_b` fires. Completeness stays
+   false on an unnamed inside pair (not leftover `Ⅷ`).
    Do not reorder the four wired certificates. Do not remint
    `cone_separates_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
@@ -649,6 +681,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_MixedCone
   else if same_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_SameCone
+  else if lens_edges_cross_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Lens
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

@@ -23,7 +23,8 @@ The #522 honesty ask and wired-triangle bar 1 → bar 2 are done
 ([`522-closing-summary.md`](522-closing-summary.md)). What remains is
 **named leftover work** (`Ⅰ` sliver bar 1; `Ⅱ` obtuse-at-v classified;
 `Ⅲ∨Ⅳ` xor with two compiled witnesses; `Ⅳ` residue pair;
-`Ⅴ` mixed-cone classified; `Ⅵ` same-cone classified), #67 /
+`Ⅴ` mixed-cone classified; `Ⅵ` same-cone classified;
+`Ⅶ` lens classified), #67 /
 sibling residue, or owner sign-off on the epic. After this
 letter the residue is not “unnamed proof work, leftover `Ⅰ`.”
 
@@ -57,9 +58,10 @@ interior-side stem (compiled residue pair; II nonempty). The xor
 (`RelateNGCore.v : touch_onesided_t_b`) is a `Ⅲ∨Ⅳ` configuration
 class with two compiled witnesses; it is not a leftover-`Ⅲ`
 detector. `Ⅴ` is mixed-cone (classified; fill token). `Ⅵ` is
-same-cone (classified; fill token). Completeness
-is an unnamed lens pair (not leftover `Ⅶ`). Do not swap them.
-Do not mint leftover `Ⅶ`.
+same-cone (classified; fill token). `Ⅶ` is the lens
+(classified; fill token). Completeness is an unnamed inside
+pair (not leftover `Ⅷ`). Do not swap them.
+Do not mint leftover `Ⅷ`.
 
 ## Leftover table
 
@@ -71,11 +73,12 @@ Value and priority are orthogonal.
 | `Ⅰ` | Mutual vertex-in-open-edge sliver | #522-adjacent | research | Bar 1 landed. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. Compiled pair is II = 2, BB = 1 — a sliver, not a kiss. Fill stays `im_unsupported`. | steal `522-j` / `522-m` / `522-f`; remint fills; bucket obtuse under `Ⅰ`; mint `522-n` |
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
-| `Ⅱ` | Obtuse-at-v certificate | #522-adjacent | research | Classified (QED). Chart: [`map-obtuse-cert.md`](map-obtuse-cert.md). Headline `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared origin; cone `side_dot = 0`. Detector `RelateNGCore.v : touch_obtuse_vertex_b` is a closed cone plus `negb cone_separates_b` — not a remint of #572. Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX, discharged QEX on an unnamed pair after leftover `Ⅴ`. Ticket 27 closed. | remint `cone_separates_b` / `touch_vertex_b`; steal `522-i` / `522-m`; emit `FFFF1FFF2`; claim Bar 1; mint `522-n` / `Ⅶ` |
-| `Ⅲ` | Exterior-side one-sided T | #522-adjacent | research | Exterior-side pair compiled. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. Contact `(1,0)` is collinear with A's base `y = 0`. II empty (`RelateNGComplete.v : onesided_t_ii_empty`) — not a compiled BB-dim-0 cell; there is no `onesided_t_bb_dim0`. Xor is `Ⅲ∨Ⅳ` with two compiled witnesses. Fill token is load-bearing (`im_unsupported`). `classify_triangle_pair` arm is `True` — leftover `Ⅰ` honesty, not CONTEXT Bar 1. Completeness is unnamed after leftover `Ⅴ`. | remint leftover `Ⅰ`; remint leftover `Ⅱ`; remint leftover `Ⅳ`; emit `FFFFFFFFF` / `FFFF1FFF2` / `FF2F11212`; claim Bar 1; claim a leftover-`Ⅲ` detector; mint `522-n` / `Ⅶ` |
-| `Ⅳ` | Interior-side stem | #522-adjacent | research | Residue pair compiled. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(5/4,1/4)(3/4,1/4)`. Same A and contact as leftover `Ⅲ`; remaining B vertices sit on the interior side of `y = 0` (`RelateNGComplete.v : interior_side_same_side`). Stem `gtri A = 0`; remaining B vertices `gtri A > 0`; none `gtri A < 0`. So `overlap_b` false (`RelateNGComplete.v : interior_side_overlap_b_false`) while II is nonempty (`RelateNGComplete.v : interior_side_ii_nonempty`) — DE-9IM overlap, detector miss. Inhabitance `RelateNGComplete.v : interior_side_pair_inhabits`. Boolean is not side-aware. Leftover `Ⅲ` looks like areal Touches. One constructor, one `True` arm, one `im_unsupported` — fill token keeps those families from mixing. Not CONTEXT Bar 1. Completeness is unnamed after leftover `Ⅴ`. | invent a side-distinguishing detector; remint the fill; steal leftover `Ⅲ`; emit `FFFFFFFFF` / `FFFF1FFF2` / `FF2F11212`; claim Bar 1; mint `522-n` / `Ⅶ` |
-| `Ⅴ` | Mixed-cone certificate | #522-adjacent | research | Classified (QED). Chart: [`map-mixed-cone-cert.md`](map-mixed-cone-cert.md). Headline `RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-1,-1)(3,1)`. Shared origin; remaining B verts have opposite-sign `side_dot` vs `nA = (2,2)`. Detector `RelateNGCore.v : mixed_cone_vertex_b` is opposite-sign plus `negb` of both cones — not a remint of #572 or leftover `Ⅱ`. Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX (`RelateNGTouchMixedCone.v : triangle_pair_regime_ccw_stop`), discharged QEX on an unnamed pair after leftover `Ⅵ`. Ticket 28 closed. | remint `cone_separates_b` / `touch_obtuse_vertex_b`; steal `522-j` / `522-m`; emit `FFFF1FFF2`; claim Bar 1; mint `522-n` / `Ⅶ` |
-| `Ⅵ` | Same-cone certificate | #522-adjacent | research | Classified (QED). Chart: [`map-same-cone-cert.md`](map-same-cone-cert.md). Headline `RelateNGTouchSameCone.v : triangle_pair_regime_samecone`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(3,1)(1,3)`. Shared origin; remaining B verts have same-sign `side_dot` vs `nA = (2,2)`. Detector `RelateNGCore.v : same_cone_vertex_b` is both-strict-pos plus `negb` of both cones and of `mixed_cone_from_v` — not a remint of #572, leftover `Ⅱ`, or leftover `Ⅴ`. Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX (`RelateNGTouchSameCone.v : triangle_pair_regime_ccw_stop`), discharged QEX on an unnamed lens. Ticket 29 closed. | remint `cone_separates_b` / `mixed_cone_vertex_b`; steal `522-j` / `522-m`; emit `2FFF1FFF2`; claim Bar 1; mint `522-n` / `Ⅶ` |
+| `Ⅱ` | Obtuse-at-v certificate | #522-adjacent | research | Classified (QED). Chart: [`map-obtuse-cert.md`](map-obtuse-cert.md). Headline `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared origin; cone `side_dot = 0`. Detector `RelateNGCore.v : touch_obtuse_vertex_b` is a closed cone plus `negb cone_separates_b` — not a remint of #572. Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX, discharged QEX on an unnamed pair after leftover `Ⅴ`. Ticket 27 closed. | remint `cone_separates_b` / `touch_vertex_b`; steal `522-i` / `522-m`; emit `FFFF1FFF2`; claim Bar 1; mint `522-n` / leftover `Ⅷ` |
+| `Ⅲ` | Exterior-side one-sided T | #522-adjacent | research | Exterior-side pair compiled. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. Contact `(1,0)` is collinear with A's base `y = 0`. II empty (`RelateNGComplete.v : onesided_t_ii_empty`) — not a compiled BB-dim-0 cell; there is no `onesided_t_bb_dim0`. Xor is `Ⅲ∨Ⅳ` with two compiled witnesses. Fill token is load-bearing (`im_unsupported`). `classify_triangle_pair` arm is `True` — leftover `Ⅰ` honesty, not CONTEXT Bar 1. Completeness is unnamed after leftover `Ⅴ`. | remint leftover `Ⅰ`; remint leftover `Ⅱ`; remint leftover `Ⅳ`; emit `FFFFFFFFF` / `FFFF1FFF2` / `FF2F11212`; claim Bar 1; claim a leftover-`Ⅲ` detector; mint `522-n` / leftover `Ⅷ` |
+| `Ⅳ` | Interior-side stem | #522-adjacent | research | Residue pair compiled. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(5/4,1/4)(3/4,1/4)`. Same A and contact as leftover `Ⅲ`; remaining B vertices sit on the interior side of `y = 0` (`RelateNGComplete.v : interior_side_same_side`). Stem `gtri A = 0`; remaining B vertices `gtri A > 0`; none `gtri A < 0`. So `overlap_b` false (`RelateNGComplete.v : interior_side_overlap_b_false`) while II is nonempty (`RelateNGComplete.v : interior_side_ii_nonempty`) — DE-9IM overlap, detector miss. Inhabitance `RelateNGComplete.v : interior_side_pair_inhabits`. Boolean is not side-aware. Leftover `Ⅲ` looks like areal Touches. One constructor, one `True` arm, one `im_unsupported` — fill token keeps those families from mixing. Not CONTEXT Bar 1. Completeness is unnamed after leftover `Ⅴ`. | invent a side-distinguishing detector; remint the fill; steal leftover `Ⅲ`; emit `FFFFFFFFF` / `FFFF1FFF2` / `FF2F11212`; claim Bar 1; mint `522-n` / leftover `Ⅷ` |
+| `Ⅴ` | Mixed-cone certificate | #522-adjacent | research | Classified (QED). Chart: [`map-mixed-cone-cert.md`](map-mixed-cone-cert.md). Headline `RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-1,-1)(3,1)`. Shared origin; remaining B verts have opposite-sign `side_dot` vs `nA = (2,2)`. Detector `RelateNGCore.v : mixed_cone_vertex_b` is opposite-sign plus `negb` of both cones — not a remint of #572 or leftover `Ⅱ`. Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX (`RelateNGTouchMixedCone.v : triangle_pair_regime_ccw_stop`), discharged QEX on an unnamed pair after leftover `Ⅵ`. Ticket 28 closed. | remint `cone_separates_b` / `touch_obtuse_vertex_b`; steal `522-j` / `522-m`; emit `FFFF1FFF2`; claim Bar 1; mint `522-n` / leftover `Ⅷ` |
+| `Ⅵ` | Same-cone certificate | #522-adjacent | research | Classified (QED). Chart: [`map-same-cone-cert.md`](map-same-cone-cert.md). Headline `RelateNGTouchSameCone.v : triangle_pair_regime_samecone`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(3,1)(1,3)`. Shared origin; remaining B verts have same-sign `side_dot` vs `nA = (2,2)`. Detector `RelateNGCore.v : same_cone_vertex_b` is both-strict-pos plus `negb` of both cones and of `mixed_cone_from_v` — not a remint of #572, leftover `Ⅱ`, or leftover `Ⅴ`. Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX (`RelateNGTouchSameCone.v : triangle_pair_regime_ccw_stop`), discharged QEX on an unnamed inside pair after leftover `Ⅶ`. Ticket 29 closed. | remint `cone_separates_b` / `mixed_cone_vertex_b`; steal `522-j` / `522-m`; emit `2FFF1FFF2`; claim Bar 1; mint `522-n` / `Ⅷ` |
+| `Ⅶ` | Lens certificate | #522-adjacent | research | Classified (QED). Chart: [`map-lens-cert.md`](map-lens-cert.md). Headline `RelateNGTouchLens.v : triangle_pair_regime_lens`. Pair `(0,0)(3,0)(0,3)` vs `(2,-1)(2,2)(-1,2)`. Both CCW; interiors meet; no shared vertex. Detector `RelateNGCore.v : lens_edges_cross_b` is a boolean proper-cross of some A-edge with some B-edge — not a remint of the noding-lane Prop `segments_proper_cross` or of `overlap_b`. Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX (`RelateNGTouchLens.v : triangle_pair_regime_ccw_stop`), discharged QEX on an unnamed inside pair. Ticket 30 closed. | remint `segments_proper_cross` / `overlap_b`; steal `522-j` / `522-m`; emit `2FFF1FFF2`; claim Bar 1; mint `522-n` / `Ⅷ` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -90,7 +93,8 @@ Value and priority are orthogonal.
 - Wire token + harness — #588 + #595. Decline vector was the T-junction;
   leftover `Ⅰ` moved `REGIME DECLINE` to obtuse-at-v; leftover `Ⅱ`
   moved it to mixed-cone; leftover `Ⅴ` moved it to same-cone;
-  leftover `Ⅵ` moved it to an unnamed lens.
+  leftover `Ⅵ` moved it to an unnamed lens; leftover `Ⅶ`
+  moved it to an unnamed inside pair.
 - Wrap-up — #596. Owner sign-off still required.
 - #567 DoD met; TouchEdge exclusivity carved on `main` via #597, not proved.
 - #589 wayfinder PR stays closed.
@@ -99,8 +103,8 @@ Value and priority are orthogonal.
   one-sided T (compiled pair; `Ⅲ∨Ⅳ` xor; two witnesses;
   fill token). `Ⅳ` = interior-side stem (compiled residue pair).
   `Ⅴ` is mixed-cone (classified). `Ⅵ` is same-cone (classified).
-  Completeness is an unnamed lens pair (not leftover `Ⅶ`).
-  `522-n` is not minted.
+  `Ⅶ` is the lens (classified). Completeness is an unnamed
+  inside pair (not leftover `Ⅷ`). `522-n` is not minted.
 
 ## Fog
 
@@ -129,9 +133,12 @@ Value and priority are orthogonal.
   Ticket 28 closed.
 - **`Ⅵ`** is compiled (QED). Chart: [`map-same-cone-cert.md`](map-same-cone-cert.md).
   Headline `RelateNGTouchSameCone.v : triangle_pair_regime_samecone`.
-  Ticket 29 closed. Epic #522 stop is QED ∨ QEX
-  (`RelateNGTouchSameCone.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed lens. Do not mint leftover `Ⅶ`.
+  Ticket 29 closed.
+- **`Ⅶ`** is compiled (QED). Chart: [`map-lens-cert.md`](map-lens-cert.md).
+  Headline `RelateNGTouchLens.v : triangle_pair_regime_lens`.
+  Ticket 30 closed. Epic #522 stop is QED ∨ QEX
+  (`RelateNGTouchLens.v : triangle_pair_regime_ccw_stop`),
+  discharged QEX on an unnamed inside pair. Do not mint leftover `Ⅷ`.
 
 ## Frontier
 
@@ -142,8 +149,10 @@ xor; fill stays `im_unsupported`. Leftover `Ⅴ` is classified
 (`RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`; QED).
 Leftover `Ⅵ` is classified
 (`RelateNGTouchSameCone.v : triangle_pair_regime_samecone`; QED).
-Epic #522 stop is QED ∨ QEX, discharged QEX on an unnamed lens
-(`RelateNGTouchSameCone.v : triangle_pair_regime_ccw_stop`).
+Leftover `Ⅶ` is classified
+(`RelateNGTouchLens.v : triangle_pair_regime_lens`; QED).
+Epic #522 stop is QED ∨ QEX, discharged QEX on an unnamed inside pair
+(`RelateNGTouchLens.v : triangle_pair_regime_ccw_stop`).
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
@@ -154,7 +163,8 @@ Epic #522 stop is QED ∨ QEX, discharged QEX on an unnamed lens
 Ⅳ ───── interior-side stem ── residue pair ── TPR_TouchOnesided (fill token)
 Ⅴ ─────── mixed-cone certificate ── classified ── TPR_MixedCone (fill token)
 Ⅵ ─────── same-cone certificate ── classified ── TPR_SameCone (fill token)
-unnamed ── lens pair after leftover Ⅵ ── live completeness cex
+Ⅶ ─────── lens certificate ── classified ── TPR_Lens (fill token)
+unnamed ── inside pair after leftover Ⅶ ── live completeness cex
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 
@@ -163,5 +173,5 @@ unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 parked ──── empty/empty
 
 522-n ── not minted
-Ⅶ ── unused ── do not mint
+Ⅷ ── unused ── do not mint
 ```

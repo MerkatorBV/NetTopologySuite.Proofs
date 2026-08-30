@@ -19,8 +19,8 @@
    pin is #570). After leftover Ⅴ. False on
    `classified_hard_pairs`, leftover Ⅰ, leftover Ⅱ, leftover Ⅲ,
    leftover Ⅳ, leftover Ⅴ, and the #567 contains pair.
-   Completeness stays false on an unnamed lens pair (not leftover
-   `Ⅶ`). #577 Green is completeness (QED) or a documented cex
+   Completeness stays false on an unnamed inside pair after leftover
+   `Ⅶ`. #577 Green is completeness (QED) or a documented cex
    (QEX). `triangle_pair_regime_ccw_stop` is that disjunction,
    discharged QEX. Leftover `Ⅵ` itself is QED
    (`leftover_vi_qed_or_qex`). `classify_triangle_pair` arm is
@@ -28,7 +28,7 @@
    mentions `TPR_SameCone` may be proved through
    `classify_triangle_pair`. Do not steal 522-j / 522-m / 522-f /
    522-i / leftover Ⅰ / leftover Ⅱ / leftover Ⅴ. Do not remint
-   `cone_separates_b`. Do not mint 522-n / `Ⅶ`. Do not remint
+   `cone_separates_b`. Do not mint 522-n / leftover `Ⅷ`. Do not remint
    aa_matrix_*.
 
    WITNESS topic: relate · claimId: Ⅵ · witness: Ⅵ-same-cone-cex
@@ -323,16 +323,16 @@ Proof.
 Qed.
 
 Theorem unnamed_ccw_still_unsupported :
-  triangle_pair_regime 0 0 3 0 0 3 2 (-1) 2 2 (-1) 2 = TPR_Unsupported.
+  triangle_pair_regime 1 1 2 1 1 2 0 0 4 0 0 4 = TPR_Unsupported.
 Proof.
   exact unnamed_ccw_pair_unsupported.
 Qed.
 
 (* Epic #522 / #577 stop: completeness (QED) or a documented CCW
-   unsupported pair (QEX). Discharged QEX — unnamed lens, not leftover
-   `Ⅶ`. Leftover-Ⅵ classify does not take the left. Not a 522-j
-   remint. *)
-(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed lens","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
+   unsupported pair (QEX). Discharged QEX — unnamed inside pair after
+   leftover `Ⅶ`. Leftover-Ⅵ classify does not take the left. Not a
+   522-j remint. *)
+(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed inside pair after leftover Ⅶ","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
 Theorem triangle_pair_regime_ccw_stop :
   (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
      0 < gdbl ax ay bx by_ cx cy ->
