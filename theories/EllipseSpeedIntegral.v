@@ -526,7 +526,7 @@ Proof.
         with ((8 * / 24) * (M * (xv * xv * xv))) by ring.
       replace (8 * / 24) with (2 * / 6).
       2:{ replace 24 with (4 * 6) by ring.
-          rewrite Rinv_mult; [| lra | lra].
+          rewrite Rinv_mult_distr; [| lra | lra].
           replace 8 with (2 * 4) by ring.
           rewrite <- Rmult_assoc.
           rewrite (Rmult_assoc 2 4 (/ 4)).
