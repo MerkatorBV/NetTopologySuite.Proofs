@@ -70,6 +70,10 @@
    is "expected 1 tactic" (7647e7b L529). Keep the [distr] name.
    [ring] does not see [s*2] as [s+s] (9b03bd6 L558). Expand
    [-s*2] as [-s + -s] via [replace 2 with (1+1)].
+   Final [ring] of [Hmid_s] after that expand still fails
+   (bfa07f0 L560 / 295a15b L567): leftover
+   [(s+t)+(-s+-s) = t-s] is not a flocq ring equation.
+   Close with [Rplus_comm] / [Rplus_assoc] / [Rplus_opp_r].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -229,6 +233,29 @@ Proof.
      - sin ((s + t) / 2 + (t - s) / 2)).
   - f_equal; [f_equal | f_equal]; field.
   - rewrite sin_minus, sin_plus. ring.
+Qed.
+
+(* Flocq [ring] refuses [(s+t)+(-s+-s) = t-s] (295a15b L567). *)
+Lemma half_sum_minus_left : forall s t,
+  (s + t) / 2 - s = (t - s) / 2.
+Proof.
+  intros s t.
+  unfold Rdiv, Rminus.
+  apply (Rmult_eq_reg_r 2); [| lra].
+  rewrite Rmult_plus_distr_r.
+  replace ((s + t) * / 2 * 2) with (s + t).
+  2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. apply Rmult_1_r. }
+  replace ((t + - s) * / 2 * 2) with (t + - s).
+  2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. apply Rmult_1_r. }
+  replace ((- s) * 2) with (- s + - s).
+  2:{ replace 2 with (1 + 1) by ring.
+      rewrite Rmult_plus_distr_l. rewrite Rmult_1_r. reflexivity. }
+  rewrite (Rplus_comm s t).
+  rewrite Rplus_assoc.
+  rewrite <- (Rplus_assoc s (- s) (- s)).
+  rewrite Rplus_opp_r.
+  rewrite Rplus_0_l.
+  reflexivity.
 Qed.
 
 Lemma cos_abs_le_1 : forall x, Rabs (cos x) <= 1.
@@ -553,22 +580,11 @@ Proof.
       with (Rabs (ellipse_speed rx ry s - ellipse_speed rx ry mid))
       by (apply Rabs_minus_sym).
     assert (Hmid_s : mid - s = xv).
-    { unfold mid, xv, gap.
-      apply (Rmult_eq_reg_r 2); [| lra].
-      unfold Rdiv.
-      rewrite Rmult_plus_distr_r.
-      replace ((s + t) * / 2 * 2) with (s + t).
-      2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. ring. }
-      replace ((t - s) * / 2 * 2) with (t - s).
-      2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. ring. }
-      replace (- s * 2) with (- s + - s).
-      2:{ replace 2 with (1 + 1) by ring.
-          rewrite Rmult_plus_distr_l. rewrite Rmult_1_r. reflexivity. }
-      ring. }
+    { unfold mid, xv, gap. apply half_sum_minus_left. }
     assert (Hs_mid : s <= mid).
     { apply (Rplus_le_reg_r (- s)).
-      replace (s + - s) with 0 by ring.
-      replace (mid + - s) with (mid - s) by ring.
+      rewrite Rplus_opp_r.
+      replace (mid + - s) with (mid - s) by (unfold Rminus; reflexivity).
       rewrite Hmid_s. exact Hxv0. }
     pose proof (ellipse_speed_holder rx ry s mid Hs_mid) as Hh.
     eapply Rle_trans; [exact Hh |].
