@@ -19,9 +19,7 @@
      uniformly_continuous_on σ
      increment_squeezed F σ     (F increment is squeezed by any pair of
                                  σ-bounds — the integral remainder, MVT or
-                                 Riemann, without constructing � (F increment is squeezed by any pair of
-                                 σ-bounds — the integral remainder, MVT or
-                                 Riemann, without constructing ∫)
+                                 Riemann, without constructing an integral)
      chord_rate_tight g σ       (on fine gaps the chord is within ε of
                                  σ(left)·gap — first-order speed)
 
@@ -66,6 +64,9 @@ Local Open Scope R_scope.
 (* Premise pack.                                                              *)
 (* -------------------------------------------------------------------------- *)
 
+(* One-sided on the window: the modulus is stated for `s ≤ t` only.
+   Enough for a packed increment on [a, b]. 508-d must not reuse this
+   as a two-sided modulus. *)
 Definition uniformly_continuous_on (f : R -> R) (a b : R) : Prop :=
   forall eps, 0 < eps ->
     exists d, 0 < d /\
@@ -338,6 +339,38 @@ Proof.
   lra.
 Qed.
 
+(* Named combination: dist ≤ polyline ≤ Riemann + ε·span ≤ ΔF + 2ε·span.
+   Do not fold this into a 12-hypothesis lra after INR / field rewrites —
+   the flocq container could not find that witness. *)
+Lemma dist_le_dF_plus_two_eps_span :
+  forall dgt poly riemann dF eps span,
+    dgt <= poly ->
+    poly <= riemann + eps * span ->
+    riemann <= dF + eps * span ->
+    dgt <= dF + (2 * eps) * span.
+Proof.
+  intros dgt poly riemann dF eps span Htri Hpl Hri.
+  apply (Rle_trans dgt poly (dF + (2 * eps) * span)); [exact Htri|].
+  apply (Rle_trans poly (riemann + eps * span) (dF + (2 * eps) * span));
+    [exact Hpl|].
+  replace (dF + (2 * eps) * span) with (dF + eps * span + eps * span)
+    by ring.
+  apply Rplus_le_compat_r. exact Hri.
+Qed.
+
+Lemma slack_half_contradiction :
+  forall dgt dF span,
+    0 < span ->
+    dF < dgt ->
+    dgt <= dF + (2 * ((dgt - dF) / (4 * span))) * span ->
+    False.
+Proof.
+  intros dgt dF span Hspan Hgt Happrox.
+  replace (2 * ((dgt - dF) / (4 * span)) * span)
+    with ((dgt - dF) / 2) in Happrox by (field; lra).
+  lra.
+Qed.
+
 Lemma speed_integral_chord_modulus :
   forall (g : Curve) (σ F : R -> R) a b,
     speed_integral_premises g σ F a b ->
@@ -384,18 +417,23 @@ Proof.
     pose proof (dist_le_uniform_polyline g (S n0) s h) as Htri.
     rewrite Hend in Hri, Hpl, Htri.
     rewrite Hnh in Hri, Hpl.
-    lra. }
+    exact (dist_le_dF_plus_two_eps_span
+             (dist (g s) (g t))
+             (polyline_len g s (uniform_tail s h (S n0)))
+             (riemann_sum σ s (uniform_tail s h (S n0)) t
+                (left_tags s (uniform_tail s h (S n0))))
+             (F t - F s) eps (t - s) Htri Hpl Hri). }
   destruct (Rle_dec (dist (g s) (g t)) (F t - F s)) as [Hok | Hbad].
   { exact Hok. }
   exfalso.
   set (slack := dist (g s) (g t) - (F t - F s)).
   assert (Hsl : 0 < slack) by (unfold slack; lra).
   set (eps := slack / (4 * (t - s))).
-  assert (Heps : 0 < eps).
-  { unfold eps. apply Rdiv_lt_0_compat; lra. }
+  assert (Heps : 0 < eps) by (unfold eps; apply Rdiv_lt_0_compat; lra).
   specialize (Happrox eps Heps).
-  unfold slack, eps in *.
-  lra.
+  unfold slack, eps in Happrox.
+  apply (slack_half_contradiction (dist (g s) (g t)) (F t - F s) (t - s));
+    [lra | lra | exact Happrox].
 Qed.
 
 (* WITNESS {"claimId":"508-c","topic":"metric","lemma":"speed_integral_is_curve_length","title":"Speed-integral premises imply metric length F b - F a","file":"theories/SpeedIntegral.v","witness":"508-c-speed-integral","board":"#561"} *)
