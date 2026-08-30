@@ -46,6 +46,11 @@ theories/EllipseLength.v
 # envelope).  General elliptic-E integrand is named (speed² sandwich) and
 # remains parked.  No closed form invented.  3-axiom.
 theories/EllipseLength_E.v
+# #508-d / #563: instantiate SpeedIntegral on the ellipse. UC of
+# ellipse_speed (Hölder 1/2) and chord_rate_tight are discharged.
+# increment_squeezed E σ stays the Technique-park primitive — Route 1
+# does not construct RInt. Witness: 3×4 quarter sandwich.  3-axiom.
+theories/EllipseSpeedIntegral.v
 # #508 Bezier rung 1: the cubic Bezier parameterization (oracle B token)
 # against the CurveLength spec.  Degree-elevation exactness (Bible A1) as an
 # is_curve_length iff, and the control-net Lipschitz upper bound

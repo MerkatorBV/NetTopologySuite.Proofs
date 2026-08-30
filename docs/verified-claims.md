@@ -1732,3 +1732,19 @@ This letter does not retire epic 508 (that is #566).
 |---|---|---|
 | `SpeedIntegral.v : speed_integral_is_curve_length` (+ `speed_integral_chord_modulus`, `speed_integral_tightness`, `increment_squeezed_const`, `constant_speed_premises`, `riemann_sum`, `tagged_chain`) | **Speed-integral pack (#508/#561, claimId: 508-c, witness: 508-c-speed-integral):** `speed_integral_premises g σ F a b` (UC of σ, F increment squeezed by σ-bounds, first-order chord-rate) implies `is_curve_length g a b (F b − F a)` via `curve_length_of_primitive`. Tagged partitions and left-endpoint Riemann sums are first-class. Route 1; no Heine–Cantor, no Coquelicot. Does not retire epic 508 `[exact]` | 3 |
 | `SpeedIntegral.v : arc_quarter_via_speed_integral` (+ `arc_r_theta_via_speed_integral`, `arc_speed_matches_envelope`, `circle_chord_rate`) | **Quarter-circle second path:** `circle_param O r` on `[0, π/2]` has metric length `r·π/2` through the pack (speed constantly `r`); uniqueness agrees with the envelope headline `[exact]` | 3 |
+
+## Issue #508 — elliptic-E pack instance (`EllipseSpeedIntegral.v`) <!-- feat:arc-len geom:arc -->
+
+#563 / claimId `508-d` instantiates the #561 pack on the ellipse speed
+`√(rx² sin² t + ry² cos² t)`. Uniform continuity and first-order
+chord-rate are discharged. `increment_squeezed E σ` remains the
+Technique-park primitive — Route 1 does not construct `RInt`. The
+`H_E_*` Section in `EllipseLength_E.v` is intact. Does not retire
+epic 508 (that is #566). Does not remint SpeedIntegral.
+
+**NTS RGR Board catalog (#508 children).** `508-d` = #563 / elliptic-E pack instance (witness `508-d-elliptic-e`). Headline `EllipseSpeedIntegral.v : ellipse_speed_integral_is_curve_length`. Instance `ellipse_34_quarter_E_sandwich`. Board pointer stays #563. `508-a` = #559, `508-b` = #560, and `508-c` = #561 are on `main`. Remaining children `508-e` `508-f` `508-g` `508-h` are not this letter.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `EllipseSpeedIntegral.v : ellipse_speed_integral_is_curve_length` (+ `ellipse_speed_uc`, `ellipse_chord_rate`, `ellipse_speed_bounds`, `ellipse_chord_eq_speed`) | **Elliptic pack instance (#508/#563, claimId: 508-d, witness: 508-d-elliptic-e):** `increment_squeezed E (ellipse_speed rx ry) a b` implies `is_curve_length (ellipse_param …) a b (E b − E a)`. UC is Hölder 1/2; chords equal `2|sin(gap/2)|·σ(mid)`. No Heine–Cantor, no Coquelicot. Does not retire epic 508 `[exact]` / `[conditional]` | 3 |
+| `EllipseSpeedIntegral.v : ellipse_34_quarter_E_sandwich` (+ `ellipse_E_increment_sandwich`, `ellipse_34_quarter_via_speed_integral`) | **3×4 quarter witness:** any squeezed E-increment on `[0, π/2]` lies in `[3π/2, 4π/2]`; the same E is a metric length through the pack `[exact]` / `[conditional]` | 3 |
