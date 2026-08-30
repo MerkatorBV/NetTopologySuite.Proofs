@@ -130,6 +130,8 @@ Park: **research** (ADR-0002). The finding is compiled; the detector is not.
 - **`ⅠⅠ`.** Obtuse-at-v. Finding
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Do not invent that detector in leftover `Ⅰ`.
+- **Grill.** [`map-tjunction-grill.md`](map-tjunction-grill.md). Leftover
+  `Ⅰ` is specified; #609 is faithful; CONTEXT Bar 1 is not met.
 - **Constructor vs reuse `TPR_TouchEdge`.** Technique, not this map.
 - **Fill.** Geometry of the kiss is areal Touches with BB dim 1. The
   designated TouchEdge pin is still `FFFF1FFF2`. Remint is a different

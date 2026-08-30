@@ -56,7 +56,7 @@ Value and priority are orthogonal.
 
 | Id | Leftover | Kind | Park | Status | Do not |
 |---|---|---|---|---|---|
-| `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Named. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Finding `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. | invent the detector; steal `522-j` / `522-m`; bucket obtuse under `Ⅰ` |
+| `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Named. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Grill: [`map-tjunction-grill.md`](map-tjunction-grill.md). Finding `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. Bar 1 in flight #609; not CONTEXT Bar 1. | restage the detector; steal `522-j` / `522-m`; bucket obtuse under `Ⅰ`; treat #609 as CONTEXT Bar 1 |
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
 | `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
@@ -77,6 +77,9 @@ Value and priority are orthogonal.
 - #589 wayfinder PR stays closed.
 - Leftover ids switch to repeated `Ⅰ` marks. `Ⅰ` = T-junction kiss.
   `ⅠⅠ` = obtuse-at-v. `522-n` is not minted.
+- Leftover `Ⅰ` grill — [`map-tjunction-grill.md`](map-tjunction-grill.md).
+  Spec holds. #609 is faithful. CONTEXT Bar 1 is not met
+  (`RelateNGDisjoint.v : tjunction_pair_unsupported` on `main`).
 
 ## Fog
 
@@ -98,6 +101,7 @@ detector. `/implement` of either is a later letter.
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
 
 Ⅰ ──────── T-junction / partial-edge kiss ── research ── finding #577
+           grill map-tjunction-grill.md ── not CONTEXT Bar 1
 ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f

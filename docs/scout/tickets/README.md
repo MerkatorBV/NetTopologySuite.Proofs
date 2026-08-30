@@ -48,7 +48,7 @@ Order of work: top-down from #64, with the freebie first.
 **Related living maps.** The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
-`/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss. Leftover `ⅠⅠ` is
+`/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss ([`map-tjunction-cert.md`](../map-tjunction-cert.md); grill [`map-tjunction-grill.md`](../map-tjunction-grill.md)). Leftover `ⅠⅠ` is
 the obtuse-at-v certificate. Sibling #523 alphabet grill:
 [`docs/scout/map-523.md`](../map-523.md). Takeable spec:
 [`docs/scout/spec-523.md`](../spec-523.md). Alphabet letter landed:
