@@ -90,6 +90,8 @@
    Flocq [sqrt_le_1] is [sqrt x <= sqrt y], not [sqrt x <= eps/2]
    (dd4f28a L699). Rewrite [eps/2] as [sqrt (Rsqr (eps/2))] via
    [sqrt_Rsqr] first (already [0 <= x -> sqrt (x²) = x]).
+   After that the second [sqrt_le_1] arm is [0 <= Rsqr (eps/2)],
+   not [0 <= eps/2] (afa1be1 L711). [apply Rle_0_sqr].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -707,9 +709,9 @@ Proof.
         -- apply Rmult_le_pos; [exact HK |].
            unfold Rdiv. apply Rmult_le_pos; [exact Hgap0 |].
            apply Rlt_le, Rinv_0_lt_compat. lra.
-        -- unfold Rdiv. apply Rmult_le_pos; [apply Rmult_le_pos; lra |].
-           apply Rlt_le, Rinv_0_lt_compat. lra.
-        -- assert (Hgd1 : gap < d1).
+        -- apply Rle_0_sqr.
+        -- unfold Rsqr.
+           assert (Hgd1 : gap < d1).
            { unfold gap. eapply Rlt_le_trans; [exact Hdt |].
              unfold delta.
              eapply Rle_trans; [apply Rmin_r | apply Rmin_l]. }
