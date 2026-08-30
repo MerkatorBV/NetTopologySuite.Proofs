@@ -361,7 +361,7 @@ static class Program
                     Hit("OK", $"SIMPLE/{v.Name}", $"oracle={oOut}; nts fail-closed (contract)");
                 else
                     Hit("BUG", $"SIMPLE/{v.Name}",
-                        $"oracle={oOut}; nts answered {nts} but the multi-segment case must stay fail-closed");
+                        $"oracle={oOut}; nts answered {nts} but this row's contract is fail-closed");
             }
         }
 
