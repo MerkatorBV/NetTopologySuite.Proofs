@@ -54,6 +54,9 @@
    [apply Req_le] on [1+1 <= ?b] instantiates [?b] as [1+1]
    (974266b L302, leftover [(t-s)*(IPR 1 + IPR 1)]). Assert
    [Rabs (sin t + sin s) <= 2] with a concrete conclusion.
+   [holder_window_lt] first arm [lra] cannot witness
+   [K*gap < (K+1)*gap] when [gap] may be 0 (1480ac6 L335).
+   Split [gap = 0]; cancel [/(K+1)] with [Rinv_r].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -331,14 +334,26 @@ Lemma holder_window_lt : forall K gap eps,
   K * gap < eps * eps.
 Proof.
   intros K gap eps HK Hg Heps Hdt.
-  apply (Rlt_le_trans (K * gap) ((K + 1) * gap) (eps * eps)).
-  - rewrite Rmult_plus_distr_r. lra.
-  - apply (Rmult_le_reg_r (/ (K + 1))).
-    + apply Rinv_0_lt_compat. lra.
-    + replace ((K + 1) * gap * / (K + 1)) with gap by (field; lra).
-      replace (eps * eps * / (K + 1)) with (eps * eps / (K + 1))
-        by (unfold Rdiv; ring).
-      apply Rlt_le. exact Hdt.
+  destruct (Req_dec gap 0) as [Hg0 | Hgnz].
+  - rewrite Hg0. rewrite Rmult_0_r.
+    apply Rmult_lt_0_compat; [exact Heps | exact Heps].
+  - assert (Hgp : 0 < gap).
+    { destruct Hg as [Hlt | Heq]; [exact Hlt |].
+      destruct Hgnz. symmetry. exact Heq. }
+    apply (Rlt_le_trans (K * gap) ((K + 1) * gap) (eps * eps)).
+    + rewrite Rmult_plus_distr_r. rewrite Rmult_1_l.
+      rewrite <- (Rplus_0_r (K * gap)) at 1.
+      apply Rplus_lt_compat_l. exact Hgp.
+    + apply (Rmult_le_reg_r (/ (K + 1))).
+      * apply Rinv_0_lt_compat. lra.
+      * replace ((K + 1) * gap * / (K + 1)) with gap.
+        2:{ rewrite (Rmult_comm (K + 1)).
+            rewrite Rmult_assoc.
+            rewrite Rinv_r by lra.
+            rewrite Rmult_1_r. reflexivity. }
+        replace (eps * eps * / (K + 1)) with (eps * eps / (K + 1))
+          by (unfold Rdiv; reflexivity).
+        apply Rlt_le. exact Hdt.
 Qed.
 
 Lemma ellipse_speed_uc : forall rx ry a b,
