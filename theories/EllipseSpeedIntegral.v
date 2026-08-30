@@ -285,8 +285,8 @@ Proof.
       pose proof (SIN_bound s) as HsB.
       replace 2 with (1 + 1) by ring.
       apply Rplus_le_compat.
-      + apply Rabs_le. exact HtB.
-      + apply Rabs_le. exact HsB.
+      * apply Rabs_le. exact HtB.
+      * apply Rabs_le. exact HsB.
   - rewrite (Rabs_right (t - s)) by lra.
     replace (2 * Rabs (rx * rx - ry * ry) * (t - s))
       with (Rabs (rx * rx - ry * ry) * (2 * (t - s))) by ring.
