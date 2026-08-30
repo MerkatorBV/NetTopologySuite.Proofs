@@ -79,6 +79,12 @@ Proof. apply sqrt_lt_R0. lra. Qed.
 Lemma sqrt2_gt_1 : 1 < sqrt 2.
 Proof. rewrite <- sqrt_1. apply sqrt_lt_1; lra. Qed.
 
+Lemma sqrt2_lt_2 : sqrt 2 < 2.
+Proof.
+  rewrite <- (sqrt_square 2) at 2 by lra.
+  apply sqrt_lt_1; lra.
+Qed.
+
 Lemma sqrt2_neq_0 : sqrt 2 <> 0.
 Proof. apply Rgt_not_eq, sqrt2_pos. Qed.
 
@@ -147,8 +153,8 @@ Proof.
   unfold golden_w1.
   apply (Rmult_le_reg_r 2); [lra |].
   unfold Rdiv. rewrite Rmult_assoc, Rinv_l, Rmult_1_r by lra.
-  rewrite <- (sqrt_square 2) at 2 by lra.
-  apply sqrt_le_1; lra.
+  rewrite Rmult_1_l.
+  apply Rlt_le, sqrt2_lt_2.
 Qed.
 
 Lemma golden_den_pos : forall t,
@@ -187,8 +193,8 @@ Proof.
   set (a := atan x).
   assert (Htan : tan a = x) by (unfold a; apply tan_atan).
   assert (Hcos : 0 < cos a).
-  { pose proof (atan_bound x) as Hb. unfold a.
-    apply cos_gt_0; lra. }
+  { unfold a. pose proof (atan_bound x) as [Hb1 Hb2].
+    apply cos_gt_0; assumption. }
   assert (Hcos0 : cos a <> 0) by lra.
   rewrite cos_2a.
   replace (cos a * cos a - sin a * sin a)
@@ -208,8 +214,8 @@ Proof.
   set (a := atan x).
   assert (Htan : tan a = x) by (unfold a; apply tan_atan).
   assert (Hcos : 0 < cos a).
-  { pose proof (atan_bound x) as Hb. unfold a.
-    apply cos_gt_0; lra. }
+  { unfold a. pose proof (atan_bound x) as [Hb1 Hb2].
+    apply cos_gt_0; assumption. }
   assert (Hcos0 : cos a <> 0) by lra.
   rewrite sin_2a.
   replace (2 * sin a * cos a)
