@@ -323,6 +323,8 @@ Proof.
   exact encode_wire_unsupported.
 Qed.
 
+(* TPR_TouchPartialEdge is classified but fill is still the token.
+   Keep it excluded so a matrix decode cannot swallow leftover Ⅰ. *)
 Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_Unsupported ->
   r <> TPR_TouchPartialEdge ->

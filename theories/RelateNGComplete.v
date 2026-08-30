@@ -64,20 +64,20 @@ Import ListNotations.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
-(* Compiled cex: T-junction / partial-edge kiss.                              *)
+(* Historical 522-j pair: T-junction / partial-edge kiss.                     *)
 (*                                                                            *)
-(* A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1).  Both gdbl = 2.  No shared      *)
-(* vertex, no full shared edge, no separating edge.  The pin itself lives     *)
-(* in RelateNGDisjoint (`tjunction_pair_unsupported`); this module records    *)
-(* that the pair is inside the ticket's nondegenerate-CCW domain.             *)
+(* A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1).  Both gdbl = 2.  Leftover `Ⅰ`   *)
+(* classifies this pair as `TPR_TouchPartialEdge`.  The live completeness    *)
+(* cex is obtuse-at-v (leftover `ⅠⅠ` / 522-m) below.                          *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma tjunction_pair_both_ccw :
   0 < gdbl 0 0 2 0 0 1 /\ 0 < gdbl 1 0 3 0 2 1.
 Proof. unfold gdbl; split; lra. Qed.
 
-(* 522-j recorded this pair as the decline cex. Leftover Ⅰ classifies
-   it. Live completeness cex is obtuse (522-m). *)
+(* Historical name. 522-j recorded this pair as Unsupported. Leftover Ⅰ
+   classifies it. Live 522-j / 522-m seed is
+   triangle_pair_regime_ccw_incomplete (obtuse). *)
 Theorem triangle_pair_regime_incomplete_tjunction :
   0 < gdbl 0 0 2 0 0 1 /\
   0 < gdbl 1 0 3 0 2 1 /\
@@ -206,8 +206,8 @@ Proof.
   exact (touch_vertex_b_false_of_non_ccw _ _ _ _ _ _ _ _ _ _ _ _ H).
 Qed.
 
-(* Next certificate specs (not invented here): T-junction / partial-edge
-   kiss, and obtuse-at-v.  Five names remain not a partition. *)
+(* Leftover Ⅰ classified the T-junction. Obtuse-at-v (leftover ⅠⅠ)
+   is still not invented. Five names remain not a partition. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Filtered-hypothesis retry (#522 claimId 522-m).                            *)

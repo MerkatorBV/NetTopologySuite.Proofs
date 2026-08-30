@@ -16,7 +16,9 @@
    macro: relate
    lane: proofs
    issue: leftover Ⅰ / #522
-   ADR-0004: not a remint.
+   ADR-0004: leftover numerals stay off the 522-* board catalog
+   (not a partial mint). JSON blob on the headline is the leftover
+   tag. Not requesting mutation pins this letter.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
