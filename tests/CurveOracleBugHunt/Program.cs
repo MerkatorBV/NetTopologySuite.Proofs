@@ -369,6 +369,58 @@ static class Program
             }
         }
 
+        Console.WriteLine("=== HOLES_DISJOINT vs NTS ring-pair validity (615-h rung 4: #639) ===");
+        // The lane classifies two RING REGIONS: DISJOINT, boundary meet
+        // ("NOT_DISJOINT CROSS iA iB x y"), or nesting (A_IN_B / B_IN_A).
+        // The NTS side probes IsValid on a value composed from the same
+        // rings. Semantics note: the oracle's NOT_DISJOINT covers ANY
+        // boundary meet or nesting, while the NTS rules implemented this
+        // rung refute a CurvePolygon ring pair only at >= 2 boundary
+        // contacts or a shared 1-D piece (8.2.1 Desc 11), and a
+        // MultiSurface element pair only at a shared 1-D piece (4.2.27
+        // permits finitely many POINT contacts) -- one contact and pure
+        // nesting stay fail-closed pending the containment machinery
+        // (ticket 615-h continuation, #641). OracleExpected is a verdict
+        // PREFIX: CROSS rows carry indices and a hex-float point after it.
+        foreach (var v in Cases.HolesDisjoint)
+        {
+            string stdin = $"HOLES_DISJOINT\n{v.SegsA.Length}\n" + string.Join("\n", v.SegsA)
+                + $"\n{v.SegsB.Length}\n" + string.Join("\n", v.SegsB) + "\n";
+            string oOut;
+            try { oOut = Oracle.Run(stdin); }
+            catch (Exception ex) { Hit("FAIL", $"HOLES/{v.Name}", $"oracle: {ex.Message}"); continue; }
+
+            if (!oOut.StartsWith(v.OracleExpected, StringComparison.Ordinal))
+            {
+                Hit("FAIL", $"HOLES/{v.Name}", $"oracle={oOut} (exp prefix {v.OracleExpected})");
+                continue;
+            }
+
+            var g = v.Geometry(gf);
+            bool? nts;
+            try { nts = g.IsValid; }
+            catch (NotSupportedException) { nts = null; }
+
+            if (v.NtsExpected is bool expected)
+            {
+                if (nts == expected)
+                    Hit("OK", $"HOLES/{v.Name}", $"oracle={oOut} nts_isvalid={nts}");
+                else
+                    Hit("BUG", $"HOLES/{v.Name}",
+                        $"oracle={oOut} nts_isvalid={(object?)nts ?? "throw"} (exp {expected})");
+            }
+            else
+            {
+                // Fail-closed contract rows: the frontier past Desc 11 /
+                // the 1-D boundary rule (containment, interiors-disjoint).
+                if (nts is null)
+                    Hit("OK", $"HOLES/{v.Name}", $"oracle={oOut}; nts fail-closed (contract)");
+                else
+                    Hit("BUG", $"HOLES/{v.Name}",
+                        $"oracle={oOut}; nts answered {nts} but this row's contract is fail-closed");
+            }
+        }
+
         Console.WriteLine();
         Console.WriteLine($"SUMMARY\tok={ok}\twarn={warns}\tbug_or_fail={fails}");
         return fails > 0 ? 1 : 0;
@@ -584,6 +636,86 @@ static class Cases
     };
 
     /// <summary>
+    /// HOLES_DISJOINT vectors (Proofs #615 ticket 615-h, #639 rung 4). SegsA
+    /// and SegsB are the two rings on the oracle wire; Geometry composes the
+    /// same rings into the NTS value whose IsValid is probed (a CurvePolygon
+    /// shell+hole, or a two-element MultiSurface). NtsExpected: a bool for a
+    /// decided verdict, null for the fail-closed contract (the #641
+    /// frontier: one-contact tangency, containment/nesting, and the
+    /// interiors-disjoint condition).
+    /// </summary>
+    public static readonly (string Name, string[] SegsA, string[] SegsB, string OracleExpected, bool? NtsExpected, Func<GeometryFactory, Geometry> Geometry)[] HolesDisjoint =
+    {
+        // Two proper crossings between shell and hole: >= 2 contacts, so
+        // 8.2.1 Desc 11 gives definite false.
+        ("cp_hole_crosses_shell",
+            new[] { "A 0 0 2 2 4 0", "A 4 0 2 -2 0 0" },
+            new[] { "A 3 1 5 3 7 1", "A 7 1 5 -1 3 1" },
+            "NOT_DISJOINT CROSS", false,
+            gf => new CurvePolygon(Cs(gf, (0, 0), (2, 2), (4, 0), (2, -2), (0, 0)),
+                new Curve[] { Cs(gf, (3, 1), (5, 3), (7, 1), (5, -1), (3, 1)) }, gf)),
+        // Internal tangency at (4,0): the oracle reports the boundary meet;
+        // ONE contact passes Desc 11, and Desc 12-14 stay fail-closed.
+        ("cp_hole_tangent_internal",
+            new[] { "A 0 0 2 2 4 0", "A 4 0 2 -2 0 0" },
+            new[] { "A 2 0 3 1 4 0", "A 4 0 3 -1 2 0" },
+            "NOT_DISJOINT CROSS", null,
+            gf => new CurvePolygon(Cs(gf, (0, 0), (2, 2), (4, 0), (2, -2), (0, 0)),
+                new Curve[] { Cs(gf, (2, 0), (3, 1), (4, 0), (3, -1), (2, 0)) }, gf)),
+        // Hole region fully outside the shell: zero contacts -- hole-inside-
+        // shell containment is the #641 frontier, so NTS stays fail-closed
+        // where the oracle answers DISJOINT.
+        ("cp_hole_far_outside",
+            new[] { "A 0 0 2 2 4 0", "A 4 0 2 -2 0 0" },
+            new[] { "A 10 0 12 2 14 0", "A 14 0 12 -2 10 0" },
+            "DISJOINT", null,
+            gf => new CurvePolygon(Cs(gf, (0, 0), (2, 2), (4, 0), (2, -2), (0, 0)),
+                new Curve[] { Cs(gf, (10, 0), (12, 2), (14, 0), (12, -2), (10, 0)) }, gf)),
+        // Proper nesting with no boundary contact (the legal hole shape):
+        // the oracle certifies B_IN_A; NTS cannot yet confirm containment,
+        // so the row's contract is the fail-closed throw. The inner ring
+        // sits off-axis so the lane's nesting ray cast does not pass
+        // through an outer-ring vertex.
+        ("cp_hole_nested_offaxis",
+            new[] { "A 0 0 2 2 4 0", "A 4 0 2 -2 0 0" },
+            new[] { "A 1 0.2 2 1.2 3 0.2", "A 3 0.2 2 -0.8 1 0.2" },
+            "NOT_DISJOINT B_IN_A", null,
+            gf => new CurvePolygon(Cs(gf, (0, 0), (2, 2), (4, 0), (2, -2), (0, 0)),
+                new Curve[] { Cs(gf, (1, 0.2), (2, 1.2), (3, 0.2), (2, -0.8), (1, 0.2)) }, gf)),
+        // Two surface elements whose boundaries share the whole upper
+        // semicircle (a 1-D piece): 4.2.27 definite false on the
+        // MultiSurface (the exactly-cocircular kernel path).
+        ("ms_shared_arc",
+            new[] { "A 0 0 1 1 2 0", "A 2 0 1 -1 0 0" },
+            new[] { "A 0 0 1 1 2 0", "C 2 0 0 0" },
+            "NOT_DISJOINT CROSS", false,
+            gf => new MultiSurface(new Geometry[]
+            {
+                new CurvePolygon(Cs(gf, (0, 0), (1, 1), (2, 0), (1, -1), (0, 0)), gf),
+                new CurvePolygon(new CompoundCurve(new Curve[]
+                {
+                    Cs(gf, (0, 0), (1, 1), (2, 0)),
+                    gf.CreateLineString(new[] { new Coordinate(2, 0), new Coordinate(0, 0) }),
+                }, gf), gf),
+            }, gf)),
+        // Classical squares sharing a full edge: the same 1-D rule through
+        // the chord-chord path.
+        ("ms_shared_edge_squares",
+            new[] { "C 0 0 4 0", "C 4 0 4 4", "C 4 4 0 4", "C 0 4 0 0" },
+            new[] { "C 4 0 8 0", "C 8 0 8 4", "C 8 4 4 4", "C 4 4 4 0" },
+            "NOT_DISJOINT CROSS", false,
+            gf => new MultiSurface(new Geometry[] { Sq(gf, 0, 0, 4), Sq(gf, 4, 0, 4) }, gf)),
+        // Corner touch: a POINT contact is permitted boundary contact under
+        // 4.2.27, and the interiors-disjoint condition is the #641
+        // frontier -- fail-closed, never an unchecked verdict either way.
+        ("ms_corner_touch_squares",
+            new[] { "C 0 0 4 0", "C 4 0 4 4", "C 4 4 0 4", "C 0 4 0 0" },
+            new[] { "C 4 4 8 4", "C 8 4 8 8", "C 8 8 4 8", "C 4 8 4 4" },
+            "NOT_DISJOINT CROSS", null,
+            gf => new MultiSurface(new Geometry[] { Sq(gf, 0, 0, 4), Sq(gf, 4, 4, 4) }, gf)),
+    };
+
+    /// <summary>
     /// ENVELOPE_UNIFIED golden vectors (Proofs #615 ticket 615-e), mirroring
     /// the fork's CurveMetricsTests envelope contracts.
     /// </summary>
@@ -626,6 +758,14 @@ static class Cases
         for (int i = 0; i < pts.Length; i++) coords[i] = new Coordinate(pts[i].x, pts[i].y);
         return new CircularString(gf.CoordinateSequenceFactory.Create(coords), gf);
     }
+
+    private static Polygon Sq(GeometryFactory gf, double x, double y, double s) =>
+        gf.CreatePolygon(new[]
+        {
+            new Coordinate(x, y), new Coordinate(x + s, y),
+            new Coordinate(x + s, y + s), new Coordinate(x, y + s),
+            new Coordinate(x, y),
+        });
 
     public static readonly (string Name, int ArcIdx, double Px, double Py)[] DistQueries =
     {
