@@ -16,15 +16,15 @@ witness: none
 
 ## Destination
 
-**Name the #577 finding pair as the next certificate's specification, without
-inventing the certificate.**
+**Confirm leftover `Ⅰ` is the #577 kiss pair. Do not invent a second
+detector, and do not invent leftover `ⅠⅠ`.**
 
 Ticket #577 asked either completeness or a documented counterexample that
 becomes the next certificate's spec. Completeness is false
 (`RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`). The
-compiled pair is the spec. This map charts what that spec is, what it is
-not, and what `/implement` of leftover `Ⅰ` must not steal. It does **not**
-write a detector. `/implement` of `Ⅰ` is a later letter.
+compiled pair is the spec. Research #599 named it. This letter re-charts
+the spec against `main` and the in-flight bar-1 letter (#609). It does
+**not** write a detector. Bar 1 is not on `main`.
 
 ## The pair (the spec)
 
@@ -70,15 +70,18 @@ Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 | `separated_b` | `RelateNGDisjoint.v : tjunction_no_separator` — no supporting edge is vertex-strict. |
 | `touch_vertex_b` | `exactly_one_shared_from_a` is false (no shared vertex). |
 
-Compiled decline: `RelateNGDisjoint.v : tjunction_pair_unsupported`.
+Compiled decline on `main`: `RelateNGDisjoint.v : tjunction_pair_unsupported`.
 No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predicate`.
+Bar 1 in flight as #609 (CI green, not on `main`) classifies this pair
+`TPR_TouchPartialEdge` and keeps the fill `im_unsupported`. Do not cite
+that constructor from this tree.
 
 ## Nearby pairs that are **not** this leftover
 
 | Pair | What it is | Do not |
 |---|---|---|
 | `(0,0)(1,0)(0,1)` vs `(2,0)(3,0)(2,1)` | #530 / #571 sentinel. Classified **disjoint**. | treat as the decline golden |
-| `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)` | Obtuse-at-v. `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Shared vertex; cone `side_dot = 0`. | bucket under one letter |
+| `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)` | Leftover `ⅠⅠ` obtuse-at-v. `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Shared vertex; cone `side_dot = 0`. Chart: #611. | bucket under one letter |
 | `(0,0)(1,0)(0,1)` vs `(2,0)(2,1)(3,0)` | RelatePrepared decline 12-tuple. B is **CW** (`gdbl < 0`). Domain-boundary, not the kiss. | use as the T-junction spec |
 | Line×line int×bnd | `RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`. #67 / S15d. IB dim-0. | steal as the triangle certificate |
 | Full shared edge `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | Frozen `TPR_TouchEdge` pin. | widen `shares_edge_b` to absorb the kiss |
@@ -87,68 +90,73 @@ A **non-collinear** vertex-in-open-edge T (BB dim 0) is not compiled.
 If a later letter wants that family, it is a **third** leftover, not this
 one.
 
-## If `/implement Ⅰ` is asked — implement rungs (not this map)
+## If `/implement Ⅰ` is asked again — do not restage
 
-Park: **research** (ADR-0002). The finding is compiled; the detector is not.
+Park: **research** (ADR-0002). Bar 1 is already the letter #609.
 
-1. **Detector, not a remint.** A new boolean (working name only:
-   `touch_partial_edge_b`) that is true on this 12-tuple and false on the
-   four wired hard pairs (`classified_hard_pairs`). Do **not** widen
-   `shares_edge_b` / `touch_edge_b`. That vocab is the frozen TouchEdge
-   leftover (#597 carve). Do **not** remint `aa_matrix_*` pins.
-2. **Constructor is an owner call.** Reuse `TPR_TouchEdge` vs add a
-   constructor. Reuse inherits fill `FFFF1FFF2` (`aa_matrix_touch_vertical`)
-   and fights TouchEdge exclusivity. A new constructor can stay on
-   `im_unsupported` until a fill is named. This map does not pick.
-3. **Bar 1 first.** Interiors miss; the shared set is a positive-length
-   boundary segment. Do not claim bar-2 nine-cell gtri in the first letter
-   unless asked. OGC areal touch `FF2F11212` already lives as
+1. **Do not write a second detector.** #609 already has a mutual
+   vertex-in-open-edge boolean and constructor `TPR_TouchPartialEdge`
+   on fill `im_unsupported`. Do not restage that Coq onto this research
+   branch, leftover `ⅠⅠ` (#611), or a `508-*` branch. Do **not** widen
+   `shares_edge_b` / `touch_edge_b`. Do **not** remint `aa_matrix_*`.
+2. **Constructor is decided on #609.** New constructor, fill stays
+   `im_unsupported`. Do not reopen reuse of `TPR_TouchEdge` here.
+3. **Bar 1 only.** Interiors miss; the shared set is a positive-length
+   boundary segment. Do not claim bar-2 nine-cell gtri unless asked.
+   OGC areal touch `FF2F11212` already lives as
    `aa_matrix_touch_edge_ogc` — cite, do not rewire the classifier pointer.
-4. **Harness golden must move.** Today's decline vector **is this pair**.
-   If the pair classifies, `REGIME DECLINE` in
-   `oracle/de9im_triangle_vectors.txt` and the hunt selfcheck notes must
-   point at a still-unsupported pair (obtuse-at-v is the existing one).
-   Do not turn the decline into a confident `FFFFFFFFF`.
+4. **Harness golden.** On `main` the decline vector **is this pair**
+   (`RelateNGOracleSurface.v : relate_tjunction_wire_unsupported`).
+   After #609 merges, `REGIME DECLINE` must stay on a still-unsupported
+   pair (obtuse-at-v / leftover `ⅠⅠ`). Do not emit `FFFFFFFFF`.
 5. **Classifier order.** After `touch_edge_b` (full shared edge wins).
    Do not reorder the four wired certificates.
 6. **Completeness stays false.** Wiring this pair does not prove
-   CCW-completeness. Obtuse-at-v remains. Do not claim
-   `triangle_pair_regime_ccw_incomplete` is obsolete.
+   CCW-completeness. Obtuse-at-v remains
+   (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
+   Do not claim `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`
+   is obsolete. Do not steal leftover `ⅠⅠ`.
 
 ## Decisions so far
 
 - Completeness false on this pair — #583 / `522-j`.
 - Filtered retry still false (obtuse) — #584 / `522-m`.
-- Honest decline wire token is this pair — #588 + #595 / `522-f`.
-- Certificates not invented in those letters.
+- Honest decline wire token is this pair on `main` — #588 + #595 / `522-f`.
+- Leftover `Ⅰ` named — #599 / this chart.
+- Leftover `Ⅰ` bar 1 in flight — #609 (CI green, not on `main`).
+- Leftover `ⅠⅠ` named — #611. Detector not invented.
 - Parent leftovers chart: #598 / `docs/scout/map-522-leftovers.md` (on `main`).
 - Leftover ids are Roman numerals. This leftover is `Ⅰ`. `522-n` is
-  not minted.
+  not minted. `ⅠⅠⅠ` is unused.
 
 ## Fog
 
 - **`ⅠⅠ`.** Obtuse-at-v. Finding
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
-  Do not invent that detector in leftover `Ⅰ`.
-- **Constructor vs reuse `TPR_TouchEdge`.** Technique, not this map.
+  Chart: #611. Do not invent that detector in leftover `Ⅰ`.
+- **#609 not on `main`.** This research tree still declines the kiss
+  (`RelateNGDisjoint.v : tjunction_pair_unsupported`). Do not pretend
+  bar 1 has merged.
 - **Fill.** Geometry of the kiss is areal Touches with BB dim 1. The
   designated TouchEdge pin is still `FFFF1FFF2`. Remint is a different
   leftover.
 - **Family width.** This spec is the compiled collinear kiss. A dim-0
-  T is unnamed and separate.
+  T is unnamed and separate (`ⅠⅠⅠ` if asked).
 
 ## Frontier
 
-Leftover `Ⅰ` is named. This map does not invent the detector.
+Leftover `Ⅰ` is named. This map does not invent a detector. Bar 1 is
+#609, not this letter.
 
 ```
 #577 finding ── triangle_pair_regime_incomplete_tjunction ── done
 
-Ⅰ ── T-junction / partial-edge kiss ── detector not invented
+Ⅰ ── T-junction / partial-edge kiss ── research #599 + this letter
      pair (0,0)(2,0)(0,1) vs (1,0)(3,0)(2,1)
-     decline golden today
+     decline golden on main
+     bar 1 in flight #609 ── do not restage
 
-ⅠⅠ ── obtuse-at-v ── 522-m finding ── not this leftover
+ⅠⅠ ── obtuse-at-v ── research #611 ── not this leftover
 not this leftover ── line×line T ── #67
 not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins

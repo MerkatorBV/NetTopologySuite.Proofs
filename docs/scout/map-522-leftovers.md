@@ -56,10 +56,10 @@ Value and priority are orthogonal.
 
 | Id | Leftover | Kind | Park | Status | Do not |
 |---|---|---|---|---|---|
-| `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Named. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Finding `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. | invent the detector; steal `522-j` / `522-m`; bucket obtuse under `Ⅰ` |
+| `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Named. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Finding `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. Bar 1 in flight #609 (not on `main`). | restage the detector; steal `522-j` / `522-m`; bucket obtuse under `Ⅰ`; mint `522-n` |
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
-| `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
+| `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Chart: #611. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m` / `522-i`; bucket under `Ⅰ` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -77,6 +77,10 @@ Value and priority are orthogonal.
 - #589 wayfinder PR stays closed.
 - Leftover ids switch to repeated `Ⅰ` marks. `Ⅰ` = T-junction kiss.
   `ⅠⅠ` = obtuse-at-v. `522-n` is not minted.
+- Leftover `Ⅰ` research refresh — chart still
+  [`map-tjunction-cert.md`](map-tjunction-cert.md). Bar 1 is #609,
+  not on `main` (`RelateNGDisjoint.v : tjunction_pair_unsupported`).
+  Leftover `ⅠⅠ` research is #611.
 
 ## Fog
 
@@ -98,7 +102,8 @@ detector. `/implement` of either is a later letter.
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
 
 Ⅰ ──────── T-junction / partial-edge kiss ── research ── finding #577
-ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584
+           bar 1 in flight #609 ── do not restage
+ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584 / #611
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 
