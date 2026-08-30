@@ -66,6 +66,7 @@ From NTS.Proofs Require Import Distance Segment
   RelateCurveMatrix
   GeneralTriangleSeparation
   RelateMatrixTriangle
+  RelateNGCore
   RelateNGTouch
   RelateNGRingInclusion
   RelateNGDisjointCells.
