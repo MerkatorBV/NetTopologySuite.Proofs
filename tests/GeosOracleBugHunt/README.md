@@ -9,7 +9,14 @@ Gates GEOS curve / predicate behaviour against NetTopologySuite.Proofs `oracle_b
 
 ## Run
 
+Full hunt is **local-only** (needs `geosop` + `oracle_bin`). The three
+PR jobs (corpus guardrails / Rocq 9.2.0 / theories-flocq) do not invoke
+`CurveOracleBugHunt`. The no-oracle REL selfcheck is in `make ci-guards`.
+
 ```bash
+# no oracle, no geosop — token allowlist only (#575 / 522-f)
+python3 hunt.py --selfcheck
+
 export GEOSOP=/path/to/geosop
 export ORACLE=/path/to/oracle_bin
 python3 hunt.py
@@ -27,5 +34,6 @@ python3 hunt.py
 | COVERS968/* | GEOS #968 |
 | SPLIT1497/* | GEOS #1497 / #1500 |
 | MS/* | MultiSurface A/P (#1502) |
+| REL/* | `RELATE_MATRIX` token allowlist + triangle fill pins (#575 / 522-f). A decline is `UNSUPPORTED`, not a parse error. The #530 pair is the disjoint pin, not the decline. Does not remint fills. No GEOS matrix compare (classifier pins ≠ OGC). |
 
 See `docs/geos-oracle-rung-2026-08.md`.

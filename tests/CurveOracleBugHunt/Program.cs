@@ -140,6 +140,62 @@ static class Program
             }
         }
 
+        Console.WriteLine("=== RELATE_MATRIX token allowlist (no oracle) ===");
+        {
+            try
+            {
+                var (kind, val) = Oracle.ParseRelateWire("UNSUPPORTED");
+                if (kind == "token" && val == "UNSUPPORTED")
+                    Hit("OK", "REL/token_unsupported", "decline is a token, not a parse error");
+                else
+                    Hit("FAIL", "REL/token_unsupported", $"got {kind} {val}");
+            }
+            catch (Exception ex) { Hit("FAIL", "REL/token_unsupported", ex.Message); }
+
+            try
+            {
+                var (kind, val) = Oracle.ParseRelateWire("FFFFFFFFF");
+                if (kind == "matrix" && val == "FFFFFFFFF")
+                    Hit("OK", "REL/matrix_disjoint_pin",
+                        "#530 / #571 sentinel is a matrix, not UNSUPPORTED");
+                else
+                    Hit("FAIL", "REL/matrix_disjoint_pin", $"got {kind} {val}");
+            }
+            catch (Exception ex) { Hit("FAIL", "REL/matrix_disjoint_pin", ex.Message); }
+
+            try
+            {
+                Oracle.ParseRelateWire("NOT_A_TOKEN");
+                Hit("FAIL", "REL/unknown_rejected", "unknown token was accepted");
+            }
+            catch (Exception)
+            {
+                Hit("OK", "REL/unknown_rejected", "unknown token is still a parse error");
+            }
+        }
+
+        Console.WriteLine("=== RELATE_MATRIX golden vectors (oracle catalog; #575 / 522-f) ===");
+        foreach (var v in Cases.RelateVectors)
+        {
+            string oOut;
+            try { oOut = Oracle.Run($"RELATE_MATRIX\n{v.Key}\n"); }
+            catch (Exception ex)
+            {
+                Hit("WARN", $"REL/{v.Tag}", $"oracle missing or failed: {ex.Message}");
+                continue;
+            }
+            try
+            {
+                var (kind, val) = Oracle.ParseRelateWire(oOut);
+                if (kind == v.Kind && val == v.Expected)
+                    Hit("OK", $"REL/{v.Tag}", $"{v.Key} -> {kind} {val} ({v.Provenance})");
+                else
+                    Hit("FAIL", $"REL/{v.Tag}",
+                        $"{v.Key} -> {kind} {val} (exp {v.Kind} {v.Expected}); {v.Provenance}");
+            }
+            catch (Exception ex) { Hit("FAIL", $"REL/{v.Tag}", ex.Message); }
+        }
+
         Console.WriteLine("=== chord_le_arc_length (oracle theorem) ===");
         foreach (var a in Cases.Arcs)
         {
@@ -186,6 +242,21 @@ static class Oracle
         if (p.ExitCode != 0 && string.IsNullOrEmpty(stdout))
             throw new Exception($"oracle exit {p.ExitCode}: {stderr}");
         return stdout;
+    }
+
+    /// <summary>
+    /// Classify one RELATE_MATRIX oracle line.
+    /// <c>UNSUPPORTED</c> is a decline (result position only), not a parse error.
+    /// </summary>
+    public static (string Kind, string Value) ParseRelateWire(string s)
+    {
+        string t = s.Trim();
+        if (t == "UNSUPPORTED")
+            return ("token", t);
+        if (t.Length == 9 && t.All(c => c is 'F' or '0' or '1' or '2'))
+            return ("matrix", t);
+        throw new Exception(
+            $"relate wire: not a 9-char matrix and not an allowlisted token: '{t}'");
     }
 
     public static double ParseHexFloat(string s)
@@ -248,5 +319,23 @@ static class Cases
         ("semi_off_sweep", 1, 0, -2),
         ("quarter_origin", 0, 0, 0),
         ("quarter_inside", 0, 0.5, 0.5),
+    };
+
+    // Classifier pins from oracle/de9im_triangle_vectors.txt. Not OGC remints.
+    // #530 is DISJOINT, not the decline. Decline is the T-junction (#577).
+    public static readonly (string Tag, string Key, string Kind, string Expected, string Provenance)[] RelateVectors =
+    {
+        ("DISJOINT", "triangle_pair_fill TPR_Disjoint", "matrix", "FFFFFFFFF",
+            "#571 / 522-c sentinel (the #530 pair, now classified)"),
+        ("OVERLAP", "triangle_pair_fill TPR_Overlap", "matrix", "2FFF1FFF2",
+            "#567 / 522-b overlap pair"),
+        ("CONTAINS", "triangle_pair_fill TPR_Contains", "matrix", "2FFFFFFF2",
+            "RelateMatrixTriangle.contains_pair_contains"),
+        ("TOUCH_EDGE", "triangle_pair_fill TPR_TouchEdge", "matrix", "FFFF1FFF2",
+            "frozen shared-edge pin"),
+        ("TOUCH_VERTEX", "triangle_pair_fill TPR_TouchVertex", "matrix", "FFFF1FFF2",
+            "#572 / 522-i pair"),
+        ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
+            "T-junction leftover (#577 / 522-j). Not the #530 pair."),
     };
 }
