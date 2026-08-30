@@ -46,6 +46,8 @@
    "No such assumption"). [replace 2 with (1+1) by ring], then
    [exact HtB]. Do not nest [+] under [+] (b233899 L288 Focus).
    Inner [Rplus_le_compat] arms use [*].
+   [lra] on [(t-s)*2 <= 2*(t-s)] cannot find a witness
+   (860debe L294). [apply Req_le; ring].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -291,7 +293,7 @@ Proof.
   - rewrite (Rabs_right (t - s)) by lra.
     replace (2 * Rabs (rx * rx - ry * ry) * (t - s))
       with (Rabs (rx * rx - ry * ry) * (2 * (t - s))) by ring.
-    apply Rmult_le_compat_l; [apply Rabs_pos | lra].
+    apply Req_le. ring.
 Qed.
 
 Lemma ellipse_speed_holder : forall rx ry s t,
