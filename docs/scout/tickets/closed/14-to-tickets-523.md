@@ -23,9 +23,9 @@ Minted claimIds (children of ticket 523, not leftover numerals, not
 
 | claimId | Scout | GitHub | Slice | Gate |
 |---|---|---|---|---|
-| `523-a` | [15](../15-523-a-eb-refuse.md) | [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | E/B `failwith` | — |
-| `523-b` | [16](../16-523-b-cell-unknown.md) | [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | consumers learn `?` as a matrix cell | — |
-| `523-c` | [17](../17-523-c-driver-alphabet.md) | [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | driver emits `?` | 16 / #604 |
+| `523-a` | [15](15-523-a-eb-refuse.md) | [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | E/B `failwith` | — |
+| `523-b` | [16](16-523-b-cell-unknown.md) | [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | consumers learn `?` as a matrix cell | — |
+| `523-c` | [17](17-523-c-driver-alphabet.md) | [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | driver emits `?` | 16 / #604 |
 
 Children of ticket 523 (GitHub sub-issues). #605 is blocked by #604.
 `/implement 523-a` or `/implement 523-b` can start now.
