@@ -228,6 +228,18 @@ Proof.
   lra.
 Qed.
 
+(* Apply-form: unification picks the goal's actual subtraction,
+   so keyed rewrite does not have to match `r` against `(fun _ => r) s`. *)
+Lemma rabs_deficit_le : forall x y e,
+  x <= y ->
+  y - x <= e ->
+  Rabs (x - y) <= e.
+Proof.
+  intros x y e Hxy Hle.
+  rewrite (rabs_of_deficit x y Hxy).
+  exact Hle.
+Qed.
+
 (* After `rewrite S_INR` the mesh end is `t0 + h + INR k · h`. *)
 Lemma plus_nonneg_tail_le : forall t0 h (k : nat) b,
   0 <= h ->
@@ -245,7 +257,7 @@ Qed.
 Lemma twenty_four_eps_pos : forall eps, 0 < eps -> 0 < 24 * eps.
 Proof.
   intros eps Heps.
-  apply Rmult_lt_0_compat; lra.
+  apply Rmult_lt_0_compat; [lra | exact Heps].
 Qed.
 
 Lemma pos_lt_sq : forall x y, 0 <= x -> x < y -> x * x < y * y.
@@ -655,31 +667,32 @@ Proof.
       apply Rdiv_lt_0_compat; [exact H24 | exact Hrpos]. }
     split; [exact Hdpos |].
     intros s t _ Hst _ Hdlt.
-    change (circle_speed r s) with r.
     set (gap := t - s).
     assert (Hgap0 : 0 <= gap) by (unfold gap; lra).
     assert (Hgap2 : gap < 2).
     { unfold gap. eapply Rlt_le_trans; [exact Hdlt |].
       unfold delta. apply Rmin_l. }
-    pose proof (circle_edge_le O r s t Hr Hst) as Hup.
-    rewrite (rabs_of_deficit
-      (dist (circle_param O r s) (circle_param O r t))
-      (r * (t - s)) Hup).
-    unfold circle_param.
-    rewrite circle_chord_dist by exact Hr.
-    assert (Hsinpos : 0 <= sin ((t - s) / 2)).
-    { apply sin_ge_0; [lra |]. pose proof PI_ge_2. lra. }
-    rewrite (Rabs_right (sin ((t - s) / 2))) by exact Hsinpos.
-    fold gap.
-    assert (Hx4 : gap / 2 <= 4) by lra.
-    pose proof (circle_chord_taylor_slack r gap Hr Hgap0 Hx4) as Hcalc.
-    eapply Rle_trans; [exact Hcalc |].
-    apply (cubic_slack_le_eps_gap r gap delta eps Hrpos Hgap0).
-    - unfold gap; exact Hdlt.
-    - unfold delta.
-      apply rmin_sqrt_sq_bound; [lra |].
-      apply Rlt_le.
-      apply Rdiv_lt_0_compat; [exact H24 | exact Hrpos].
+    apply rabs_deficit_le.
+    - replace (circle_speed r s * (t - s)) with (r * (t - s))
+        by (unfold circle_speed; reflexivity).
+      apply circle_edge_le; [exact Hr | exact Hst].
+    - replace (circle_speed r s * (t - s)) with (r * (t - s))
+        by (unfold circle_speed; reflexivity).
+      unfold circle_param.
+      rewrite circle_chord_dist by exact Hr.
+      assert (Hsinpos : 0 <= sin ((t - s) / 2)).
+      { apply sin_ge_0; [lra |]. pose proof PI_ge_2. lra. }
+      rewrite (Rabs_right (sin ((t - s) / 2))) by exact Hsinpos.
+      fold gap.
+      assert (Hx4 : gap / 2 <= 4) by lra.
+      pose proof (circle_chord_taylor_slack r gap Hr Hgap0 Hx4) as Hcalc.
+      eapply Rle_trans; [exact Hcalc |].
+      apply (cubic_slack_le_eps_gap r gap delta eps Hrpos Hgap0).
+      + unfold gap; exact Hdlt.
+      + unfold delta.
+        apply rmin_sqrt_sq_bound; [lra |].
+        apply Rlt_le.
+        apply Rdiv_lt_0_compat; [exact H24 | exact Hrpos].
 Qed.
 
 Theorem arc_r_theta_via_speed_integral : forall (O : Point) r a b,
