@@ -839,7 +839,8 @@ Lemma ellipse_E_increment_sandwich :
     Rmin rx ry * (b - a) <= E b - E a <= Rmax rx ry * (b - a).
 Proof.
   intros rx ry E a b Hrx Hry Hab Hsq.
-  apply (Hsq a b (Rmin rx ry) (Rmax rx ry) Hab Hab Hab).
+  apply (Hsq a b (Rmin rx ry) (Rmax rx ry)
+           (Rle_refl a) Hab (Rle_refl b)).
   intros u _ _. apply ellipse_speed_bounds; assumption.
 Qed.
 
@@ -869,7 +870,11 @@ Corollary ellipse_34_quarter_via_speed_integral :
 Proof.
   intros Oc rot E Hsq.
   pose proof PI_RGT_0 as Hpi.
-  apply ellipse_speed_integral_is_curve_length; lra || exact Hsq.
+  apply ellipse_speed_integral_is_curve_length.
+  - lra.
+  - lra.
+  - lra.
+  - exact Hsq.
 Qed.
 
 Print Assumptions ellipse_speed_integral_is_curve_length.
