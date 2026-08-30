@@ -87,6 +87,9 @@
    (1ed0ee7 L633). Equality proofs must be [2:{ }] or [by].
    The witness is [B = A] (90ac1a1 L644): [apply rmul_cancel_rinv]
    sees [eps*/2 = eps*/2*gap*/gap]. [symmetry] before [apply].
+   Flocq [sqrt_le_1] is [sqrt x <= sqrt y], not [sqrt x <= eps/2]
+   (dd4f28a L699). Rewrite [eps/2] as [sqrt (Rsqr (eps/2))] via
+   [sqrt_Rsqr] first (already [0 <= x -> sqrt (x²) = x]).
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -696,6 +699,10 @@ Proof.
         replace (eps / 2 * gap * / gap) with (eps / 2)
           by (unfold Rdiv; symmetry;
               apply (rmul_cancel_rinv (eps * / 2) gap Hgnz)).
+        assert (Heps2 : 0 <= eps / 2).
+        { unfold Rdiv. apply Rmult_le_pos; [lra |].
+          apply Rlt_le, Rinv_0_lt_compat. lra. }
+        rewrite <- (sqrt_Rsqr (eps / 2) Heps2).
         apply sqrt_le_1.
         -- apply Rmult_le_pos; [exact HK |].
            unfold Rdiv. apply Rmult_le_pos; [exact Hgap0 |].
