@@ -63,7 +63,12 @@
          (`touch_edge_pair_ogc_gtri_cells`).  Names
          `aa_matrix_touch_edge_ogc`; Qex: classifier IE is empty while
          IE is dim-2.  Does not remint `aa_matrix_touch_vertical` or
-         `triangle_pair_fill`.  Overlap remains.
+         `triangle_pair_fill`.
+     - RelateNGOverlapCells.v  #576 / 522-h (overlap split): nine
+         gtri cells of OGC 212101212 on the #567 / #570 overlap pair
+         (`overlap_pair_ogc_gtri_cells`).  Names `aa_matrix_overlap_ogc`;
+         Qex: classifier IE is empty while IE is dim-2.  Does not remint
+         `aa_matrix_partial_overlap` or `triangle_pair_fill`.
      - RelateNGOracleSurface.v  #575 / 522-f: oracle wire token
          (`triangle_unsupported_token`): a decline is
          `RWR_Unsupported`, not a 9-cell matrix.  Classified triangle
@@ -122,4 +127,5 @@ From NTS.Proofs Require Export
   RelateNGDisjointCells
   RelateNGContainsCells
   RelateNGTouchEdgeCells
+  RelateNGOverlapCells
   RelateNGOracleSurface.

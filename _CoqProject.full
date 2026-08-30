@@ -2793,8 +2793,13 @@ theories/RelateNGContainsCells.v
 # the frozen shared-edge pair.  Names aa_matrix_touch_edge_ogc; does
 # not remint aa_matrix_touch_vertical (shared FFFF1FFF2 pin).  Qex:
 # classifier IE is empty while IE is dim-2.  Pointer remint is later.
-# Overlap remains on #576.
 theories/RelateNGTouchEdgeCells.v
+# #576 / 522-h (overlap split): nine gtri cells of OGC 212101212 on
+# the #567 / #570 overlap pair.  Names aa_matrix_overlap_ogc; does
+# not remint aa_matrix_partial_overlap (shared 2FFF1FFF2 pin).  Qex:
+# classifier IE is empty while IE is dim-2.  Pointer remint is later.
+# Ticket 576 stays open.
+theories/RelateNGOverlapCells.v
 # #575 / 522-f: UNSUPPORTED wire token + triangle fill pins.
 # Decline encodes as RWR_Unsupported (not a 9-cell).  Does not remint
 # aa_matrix_disjoint / triangle_pair_fill TPR_Disjoint.
