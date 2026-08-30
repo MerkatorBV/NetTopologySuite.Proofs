@@ -40,8 +40,8 @@ pair is classified disjoint).
 
 ## Still open (not a hole in the original #522 honesty ask)
 
-- **#567 leftover:** `TPR_TouchEdge` exclusivity vs the four gtri predicates
-  (close-or-carve; not a predicate rewrite).
+- **#567 leftover carved:** `TPR_TouchEdge` exclusivity vs the four gtri
+  predicates (witness `522-a-touch-edge-carve`). Not a predicate rewrite.
 - **Fill remints** (classifier pointer → OGC `*_ogc`). Unnamed. Leftover
   letter `522-n` if minted.
 - **T-junction / obtuse certificates.** Completeness recorded the findings

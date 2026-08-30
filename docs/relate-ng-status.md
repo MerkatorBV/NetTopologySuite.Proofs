@@ -93,8 +93,9 @@ disguised as disjointness — that was #530.
 - **`F` vs not-computed** on `CURVE_RELATE_MATRIX` — sibling #523, not a #522 child.
 - **Empty/empty `relate`** — parked on the #522 epic (declines; ISO 13249-3
   if revisited).
-- **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named leftover
-  on #567 / `522-a`, not a predicate rewrite.
+- **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — carved off
+  #567 / `522-a` (witness `522-a-touch-edge-carve`). Not a predicate rewrite.
+  If minted, leftover letter `522-n`.
 - **Disjoint fill remint** (FFFFFFFFF → FF2FF1212) — unnamed. Not `522-f`.
 - **T-junction / obtuse certificates** — unnamed. Completeness tickets
   recorded the findings and stopped. Leftover letter `522-n` if minted.

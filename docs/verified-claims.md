@@ -897,6 +897,8 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#578 / `522-l` wrap-up** (own paragraph). TRIAGE `#522` row, `CONTEXT.md` decline/sentinel glossary, one prose gate (`scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`), ticket-11 precondition 1, and [`docs/scout/522-closing-summary.md`](scout/522-closing-summary.md). Does not remint fills. Does not retire epic 522. Witness `522-l-wrap-up`.
 
+**#567 / `522-a` leftover carve** (own paragraph). Ticket DoD is met (#579 exclusivity + #586 contains bridge). `TPR_TouchEdge` exclusivity vs the four gtri predicates is named and not proved — the frozen shared-edge anchors stay untouched. If minted later, leftover letter `522-n`. Witness `522-a-touch-edge-carve`.
+
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `RelateCurveMatrix.v : ii_cell_dim2_sound_gtri` | **Jordan cell dim (general triangle):** under `geom_de9im_pointset` for gtri self-geometry, `im_ii = Some 2` implies existence of interior point (`ii_has_dim2`) `[exact]` | 3 |
