@@ -60,6 +60,9 @@
    Flocq [sqrt_Rsqr] is [0 <= x -> sqrt (Rsqr x) = x], so
    [rewrite sqrt_Rsqr] already yields [2], not [Rabs 2]
    (84b2036 L419). [sqrt_Rsqr 2] by [lra]; [sqrt_Rsqr_abs] for [su].
+   After [set (gap := t-s)] the chord-rate goal has [ss * gap],
+   not [2 * xv * ss] (7d2c5cc L489). Prove [2 * xv = gap] with
+   [Rinv_r]; do not [field] that scale.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -472,15 +475,20 @@ Proof.
   2:{ unfold xv, gap in Hsin0. exact (Rle_ge _ _ Hsin0). }
   replace ((t - s) / 2) with xv by (unfold xv, gap; reflexivity).
   replace ((s + t) / 2) with mid by reflexivity.
-  replace (ellipse_speed rx ry s * (t - s))
-    with (2 * xv * ellipse_speed rx ry s)
-    by (unfold xv, gap, Rdiv; field).
   set (sm := ellipse_speed rx ry mid).
   set (ss := ellipse_speed rx ry s).
   assert (Hsm0 : 0 <= sm) by (unfold sm; apply ellipse_speed_nonneg).
   assert (Hss0 : 0 <= ss) by (unfold ss; apply ellipse_speed_nonneg).
   assert (HsmM : sm <= M).
   { unfold sm, M. apply (proj2 (ellipse_speed_bounds rx ry mid Hrx Hry)). }
+  assert (H2xv : 2 * xv = gap).
+  { unfold xv, Rdiv.
+    rewrite <- Rmult_assoc.
+    rewrite (Rmult_comm 2 gap).
+    rewrite Rmult_assoc.
+    rewrite Rinv_r by lra.
+    rewrite Rmult_1_r. reflexivity. }
+  replace (ss * gap) with (2 * xv * ss) by (rewrite H2xv; ring).
   pose proof (Rabs_triang (2 * sin xv * sm - 2 * xv * sm)
                           (2 * xv * sm - 2 * xv * ss)) as Htr.
   replace (2 * sin xv * sm - 2 * xv * ss)
@@ -490,7 +498,7 @@ Proof.
   assert (Hsinx : sin xv <= xv) by (apply sin_le_x; exact Hxv0).
   assert (Hx4 : xv <= 4).
   { apply Rlt_le. apply (Rlt_le_trans xv 1 4); [| lra].
-    apply (half_gap_lt_one s t). exact Hgap2. }
+    apply (half_gap_lt_one s t). unfold gap in Hgap2. exact Hgap2. }
   assert (Hslack : xv - sin xv <= xv * xv * xv / 6).
   { pose proof (sin_lower_taylor xv Hxv0 Hx4) as Htaylor. lra. }
   assert (Harm1' : Rabs (2 * sin xv * sm - 2 * xv * sm)
