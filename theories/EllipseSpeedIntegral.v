@@ -41,6 +41,10 @@
    After that pin the leftover [2 * Rabs (sin (gap/2))] is not
    [Rabs (sin _)]; apply [Rmult_le_compat_l] then [Rabs_sin_le_abs]
    (a49f234 L237). Cancel [2*(Rabs * /2)] with [Rinv_r], not [field].
+   [apply Rplus_le_compat; apply Rabs_le; assumption] leaves evars
+   because flocq [1+1] is not convertible to [2] (67541e1 L282,
+   "No such assumption"). [replace 2 with (1+1) by ring], then
+   [exact HtB].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -279,7 +283,10 @@ Proof.
     + eapply Rle_trans; [apply Rabs_triang |].
       pose proof (SIN_bound t) as HtB.
       pose proof (SIN_bound s) as HsB.
-      apply Rplus_le_compat; apply Rabs_le; assumption.
+      replace 2 with (1 + 1) by ring.
+      apply Rplus_le_compat.
+      + apply Rabs_le. exact HtB.
+      + apply Rabs_le. exact HsB.
   - rewrite (Rabs_right (t - s)) by lra.
     replace (2 * Rabs (rx * rx - ry * ry) * (t - s))
       with (Rabs (rx * rx - ry * ry) * (2 * (t - s))) by ring.
