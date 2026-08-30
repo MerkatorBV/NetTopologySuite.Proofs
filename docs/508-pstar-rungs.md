@@ -39,4 +39,6 @@ plumbing that lived in `Bezier3Length.v`, `NurbsQuadraticLength.v`,
 and `NurbsGeneralLength.v`.  Public names stay (`bern2_*`, `bern3_*`,
 `bezier3_c0/c1/c2`, `norm_triple_le`, `nurbs2_den_lb`).  Elevation
 exactness is the n=2 instance of `elevate_ctrl` via `bern_elevate_2`.
-Does not retire epic 508.  Wrap-up is #566.
+Non-negativity is `Rmult_le_pos` / `lra` — Flocq 4.2.1 `nra` cannot
+find a cubic witness (CI death on 48a5c3f). Does not retire epic 508.
+Wrap-up is #566.

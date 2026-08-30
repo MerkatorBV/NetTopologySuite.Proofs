@@ -33,6 +33,11 @@ From Stdlib Require Import Reals Lra Lia Arith.
 From NTS.Proofs Require Import Distance.
 Local Open Scope R_scope.
 
+(* Flocq 4.2.1 [nra] cannot find a witness on the cubic / mixed
+   products below (CI death on 48a5c3f, L195). Pin with
+   [Rmult_le_pos] / [Rplus_le_le_0_compat] / [lra] / [ring] —
+   same class as SpeedIntegral. Do not reintroduce [nra] here. *)
+
 (* -------------------------------------------------------------------------- *)
 (* Bernstein basis: de Casteljau recurrence.                                  *)
 (* -------------------------------------------------------------------------- *)
@@ -66,7 +71,10 @@ Proof.
     pose proof (IH i t Ht0 Ht1) as Hi.
     assert (Hprev : 0 <= match i with O => 0 | S i' => bern n i' t end).
     { destruct i as [|i']; [lra | apply IH; assumption]. }
-    nra.
+    assert (H1t : 0 <= 1 - t) by lra.
+    apply Rplus_le_le_0_compat.
+    - apply Rmult_le_pos; [exact H1t | exact Hi].
+    - apply Rmult_le_pos; [exact Ht0 | exact Hprev].
 Qed.
 
 Lemma sum_f_R0_0 : forall f, sum_f_R0 f 0 = f 0%nat.
@@ -184,7 +192,13 @@ Lemma bern2_nonneg : forall t,
   0 <= bern2_0 t /\ 0 <= bern2_1 t /\ 0 <= bern2_2 t.
 Proof.
   intros t Ht0 Ht1. unfold bern2_0, bern2_1, bern2_2.
-  split; [| split]; nra.
+  assert (H1t : 0 <= 1 - t) by lra.
+  split; [| split].
+  - apply Rmult_le_pos; [exact H1t | exact H1t].
+  - apply Rmult_le_pos.
+    + lra.
+    + apply Rmult_le_pos; [exact Ht0 | exact H1t].
+  - apply Rmult_le_pos; [exact Ht0 | exact Ht0].
 Qed.
 
 Lemma bern3_nonneg : forall t,
@@ -192,7 +206,21 @@ Lemma bern3_nonneg : forall t,
   0 <= bern3_0 t /\ 0 <= bern3_1 t /\ 0 <= bern3_2 t /\ 0 <= bern3_3 t.
 Proof.
   intros t Ht0 Ht1. unfold bern3_0, bern3_1, bern3_2, bern3_3.
-  repeat split; nra.
+  assert (H1t : 0 <= 1 - t) by lra.
+  assert (H3 : 0 <= 3) by lra.
+  repeat split.
+  - apply Rmult_le_pos; [apply Rmult_le_pos; [exact H1t | exact H1t] | exact H1t].
+  - apply Rmult_le_pos.
+    + exact H3.
+    + apply Rmult_le_pos.
+      * exact Ht0.
+      * apply Rmult_le_pos; [exact H1t | exact H1t].
+  - apply Rmult_le_pos.
+    + exact H3.
+    + apply Rmult_le_pos.
+      * apply Rmult_le_pos; [exact Ht0 | exact Ht0].
+      * exact H1t.
+  - apply Rmult_le_pos; [apply Rmult_le_pos; [exact Ht0 | exact Ht0] | exact Ht0].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -365,15 +393,35 @@ Lemma bezier3_c_nonneg : forall s t,
   0 <= bezier3_c0 s t /\ 0 <= bezier3_c1 s t /\ 0 <= bezier3_c2 s t.
 Proof.
   intros s t Hs Hst Ht1.
+  assert (Ht0 : 0 <= t) by lra.
+  assert (H1s : 0 <= 1 - s) by lra.
+  assert (H1t : 0 <= 1 - t) by lra.
   unfold bezier3_c0, bezier3_c1, bezier3_c2.
   split.
   { replace (3 - 3 * (s + t) + (s * s + s * t + t * t))
       with ((1 - s) * (1 - s) + (1 - s) * (1 - t) + (1 - t) * (1 - t))
       by ring.
-    nra. }
+    apply Rplus_le_le_0_compat.
+    - apply Rplus_le_le_0_compat.
+      + apply Rmult_le_pos; [exact H1s | exact H1s].
+      + apply Rmult_le_pos; [exact H1s | exact H1t].
+    - apply Rmult_le_pos; [exact H1t | exact H1t]. }
   split.
-  { pose proof (sqr_nonneg (s - t)) as Hsq. nra. }
-  nra.
+  { replace (3 * (s + t) - 2 * (s * s + s * t + t * t))
+      with (2 * s * (1 - s) + 2 * t * (1 - t) + s * (1 - t) + t * (1 - s))
+      by ring.
+    apply Rplus_le_le_0_compat.
+    - apply Rplus_le_le_0_compat.
+      + apply Rplus_le_le_0_compat.
+        * apply Rmult_le_pos; [apply Rmult_le_pos; [lra | exact Hs] | exact H1s].
+        * apply Rmult_le_pos; [apply Rmult_le_pos; [lra | exact Ht0] | exact H1t].
+      + apply Rmult_le_pos; [exact Hs | exact H1t].
+    - apply Rmult_le_pos; [exact Ht0 | exact H1s]. }
+  apply Rplus_le_le_0_compat.
+  - apply Rplus_le_le_0_compat.
+    + apply Rmult_le_pos; [exact Hs | exact Hs].
+    + apply Rmult_le_pos; [exact Hs | exact Ht0].
+  - apply Rmult_le_pos; [exact Ht0 | exact Ht0].
 Qed.
 
 Lemma bezier3_c_sum : forall s t,
@@ -396,7 +444,14 @@ Proof.
   pose proof (bern2_partition t) as Hp.
   replace wmin with (wmin * (bern2_0 t + bern2_1 t + bern2_2 t))
     by (rewrite Hp; ring).
-  nra.
+  replace (wmin * (bern2_0 t + bern2_1 t + bern2_2 t))
+    with (bern2_0 t * wmin + bern2_1 t * wmin + bern2_2 t * wmin)
+    by ring.
+  apply Rplus_le_compat.
+  - apply Rplus_le_compat.
+    + apply Rmult_le_compat_l; [exact Hb0 | exact Hw0].
+    + apply Rmult_le_compat_l; [exact Hb1 | exact Hw1].
+  - apply Rmult_le_compat_l; [exact Hb2 | exact Hw2].
 Qed.
 
 Print Assumptions bern_partition.
