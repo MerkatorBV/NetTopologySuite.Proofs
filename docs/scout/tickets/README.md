@@ -17,7 +17,8 @@ Order of work: top-down from #64, with the freebie first.
 | 05 | ~~[Retire #65 — buffer and offset curves](closed/05-retire-65-buffer-and-offset.md)~~ **closed** → #515 #513 #514, ADR-0002 | grilling | — |
 | 06 | ~~[Retire #66 — precision models, snap rounding, OverlayNG](closed/06-retire-66-precision-and-overlay.md)~~ **closed** → #517 #518 #519 #520, ADR-0002 amended | grilling | — |
 | 07 | ~~[Retire #67 — RelateNG matrix and boundary handling](closed/07-retire-67-relateng.md)~~ **closed: decided not to close #67** → ADR-0003, #522, #523 | grilling | — |
-| 11 | [Retire #67 — second pass](11-retire-67-second-pass.md) | grilling | ADR-0003 unconsumed, **#523**, **#503** — precondition 1 largely met by #530 |
+| 11 | [Retire #67 — second pass](11-retire-67-second-pass.md) | grilling | ADR-0003 unconsumed, **#523**, **#503** — precondition 1 largely met by #530; #523 grilled (ticket 12), still open, not accepted |
+| 12 | ~~[Grill #523 — `CURVE_RELATE_MATRIX` alphabet](closed/12-grill-523-curve-relate-alphabet.md)~~ **closed: decided not to resolve ticket 523** → [`map-523.md`](../map-523.md) | grilling | — |
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 11 (04–08 all closed) |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty**, 09 |
@@ -32,24 +33,26 @@ Order of work: top-down from #64, with the freebie first.
 06 ═══════════════════════╣       │  #66 closed → #517 #518 #519 #520
 07 ═══ 11 ────────────────╣       │  #67 still open (reopened after an
        (ADR-0003, #523,   ║       │  accidental keyword closure) → ADR-0003,
-        #503)             ║       │  #522 half-fixed by #530, #523
+        #503)             ║       │  #522 wrap-up on main; #523 grilled
+                                  │  (ticket 12) and still open, not accepted
 08 ═══════════ 09 ────────╝───────┘  #68 closed → #525 (global tier), #526
 ```
 
-**Related living map.** The #522 children (bar 1 → bar 2) have their own
+**Related living maps.** The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss. Leftover `ⅠⅠ` is
-the obtuse-at-v certificate. Ticket 11 still waits on
+the obtuse-at-v certificate. Sibling #523 alphabet grill:
+[`docs/scout/map-523.md`](../map-523.md). Ticket 11 still waits on
 ADR-0003 / #523 / #503; it does not own leftover grab order and does
-not receive a closed `522-*` letter.
+not receive a closed `522-*` letter. The grill did not accept ticket 523.
 
 **Frontier: empty.** Every remaining ticket waits on out-of-map execution —
 proof work, an oracle fix, and documentation corrections — not on a decision:
 
 | Ticket | Waiting on |
 |---|---|
-| 11 · second pass at #67 | ADR-0003 consumed by the capstone work · #523 · #503's four defects. Precondition 1 largely met by #530. |
+| 11 · second pass at #67 | ADR-0003 consumed by the capstone work · ticket 523 (grilled, not accepted) · #503's four defects. Precondition 1 largely met by #530. |
 | 09 · end #69's umbrella | ticket 11 |
 | 10 · resync surviving bodies | #506's split queue emptying · ticket 09 |
 
