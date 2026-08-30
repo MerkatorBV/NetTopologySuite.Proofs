@@ -359,6 +359,16 @@ Proof.
   - apply (Rle_trans 1 2 PI); [lra | exact Hpi2].
 Qed.
 
+(* Pinned flocq stdlib has no Rdiv_le_0_compat. *)
+Lemma half_nonneg : forall x, 0 <= x -> 0 <= x / 2.
+Proof.
+  intros x Hx.
+  unfold Rdiv.
+  apply Rmult_le_pos; [exact Hx |].
+  apply Rlt_le, Rinv_0_lt_compat.
+  lra.
+Qed.
+
 Lemma sin_half_gap_nonneg : forall s t,
   s <= t ->
   t - s < 2 ->
@@ -366,7 +376,7 @@ Lemma sin_half_gap_nonneg : forall s t,
 Proof.
   intros s t Hst Hgap.
   apply sin_ge_0.
-  - apply Rdiv_le_0_compat; lra.
+  - apply half_nonneg; lra.
   - apply half_gap_le_PI; exact Hgap.
 Qed.
 
