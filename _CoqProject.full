@@ -16,6 +16,11 @@ theories/CurveLength.v
 # atan2/angle_between lane (the 3-point CircularArc bridge is the next rung).
 # 3-axiom (Stdlib PI2_1 avoided via a local sin_le_x-derived PI >= 2).
 theories/ArcRectifiable.v
+# #508-c / #561: speed-integral premise pack. Route 1 (in-corpus tagged
+# partitions + UC hypothesis). Heine-Cantor and Coquelicot/RInt are not
+# imported — host lane stays 3-axiom. Witness: arc_r_theta through the
+# pack (same statement as the envelope headline). 508-d / 508-e instantiate.
+theories/SpeedIntegral.v
 # #508 "Also owed" bridge: the 3-point CircularArc model meets the
 # parameterized circle — the principal sweep is realized by a parameter
 # interval whose circle points are arc_start/arc_end and whose metric length

@@ -905,7 +905,7 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#523 alphabet letter** (own paragraph). `CURVE_RELATE_MATRIX` refuses E/B (`failwith`, buffer shape). Harness `parse_relate_wire` / `ParseRelateWire` accept `FF?FF1212` as `("matrix", …)`. `lookup_matrix "FF?FF1212"` still fails. Lineal undistinguished cells and areal probe misses print `?`. C/A kernels that reported no contact keep `F`. Shared pins and the T-junction decline golden stay put. Does not remint `522-f`. Does not retire ticket 523.
 
-**NTS RGR Board catalog (#508 children).** `508-a` = #559 / golden rational quarter (witness `508-a-golden-quarter`) · `508-b` = #560 / orientation-reversing reparam (witness `508-b-reflect`). Headline this letter: `NurbsConicExact.v : nurbs2_golden_quarter_length`. Board pointer stays #559. Does not retire epic 508. Remaining children `508-c`…`508-h` are not this letter.
+**NTS RGR Board catalog (#508 children).** `508-a` = #559 / golden rational quarter (witness `508-a-golden-quarter`) · `508-b` = #560 / orientation-reversing reparam (witness `508-b-reflect`) · `508-c` = #561 / speed-integral pack (witness `508-c-speed-integral`). Headline this letter: `SpeedIntegral.v : speed_integral_is_curve_length`. Board pointer stays #561. Does not retire epic 508. Remaining children `508-d`…`508-h` are not this letter.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -1691,3 +1691,30 @@ stay 3-axiom in their own files.  This letter does not retire epic 508
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `NurbsConicExact.v : nurbs2_golden_quarter_length` (+ `golden_pt_on_circle`, `golden_phi_mono`, `golden_phi_surj`, `cos_2_atan`, `sin_2_atan`) | **Golden rational quarter circle (#508/#559, claimId: 508-a, witness: 508-a-golden-quarter):** `is_curve_length` of the oracle `N` vector on `[0,1]` equals `π/2` — Weierstrass `φ` is weakly monotone with explicit `tan` preimages (no IVT); the unit circle on `[0, π/2]` transfers by `is_curve_length_reparam` and windowed ext. Category C (`atan`). Does not retire epic 508 `[exact]` | 4 |
+
+## Issue #508 — integral machinery: speed-integral premises (`SpeedIntegral.v`) <!-- feat:arc-len geom:arc -->
+
+The missing method between "F is an integral of the speed" and the two
+windowed premises of `ArcRectifiable.v : curve_length_of_primitive`.
+Spike decision is Route 1 (in-corpus tagged partitions). Uniform
+continuity of the speed is a hypothesis — Heine–Cantor is not imported
+(stdlib compactness on a closed interval is outside the 3-axiom
+allowlist). Coquelicot / `RInt` (Route 2) is gated off this letter so
+the host-lane metric files stay 3-axiom; 508-e may still discharge the
+pack via clothoid-halley-coq. 508-d / 508-e instantiate the pack; they
+do not remint it.
+
+Chord modulus: triangle inequality along a fine left-tagged uniform
+partition, Riemann sum within ε of the F increment. Tightness is local
+(UC + increment sandwich + first-order chord-rate). The circle speed is
+constantly `r`, `F(t) = r·t`, and the envelope headline
+`is_curve_length (circle_param O r) a b (r·(b−a))` is a second proof
+path through the pack. `curve_length_unique` pins the two paths.
+This letter does not retire epic 508 (that is #566).
+
+**NTS RGR Board catalog (#508 children).** `508-c` = #561 / speed-integral pack (witness `508-c-speed-integral`). Headline `SpeedIntegral.v : speed_integral_is_curve_length`. Instance `arc_quarter_via_speed_integral`. Board pointer stays #561. Does not retire epic 508. `508-a` = #559 and `508-b` = #560 are on `main`. Remaining children `508-d`…`508-h` are not this letter.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `SpeedIntegral.v : speed_integral_is_curve_length` (+ `speed_integral_chord_modulus`, `speed_integral_tightness`, `increment_squeezed_const`, `constant_speed_premises`, `riemann_sum`, `tagged_chain`) | **Speed-integral pack (#508/#561, claimId: 508-c, witness: 508-c-speed-integral):** `speed_integral_premises g σ F a b` (UC of σ, F increment squeezed by σ-bounds, first-order chord-rate) implies `is_curve_length g a b (F b − F a)` via `curve_length_of_primitive`. Tagged partitions and left-endpoint Riemann sums are first-class. Route 1; no Heine–Cantor, no Coquelicot. Does not retire epic 508 `[exact]` | 3 |
+| `SpeedIntegral.v : arc_quarter_via_speed_integral` (+ `arc_r_theta_via_speed_integral`, `arc_speed_matches_envelope`, `circle_chord_rate`) | **Quarter-circle second path:** `circle_param O r` on `[0, π/2]` has metric length `r·π/2` through the pack (speed constantly `r`); uniqueness agrees with the envelope headline `[exact]` | 3 |
