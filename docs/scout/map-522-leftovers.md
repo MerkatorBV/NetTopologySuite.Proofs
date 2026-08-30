@@ -66,7 +66,7 @@ Value and priority are orthogonal.
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
 | `Ⅱ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
 | `Ⅲ` | Exterior-side one-sided T | #522-adjacent | research | Detector landed. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. Classifier emits `TPR_TouchOnesided` (`RelateNGComplete.v : onesided_t_pair_onesided`). II empty (`RelateNGComplete.v : onesided_t_ii_empty`). Fill stays `im_unsupported`. Not CONTEXT Bar 1. The xor also fires on leftover `Ⅳ`. | remint leftover `Ⅰ`; invent leftover `Ⅱ`; compile leftover `Ⅳ`; emit `FFFFFFFFF`; claim Bar 1; mint `522-n` / `Ⅴ` |
-| `Ⅳ` | Interior-side one-sided T | #522-adjacent | research | Named. The xor `touch_onesided_t_b` (`RelateNGCore.v : touch_onesided_t_b`) fires on this family too; the boolean does not distinguish leftover `Ⅲ` from leftover `Ⅳ`. Not compiled. No side-distinguishing detector. Fill stays the token. | compile leftover `Ⅳ`; invent a side-distinguishing detector; remint the fill; steal leftover `Ⅲ`; mint `522-n` / `Ⅴ` |
+| `Ⅳ` | Interior-side one-sided T | #522-adjacent | research | Named. Chart: [`map-interior-side-cert.md`](map-interior-side-cert.md). Same-side one-sided T. The xor `touch_onesided_t_b` (`RelateNGCore.v : touch_onesided_t_b`) does not distinguish leftover `Ⅲ` from leftover `Ⅳ`. Not compiled. `overlap_b` may steal same-side stems (`RelateNGCore.v : overlap_b`). Fill stays the token. | compile leftover `Ⅳ`; invent a side-distinguishing detector; remint the fill; steal leftover `Ⅲ`; mint `522-n` / `Ⅴ` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -100,15 +100,18 @@ Value and priority are orthogonal.
   (`RelateNGComplete.v : onesided_t_pair_inhabits`) and classified
   (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). Fill
   stays `im_unsupported`.
-- **`Ⅳ`** is the interior-side stem. Named only. The xor does not
-  distinguish it from leftover `Ⅲ`. Do not compile. Next unused is
-  `Ⅴ` — ask before assigning.
+- **`Ⅳ`** is the interior-side stem. Chart:
+  [`map-interior-side-cert.md`](map-interior-side-cert.md). Named
+  only. The xor does not distinguish it from leftover `Ⅲ`. Do not
+  compile. Next unused is `Ⅴ` — ask before assigning.
 
 ## Frontier
 
 Leftover `Ⅰ` bar 1 is landed. Leftover `Ⅱ` is still named only.
 Leftover `Ⅲ` is compiled and classified (`TPR_TouchOnesided`);
-fill stays `im_unsupported`. Leftover `Ⅳ` is named only.
+fill stays `im_unsupported`. Leftover `Ⅳ` is named
+([`map-interior-side-cert.md`](map-interior-side-cert.md)); no
+compiled pair.
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
@@ -116,7 +119,7 @@ fill stays `im_unsupported`. Leftover `Ⅳ` is named only.
 Ⅰ ──────── T-junction / partial-edge kiss ── bar 1 ── TPR_TouchPartialEdge
 Ⅱ ─────── obtuse-at-v certificate ── research ── finding #584
 Ⅲ ───── exterior-side one-sided T ── detector ── TPR_TouchOnesided (fill token)
-Ⅳ ───── interior-side stem ── named ── xor does not distinguish from Ⅲ
+Ⅳ ───── interior-side stem ── research ── map-interior-side-cert.md (no pair)
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 

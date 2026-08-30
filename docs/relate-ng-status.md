@@ -116,9 +116,10 @@ disguised as disjointness — that was #530.
 - **Exterior-side one-sided T** — leftover `Ⅲ`. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill stays
   `im_unsupported`. Not CONTEXT Bar 1.
-- **Interior-side one-sided T** — leftover `Ⅳ`. Named only. The xor
-  `touch_onesided_t_b` (`RelateNGCore.v : touch_onesided_t_b`) does not
-  distinguish leftover `Ⅲ` from leftover `Ⅳ`. Do not compile.
+- **Interior-side one-sided T** — leftover `Ⅳ`. Named only. Chart:
+  [`scout/map-interior-side-cert.md`](scout/map-interior-side-cert.md).
+  The xor `touch_onesided_t_b` (`RelateNGCore.v : touch_onesided_t_b`)
+  does not distinguish leftover `Ⅲ` from leftover `Ⅳ`. Do not compile.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 
