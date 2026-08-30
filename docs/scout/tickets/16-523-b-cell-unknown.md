@@ -23,8 +23,14 @@ Consumers (`origin/main` @ `5b7a934`):
 
 ## Acceptance
 
-1. A 9-char that contains `?` parses as `("matrix", ninechar)`.
-   Example: `parse_relate_wire("FF?FF1212")` succeeds as a matrix.
+**Result parse vs catalog lookup stay split.** A 9-char with `?` is a
+valid **result** cell string. It is not a catalog key or a fill key.
+
+1. **Result parse** accepts `?` in a 9-char. A string that contains
+   `?` parses as `("matrix", ninechar)`. Example:
+   `parse_relate_wire("FF?FF1212")` succeeds as a matrix.
+   `is_valid_de9im_result` (or the hunt/C# allowlist) is true for
+   that 9-char.
 2. Parsers keep two kinds only: `("token", "UNSUPPORTED")` and
    `("matrix", ninechar)`. No third kind for `?`.
 3. Whole-line `UNSUPPORTED` stays Decline
@@ -35,9 +41,11 @@ Consumers (`origin/main` @ `5b7a934`):
 5. Do **not** add `?` to `RELATE_TOKENS`. A bare `?` or a
    whole-line-that-is-not-a-9-char is not Decline.
 6. Do **not** steal `UNSUPPORTED` as a cell character.
-7. Do **not** put `?` in catalog keys or in the shared classifier
-   pins (FFFFFFFFF / 2FFF1FFF2 / 2FFFFFFF2 / FFFF1FFF2). Those pins
-   are also used by `rect_pair_fill`.
+7. **Catalog lookup** (`lookup_matrix` / fill keys / shared-pin keys)
+   still rejects `?`. `catalog_ok_keys` and `shared_pin_ok` stay
+   `F/0/1/2`. Do **not** put `?` in catalog keys or in the shared
+   classifier pins (FFFFFFFFF / 2FFF1FFF2 / 2FFFFFFF2 / FFFF1FFF2).
+   Those pins are also used by `rect_pair_fill`.
 8. T-junction decline golden stays `UNSUPPORTED`
    (`oracle/de9im_triangle_vectors.txt` `REGIME DECLINE`). Do not
    turn it into a confident `FFFFFFFFF`. The #530 / #571 pair stays
