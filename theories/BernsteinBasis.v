@@ -104,9 +104,13 @@ Lemma bern_Sn_sum_upto : forall n k t,
     + t * sum_f_R0 (fun i => match i with O => 0 | S i' => bern n i' t end) k.
 Proof.
   intros n k t. induction k as [|k IH].
-  - simpl. rewrite bern_Sn. ring.
-  - rewrite sum_f_R0_S. rewrite bern_Sn. rewrite IH.
-    rewrite sum_f_R0_S. rewrite sum_f_R0_S. ring.
+  - rewrite bern_Sn. ring.
+  - rewrite (sum_f_R0_S (fun i => bern (S n) i t) k).
+    rewrite bern_Sn.
+    rewrite IH.
+    rewrite (sum_f_R0_S (fun i => bern n i t) k).
+    rewrite (sum_f_R0_S (fun i => match i with O => 0 | S i' => bern n i' t end) k).
+    ring.
 Qed.
 
 (* WITNESS {"claimId":"508-f-bern-partition","topic":"metric","lemma":"bern_partition","title":"Bernstein basis of degree n is a partition of unity","file":"theories/BernsteinBasis.v","witness":"508-f-bernstein","board":"#562"} *)
