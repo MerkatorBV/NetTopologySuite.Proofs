@@ -316,7 +316,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 | ring = closed ∧ simple (§4.2.4) | `Curve.IsRing` (`Curve.cs:40`); `IsSimple` fails closed (`Operation/Valid/IsSimpleOp.cs:165`) | definition ok; evaluation red-marked |
 | CS well-formed ⇔ 2n+1 points, ≥3 (§7.3.1 Desc 7) | ctor enforces 0 or odd ≥3 (`CircularString.cs:56-70`) | ok |
 | CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | definite-false via `CurveValidity` rung 1 since `359b334` (constructs at intake per ADR-0005; IsValid returns false) | ok — landed 2026-08-30 (`615-g`); clean values stay fail-closed pending rung 2 (`615-h`) |
-| CS collinear triple → straight-line segment (§7.3.1 Desc 8b) | no arc math yet; semantics unimplemented | pending (metrics follow-up) |
+| CS collinear triple → straight-line segment (§7.3.1 Desc 8b) | `CircularArcGeometry.SegmentLength` maps a collinear triple to its start–end chord since `2ccd353`; pinned by `Length_CollinearTriple_IsChord` and the `collinear_chord` oracle vector | ok — landed 2026-08-30 (`615-d`) |
 | CS bulge / centre-radius-angle representations (§7.3.1 Desc 13–15) | absent | untracked gap (SQL API surface; optional for NTS) |
 | CC components: **all** ST_Curve subtypes, nested CC included (§7.10.1 Desc 7; §5.1.67 `<curve text>`) | accepted and spliced flat, ctor + reader, since `2c4c7bc` (flatten tests in `CompoundCurveTest`/`CurveWktTest`) | ok — ADR-0005 Decision 2, landed 2026-08-30 (`615-b`) |
 | CC contiguity: end = next start (§7.10.1 Desc 7) | `Equals2D` check in ctor (`CompoundCurve.cs:75-86`) | ok (2D reading; spec default closedness is 2D, §4.2.4.1) |
@@ -413,14 +413,34 @@ belongs there, not in `Envelope`.
 ### 6.5 Fail-closed metrics vs. spec-required answers
 
 ST_Length, ST_Distance, ST_Envelope are total over non-empty values in the
-spec; the branch throws `NotSupportedException`. This is a deliberate,
-documented, red-test-marked interim (headers of `CircularString.cs:10-14`,
-`CurveMetricsContractTests.cs:2-6`), preferred over silently returning
-chord-approx numbers — which would satisfy the type signature while violating
-§7.3.1 Desc 8's definition of the value being measured. The Red tests are the
-spec's side of that contract.
+spec. **ST_Length is exact over the locus since `2ccd353`** (`615-d`, §3.1);
+ST_Distance and ST_Envelope still throw `NotSupportedException` — a
+deliberate, documented, red-test-marked interim (the three remaining Red
+tests in `CurveMetricsContractTests.cs`, tickets `615-e/f`), preferred over
+silently returning chord-approx numbers — which would satisfy the type
+signature while violating §7.3.1 Desc 8's definition of the value being
+measured. The remaining Red tests are the spec's side of that contract.
 
 ---
+
+### 6.6 Cross-repo fork: the `(A, B, A)` factory rewrite (recorded, undecided)
+
+`grootstebozewolf/jts#124` (ported to NTS by
+`grootstebozewolf/NetTopologySuite#20`) rewrites a 3-point closed arc
+`(A, B, A)`, A ≠ B, into the five-point full-circle form `(A, C, B, D, A)`
+at factory/read time. ADR-0005's posture gives the same WKT a different
+answer: it constructs as the 3-token value (intake is representability
+only, `615-c`) and is **definitely invalid** at rung 1 (§7.3.1 Desc 6,
+`615-g`) — `(A, B, A)` is not the 13249-3 full-circle form, and the
+rewrite is a JTS-side on-ramp the spec does not have. Per the PR #626
+review (2026-08-30), these two postures must not both stand as silent
+sources of truth: merging the NTS port into the foundation branch
+requires either recording the rewrite in this document as a **documented
+JTS/NTS input deviation** (a factory-door normalization — in which case
+the CurveOracleBugHunt harness should construct via the factory so its
+vectors keep tracking intake) or amending ADR-0005. Until the PO decides,
+the port is not "the Proofs posture". Recorded here so the fork is loud,
+not silent. **Decision pending.**
 
 ## 7. Cross-check against EXACT_CURVE_BIBLE.md
 
