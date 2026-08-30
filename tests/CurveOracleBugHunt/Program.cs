@@ -320,7 +320,7 @@ static class Program
                 Hit("OK", $"INVAR/chord_le_arc/{a.Name}", $"chord={endChord:G9} arc={oracleLen:G9}");
         }
 
-        Console.WriteLine("=== RING_SIMPLE vs NTS IsSimple (615-h rungs 1+2: #624, #630) ===");
+        Console.WriteLine("=== RING_SIMPLE vs NTS IsSimple (615-h rungs 1-3: #624, #630, #634) ===");
         // CircularString simplicity is decided on the branch for every
         // segment count (pairwise contact kernel mirroring this lane's
         // composition). Collinear segments are sent to the oracle AS chords

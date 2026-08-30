@@ -122,7 +122,13 @@ is **checked-valid**. **Reading of record (#634):** Desc 6 and Desc 7 are
 §7.3.1's complete validity obligations — simplicity is NOT among them
 ("simple ∧ closed = circular ring", Desc 9–10, defines a term; a
 self-intersecting CircularString is valid-but-not-simple, exactly like a
-classical LineString). Non-finite coordinates are definite-false for
+classical LineString). **Sub-reading (review-pinned):** Desc 6 binds only a
+segment's start and end points; an intermediate coincident with an endpoint
+makes the triple exactly collinear (the orientation cross is exactly zero),
+so Desc 8b applies and the segment is the legal start–end chord —
+`CIRCULARSTRING (0 0, 0 0, 2 0)` is checked-valid, consistent with the
+Desc-8b overshoot readings already pinned at 615-d/f (the intermediate of a
+collinear triple is not part of the locus and need not lie on the chord). Non-finite coordinates are definite-false for
 classical `IsValidOp` parity. No bulge/centre-angle representation exists on
 the branch (untracked gap; SQL-level API, low priority for a geometry
 library).
@@ -154,7 +160,9 @@ contiguity checked across splice boundaries; the former rejection
 contradicted the spec (§6.1, retained as history). **Reading of record
 (#634):** contiguity (Desc 7) and component well-formedness (Desc 3) are
 §7.10.1's complete validity obligations ("simple ∧ closed ⇒ ring", Desc 8,
-defines a term), so a clean CompoundCurve is checked-valid since `66265ed`.
+defines a term; Desc 5's no-null-components rule is discharged at intake —
+a constructed value cannot violate it, `CompoundCurve.cs` cites it), so a
+clean CompoundCurve is checked-valid since `66265ed`.
 
 ### 2.3 ST_CurvePolygon (§4.2.15, §8.2.1)
 
@@ -479,8 +487,18 @@ CurvePolygon with a provably non-simple ring is definite `false`
 (§8.2.1 Desc 2–3), and a CP passing everything throws naming the ring-pair
 conditions (Desc 11–14, #639). The five-point full-circle idiom is now
 checked-valid and a checked simple ring. MultiCurve/MultiSurface still have
-no override: their members reach `IsValidOp`'s default fail-closed throw —
-no silent-true path, wiring them through is #639.
+no override, and that is a **hole, not a guard** (review-demonstrated):
+`IsValidOp`'s GeometryCollection arm checks members individually, so a
+CURVED member throws fail-closed, but an all-classical-member MultiCurve
+silently takes classical GC validity, and an all-classical MultiSurface
+additionally misses the surface-pair conditions (two overlapping polygons
+answer `true` where the same pair as MultiPolygon answers `false`).
+Wiring real MC/MS verdicts is #639. Also recorded: a
+deserialization-bypass CompoundCurve that skipped the constructor's
+contiguity check can get either simplicity verdict from the chain
+composition (contacts fail the permitted filter → `false`; disjoint
+component loci → `true`) — `IsValid` catches such values definite-false
+via the Desc-7 re-assert, and every constructed value is contiguous.
 
 ### 6.3 Ring simplicity for CurvePolygon — spec stricter than the constructor
 
