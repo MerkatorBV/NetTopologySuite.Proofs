@@ -550,6 +550,14 @@ static class Cases
         // closing-pair allowance is (0,0), not (1,1)).
         ("non_adjacent_touch", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0", "C 4 0 1 1" }, "NOT_SIMPLE", false,
             gf => Cs(gf, (0, 0), (1, 1), (2, 0), (3, -1), (4, 0), (2.5, 0.5), (1, 1))),
+        // The exact/double split (615-h rung-2 review): the flat arc's
+        // circumradius (~2e8) is beyond double precision for contact
+        // decisions, so NTS refuses (conditioning guard) while the
+        // exact-rational oracle decides — it even finds the genuine second
+        // crossing of the flat arc and its connector chord 2.8e-8 from the
+        // shared vertex.
+        ("flat_arc_ill_conditioned", new[] { "A -2 0.9 0 0.90000001 2 0.9", "C 2 0.9 1 0", "A 1 0 0 1 -1 0" }, "NOT_SIMPLE", null,
+            gf => Cs(gf, (-2, 0.9), (0, 0.90000001), (2, 0.9), (1.5, 0.45), (1, 0), (0, 1), (-1, 0))),
         ("bowtie_4chords", new[] { "C 0 0 2 2", "C 2 2 2 0", "C 2 0 0 2", "C 0 2 0 0" }, "NOT_SIMPLE", false,
             gf => gf.CreateLineString(new[]
             {
