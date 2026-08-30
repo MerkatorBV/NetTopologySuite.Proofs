@@ -58,17 +58,13 @@ From NTS.Proofs Require Import RelateNGCore RelateNGContains RelateNGOverlap
 Import ListNotations.
 Local Open Scope R_scope.
 
-(* Historical 522-j pair: leftover `Ⅰ` classifies the T-junction
-   as `TPR_TouchPartialEdge`. Live cex is mixed-cone (not leftover `Ⅴ`). *)
+(* Historical 522-j pair: leftover `Ⅰ` classifies; live cex is mixed-cone. *)
 
 Lemma tjunction_pair_both_ccw :
   0 < gdbl 0 0 2 0 0 1 /\ 0 < gdbl 1 0 3 0 2 1.
 Proof. unfold gdbl; split; lra. Qed.
 
-(** The leftover-Ⅰ pair classifies as [TPR_TouchPartialEdge]
-    (historical name: 522-j recorded [TPR_Unsupported]). Live
-    completeness cex is [triangle_pair_regime_ccw_incomplete]
-    (mixed-cone; not leftover `Ⅴ`). *)
+(** Leftover-Ⅰ classifies as [TPR_TouchPartialEdge]. Live cex is mixed-cone. *)
 Theorem triangle_pair_regime_incomplete_tjunction :
   0 < gdbl 0 0 2 0 0 1 /\
   0 < gdbl 1 0 3 0 2 1 /\
@@ -465,6 +461,30 @@ Proof.
   reflexivity.
 Qed.
 
+Lemma mixed_cone_no_partial_edge :
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+    (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 3 1) = false.
+Proof.
+  unfold touch_partial_edge_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross; cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+Lemma mixed_cone_no_onesided :
+  touch_onesided_t_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+    (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 3 1) = false.
+Proof.
+  unfold touch_onesided_t_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross; cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
 Lemma mixed_cone_pair_unsupported :
   triangle_pair_regime 0 0 2 0 0 2 0 0 (-1) (-1) 3 1 = TPR_Unsupported.
 Proof.
@@ -550,16 +570,8 @@ Proof.
       unfold vec_sum_from, side_dot. cbn [px py]. lra. }
   rewrite HA1, HA2, HA3.
   rewrite !orb_false_r, andb_false_r.
-  unfold touch_partial_edge_b, some_vertex_on_open_edges,
-         vertex_on_open_edges, on_open_seg_b, cross.
-  cbn [px py].
-  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
-  unfold touch_onesided_t_b, some_vertex_on_open_edges,
-         vertex_on_open_edges, on_open_seg_b, cross.
-  cbn [px py].
-  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  rewrite mixed_cone_no_partial_edge.
+  rewrite mixed_cone_no_onesided.
   rewrite mixed_cone_touch_obtuse_false.
   reflexivity.
 Qed.
@@ -610,18 +622,7 @@ Proof.
   exact Hreg.
 Qed.
 
-(* -------------------------------------------------------------------------- *)
-(* Leftover Ⅲ — exterior-side one-sided T.                                  *)
-(*                                                                            *)
-(* Exterior-side stem (ticket 21).  A = (0,0)(2,0)(0,1),                      *)
-(* B = (1,0)(1/2,-1)(3/2,-1).  Both CCW.  B-vertex (1,0) sits in the open     *)
-(* base of A (collinear with y = 0).  Not mutual (`touch_partial_edge_b`      *)
-(* = false).  No shared vertex.  Interiors opposite across y = 0, so II      *)
-(* is empty (`onesided_t_ii_empty`).  There is no `onesided_t_bb_dim0`.       *)
-(* Xor emits TPR_TouchOnesided (ticket 22) — Ⅲ∨Ⅳ with two compiled         *)
-(* witnesses, not a leftover-Ⅲ detector and not a side-aware boolean.        *)
-(* Fill stays im_unsupported. Completeness is mixed-cone. Not CONTEXT Bar 1. *)
-(* -------------------------------------------------------------------------- *)
+(* Leftover Ⅲ — exterior-side stem. Completeness is mixed-cone. *)
 
 Definition onesided_t_pair_coords
     (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Prop :=
