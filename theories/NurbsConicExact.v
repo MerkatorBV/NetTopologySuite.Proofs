@@ -38,6 +38,7 @@
 From Stdlib Require Import Reals Lra Ratan List.
 From NTS.Proofs Require Import
   Distance CurveLength ArcRectifiable NurbsQuadraticLength.
+Import ListNotations.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
@@ -238,10 +239,16 @@ Proof.
   unfold golden_numx, golden_uden, golden_w0, golden_w1, golden_w2,
          golden_p0, golden_p1, golden_p2, bern2_0, bern2_1, bern2_2.
   cbn [px py].
-  apply Rminus_diag_uniq.
-  field_simplify.
-  rewrite sqrt2_sqr.
-  ring.
+  assert (H :
+      2 * ((1 - t) * (1 - t) * (1 * 1)
+           + 2 * (t * (1 - t)) * ((sqrt 2 / 2) * 1)
+           + t * t * (1 * 0))
+      - ((sqrt 2 + (1 - sqrt 2) * t) * (sqrt 2 + (1 - sqrt 2) * t)
+         - t * t) = 0).
+  { field_simplify.
+    all: try lra.
+    rewrite sqrt2_sqr. ring. }
+  lra.
 Qed.
 
 Lemma two_den_uden : forall t,
@@ -251,10 +258,16 @@ Proof.
   intro t.
   unfold nurbs2_den, golden_uden, golden_w0, golden_w1, golden_w2,
          bern2_0, bern2_1, bern2_2.
-  apply Rminus_diag_uniq.
-  field_simplify.
-  rewrite sqrt2_sqr.
-  ring.
+  assert (H :
+      2 * ((1 - t) * (1 - t) * 1
+           + 2 * (t * (1 - t)) * (sqrt 2 / 2)
+           + t * t * 1)
+      - ((sqrt 2 + (1 - sqrt 2) * t) * (sqrt 2 + (1 - sqrt 2) * t)
+         + t * t) = 0).
+  { field_simplify.
+    all: try lra.
+    rewrite sqrt2_sqr. ring. }
+  lra.
 Qed.
 
 Lemma two_numy_uden : forall t,
@@ -264,10 +277,15 @@ Proof.
   unfold golden_numy, golden_uden, golden_w0, golden_w1, golden_w2,
          golden_p0, golden_p1, golden_p2, bern2_0, bern2_1, bern2_2.
   cbn [px py].
-  apply Rminus_diag_uniq.
-  field_simplify.
-  rewrite sqrt2_sqr.
-  ring.
+  assert (H :
+      2 * ((1 - t) * (1 - t) * (1 * 0)
+           + 2 * (t * (1 - t)) * ((sqrt 2 / 2) * 1)
+           + t * t * (1 * 1))
+      - 2 * t * (sqrt 2 + (1 - sqrt 2) * t) = 0).
+  { field_simplify.
+    all: try lra.
+    rewrite sqrt2_sqr. ring. }
+  lra.
 Qed.
 
 Lemma golden_weierstrass_x : forall t,
@@ -323,10 +341,16 @@ Proof.
   unfold nurbs2_pt, circle_pt, golden_phi, golden_origin.
   apply point_ext; cbn [px py].
   - rewrite Rplus_0_l, Rmult_1_l, cos_2_atan.
-    fold (golden_numx t).
+    change (bern2_0 t * (golden_w0 * px golden_p0)
+            + bern2_1 t * (golden_w1 * px golden_p1)
+            + bern2_2 t * (golden_w2 * px golden_p2))
+      with (golden_numx t).
     apply golden_weierstrass_x; assumption.
   - rewrite Rplus_0_l, Rmult_1_l, sin_2_atan.
-    fold (golden_numy t).
+    change (bern2_0 t * (golden_w0 * py golden_p0)
+            + bern2_1 t * (golden_w1 * py golden_p1)
+            + bern2_2 t * (golden_w2 * py golden_p2))
+      with (golden_numy t).
     apply golden_weierstrass_y; assumption.
 Qed.
 
