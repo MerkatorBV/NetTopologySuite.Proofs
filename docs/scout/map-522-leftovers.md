@@ -96,7 +96,8 @@ Value and priority are orthogonal.
 ## Frontier
 
 Leftovers `Ⅰ` and `ⅠⅠ` are named. This map does not invent either
-detector. `/implement` of either is a later letter.
+detector on `main`. Leftover `Ⅰ` bar 1 is in flight as #609.
+`/implement` of leftover `ⅠⅠ` is a later letter.
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
