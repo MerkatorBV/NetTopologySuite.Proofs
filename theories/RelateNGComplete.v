@@ -6,10 +6,11 @@
    Ticket #577 asked either a completeness theorem (every nondegenerate
    CCW triangle pair answers a named regime) or a documented
    counterexample that becomes the next certificate's spec.  Completeness
-   is FALSE: the compiled T-junction / partial-edge kiss
-   `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` is both-CCW and still emits
-   `TPR_Unsupported`.  Obtuse-at-v is the other leftover family named
-   in Core; it is not invented as a certificate here.
+   was FALSE on the compiled T-junction / partial-edge kiss
+   `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` (522-j). Leftover `Ⅰ`
+   classifies that pair as `TPR_TouchPartialEdge`. Completeness is
+   still FALSE: obtuse-at-v (leftover `ⅠⅠ`, 522-m) still emits
+   `TPR_Unsupported`.  Do not invent the obtuse certificate here.
 
    Hard pairs that DO classify are cited, not re-proved.  Catalog
    ids, not the older witness-issue shorthand: disjoint is #571 /
@@ -22,7 +23,8 @@
    fails.  That is NOT "non-CCW ⇒ Unsupported" — `touch_edge_b` has no
    CCW guard, and `contains_b` guards only A.
 
-   Five names are not a partition.  Do not invent a T-junction or
+   Five names are not a partition.  Leftover `Ⅰ` classifies the
+   T-junction in `RelateNGTouchPartialEdge`.  Do not invent the
    obtuse-at-v certificate in this file.  Not an ADR-0004 remint.
    `522-j` is the existing #577 ticket id.  The filtered-completeness
    retry (`522-m`) lives below: excluding the T-junction 12-tuple,
@@ -44,8 +46,6 @@
      Assisted-by: Cursor Agent
    ========================================================================== *)
 
-(* WITNESS {"claimId":"522-j","topic":"relate","lemma":"triangle_pair_regime_incomplete_tjunction","title":"Classifier completeness is false: a both-CCW T-junction still emits TPR_Unsupported","file":"theories/RelateNGComplete.v","witness":"522-j-sentinel-cex","board":"#577"} *)
-
 From Stdlib Require Import Reals List Lia Lra Ranalysis Bool Btauto.
 From NTS.Proofs Require Import Real.
 From NTS.Proofs Require Import DE9IM Distance Overlay Segment RelateBoundary
@@ -64,39 +64,29 @@ Import ListNotations.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
-(* Compiled cex: T-junction / partial-edge kiss.                              *)
+(* Historical 522-j pair: T-junction / partial-edge kiss.                     *)
 (*                                                                            *)
-(* A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1).  Both gdbl = 2.  No shared      *)
-(* vertex, no full shared edge, no separating edge.  The pin itself lives     *)
-(* in RelateNGDisjoint (`tjunction_pair_unsupported`); this module records    *)
-(* that the pair is inside the ticket's nondegenerate-CCW domain.             *)
+(* A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1).  Both gdbl = 2.  Leftover `Ⅰ`   *)
+(* classifies this pair as `TPR_TouchPartialEdge`.  The live completeness    *)
+(* cex is obtuse-at-v (leftover `ⅠⅠ` / 522-m) below.                          *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma tjunction_pair_both_ccw :
   0 < gdbl 0 0 2 0 0 1 /\ 0 < gdbl 1 0 3 0 2 1.
 Proof. unfold gdbl; split; lra. Qed.
 
-(* WITNESS topic: relate · claimId: 522-j · witness: 522-j-sentinel-cex *)
-(* WITNESS {"claimId":"522-j","topic":"relate","lemma":"triangle_pair_regime_incomplete_tjunction","title":"Classifier completeness is false: a both-CCW T-junction still emits TPR_Unsupported","file":"theories/RelateNGComplete.v","witness":"522-j-sentinel-cex","board":"#577"} *)
+(** The leftover-Ⅰ pair classifies as [TPR_TouchPartialEdge]
+    (historical name: 522-j recorded [TPR_Unsupported]). Live
+    completeness cex is [triangle_pair_regime_ccw_incomplete]
+    (obtuse / leftover ⅠⅠ). *)
 Theorem triangle_pair_regime_incomplete_tjunction :
   0 < gdbl 0 0 2 0 0 1 /\
   0 < gdbl 1 0 3 0 2 1 /\
-  triangle_pair_regime 0 0 2 0 0 1 1 0 3 0 2 1 = TPR_Unsupported.
+  triangle_pair_regime 0 0 2 0 0 1 1 0 3 0 2 1 = TPR_TouchPartialEdge.
 Proof.
   split; [unfold gdbl; lra|].
   split; [unfold gdbl; lra|].
-  exact tjunction_pair_unsupported.
-Qed.
-
-Theorem triangle_pair_regime_ccw_incomplete :
-  exists ax ay bx by_ cx cy dx dy ex ey fx fy : R,
-    0 < gdbl ax ay bx by_ cx cy /\
-    0 < gdbl dx dy ex ey fx fy /\
-    triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
-      = TPR_Unsupported.
-Proof.
-  exists 0, 0, 2, 0, 0, 1, 1, 0, 3, 0, 2, 1.
-  exact triangle_pair_regime_incomplete_tjunction.
+  exact tjunction_pair_touch_partial.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -217,8 +207,8 @@ Proof.
   exact (touch_vertex_b_false_of_non_ccw _ _ _ _ _ _ _ _ _ _ _ _ H).
 Qed.
 
-(* Next certificate specs (not invented here): T-junction / partial-edge
-   kiss, and obtuse-at-v.  Five names remain not a partition. *)
+(* Leftover Ⅰ classified the T-junction. Obtuse-at-v (leftover ⅠⅠ)
+   is still not invented. Five names remain not a partition. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Filtered-hypothesis retry (#522 claimId 522-m).                            *)
@@ -391,7 +381,26 @@ Proof.
       unfold vec_sum_from, side_dot. cbn [px py]. lra. }
   rewrite HA1, HA2, HA3.
   rewrite !orb_false_r, andb_false_r.
+  unfold touch_partial_edge_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
   reflexivity.
+Qed.
+
+(* WITNESS {"claimId":"522-j","topic":"relate","lemma":"triangle_pair_regime_ccw_incomplete","title":"Classifier completeness is still false after leftover Ⅰ: obtuse-at-v emits TPR_Unsupported","file":"theories/RelateNGComplete.v","witness":"522-j-sentinel-cex","board":"#577"} *)
+Theorem triangle_pair_regime_ccw_incomplete :
+  exists ax ay bx by_ cx cy dx dy ex ey fx fy : R,
+    0 < gdbl ax ay bx by_ cx cy /\
+    0 < gdbl dx dy ex ey fx fy /\
+    triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
+      = TPR_Unsupported.
+Proof.
+  exists 0, 0, 2, 0, 0, 2, 0, 0, (-2), 0, 1, (-1).
+  split; [unfold gdbl; lra|].
+  split; [unfold gdbl; lra|].
+  exact obtuse_pair_unsupported.
 Qed.
 
 (* WITNESS {"claimId":"522-m","topic":"relate","lemma":"triangle_pair_regime_ccw_incomplete_not_tjunction","title":"Filtered CCW-completeness is still false: obtuse-at-v declines after the T-junction cex is excluded","file":"theories/RelateNGComplete.v","witness":"522-m-complete-filtered","board":"#522"} *)

@@ -48,9 +48,10 @@ Roman numerals. Do **not** mint `522-n`.
   proved. Carved on `main` via #597.
 - **Fill remints** (classifier pointer → OGC `*_ogc`). Unnamed. Shared
   with the rect lane. Not `522-f`.
-- **T-junction / partial-edge kiss** — leftover `Ⅰ`. Completeness
-  recorded the finding (`RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`)
-  and stopped.
+- **T-junction / partial-edge kiss** — leftover `Ⅰ` bar 1 landed
+  (`RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`).
+  Completeness recorded the finding and leftover `Ⅰ` classified the
+  pair. Fill stays `im_unsupported`.
 - **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Separate from `Ⅰ`. Detector not invented.

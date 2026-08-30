@@ -614,8 +614,10 @@ Proof.
   destruct (separated_b ax ay bx by_ cx cy dx dy ex ey fx fy);
     [ discriminate | ].
   destruct (touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy) eqn:Htv;
-    [ | discriminate ].
-  exact (touch_vertex_b_triangles_touch _ _ _ _ _ _ _ _ _ _ _ _ Htv).
+    [ | ].
+  - exact (touch_vertex_b_triangles_touch _ _ _ _ _ _ _ _ _ _ _ _ Htv).
+  - destruct (touch_partial_edge_b _ _ _ _ _ _);
+      discriminate.
 Qed.
 
 (* -------------------------------------------------------------------------- *)

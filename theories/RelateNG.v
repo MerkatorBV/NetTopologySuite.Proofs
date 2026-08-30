@@ -37,12 +37,11 @@
          shared vertex).  Expected re-export blast (hub, not extra
          leaf fan-out).  Leftover declines are #577 / 522-j.
      - RelateNGComplete.v    leftover-decline finding (#577 / 522-j):
-         completeness is FALSE (`triangle_pair_regime_incomplete_tjunction`);
-         hard pairs that do classify are cited, not re-proved;
-         domain boundary for the both-CCW certificates.  Filtered
-         retry (#522 / 522-m): excluding the T-junction 12-tuple,
-         completeness is still FALSE (obtuse-at-v).  Next
-         certificate specs (T-junction, obtuse-at-v) are not invented.
+         completeness is still FALSE (obtuse-at-v / leftover ⅠⅠ).
+         The compiled T-junction pair is leftover `Ⅰ` (classified).
+     - RelateNGTouchPartialEdge.v leftover `Ⅰ` bar 1: mutual
+         open-edge detector `touch_partial_edge_b` reaches
+         `TPR_TouchPartialEdge` (fill stays `im_unsupported`).
      - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
          (#568 / 522-g): a strict-`gtri` point has an explicit open
          disk of strict points; a nondegenerate segment carries dim-1;
@@ -123,6 +122,7 @@ From NTS.Proofs Require Export
   RelateNGTouchCells
   RelateNGRect
   RelateNGComplete
+  RelateNGTouchPartialEdge
   RelateNGRingInclusion
   RelateNGDisjointCells
   RelateNGContainsCells

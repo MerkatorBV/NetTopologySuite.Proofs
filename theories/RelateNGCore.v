@@ -428,10 +428,37 @@ Definition touch_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
           (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
   else false else false.
 
+(* Leftover Ⅰ: a vertex of one triangle sits in the OPEN interior of an
+   edge of the other (collinear, strictly between endpoints). Mutual —
+   some B-vertex on an open A-edge AND some A-vertex on an open B-edge —
+   so a one-sided dim-0 T is not this leftover. Do not widen
+   `shares_edge_b` (frozen TouchEdge leftover). Pure `Req_dec_T` /
+   `Rlt_dec`. *)
+Definition on_open_seg_b (p q r : Point) : bool :=
+  if Req_dec_T (cross p q r) 0 then
+    if Rlt_dec 0 ((px r - px p) * (px q - px p) + (py r - py p) * (py q - py p))
+    then
+    if Rlt_dec 0 ((px r - px q) * (px p - px q) + (py r - py q) * (py p - py q))
+    then true else false else false
+  else false.
+
+Definition vertex_on_open_edges (a1 a2 a3 v : Point) : bool :=
+  on_open_seg_b a1 a2 v || on_open_seg_b a2 a3 v || on_open_seg_b a3 a1 v.
+
+Definition some_vertex_on_open_edges (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  vertex_on_open_edges a1 a2 a3 b1
+  || vertex_on_open_edges a1 a2 a3 b2
+  || vertex_on_open_edges a1 a2 a3 b3.
+
+Definition touch_partial_edge_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  some_vertex_on_open_edges a1 a2 a3 b1 b2 b3
+  && some_vertex_on_open_edges b1 b2 b3 a1 a2 a3.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
-   certificate, and a vertex-touch certificate, and DECLINES on
-   everything else.
+   certificate, a vertex-touch certificate, and leftover Ⅰ's collinear
+   partial-edge kiss (`touch_partial_edge_b`, after `touch_edge_b` so a
+   full shared edge still wins).  DECLINES on everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
@@ -439,9 +466,10 @@ Definition touch_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    classified disjoint and filled with `aa_matrix_disjoint`.  The default is
    TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
    disjoint is reachable when `separated_b` fires (#571); vertex-touch is
-   reachable when `touch_vertex_b` fires (#572); pairs no certificate
-   covers (pure lens, T-junction / partial-edge kiss) still decline —
-   leftover-decline finding is #577 / 522-j (`RelateNGComplete`). *)
+   reachable when `touch_vertex_b` fires (#572); leftover Ⅰ is reachable
+   when `touch_partial_edge_b` fires.  Obtuse-at-v (leftover ⅠⅠ) still
+   declines — completeness stays false (522-m). Do not reorder the four
+   wired certificates. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -454,6 +482,10 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_Disjoint
   else if touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_TouchVertex
+  else if touch_partial_edge_b
+            (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+            (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+  then TPR_TouchPartialEdge
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

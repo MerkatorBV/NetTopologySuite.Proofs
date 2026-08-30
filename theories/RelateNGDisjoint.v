@@ -16,8 +16,9 @@
 
    Earlier classifier branches are derived false (not assumed).  Pairs
    whose closures miss without a vertex-strict supporting edge
-   (partial-edge kiss) still decline — completeness is #577.
-   Vertex-touch is #572.
+   (partial-edge kiss) used to decline — leftover `Ⅰ` now names
+   that pair `TPR_TouchPartialEdge` (fill still `im_unsupported`).
+   Completeness is still #577 / leftover `ⅠⅠ`. Vertex-touch is #572.
 
    Frozen anchors stay untouched: `touch_int_ext_exclusion` and the
    II-guard maximality refutation.  `triangles_touch_on_shared_edge`
@@ -524,6 +525,8 @@ Proof.
     [ exact (separated_b_triangles_separated _ _ _ _ _ _ _ _ _ _ _ _ Hsep)
     | ].
   destruct (touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+    [ discriminate | ].
+  destruct (touch_partial_edge_b _ _ _ _ _ _);
     discriminate.
 Qed.
 
@@ -663,8 +666,21 @@ Proof.
   rewrite E6. reflexivity.
 Qed.
 
-Lemma tjunction_pair_unsupported :
-  triangle_pair_regime 0 0 2 0 0 1 1 0 3 0 2 1 = TPR_Unsupported.
+Lemma tjunction_touch_partial_edge_b :
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint 3 0) (mkPoint 2 1) = true.
+Proof.
+  unfold touch_partial_edge_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+Lemma tjunction_pair_touch_partial :
+  triangle_pair_regime 0 0 2 0 0 1 1 0 3 0 2 1 = TPR_TouchPartialEdge.
 Proof.
   unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
   cbn [px py].
@@ -709,7 +725,18 @@ Proof.
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   cbn [px py].
   repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  rewrite tjunction_touch_partial_edge_b.
   reflexivity.
+Qed.
+
+(** The leftover-Ⅰ pair's fill is still [im_unsupported]
+    (historical name: the regime used to be [TPR_Unsupported]). *)
+Lemma tjunction_pair_unsupported :
+  triangle_pair_fill
+    (triangle_pair_regime 0 0 2 0 0 1 1 0 3 0 2 1) = im_unsupported.
+Proof.
+  rewrite tjunction_pair_touch_partial.
+  exact triangle_pair_fill_touch_partial_eq.
 Qed.
 
 Lemma relate_tjunction_pair_no_predicate :
@@ -719,8 +746,8 @@ Lemma relate_tjunction_pair_no_predicate :
 Proof.
   intros r.
   rewrite relate_on_triangles_dispatches.
+  unfold tris_relate.
   rewrite tjunction_pair_unsupported.
-  unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
   exact (im_unsupported_no_predicate r).
 Qed.
 
