@@ -76,6 +76,10 @@
    Close with [Rplus_comm] / [Rplus_assoc] / [Rplus_opp_r].
    [apply Rmult_1_r] needs [?r*1 = ?r]; after [/2*2] cancel the
    replace-witness is [s+t = (s+t)*1] (7ff799a L247). [rewrite].
+   Flocq does not convert [Rabs (a-b)] with [Rabs (b-a)]
+   (f3cad32 L594). Do not [replace] the holder goal via
+   [Rabs_minus_sym]; [ellipse_speed_holder s mid] already
+   matches [Rabs (σ mid − σ s)].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -580,9 +584,6 @@ Proof.
       by (rewrite <- H2xv; ring).
     apply Rmult_le_compat_l; [exact Hgap0 |].
     unfold sm, ss.
-    replace (Rabs (ellipse_speed rx ry mid - ellipse_speed rx ry s))
-      with (Rabs (ellipse_speed rx ry s - ellipse_speed rx ry mid))
-      by (apply Rabs_minus_sym).
     assert (Hmid_s : mid - s = xv).
     { unfold mid, xv, gap. apply half_sum_minus_left. }
     assert (Hs_mid : s <= mid).
