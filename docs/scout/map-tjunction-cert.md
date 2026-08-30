@@ -83,11 +83,13 @@ No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predica
 | `(0,0)(1,0)(0,1)` vs `(2,0)(2,1)(3,0)` | RelatePrepared decline 12-tuple. B is **CW** (`gdbl < 0`). Domain-boundary, not the kiss. | use as the T-junction spec |
 | Line×line int×bnd | `RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`. #67 / S15d. IB dim-0. | steal as the triangle certificate |
 | Full shared edge `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | Frozen `TPR_TouchEdge` pin. | widen `shares_edge_b` to absorb the kiss |
-| (none compiled) | Leftover `ⅠⅠⅠ` one-sided / non-collinear vertex-in-open-edge T. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md). | invent a 12-tuple / steal `ⅠⅠⅠ` |
+| (none compiled) | Leftover `ⅠⅠⅠ` one-sided / non-collinear vertex-in-open-edge T. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md). Grill: [`map-onesided-t-grill.md`](map-onesided-t-grill.md). Spec: [`spec-onesided-t.md`](spec-onesided-t.md). | invent a 12-tuple / steal `ⅠⅠⅠ` |
 
 A **non-collinear** vertex-in-open-edge T (BB dim 0, no shared vertex)
 is leftover **`ⅠⅠⅠ`**. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md).
-**No compiled pair.** It is not this leftover.
+Grill: [`map-onesided-t-grill.md`](map-onesided-t-grill.md). Spec:
+[`spec-onesided-t.md`](spec-onesided-t.md). **No compiled pair.** It
+is not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -128,7 +130,8 @@ Park: **research** (ADR-0002). The finding is compiled; the detector is not.
 - Parent leftovers chart: #598 / `docs/scout/map-522-leftovers.md` (on `main`).
 - Leftover ids are Roman numerals. This leftover is `Ⅰ`. `522-n` is
   not minted. Leftover `ⅠⅠⅠ` is the one-sided / non-collinear
-  vertex-in-open-edge T (`map-onesided-t-cert.md`; no compiled pair).
+  vertex-in-open-edge T (`map-onesided-t-cert.md`; grill
+  `map-onesided-t-grill.md`; spec `spec-onesided-t.md`; no compiled pair).
   `ⅠⅠⅠⅠ` is unused.
 
 ## Fog
@@ -137,7 +140,9 @@ Park: **research** (ADR-0002). The finding is compiled; the detector is not.
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Do not invent that detector in leftover `Ⅰ`.
 - **`ⅠⅠⅠ`.** One-sided / non-collinear vertex-in-open-edge T. Chart:
-  [`map-onesided-t-cert.md`](map-onesided-t-cert.md). No compiled pair.
+  [`map-onesided-t-cert.md`](map-onesided-t-cert.md). Grill:
+  [`map-onesided-t-grill.md`](map-onesided-t-grill.md). Spec:
+  [`spec-onesided-t.md`](spec-onesided-t.md). No compiled pair.
   Do not invent a 12-tuple or that detector here.
 - **Constructor vs reuse `TPR_TouchEdge`.** Technique, not this map.
 - **Fill.** Geometry of the kiss is areal Touches with BB dim 1. The
@@ -164,6 +169,7 @@ not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
-ⅠⅠⅠ ──── one-sided / non-collinear vertex-in-open-edge T ── map-onesided-t-cert.md
+ⅠⅠⅠ ──── one-sided / non-collinear vertex-in-open-edge T
+         map-onesided-t-cert.md ── grill ── spec ── ticket 21 takeable
 ⅠⅠⅠⅠ ── unused
 ```

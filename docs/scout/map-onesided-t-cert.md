@@ -152,6 +152,9 @@ statement for this family.
 - Parent leftovers chart: #598 / `docs/scout/map-522-leftovers.md`.
 - Leftover ids are Roman numerals. This leftover is `ⅠⅠⅠ`. `522-n`
   is not minted. `ⅠⅠⅠⅠ` is unused.
+- Grill / spec / tickets — [`map-onesided-t-grill.md`](map-onesided-t-grill.md),
+  [`spec-onesided-t.md`](spec-onesided-t.md), scout 18–20 closed.
+  Ticket 21 (compile or empty) is takeable.
 
 ## Fog
 
@@ -171,7 +174,8 @@ statement for this family.
 ## Frontier
 
 Leftover `ⅠⅠⅠ` is named. There is no compiled pair. This map does
-not invent a detector.
+not invent a detector. Grill, spec, and scout tickets 18–20 are
+closed. Ticket 21 is takeable.
 
 ```
 family named ── one-sided / non-collinear vertex-in-open-edge T
@@ -179,7 +183,8 @@ family named ── one-sided / non-collinear vertex-in-open-edge T
      BB dim 0; not mutual; no shared vertex
 
 ⅠⅠⅠ ── research ── destination met (name only)
-     /implement later: compile cex or prove empty, then detector
+     grill map-onesided-t-grill.md ── spec-onesided-t.md
+     /implement ⅠⅠⅠ starts at ticket 21 (compile or empty)
 
 Ⅰ ── T-junction / partial-edge kiss ── map-tjunction-cert.md ── not this leftover
 ⅠⅠ ── obtuse-at-v ── #611 ── not this leftover

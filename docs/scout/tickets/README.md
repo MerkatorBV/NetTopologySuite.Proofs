@@ -24,6 +24,11 @@ Order of work: top-down from #64, with the freebie first.
 | 15 | ~~[`523-a` — E/B refuse](closed/15-523-a-eb-refuse.md)~~ **closed** → [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | task | 14 |
 | 16 | ~~[`523-b` — consumers accept `?` as a matrix cell](closed/16-523-b-cell-unknown.md)~~ **closed** → [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | task | 14 |
 | 17 | ~~[`523-c` — driver prints `?` where it did not compute](closed/17-523-c-driver-alphabet.md)~~ **closed** → [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | task | 16 / #604 |
+| 18 | ~~[Grill leftover `ⅠⅠⅠ`](closed/18-grill-onesided-t.md)~~ **closed: grill written; leftover `ⅠⅠⅠ` stays open** → [`map-onesided-t-grill.md`](../map-onesided-t-grill.md) | grilling | — |
+| 19 | ~~[Spec leftover `ⅠⅠⅠ`](closed/19-spec-onesided-t.md)~~ **closed: spec written; leftover `ⅠⅠⅠ` stays open** → [`spec-onesided-t.md`](../spec-onesided-t.md) | task | 18 |
+| 20 | ~~[Cut leftover `ⅠⅠⅠ` spec into takeable tickets](closed/20-to-tickets-onesided-t.md)~~ **closed: tickets written; leftover `ⅠⅠⅠ` stays open** → 21 / 22 | task | 19 |
+| 21 | [Leftover `ⅠⅠⅠ` — compile a cex or prove emptiness](21-leftover-iii-compile-or-empty.md) | task | 20 |
+| 22 | [Leftover `ⅠⅠⅠ` — detector if inhabited](22-leftover-iii-detector.md) | task | 21 (cancelled if 21 proves empty) |
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 11 (04–08 all closed) |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty**, 09 |
@@ -49,7 +54,11 @@ Order of work: top-down from #64, with the freebie first.
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss. Leftover `ⅠⅠ` is
-the obtuse-at-v certificate. Sibling #523 alphabet grill:
+the obtuse-at-v certificate. Leftover `ⅠⅠⅠ` is the one-sided /
+non-collinear vertex-in-open-edge T
+([`map-onesided-t-cert.md`](../map-onesided-t-cert.md); grill
+[`map-onesided-t-grill.md`](../map-onesided-t-grill.md); spec
+[`spec-onesided-t.md`](../spec-onesided-t.md)). Sibling #523 alphabet grill:
 [`docs/scout/map-523.md`](../map-523.md). Takeable spec:
 [`docs/scout/spec-523.md`](../spec-523.md). Alphabet letter landed:
 [`15`](closed/15-523-a-eb-refuse.md) `523-a`, [`16`](closed/16-523-b-cell-unknown.md)
@@ -58,19 +67,28 @@ waits on ADR-0003 / #523 / #503; it does not own leftover grab order and
 does not receive a closed `522-*` letter. Landing the children does not
 accept ticket 523.
 
-**Frontier.** Alphabet children 15–17 are closed. Ticket 11 still waits.
+**Frontier.** Alphabet children 15–17 are closed. Leftover `ⅠⅠⅠ`
+grill / spec / to-tickets (18–20) are closed. Ticket 21 is takeable.
+Ticket 11 still waits.
 
 | Ticket | Waiting on |
 |---|---|
 | 15 · `523-a` / #603 E/B refuse | closed |
 | 16 · `523-b` / #604 consumer `?` cell | closed |
 | 17 · `523-c` / #605 driver alphabet | closed |
+| 18 · grill leftover `ⅠⅠⅠ` | closed |
+| 19 · spec leftover `ⅠⅠⅠ` | closed |
+| 20 · to-tickets leftover `ⅠⅠⅠ` | closed |
+| 21 · leftover `ⅠⅠⅠ` compile or empty | takeable · claimId `ⅠⅠⅠ` · no GitHub child |
+| 22 · leftover `ⅠⅠⅠ` detector | ticket 21 (cancelled if 21 proves empty) |
 | 11 · second pass at #67 | ADR-0003 consumed by the capstone work · ticket 523 (`523-a`…`523-c` landed; still open, not accepted) · #503's four defects. Precondition 1 largely met by #530. |
 | 09 · end #69's umbrella | ticket 11 |
 | 10 · resync surviving bodies | #506's split queue emptying · ticket 09 |
 
-The next useful session is not another #523 letter. Owner resolve-or-accept
-is the gate for ticket 11 precondition 3. Do not start leftover `Ⅰ` or `ⅠⅠ`.
+The next useful leftover-`ⅠⅠⅠ` session is ticket 21 (`/implement ⅠⅠⅠ`
+slice A). Do not start leftover `Ⅰ` or `ⅠⅠ` from this queue. Owner
+resolve-or-accept is still the gate for ticket 11 precondition 3.
+Do not mint `522-n`. Do not mint `ⅠⅠⅠⅠ`.
 
 Three epics retired on evidence, one deliberately not: **an epic closes only when
 its closure comment would be true.**

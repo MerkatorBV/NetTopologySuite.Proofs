@@ -61,7 +61,7 @@ Value and priority are orthogonal.
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
 | `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Chart: #611 (not on `main`). Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m` / `522-i`; bucket under `Ⅰ` |
-| `ⅠⅠⅠ` | One-sided / non-collinear vertex-in-open-edge T | #522-adjacent | research | Named. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md). **No compiled pair.** BB dim 0; not mutual; no shared vertex. | invent a 12-tuple; invent the detector; steal leftover `Ⅰ` / `ⅠⅠ`; mint `522-n` |
+| `ⅠⅠⅠ` | One-sided / non-collinear vertex-in-open-edge T | #522-adjacent | research | Named. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md). Grill: [`map-onesided-t-grill.md`](map-onesided-t-grill.md). Spec: [`spec-onesided-t.md`](spec-onesided-t.md). Scout 21 takeable (compile or empty); 22 blocked. **No compiled pair.** BB dim 0; not mutual; no shared vertex. CONTEXT Bar 1 not applicable. | invent a 12-tuple; invent the detector; steal leftover `Ⅰ` / `ⅠⅠ`; mint `522-n` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -79,8 +79,8 @@ Value and priority are orthogonal.
 - #589 wayfinder PR stays closed.
 - Leftover ids switch to repeated `Ⅰ` marks. `Ⅰ` = T-junction kiss.
   `ⅠⅠ` = obtuse-at-v. `ⅠⅠⅠ` = one-sided / non-collinear
-  vertex-in-open-edge T (named; no compiled pair). `522-n` is not
-  minted. `ⅠⅠⅠⅠ` is unused.
+  vertex-in-open-edge T (named; no compiled pair). Grill / spec /
+  tickets this letter. `522-n` is not minted. `ⅠⅠⅠⅠ` is unused.
 
 ## Fog
 
@@ -91,23 +91,27 @@ Value and priority are orthogonal.
   and the same shared-pin caution.
 - **Three leftovers are three leftovers.** T-junction is `Ⅰ`.
   Obtuse-at-v is `ⅠⅠ`. The one-sided / non-collinear
-  vertex-in-open-edge T is `ⅠⅠⅠ` (named; no compiled pair).
+  vertex-in-open-edge T is `ⅠⅠⅠ` (named; no compiled pair;
+  grill / spec / ticket 21 takeable).
 - **`ⅠⅠⅠⅠ`** is unused. Ask before assigning it. Do not mint `ⅠⅤ` /
   `Ⅳ`.
 
 ## Frontier
 
 Leftovers `Ⅰ`, `ⅠⅠ`, and `ⅠⅠⅠ` are named. This map does not invent
-any detector. Leftover `ⅠⅠⅠ` has no compiled pair. `/implement` of
-any of them is a later letter.
+any detector. Leftover `ⅠⅠⅠ` has no compiled pair. Grill, spec, and
+scout tickets 18–20 are closed. Ticket 21 (compile or empty) is
+takeable. `/implement ⅠⅠⅠ` starts there.
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
 
 Ⅰ ──────── T-junction / partial-edge kiss ── research ── finding #577
 ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584 / #611
-ⅠⅠⅠ ────── one-sided / non-collinear vertex-in-open-edge T ── research
-           named; no compiled pair
+ⅠⅠⅠ ────── one-sided / non-collinear vertex-in-open-edge T
+           research #614 ── grill ── spec ── tickets 18–20 closed
+           21 compile-or-empty ── takeable
+           22 detector ── blocked by 21; cancel if empty
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 
