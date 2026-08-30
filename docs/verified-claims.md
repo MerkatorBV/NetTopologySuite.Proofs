@@ -901,6 +901,8 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#522 leftovers wayfinder** (own paragraph). [`docs/scout/map-522-leftovers.md`](scout/map-522-leftovers.md) charts residue after wrap-up. Leftover ids are repeated `Ⅰ` marks. `Ⅰ` is the T-junction / partial-edge kiss. `ⅠⅠ` is the obtuse-at-v certificate (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`). Does not mint `522-n`. Does not invent either detector. Does not mint children. Does not remint fills. Does not retire epic 522. claimId none. #589 stays closed.
 
+**NTS RGR Board catalog (#523 children).** Sibling of epic #522, not a leftover numeral and not `522-n`. Spec: [`docs/scout/spec-523.md`](scout/spec-523.md). `523-a` = ticket 15 / E/B `failwith` (no consumer-token gate) · `523-b` = ticket 16 / harness + `lookup_matrix` accept `?` as a matrix cell only (`RelateNGCore.v : relate_unsupported_no_predicate` stays whole-line Decline) · `523-c` = ticket 17 / driver emits `?` where emptiness is not established (`RelateCurveMatrix.v : cell_none_iff_empty`; EE stays `2` via `geom_de9im_ee_nonempty`). `523-c` waits on `523-b`. Do not steal `522-f`. Do not mint leftover `ⅠⅠⅠ`. Ticket 523 stays open.
+
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `RelateCurveMatrix.v : ii_cell_dim2_sound_gtri` | **Jordan cell dim (general triangle):** under `geom_de9im_pointset` for gtri self-geometry, `im_ii = Some 2` implies existence of interior point (`ii_has_dim2`) `[exact]` | 3 |
