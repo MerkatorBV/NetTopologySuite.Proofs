@@ -469,7 +469,7 @@ Qed.
 
 Lemma onesided_t_B_gsA_plus_gsC : forall p,
   gsA 1 0 (1/2) (-1) p + gsC 1 0 (3/2) (-1) p = - py p.
-Proof. intros p; unfold gsA, gsC; cbn [px py]; ring. Qed.
+Proof. intros p; unfold gsA, gsC; cbn [px py]; lra. Qed.
 
 (* Exterior-side stem: A's interior is y > 0, B's slacks on the two
    apex edges sum to -y, so II is empty. *)
