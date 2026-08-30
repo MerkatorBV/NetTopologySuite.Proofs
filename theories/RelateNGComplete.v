@@ -466,10 +466,8 @@ Lemma mixed_cone_no_partial_edge :
     (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
     (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 3 1) = false.
 Proof.
-  unfold touch_partial_edge_b, some_vertex_on_open_edges,
-         vertex_on_open_edges, on_open_seg_b, cross; cbn [px py].
-  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  unfold touch_partial_edge_b.
+  rewrite mixed_cone_no_open_A, mixed_cone_no_open_B.
   reflexivity.
 Qed.
 
@@ -478,10 +476,8 @@ Lemma mixed_cone_no_onesided :
     (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
     (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 3 1) = false.
 Proof.
-  unfold touch_onesided_t_b, some_vertex_on_open_edges,
-         vertex_on_open_edges, on_open_seg_b, cross; cbn [px py].
-  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  unfold touch_onesided_t_b.
+  rewrite mixed_cone_no_open_A, mixed_cone_no_open_B.
   reflexivity.
 Qed.
 

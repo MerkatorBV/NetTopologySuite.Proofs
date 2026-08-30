@@ -842,6 +842,120 @@ Proof.
   reflexivity.
 Qed.
 
+(* Open-edge pins. One `lra` per call — `repeat lra` on a 12-hypothesis
+   leftover-Ⅰ/Ⅲ miss dies in the pinned flocq container. *)
+Lemma on_open_seg_b_false_of_ncross : forall p q r,
+  cross p q r <> 0 ->
+  on_open_seg_b p q r = false.
+Proof.
+  intros p q r Hnz.
+  unfold on_open_seg_b.
+  destruct (Req_dec_T (cross p q r) 0) as [Heq | _];
+    [ contradiction | reflexivity ].
+Qed.
+
+Lemma on_open_seg_b_false_of_nbetween_fst : forall p q r,
+  ~ (0 < (px r - px p) * (px q - px p) + (py r - py p) * (py q - py p)) ->
+  on_open_seg_b p q r = false.
+Proof.
+  intros p q r Hn.
+  unfold on_open_seg_b.
+  destruct (Req_dec_T (cross p q r) 0) as [_ | _]; [ | reflexivity ].
+  destruct (Rlt_dec 0 ((px r - px p) * (px q - px p)
+                       + (py r - py p) * (py q - py p)))
+    as [Hlt | _]; [ contradiction | reflexivity ].
+Qed.
+
+Lemma on_open_seg_b_false_of_nbetween_snd : forall p q r,
+  ~ (0 < (px r - px q) * (px p - px q) + (py r - py q) * (py p - py q)) ->
+  on_open_seg_b p q r = false.
+Proof.
+  intros p q r Hn.
+  unfold on_open_seg_b.
+  destruct (Req_dec_T (cross p q r) 0) as [_ | _]; [ | reflexivity ].
+  destruct (Rlt_dec 0 ((px r - px p) * (px q - px p)
+                       + (py r - py p) * (py q - py p)))
+    as [_ | _]; [ | reflexivity ].
+  destruct (Rlt_dec 0 ((px r - px q) * (px p - px q)
+                       + (py r - py q) * (py p - py q)))
+    as [Hlt | _]; [ contradiction | reflexivity ].
+Qed.
+
+(* Mixed-cone cex (not leftover `Ⅴ`): no vertex sits in an open edge.
+   Shared origin is an endpoint (nbetween), every other hit has
+   nonzero cross. Used by leftover-Ⅱ completeness, not a remint. *)
+Lemma mixed_cone_no_open_A :
+  some_vertex_on_open_edges
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+    (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 3 1) = false.
+Proof.
+  unfold some_vertex_on_open_edges, vertex_on_open_edges.
+  rewrite (on_open_seg_b_false_of_nbetween_fst
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 2 0) (mkPoint 0 2) (mkPoint 0 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_snd
+             (mkPoint 0 2) (mkPoint 0 0) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint (-1) (-1))
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 2 0) (mkPoint 0 2) (mkPoint (-1) (-1))
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 2) (mkPoint 0 0) (mkPoint (-1) (-1))
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 3 1)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 2 0) (mkPoint 0 2) (mkPoint 3 1)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 2) (mkPoint 0 0) (mkPoint 3 1)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  reflexivity.
+Qed.
+
+Lemma mixed_cone_no_open_B :
+  some_vertex_on_open_edges
+    (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 3 1)
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2) = false.
+Proof.
+  unfold some_vertex_on_open_edges, vertex_on_open_edges.
+  rewrite (on_open_seg_b_false_of_nbetween_fst
+             (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint (-1) (-1)) (mkPoint 3 1) (mkPoint 0 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_snd
+             (mkPoint 3 1) (mkPoint 0 0) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 2 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint (-1) (-1)) (mkPoint 3 1) (mkPoint 2 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 3 1) (mkPoint 0 0) (mkPoint 2 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 0) (mkPoint (-1) (-1)) (mkPoint 0 2)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint (-1) (-1)) (mkPoint 3 1) (mkPoint 0 2)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 3 1) (mkPoint 0 0) (mkPoint 0 2)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  reflexivity.
+Qed.
+
 (* Mutation replay (in-tree, #572; not an ADR-0004 mint).  Flip exactly
    one comparison below, rebuild this file, then restore the sign.
      1. `both_strict_pos_b`: `0 < side` → `0 <= side`
