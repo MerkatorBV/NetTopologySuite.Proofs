@@ -782,9 +782,16 @@ Proof. unfold cross; cbn [px py]; split; [|split]; lra. Qed.
 Lemma interior_side_gtri_A_stem :
   gtri 0 0 2 0 0 1 (mkPoint 1 0) = 0.
 Proof.
-  unfold gtri, gsA, gsB, gsC; cbn [px py].
-  rewrite (Rmin_left 0 1); [| lra].
-  rewrite (Rmin_left 0 1); [| lra].
+  unfold gtri.
+  assert (HA : gsA 0 0 2 0 (mkPoint 1 0) = 0) by
+    (unfold gsA; cbn [px py]; ring).
+  rewrite HA.
+  assert (HB : 0 <= gsB 2 0 0 1 (mkPoint 1 0)) by
+    (unfold gsB; cbn [px py]; lra).
+  assert (HC : 0 <= gsC 0 0 0 1 (mkPoint 1 0)) by
+    (unfold gsC; cbn [px py]; lra).
+  rewrite (Rmin_left _ _ HB).
+  rewrite (Rmin_left _ _ HC).
   reflexivity.
 Qed.
 
