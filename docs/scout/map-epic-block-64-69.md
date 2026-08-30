@@ -119,8 +119,9 @@ whatever its epic's body says about it.
   F-without-empty claims still hold. Coq emptiness is `None`
   (`RelateCurveMatrix.v : cell_none_iff_empty`); the oracle prints `F`
   for E/B `[]`, undistinguished lineal cells, and an 80×80 grid miss.
-  Living record: [`map-523.md`](map-523.md). Ticket 11 precondition 3
-  remains unmet. Driver rewrite is a later `/implement`.
+  Living record: [`map-523.md`](map-523.md). Spec:
+  [`spec-523.md`](spec-523.md). Ticket 11 precondition 3 remains unmet.
+  Driver rewrite is a later `/implement`.
 - [Retire #67 — RelateNG matrix and boundary handling](tickets/closed/07-retire-67-relateng.md)
   — **decided NOT to close #67**, the first break from the pattern: its compute
   path answers `FFFFFFFFF` for unsupported pairs and classifies overlapping
@@ -133,7 +134,8 @@ whatever its epic's body says about it.
   [Retire #67 — second pass](tickets/11-retire-67-second-pass.md).
   Ticket 523 grilled 2026-08-30
   ([Grill #523](tickets/closed/12-grill-523-curve-relate-alphabet.md),
-  [`map-523.md`](map-523.md)): still open, not accepted.
+  [`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md)): still
+  open, not accepted.
 - [Retire #66 — precision models, snap rounding, OverlayNG](tickets/closed/06-retire-66-precision-and-overlay.md)
   — **closed**; residue is #517 tie-freeness, #518 the ownerless
   `fully_intersected` bridge, #519 guard 5, #520 the three OverlayNG hypotheses.
