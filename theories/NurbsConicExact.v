@@ -103,7 +103,7 @@ Proof.
   intro x. rewrite cos_atan.
   apply Rdiv_lt_0_compat; [lra |].
   apply sqrt_lt_R0.
-  pose proof (Rle_0_sqr x) as Hx. unfold Rsqr in Hx. lra.
+  apply Rplus_lt_le_0_compat; [lra | apply Rle_0_sqr].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
