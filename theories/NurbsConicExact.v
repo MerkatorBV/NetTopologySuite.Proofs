@@ -101,8 +101,9 @@ Proof. rewrite <- atan_1. apply tan_atan. Qed.
 Lemma cos_atan_pos : forall x, 0 < cos (atan x).
 Proof.
   intro x. rewrite cos_atan.
-  apply Rinv_0_lt_compat, sqrt_lt_R0.
-  apply Rplus_lt_le_0_compat; [lra | apply Rle_0_sqr].
+  apply Rdiv_lt_0_compat; [lra |].
+  apply sqrt_lt_R0.
+  pose proof (Rle_0_sqr x) as Hx. unfold Rsqr in Hx. lra.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
