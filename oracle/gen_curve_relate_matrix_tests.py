@@ -7,7 +7,9 @@
 # the TRUE OGC convention (the existing RELATE_MATRIX / RELATE_PREDICATE modes
 # only EVALUATE a supplied matrix); it generalizes HOLES_DISJOINT.
 #
-# Row-major cells: II IB IE / BI BB BE / EI EB EE, each F/0/1/2.  TRUE OGC:
+# Row-major cells: II IB IE / BI BB BE / EI EB EE, each F/0/1/2/?.
+# `?` is a probe miss / uncomputed cell (523-c), not Coq None and not Decline.
+# TRUE OGC:
 # disjoint areal geometries -> "FF2FF1212", A-contains-B -> "212FF1FF2",
 # overlap -> "212101212", equal -> "2FFF1FFF2".  (NOT the repo's older non-OGC
 # "FFFFFFFFF" disjoint pin: DE9IM.v's pat_disjoint forces EI=EB=F and does not
@@ -281,7 +283,7 @@ def independent_matrix(ga, gb):
         bdim(ptB, runB, 2),         # EB  (B-boundary exterior to A)
         2,                          # EE
     ]
-    return "".join("F" if d < 0 else str(d) for d in cells)
+    return "".join("?" if d < 0 else str(d) for d in cells)
 
 
 # --- independent analytic boundary-intersection (for isolated/tangent BB) ----
@@ -366,6 +368,8 @@ OGC_PATTERNS = {
 def pat_char(pc, ch):
     if pc == "*":
         return True
+    if ch == "?":
+        return False
     if pc == "F":
         return ch == "F"
     if pc == "T":
@@ -373,9 +377,30 @@ def pat_char(pc, ch):
     return ch == pc
 
 
+def pattern_applicable(matrix, pat):
+    return all(matrix[i] != "?" or p == "*" for i, p in enumerate(pat))
+
+
+def i1_matches(got, expect):
+    """Oracle may print ? where the Coq witness has F (probe miss).
+    Established 0/1/2 cells must match. EE stays 2."""
+    if len(got) != 9 or len(expect) != 9:
+        return False
+    for g, e in zip(got, expect):
+        if g == "?":
+            if e != "F":
+                return False
+        elif g != e:
+            return False
+    return True
+
+
 def ogc_holds(matrix, name):
     pats = OGC_PATTERNS[name]
-    return any(all(pat_char(p[i], matrix[i]) for i in range(9)) for p in pats)
+    applicable = [p for p in pats if pattern_applicable(matrix, p)]
+    if not applicable:
+        return None
+    return any(all(pat_char(p[i], matrix[i]) for i in range(9)) for p in applicable)
 
 
 # --- shapes -----------------------------------------------------------------
@@ -422,7 +447,7 @@ emit("## I1 CURATED + I2 TRANSPOSE + I4 OGC-PREDICATE")
 for name, ga, gb, expect in CASES:
     got = run(ga, gb)
     tags = []
-    if got != expect:
+    if not i1_matches(got, expect):
         violations += 1
         tags.append(f"!! I1_EXPECTED_{expect}_GOT_{got}")
     # I2 transpose
@@ -438,7 +463,7 @@ for name, ga, gb, expect in CASES:
     # the documented DE9IM.disjoint_intersects3 quirk; im_overlaps omits the
     # IE/EI requirement so it fires on `equal`), so they are intentionally NOT
     # routed through the repo engine -- the independent engine is the oracle.
-    if len(got) == 9 and all(c in "FT012" for c in got):
+    if len(got) == 9 and all(c in "FT012?" for c in got) and "?" not in got:
         for pred in ("CONTAINS", "WITHIN"):
             ind = ogc_holds(got, pred)
             repo = predicate(got, pred) == "TRUE"
@@ -472,7 +497,11 @@ for name, ga, gb, expect in CASES:
     elif "overlapping" in name:
         checks = [("OVERLAPS", True), ("INTERSECTS", True)]
     for pred, want in checks:
-        if ogc_holds(got, pred) != want:
+        held = ogc_holds(got, pred)
+        if held is None:
+            emit(f"  [{name}] OGC {pred} skipped (`?` in a constrained cell)   ok")
+            continue
+        if held != want:
             violations += 1
             emit(f"  [{name}] !! I4_OGC_{pred} expected {want} on {got}")
         else:

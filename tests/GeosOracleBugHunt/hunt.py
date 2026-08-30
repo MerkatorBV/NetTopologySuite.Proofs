@@ -68,7 +68,10 @@ def oracle(stdin: str) -> str:
 # RELATE_MATRIX result-position tokens.  A decline is one of these, never a
 # 9-char matrix.  Legal here only — not as a catalog key / matrix cell.
 RELATE_TOKENS = frozenset({"UNSUPPORTED"})
-RELATE_MATRIX_CHARS = set("F012")
+# Result parse accepts ? as a matrix cell (523-b).  Catalog lookup /
+# fill keys / shared pins stay F/0/1/2 — see oracle/relate_matrix.ml
+# lookup_matrix.  Do not add ? to RELATE_TOKENS.
+RELATE_MATRIX_CHARS = set("F012?")
 
 
 def parse_relate_wire(s: str) -> tuple[str, str]:
@@ -547,6 +550,21 @@ def selfcheck_relate_token() -> None:
         hit("FAIL", "REL/unknown_rejected", "unknown token was accepted")
     except ValueError:
         hit("OK", "REL/unknown_rejected", "unknown token is still a parse error")
+    try:
+        kind, val = parse_relate_wire("FF?FF1212")
+        if kind == "matrix" and val == "FF?FF1212":
+            hit("OK", "REL/matrix_cell_unknown",
+                "? is a matrix cell, not a third parse kind (523-b)")
+        else:
+            hit("FAIL", "REL/matrix_cell_unknown", f"got {kind} {val}")
+    except Exception as e:
+        hit("FAIL", "REL/matrix_cell_unknown", str(e))
+    try:
+        parse_relate_wire("?")
+        hit("FAIL", "REL/bare_unknown_rejected", "bare ? was accepted as Decline")
+    except ValueError:
+        hit("OK", "REL/bare_unknown_rejected",
+            "bare ? is not Decline and not RELATE_TOKENS")
 
 
 def hunt_relate_matrix() -> None:

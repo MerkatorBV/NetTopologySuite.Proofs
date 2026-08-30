@@ -1,8 +1,8 @@
 # `523-b` — consumers accept `?` as a DE-9IM matrix cell
 
-**Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** — · **Spec:** [`spec-523.md`](../spec-523.md) slice B
-**claimId:** `523-b` · **GitHub:** [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) · **witness:** none yet
+**Type:** task · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
+**Blocked by:** — · **Spec:** [`spec-523.md`](../../spec-523.md) slice B
+**claimId:** `523-b` · **GitHub:** [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) · **witness:** `523-b-cell-unknown`
 
 > Umbrella: ticket 523 / #604. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
 > Not a remint of `522-f`.
@@ -63,3 +63,12 @@ is `523-c`, and it waits on this one.
 Do not remint `522-f`. Do not implement leftover `Ⅰ` / `ⅠⅠ`. Do not
 mint `ⅠⅠⅠ`. Do not emit `?` from the driver here. Do not comment on
 GitHub issue 523 unless the user says `comment`.
+
+## Resolution
+
+**Closed 2026-08-30.** Result parse accepts `?` in a 9-char
+(`parse_relate_wire("FF?FF1212")` → `("matrix", …)`). Catalog lookup
+still rejects `?` (`lookup_matrix "FF?FF1212"` fails). `RELATE_TOKENS`
+unchanged. Bare `?` is not Decline. Shared pins and the T-junction
+golden stay put. Witness `523-b-cell-unknown`. Same letter claimed
+`523-c` after this split. Ticket 523 stays open.

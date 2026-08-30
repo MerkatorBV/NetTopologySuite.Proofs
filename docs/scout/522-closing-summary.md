@@ -57,9 +57,9 @@ Roman numerals. Do **not** mint `522-n`.
 - **Nine-cell `geom_de9im_pointset`**, full noding, Touches-vs-Share —
   #67 / ticket 11, not #522 children.
 - **`#523` `F` vs not-computed** — sibling. Grilled 2026-08-30
-  ([`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md),
-  `523-a` / `523-b` / `523-c` = #603 #604 #605); still open, not
-  accepted.
+  ([`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md)).
+  Children `523-a` / `523-b` / `523-c` (#603 #604 #605) landed;
+  ticket 523 still open, not accepted. Do not mint leftover `ⅠⅠⅠ`.
 - **Empty/empty relate** — parked on the epic.
 
 ## Surfaces that must agree

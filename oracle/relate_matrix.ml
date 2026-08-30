@@ -221,9 +221,13 @@ let normalize_key s =
   let t = String.trim s in
   strip_prefix "FILL " (strip_prefix "COQ " t)
 
+(* Catalog / fill / shared-pin keys stay F/0/1/2.  A 9-char with `?` is a
+   valid *result* cell string (523-b harness parse), not a catalog key. *)
+let catalog_ok_char c = c = 'F' || (c >= '0' && c <= '2')
+
 let lookup_matrix key =
   let k = normalize_key key in
-  if String.length k = 9 && String.for_all (fun c -> c = 'F' || (c >= '0' && c <= '2')) k then
+  if String.length k = 9 && String.for_all catalog_ok_char k then
     k
   else
     match List.assoc_opt k catalog with

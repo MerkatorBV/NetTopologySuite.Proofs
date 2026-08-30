@@ -3798,10 +3798,19 @@ let run_holes_disjoint () =
              (same for B).  "L" makes the encoding explicit and stable for RGR.
            Point proxy (v1): zero-length chord "C x y x y" is treated as 0-dim point
              for pointOnBoundary decisions.
-   Output: a 9-char row-major matrix (II IB IE BI BB BE EI EB EE), each F/0/1/2;
-           or "NAN".  For the lineal slice only the cells distinguishable by the
-           reused analytical primitives (hasBB/hasBI/.../crosses/touches/equal) are
-           populated; others F.  See docs/curve-relate-matrix-lemma-reuse-map.md. *)
+   Output: a 9-char row-major matrix (II IB IE BI BB BE EI EB EE), each
+           F/0/1/2/? ; or "NAN".  F/0/1/2 only where emptiness or dimension
+           is established.  `?` is a matrix cell the mode did not compute
+           (not Decline, not Coq None).  For the lineal slice only the cells
+           distinguishable by the reused analytical primitives
+           (hasBB/hasBI/.../crosses/touches/equal) are populated; others `?`.
+           An exhausted 80×80 probe over the padded joint box leaves the
+           open cell as `?`: no sample found.  That is not
+           RelateCurveMatrix.v : cell_none_iff_empty.  EE stays 2
+           (geom_de9im_ee_nonempty).  Elliptic / Bézier refuse the mode
+           (failwith), same shape as BUFFER_REGION / BUFFER_UNIFIED /
+           ARC_BUFFER_SIMPLE — not UNSUPPORTED.  See
+           docs/curve-relate-matrix-lemma-reuse-map.md. *)
 let run_curve_relate_matrix () =
   let parse_seg () =
     let toks =
@@ -3843,6 +3852,13 @@ let run_curve_relate_matrix () =
   let (kindA, ga) = parse_geom_or_lineal () in
   let (kindB, gb) = parse_geom_or_lineal () in
   let is_lineal = (kindA = `Lineal) && (kindB = `Lineal) in
+  (* 523-a: E/B is a capability refuse, not a Decline and not a 9-char.
+     Buffer precedent: BUFFER_REGION / BUFFER_UNIFIED / ARC_BUFFER_SIMPLE. *)
+  let seg_eb = function `Elliptic _ | `Bezier _ -> true | _ -> false in
+  let geom_eb g =
+    Array.exists (fun ring -> Array.exists seg_eb ring) g in
+  if geom_eb ga || geom_eb gb then
+    failwith "CURVE_RELATE_MATRIX: elliptic / Bézier refuse";
   (* For point-vs-lineal v1 we also accept a degenerate chord as point proxy.
      Mixed (point as degenerate + lineal) is handled in the lineal block below. *)
   let seg_pts = function
@@ -4082,16 +4098,17 @@ let run_curve_relate_matrix () =
     (* Assemble matrix from the explicit booleans.
        For lineal v1 we emit a representative 9-char that distinguishes the
        requested classes (disjoint / boundary touch / crossing / point-on-boundary / equal).
-       Non-populated cells for lineal are F where no areal dimension applies.
+       C/A kernels that reported no contact keep F (emptiness established).
+       Cells the header calls undistinguishable are `?`, not F (523-c).
        The cells are chosen to be consistent with DE9IM laws (reused) and
        match catalogued line-line examples where possible. *)
     let m =
-      if structurally_equal then "1FFF0FFF0"   (* collinear-style overlap / equal lineal *)
-      else if disjoint then "FFFFFFFFF"
-      else if pointOnBoundary then "0FFFFFFFF" (* point-on-boundary; II=0 for the contact point *)
-      else if crosses then "0F1FF0102"         (* classic line crossing example *)
-      else if touches then "F0FFFFFF2"         (* boundary touch, endpoint or tangent *)
-      else if hasBB then "0FFFFFFFF"           (* fallback interior point contact *)
+      if structurally_equal then "1???0???0"   (* equal lineal; others not computed *)
+      else if disjoint then "FFFFFFFFF"        (* C/A pair_pts reported no contact *)
+      else if pointOnBoundary then "0????????" (* point-on-boundary; II=0 *)
+      else if crosses then "0?1??0102"         (* classic line crossing; others ? *)
+      else if touches then "?0??????2"         (* boundary touch, endpoint or tangent *)
+      else if hasBB then "0????????"           (* fallback interior point contact *)
       else "FFFFFFFFF" in
     print_endline m
   end else begin
@@ -4351,7 +4368,9 @@ let run_curve_relate_matrix () =
         end
       done
     done;
-    (* assemble the 9 cells (F = -1 ; 0/1/2 = dimension) *)
+    (* assemble the 9 cells (-1 = not computed → `?` ; 0/1/2 = dimension).
+       An exhausted 80×80 probe is `?`, not F and not Coq None (523-c).
+       EE stays 2 (geom_de9im_ee_nonempty). *)
     let bnd_dim run pt s = if run.(s) then 1 else if pt.(s) then 0 else -1 in
     let cell_ii = if !f_ii then 2 else -1 in
     let cell_ie = if !f_ie then 2 else -1 in
@@ -4365,7 +4384,7 @@ let run_curve_relate_matrix () =
       let run = runA.(1) || runB.(1) in
       let pt  = ptA.(1) || ptB.(1) || !crossings in
       if run then 1 else if pt then 0 else -1 in
-    let ch d = if d < 0 then 'F' else Char.chr (Char.code '0' + d) in
+    let ch d = if d < 0 then '?' else Char.chr (Char.code '0' + d) in
     let cells = [| cell_ii; cell_ib; cell_ie;
                    cell_bi; cell_bb; cell_be;
                    cell_ei; cell_eb; cell_ee |] in

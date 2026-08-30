@@ -36,6 +36,21 @@ if rc != 0 or out != "FFFFFFFFF":
     fail("relate_disjoint", out, "FFFFFFFFF", stdin)
 print("relate disjoint ok")
 
+# 523-a: E/B refuse — failwith, no 9-char, not UNSUPPORTED
+stdin_eb = """CURVE_RELATE_MATRIX
+L
+1
+E 0 0 1 1 0 0 6.28
+L
+1
+C 0 0 1 0
+"""
+out_eb, err_eb, rc_eb = run(stdin_eb)
+print("RED_NOTE relate_eb_refuse_rc=", rc_eb, "out=", out_eb)
+if rc_eb == 0 or out_eb == "FFFFFFFFF" or out_eb == "UNSUPPORTED" or (out_eb and len(out_eb) == 9):
+    fail("relate_eb_refuse", out_eb, "failwith (no 9-char)", stdin_eb)
+print("relate E/B refuse ok")
+
 # Arc vs chord
 stdin2 = """CURVE_RELATE_MATRIX
 L
