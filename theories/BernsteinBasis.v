@@ -36,7 +36,9 @@ Local Open Scope R_scope.
 (* Flocq 4.2.1 [nra] cannot find a witness on the cubic / mixed
    products below (CI death on 48a5c3f, L195). Pin with
    [Rmult_le_pos] / [Rplus_le_le_0_compat] / [lra] / [ring] —
-   same class as SpeedIntegral. Do not reintroduce [nra] here. *)
+   same class as SpeedIntegral. Do not reintroduce [nra] here.
+   Nested goals under an induction [-] must use [+] / [*];
+   same-bullet nesting is a [Focus] error (6f0a32d L76). *)
 
 (* -------------------------------------------------------------------------- *)
 (* Bernstein basis: de Casteljau recurrence.                                  *)
@@ -73,8 +75,8 @@ Proof.
     { destruct i as [|i']; [lra | apply IH; assumption]. }
     assert (H1t : 0 <= 1 - t) by lra.
     apply Rplus_le_le_0_compat.
-    - apply Rmult_le_pos; [exact H1t | exact Hi].
-    - apply Rmult_le_pos; [exact Ht0 | exact Hprev].
+    + apply Rmult_le_pos; [exact H1t | exact Hi].
+    + apply Rmult_le_pos; [exact Ht0 | exact Hprev].
 Qed.
 
 Lemma sum_f_R0_0 : forall f, sum_f_R0 f 0 = f 0%nat.
