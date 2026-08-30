@@ -5,9 +5,9 @@ A wayfinder map. Charted 2026-08-30. This is **not** a second copy of
 issue. The epic comment stays the design of record. #589 stays closed.
 
 > **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
-> historical. Do **not** mint `522-n`. New leftover ids are Unicode
-> Roman numerals (`Ⅰ`, `Ⅱ`, …), not `522-*` letters. Do not remint
-> ADR-0004. Do not mint GitHub children from this map.
+> historical. Do **not** mint `522-n`. New leftover ids are repeated
+> `Ⅰ` marks (`Ⅰ`, `ⅠⅠ`, `ⅠⅠⅠ`, …), not `522-*` letters and not
+> `Ⅱ`. Do not remint ADR-0004. Do not mint GitHub children from this map.
 
 topics: relate
 claimId: none
@@ -26,9 +26,9 @@ sign-off on the epic.
 ## Notes
 
 **#522 children.** Wrap-up #596 closed #576 and #578. Harness #595
-closed #575. Carve #597 is **ready, not on `main`**: it closes #567
-without proving TouchEdge exclusivity. After #597 lands, every child
-is closed. The epic stays open for owner sign-off.
+closed #575. Carve #597 is **on `main`**: it closed #567 without
+proving TouchEdge exclusivity. Every child is closed. The epic stays
+open for owner sign-off.
 
 **Shared classifier pins.** `triangle_pair_fill` and `rect_pair_fill`
 share `aa_matrix_disjoint` (FFFFFFFFF), `aa_matrix_partial_overlap`
@@ -73,7 +73,7 @@ Value and priority are orthogonal.
 - Bar 2 gtri cells — #587 #592 #593 #594. Pins not reminted.
 - Wire token + harness — #588 + #595. Decline vector is the T-junction.
 - Wrap-up — #596. Owner sign-off still required.
-- #567 DoD met; TouchEdge exclusivity carved (ready #597), not proved.
+- #567 DoD met; TouchEdge exclusivity carved on `main` via #597, not proved.
 - #589 wayfinder PR stays closed.
 - Leftover ids switch to repeated `Ⅰ` marks. `Ⅰ` = T-junction kiss.
   `ⅠⅠ` = obtuse-at-v. `522-n` is not minted.
@@ -99,7 +99,7 @@ detector. `/implement` of either is a later letter.
 
 Ⅰ ──────── T-junction / partial-edge kiss ── research ── finding #577
 ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584
-unnamed ── TouchEdge exclusivity ── technique ── carve #597 ready
+unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 
 #67 / 11 ── geom_de9im_pointset · noding · Touches-vs-Share

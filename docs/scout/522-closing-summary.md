@@ -45,7 +45,7 @@ These are not holes in the original honesty ask. Chart:
 Roman numerals. Do **not** mint `522-n`.
 
 - **TouchEdge exclusivity** vs the four gtri predicates — named, not
-  proved. Carve ready as #597.
+  proved. Carved on `main` via #597.
 - **Fill remints** (classifier pointer → OGC `*_ogc`). Unnamed. Shared
   with the rect lane. Not `522-f`.
 - **T-junction / partial-edge kiss** — leftover `Ⅰ`. Completeness

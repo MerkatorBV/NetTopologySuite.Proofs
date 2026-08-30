@@ -94,7 +94,7 @@ disguised as disjointness — that was #530.
 - **Empty/empty `relate`** — parked on the #522 epic (declines; ISO 13249-3
   if revisited).
 - **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not
-  proved. Carve ready as #597. Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
+  proved. Carved on `main` via #597. Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
 - **Disjoint fill remint** (FFFFFFFFF → FF2FF1212) — unnamed. Not `522-f`.
 - **T-junction / partial-edge kiss** — leftover `Ⅰ`. Finding:
   `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`.
