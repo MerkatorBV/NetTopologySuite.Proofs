@@ -93,9 +93,11 @@
    After that the second [sqrt_le_1] arm is [0 <= Rsqr (eps/2)],
    not [0 <= eps/2] (afa1be1 L711). [apply Rle_0_sqr].
    [lra] on [eps*eps <= 2*(eps*eps)] cannot witness [0 <= eps*eps]
-   (f700cec L764). [Rmult_le_compat_r] then unifies [r] as [8]
+   (f700cec L764).    [Rmult_le_compat_r] then unifies [r] as [8]
    from [Rmult_le_reg_r 8] (789c7fa L767). Close with
    [Rplus_le_reg_r] and [Rle_0_sqr].
+   After [unfold Rdiv] the RHS is [(eps*/2)*(eps*/2)*8], not
+   [eps/2*eps/2] (2e9a0ae L780). Assert the scale identity.
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -748,23 +750,23 @@ Proof.
                    by (symmetry; apply (rmul_cancel_linv K (K + 1)); lra).
                  lra.
               ** unfold Rdiv.
-                 replace (eps / 2 * (eps / 2)) with (eps * eps / 4).
-                 2:{ unfold Rdiv.
-                   replace ((eps * / 2) * (eps * / 2))
-                     with (eps * eps * (/ 2 * / 2)) by ring.
-                   replace (/ 2 * / 2) with (/ 4).
-                   2:{ rewrite <- Rinv_mult_distr by lra.
-                     replace (2 * 2) with 4 by ring. reflexivity. }
-                   ring. }
+                 (* (eps*/2)*(eps*/2) after unfold Rsqr / Rdiv, not eps/2*eps/2 *)
                  apply (Rmult_le_reg_r 8); [lra |].
                  replace (eps * eps * / 8 * 8) with (eps * eps)
                    by (symmetry; apply (rmul_cancel_linv (eps * eps) 8); lra).
-                 replace (eps * eps * / 4 * 8) with (2 * (eps * eps)).
-                 2:{ replace ((eps * eps * / 4) * 8)
+                 assert (Hright :
+                   (eps * / 2) * (eps * / 2) * 8 = 2 * (eps * eps)).
+                 { replace ((eps * / 2) * (eps * / 2) * 8)
+                     with (eps * eps * (/ 2 * / 2) * 8) by ring.
+                   replace (/ 2 * / 2) with (/ 4).
+                   2:{ rewrite <- Rinv_mult_distr by lra.
+                     replace (2 * 2) with 4 by ring. reflexivity. }
+                   replace (eps * eps * / 4 * 8)
                      with (eps * eps * (/ 4 * 8)) by ring.
                    replace 8 with (4 * 2) by ring.
                    rewrite <- (Rmult_assoc (/ 4) 4 2).
                    rewrite Rinv_l by lra. ring. }
+                 rewrite Hright.
                  apply (Rplus_le_reg_r (- (eps * eps))).
                  rewrite Rplus_opp_r.
                  replace (2 * (eps * eps) + - (eps * eps)) with (eps * eps).
