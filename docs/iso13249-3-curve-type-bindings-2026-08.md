@@ -129,8 +129,10 @@ Branch: contiguity enforced with `Equals2D` at construction
 (`Curves/CompoundCurve.cs:75-86` at e84458e) — consistent with the spec's
 default 2D reading of closedness (ST_IsClosed ignores z/m, §4.2.4.1 item 5),
 though the spec text for contiguity itself does not say "ignoring z". Empty
-components rejected (`CompoundCurve.cs:64-68` at e84458e) — stricter than
-the spec, harmless; scheduled to drop per ADR-0005 (#615 ticket `615-c`).
+components: **dropped at intake since branch commit `4c787c2`** (2026-08-30,
+ticket `615-c`) — the spec forbids only null (Desc 5), an empty component
+contributes nothing to the point set, and contiguity is checked across the
+drop; the former stricter-than-spec rejection is gone, per ADR-0005.
 **Nested CompoundCurve components: accepted and spliced flat since branch
 commit `2c4c7bc`** (2026-08-30, ticket `615-b`) — constructor and reader
 accept them per §7.10.1 and flatten into the component list, with
@@ -318,7 +320,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 | CS bulge / centre-radius-angle representations (§7.3.1 Desc 13–15) | absent | untracked gap (SQL API surface; optional for NTS) |
 | CC components: **all** ST_Curve subtypes, nested CC included (§7.10.1 Desc 7; §5.1.67 `<curve text>`) | accepted and spliced flat, ctor + reader, since `2c4c7bc` (flatten tests in `CompoundCurveTest`/`CurveWktTest`) | ok — ADR-0005 Decision 2, landed 2026-08-30 (`615-b`) |
 | CC contiguity: end = next start (§7.10.1 Desc 7) | `Equals2D` check in ctor (`CompoundCurve.cs:75-86`) | ok (2D reading; spec default closedness is 2D, §4.2.4.1) |
-| CC empty components (spec silent; only null forbidden, §7.10.1 Desc 5) | rejected (`CompoundCurve.cs:64-68`) | stricter than spec, harmless |
+| CC empty components (spec silent; only null forbidden, §7.10.1 Desc 5) | dropped at intake since `4c787c2` (normalize inside; contiguity checked across the drop) | ok — ADR-0005 Decision 1, landed 2026-08-30 (`615-c`); every surviving intake check now carries its clause citation in-code |
 | CP rings are rings = closed ∧ simple, any ST_Curve (§8.2.1 Desc 2–3) | ctor: closed only (`CurvePolygon.cs:96-108`); simplicity deferred | partial; red-marked via IsSimple |
 | CP ring intersection ≤ 1 point, no spikes/cuts, connected interior (§8.2.1 Desc 11–14) | not evaluated (IsValid fail-closed) | known gap (IsValid work) |
 | ST_Length on curves (§7.1.2 Desc 2; operand = arc locus §7.3.1 Desc 8) | exact r·θ over the locus since `2ccd353` (`CircularArcGeometry` seam; collinear → chord per Desc 8b; CC = component sum) | ok — landed 2026-08-30 (`615-d`); oracle-pinned, see §5a |
