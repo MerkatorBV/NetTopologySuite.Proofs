@@ -38,6 +38,9 @@
    [rewrite (Rabs_right 2)] needs a subterm [Rabs 2]. Left-associated
    [2 * cos * sin] becomes [Rabs (2 * cos)] after one [Rabs_mult]
    (784051a L226). Parenthesize [2 * (cos * sin)].
+   After that pin the leftover [2 * Rabs (sin (gap/2))] is not
+   [Rabs (sin _)]; apply [Rmult_le_compat_l] then [Rabs_sin_le_abs]
+   (a49f234 L237). Cancel [2*(Rabs * /2)] with [Rinv_r], not [field].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -234,11 +237,19 @@ Proof.
     apply cos_abs_le_1.
   - rewrite Rmult_1_l.
     eapply Rle_trans.
-    + apply Rabs_sin_le_abs.
+    + apply Rmult_le_compat_l; [lra |].
+      apply Rabs_sin_le_abs.
     + unfold Rdiv.
       rewrite Rabs_mult.
       rewrite (Rabs_right (/ 2)) by lra.
-      replace (2 * (Rabs (b - a) * / 2)) with (Rabs (b - a)) by field.
+      rewrite (Rabs_minus_sym b a).
+      replace (2 * (Rabs (a - b) * / 2)) with (Rabs (a - b)).
+      2:{ rewrite <- Rmult_assoc.
+          rewrite (Rmult_comm 2 (Rabs (a - b))).
+          rewrite Rmult_assoc.
+          rewrite Rinv_r by lra.
+          rewrite Rmult_1_r.
+          reflexivity. }
       apply Rle_refl.
 Qed.
 
