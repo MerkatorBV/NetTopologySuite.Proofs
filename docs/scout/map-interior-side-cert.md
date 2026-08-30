@@ -28,13 +28,11 @@ Leftover `Ⅲ` compiled an **exterior-side** stem
 **opposite** sides of the supporting line, so II is empty
 (`RelateNGComplete.v : onesided_t_ii_empty`). The xor
 (`RelateNGCore.v : touch_onesided_t_b`) does not test that side. This
-map assigns leftover **`Ⅳ`** to the **same-side** one-sided T and
-stops. It does **not** invent a 12-tuple. It does **not** invent a
-side-distinguishing detector. Completeness stays false
-(`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`).
-`/implement` of `Ⅳ` is a later letter, and that letter must first
-compile a cex or prove the residue empty among both-CCW pairs that
-already miss leftover `Ⅰ` and the four wired certificates.
+map assigns leftover **`Ⅳ`** to the **same-side** one-sided T.
+Ticket 26 compiled the residue pair
+(`RelateNGComplete.v : interior_side_pair_inhabits`). It does
+**not** invent a side-distinguishing detector. Completeness stays
+false (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`).
 
 ## The family (not a spec pair)
 
