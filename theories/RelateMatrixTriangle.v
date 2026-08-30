@@ -309,7 +309,9 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
 (* `TPR_TouchEdge` is deliberately absent: its predicate is the frozen        *)
 (* shared-edge vocabulary (RelateNGTouch anchors) and its exclusivity         *)
 (* against the gtri-shaped predicates is not a cheap consequence of the       *)
-(* definitions; that is later #522 rungs' work, not #567's.                   *)
+(* definitions.  #567 / 522-a DoD does not include that exclusivity; the      *)
+(* leftover is carved (witness 522-a-touch-edge-carve).  If minted later,     *)
+(* use leftover letter 522-n — do not remint the frozen anchors.              *)
 (* -------------------------------------------------------------------------- *)
 
 Theorem separated_not_overlap : forall a1 a2 a3 b1 b2 b3,
