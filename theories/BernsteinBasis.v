@@ -83,22 +83,19 @@ Proof.
   intros n i t. simpl. reflexivity.
 Qed.
 
-Lemma bern_prev_S : forall n k t,
-  match S k with O => 0 | S i' => bern n i' t end = bern n k t.
-Proof.
-  intros n k t. reflexivity.
-Qed.
-
 (* sum_{i=0}^{S m} prev_i = sum_{k=0}^{m} bern n k, where prev 0 = 0
-   and prev (S k) = bern n k. *)
+   and prev (S k) = bern n k. Do not rewrite a reflexivity lemma —
+   Rocq 9.2 rejects a rewrite that leaves the goal unchanged. *)
 Lemma sum_f_R0_prev_bern : forall n m t,
   sum_f_R0 (fun i => match i with O => 0 | S i' => bern n i' t end) (S m)
   = sum_f_R0 (fun i => bern n i t) m.
 Proof.
   intros n m t. induction m as [|m IH].
-  - rewrite sum_f_R0_S. rewrite bern_prev_S. simpl. ring.
-  - rewrite sum_f_R0_S. rewrite bern_prev_S. rewrite IH.
-    rewrite sum_f_R0_S. ring.
+  - rewrite sum_f_R0_S. simpl. ring.
+  - rewrite (sum_f_R0_S (fun i => match i with O => 0 | S i' => bern n i' t end) (S m)).
+    rewrite IH.
+    rewrite (sum_f_R0_S (fun i => bern n i t) m).
+    apply f_equal. reflexivity.
 Qed.
 
 Lemma bern_Sn_sum_upto : forall n k t,
@@ -207,6 +204,33 @@ Qed.
 
 (* WITNESS {"claimId":"508-f-elevate-2","topic":"metric","lemma":"bern_elevate_2","title":"Degree elevation n=2 is exact on coordinates: elevated cubic Bernstein combo equals the quadratic","file":"theories/BernsteinBasis.v","witness":"508-f-bernstein","board":"#562"} *)
 
+Lemma elevate_ctrl_2_0 : forall P, elevate_ctrl 2 P 0%nat = P 0%nat.
+Proof. intros P. unfold elevate_ctrl. reflexivity. Qed.
+
+Lemma elevate_ctrl_2_3 : forall P, elevate_ctrl 2 P 3%nat = P 2%nat.
+Proof.
+  intros P. unfold elevate_ctrl.
+  destruct (Nat.eq_dec 3 3) as [E|E]; [reflexivity | lia].
+Qed.
+
+Lemma elevate_ctrl_2_1 : forall P,
+  elevate_ctrl 2 P 1%nat
+  = (INR 1 / INR 3) * P 0%nat + (INR 2 / INR 3) * P 1%nat.
+Proof.
+  intros P. unfold elevate_ctrl.
+  destruct (Nat.eq_dec 1 3) as [E|E]; [lia |].
+  simpl. field. apply (S_INR_neq_0 2).
+Qed.
+
+Lemma elevate_ctrl_2_2 : forall P,
+  elevate_ctrl 2 P 2%nat
+  = (INR 2 / INR 3) * P 1%nat + (INR 1 / INR 3) * P 2%nat.
+Proof.
+  intros P. unfold elevate_ctrl.
+  destruct (Nat.eq_dec 2 3) as [E|E]; [lia |].
+  simpl. field. apply (S_INR_neq_0 2).
+Qed.
+
 Theorem bern_elevate_2 : forall (P : nat -> R) t,
   bern2_0 t * P 0%nat + bern2_1 t * P 1%nat + bern2_2 t * P 2%nat
   =
@@ -216,9 +240,8 @@ Theorem bern_elevate_2 : forall (P : nat -> R) t,
   + bern3_3 t * elevate_ctrl 2 P 3%nat.
 Proof.
   intros P t.
+  rewrite elevate_ctrl_2_0, elevate_ctrl_2_1, elevate_ctrl_2_2, elevate_ctrl_2_3.
   unfold bern2_0, bern2_1, bern2_2, bern3_0, bern3_1, bern3_2, bern3_3.
-  unfold elevate_ctrl.
-  simpl.
   field.
   apply (S_INR_neq_0 2).
 Qed.
