@@ -549,6 +549,16 @@ Proof.
     + apply (Hanti lo u); lra.
 Qed.
 
+(* (xs ++ [x]) ++ [y] = xs ++ x :: [y], proved by induction so we never
+   fight app_assoc's association. *)
+Lemma app_snoc_cons : forall (A : Type) (xs : list A) (x y : A),
+  (xs ++ [x]) ++ [y] = xs ++ x :: [y].
+Proof.
+  intros A xs x y; induction xs as [|z zs IH]; simpl.
+  - reflexivity.
+  - rewrite IH. reflexivity.
+Qed.
+
 (* Reversing the visit order preserves polyline length (dist is symmetric). *)
 Lemma polyline_len_rev : forall (g : Curve) ts t u,
   polyline_len g t (ts ++ [u]) = polyline_len g u (rev ts ++ [t]).
@@ -559,7 +569,7 @@ Proof.
     simpl polyline_len.
     rewrite IH.
     replace (rev (v :: tl) ++ [t]) with (rev tl ++ v :: [t]).
-    2: { simpl rev. rewrite app_assoc. reflexivity. }
+    2: { simpl rev. apply app_snoc_cons. }
     rewrite (polyline_len_app_mid g (rev tl) u v [t]).
     simpl polyline_len.
     rewrite dist_sym, Rplus_0_r.
