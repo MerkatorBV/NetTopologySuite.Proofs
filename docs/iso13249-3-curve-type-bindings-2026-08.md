@@ -332,7 +332,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 
 | Run | Oracle | NTS | Result |
 |---|---|---|---|
-| 2026-08-30, ticket `615-d` | `oracle_bin` rebuilt in-container via `make -C oracle` from this repo at `4e33e2c` (extraction unchanged) | fork branch at `2ccd353` | `SUMMARY ok=24 warn=7 bug_or_fail=0` — 7 legacy ARC_LENGTH + 5 new LENGTH_UNIFIED vectors all `rel < 1e-9` (several bit-exact); the 7 WARNs are the honest fail-closed pendings for Envelope/Distance (`615-e/f`), flipped when those land |
+| 2026-08-30, ticket `615-d` | `oracle_bin` rebuilt in-container via `make -C oracle` from this repo at `4e33e2c` (extraction unchanged) | fork branch at `2ccd353` + review follow-up `df5ba57` (CW-witness + unequal-radii vectors) | `SUMMARY ok=26 warn=7 bug_or_fail=0` — 7 legacy ARC_LENGTH + 7 LENGTH_UNIFIED vectors all `rel < 1e-9` (several bit-exact); the 7 WARNs are the honest fail-closed pendings for Envelope/Distance (`615-e/f`), flipped when those land |
 
 Harness: `ORACLE=oracle/oracle_bin dotnet run --project tests/CurveOracleBugHunt`
 (now platform-portable: direct exec off Windows; WSL path preserved on it).
@@ -447,4 +447,4 @@ spec-adjacent statements, checked:
 
 ---
 
-SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Remaining divergences are either red-test-marked fail-closed gaps (Length §7.1.2, Distance §5.1.41, Envelope §5.1.19 — the four Red tests in `CurveMetricsContractTests.cs`, tickets `615-d/e/f`) or deferred-validity gaps (§7.3.1 Desc 6 distinctness, §8.2.1 ring simplicity — tickets `615-g/h`) awaiting arc-aware IsValid/IsSimple.
+SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). Remaining divergences are either red-test-marked fail-closed gaps (Distance §5.1.41, Envelope §5.1.19 — the three Red tests in `CurveMetricsContractTests.cs`, tickets `615-e/f`) or deferred-validity gaps (§7.3.1 Desc 6 distinctness, §8.2.1 ring simplicity — tickets `615-g/h`) awaiting arc-aware IsValid/IsSimple.
