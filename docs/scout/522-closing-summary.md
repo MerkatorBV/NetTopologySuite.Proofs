@@ -52,7 +52,7 @@ Roman numerals. Do **not** mint `522-n`.
   (`RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`).
   Completeness recorded the finding and leftover `Ⅰ` classified the
   pair. Fill stays `im_unsupported`.
-- **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding
+- **Obtuse-at-v certificate** — leftover `Ⅱ`. Finding
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Separate from `Ⅰ`. Detector not invented.
 - **Nine-cell `geom_de9im_pointset`**, full noding, Touches-vs-Share —
@@ -60,7 +60,8 @@ Roman numerals. Do **not** mint `522-n`.
 - **`#523` `F` vs not-computed** — sibling. Grilled 2026-08-30
   ([`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md)).
   Children `523-a` / `523-b` / `523-c` (#603 #604 #605) landed;
-  ticket 523 still open, not accepted. Do not mint leftover `ⅠⅠⅠ`.
+  ticket 523 still open, not accepted. Do not steal leftover `Ⅲ`.
+  Leftover `Ⅳ` is the interior-side stem (named only).
 - **Empty/empty relate** — parked on the epic.
 
 ## Surfaces that must agree

@@ -4,7 +4,7 @@
 **Blocked by:** [`523-b` / #604](16-523-b-cell-unknown.md) · **Spec:** [`spec-523.md`](../../spec-523.md) slice C
 **claimId:** `523-c` · **GitHub:** [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) · **witness:** `523-c-driver-unknown`
 
-> Umbrella: ticket 523 / #605. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
+> Umbrella: ticket 523 / #605. Does not retire that issue. Not leftover `Ⅲ`.
 > Gate: `523-b` / #604 must land first so consumers do not reject the new
 > cell glyph.
 
@@ -58,7 +58,7 @@ letter does not auto-retire that issue.
 ## Non-goals
 
 Shared pins stay put. Decline golden stays `UNSUPPORTED`. Do not
-implement leftover `Ⅰ` / `ⅠⅠ`. Do not mint `ⅠⅠⅠ`. Do not remint
+implement leftover `Ⅰ` / `Ⅱ`. Do not mint `Ⅲ`. Do not remint
 ADR-0004. Do not add a CONTEXT name for per-cell unknown unless
 `/domain-modeling` + owner accept. Do not comment on GitHub issue
 523 unless the user says `comment`.

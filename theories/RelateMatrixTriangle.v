@@ -20,7 +20,7 @@
    partition of all triangle pairs:    a partial-edge kiss that is neither
    a full shared edge nor a single shared vertex used to satisfy none of
    them.     Leftover `Ⅰ` adds `TPR_TouchPartialEdge` (fill stays
-   `im_unsupported` until a fill is named). Leftover `ⅠⅠⅠ` adds
+   `im_unsupported` until a fill is named). Leftover `Ⅲ` adds
    `TPR_TouchOnesided` (same fill honesty). Obtuse-at-v still declines.
 
    Honest scoping: triangles only (convex, no holes). Full pointset
@@ -51,7 +51,7 @@ Inductive TrianglePairRegime : Type :=
 | TPR_TouchEdge
 | TPR_TouchVertex   (* vertex contact; matrix shape can be adjusted later *)
 | TPR_TouchPartialEdge (* leftover Ⅰ: mutual vertex-in-open-edge; fill is the token *)
-| TPR_TouchOnesided (* leftover ⅠⅠⅠ: one-sided vertex-in-open-edge; fill is the token *)
+| TPR_TouchOnesided (* leftover Ⅲ: one-sided vertex-in-open-edge; fill is the token *)
 | TPR_Unsupported.  (* the classifier declined -- NOT a geometric verdict *)
 
 Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
@@ -62,7 +62,7 @@ Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
   | TPR_TouchEdge   => aa_matrix_touch_vertical  (* BB=1, EE=2 *)
   | TPR_TouchVertex => aa_matrix_touch_vertical  (* same for starter; point contact may be dim 0 *)
   | TPR_TouchPartialEdge => im_unsupported       (* leftover Ⅰ: classified, fill not named *)
-  | TPR_TouchOnesided => im_unsupported          (* leftover ⅠⅠⅠ: classified, fill not named *)
+  | TPR_TouchOnesided => im_unsupported          (* leftover Ⅲ: classified, fill not named *)
   | TPR_Unsupported => im_unsupported            (* decline; see DE9IM.im_unsupported *)
   end.
 
@@ -314,7 +314,7 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
      [classify_triangle_pair]. Do not remint to a Touches fill —
      the compiled pair is sliver overlap (II nonempty). *)
   | TPR_TouchPartialEdge => True
-  (* Leftover ⅠⅠⅠ: same honesty as leftover Ⅰ. [True] is not a
+  (* Leftover Ⅲ: same honesty as leftover Ⅰ. [True] is not a
      denotation. Do not prove [classify_triangle_pair] facts about
      this constructor. Fill stays [im_unsupported]. Not CONTEXT
      Bar 1. Exterior-side stem; II empty; do not remint to a

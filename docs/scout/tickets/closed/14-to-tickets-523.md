@@ -9,7 +9,7 @@ Living spec: [`docs/scout/spec-523.md`](../../spec-523.md).
 
 Turn [`spec-523.md`](../../spec-523.md) slices A–C into claimable
 tickets so `/implement` does not re-spec. Do not implement. Do not
-accept ticket 523. Do not mint leftover `ⅠⅠⅠ`. Do not steal closed
+accept ticket 523. Do not mint leftover `Ⅲ`. Do not steal closed
 `522-*` letters.
 
 ## Resolution

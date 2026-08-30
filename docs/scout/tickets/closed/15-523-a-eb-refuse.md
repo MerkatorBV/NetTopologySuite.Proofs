@@ -4,7 +4,7 @@
 **Blocked by:** — · **Spec:** [`spec-523.md`](../../spec-523.md) slice A
 **claimId:** `523-a` · **GitHub:** [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) · **witness:** `523-a-eb-refuse`
 
-> Umbrella: ticket 523 / #603. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
+> Umbrella: ticket 523 / #603. Does not retire that issue. Not leftover `Ⅲ`.
 > Not a `522-*` letter.
 
 ## Question
@@ -41,7 +41,7 @@ No consumer-token gate. This ticket can land before `523-b` / `523-c`.
 
 Shared pins stay put (FFFFFFFFF / 2FFF1FFF2 / 2FFFFFFF2 / FFFF1FFF2).
 Decline golden stays `UNSUPPORTED`. Do not implement `523-b` / `523-c`
-here unless the same letter claims them. Do not mint `ⅠⅠⅠ`. Do not
+here unless the same letter claims them. Do not mint `Ⅲ`. Do not
 comment on GitHub issue 523 unless the user says `comment`.
 
 ## Resolution

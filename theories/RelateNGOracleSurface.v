@@ -11,7 +11,7 @@
    (`WireCell` / `WireMatrix`), encodes a well-formed matrix or declines
    (`RelateWireResult`), and proves the triangle classifier's fills
    land on the right side of that cut. Leftover `Ⅰ`
-   (`TPR_TouchPartialEdge`) and leftover `ⅠⅠⅠ`
+   (`TPR_TouchPartialEdge`) and leftover `Ⅲ`
    (`TPR_TouchOnesided`) stay on the token side.
 
    Green (Qed):
@@ -334,7 +334,7 @@ Qed.
 
 (* TPR_TouchPartialEdge / TPR_TouchOnesided are classified but fill
    is still the token. Keep them excluded so a matrix decode cannot
-   swallow leftover Ⅰ / leftover ⅠⅠⅠ. *)
+   swallow leftover Ⅰ / leftover Ⅲ. *)
 Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_Unsupported ->
   r <> TPR_TouchPartialEdge ->

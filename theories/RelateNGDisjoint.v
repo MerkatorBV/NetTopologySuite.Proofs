@@ -18,7 +18,7 @@
    whose closures miss without a vertex-strict supporting edge
    (partial-edge kiss) used to decline — leftover `Ⅰ` now names
    that pair `TPR_TouchPartialEdge` (fill still `im_unsupported`).
-   Completeness is still #577 / leftover `ⅠⅠ`. Vertex-touch is #572.
+   Completeness is still #577 / leftover `Ⅱ`. Vertex-touch is #572.
 
    Frozen anchors stay untouched: `touch_int_ext_exclusion` and the
    II-guard maximality refutation.  `triangles_touch_on_shared_edge`

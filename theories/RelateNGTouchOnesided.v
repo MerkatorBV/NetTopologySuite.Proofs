@@ -1,7 +1,7 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNGTouchOnesided
    ----------------------------------------------------------------------------
-   Leftover ⅠⅠⅠ: one-sided vertex-in-open-edge detector.
+   Leftover Ⅲ: one-sided vertex-in-open-edge detector.
 
    Map: docs/scout/map-522-leftovers.md. Compiled pair
    A = (0,0)(2,0)(0,1), B = (1,0)(1/2,-1)(3/2,-1) is an exterior-side
@@ -10,18 +10,19 @@
    (not a widening of leftover Ⅰ's mutual `touch_partial_edge_b`).
    Constructor `TPR_TouchOnesided` stays on `im_unsupported`
    (load-bearing; do not remint to a Touches fill). After leftover Ⅰ
-   and after `touch_vertex_b`. True on leftover ⅠⅠⅠ; false on leftover
-   Ⅰ (mutual), leftover ⅠⅠ, `classified_hard_pairs`, and the #567
-   contains pair. Completeness stays false (obtuse / ⅠⅠ).
+   and after `touch_vertex_b`. True on leftover Ⅲ; false on leftover
+   Ⅰ (mutual), leftover Ⅱ, `classified_hard_pairs`, and the #567
+   contains pair. Completeness stays false (obtuse / Ⅱ).
    `classify_triangle_pair` arm is `True` — leftover Ⅰ honesty, not
-   CONTEXT Bar 1. Do not steal 522-j / 522-m / 522-f / leftover Ⅰ.
-   Do not invent leftover ⅠⅠ. Do not mint 522-n / ⅠⅠⅠⅠ. Do not
-   remint aa_matrix_*.
+   CONTEXT Bar 1. The xor also fires on leftover Ⅳ (interior-side
+   stem; named only). Do not steal 522-j / 522-m / 522-f / leftover Ⅰ.
+   Do not invent leftover Ⅱ. Do not compile leftover Ⅳ. Do not
+   mint 522-n / Ⅴ. Do not remint aa_matrix_*.
 
-   WITNESS topic: relate · claimId: ⅠⅠⅠ · witness: ⅠⅠⅠ-onesided-t-detector
+   WITNESS topic: relate · claimId: Ⅲ · witness: Ⅲ-onesided-t-detector
    macro: relate
    lane: proofs
-   issue: leftover ⅠⅠⅠ / #522
+   issue: leftover Ⅲ / #522
    ADR-0004: leftover numerals stay off the 522-* board catalog
    (not a partial mint). JSON blob on the headline is the leftover
    tag. Not requesting mutation pins this letter.
@@ -169,7 +170,7 @@ Proof.
   exact hard_contains_no_onesided.
 Qed.
 
-(* WITNESS {"claimId":"ⅠⅠⅠ","topic":"relate","lemma":"triangle_pair_regime_onesided","title":"TPR_TouchOnesided reachable on the compiled leftover-ⅠⅠⅠ exterior-side stem","file":"theories/RelateNGTouchOnesided.v","witness":"ⅠⅠⅠ-onesided-t-detector","board":"leftover-ⅠⅠⅠ"} *)
+(* WITNESS {"claimId":"Ⅲ","topic":"relate","lemma":"triangle_pair_regime_onesided","title":"TPR_TouchOnesided reachable on the compiled leftover-Ⅲ exterior-side stem","file":"theories/RelateNGTouchOnesided.v","witness":"Ⅲ-onesided-t-detector","board":"leftover-Ⅲ"} *)
 Theorem triangle_pair_regime_onesided :
   triangle_pair_regime 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1)
     = TPR_TouchOnesided.

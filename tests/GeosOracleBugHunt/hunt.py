@@ -140,7 +140,7 @@ RELATE_VECTORS = (
         "triangle_pair_fill TPR_Unsupported",
         "token",
         "UNSUPPORTED",
-        "Obtuse-at-v leftover ⅠⅠ. T-junction pair classifies leftover Ⅰ.",
+        "Obtuse-at-v leftover Ⅱ. T-junction pair classifies leftover Ⅰ.",
     ),
 )
 

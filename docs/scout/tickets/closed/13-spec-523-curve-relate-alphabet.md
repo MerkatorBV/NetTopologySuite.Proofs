@@ -11,7 +11,7 @@ Grill record: [`docs/scout/map-523.md`](../../map-523.md).
 Turn the grilled #523 record into a takeable `/implement` spec: alphabet,
 E/B refuse, exhausted-probe meaning, parks, and explicit non-goals.
 Do not implement the driver rewrite. Do not accept ticket 523. Do not
-mint leftover `ⅠⅠⅠ`.
+mint leftover `Ⅲ`.
 
 ## Resolution
 
@@ -34,4 +34,4 @@ matrix Decline stays `UNSUPPORTED`
 is not Decline. Do not steal `UNSUPPORTED` as a cell.
 
 Do **not** implement those slices here. Do **not** mint leftover
-`ⅠⅠⅠ`. Do **not** remint classifier pins.
+`Ⅲ`. Do **not** remint classifier pins.

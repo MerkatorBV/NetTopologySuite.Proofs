@@ -9,7 +9,7 @@
    was FALSE on the compiled T-junction / partial-edge kiss
    `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` (522-j). Leftover `Ⅰ`
    classifies that pair as `TPR_TouchPartialEdge`. Completeness is
-   still FALSE: obtuse-at-v (leftover `ⅠⅠ`, 522-m) still emits
+   still FALSE: obtuse-at-v (leftover `Ⅱ`, 522-m) still emits
    `TPR_Unsupported`.  Do not invent the obtuse certificate here.
 
    Hard pairs that DO classify are cited, not re-proved.  Catalog
@@ -25,17 +25,19 @@
 
    Five names are not a partition.  Leftover `Ⅰ` classifies the
    T-junction in `RelateNGTouchPartialEdge`.  Do not invent the
-   obtuse-at-v certificate in this file.  Leftover `ⅠⅠⅠ` is compiled
+   obtuse-at-v certificate in this file.     Leftover `Ⅲ` is compiled
    below as an exterior-side stem (`onesided_t_pair_inhabits`); the
    classifier emits `TPR_TouchOnesided` (ticket 22).  Fill stays
-   `im_unsupported`.  Not an ADR-0004 remint.
+   `im_unsupported`.  Leftover `Ⅳ` is the interior-side stem
+   (named only; the xor does not distinguish it from leftover `Ⅲ`).
+   Not an ADR-0004 remint.
    `522-j` is the existing #577 ticket id.  The filtered-completeness
    retry (`522-m`) lives below: excluding the T-junction 12-tuple,
    completeness is still FALSE (obtuse-at-v).
 
    WITNESS topic: relate · claimId: 522-j · witness: 522-j-sentinel-cex
    WITNESS topic: relate · claimId: 522-m · witness: 522-m-complete-filtered
-   WITNESS topic: relate · claimId: ⅠⅠⅠ · witness: ⅠⅠⅠ-onesided-t-cex
+   WITNESS topic: relate · claimId: Ⅲ · witness: Ⅲ-onesided-t-cex
    macro: relate
    lane: proofs
    issue: #577 / #522
@@ -72,7 +74,7 @@ Local Open Scope R_scope.
 (*                                                                            *)
 (* A = (0,0)(2,0)(0,1), B = (1,0)(3,0)(2,1).  Both gdbl = 2.  Leftover `Ⅰ`   *)
 (* classifies this pair as `TPR_TouchPartialEdge`.  The live completeness    *)
-(* cex is obtuse-at-v (leftover `ⅠⅠ` / 522-m) below.                          *)
+(* cex is obtuse-at-v (leftover `Ⅱ` / 522-m) below.                          *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma tjunction_pair_both_ccw :
@@ -82,7 +84,7 @@ Proof. unfold gdbl; split; lra. Qed.
 (** The leftover-Ⅰ pair classifies as [TPR_TouchPartialEdge]
     (historical name: 522-j recorded [TPR_Unsupported]). Live
     completeness cex is [triangle_pair_regime_ccw_incomplete]
-    (obtuse / leftover ⅠⅠ). *)
+    (obtuse / leftover Ⅱ). *)
 Theorem triangle_pair_regime_incomplete_tjunction :
   0 < gdbl 0 0 2 0 0 1 /\
   0 < gdbl 1 0 3 0 2 1 /\
@@ -211,7 +213,7 @@ Proof.
   exact (touch_vertex_b_false_of_non_ccw _ _ _ _ _ _ _ _ _ _ _ _ H).
 Qed.
 
-(* Leftover Ⅰ classified the T-junction. Obtuse-at-v (leftover ⅠⅠ)
+(* Leftover Ⅰ classified the T-junction. Obtuse-at-v (leftover Ⅱ)
    is still not invented. Five names remain not a partition. *)
 
 (* -------------------------------------------------------------------------- *)
@@ -445,7 +447,7 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Leftover ⅠⅠⅠ — one-sided / non-collinear vertex-in-open-edge T.           *)
+(* Leftover Ⅲ — one-sided / non-collinear vertex-in-open-edge T.           *)
 (*                                                                            *)
 (* Exterior-side stem (ticket 21).  A = (0,0)(2,0)(0,1),                      *)
 (* B = (1,0)(1/2,-1)(3/2,-1).  Both CCW.  B-vertex (1,0) sits in the open     *)
@@ -453,7 +455,8 @@ Qed.
 (* vertex.  Interiors opposite across y = 0, so II is empty (BB dim 0).       *)
 (* Classifier emits TPR_TouchOnesided (ticket 22).  Fill stays                 *)
 (* im_unsupported.  Detector lives in RelateNGTouchOnesided.  Do not          *)
-(* remint leftover Ⅰ.  Completeness stays false on leftover ⅠⅠ.               *)
+(* remint leftover Ⅰ.  Completeness stays false on leftover Ⅱ.               *)
+(* Leftover Ⅳ is the interior-side stem (named only).                         *)
 (* -------------------------------------------------------------------------- *)
 
 Definition onesided_t_pair_coords
@@ -526,7 +529,7 @@ Proof.
     reflexivity. }
 Qed.
 
-(* Ticket 21 filter: no shared vertex (also distinguishes leftover ⅠⅠ). *)
+(* Ticket 21 filter: no shared vertex (also distinguishes leftover Ⅱ). *)
 Lemma onesided_t_no_shared_vertex :
   is_vertex_b (mkPoint 0 0)
     (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = false /\
@@ -670,7 +673,7 @@ Proof.
   reflexivity.
 Qed.
 
-(* WITNESS {"claimId":"ⅠⅠⅠ","topic":"relate","lemma":"onesided_t_pair_onesided","title":"Leftover ⅠⅠⅠ exterior-side stem classifies as TPR_TouchOnesided","file":"theories/RelateNGComplete.v","witness":"ⅠⅠⅠ-onesided-t-cex","board":"leftover-ⅠⅠⅠ"} *)
+(* WITNESS {"claimId":"Ⅲ","topic":"relate","lemma":"onesided_t_pair_onesided","title":"Leftover Ⅲ exterior-side stem classifies as TPR_TouchOnesided","file":"theories/RelateNGComplete.v","witness":"Ⅲ-onesided-t-cex","board":"leftover-Ⅲ"} *)
 Theorem onesided_t_pair_inhabits :
   onesided_t_pair_coords 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1) /\
   0 < gdbl 0 0 2 0 0 1 /\

@@ -5,9 +5,10 @@ A wayfinder map. Charted 2026-08-30. This is **not** a second copy of
 issue. The epic comment stays the design of record. #589 stays closed.
 
 > **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
-> historical. Do **not** mint `522-n`. New leftover ids are repeated
-> `Ⅰ` marks (`Ⅰ`, `ⅠⅠ`, `ⅠⅠⅠ`, …), not `522-*` letters and not
-> `Ⅱ`. Do not remint ADR-0004. Do not mint GitHub children from this map.
+> historical. Do **not** mint `522-n`. Leftover ids are precomposed
+> Roman numerals (`Ⅰ`, `Ⅱ`, `Ⅲ`, `Ⅳ`, …), not `522-*` letters
+> and not repeated `Ⅰ` marks. Do not remint ADR-0004. Do not mint
+> GitHub children from this map.
 
 topics: relate
 claimId: none
@@ -44,11 +45,14 @@ rejects FF2FF1212 (`RelateNGDisjointCells.v : ogc_disjoint_fill_not_im_disjoint`
 **#589.** Closed / red. Do not merge or reopen. This file is the leftovers
 chart; `map-522.md` stays the child-ticket freshness layer.
 
-**Leftover ids.** Repeated `Ⅰ` marks (`Ⅰ`, `ⅠⅠ`, `ⅠⅠⅠ`, …), not
-`522-*` letters. `Ⅰ` is the T-junction / partial-edge kiss. `ⅠⅠ` is
-the obtuse-at-v certificate. `ⅠⅠⅠ` is the one-sided / non-collinear
-T (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). Do not swap
-them. Next unused is `ⅠⅠⅠⅠ` — ask before assigning.
+**Leftover ids.** Precomposed Roman numerals (`Ⅰ`, `Ⅱ`, `Ⅲ`,
+`Ⅳ`, …), not `522-*` letters and not repeated `Ⅰ` marks. `Ⅰ` is
+the T-junction / partial-edge kiss. `Ⅱ` is the obtuse-at-v
+certificate. `Ⅲ` is the exterior-side one-sided T
+(`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). `Ⅳ` is
+the interior-side stem (named only; the xor does not distinguish it
+from `Ⅲ`). Do not swap them. Next unused is `Ⅴ` — ask before
+assigning.
 
 ## Leftover table
 
@@ -60,8 +64,9 @@ Value and priority are orthogonal.
 | `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Bar 1 landed. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. Fill stays `im_unsupported`. | steal `522-j` / `522-m` / `522-f`; remint fills; bucket obtuse under `Ⅰ`; mint `522-n` |
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
-| `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
-| `ⅠⅠⅠ` | One-sided / non-collinear T | #522-adjacent | research | Detector landed. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. Classifier emits `TPR_TouchOnesided` (`RelateNGComplete.v : onesided_t_pair_onesided`). II empty (`RelateNGComplete.v : onesided_t_ii_empty`). Fill stays `im_unsupported`. Not CONTEXT Bar 1. | remint leftover `Ⅰ`; invent leftover `ⅠⅠ`; emit `FFFFFFFFF`; claim Bar 1; mint `522-n` / `ⅠⅠⅠⅠ` |
+| `Ⅱ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
+| `Ⅲ` | Exterior-side one-sided T | #522-adjacent | research | Detector landed. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. Classifier emits `TPR_TouchOnesided` (`RelateNGComplete.v : onesided_t_pair_onesided`). II empty (`RelateNGComplete.v : onesided_t_ii_empty`). Fill stays `im_unsupported`. Not CONTEXT Bar 1. The xor also fires on leftover `Ⅳ`. | remint leftover `Ⅰ`; invent leftover `Ⅱ`; compile leftover `Ⅳ`; emit `FFFFFFFFF`; claim Bar 1; mint `522-n` / `Ⅴ` |
+| `Ⅳ` | Interior-side one-sided T | #522-adjacent | research | Named. The xor `touch_onesided_t_b` (`RelateNGCore.v : touch_onesided_t_b`) fires on this family too; the boolean does not distinguish leftover `Ⅲ` from leftover `Ⅳ`. Not compiled. No side-distinguishing detector. Fill stays the token. | compile leftover `Ⅳ`; invent a side-distinguishing detector; remint the fill; steal leftover `Ⅲ`; mint `522-n` / `Ⅴ` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -78,9 +83,11 @@ Value and priority are orthogonal.
 - Wrap-up — #596. Owner sign-off still required.
 - #567 DoD met; TouchEdge exclusivity carved on `main` via #597, not proved.
 - #589 wayfinder PR stays closed.
-- Leftover ids switch to repeated `Ⅰ` marks. `Ⅰ` = T-junction kiss.
-  `ⅠⅠ` = obtuse-at-v. `ⅠⅠⅠ` = one-sided T (compiled + detector;
-  `TPR_TouchOnesided`; fill still `im_unsupported`). `522-n` is not minted.
+- Leftover ids switch to precomposed Roman numerals. `Ⅰ` = T-junction
+  kiss. `Ⅱ` = obtuse-at-v. `Ⅲ` = exterior-side one-sided T
+  (compiled + detector; `TPR_TouchOnesided`; fill still
+  `im_unsupported`). `Ⅳ` = interior-side stem (named only). `522-n`
+  is not minted.
 
 ## Fog
 
@@ -89,24 +96,27 @@ Value and priority are orthogonal.
 - **Remint order** if asked: disjoint is the sharpest (Qex already
   compiled); contains / touch / overlap follow the same pointer pattern
   and the same shared-pin caution.
-- **`ⅠⅠⅠ`** is compiled as an exterior-side stem
+- **`Ⅲ`** is compiled as an exterior-side stem
   (`RelateNGComplete.v : onesided_t_pair_inhabits`) and classified
   (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). Fill
-  stays `im_unsupported`. Next unused is `ⅠⅠⅠⅠ` — ask before
-  assigning.
+  stays `im_unsupported`.
+- **`Ⅳ`** is the interior-side stem. Named only. The xor does not
+  distinguish it from leftover `Ⅲ`. Do not compile. Next unused is
+  `Ⅴ` — ask before assigning.
 
 ## Frontier
 
-Leftover `Ⅰ` bar 1 is landed. Leftover `ⅠⅠ` is still named only.
-Leftover `ⅠⅠⅠ` is compiled and classified (`TPR_TouchOnesided`);
-fill stays `im_unsupported`.
+Leftover `Ⅰ` bar 1 is landed. Leftover `Ⅱ` is still named only.
+Leftover `Ⅲ` is compiled and classified (`TPR_TouchOnesided`);
+fill stays `im_unsupported`. Leftover `Ⅳ` is named only.
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
 
 Ⅰ ──────── T-junction / partial-edge kiss ── bar 1 ── TPR_TouchPartialEdge
-ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584
-ⅠⅠⅠ ───── one-sided T ── detector ── TPR_TouchOnesided (fill token)
+Ⅱ ─────── obtuse-at-v certificate ── research ── finding #584
+Ⅲ ───── exterior-side one-sided T ── detector ── TPR_TouchOnesided (fill token)
+Ⅳ ───── interior-side stem ── named ── xor does not distinguish from Ⅲ
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 
@@ -115,5 +125,5 @@ unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 parked ──── empty/empty
 
 522-n ── not minted
-ⅠⅠⅠⅠ ── unused ── ask before assigning
+Ⅴ ── unused ── ask before assigning
 ```

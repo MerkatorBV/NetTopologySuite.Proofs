@@ -110,9 +110,15 @@ disguised as disjointness — that was #530.
   Fill stays `im_unsupported`. Chart:
   [`scout/map-tjunction-cert.md`](scout/map-tjunction-cert.md).
   Do **not** mint `522-n`.
-- **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding:
+- **Obtuse-at-v certificate** — leftover `Ⅱ`. Finding:
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Do not bucket with T-junction under `Ⅰ`. Detector not invented.
+- **Exterior-side one-sided T** — leftover `Ⅲ`. Headline
+  `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill stays
+  `im_unsupported`. Not CONTEXT Bar 1.
+- **Interior-side one-sided T** — leftover `Ⅳ`. Named only. The xor
+  `touch_onesided_t_b` (`RelateNGCore.v : touch_onesided_t_b`) does not
+  distinguish leftover `Ⅲ` from leftover `Ⅳ`. Do not compile.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 

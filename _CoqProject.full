@@ -2775,17 +2775,18 @@ theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v
 theories/RelateNGRect.v
 # #577 / 522-j: leftover-decline finding.  Completeness is still
-# false (obtuse-at-v / leftover ⅠⅠ). The compiled T-junction pair
+# false (obtuse-at-v / leftover Ⅱ). The compiled T-junction pair
 # is leftover Ⅰ (classified TPR_TouchPartialEdge).
 theories/RelateNGComplete.v
 # Leftover Ⅰ: collinear partial-edge kiss at bar 1. Detector
 # touch_partial_edge_b; constructor TPR_TouchPartialEdge stays on
 # im_unsupported. Does not remint fills. Completeness stays false.
 theories/RelateNGTouchPartialEdge.v
-# Leftover ⅠⅠⅠ: one-sided vertex-in-open-edge detector
+# Leftover Ⅲ: one-sided vertex-in-open-edge detector
 # touch_onesided_t_b; constructor TPR_TouchOnesided stays on
 # im_unsupported. After leftover Ⅰ. Completeness stays false
-# (obtuse / ⅠⅠ). Not CONTEXT Bar 1. Does not remint fills.
+# (obtuse / Ⅱ). Not CONTEXT Bar 1. Does not remint fills.
+# Leftover Ⅳ is the interior-side stem (named only).
 theories/RelateNGTouchOnesided.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +

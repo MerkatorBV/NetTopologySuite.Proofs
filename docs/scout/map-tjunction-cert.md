@@ -5,9 +5,9 @@ a remint of `522-j` / `522-m`, and **not** the line×line noding T-junction
 (`RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`).
 
 > **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
-> historical. Do **not** mint `522-n`. Leftover ids are repeated `Ⅰ`
-> marks. This leftover is **`Ⅰ`**. Obtuse-at-v is **`ⅠⅠ`**. Do not
-> swap them. Do not remint ADR-0004.
+> historical. Do **not** mint `522-n`. Leftover ids are precomposed
+> Roman numerals. This leftover is **`Ⅰ`**. Obtuse-at-v is **`Ⅱ`**.
+> Do not swap them. Do not remint ADR-0004.
 > This map does not mint a GitHub child.
 
 topics: relate
@@ -62,8 +62,9 @@ because no B-vertex is strictly interior to A (the #570 pure-lens hole).
 The detector names the vertex-on-open-edge *configuration*. It does not
 establish `triangles_partial_overlap` and it does not establish
 interiors-disjoint touch. That is why fill stays `im_unsupported`.
-A one-sided dim-0 T is leftover `ⅠⅠⅠ`
+A one-sided dim-0 T is leftover `Ⅲ`
 (`RelateNGComplete.v : onesided_t_pair_inhabits`), not this leftover.
+The interior-side stem is leftover `Ⅳ` (named only).
 
 ## Why every wired detector misses
 
@@ -73,7 +74,7 @@ Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 → `touch_onesided_t_b` → `TPR_TouchOnesided` → `TPR_Unsupported`.
 Headline for leftover `Ⅰ`:
 `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
-Leftover `ⅠⅠⅠ` detector:
+Leftover `Ⅲ` detector:
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`.
 
 | Detector | Why false on this pair |
@@ -100,10 +101,10 @@ No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predica
 | Full shared edge `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | Frozen `TPR_TouchEdge` pin. | widen `shares_edge_b` to absorb the kiss |
 
 A **one-sided / non-collinear** vertex-in-open-edge T (BB dim 0) is
-leftover `ⅠⅠⅠ` (`RelateNGComplete.v : onesided_t_pair_inhabits`;
+leftover `Ⅲ` (`RelateNGComplete.v : onesided_t_pair_inhabits`;
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`;
 exterior-side stem; `TPR_TouchOnesided`; fill still `im_unsupported`).
-Not this leftover.
+The interior-side stem is leftover `Ⅳ` (named only). Not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -148,7 +149,7 @@ writes the detector.
 
 ## Fog
 
-- **`ⅠⅠ`.** Obtuse-at-v. Finding
+- **`Ⅱ`.** Obtuse-at-v. Finding
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Do not invent that detector in leftover `Ⅰ`.
 - **Constructor vs reuse `TPR_TouchEdge`.** Technique, not this map.
@@ -156,13 +157,14 @@ writes the detector.
   designated TouchEdge pin is still `FFFF1FFF2`. Do not remint this
   constructor to a Touches fill. Remint is a different leftover.
 - **Family width.** This spec is the compiled collinear kiss. A dim-0
-  T is leftover `ⅠⅠⅠ`
-  (`RelateNGComplete.v : onesided_t_pair_inhabits`).
+  exterior-side T is leftover `Ⅲ`
+  (`RelateNGComplete.v : onesided_t_pair_inhabits`). The interior-side
+  stem is leftover `Ⅳ` (named only).
 
 ## Frontier
 
 Leftover `Ⅰ` bar 1 is landed (`triangle_pair_regime_touchpartial`).
-Fill is still `im_unsupported`. Completeness stays false on `ⅠⅠ`.
+Fill is still `im_unsupported`. Completeness stays false on `Ⅱ`.
 
 ```
 #577 finding ── triangle_pair_regime_incomplete_tjunction ── historical
@@ -171,12 +173,13 @@ Fill is still `im_unsupported`. Completeness stays false on `ⅠⅠ`.
      pair (0,0)(2,0)(0,1) vs (1,0)(3,0)(2,1)
      decline golden moved to obtuse-at-v
 
-ⅠⅠ ── obtuse-at-v ── 522-m finding ── not this leftover
+Ⅱ ── obtuse-at-v ── 522-m finding ── not this leftover
 not this leftover ── line×line T ── #67
 not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
-ⅠⅠⅠ ──── compiled exterior-side stem ── TPR_TouchOnesided (fill token)
-ⅠⅠⅠⅠ ── unused ── ask before assigning
+Ⅲ ──── compiled exterior-side stem ── TPR_TouchOnesided (fill token)
+Ⅳ ──── interior-side stem ── named ── xor does not distinguish from Ⅲ
+Ⅴ ── unused ── ask before assigning
 ```

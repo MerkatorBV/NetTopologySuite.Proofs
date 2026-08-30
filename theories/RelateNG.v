@@ -37,15 +37,16 @@
          shared vertex).  Expected re-export blast (hub, not extra
          leaf fan-out).  Leftover declines are #577 / 522-j.
      - RelateNGComplete.v    leftover-decline finding (#577 / 522-j):
-         completeness is still FALSE (obtuse-at-v / leftover ⅠⅠ).
+         completeness is still FALSE (obtuse-at-v / leftover Ⅱ).
          The compiled T-junction pair is leftover `Ⅰ` (classified).
      - RelateNGTouchPartialEdge.v leftover `Ⅰ` bar 1: mutual
          open-edge detector `touch_partial_edge_b` reaches
          `TPR_TouchPartialEdge` (fill stays `im_unsupported`).
-     - RelateNGTouchOnesided.v leftover `ⅠⅠⅠ` detector:
+     - RelateNGTouchOnesided.v leftover `Ⅲ` detector:
          one-sided `touch_onesided_t_b` reaches
          `TPR_TouchOnesided` (fill stays `im_unsupported`;
-         not CONTEXT Bar 1). Completeness stays false (obtuse / ⅠⅠ).
+         not CONTEXT Bar 1). Completeness stays false (obtuse / Ⅱ).
+         Leftover `Ⅳ` is the interior-side stem (named only).
      - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
          (#568 / 522-g): a strict-`gtri` point has an explicit open
          disk of strict points; a nondegenerate segment carries dim-1;

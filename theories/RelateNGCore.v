@@ -454,9 +454,11 @@ Definition touch_partial_edge_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
   some_vertex_on_open_edges a1 a2 a3 b1 b2 b3
   && some_vertex_on_open_edges b1 b2 b3 a1 a2 a3.
 
-(* Leftover ⅠⅠⅠ: exactly one direction of vertex-in-open-edge.
-   Not leftover Ⅰ (mutual). Do not widen `touch_partial_edge_b`.
-   Pure `Req_dec_T` / `Rlt_dec` via the existing open-edge helpers. *)
+(* Leftover Ⅲ: exactly one direction of vertex-in-open-edge.
+   Not leftover Ⅰ (mutual). The xor also fires on leftover Ⅳ
+   (interior-side stem; named only). Do not widen
+   `touch_partial_edge_b`. Pure `Req_dec_T` / `Rlt_dec` via the
+   existing open-edge helpers. *)
 Definition touch_onesided_t_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
   xorb (some_vertex_on_open_edges a1 a2 a3 b1 b2 b3)
        (some_vertex_on_open_edges b1 b2 b3 a1 a2 a3).
@@ -474,9 +476,10 @@ Definition touch_onesided_t_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
    TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
    disjoint is reachable when `separated_b` fires (#571); vertex-touch is
    reachable when `touch_vertex_b` fires (#572); leftover Ⅰ is reachable
-   when `touch_partial_edge_b` fires.  Leftover ⅠⅠⅠ is reachable
-   when `touch_onesided_t_b` fires (after leftover Ⅰ). Obtuse-at-v
-   (leftover ⅠⅠ) still declines — completeness stays false (522-m).
+   when `touch_partial_edge_b` fires.  Leftover Ⅲ is reachable
+   when `touch_onesided_t_b` fires (after leftover Ⅰ). The xor also
+   fires on leftover Ⅳ (interior-side; named only). Obtuse-at-v
+   (leftover Ⅱ) still declines — completeness stays false (522-m).
    Do not reorder the four wired certificates. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
