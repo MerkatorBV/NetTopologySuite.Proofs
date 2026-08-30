@@ -27,5 +27,6 @@ python3 hunt.py
 | COVERS968/* | GEOS #968 |
 | SPLIT1497/* | GEOS #1497 / #1500 |
 | MS/* | MultiSurface A/P (#1502) |
+| REL/* | `RELATE_MATRIX` token allowlist + triangle fill pins (#575 / 522-f). A decline is `UNSUPPORTED`, not a parse error. The #530 pair is the disjoint pin, not the decline. Does not remint fills. No GEOS matrix compare (classifier pins ≠ OGC). |
 
 See `docs/geos-oracle-rung-2026-08.md`.

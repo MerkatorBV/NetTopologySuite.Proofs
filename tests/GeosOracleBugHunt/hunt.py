@@ -65,6 +65,76 @@ def oracle(stdin: str) -> str:
     return out
 
 
+# RELATE_MATRIX result-position tokens.  A decline is one of these, never a
+# 9-char matrix.  Legal here only — not as a catalog key / matrix cell.
+RELATE_TOKENS = frozenset({"UNSUPPORTED"})
+RELATE_MATRIX_CHARS = set("F012")
+
+
+def parse_relate_wire(s: str) -> tuple[str, str]:
+    """Classify one RELATE_MATRIX oracle line.
+
+    Returns ``("token", name)`` or ``("matrix", ninechar)``.
+    ``UNSUPPORTED`` is a decline, not a parse error.
+    """
+    t = s.strip()
+    if t in RELATE_TOKENS:
+        return ("token", t)
+    if len(t) == 9 and all(c in RELATE_MATRIX_CHARS for c in t):
+        return ("matrix", t)
+    raise ValueError(
+        f"relate wire: not a 9-char matrix and not an allowlisted token: {t!r}"
+    )
+
+
+# Golden vectors from oracle/de9im_triangle_vectors.txt (#575 / 522-f).
+# Classifier pins, not OGC remints.  #530 is DISJOINT, not the decline.
+RELATE_VECTORS = (
+    (
+        "DISJOINT",
+        "triangle_pair_fill TPR_Disjoint",
+        "matrix",
+        "FFFFFFFFF",
+        "#571 / 522-c sentinel (the #530 pair, now classified)",
+    ),
+    (
+        "OVERLAP",
+        "triangle_pair_fill TPR_Overlap",
+        "matrix",
+        "2FFF1FFF2",
+        "#567 / 522-b overlap pair",
+    ),
+    (
+        "CONTAINS",
+        "triangle_pair_fill TPR_Contains",
+        "matrix",
+        "2FFFFFFF2",
+        "RelateMatrixTriangle.contains_pair_contains",
+    ),
+    (
+        "TOUCH_EDGE",
+        "triangle_pair_fill TPR_TouchEdge",
+        "matrix",
+        "FFFF1FFF2",
+        "frozen shared-edge pin",
+    ),
+    (
+        "TOUCH_VERTEX",
+        "triangle_pair_fill TPR_TouchVertex",
+        "matrix",
+        "FFFF1FFF2",
+        "#572 / 522-i pair",
+    ),
+    (
+        "DECLINE",
+        "triangle_pair_fill TPR_Unsupported",
+        "token",
+        "UNSUPPORTED",
+        "T-junction leftover (#577 / 522-j). Not the #530 pair.",
+    ),
+)
+
+
 def parse_hex_float(s: str) -> float:
     s = s.strip()
     if s in ("DEGENERATE", "NAN"):
@@ -449,13 +519,70 @@ def hunt_multipoint_ms() -> None:
             )
 
 
+def selfcheck_relate_token() -> None:
+    """Token allowlist does not need geosop or oracle_bin."""
+    print("=== RELATE_MATRIX token allowlist (no oracle) ===")
+    try:
+        kind, val = parse_relate_wire("UNSUPPORTED")
+        if kind == "token" and val == "UNSUPPORTED":
+            hit("OK", "REL/token_unsupported", "decline is a token, not a parse error")
+        else:
+            hit("FAIL", "REL/token_unsupported", f"got {kind} {val}")
+    except Exception as e:
+        hit("FAIL", "REL/token_unsupported", str(e))
+    try:
+        kind, val = parse_relate_wire("FFFFFFFFF")
+        if kind == "matrix" and val == "FFFFFFFFF":
+            hit(
+                "OK",
+                "REL/matrix_disjoint_pin",
+                "#530 / #571 sentinel is a matrix, not UNSUPPORTED",
+            )
+        else:
+            hit("FAIL", "REL/matrix_disjoint_pin", f"got {kind} {val}")
+    except Exception as e:
+        hit("FAIL", "REL/matrix_disjoint_pin", str(e))
+    try:
+        parse_relate_wire("NOT_A_TOKEN")
+        hit("FAIL", "REL/unknown_rejected", "unknown token was accepted")
+    except ValueError:
+        hit("OK", "REL/unknown_rejected", "unknown token is still a parse error")
+
+
+def hunt_relate_matrix() -> None:
+    """Drive classifier fill keys.  Does not remint the pins.  No GEOS compare."""
+    print("=== RELATE_MATRIX golden vectors (oracle catalog; #575 / 522-f) ===")
+    if not os.path.isfile(ORACLE):
+        hit("WARN", "REL/oracle_missing", f"ORACLE not a file: {ORACLE}")
+        return
+    for tag, key, exp_kind, exp_val, provenance in RELATE_VECTORS:
+        try:
+            out = oracle(f"RELATE_MATRIX\n{key}\n")
+            kind, val = parse_relate_wire(out)
+        except Exception as e:
+            hit("FAIL", f"REL/{tag}", f"{key}: {e}")
+            continue
+        if kind == exp_kind and val == exp_val:
+            hit("OK", f"REL/{tag}", f"{key} -> {kind} {val} ({provenance})")
+        else:
+            hit(
+                "FAIL",
+                f"REL/{tag}",
+                f"{key} -> {kind} {val} (exp {exp_kind} {exp_val}); {provenance}",
+            )
+
+
 def main() -> int:
     print(f"GEOSOP={GEOSOP}")
     print(f"ORACLE={ORACLE}")
+    selfcheck_relate_token()
     try:
         ver = geosop("--help").splitlines()[0]
     except Exception as e:
         print(f"FATAL: cannot run geosop: {e}", file=sys.stderr)
+        hunt_relate_matrix()
+        print()
+        print(f"SUMMARY\tok={ok}\twarn={warn}\tbug={bug}\tfail={fail}")
         return 2
     print(f"geos: {ver}")
     hunt_length()
@@ -467,6 +594,7 @@ def main() -> int:
     hunt_covers_968()
     hunt_split_1497()
     hunt_multipoint_ms()
+    hunt_relate_matrix()
     print()
     print(f"SUMMARY\tok={ok}\twarn={warn}\tbug={bug}\tfail={fail}")
     return 1 if (bug + fail) > 0 else 0
