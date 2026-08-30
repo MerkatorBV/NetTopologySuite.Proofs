@@ -38,17 +38,25 @@ Classifier fills are **not** reminted. The shared pins stay FFFFFFFFF /
 Honest decline golden vector is the T-junction, not the #530 pair (that
 pair is classified disjoint).
 
-## Still open (not a hole in the original #522 honesty ask)
+## Named, not proved / not a #522 child
 
-- **#567 leftover carved:** `TPR_TouchEdge` exclusivity vs the four gtri
-  predicates (witness `522-a-touch-edge-carve`). Not a predicate rewrite.
-- **Fill remints** (classifier pointer → OGC `*_ogc`). Unnamed. Leftover
-  letter `522-n` if minted.
-- **T-junction / obtuse certificates.** Completeness recorded the findings
+These are not holes in the original honesty ask. Chart:
+[`map-522-leftovers.md`](map-522-leftovers.md). New leftover ids are
+Roman numerals. Do **not** mint `522-n`.
+
+- **TouchEdge exclusivity** vs the four gtri predicates — named, not
+  proved. Carved on `main` via #597.
+- **Fill remints** (classifier pointer → OGC `*_ogc`). Unnamed. Shared
+  with the rect lane. Not `522-f`.
+- **T-junction / partial-edge kiss** — leftover `Ⅰ`. Completeness
+  recorded the finding (`RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`)
   and stopped.
-- **Nine-cell `geom_de9im_pointset`** (ADR-0003 half-open leftover).
-- **Full RelateNG noding**, Touches-vs-Share, `#523` `F` vs not-computed —
-  #67 / sibling residue, not #522 children.
+- **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding
+  `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
+  Separate from `Ⅰ`. Detector not invented.
+- **Nine-cell `geom_de9im_pointset`**, full noding, Touches-vs-Share —
+  #67 / ticket 11, not #522 children.
+- **`#523` `F` vs not-computed** — sibling.
 - **Empty/empty relate** — parked on the epic.
 
 ## Surfaces that must agree
