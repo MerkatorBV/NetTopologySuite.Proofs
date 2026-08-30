@@ -16,3 +16,17 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 
 Oracle `B` stays 8-coord cubic.  `red_length_unified_zoo_tests.py` is
 untouched.  No new 64-a r·θ definition.
+
+## 508-c spike (#561)
+
+Route 1 (in-corpus).  `theories/SpeedIntegral.v` packages
+
+`uniformly_continuous_on σ` + `increment_squeezed F σ` + `chord_rate_tight g σ`
+
+over tagged partitions (`chain` + one tag per gap, `riemann_sum`) and
+proves `speed_integral_premises → is_curve_length g a b (F b − F a)`.
+
+Heine–Cantor is **not** imported — uniform continuity stays a
+hypothesis (3-axiom allowlist).  Coquelicot / `RInt` (Route 2) is
+gated off this letter; host-lane metric files stay 3-axiom.  508-d
+(elliptic E) and 508-e (Fresnel) instantiate the pack.
