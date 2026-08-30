@@ -17,7 +17,9 @@ The NTS donor branch `feat/curves-structure-wkt-foundation`
 (CircularString, CompoundCurve, CurvePolygon — CONTEXT.md, *Curve types*).
 Since NetTopologySuite#857 moved curve work in-tree, nothing pulls the branch,
 so its types can be reshaped against ISO/IEC 13249-3:2016 without breaking a
-consumer. The clause-by-clause gap analysis is
+consumer. The epic's governing premise (#615 decision 2, confirmed by the PO)
+is that **ISO is leading**: where the spec and the branch disagree, the spec
+wins unless a deviation is recorded as deliberate. The clause-by-clause gap analysis is
 `docs/iso13249-3-curve-type-bindings-2026-08.md` (the clause table's single
 source of truth; this ADR cites it rather than restating clauses).
 

@@ -68,7 +68,7 @@ _Avoid_: validation, well formed (as a constructor claim)
 Every spec "shall" beyond representability, owned by arc-aware `ST_IsValid`:
 implemented rules answer definite-false naming their clause; unimplemented
 rules fail closed (throw naming the missing rung) — never an unchecked
-`true`. The lane climbs rung by rung and is not bounded by any one epic.
+`true`.
 _Avoid_: invalid (for merely un-checked values), IsValid returns true (until
 the rung that checks it lands)
 
