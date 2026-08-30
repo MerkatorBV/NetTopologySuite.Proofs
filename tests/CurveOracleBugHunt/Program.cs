@@ -320,6 +320,51 @@ static class Program
                 Hit("OK", $"INVAR/chord_le_arc/{a.Name}", $"chord={endChord:G9} arc={oracleLen:G9}");
         }
 
+        Console.WriteLine("=== RING_SIMPLE vs NTS IsSimple rung 1 (615-h / #624) ===");
+        // Single-segment simplicity is decided on the branch (arc: injective
+        // sweep; collinear: the Desc-8b chord — sent to the oracle AS a chord,
+        // since the RING_SIMPLE lane's arc parser requires a circumcentre and
+        // answers DEGENERATE for collinear controls). The multi-segment case
+        // is the fail-closed frontier (Proofs #630): the oracle decides it,
+        // NTS must throw — both sides of that contract are pinned here.
+        foreach (var v in Cases.RingSimple)
+        {
+            string stdin = $"RING_SIMPLE\n{v.Segs.Length}\n" + string.Join("\n", v.Segs) + "\n";
+            string oOut;
+            try { oOut = Oracle.Run(stdin); }
+            catch (Exception ex) { Hit("FAIL", $"SIMPLE/{v.Name}", $"oracle: {ex.Message}"); continue; }
+
+            string oVerdict = oOut.Split(' ')[0];
+            if (oVerdict != v.OracleExpected)
+            {
+                Hit("FAIL", $"SIMPLE/{v.Name}", $"oracle={oOut} (exp {v.OracleExpected})");
+                continue;
+            }
+
+            var g = v.Geometry(gf);
+            bool? nts;
+            try { nts = g.IsSimple; }
+            catch (NotSupportedException) { nts = null; }
+
+            if (v.NtsExpected is bool expected)
+            {
+                if (nts == expected)
+                    Hit("OK", $"SIMPLE/{v.Name}", $"oracle={oOut} nts={nts}");
+                else
+                    Hit("BUG", $"SIMPLE/{v.Name}", $"oracle={oOut} nts={(object?)nts ?? "throw"} (exp {expected})");
+            }
+            else
+            {
+                // The frontier contract: the oracle decides, NTS stays
+                // fail-closed until the arc-arc rung (#630) lands.
+                if (nts is null)
+                    Hit("OK", $"SIMPLE/{v.Name}", $"oracle={oOut}; nts fail-closed (contract)");
+                else
+                    Hit("BUG", $"SIMPLE/{v.Name}",
+                        $"oracle={oOut}; nts answered {nts} but the multi-segment case must stay fail-closed");
+            }
+        }
+
         Console.WriteLine();
         Console.WriteLine($"SUMMARY\tok={ok}\twarn={warns}\tbug_or_fail={fails}");
         return fails > 0 ? 1 : 0;
@@ -461,6 +506,35 @@ static class Cases
                 gf.CreateLineString(new[] { new Coordinate(0, 0), new Coordinate(1, 0) }),
                 Cs(gf, (1, 0), (2, 1), (3, 0)),
             }, gf)),
+    };
+
+    /// <summary>
+    /// RING_SIMPLE vectors (Proofs #615 ticket 615-h, #624 rung 1).
+    /// OracleExpected is the verdict's first token (SIMPLE / NOT_SIMPLE /
+    /// DEGENERATE). NtsExpected: a bool for a decided IsSimple, null for the
+    /// fail-closed contract (NTS must throw NotSupportedException).
+    /// A collinear single segment is sent to the oracle AS its Desc-8b chord
+    /// ("C ..."): the lane's arc parser needs a circumcentre and calls
+    /// collinear arc controls DEGENERATE, while NTS reads them as the chord.
+    /// </summary>
+    public static readonly (string Name, string[] Segs, string OracleExpected, bool? NtsExpected, Func<GeometryFactory, Geometry> Geometry)[] RingSimple =
+    {
+        ("single_arc_semicircle", new[] { "A 1 0 0 1 -1 0" }, "SIMPLE", true,
+            gf => Cs(gf, (1, 0), (0, 1), (-1, 0))),
+        ("single_arc_major", new[] { "A 1 0 0 1 0 -1" }, "SIMPLE", true,
+            gf => Cs(gf, (1, 0), (0, 1), (0, -1))),
+        ("single_collinear_as_chord", new[] { "C 0 0 2 2" }, "SIMPLE", true,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 2))),
+        ("single_degenerate_closed", new[] { "A 1 0 0 1 1 0" }, "DEGENERATE", null,
+            gf => Cs(gf, (1, 0), (0, 1), (1, 0))),
+        ("two_arcs_tangent_at_vertex", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0" }, "SIMPLE", null,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (3, -1), (4, 0))),
+        ("bowtie_4chords", new[] { "C 0 0 2 2", "C 2 2 2 0", "C 2 0 0 2", "C 0 2 0 0" }, "NOT_SIMPLE", false,
+            gf => gf.CreateLineString(new[]
+            {
+                new Coordinate(0, 0), new Coordinate(2, 2), new Coordinate(2, 0),
+                new Coordinate(0, 2), new Coordinate(0, 0),
+            })),
     };
 
     /// <summary>
