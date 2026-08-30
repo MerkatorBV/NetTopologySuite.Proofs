@@ -9,6 +9,7 @@
 #   TPR_Contains    2FFFFFFF2
 #   TPR_TouchEdge   FFFF1FFF2
 #   TPR_TouchVertex FFFF1FFF2   (same starter as edge touch)
+#   TPR_TouchPartialEdge  UNSUPPORTED  (leftover Ⅰ; fill not named)
 #
 # Provenance (classifier witness pairs, not geometry computation):
 #   DISJOINT      #571 / 522-c sentinel (the #530 pair, now classified)
@@ -16,7 +17,8 @@
 #   CONTAINS      RelateMatrixTriangle.contains_pair_contains
 #   TOUCH_EDGE    frozen shared-edge pin (RelateNGTouch.ex_triangles_touch_on_shared_edge)
 #   TOUCH_VERTEX  #572 / 522-i pair
-#   DECLINE       T-junction #577 / 522-j — NOT the #530 pair
+#   TOUCH_PARTIAL leftover Ⅰ kiss — classified, fill still UNSUPPORTED
+#   DECLINE       obtuse-at-v leftover ⅠⅠ — NOT the T-junction (now classified)
 #
 # Oracle mode: RELATE_MATRIX now prints UNSUPPORTED for decline keys.
 
@@ -60,9 +62,16 @@ FILL triangle_pair_fill TPR_TouchVertex
 WIRE FFFF1FFF2
 NOTES #572 / 522-i pair. Same starter fill as edge touch.
 
-REGIME DECLINE
+REGIME TOUCH_PARTIAL
 TRI_A 0 0  2 0  0 1
 TRI_B 1 0  3 0  2 1
 TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_TouchPartialEdge
+NOTES Leftover Ⅰ kiss. Classified TPR_TouchPartialEdge; fill not named. Not a matrix.
+
+REGIME DECLINE
+TRI_A 0 0  2 0  0 2
+TRI_B 0 0  -2 0  1 -1
+TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_Unsupported
-NOTES T-junction leftover (#577 / 522-j). Not a matrix. The #530 pair classifies disjoint.
+NOTES Obtuse-at-v leftover ⅠⅠ. Not a matrix. The T-junction pair classifies leftover Ⅰ.

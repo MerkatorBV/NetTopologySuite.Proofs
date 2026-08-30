@@ -243,6 +243,7 @@ let is_unsupported_key key =
   let k = normalize_key key in
   k = "UNSUPPORTED"
   || k = "triangle_pair_fill TPR_Unsupported"
+  || k = "triangle_pair_fill TPR_TouchPartialEdge"
   || k = "im_unsupported"
 
 let lookup_result key =

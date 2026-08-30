@@ -129,11 +129,18 @@ RELATE_VECTORS = (
         "#572 / 522-i pair",
     ),
     (
+        "TOUCH_PARTIAL",
+        "triangle_pair_fill TPR_TouchPartialEdge",
+        "token",
+        "UNSUPPORTED",
+        "Leftover Ⅰ kiss. Classified; fill not named.",
+    ),
+    (
         "DECLINE",
         "triangle_pair_fill TPR_Unsupported",
         "token",
         "UNSUPPORTED",
-        "T-junction leftover (#577 / 522-j). Not the #530 pair.",
+        "Obtuse-at-v leftover ⅠⅠ. T-junction pair classifies leftover Ⅰ.",
     ),
 )
 

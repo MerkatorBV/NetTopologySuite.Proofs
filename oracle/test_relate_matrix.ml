@@ -89,6 +89,10 @@ let () =
    | Unsupported -> ()
    | Matrix m ->
        Printf.eprintf "FAIL TPR_Unsupported: got matrix %S\n" m; exit 1);
+  (match lookup_result "triangle_pair_fill TPR_TouchPartialEdge" with
+   | Unsupported -> ()
+   | Matrix m ->
+       Printf.eprintf "FAIL TPR_TouchPartialEdge: got matrix %S\n" m; exit 1);
   (match lookup_result "im_unsupported" with
    | Unsupported -> ()
    | Matrix m ->

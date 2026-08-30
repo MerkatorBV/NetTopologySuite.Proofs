@@ -410,6 +410,19 @@ Proof.
   apply Hlt. eapply Rle_trans; [apply Rmin_l_le | apply Rmin_l_le].
 Qed.
 
+Lemma cw_pair_no_partial_edge :
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint 2 0) (mkPoint 2 1) (mkPoint 3 0) = false.
+Proof.
+  unfold touch_partial_edge_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
 Lemma cw_pair_regime_unsupported :
   triangle_pair_regime 0 0 1 0 0 1 2 0 2 1 3 0 = TPR_Unsupported.
 Proof.
@@ -422,6 +435,7 @@ Proof.
              (or_intror cw_B_gdbl_nlt)).
   rewrite (touch_vertex_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
              (or_intror cw_B_gdbl_nlt)).
+  rewrite cw_pair_no_partial_edge.
   reflexivity.
 Qed.
 
@@ -518,15 +532,14 @@ Proof.
     rewrite far_cache_regime_disjoint. reflexivity.
   - split.
     + rewrite relate_on_triangles_dispatches.
-      rewrite tjunction_pair_unsupported.
-      unfold tris_relate. apply triangle_pair_fill_unsupported_eq.
+      unfold tris_relate.
+      exact tjunction_pair_unsupported.
     + split.
       * rewrite relate_on_triangles_dispatches.
-        rewrite tjunction_pair_unsupported.
         unfold evaluate, evaluate_from_tri_cache. simpl.
         rewrite far_cache_regime_disjoint.
         unfold tris_relate.
-        try rewrite triangle_pair_fill_unsupported_eq.
+        rewrite tjunction_pair_unsupported.
         exact aa_matrix_disjoint_neq_unsupported.
       * intros [_ Htr]. cbn in Htr.
         apply (f_equal

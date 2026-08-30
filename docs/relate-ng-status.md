@@ -105,9 +105,10 @@ disguised as disjointness — that was #530.
 - **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not
   proved. Carved on `main` via #597. Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
 - **Disjoint fill remint** (FFFFFFFFF → FF2FF1212) — unnamed. Not `522-f`.
-- **T-junction / partial-edge kiss** — leftover `Ⅰ`. Finding:
-  `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`.
-  Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
+- **T-junction / partial-edge kiss** — leftover `Ⅰ` bar 1 landed.
+  Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
+  Fill stays `im_unsupported`. Chart:
+  [`scout/map-tjunction-cert.md`](scout/map-tjunction-cert.md).
   Do **not** mint `522-n`.
 - **Obtuse-at-v certificate** — leftover `ⅠⅠ`. Finding:
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.

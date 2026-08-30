@@ -9,8 +9,9 @@
    `im_unsupported` carries EI=BE=`Some 3`, so it fails `matrix_ok` and
    is not a legal F/0/1/2 nine-char.  This module names the wire cells
    (`WireCell` / `WireMatrix`), encodes a well-formed matrix or declines
-   (`RelateWireResult`), and proves the triangle classifier's six fills
-   land on the right side of that cut.
+   (`RelateWireResult`), and proves the triangle classifier's fills
+   land on the right side of that cut. Leftover `Ⅰ`
+   (`TPR_TouchPartialEdge`) stays on the token side.
 
    Green (Qed):
      - `encode_matrix m <> None` iff `matrix_ok m`
@@ -314,17 +315,27 @@ Theorem triangle_touch_vertex_wire :
   triangle_pair_wire TPR_TouchVertex = RWR_Matrix wm_touch.
 Proof. reflexivity. Qed.
 
+Theorem triangle_touch_partial_wire :
+  triangle_pair_wire TPR_TouchPartialEdge = RWR_Unsupported.
+Proof.
+  unfold triangle_pair_wire.
+  rewrite triangle_pair_fill_touch_partial_eq.
+  exact encode_wire_unsupported.
+Qed.
+
 Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_Unsupported ->
+  r <> TPR_TouchPartialEdge ->
   exists w, triangle_pair_wire r = RWR_Matrix w.
 Proof.
-  intros r H.
+  intros r H Hu.
   destruct r.
   - exists wm_disjoint; exact triangle_disjoint_wire.
   - exists wm_overlap; exact triangle_overlap_wire.
   - exists wm_contains; exact triangle_contains_wire.
   - exists wm_touch; exact triangle_touch_edge_wire.
   - exists wm_touch; exact triangle_touch_vertex_wire.
+  - contradiction Hu; reflexivity.
   - contradiction H; reflexivity.
 Qed.
 
@@ -352,9 +363,9 @@ Theorem relate_tjunction_wire_unsupported :
   = RWR_Unsupported.
 Proof.
   rewrite relate_on_triangles_dispatches.
-  rewrite tjunction_pair_unsupported.
   unfold tris_relate.
-  exact triangle_unsupported_token.
+  rewrite tjunction_pair_unsupported.
+  exact encode_wire_unsupported.
 Qed.
 
 Theorem relate_tjunction_not_a_matrix : forall w,

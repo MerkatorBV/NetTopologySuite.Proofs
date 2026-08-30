@@ -56,7 +56,7 @@ Value and priority are orthogonal.
 
 | Id | Leftover | Kind | Park | Status | Do not |
 |---|---|---|---|---|---|
-| `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Named. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Finding `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. | invent the detector; steal `522-j` / `522-m`; bucket obtuse under `Ⅰ` |
+| `Ⅰ` | T-junction / partial-edge kiss | #522-adjacent | research | Bar 1 landed. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. Fill stays `im_unsupported`. | steal `522-j` / `522-m` / `522-f`; remint fills; bucket obtuse under `Ⅰ`; mint `522-n` |
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
 | `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
@@ -71,7 +71,8 @@ Value and priority are orthogonal.
 - Wired bar 1 — #580 #581 #582 + contains bridge #586.
 - Completeness false — #583 / #584. Certificates not invented.
 - Bar 2 gtri cells — #587 #592 #593 #594. Pins not reminted.
-- Wire token + harness — #588 + #595. Decline vector is the T-junction.
+- Wire token + harness — #588 + #595. Decline vector was the T-junction;
+  leftover `Ⅰ` moved `REGIME DECLINE` to obtuse-at-v.
 - Wrap-up — #596. Owner sign-off still required.
 - #567 DoD met; TouchEdge exclusivity carved on `main` via #597, not proved.
 - #589 wayfinder PR stays closed.
@@ -91,13 +92,12 @@ Value and priority are orthogonal.
 
 ## Frontier
 
-Leftovers `Ⅰ` and `ⅠⅠ` are named. This map does not invent either
-detector. `/implement` of either is a later letter.
+Leftover `Ⅰ` bar 1 is landed. Leftover `ⅠⅠ` is still named only.
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
 
-Ⅰ ──────── T-junction / partial-edge kiss ── research ── finding #577
+Ⅰ ──────── T-junction / partial-edge kiss ── bar 1 ── TPR_TouchPartialEdge
 ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f

@@ -17,10 +17,10 @@
    vocabulary and is deliberately outside that exclusivity block).
    Ray parity never appears here; it enters only via the sanctioned
    ADR-0003 bridge (RelateNGTouchCells).  The five names are not a
-   partition of all triangle pairs: a partial-edge kiss that is neither
-   a full shared edge nor a single shared vertex satisfies none of
-   them.  That pair is a decline (`TPR_Unsupported`), not a missing
-   sixth regime.
+   partition of all triangle pairs:    a partial-edge kiss that is neither
+   a full shared edge nor a single shared vertex used to satisfy none of
+   them.  Leftover `Ⅰ` adds `TPR_TouchPartialEdge` (fill stays
+   `im_unsupported` until a fill is named). Obtuse-at-v still declines.
 
    Honest scoping: triangles only (convex, no holes). Full pointset
    satisfaction and noding bridge in RelateNG.
@@ -49,6 +49,7 @@ Inductive TrianglePairRegime : Type :=
 | TPR_Contains
 | TPR_TouchEdge
 | TPR_TouchVertex   (* vertex contact; matrix shape can be adjusted later *)
+| TPR_TouchPartialEdge (* leftover Ⅰ: collinear partial-edge kiss; no fill yet *)
 | TPR_Unsupported.  (* the classifier declined -- NOT a geometric verdict *)
 
 Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
@@ -58,6 +59,7 @@ Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
   | TPR_Contains    => aa_matrix_contains
   | TPR_TouchEdge   => aa_matrix_touch_vertical  (* BB=1, EE=2 *)
   | TPR_TouchVertex => aa_matrix_touch_vertical  (* same for starter; point contact may be dim 0 *)
+  | TPR_TouchPartialEdge => im_unsupported       (* leftover Ⅰ: classified, fill not named *)
   | TPR_Unsupported => im_unsupported            (* decline; see DE9IM.im_unsupported *)
   end.
 
@@ -79,6 +81,10 @@ Proof. reflexivity. Qed.
 
 Lemma triangle_pair_fill_touch_vertex_eq :
   triangle_pair_fill TPR_TouchVertex = aa_matrix_touch_vertical.
+Proof. reflexivity. Qed.
+
+Lemma triangle_pair_fill_touch_partial_eq :
+  triangle_pair_fill TPR_TouchPartialEdge = im_unsupported.
 Proof. reflexivity. Qed.
 
 Lemma triangle_pair_fill_unsupported_eq :
@@ -294,6 +300,10 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
   | TPR_Contains    => triangle_a_contains_b a1 a2 a3 b1 b2 b3
   | TPR_TouchEdge   => triangles_touch_on_edge a1 a2 a3 b1 b2 b3
   | TPR_TouchVertex => triangles_touch_at_vertex a1 a2 a3 b1 b2 b3
+  (* Leftover Ⅰ: bar 1 names the regime. Fill is still `im_unsupported`;
+     the geometric denotation is the mutual open-edge detector, not a
+     reminted `aa_matrix_*` pin. *)
+  | TPR_TouchPartialEdge => True
   (* `TPR_Unsupported` names no configuration -- it records that the
      classifier made no claim.  `True` is the correct denotation of "no
      claim"; unlike the five arms above it is not a geometric predicate. *)

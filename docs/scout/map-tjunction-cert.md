@@ -32,8 +32,10 @@ A = `(0,0)(2,0)(0,1)`, B = `(1,0)(3,0)(2,1)`.
 
 Pinned as `tjunction_pair_coords` in `RelateNGComplete.v`. Both-CCW:
 `gdbl A = gdbl B = 2` (`RelateNGComplete.v : tjunction_pair_both_ccw`).
-Oracle / harness golden: `oracle/de9im_triangle_vectors.txt` `REGIME DECLINE`
-and `RelateNGOracleSurface.v : relate_tjunction_wire_unsupported`.
+Oracle / harness golden: `oracle/de9im_triangle_vectors.txt` `REGIME TOUCH_PARTIAL`
+(fill still `UNSUPPORTED`). Decline golden is now obtuse-at-v.
+`RelateNGOracleSurface.v : relate_tjunction_wire_unsupported` still holds
+because the fill is `im_unsupported`.
 
 ```
         (0,1)                 (2,1)
@@ -60,7 +62,9 @@ vertex-in-open-edge T (BB dimension 0). The corpus nickname is
 
 Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 `touch_edge_b` → `contains_b` → `overlap_b` → `separated_b` →
-`touch_vertex_b` → `TPR_Unsupported`.
+`touch_vertex_b` → `touch_partial_edge_b` → `TPR_TouchPartialEdge`
+→ `TPR_Unsupported`. Headline:
+`RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
 
 | Detector | Why false on this pair |
 |---|---|
@@ -69,8 +73,10 @@ Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 | `overlap_b` | Needs a B-vertex with `0 < gtri A`. All three B-vertices have `gtri A ≤ 0`. `(2,1)` is strictly exterior. |
 | `separated_b` | `RelateNGDisjoint.v : tjunction_no_separator` — no supporting edge is vertex-strict. |
 | `touch_vertex_b` | `exactly_one_shared_from_a` is false (no shared vertex). |
+| `touch_partial_edge_b` | **True** on this pair (leftover `Ⅰ` bar 1). |
 
-Compiled decline: `RelateNGDisjoint.v : tjunction_pair_unsupported`.
+Compiled fill still declines: `RelateNGDisjoint.v : tjunction_pair_unsupported`
+(`triangle_pair_fill TPR_TouchPartialEdge = im_unsupported`).
 No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predicate`.
 
 ## Nearby pairs that are **not** this leftover
@@ -89,7 +95,8 @@ one.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
-Park: **research** (ADR-0002). The finding is compiled; the detector is not.
+Park: **research** (ADR-0002). Bar 1 of leftover `Ⅰ` is the letter that
+writes the detector.
 
 1. **Detector, not a remint.** A new boolean (working name only:
    `touch_partial_edge_b`) that is true on this 12-tuple and false on the
@@ -139,14 +146,15 @@ Park: **research** (ADR-0002). The finding is compiled; the detector is not.
 
 ## Frontier
 
-Leftover `Ⅰ` is named. This map does not invent the detector.
+Leftover `Ⅰ` bar 1 is landed (`triangle_pair_regime_touchpartial`).
+Fill is still `im_unsupported`. Completeness stays false on `ⅠⅠ`.
 
 ```
-#577 finding ── triangle_pair_regime_incomplete_tjunction ── done
+#577 finding ── triangle_pair_regime_incomplete_tjunction ── historical
 
-Ⅰ ── T-junction / partial-edge kiss ── detector not invented
+Ⅰ ── T-junction / partial-edge kiss ── bar 1 ── TPR_TouchPartialEdge
      pair (0,0)(2,0)(0,1) vs (1,0)(3,0)(2,1)
-     decline golden today
+     decline golden moved to obtuse-at-v
 
 ⅠⅠ ── obtuse-at-v ── 522-m finding ── not this leftover
 not this leftover ── line×line T ── #67
