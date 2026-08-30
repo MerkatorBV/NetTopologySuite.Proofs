@@ -320,13 +320,17 @@ static class Program
                 Hit("OK", $"INVAR/chord_le_arc/{a.Name}", $"chord={endChord:G9} arc={oracleLen:G9}");
         }
 
-        Console.WriteLine("=== RING_SIMPLE vs NTS IsSimple rung 1 (615-h / #624) ===");
-        // Single-segment simplicity is decided on the branch (arc: injective
-        // sweep; collinear: the Desc-8b chord — sent to the oracle AS a chord,
-        // since the RING_SIMPLE lane's arc parser requires a circumcentre and
-        // answers DEGENERATE for collinear controls). The multi-segment case
-        // is the fail-closed frontier (Proofs #630): the oracle decides it,
-        // NTS must throw — both sides of that contract are pinned here.
+        Console.WriteLine("=== RING_SIMPLE vs NTS IsSimple (615-h rungs 1+2: #624, #630) ===");
+        // CircularString simplicity is decided on the branch for every
+        // segment count (pairwise contact kernel mirroring this lane's
+        // composition). Collinear segments are sent to the oracle AS chords
+        // ("C ..."), since the lane's arc parser requires a circumcentre and
+        // answers DEGENERATE for collinear controls. Semantics note: the
+        // lane models a RING (the chain's first/last segments are always
+        // adjacent there), so open-chain vectors appear only where that
+        // difference cannot bite; closed values map exactly. The remaining
+        // fail-closed contract row is the degenerate closed segment, which
+        // the oracle itself declines (DEGENERATE).
         foreach (var v in Cases.RingSimple)
         {
             string stdin = $"RING_SIMPLE\n{v.Segs.Length}\n" + string.Join("\n", v.Segs) + "\n";
@@ -355,8 +359,8 @@ static class Program
             }
             else
             {
-                // The frontier contract: the oracle decides, NTS stays
-                // fail-closed until the arc-arc rung (#630) lands.
+                // The fail-closed contract row (the degenerate closed
+                // segment, which the oracle itself declines).
                 if (nts is null)
                     Hit("OK", $"SIMPLE/{v.Name}", $"oracle={oOut}; nts fail-closed (contract)");
                 else
@@ -533,8 +537,19 @@ static class Cases
             gf => Cs(gf, (0, 0), (1, 1), (2, 2))),
         ("single_degenerate_closed", new[] { "A 1 0 0 1 1 0" }, "DEGENERATE", null,
             gf => Cs(gf, (1, 0), (0, 1), (1, 0))),
-        ("two_arcs_tangent_at_vertex", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0" }, "SIMPLE", null,
+        // Flipped by 615-h rung 2 (#630): multi-segment CS is decided.
+        ("two_arcs_tangent_at_vertex", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0" }, "SIMPLE", true,
             gf => Cs(gf, (0, 0), (1, 1), (2, 0), (3, -1), (4, 0))),
+        // Closed values map exactly onto the lane's ring semantics.
+        ("full_circle_idiom_ring", new[] { "A 0 0 1 1 2 0", "A 2 0 1 -1 0 0" }, "SIMPLE", true,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (1, -1), (0, 0))),
+        ("there_and_back_overlap", new[] { "A 0 0 1 1 2 0", "A 2 0 1 1 0 0" }, "NOT_SIMPLE", false,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (1, 1), (0, 0))),
+        // Open 3-segment chain whose last chord touches the first arc at
+        // (1,1): not permitted under either semantics (the ring model's
+        // closing-pair allowance is (0,0), not (1,1)).
+        ("non_adjacent_touch", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0", "C 4 0 1 1" }, "NOT_SIMPLE", false,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (3, -1), (4, 0), (2.5, 0.5), (1, 1))),
         ("bowtie_4chords", new[] { "C 0 0 2 2", "C 2 2 2 0", "C 2 0 0 2", "C 0 2 0 0" }, "NOT_SIMPLE", false,
             gf => gf.CreateLineString(new[]
             {
