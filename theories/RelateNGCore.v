@@ -292,24 +292,168 @@ Definition contains_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
   if Rlt_dec 0 (gtri ax ay bx by_ cx cy (mkPoint fx fy)) then true
   else false else false else false else false.
 
-(* Triangle regime classifier.  DETECTS the shared-edge touch regime (the
-   `touch_edge_b` decision, proven correct on the `triangles_touch_on_shared_edge`
-   inputs by `triangle_pair_regime_touch` below) and the containment regime
-   (the `contains_b` decision, proven correct by `triangle_pair_regime_contains`
-   below), and DECLINING on everything else.
+(* Strict gtri-sign probes used by the overlap certificate.  Pure `Rlt_dec`. *)
+Definition gtri_strict_pos_b (ax ay bx by_ cx cy : R) (p : Point) : bool :=
+  if Rlt_dec 0 (gtri ax ay bx by_ cx cy p) then true else false.
+
+Definition gtri_strict_neg_b (ax ay bx by_ cx cy : R) (p : Point) : bool :=
+  if Rlt_dec (gtri ax ay bx by_ cx cy p) 0 then true else false.
+
+Definition some_vertex_strict_pos (ax ay bx by_ cx cy : R)
+    (p q r : Point) : bool :=
+  gtri_strict_pos_b ax ay bx by_ cx cy p
+  || gtri_strict_pos_b ax ay bx by_ cx cy q
+  || gtri_strict_pos_b ax ay bx by_ cx cy r.
+
+Definition some_vertex_strict_neg (ax ay bx by_ cx cy : R)
+    (p q r : Point) : bool :=
+  gtri_strict_neg_b ax ay bx by_ cx cy p
+  || gtri_strict_neg_b ax ay bx by_ cx cy q
+  || gtri_strict_neg_b ax ay bx by_ cx cy r.
+
+(* Sound-but-partial overlap certificate (#570 / claimId 522-b).
+   Both triangles CCW, a vertex of B strictly interior to A, a vertex of B
+   strictly exterior to A, and a vertex of A strictly exterior to B.
+   `triangle_pair_regime_overlap` (RelateNGOverlap) derives the earlier
+   branches false and lifts the flag to `triangles_partial_overlap` via a
+   convexity nudge toward B's centroid.  Lens pairs whose interiors meet
+   without a B-vertex in A still decline -- completeness is later #522. *)
+Definition overlap_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_vertex_strict_pos ax ay bx by_ cx cy
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && some_vertex_strict_neg ax ay bx by_ cx cy
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && some_vertex_strict_neg dx dy ex ey fx fy
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+  else false else false.
+
+(* Separating-edge certificate (#571 / claimId 522-c).  An oriented edge of
+   one triangle is a strict supporting line: the owner's remaining vertex
+   and the other triangle's three vertices have opposite `cross` signs
+   (pure `Rlt_dec`).  Six candidates — three edges of A, three of B.
+   Sound-but-partial: pairs whose closures miss each other without a
+   vertex-strict supporting edge (partial-edge kiss) still decline.
+   Vertex-touch is #572.  Completeness of leftover declines is #577. *)
+Definition edge_separates_b (p1 p2 apex q1 q2 q3 : Point) : bool :=
+  opposite_sides_b p1 p2 apex q1
+  && opposite_sides_b p1 p2 apex q2
+  && opposite_sides_b p1 p2 apex q3.
+
+Definition some_edge_separates_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  edge_separates_b a1 a2 a3 b1 b2 b3 ||
+  edge_separates_b a2 a3 a1 b1 b2 b3 ||
+  edge_separates_b a3 a1 a2 b1 b2 b3 ||
+  edge_separates_b b1 b2 b3 a1 a2 a3 ||
+  edge_separates_b b2 b3 b1 a1 a2 a3 ||
+  edge_separates_b b3 b1 b2 a1 a2 a3.
+
+Definition separated_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_edge_separates_b
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+  else false else false.
+
+(* Vertex-touch certificate (#572 / claimId 522-i).  A shared vertex `v`
+   plus a separating line through `v`: the normal is the sum of one
+   triangle's remaining legs (`(a2-v)+(a3-v)`), both of that triangle's
+   remaining vertices are strictly on the positive side, and both of the
+   other triangle's remaining vertices are strictly on the negative
+   side (pure `Rlt_dec` on the same affine side function the disjoint
+   certificate uses).  Exactly one A-vertex is a B-vertex, so a shared
+   edge stays on `touch_edge_b`.  Sound-but-partial: obtuse-at-`v` pairs
+   and slivers that also overlap are rejected.  Completeness of leftover
+   declines (obtuse-at-`v`, T-junction / partial-edge kiss) is #577. *)
+Definition is_vertex_b (v p q r : Point) : bool :=
+  point_eqb v p || point_eqb v q || point_eqb v r.
+
+Definition others_fst (v p q r : Point) : Point :=
+  if point_eqb v p then q else if point_eqb v q then p else p.
+
+Definition others_snd (v p q r : Point) : Point :=
+  if point_eqb v p then r else if point_eqb v q then r else q.
+
+Definition side_dot (v n q : Point) : R :=
+  (px q - px v) * px n + (py q - py v) * py n.
+
+Definition vec_sum_from (v a b : Point) : Point :=
+  mkPoint (px a + px b - 2 * px v) (py a + py b - 2 * py v).
+
+Definition both_strict_pos_b (v n p q : Point) : bool :=
+  (if Rlt_dec 0 (side_dot v n p) then true else false)
+  && (if Rlt_dec 0 (side_dot v n q) then true else false).
+
+Definition both_strict_neg_b (v n p q : Point) : bool :=
+  (if Rlt_dec (side_dot v n p) 0 then true else false)
+  && (if Rlt_dec (side_dot v n q) 0 then true else false).
+
+Definition cone_separates_b (v a1 a2 b1 b2 : Point) : bool :=
+  let nA := vec_sum_from v a1 a2 in
+  let nB := vec_sum_from v b1 b2 in
+  (both_strict_pos_b v nA a1 a2 && both_strict_neg_b v nA b1 b2)
+  || (both_strict_pos_b v nB b1 b2 && both_strict_neg_b v nB a1 a2).
+
+Definition exactly_one_shared_from_a (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  let s1 := is_vertex_b a1 b1 b2 b3 in
+  let s2 := is_vertex_b a2 b1 b2 b3 in
+  let s3 := is_vertex_b a3 b1 b2 b3 in
+  (s1 && negb s2 && negb s3)
+  || (negb s1 && s2 && negb s3)
+  || (negb s1 && negb s2 && s3).
+
+Definition touch_vertex_from_v (v a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  is_vertex_b v a1 a2 a3
+  && is_vertex_b v b1 b2 b3
+  && cone_separates_b v
+       (others_fst v a1 a2 a3) (others_snd v a1 a2 a3)
+       (others_fst v b1 b2 b3) (others_snd v b1 b2 b3).
+
+Definition touch_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    exactly_one_shared_from_a
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && (touch_vertex_from_v (mkPoint ax ay)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || touch_vertex_from_v (mkPoint bx by_)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || touch_vertex_from_v (mkPoint cx cy)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
+  else false else false.
+
+(* Triangle regime classifier.  DETECTS shared-edge touch, containment,
+   the vertex-stab overlap certificate, a separating-edge disjoint
+   certificate, and a vertex-touch certificate, and DECLINES on
+   everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
    two genuinely overlapping triangles -- a supported input pair -- were
    classified disjoint and filled with `aa_matrix_disjoint`.  The default is
-   now TPR_Unsupported, whose fill is the sentinel.  Recovering the real
-   verdict for the overlap regime needs a sound cheap test (issue #522). *)
+   TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
+   disjoint is reachable when `separated_b` fires (#571); vertex-touch is
+   reachable when `touch_vertex_b` fires (#572); pairs no certificate
+   covers (pure lens, T-junction / partial-edge kiss) still decline —
+   leftover-decline finding is #577 / 522-j (`RelateNGComplete`). *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   then TPR_TouchEdge
   else if contains_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Contains
+  else if overlap_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Overlap
+  else if separated_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Disjoint
+  else if touch_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_TouchVertex
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the
@@ -371,32 +515,71 @@ Proof.
 Qed.
 
 (* Basic example of triangle dispatch reducing.  These two triangles share no
-   edge and neither contains the other, so the classifier DECLINES: it returns
-   TPR_Unsupported, not TPR_Disjoint.  Note that these two triangles happen to
-   be genuinely disjoint -- but the classifier never established that, and the
-   whole point of #522 is that it must not claim what it did not test. *)
+   edge, neither contains the other, and A's hypotenuse (1,0)--(0,1) is a
+   strict supporting line for B, so the classifier now answers TPR_Disjoint
+   (#571).  The pair is the #530 sentinel that used to decline. *)
 Example relate_triangle_dispatch_ex :
   relate (triangle_geometry 0 0 1 0 0 1) (triangle_geometry 2 0 3 0 2 1) =
-  tris_relate 0 0 1 0 0 1 2 0 3 0 2 1 TPR_Unsupported.
+  tris_relate 0 0 1 0 0 1 2 0 3 0 2 1 TPR_Disjoint.
 Proof.
   rewrite relate_on_triangles_dispatches.
-  assert (Hreg : triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Unsupported).
+  assert (Hreg : triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Disjoint).
   { unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
     cbn [px py].
     repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
-    (* touch_edge_b is now pinned to `false`; the containment branch remains:
-       the two triangles don't even share an x-range, so gtri of the first
-       triangle at the second triangle's first vertex (2,0) is already
-       non-positive (its gsA slack is exactly 0 there). *)
     unfold contains_b.
     assert (Hcb : gtri 0 0 1 0 0 1 (mkPoint 2 0) <= 0).
     { unfold gtri.
       assert (H : gsA 0 0 1 0 (mkPoint 2 0) = 0) by (unfold gsA; simpl; ring).
       rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
-    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn].
-    - destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _];
-        [ exfalso; lra | reflexivity ].
-    - exfalso. apply Hn. unfold gdbl. lra. }
+    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [Hlt | _];
+      [ exfalso; lra | ].
+    unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
+    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gdbl 2 0 3 0 2 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 0))) as [H2 | _];
+      [ exfalso; lra | ].
+    assert (H3 : gtri 0 0 1 0 0 1 (mkPoint 3 0) <= 0).
+    { unfold gtri.
+      assert (H : gsA 0 0 1 0 (mkPoint 3 0) = 0) by (unfold gsA; simpl; ring).
+      rewrite H. eapply Rle_trans; [ apply Rmin_l_le | apply Rmin_l_le ]. }
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 3 0))) as [H3lt | _];
+      [ exfalso; lra | ].
+    assert (H21 : gtri 0 0 1 0 0 1 (mkPoint 2 1) < 0).
+    { eapply Rle_lt_trans; [ apply (gtri_le_gsB 0 0 1 0 0 1 (mkPoint 2 1)) | ].
+      unfold gsB; cbn [px py]; lra. }
+    destruct (Rlt_dec 0 (gtri 0 0 1 0 0 1 (mkPoint 2 1))) as [H21lt | _];
+      [ exfalso; lra | ].
+    (* separated_b: both CCW; A's hypotenuse (1,0)--(0,1) strictly separates. *)
+    unfold separated_b, some_edge_separates_b, edge_separates_b, opposite_sides_b.
+    destruct (Rlt_dec 0 (gdbl 0 0 1 0 0 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    destruct (Rlt_dec 0 (gdbl 2 0 3 0 2 1)) as [_ | Hn];
+      [ | exfalso; apply Hn; unfold gdbl; lra ].
+    cbn [px py].
+    (* First candidate (bottom edge) is not strict: B's (2,0) is collinear. *)
+    destruct (Rlt_dec (cross (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+                      * cross (mkPoint 0 0) (mkPoint 1 0) (mkPoint 2 0)) 0)
+      as [Hbot | _];
+      [ exfalso; unfold cross in Hbot; cbn [px py] in Hbot; lra | ].
+    (* Second candidate: hypotenuse (1,0)--(0,1), apex (0,0). *)
+    destruct (Rlt_dec (cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 0 0)
+                      * cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 2 0)) 0)
+      as [_ | Hn];
+      [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
+    destruct (Rlt_dec (cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 0 0)
+                      * cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 3 0)) 0)
+      as [_ | Hn];
+      [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
+    destruct (Rlt_dec (cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 0 0)
+                      * cross (mkPoint 1 0) (mkPoint 0 1) (mkPoint 2 1)) 0)
+      as [_ | Hn];
+      [ | exfalso; apply Hn; unfold cross; cbn [px py]; lra ].
+    reflexivity. }
   rewrite Hreg. reflexivity.
 Qed.
 
@@ -437,34 +620,25 @@ Lemma relate_unsupported_not_disjoint :
   ~ im_disjoint (relate [] []).
 Proof. exact (relate_unsupported_no_predicate RDisjoint). Qed.
 
-(* The second half of #522, and the sharper one: an unclassified *triangle*
-   pair is a SUPPORTED input on which the classifier has no verdict.  It used
-   to be filled with `aa_matrix_disjoint`; it now declines.  Stated on the
-   concrete pair of `relate_triangle_dispatch_ex` -- which happens to be
-   genuinely disjoint, making the point exactly: even when the answer would
-   have been right, the dispatch had not earned it. *)
-Lemma relate_unclassified_triangles_no_predicate :
-  forall r : RelatePredicate,
-    ~ predicate_holds r (relate (triangle_geometry 0 0 1 0 0 1)
-                                (triangle_geometry 2 0 3 0 2 1)).
-Proof.
-  intros r. rewrite relate_triangle_dispatch_ex.
-  unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
-  exact (im_unsupported_no_predicate r).
-Qed.
-
-Lemma relate_unclassified_triangles_not_disjoint :
-  ~ im_disjoint (relate (triangle_geometry 0 0 1 0 0 1)
-                        (triangle_geometry 2 0 3 0 2 1)).
-Proof. exact (relate_unclassified_triangles_no_predicate RDisjoint). Qed.
-
-Lemma relate_unclassified_triangles_not_ok :
-  ~ matrix_ok (relate (triangle_geometry 0 0 1 0 0 1)
+(* The #530 sentinel pair now classifies disjoint (#571): the designated
+   fill is `aa_matrix_disjoint`, which satisfies `im_disjoint`.  Bar 1 is
+   the geometric verdict plus this designated witness; the OGC areal
+   string FF2FF1212 is the later #573 / #575 fill upgrade. *)
+Lemma relate_dispatch_pair_disjoint :
+  im_disjoint (relate (triangle_geometry 0 0 1 0 0 1)
                       (triangle_geometry 2 0 3 0 2 1)).
 Proof.
   rewrite relate_triangle_dispatch_ex.
-  unfold tris_relate. rewrite triangle_pair_fill_unsupported_eq.
-  exact im_unsupported_not_ok.
+  unfold tris_relate. rewrite triangle_pair_fill_disjoint_eq.
+  exact aa_matrix_disjoint_witness.
+Qed.
+
+Lemma relate_dispatch_pair_predicate_disjoint :
+  predicate_holds RDisjoint
+    (relate (triangle_geometry 0 0 1 0 0 1)
+            (triangle_geometry 2 0 3 0 2 1)).
+Proof.
+  unfold predicate_holds. exact relate_dispatch_pair_disjoint.
 Qed.
 
 

@@ -2750,15 +2750,34 @@ theories/RelateNGBoundaryGraph.v
 # 3-axiom classical-reals base.  No Admitted.
 theories/RelateNGMatrixEqual.v
 # S13: RelateNG pipeline (strata, relate, dim, MOD2+area integration).
-# Split (2026-08) into six layered modules + re-export umbrella; the
+# Split (2026-08) into layered modules + re-export umbrella; the
 # meso-audit B6 untangle (rect vs triangle lanes) is executed by the Core
-# layout.  Register the six modules before the umbrella.
+# layout.  Register the leaf modules before the umbrellas.
+# RelateNGTouchVertex is itself an umbrella over Cone + Regime (#572).
 theories/RelateNGCore.v
 theories/RelateNGContains.v
+# #567 / 522-a remaining core slice: detector→predicate bridge.
+# contains_b + B CCW ⇒ triangle_a_contains_b.  Honesty pin: contains_b
+# alone is not enough (CW-listed B).  Same claimId as #579; not a remint.
+theories/RelateNGContainsBridge.v
+theories/RelateNGOverlap.v
+theories/RelateNGDisjoint.v
+theories/RelateNGTouchVertexCone.v
+theories/RelateNGTouchVertexRegime.v
+theories/RelateNGTouchVertex.v
 theories/RelateNGTouch.v
 theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v
 theories/RelateNGRect.v
+# #577 / 522-j: leftover-decline finding.  Completeness is false — a
+# both-CCW T-junction still emits TPR_Unsupported.  Cites existing
+# classified hard pairs; does not invent the next certificate.
+theories/RelateNGComplete.v
+# #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
+# neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
+# sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE
+# stays empty; that fill is #573 / 522-d).
+theories/RelateNGRingInclusion.v
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
 theories/RelatePrepared.v

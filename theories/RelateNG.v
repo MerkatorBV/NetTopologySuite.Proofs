@@ -3,7 +3,7 @@
    ----------------------------------------------------------------------------
    Issue #67 S13: full RelateNG pipeline integration — re-export umbrella.
 
-   The former 1 750-line monolith was split (2026-08) into six layered
+   The former 1 750-line monolith was split (2026-08) into layered
    modules; this file re-exports them all, so existing
    `Require Import RelateNG` clients (RelatePrepared.v) are unaffected.
    The original section banners are preserved inside the split files, and
@@ -20,6 +20,34 @@
          (`triangle_pair_regime_contains`; whole-boundary containment
          `contains_b_ring_inside` / `contains_b_ring_strictly_inside`
          via TriangleContainmentConvex).
+     - RelateNGContainsBridge.v  #567 / 522-a detector→predicate bridge
+         (`contains_b_ccw_implies_closed_containment`): `contains_b`
+         plus B CCW lifts to closed `triangle_a_contains_b`.  Honesty
+         pin: `contains_b` alone is not enough (CW-listed B).
+     - RelateNGOverlap.v     TPR_Overlap regime at bar 1 (#570 / 522-b)
+         (`triangle_pair_regime_overlap`; soundness
+         `overlap_b_partial_overlap` via a centroid nudge).
+     - RelateNGDisjoint.v    TPR_Disjoint regime at bar 1 (#571 / 522-c)
+         (`triangle_pair_regime_disjoint`; soundness
+         `separated_b_triangles_separated` via a supporting edge).
+     - RelateNGTouchVertex.v TPR_TouchVertex regime at bar 1 (#572 / 522-i)
+         (umbrella over RelateNGTouchVertexCone + RelateNGTouchVertexRegime;
+         `triangle_pair_regime_touchvertex`; soundness
+         `touch_vertex_b_triangles_touch` via a line through the
+         shared vertex).  Expected re-export blast (hub, not extra
+         leaf fan-out).  Leftover declines are #577 / 522-j.
+     - RelateNGComplete.v    leftover-decline finding (#577 / 522-j):
+         completeness is FALSE (`triangle_pair_regime_incomplete_tjunction`);
+         hard pairs that do classify are cited, not re-proved;
+         domain boundary for the both-CCW certificates.  Filtered
+         retry (#522 / 522-m): excluding the T-junction 12-tuple,
+         completeness is still FALSE (obtuse-at-v).  Next
+         certificate specs (T-junction, obtuse-at-v) are not invented.
+     - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
+         (#568 / 522-g): a strict-`gtri` point has an explicit open
+         disk of strict points; a nondegenerate segment carries dim-1;
+         the #530 sentinel IE cell has dim-2 content.  Does not remint
+         `aa_matrix_disjoint` (empty IE is #573 / 522-d).
      - RelateNGTouch.v       shared-edge touch regime
          (`triangles_touch_on_shared_edge` + detector agreement
          `triangle_pair_regime_touch`; strict interior separation
@@ -57,7 +85,13 @@
 From NTS.Proofs Require Export
   RelateNGCore
   RelateNGContains
+  RelateNGContainsBridge
+  RelateNGOverlap
+  RelateNGDisjoint
+  RelateNGTouchVertex
   RelateNGTouch
   RelateNGTouchRED
   RelateNGTouchCells
-  RelateNGRect.
+  RelateNGRect
+  RelateNGComplete
+  RelateNGRingInclusion.
