@@ -556,7 +556,9 @@ Proof.
   intros g ts; induction ts as [|v tl IH]; intros t u.
   - simpl. rewrite dist_sym. reflexivity.
   - simpl. rewrite IH.
-    rewrite <- app_assoc.
+    (* RHS is polyline_len g u ((rev tl ++ [v]) ++ [t]).
+       Associate to rev tl ++ (v :: [t]) so polyline_len_app_mid fires. *)
+    rewrite app_assoc.
     rewrite (polyline_len_app_mid g (rev tl) u v [t]).
     simpl. rewrite dist_sym, Rplus_0_r. apply Rplus_comm.
 Qed.
