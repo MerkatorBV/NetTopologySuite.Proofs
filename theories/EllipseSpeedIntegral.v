@@ -27,6 +27,10 @@
 
    No `Admitted`, no `Axiom`, no `Parameter`.  3-axiom.
    Nested goals under [-] use [+] / [*]. No [nra].
+   Do not [rewrite <- sqrt_sqrt] inside a [by ring] — on flocq
+   the rewrite is a convertibility no-op and ring then sees
+   [sqrt] (0d39b90 L81, "not a valid ring equation"). Pose the
+   identity, expand the square, then rewrite.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -64,6 +68,20 @@ Proof.
   intros rx ry Hrx Hry. apply Rmin_glb; assumption.
 Qed.
 
+Lemma sqrt_minus_sq : forall x y,
+  0 <= x -> 0 <= y ->
+  (sqrt x - sqrt y) * (sqrt x - sqrt y)
+  = x + y - 2 * sqrt x * sqrt y.
+Proof.
+  intros x y Hx Hy.
+  pose proof (sqrt_sqrt x Hx) as Hx2.
+  pose proof (sqrt_sqrt y Hy) as Hy2.
+  transitivity
+    (sqrt x * sqrt x + sqrt y * sqrt y - 2 * sqrt x * sqrt y).
+  - ring.
+  - rewrite Hx2, Hy2. ring.
+Qed.
+
 Lemma sqrt_abs_le_sqrt_diff : forall x y,
   0 <= x -> 0 <= y ->
   Rabs (sqrt x - sqrt y) <= sqrt (Rabs (x - y)).
@@ -74,14 +92,14 @@ Proof.
   - apply Rle_0_sqr.
   - apply Rabs_pos.
   - unfold Rsqr.
+    rewrite (sqrt_minus_sq x y Hx Hy).
     destruct (Rle_dec y x) as [Hyx | Hnxy].
     + rewrite (Rabs_right (x - y)) by lra.
-      replace ((sqrt x - sqrt y) * (sqrt x - sqrt y))
-        with (x + y - 2 * sqrt x * sqrt y)
-        by (rewrite <- (sqrt_sqrt x Hx), <- (sqrt_sqrt y Hy); ring).
       assert (H : y <= sqrt x * sqrt y).
-      { rewrite <- (sqrt_square y Hy).
-        rewrite <- (sqrt_mult x y Hx Hy).
+      { pose proof (sqrt_square y Hy) as Hyy.
+        rewrite <- Hyy.
+        pose proof (sqrt_mult x y Hx Hy) as Hprod.
+        rewrite <- Hprod.
         apply sqrt_le_1.
         - apply Rmult_le_pos; exact Hy.
         - apply Rmult_le_pos; [exact Hx | exact Hy].
@@ -90,12 +108,11 @@ Proof.
     + assert (Hxy : x <= y) by lra.
       rewrite (Rabs_left1 (x - y)) by lra.
       replace (- (x - y)) with (y - x) by ring.
-      replace ((sqrt x - sqrt y) * (sqrt x - sqrt y))
-        with (x + y - 2 * sqrt x * sqrt y)
-        by (rewrite <- (sqrt_sqrt x Hx), <- (sqrt_sqrt y Hy); ring).
       assert (H : x <= sqrt x * sqrt y).
-      { rewrite <- (sqrt_square x Hx).
-        rewrite <- (sqrt_mult x y Hx Hy).
+      { pose proof (sqrt_square x Hx) as Hxx.
+        rewrite <- Hxx.
+        pose proof (sqrt_mult x y Hx Hy) as Hprod.
+        rewrite <- Hprod.
         apply sqrt_le_1.
         - apply Rmult_le_pos; exact Hx.
         - apply Rmult_le_pos; [exact Hx | exact Hy].
