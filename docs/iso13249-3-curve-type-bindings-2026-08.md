@@ -284,13 +284,13 @@ items that follow it):
 
 Branch: keywords `WKTConstants.cs:47-63`; reader dispatch
 `IO/WKTReader.cs:768-773`; component/ring parsing `ReadCurveText`
-(`WKTReader.cs:1061-1094`) accepts the bare linestring body and tagged
+accepts the bare linestring body and tagged
 CIRCULARSTRING per grammar, and **since branch commit `2c4c7bc` accepts
 nested COMPOUNDCURVE inside COMPOUNDCURVE** (spliced flat by the
 constructor, §6.1) as it always did for COMPOUNDCURVE as a
 CURVEPOLYGON/MULTICURVE ring or member (`WKTReader.cs:1188-1204` at
 e84458e, matching `<ring text>`). It additionally accepts a **tagged** `LINESTRING` component
-(`WKTReader.cs:1071-1075`) — an input-side extension beyond the ISO grammar,
+(the deviation block in `ReadCurveText`) — an input-side extension beyond the ISO grammar,
 documented in-code as a deliberate deviation (GEOS/PostGIS compatibility) and
 pinned by an accept-test since branch commit `ed40bf3` (ticket `615-i`); the
 writer emits conformant bare bodies for LineString components and tags for
@@ -307,6 +307,10 @@ component's tag (joined or separate) is consumed and checked in
 outer dimension (the grammar's own shape), a conflicting tag is rejected
 citing §5.1.67, and a body that fails to parse under a non-XY outer tag
 reports the dimension-consistency rule with the original error preserved.
+A doubled component tag (joined then separate, `CIRCULARSTRINGZ M ...`) is
+likewise rejected rather than half-discarded — review follow-up `5fa469a`,
+which also pins the nested-COMPOUNDCURVE conflict arm and completes the
+EMPTY × Z/M/ZM round-trip matrix for all three curve types.
 Out of the curve lane's scope: GEOMETRYCOLLECTION members (full tagged texts,
 classical reader path) and the reader-wide legacy `XY + optional third number`
 coordinate syntax (`_isAllowOldNtsCoordinateSyntax`, on by default), which can
@@ -335,7 +339,7 @@ Type codes (§5.1.68 Table 15):
 Byte-order bytes: 0 = big endian, 1 = little endian (§5.1.68 items fz–ga).
 
 Branch: base codes 8–12 in `IO/WKBGeometryTypes.cs:63-83`; the +1000/+2000/+3000
-Z/M offsets are decoded generically (`IO/WKBReader.cs:283,297`). The alternate
+Z/M offsets are decoded generically (`WKBReader.ReadGeometryType`). The alternate
 `100000x` code series that Table 15 lists as a second legal encoding is
 **accepted on read since branch commit `ed40bf3`** (ticket `615-i`): a
 dedicated decode path maps 1000001–1000005 to the base curved types 8–12
@@ -366,7 +370,7 @@ halves are round-trip-pinned
 | ST_Envelope: extremes over the value's point set (§5.1.19 Desc 2b) | exact over the locus since `9111983` (endpoints + centre±r on crossed axes; CS + CC; CP still fail-closed) | ok — landed 2026-08-30 (`615-e`); oracle-pinned via `ENVELOPE_UNIFIED`, see §5a |
 | ST_CurveToLine / ST_CurvePolyToPoly explicit approximation (§7.1.10, §8.2.7) | `Linearize()` (`CircularString.cs:284-291`); tolerance overload throws (`CircularString.cs:303-306`) | ok as chainsaw; tolerance form pending |
 | WKT grammar incl. bare linestring bodies, EMPTY, Z/M (§5.1.67) | reader/writer (`WKTReader.cs:768-773`, `ReadCurveText`/`ReadMultiSurfaceText`, `WKTWriter.cs:1002-1096`); nested `<z m>` consistency enforced on read since `ed40bf3` | ok — landed 2026-08-30 (`615-i`); tagged-LINESTRING extension documented + deviation-pinned |
-| WKB Table 15 codes + Z/M offsets (§5.1.68) | `WKBGeometryTypes.cs:63-83`, `WKBReader.cs:283,297`; alternate 100000x codes decoded to base types since `ed40bf3` | ok — landed 2026-08-30 (`615-i`); writer emits base codes, round-trip-pinned |
+| WKB Table 15 codes + Z/M offsets (§5.1.68) | `WKBGeometryTypes.cs:63-83`, `WKBReader.ReadGeometryType`; alternate 100000x codes decoded to base types since `ed40bf3` | ok — landed 2026-08-30 (`615-i`); writer emits base codes, round-trip-pinned |
 
 ### 5a. Metric-landing oracle runs (provenance)
 
