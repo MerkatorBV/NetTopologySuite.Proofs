@@ -48,7 +48,8 @@
 From Stdlib Require Import Reals Lra Bool.
 From NTS.Proofs Require Import DE9IM Distance Orientation RelateMatrixTriangle
   GeneralTriangleSeparation
-  RelateNGCore RelateNGDisjoint RelateNGComplete.
+  RelateNGCore RelateNGDisjoint RelateNGTouchVertex RelateNGUnnamedCex
+  RelateNGComplete.
 Local Open Scope R_scope.
 
 Lemma leftover_I_no_mixedcone :
