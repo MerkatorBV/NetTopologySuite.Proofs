@@ -44,7 +44,9 @@ Local Open Scope R_scope.
    Do not [apply] after [field] unless a goal remains.
    [field] on the n=2 elevation is "not a valid field equation"
    on flocq (c8b1e36 L295). Clear the thirds with [Rinv_r], then
-   [ring]. Do not reintroduce [field] on this identity. *)
+   [ring]. Do not reintroduce [field] on this identity.
+   [INR 3 = 3] is not [reflexivity] on flocq (a9dbaf9 L325,
+   [3] vs [1+1+1]). Use [ring]. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Bernstein basis: de Casteljau recurrence.                                  *)
@@ -318,11 +320,11 @@ Proof.
 Qed.
 
 Lemma inr_1 : INR 1 = 1.
-Proof. simpl. reflexivity. Qed.
+Proof. simpl. ring. Qed.
 Lemma inr_2 : INR 2 = 2.
-Proof. simpl. reflexivity. Qed.
+Proof. simpl. ring. Qed.
 Lemma inr_3 : INR 3 = 3.
-Proof. simpl. reflexivity. Qed.
+Proof. simpl. ring. Qed.
 
 Theorem bern_elevate_2 : forall (P : nat -> R) t,
   bern2_0 t * P 0%nat + bern2_1 t * P 1%nat + bern2_2 t * P 2%nat
