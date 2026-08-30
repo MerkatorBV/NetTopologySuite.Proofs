@@ -1546,8 +1546,9 @@ witness meanwhile).
 The zoo's last lane opens at the degree the engines actually use: the
 degree-2 single-span `N` token is the RATIONAL QUADRATIC Bézier — the conic
 form (the oracle's golden vector pins the `w = √2/2` quarter circle at
-`π/2`; that exact value is MOTIVATION here, not a theorem — the conic exact
-tier is a later rung). Two unconditional results. First, the N ⊃ B token
+`π/2`; the exact value is now a theorem on `508-a` / #559 —
+`NurbsConicExact.v : nurbs2_golden_quarter_length`). Two unconditional
+results. First, the N ⊃ B token
 inclusion as a spec theorem: equal weights collapse the denominator
 (partition of unity), so the rational quadratic IS the polynomial quadratic
 pointwise and `is_curve_length` transfers as an iff — chaining through the
@@ -1685,6 +1686,13 @@ golden `nurbs2_param`.  Category C (Stdlib `atan`); the 3-axiom engines
 stay 3-axiom in their own files.  This letter does not retire epic 508
 (that is #566).
 
+**NTS RGR Board catalog (#508 children).** `508-a` = #559 / golden
+rational quarter circle (witness `508-a-golden-quarter`). Headline
+`NurbsConicExact.v : nurbs2_golden_quarter_length`. Category C (`atan`),
+same lineage as `ArcParamBridge.v`. Differential pin:
+`oracle/red_length_unified_zoo_tests.py` nurbs_arc. Does not retire
+epic 508. Remaining children `508-b`…`508-h` are not this letter.
+
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
-| `NurbsConicExact.v : nurbs2_golden_quarter_length` (+ `golden_pt_on_circle`, `golden_phi_mono`, `golden_phi_surj`, `cos_2_atan`, `sin_2_atan`) | **Golden rational quarter circle:** `is_curve_length` of the oracle `N` vector on `[0,1]` equals `π/2` — Weierstrass `φ` is weakly monotone with explicit `tan` preimages (no IVT); the unit circle on `[0, π/2]` transfers by `is_curve_length_reparam` and windowed ext `[exact]` | 4 |
+| `NurbsConicExact.v : nurbs2_golden_quarter_length` (+ `golden_pt_on_circle`, `golden_phi_mono`, `golden_phi_surj`, `cos_2_atan`, `sin_2_atan`) | **Golden rational quarter circle (#508/#559, claimId: 508-a, witness: 508-a-golden-quarter):** `is_curve_length` of the oracle `N` vector on `[0,1]` equals `π/2` — Weierstrass `φ` is weakly monotone with explicit `tan` preimages (no IVT); the unit circle on `[0, π/2]` transfers by `is_curve_length_reparam` and windowed ext. Category C (`atan`). Does not retire epic 508 `[exact]` | 4 |

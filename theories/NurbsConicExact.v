@@ -566,7 +566,7 @@ Qed.
 (* Headline: the golden quarter circle has metric length π/2.                 *)
 (* -------------------------------------------------------------------------- *)
 
-(* WITNESS {"claimId":"508-a","topic":"arc,metric","lemma":"nurbs2_golden_quarter_length","title":"Oracle golden rational quadratic quarter circle has metric length π/2","file":"theories/NurbsConicExact.v"} *)
+(* WITNESS {"claimId":"508-a","topic":"arc,metric","lemma":"nurbs2_golden_quarter_length","title":"Oracle golden rational quadratic quarter circle has metric length π/2","file":"theories/NurbsConicExact.v","witness":"508-a-golden-quarter","board":"#559"} *)
 
 Theorem nurbs2_golden_quarter_length :
   is_curve_length golden_param 0 1 (PI / 2).
