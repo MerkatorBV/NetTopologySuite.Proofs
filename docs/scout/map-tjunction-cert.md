@@ -62,7 +62,8 @@ because no B-vertex is strictly interior to A (the #570 pure-lens hole).
 The detector names the vertex-on-open-edge *configuration*. It does not
 establish `triangles_partial_overlap` and it does not establish
 interiors-disjoint touch. That is why fill stays `im_unsupported`.
-A one-sided dim-0 T is leftover `ⅠⅠⅠ`, not this leftover.
+A one-sided dim-0 T is leftover `ⅠⅠⅠ`
+(`RelateNGComplete.v : onesided_t_pair_inhabits`), not this leftover.
 
 ## Why every wired detector misses
 
@@ -96,7 +97,8 @@ No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predica
 | Full shared edge `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | Frozen `TPR_TouchEdge` pin. | widen `shares_edge_b` to absorb the kiss |
 
 A **one-sided / non-collinear** vertex-in-open-edge T (BB dim 0) is
-leftover `ⅠⅠⅠ` (research; no compiled pair). Not this leftover.
+leftover `ⅠⅠⅠ` (`RelateNGComplete.v : onesided_t_pair_inhabits`;
+exterior-side stem; still `TPR_Unsupported`). Not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -149,7 +151,8 @@ writes the detector.
   designated TouchEdge pin is still `FFFF1FFF2`. Do not remint this
   constructor to a Touches fill. Remint is a different leftover.
 - **Family width.** This spec is the compiled collinear kiss. A dim-0
-  T is unnamed and separate.
+  T is leftover `ⅠⅠⅠ`
+  (`RelateNGComplete.v : onesided_t_pair_inhabits`).
 
 ## Frontier
 
@@ -169,5 +172,6 @@ not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
-ⅠⅠⅠ ──── unused
+ⅠⅠⅠ ──── compiled exterior-side stem ── still TPR_Unsupported
+ⅠⅠⅠⅠ ── unused ── ask before assigning
 ```
