@@ -31,6 +31,8 @@
    the rewrite is a convertibility no-op and ring then sees
    [sqrt] (0d39b90 L81, "not a valid ring equation"). Pose the
    identity, expand the square, then rewrite.
+   [rewrite <- sqrt_square] without [at 1] rewrites the [y] inside
+   [sqrt y] (082ef13 L102, no subterm [sqrt x * sqrt y]).
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -97,7 +99,7 @@ Proof.
     + rewrite (Rabs_right (x - y)) by lra.
       assert (H : y <= sqrt x * sqrt y).
       { pose proof (sqrt_square y Hy) as Hyy.
-        rewrite <- Hyy.
+        rewrite <- Hyy at 1.
         pose proof (sqrt_mult x y Hx Hy) as Hprod.
         rewrite <- Hprod.
         apply sqrt_le_1.
@@ -110,7 +112,7 @@ Proof.
       replace (- (x - y)) with (y - x) by ring.
       assert (H : x <= sqrt x * sqrt y).
       { pose proof (sqrt_square x Hx) as Hxx.
-        rewrite <- Hxx.
+        rewrite <- Hxx at 1.
         pose proof (sqrt_mult x y Hx Hy) as Hprod.
         rewrite <- Hprod.
         apply sqrt_le_1.
