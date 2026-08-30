@@ -493,8 +493,8 @@ Proof.
   destruct (Rlt_dec 0 (gtri 0 0 2 0 0 2 (mkPoint (-1) (-1)))) as [H2 | _];
     [ exfalso; lra | ].
   assert (H1n : gtri 0 0 2 0 0 2 (mkPoint 3 1) < 0).
-  { eapply Rle_lt_trans; [ apply (gtri_le_gsA 0 0 2 0 0 2 (mkPoint 3 1)) | ].
-    unfold gsA; cbn [px py]; lra. }
+  { eapply Rle_lt_trans; [ apply (gtri_le_gsB 0 0 2 0 0 2 (mkPoint 3 1)) | ].
+    unfold gsB; cbn [px py]; lra. }
   destruct (Rlt_dec 0 (gtri 0 0 2 0 0 2 (mkPoint 3 1))) as [H3 | _];
     [ exfalso; lra | ].
   unfold separated_b.
