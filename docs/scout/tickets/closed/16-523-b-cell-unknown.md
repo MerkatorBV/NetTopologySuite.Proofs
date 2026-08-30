@@ -2,7 +2,7 @@
 
 **Type:** task · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Blocked by:** — · **Spec:** [`spec-523.md`](../../spec-523.md) slice B
-**claimId:** `523-b` · **GitHub:** [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) · **witness:** none yet
+**claimId:** `523-b` · **GitHub:** [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) · **witness:** `523-b-cell-unknown`
 
 > Umbrella: ticket 523 / #604. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
 > Not a remint of `522-f`.

@@ -27,5 +27,5 @@ Minted claimIds (children of ticket 523, not leftover numerals, not
 | `523-b` | [16](16-523-b-cell-unknown.md) | [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | consumers learn `?` as a matrix cell | — |
 | `523-c` | [17](17-523-c-driver-alphabet.md) | [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | driver emits `?` | 16 / #604 |
 
-Children of ticket 523 (GitHub sub-issues). #605 is blocked by #604.
-`/implement 523-a` or `/implement 523-b` can start now.
+Children of ticket 523 (GitHub sub-issues). Letters `523-a` / `523-b` /
+`523-c` landed. Ticket 523 stays open and is not accepted.
