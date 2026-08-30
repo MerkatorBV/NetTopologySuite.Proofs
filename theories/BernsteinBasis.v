@@ -41,7 +41,10 @@ Local Open Scope R_scope.
    same-bullet nesting is a [Focus] error (6f0a32d L76).
    [field] on an already-reduced elevate identity leaves no
    side-condition on flocq (8b5e655 L265, [No such goal]).
-   Do not [apply] after [field] unless a goal remains. *)
+   Do not [apply] after [field] unless a goal remains.
+   [field] on the n=2 elevation is "not a valid field equation"
+   on flocq (c8b1e36 L295). Clear the thirds with [Rinv_r], then
+   [ring]. Do not reintroduce [field] on this identity. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Bernstein basis: de Casteljau recurrence.                                  *)
@@ -280,6 +283,47 @@ Proof.
   reflexivity.
 Qed.
 
+Lemma three_inv : 3 * / 3 = 1.
+Proof.
+  apply Rinv_r. lra.
+Qed.
+
+Lemma three_mix01 : forall a b,
+  3 * ((1 / 3) * a + (2 / 3) * b) = a + 2 * b.
+Proof.
+  intros a b. unfold Rdiv.
+  replace (3 * (1 * / 3 * a + 2 * / 3 * b))
+    with ((3 * / 3) * a + (2 * (3 * / 3)) * b) by ring.
+  rewrite three_inv. ring.
+Qed.
+
+Lemma three_mix12 : forall a b,
+  3 * ((2 / 3) * a + (1 / 3) * b) = 2 * a + b.
+Proof.
+  intros a b. unfold Rdiv.
+  replace (3 * (2 * / 3 * a + 1 * / 3 * b))
+    with ((2 * (3 * / 3)) * a + (3 * / 3) * b) by ring.
+  rewrite three_inv. ring.
+Qed.
+
+Lemma bern_elevate_2_ring : forall p0 p1 p2 t,
+  (1 - t) * (1 - t) * p0 + 2 * (t * (1 - t)) * p1 + t * t * p2
+  =
+  (1 - t) * (1 - t) * (1 - t) * p0
+  + (t * ((1 - t) * (1 - t))) * (p0 + 2 * p1)
+  + ((t * t) * (1 - t)) * (2 * p1 + p2)
+  + t * t * t * p2.
+Proof.
+  intros p0 p1 p2 t. ring.
+Qed.
+
+Lemma inr_1 : INR 1 = 1.
+Proof. simpl. reflexivity. Qed.
+Lemma inr_2 : INR 2 = 2.
+Proof. simpl. reflexivity. Qed.
+Lemma inr_3 : INR 3 = 3.
+Proof. simpl. reflexivity. Qed.
+
 Theorem bern_elevate_2 : forall (P : nat -> R) t,
   bern2_0 t * P 0%nat + bern2_1 t * P 1%nat + bern2_2 t * P 2%nat
   =
@@ -291,8 +335,20 @@ Proof.
   intros P t.
   rewrite elevate_ctrl_2_0, elevate_ctrl_2_1, elevate_ctrl_2_2, elevate_ctrl_2_3.
   unfold bern2_0, bern2_1, bern2_2, bern3_0, bern3_1, bern3_2, bern3_3.
-  (* flocq [field] may close; host may leave INR 3 <> 0. *)
-  field; try apply (S_INR_neq_0 2).
+  rewrite inr_1, inr_2, inr_3.
+  replace (3 * (t * ((1 - t) * (1 - t)))
+             * ((1 / 3) * P 0%nat + (2 / 3) * P 1%nat))
+    with ((t * ((1 - t) * (1 - t)))
+          * (3 * ((1 / 3) * P 0%nat + (2 / 3) * P 1%nat)))
+    by ring.
+  rewrite three_mix01.
+  replace (3 * (t * t * (1 - t))
+             * ((2 / 3) * P 1%nat + (1 / 3) * P 2%nat))
+    with (((t * t) * (1 - t))
+          * (3 * ((2 / 3) * P 1%nat + (1 / 3) * P 2%nat)))
+    by ring.
+  rewrite three_mix12.
+  apply bern_elevate_2_ring.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
