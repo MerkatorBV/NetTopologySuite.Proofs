@@ -97,7 +97,8 @@ disguised as disjointness — that was #530.
   grid miss. EE is the established exception
   (`RelateCurveMatrix.v : geom_de9im_ee_nonempty`). Whole-matrix Decline
   is already honest (`RelateNGCore.v : relate_unsupported_no_predicate`).
-  Chart: [`scout/map-523.md`](scout/map-523.md).
+  Chart: [`scout/map-523.md`](scout/map-523.md). Spec:
+  [`scout/spec-523.md`](scout/spec-523.md).
 - **Empty/empty `relate`** — parked on the #522 epic (declines; ISO 13249-3
   if revisited).
 - **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not

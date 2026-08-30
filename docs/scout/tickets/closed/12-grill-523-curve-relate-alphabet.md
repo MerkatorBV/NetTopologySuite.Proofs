@@ -4,6 +4,7 @@
 **Blocked by:** — · **Closed:** 2026-08-30 (decision: **do not** resolve ticket 523; **do not** accept)
 
 Living record: [`docs/scout/map-523.md`](../../map-523.md).
+Spec (later, ticket 13): [`docs/scout/spec-523.md`](../../spec-523.md).
 
 ## Question
 
