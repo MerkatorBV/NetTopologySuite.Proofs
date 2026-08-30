@@ -17,9 +17,13 @@ Order of work: top-down from #64, with the freebie first.
 | 05 | ~~[Retire #65 — buffer and offset curves](closed/05-retire-65-buffer-and-offset.md)~~ **closed** → #515 #513 #514, ADR-0002 | grilling | — |
 | 06 | ~~[Retire #66 — precision models, snap rounding, OverlayNG](closed/06-retire-66-precision-and-overlay.md)~~ **closed** → #517 #518 #519 #520, ADR-0002 amended | grilling | — |
 | 07 | ~~[Retire #67 — RelateNG matrix and boundary handling](closed/07-retire-67-relateng.md)~~ **closed: decided not to close #67** → ADR-0003, #522, #523 | grilling | — |
-| 11 | [Retire #67 — second pass](11-retire-67-second-pass.md) | grilling | ADR-0003 unconsumed, **#523**, **#503** — precondition 1 largely met by #530; #523 grilled (ticket 12), still open, not accepted |
+| 11 | [Retire #67 — second pass](11-retire-67-second-pass.md) | grilling | ADR-0003 unconsumed, **#523**, **#503** — precondition 1 largely met by #530; #523 ticketed as `523-a`/`523-b`/`523-c`, still open, not accepted |
 | 12 | ~~[Grill #523 — `CURVE_RELATE_MATRIX` alphabet](closed/12-grill-523-curve-relate-alphabet.md)~~ **closed: decided not to resolve ticket 523** → [`map-523.md`](../map-523.md) | grilling | — |
 | 13 | ~~[Spec #523 — `CURVE_RELATE_MATRIX` alphabet](closed/13-spec-523-curve-relate-alphabet.md)~~ **closed: spec written; ticket 523 stays open** → [`spec-523.md`](../spec-523.md) | task | 12 |
+| 14 | ~~[Cut #523 spec into takeable tickets](closed/14-to-tickets-523.md)~~ **closed: tickets written; ticket 523 stays open** → `523-a` / `523-b` / `523-c` | task | 13 |
+| 15 | [`523-a` — E/B refuse](15-523-a-eb-refuse.md) → [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | task | 14 |
+| 16 | [`523-b` — consumers accept `?` as a matrix cell](16-523-b-cell-unknown.md) → [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | task | 14 |
+| 17 | [`523-c` — driver prints `?` where it did not compute](17-523-c-driver-alphabet.md) → [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | task | 16 / #604 |
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 11 (04–08 all closed) |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty**, 09 |
@@ -34,9 +38,10 @@ Order of work: top-down from #64, with the freebie first.
 06 ═══════════════════════╣       │  #66 closed → #517 #518 #519 #520
 07 ═══ 11 ────────────────╣       │  #67 still open (reopened after an
        (ADR-0003, #523,   ║       │  accidental keyword closure) → ADR-0003,
-        #503)             ║       │  #522 wrap-up on main; #523 grilled
-                                  │  (ticket 12), specced (ticket 13),
-                                  │  still open, not accepted
+        #503)             ║       │  #522 wrap-up on main; #523 → 523-a /
+                                  │  523-b / 523-c (15–17; 15 and 16
+                                  │  takeable). Ticket 523 still open,
+                                  │  not accepted
 08 ═══════════ 09 ────────╝───────┘  #68 closed → #525 (global tier), #526
 ```
 
@@ -46,24 +51,25 @@ frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss. Leftover `ⅠⅠ` is
 the obtuse-at-v certificate. Sibling #523 alphabet grill:
 [`docs/scout/map-523.md`](../map-523.md). Takeable spec:
-[`docs/scout/spec-523.md`](../spec-523.md). Ticket 11 still waits on
-ADR-0003 / #523 / #503; it does not own leftover grab order and does
-not receive a closed `522-*` letter. The grill and the spec did not
+[`docs/scout/spec-523.md`](../spec-523.md). Implement tickets:
+[`15`](15-523-a-eb-refuse.md) `523-a`, [`16`](16-523-b-cell-unknown.md)
+`523-b`, [`17`](17-523-c-driver-alphabet.md) `523-c`. Ticket 11 still
+waits on ADR-0003 / #523 / #503; it does not own leftover grab order and
+does not receive a closed `522-*` letter. Cutting tickets did not
 accept ticket 523.
 
-**Frontier: empty.** Every remaining ticket waits on out-of-map execution —
-proof work, an oracle fix, and documentation corrections — not on a decision:
+**Frontier.** Two tickets are takeable now. The rest still wait.
 
 | Ticket | Waiting on |
 |---|---|
-| 11 · second pass at #67 | ADR-0003 consumed by the capstone work · ticket 523 (grilled + specced, not accepted) · #503's four defects. Precondition 1 largely met by #530. |
+| 15 · `523-a` / #603 E/B refuse | — (takeable) |
+| 16 · `523-b` / #604 consumer `?` cell | — (takeable; must land before 17) |
+| 17 · `523-c` / #605 driver alphabet | 16 / #604 |
+| 11 · second pass at #67 | ADR-0003 consumed by the capstone work · ticket 523 (`523-a`…`523-c` landed, or an explicit accept) · #503's four defects. Precondition 1 largely met by #530. |
 | 09 · end #69's umbrella | ticket 11 |
 | 10 · resync surviving bodies | #506's split queue emptying · ticket 09 |
 
-**The map has done its job.** Four of the six epics are retired, the fifth is
-deliberately open with its blockers named and one of them now fixed, and the sixth
-is a hinge that cannot move until the fifth does. What remains is work, not
-wayfinding — so the next useful session is `/implement`, not this skill.
+The next useful session is `/implement 523-a` or `/implement 523-b`.
 
 Three epics retired on evidence, one deliberately not: **an epic closes only when
 its closure comment would be true.**

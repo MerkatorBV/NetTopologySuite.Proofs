@@ -7,11 +7,14 @@ precondition 3. This is **not** a leftover numeral, **not** a remint of
 523.
 
 > Ticket 11 precondition 3 stays “#523 resolved or explicitly
-> accepted.” This spec does not accept the defect. `/implement` of
-> ticket 523 is the later letter that can meet that precondition.
+> accepted.” This spec does not accept the defect. The implement
+> letters are `523-a` / `523-b` / `523-c`
+> ([#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603)
+> [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604)
+> [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605)).
 
 topics: relate, precision
-claimId: none
+claimId: none (children: `523-a`, `523-b`, `523-c`)
 witness: none
 
 ## Destination
@@ -157,11 +160,11 @@ It is not required to emit an honest `?`.
 
 One letter may do all three. If split, this order is the gate graph:
 
-| Slice | What | Gate |
-|---|---|---|
-| **A** | E/B `failwith` (ask 2) | none |
-| **B** | Consumers accept `?` as a **matrix cell** only | none, but must land before C |
-| **C** | Driver emits `?` / keeps `F` only when established; header + probe sentence (asks 1 and 3) | B |
+| Slice | claimId | Ticket | What | Gate |
+|---|---|---|---|---|
+| **A** | `523-a` | [15](tickets/15-523-a-eb-refuse.md) / [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | E/B `failwith` (ask 2) | none |
+| **B** | `523-b` | [16](tickets/16-523-b-cell-unknown.md) / [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | Consumers accept `?` as a **matrix cell** only | none, but must land before C |
+| **C** | `523-c` | [17](tickets/17-523-c-driver-alphabet.md) / [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | Driver emits `?` / keeps `F` only when established; header + probe sentence (asks 1 and 3) | B / #604 |
 
 Done when:
 

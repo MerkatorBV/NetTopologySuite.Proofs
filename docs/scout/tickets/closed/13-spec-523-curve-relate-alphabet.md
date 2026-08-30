@@ -26,6 +26,7 @@ Delivered:
   matrix cell) / C (driver emits `?`); parks per ADR-0002.
 - Pointers from the grill map, ticket 11, this README, and the
   `RelateCurveMatrix.v` claims row.
+- Later cut into `523-a` / `523-b` / `523-c` (ticket 14).
 
 `?` is the issue’s proposed wire glyph, not a CONTEXT term. Whole-
 matrix Decline stays `UNSUPPORTED`

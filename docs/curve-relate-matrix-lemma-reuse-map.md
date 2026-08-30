@@ -171,8 +171,9 @@ Only lemmas/theorems that **actually exist** in the repo are listed. Vague entri
   cells and an 80×80 areal grid miss both print `F`. E/B pairs return
   `[]` (lineal) or a centre/chord proxy (areal). Chart:
   [`scout/map-523.md`](scout/map-523.md). Spec:
-  [`scout/spec-523.md`](scout/spec-523.md). This map does not invent a
-  per-cell unknown token.
+  [`scout/spec-523.md`](scout/spec-523.md). Tickets: `523-a` /
+  `523-b` / `523-c`. This map does not invent a per-cell unknown
+  token.
 
 All other facts needed for the first slice (disjoint / touch / cross / pointOnBoundary / equal for the listed combinations) are covered by the reused items above.
 
