@@ -104,11 +104,15 @@ Lemma polyline_len_ext_on :
 Proof.
   intros g1 g2 a b ts; induction ts as [|u tl IH];
     intros t Hg Hat Hch; simpl.
-  - rewrite (Hg t Hat Hch), (Hg b); [reflexivity | lra | lra].
+  - assert (Htb : t <= b) by exact Hch.
+    assert (Hab : a <= b) by lra.
+    rewrite (Hg t Hat Htb), (Hg b Hab (Rle_refl b)).
+    reflexivity.
   - destruct Hch as [Htu Hch].
     pose proof (chain_le tl u b Hch) as Hub.
-    rewrite (Hg t Hat ltac:(lra)), (Hg u ltac:(lra) Hub).
-    rewrite (IH u Hg ltac:(lra) Hch).
+    assert (Hau : a <= u) by lra.
+    rewrite (Hg t Hat ltac:(lra)), (Hg u Hau Hub).
+    rewrite (IH u Hg Hau Hch).
     reflexivity.
 Qed.
 
@@ -385,13 +389,20 @@ Proof.
   unfold golden_u, Rdiv.
   apply (Rmult_le_reg_r (golden_uden s * golden_uden t)).
   { apply Rmult_lt_0_compat; apply golden_uden_pos; assumption. }
-  rewrite Rmult_assoc, Rinv_l, Rmult_1_r
-    by (apply golden_uden_neq_0; assumption).
+  replace (s * / golden_uden s * (golden_uden s * golden_uden t))
+    with (s * golden_uden t)
+    by (field; apply golden_uden_neq_0; assumption).
   replace (t * / golden_uden t * (golden_uden s * golden_uden t))
     with (t * golden_uden s)
     by (field; apply golden_uden_neq_0; assumption).
   unfold golden_uden.
-  nra.
+  assert (Hdiff :
+      t * (sqrt 2 + (1 - sqrt 2) * s)
+      - s * (sqrt 2 + (1 - sqrt 2) * t)
+      = (t - s) * sqrt 2) by ring.
+  assert (0 <= (t - s) * sqrt 2)
+    by (apply Rmult_le_pos; [lra | apply Rlt_le, sqrt2_pos]).
+  lra.
 Qed.
 
 Lemma golden_phi_mono : forall s t,
@@ -408,8 +419,9 @@ Lemma tan_ge_0_on_0_PI4 : forall x,
 Proof.
   intros x Hx0 Hx1.
   destruct Hx0 as [Hlt | Heq].
-  - rewrite <- tan_0. apply Rlt_le, tan_increasing_1;
-      pose proof PI_RGT_0; lra.
+  - rewrite <- tan_0. apply Rlt_le.
+    pose proof PI_RGT_0.
+    apply tan_increasing_1; lra.
   - subst. rewrite tan_0. lra.
 Qed.
 
@@ -419,7 +431,9 @@ Proof.
   intros x Hx0 Hx1.
   rewrite <- tan_PI4.
   destruct Hx1 as [Hlt | Heq].
-  - apply Rlt_le, tan_increasing_1; pose proof PI_RGT_0; lra.
+  - apply Rlt_le.
+    pose proof PI_RGT_0.
+    apply tan_increasing_1; lra.
   - subst. apply Rle_refl.
 Qed.
 
@@ -430,12 +444,17 @@ Proof.
   intros w Hw0 Hw1.
   unfold golden_pre_u.
   assert (Hden : 0 < 1 + w * (sqrt 2 - 1)).
-  { pose proof sqrt2_gt_1. nra. }
+  { apply Rplus_lt_le_0_compat; [lra |].
+    apply Rmult_le_pos; [exact Hw0 |].
+    apply Rlt_le. pose proof sqrt2_gt_1. lra. }
   split.
-  - apply Rdiv_le_0_compat; [nra | exact Hden].
+  - apply Rdiv_le_0_compat; [| exact Hden].
+    apply Rmult_le_pos; [exact Hw0 | apply Rlt_le, sqrt2_pos].
   - apply (Rmult_le_reg_r (1 + w * (sqrt 2 - 1))); [exact Hden |].
     unfold Rdiv. rewrite Rmult_assoc, Rinv_l, Rmult_1_r by lra.
-    pose proof sqrt2_gt_1. nra.
+    replace (1 * (1 + w * (sqrt 2 - 1)))
+      with (1 - w + w * sqrt 2) by ring.
+    apply Rplus_le_compat_r. lra.
 Qed.
 
 Lemma golden_u_pre : forall w,
