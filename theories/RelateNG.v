@@ -57,8 +57,13 @@
          gtri cells of OGC 212FF1FF2 on the #567 contains pair
          (`contains_pair_ogc_gtri_cells`).  Names `aa_matrix_contains_ogc`;
          Qex: classifier IB is empty while IB is dim-1.  Does not remint
-         `aa_matrix_contains` or `triangle_pair_fill`.  Touch-edge and
-         overlap remain.
+         `aa_matrix_contains` or `triangle_pair_fill`.
+     - RelateNGTouchEdgeCells.v  #576 / 522-h (touch-edge split): nine
+         gtri cells of OGC FF2F11212 on the frozen shared-edge pair
+         (`touch_edge_pair_ogc_gtri_cells`).  Names
+         `aa_matrix_touch_edge_ogc`; Qex: classifier IE is empty while
+         IE is dim-2.  Does not remint `aa_matrix_touch_vertical` or
+         `triangle_pair_fill`.  Overlap remains.
      - RelateNGOracleSurface.v  #575 / 522-f: oracle wire token
          (`triangle_unsupported_token`): a decline is
          `RWR_Unsupported`, not a 9-cell matrix.  Classified triangle
@@ -116,4 +121,5 @@ From NTS.Proofs Require Export
   RelateNGRingInclusion
   RelateNGDisjointCells
   RelateNGContainsCells
+  RelateNGTouchEdgeCells
   RelateNGOracleSurface.
