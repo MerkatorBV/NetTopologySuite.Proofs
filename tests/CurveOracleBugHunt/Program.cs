@@ -161,6 +161,48 @@ static class Program
                 Hit("BUG", $"LENU/{v.Name}", $"nts={ntsLen:G17} oracle={oracleLen:G17} rel={rel:G6}");
         }
 
+        Console.WriteLine("=== ENVELOPE_UNIFIED golden vectors (615-e) ===");
+        // NTS exact envelope (arc locus, §5.1.19 Desc 2b: endpoints + centre±r
+        // on crossed axis directions) against the oracle's ENVELOPE_UNIFIED
+        // lane (exact-Q crossing decisions, one float step on the extremes).
+        foreach (var v in Cases.EnvelopeUnified)
+        {
+            string stdin = $"ENVELOPE_UNIFIED\n{v.Segs.Length}\n" + string.Join("\n", v.Segs) + "\n";
+            string oOut;
+            try { oOut = Oracle.Run(stdin); }
+            catch (Exception ex) { Hit("FAIL", $"ENVU/{v.Name}", $"oracle: {ex.Message}"); continue; }
+
+            if (oOut is "NAN" or "EMPTY")
+            {
+                Hit("WARN", $"ENVU/{v.Name}", $"oracle={oOut}");
+                continue;
+            }
+            string[] parts = oOut.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length != 4)
+            {
+                Hit("FAIL", $"ENVU/{v.Name}", $"unexpected oracle output: {oOut}");
+                continue;
+            }
+            var env = v.Geometry(gf).EnvelopeInternal;
+            double[] nts = { env.MinX, env.MinY, env.MaxX, env.MaxY };
+            string[] side = { "minx", "miny", "maxx", "maxy" };
+            bool allOk = true;
+            for (int i = 0; i < 4; i++)
+            {
+                double o = Oracle.ParseHexFloat(parts[i]);
+                double abs = Math.Abs(nts[i] - o);
+                double rel = abs / Math.Max(Math.Abs(o), 1e-30);
+                if (abs > 1e-12 && rel > 1e-9)
+                {
+                    allOk = false;
+                    Hit("BUG", $"ENVU/{v.Name}", $"{side[i]}: nts={nts[i]:G17} oracle={o:G17}");
+                }
+            }
+            if (allOk)
+                Hit("OK", $"ENVU/{v.Name}",
+                    $"[{env.MinX:G17},{env.MinY:G17}]..[{env.MaxX:G17},{env.MaxY:G17}]");
+        }
+
         Console.WriteLine("=== WKT/WKB structural ===");
         foreach (var s in new[]
         {
@@ -420,6 +462,43 @@ static class Cases
                 Cs(gf, (1, 0), (2, 1), (3, 0)),
             }, gf)),
     };
+
+    /// <summary>
+    /// ENVELOPE_UNIFIED golden vectors (Proofs #615 ticket 615-e), mirroring
+    /// the fork's CurveMetricsTests envelope contracts.
+    /// </summary>
+    public static readonly (string Name, string[] Segs, Func<GeometryFactory, Geometry> Geometry)[] EnvelopeUnified =
+        BuildEnvelopeUnified();
+
+    private static (string, string[], Func<GeometryFactory, Geometry>)[] BuildEnvelopeUnified()
+    {
+        static double Rad(double d) => d * Math.PI / 180.0;
+        static string A(params double[] v) =>
+            "A " + string.Join(" ", v.Select(d => d.ToString("R", CultureInfo.InvariantCulture)));
+        double[] axisArc =
+        {
+            Math.Cos(Rad(-30)), Math.Sin(Rad(-30)),
+            Math.Cos(Rad(10)), Math.Sin(Rad(10)),
+            Math.Cos(Rad(50)), Math.Sin(Rad(50)),
+        };
+        return new (string, string[], Func<GeometryFactory, Geometry>)[]
+        {
+            ("axis_extreme_-30_50", new[] { A(axisArc) },
+                gf => Cs(gf, (axisArc[0], axisArc[1]), (axisArc[2], axisArc[3]), (axisArc[4], axisArc[5]))),
+            ("collinear_excludes_intermediate", new[] { "A 0 0 5 5 2 2" },
+                gf => Cs(gf, (0, 0), (5, 5), (2, 2))),
+            ("full_circle_5pt", new[] { "A 0 0 1 1 2 0", "A 2 0 1 -1 0 0" },
+                gf => Cs(gf, (0, 0), (1, 1), (2, 0), (1, -1), (0, 0))),
+            ("cw_major_arc_bulge", new[] { "A 0 0 5 10 10 0" },
+                gf => Cs(gf, (0, 0), (5, 10), (10, 0))),
+            ("compound_line_plus_arc", new[] { "C -3 0 1 0", "A 1 0 2 1 3 0" },
+                gf => new CompoundCurve(new Curve[]
+                {
+                    gf.CreateLineString(new[] { new Coordinate(-3, 0), new Coordinate(1, 0) }),
+                    Cs(gf, (1, 0), (2, 1), (3, 0)),
+                }, gf)),
+        };
+    }
 
     private static CircularString Cs(GeometryFactory gf, params (double x, double y)[] pts)
     {

@@ -433,6 +433,16 @@ run_area_unified
 # the proof-side obligations live under #508 (curve_length spec lane).
 run_length_unified
 
+# --- ENVELOPE_UNIFIED : INTERFACE-BOUNDARY (#615 ticket 615-e) --------------
+# Mode ENVELOPE_UNIFIED mirrors C#/NTS CircularArcGeometry.ExpandEnvelope /
+# Geometry.EnvelopeInternal on curve types: the exact-locus AABB whose crossed-
+# axis extremes are centre +- r -- transcendental via sqrt(r2), so no
+# Coq-extractable form. Exact companion: the axis-crossing DECISIONS (centre,
+# CCW/CW sector containment, reflex split) are pure zarith Q from the same
+# determinant as arc_invariants_q; only the four emitted extremes round, one
+# float step past certified rational algebra.
+run_envelope_unified
+
 # --- OVERLAY_UNIFIED (Precision + Overlay trusted-kernel pass, Slice 7) -------
 # Mode OVERLAY_UNIFIED computes the DE-9IM contact relationship between two
 # segment-list geometries by delegating to the hoisted thin predicates:
