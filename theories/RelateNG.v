@@ -53,6 +53,12 @@
          Names `aa_matrix_disjoint_ogc`; Qex `~ im_disjoint` of that fill
          (`pat_disjoint` forces EI=EB=F).  Does not remint
          `aa_matrix_disjoint` or `triangle_pair_fill`.
+     - RelateNGContainsCells.v  #576 / 522-h (contains split): nine
+         gtri cells of OGC 212FF1FF2 on the #567 contains pair
+         (`contains_pair_ogc_gtri_cells`).  Names `aa_matrix_contains_ogc`;
+         Qex: classifier IB is empty while IB is dim-1.  Does not remint
+         `aa_matrix_contains` or `triangle_pair_fill`.  Touch-edge and
+         overlap remain.
      - RelateNGOracleSurface.v  #575 / 522-f: oracle wire token
          (`triangle_unsupported_token`): a decline is
          `RWR_Unsupported`, not a 9-cell matrix.  Classified triangle
@@ -109,4 +115,5 @@ From NTS.Proofs Require Export
   RelateNGComplete
   RelateNGRingInclusion
   RelateNGDisjointCells
+  RelateNGContainsCells
   RelateNGOracleSurface.

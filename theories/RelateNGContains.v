@@ -205,19 +205,12 @@ Qed.
    `geom_de9im_pointset` obligation for TPR_Contains flagged in
    `RelateCurveMatrix.geom_de9im_ii_cell_dim2_sound`'s comment.
 
-   OPEN QUESTION for whoever attempts the full `geom_de9im_pointset A B
-   (triangle_pair_fill TPR_Contains)` capstone next: `aa_matrix_contains`
-   (RelateAreaArea.v) sets im_ib/im_bb/im_be to `aa_cell_empty`, i.e. it
-   claims A's interior never meets B's BOUNDARY. But THIS theorem shows the
-   opposite is geometrically true whenever contains_b actually fires --
-   every point of B's boundary lies in A's interior region (0 < gtri A), so
-   (modulo the point_set/JCT bridge from 0 < gtri to point_set membership)
-   IB should be a genuine 1-dimensional witness, not empty. `pat_contains`
-   only constrains II=T, EI=F, EB=F (IB/IE/BI/BB/BE/EE are wildcards), so
-   `aa_matrix_contains` is a valid PATTERN witness either way -- but it is
-   NOT yet claimed, let alone proven, to be the exact matrix any real
-   contains_b-classified triangle pair produces. That gap (not a common
-   INTERIOR witness point) may be the more concrete next rung. *)
+   The exact-matrix gap this comment used to leave open is the #576 /
+   522-h contains split (`RelateNGContainsCells.v`): it names
+   `aa_matrix_contains_ogc` = 212FF1FF2 and proves the nine gtri cells
+   on the #567 pair, including IB dim-1.  It does not remint
+   `aa_matrix_contains` (still empty IB).  `geom_de9im_pointset` on
+   `point_set` remains open (ADR-0003). *)
 Theorem contains_b_ring_strictly_inside :
   forall ax ay bx by_ cx cy dx dy ex ey fx fy p,
     contains_b ax ay bx by_ cx cy dx dy ex ey fx fy = true ->
