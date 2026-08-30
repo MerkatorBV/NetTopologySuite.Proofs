@@ -22,6 +22,10 @@
 
      3. Re-states the general (rx ≠ ry) pair as a Technique-park Section.
 
+   508-d / #563 (`EllipseSpeedIntegral.v`) instantiates the speed-integral
+   pack: UC and chord-rate of √σ² are discharged. increment_squeezed
+   remains the named primitive (no RInt). This file is unchanged.
+
    No `Admitted`, no `Axiom`, no `Parameter`.  3-axiom.
 
    Author: NetTopologySuite.Proofs contributors

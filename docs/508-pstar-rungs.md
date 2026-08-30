@@ -10,6 +10,7 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 |---|---|---|---|---|
 | P0 | bezier | `theories/Bezier3Polygon.v` | `bezier3_length_le_polygon` — L ≤ control-polygon length on [0,1] | Qed, 3-axiom |
 | P1 | ellipse | `theories/EllipseLength_E.v` | `ellipse_circular_E_discharges` — rx=ry inhabits H_E_chord / H_E_approx at E(t)=r·t; general elliptic-E parked | Qed + Technique park, 3-axiom |
+| P1 | ellipse | `theories/EllipseSpeedIntegral.v` | `ellipse_speed_integral_is_curve_length` — UC + chord-rate of √σ²; increment_squeezed E σ is the remaining primitive | Qed + Technique park, 3-axiom (#563 / 508-d) |
 | P1 | clothoid | `theories/ClothoidLength_unit.v` | `unit_line_discharges_window` — unit-speed straight inhabits the [sd,ed] contract; Fresnel stays clothoid-halley-coq | Qed + Technique park, 3-axiom |
 | P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; knot-span additivity; conditional primitive | Qed, 3-axiom |
 | P2 | arc | `theories/ArcMidSweep.v` | `valid_arc_sweep_nonzero`; `arc_mid_on_circle_param` | Qed, Category C (atan2; removal tracks AngleBetween) |
@@ -30,3 +31,14 @@ Heine–Cantor is **not** imported — uniform continuity stays a
 hypothesis (3-axiom allowlist).  Coquelicot / `RInt` (Route 2) is
 gated off this letter; host-lane metric files stay 3-axiom.  508-d
 (elliptic E) and 508-e (Fresnel) instantiate the pack.
+
+## 508-d (#563)
+
+`theories/EllipseSpeedIntegral.v` instantiates the pack on
+`ellipse_speed rx ry = √(rx² sin² t + ry² cos² t)`.  Uniform
+continuity is Hölder 1/2 (`|σ(t)−σ(s)| ≤ √(K·|t−s|)`).  Chord-rate
+uses the exact identity `dist = 2|sin(gap/2)|·σ(mid)`.  Route 1 does
+**not** construct the incomplete elliptic integral — `increment_squeezed`
+stays the Technique-park hypothesis.  Witness: any such E on the
+`rx=3, ry=4` quarter lies in `[3π/2, 4π/2]`.  Does not retire epic 508.
+Wrap-up is #566.  Does not remint SpeedIntegral.
