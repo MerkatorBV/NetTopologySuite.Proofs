@@ -14,8 +14,11 @@ tuple and false on leftover `Ⅰ`, leftover `ⅠⅠ`, and
 `classified_hard_pairs` (`RelateNGComplete.v : classified_hard_pairs`).
 
 Constructor is an **owner call** (reuse vs new). A new constructor
-may stay on `im_unsupported`. Fill stays `im_unsupported` until the
-owner names one.
+may stay on `im_unsupported`. Fill stays `im_unsupported` until
+ticket 21 picks a side (exterior-side stem vs interior-side stem)
+and the owner names a matrix. Do not claim CONTEXT Bar 1 with a
+`True` `classify_triangle_pair` arm. Do not remint leftover `Ⅰ`
+to `FF2F11212` / `FFFF1FFF2`.
 
 ## Acceptance
 

@@ -10,8 +10,9 @@
 ## Question
 
 Leftover `ⅠⅠⅠ` is a named family with **no** compiled 12-tuple.
-Either inhabit it among both-CCW triangles or prove it empty.
-Do not invent the tuple in a comment.
+An exterior-side stem exists; compiling a both-CCW witness is this
+letter. Emptiness would be a surprise, not the expected close.
+Do not invent the tuple in a comment and treat it as compiled.
 
 Family filter (all must hold; this list is not a pair):
 
@@ -20,9 +21,14 @@ Family filter (all must hold; this list is not a pair):
 3. The contact is not mutual (leftover `Ⅰ`'s `touch_partial_edge_b`
    on #609 stays false).
 4. The triangles share no vertex.
-5. The shared set is a point (BB dimension 0).
+5. The shared set is a point (BB dimension 0). An interior-side stem
+   can still have II nonempty (overlap) — a different DE-9IM family.
 6. The tuple is not a `classified_hard_pairs` row, not leftover `Ⅰ`,
    not leftover `ⅠⅠ`, not the RelatePrepared CW 12-tuple.
+
+Illustration, **not** the spec pair: A=`(0,0)(2,0)(0,1)` vs
+B=`(1,0)(0.5,−1)(1.5,−1)`. Exterior-side stem; interiors opposite
+across `y = 0`. Compiling some witness is the letter.
 
 Grill cites (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`;
 `RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`;
@@ -38,13 +44,20 @@ Exactly one of:
    still false). Both-CCW proofs sit next to the coords. **or**
 2. A theorem that no both-CCW pair inhabits the filter.
 
+Record which side was compiled (exterior-side stem vs interior-side
+stem). Prove II empty before calling the pair BB dim 0 Touches.
+An interior-side stem is typically overlap. Ticket 22 names a fill
+only after this letter picks a side. Fill stays `im_unsupported`
+until then.
+
 The letter does **not** emit `FFFFFFFFF`. It does **not** move the
 decline golden unless the golden pair itself classifies. Completeness
 stays false (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`)
 unless emptiness plus leftover `Ⅰ` / `ⅠⅠ` landing leave no other
-cex.
+cex. Do **not** remint leftover `Ⅰ` to `FF2F11212` / `FFFF1FFF2`.
 
-If emptiness is proved, ticket 22 is cancelled.
+If emptiness is proved, ticket 22 is cancelled. That close would be
+a surprise.
 
 ## Non-goals
 

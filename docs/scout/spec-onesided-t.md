@@ -16,12 +16,13 @@ witness: none
 
 ## Destination
 
-**Either** a compiled both-CCW 12-tuple that inhabits the family
-**or** a proof that no both-CCW pair does. Only if inhabited: a
-detector that is true on that tuple and false on leftover `Ⅰ`,
-leftover `ⅠⅠ`, and the four wired hard pairs
+**Compile** a both-CCW 12-tuple that inhabits the family. An
+exterior-side stem exists; emptiness would be a surprise. Only if
+inhabited: a detector that is true on that tuple and false on leftover
+`Ⅰ`, leftover `ⅠⅠ`, and the four wired hard pairs
 (`RelateNGComplete.v : classified_hard_pairs`). Fill stays
-`im_unsupported` until the owner names one. Completeness stays false
+`im_unsupported` until ticket 21 picks a side and the owner names a
+matrix. Completeness stays false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`).
 
 CONTEXT **Regime** is not met until a real `classify_triangle_pair`
@@ -43,7 +44,7 @@ them unless the tree moved:
 | Wired detectors miss | `RelateNGCore.v : triangle_pair_regime` |
 | #609 is mutual | #609, not on `main` |
 | Bar 1 not applicable | CONTEXT; no pair, no matrix |
-| Inhabited-or-empty open | research park |
+| Uninhabited on the compiled tree | research park; an exterior-side stem exists |
 
 ## Family (acceptance predicate, not a pair)
 
@@ -59,7 +60,10 @@ of coordinates.
 4. The triangles share **no vertex** (leftover `ⅠⅠ` / `522-i` stay
    out).
 5. The shared set is a **point** (BB dimension 0), not leftover `Ⅰ`'s
-   positive-length collinear kiss.
+   positive-length collinear kiss. An interior-side stem can still
+   have II nonempty (overlap) — a different DE-9IM family. Ticket 21
+   records which side it compiled. Prove II empty before calling the
+   pair areal Touches.
 6. The tuple is not a `classified_hard_pairs` row, not leftover `Ⅰ`,
    not leftover `ⅠⅠ`, not the RelatePrepared CW 12-tuple.
 
@@ -69,26 +73,26 @@ Do not write those six bullets as a 12-tuple in this spec.
 
 One letter may do both. If split, this order is the gate graph:
 
-### Slice A — compile a cex or prove emptiness
+### Slice A — compile a cex (emptiness would be a surprise)
 
-**Today.** No pair. Completeness false.
+**Today.** No pair on the compiled tree. Completeness false. An
+exterior-side stem exists; compiling a witness is the expected close.
 
-**After this slice.** Exactly one of:
+**After this slice.** A named 12-tuple in `RelateNGComplete.v` that
+satisfies the family filter, with a finding that the classifier emits
+`TPR_Unsupported` (or leftover `Ⅰ`'s constructor if #609 has
+landed and the boolean is still false). Both-CCW proofs sit next
+to the coords. Record which side (exterior-side stem vs interior-side
+stem).
 
-- A named 12-tuple in `RelateNGComplete.v` that satisfies the family
-  filter, with a finding that the classifier emits
-  `TPR_Unsupported` (or leftover `Ⅰ`'s constructor if #609 has
-  landed and the boolean is still false). Both-CCW proofs sit next
-  to the coords. **or**
-- A theorem that no both-CCW pair inhabits the filter.
+An emptiness theorem is still allowed and would be a surprise. If
+proved, slice B is cancelled. Completeness may still be false for
+other reasons (leftover `Ⅰ` / `ⅠⅠ` until those letters land).
 
 Do **not** invent the tuple in a comment and treat it as compiled.
 Do **not** emit `FFFFFFFFF`. Do **not** move the decline golden
-unless the golden pair itself classifies.
-
-If emptiness is proved, slice B is cancelled. Leftover `ⅠⅠⅠ` is
-then a closed empty family. Completeness may still be false for
-other reasons (leftover `Ⅰ` / `ⅠⅠ` until those letters land).
+unless the golden pair itself classifies. Do **not** remint leftover
+`Ⅰ` to `FF2F11212` / `FFFF1FFF2`.
 
 ### Slice B — detector if inhabited
 
@@ -113,14 +117,17 @@ CONTEXT Bar 1. A `True` arm is leftover `Ⅰ` #609 honesty, not Bar 1.
 
 ## Parks (ADR-0002)
 
-- **Research (slice A).** Inhabited or empty. Graduates when a cex
-  or an emptiness proof compiles.
+- **Research (slice A).** Uninhabited on the compiled tree.
+  Graduates when a cex compiles. Emptiness is still allowed and
+  would be a surprise.
 - **Sequencing (slice B, fill, harness).** Detector waits on A.
-  Fill remint waits on a named matrix that does not move the rect
-  lane. Designated TouchVertex / TouchEdge pin is still `FFFF1FFF2`.
-  Harness golden on `main` is leftover `Ⅰ`; after #609 it is
-  leftover `ⅠⅠ`. Wiring this family (if inhabited) does not move
-  that golden unless the golden pair classifies.
+  Exterior-side stem with II empty is areal Touches, BB dim 0.
+  Interior-side stem is typically overlap. Fill stays
+  `im_unsupported` until ticket 21 picks a side. Designated
+  TouchVertex / TouchEdge pin is still `FFFF1FFF2`. Harness golden
+  on `main` is leftover `Ⅰ`; after #609 it is leftover `ⅠⅠ`.
+  Wiring this family does not move that golden unless the golden
+  pair classifies.
 - **Technique.** Constructor vs reuse. Owner call.
 
 ## Non-goals

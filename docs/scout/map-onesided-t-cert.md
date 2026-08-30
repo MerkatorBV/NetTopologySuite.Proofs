@@ -50,9 +50,11 @@ Neither is this family. The oracle decline golden is leftover `Ⅰ`
 This map does not draw coordinates. Minting a pair here and calling it
 the spec would invent the certificate's input.
 
-Whether the family is inhabited among both-CCW triangles is **open**.
-That is why `/implement ⅠⅠⅠ` starts with a compiled cex **or** a
-proof of emptiness, not with a detector.
+The family is **uninhabited on the compiled tree**. An exterior-side
+stem exists; compiling it is ticket 21. Do not let “inhabitance is
+open” harden into “maybe no such triangles exist.” Emptiness would
+be a surprise. This map does not mint coordinates and call them the
+spec.
 
 ## Why leftover `Ⅰ` and leftover `ⅠⅠ` exclude it
 
@@ -104,12 +106,9 @@ classify. They are not this leftover.
 Park: **research** (ADR-0002). There is **no** published compiled
 statement for this family.
 
-1. **Compile a cex, or prove emptiness.** Do not invent a 12-tuple in
-   prose and treat it as the spec. A later implement letter must pin
-   coordinates in `RelateNGComplete.v` (both-CCW; not leftover `Ⅰ`;
-   not leftover `ⅠⅠ`; not a `classified_hard_pairs` row) **or** prove
-   that no both-CCW pair inhabits the family. Only then write a
-   detector.
+1. **Compile a cex.** An exterior-side stem exists; compiling it is
+   ticket 21. Do not invent a 12-tuple in prose and treat it as the
+   spec. Emptiness would be a surprise. Only then write a detector.
 2. **Detector, not a remint.** If a cex exists, a new boolean that is
    true on that 12-tuple and false on leftover `Ⅰ`, leftover `ⅠⅠ`,
    and the four wired hard pairs. Do **not** widen leftover `Ⅰ`'s
@@ -158,12 +157,17 @@ statement for this family.
 
 ## Fog
 
-- **Inhabited or empty.** Open. This map does not settle it.
-- **Constructor vs reuse.** Technique, not this map. The geometry (if
-  inhabited) is a dim-0 boundary kiss without a shared vertex.
-- **Fill.** If inhabited, areal Touches with BB dim 0. The designated
+- **Inhabited or empty.** Uninhabited on the compiled tree. An
+  exterior-side stem exists; compiling it is ticket 21. Emptiness
+  would be a surprise.
+- **Constructor vs reuse.** Technique, not this map. The geometry of
+  an exterior-side stem is a dim-0 boundary contact without a shared
+  vertex.
+- **Fill.** Exterior-side stem with II empty is areal Touches, BB
+  dim 0. Interior-side stem is typically overlap. The designated
   TouchVertex / TouchEdge pin is still `FFFF1FFF2`. Remint is a
-  different leftover.
+  different leftover. Fill stays `im_unsupported` until ticket 21
+  picks a side.
 - **Leftover `Ⅰ`.** In flight as #609. Mutual detector. Do not invent
   or widen that boolean here.
 - **Leftover `ⅠⅠ`.** Shared-vertex cone. Do not invent that detector

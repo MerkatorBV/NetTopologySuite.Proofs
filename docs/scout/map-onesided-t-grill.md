@@ -10,8 +10,8 @@ A grilling record. Charted 2026-08-30. This is **not** leftover `Ⅰ`,
 > (#614, not on `main` until that letter lands). Leftover `Ⅰ` bar 1
 > is in flight as #609. Leftover `ⅠⅠ` is #611. This grill answers:
 > leftover `ⅠⅠⅠ` is named and **uninhabited on the compiled tree**;
-> CONTEXT Bar 1 cannot apply; `/implement` must compile a cex or prove
-> emptiness before a detector.
+> CONTEXT Bar 1 cannot apply; `/implement` compiles a witness
+> (emptiness would be a surprise) before a detector.
 
 topics: relate
 claimId: ⅠⅠⅠ
@@ -106,17 +106,19 @@ Wiring leftover `Ⅰ` (#609) moves that golden to leftover `ⅠⅠ`. This
 family is not that golden. Do not emit `FFFFFFFFF`. Do not invent a
 CONTEXT name for "named family, no pair."
 
-### 6. Inhabited-or-empty is still open
+### 6. Uninhabited on the compiled tree
 
-**Confirmed park.** The research chart left this open. This grill
-does not settle it. Settling it is the first implement rung, not a
-prose 12-tuple.
+**Confirmed park — compiled tree, not geometry.** There is no
+published pair. That is the precise phrase. An exterior-side stem
+exists; compiling it is ticket 21. Do not let “inhabitance is open”
+harden into “maybe no such triangles exist.” Emptiness would be a
+surprise. This grill does not mint coordinates and call them the spec.
 
 ## Parks (ADR-0002)
 
-- **Research:** inhabited or empty among both-CCW triangles. No
-  published compiled statement. Gate: a cex in
-  `RelateNGComplete.v` **or** a proof of emptiness.
+- **Research:** uninhabited on the compiled tree. No published
+  compiled statement. Gate: a cex in `RelateNGComplete.v`.
+  Emptiness is still allowed and would be a surprise.
 - **Sequencing:** detector, constructor, fill. All gated on the
   research park. #609 / #611 / #614 are other letters; do not pile
   onto them.
@@ -131,18 +133,19 @@ steal `522-j` / `522-m` / `522-f` / `522-i`.
 
 ## If `/implement ⅠⅠⅠ` is asked
 
-Read [`spec-onesided-t.md`](spec-onesided-t.md). First compile a cex
-or prove emptiness. Do not invent a 12-tuple in prose. Do not restage
-#609. Do not pile onto #611 / #614 / a `508-*` branch. Completeness
-stays false until proved.
+Read [`spec-onesided-t.md`](spec-onesided-t.md). First compile a
+witness (ticket 21). Emptiness would be a surprise. Do not invent a
+12-tuple in prose and treat it as compiled. Do not restage #609. Do
+not pile onto #611 / #614 / a `508-*` branch. Completeness stays
+false until proved.
 
 ## Decisions so far
 
 - Family named — #614 / [`map-onesided-t-cert.md`](map-onesided-t-cert.md).
 - Leftover `Ⅰ` bar 1 in flight — #609 (CI green, not on `main`).
 - Leftover `ⅠⅠ` named — #611.
-- This grill — named; no compiled pair; Bar 1 not applicable;
-  inhabited-or-empty still open.
+- This grill — named; uninhabited on the compiled tree; Bar 1 not
+  applicable; an exterior-side stem exists (ticket 21).
 - Spec / tickets — [`spec-onesided-t.md`](spec-onesided-t.md);
   scout 18–20 closed; ticket 21 takeable.
 
@@ -154,7 +157,8 @@ family named ── #614 ── map-onesided-t-cert.md
      this grill ── confirmed against the tree
 
 ⅠⅠⅠ ── research #614 ── grill (this file) ── spec-onesided-t.md
-     tickets 18–20 closed ── 21 compile-or-empty takeable
+     tickets 18–20 closed ── 21 compile a witness takeable
+     emptiness would be a surprise
      /implement ⅠⅠⅠ starts at ticket 21
 
 Ⅰ ── T-junction / partial-edge kiss ── #609 ── not this leftover

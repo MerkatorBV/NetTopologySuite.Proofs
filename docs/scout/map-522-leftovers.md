@@ -61,7 +61,7 @@ Value and priority are orthogonal.
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
 | `ⅠⅠ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Chart: #611 (not on `main`). Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. | invent the detector; steal `522-m` / `522-i`; bucket under `Ⅰ` |
-| `ⅠⅠⅠ` | One-sided / non-collinear vertex-in-open-edge T | #522-adjacent | research | Named. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md). Grill: [`map-onesided-t-grill.md`](map-onesided-t-grill.md). Spec: [`spec-onesided-t.md`](spec-onesided-t.md). Scout 21 takeable (compile or empty); 22 blocked. **No compiled pair.** BB dim 0; not mutual; no shared vertex. CONTEXT Bar 1 not applicable. | invent a 12-tuple; invent the detector; steal leftover `Ⅰ` / `ⅠⅠ`; mint `522-n` |
+| `ⅠⅠⅠ` | One-sided / non-collinear vertex-in-open-edge T | #522-adjacent | research | Named. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md). Grill: [`map-onesided-t-grill.md`](map-onesided-t-grill.md). Spec: [`spec-onesided-t.md`](spec-onesided-t.md). Scout 21 takeable (compile a witness; emptiness would be a surprise); 22 blocked. **Uninhabited on the compiled tree.** An exterior-side stem exists. BB dim 0; not mutual; no shared vertex. CONTEXT Bar 1 not applicable. | invent a 12-tuple as the spec; invent the detector; steal leftover `Ⅰ` / `ⅠⅠ`; mint `522-n` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -110,7 +110,7 @@ takeable. `/implement ⅠⅠⅠ` starts there.
 ⅠⅠ ─────── obtuse-at-v certificate ── research ── finding #584 / #611
 ⅠⅠⅠ ────── one-sided / non-collinear vertex-in-open-edge T
            research #614 ── grill ── spec ── tickets 18–20 closed
-           21 compile-or-empty ── takeable
+           21 compile a witness ── takeable; emptiness would be a surprise
            22 detector ── blocked by 21; cancel if empty
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f

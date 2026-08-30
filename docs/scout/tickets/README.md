@@ -27,7 +27,7 @@ Order of work: top-down from #64, with the freebie first.
 | 18 | ~~[Grill leftover `ⅠⅠⅠ`](closed/18-grill-onesided-t.md)~~ **closed: grill written; leftover `ⅠⅠⅠ` stays open** → [`map-onesided-t-grill.md`](../map-onesided-t-grill.md) | grilling | — |
 | 19 | ~~[Spec leftover `ⅠⅠⅠ`](closed/19-spec-onesided-t.md)~~ **closed: spec written; leftover `ⅠⅠⅠ` stays open** → [`spec-onesided-t.md`](../spec-onesided-t.md) | task | 18 |
 | 20 | ~~[Cut leftover `ⅠⅠⅠ` spec into takeable tickets](closed/20-to-tickets-onesided-t.md)~~ **closed: tickets written; leftover `ⅠⅠⅠ` stays open** → 21 / 22 | task | 19 |
-| 21 | [Leftover `ⅠⅠⅠ` — compile a cex or prove emptiness](21-leftover-iii-compile-or-empty.md) | task | 20 |
+| 21 | [Leftover `ⅠⅠⅠ` — compile a cex (emptiness would be a surprise)](21-leftover-iii-compile-or-empty.md) | task | 20 |
 | 22 | [Leftover `ⅠⅠⅠ` — detector if inhabited](22-leftover-iii-detector.md) | task | 21 (cancelled if 21 proves empty) |
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 11 (04–08 all closed) |
