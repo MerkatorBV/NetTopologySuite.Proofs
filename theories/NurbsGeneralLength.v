@@ -28,6 +28,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra.
+From NTS.Proofs Require Export BernsteinBasis.
 From NTS.Proofs Require Import Distance CurveLength ArcRectifiable
                                Bezier3Length.
 Local Open Scope R_scope.
@@ -35,11 +36,6 @@ Local Open Scope R_scope.
 (* -------------------------------------------------------------------------- *)
 (* Degree-3 rational Bézier (next stored form after the conic).               *)
 (* -------------------------------------------------------------------------- *)
-
-Definition bern3_0 (t : R) : R := (1 - t) * (1 - t) * (1 - t).
-Definition bern3_1 (t : R) : R := 3 * (t * ((1 - t) * (1 - t))).
-Definition bern3_2 (t : R) : R := 3 * ((t * t) * (1 - t)).
-Definition bern3_3 (t : R) : R := t * t * t.
 
 Definition nurbs3_den (w0 w1 w2 w3 t : R) : R :=
   bern3_0 t * w0 + bern3_1 t * w1 + bern3_2 t * w2 + bern3_3 t * w3.
@@ -54,12 +50,6 @@ Definition nurbs3_pt (p0 p1 p2 p3 : Point) (w0 w1 w2 w3 t : R) : Point :=
 
 Definition nurbs3_param (p0 p1 p2 p3 : Point) (w0 w1 w2 w3 : R) : Curve :=
   nurbs3_pt p0 p1 p2 p3 w0 w1 w2 w3.
-
-Lemma bern3_partition : forall t,
-  bern3_0 t + bern3_1 t + bern3_2 t + bern3_3 t = 1.
-Proof.
-  intro t. unfold bern3_0, bern3_1, bern3_2, bern3_3. ring.
-Qed.
 
 Lemma nurbs3_den_equal : forall w t,
   nurbs3_den w w w w t = w.

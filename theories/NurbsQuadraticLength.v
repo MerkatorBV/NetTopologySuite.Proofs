@@ -53,16 +53,13 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra.
+From NTS.Proofs Require Export BernsteinBasis.
 From NTS.Proofs Require Import Distance CurveLength Bezier3Length.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
 (* The degree-2 single-span rational parameterization (oracle `N`, d = 2).   *)
 (* -------------------------------------------------------------------------- *)
-
-Definition bern2_0 (t : R) : R := (1-t)*(1-t).
-Definition bern2_1 (t : R) : R := 2*(t*(1-t)).
-Definition bern2_2 (t : R) : R := t*t.
 
 Definition nurbs2_den (w0 w1 w2 t : R) : R :=
   bern2_0 t * w0 + bern2_1 t * w1 + bern2_2 t * w2.
@@ -84,26 +81,6 @@ Definition nurbs2_param (p0 p1 p2 : Point) (w0 w1 w2 : R) : Curve :=
 Definition nurbs2_net_max (p0 p1 p2 : Point) : R :=
   Rmax (dist p0 p1) (dist p1 p2).
 
-(* Two-term instance of Bezier3Length's vector triangle inequality. *)
-Lemma norm_pair_le : forall c0 c1 x0 y0 x1 y1,
-  0 <= c0 -> 0 <= c1 ->
-  sqrt ((c0*x0 + c1*x1) * (c0*x0 + c1*x1)
-        + (c0*y0 + c1*y1) * (c0*y0 + c1*y1))
-  <= c0 * sqrt (x0*x0 + y0*y0) + c1 * sqrt (x1*x1 + y1*y1).
-Proof.
-  intros c0 c1 x0 y0 x1 y1 Hc0 Hc1.
-  pose proof (norm_triple_le c0 c1 0 x0 y0 x1 y1 0 0
-                Hc0 Hc1 (Rle_refl 0)) as H.
-  replace (0*0 + 0*0) with 0 in H by ring.
-  rewrite sqrt_0 in H.
-  assert (Heq : sqrt ((c0*x0 + c1*x1) * (c0*x0 + c1*x1)
-                      + (c0*y0 + c1*y1) * (c0*y0 + c1*y1))
-                = sqrt ((c0*x0 + c1*x1 + 0*0) * (c0*x0 + c1*x1 + 0*0)
-                        + (c0*y0 + c1*y1 + 0*0) * (c0*y0 + c1*y1 + 0*0)))
-    by (f_equal; ring).
-  rewrite Heq. lra.
-Qed.
-
 (* -------------------------------------------------------------------------- *)
 (* Partition of unity and the denominator's weight floor.                     *)
 (* -------------------------------------------------------------------------- *)
@@ -114,11 +91,8 @@ Lemma nurbs2_den_lb : forall w0 w1 w2 wmin t,
   wmin <= nurbs2_den w0 w1 w2 t.
 Proof.
   intros w0 w1 w2 wmin t Ht0 Ht1 Hw0 Hw1 Hw2.
-  unfold nurbs2_den, bern2_0, bern2_1, bern2_2.
-  assert (H0 : 0 <= (1-t)*(1-t)) by nra.
-  assert (H1 : 0 <= 2*(t*(1-t))) by nra.
-  assert (H2 : 0 <= t*t) by nra.
-  nra.
+  unfold nurbs2_den.
+  apply bern2_weighted_den_lb; assumption.
 Qed.
 
 (* -------------------------------------------------------------------------- *)

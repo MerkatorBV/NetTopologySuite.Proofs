@@ -51,6 +51,11 @@ theories/EllipseLength_E.v
 # increment_squeezed E σ stays the Technique-park primitive — Route 1
 # does not construct RInt. Witness: 3×4 quarter sandwich.  3-axiom.
 theories/EllipseSpeedIntegral.v
+# #508-f / #562: Bernstein / rational framework shared by the Bézier and
+# NURBS length lanes.  bern n i, partition of unity, elevate_ctrl at n=2,
+# combo chord bound, bern2_weighted_den_lb.  Lane files re-base here.
+# Does not grow CurveSegment or remint ADR-0004.  3-axiom.
+theories/BernsteinBasis.v
 # #508 Bezier rung 1: the cubic Bezier parameterization (oracle B token)
 # against the CurveLength spec.  Degree-elevation exactness (Bible A1) as an
 # is_curve_length iff, and the control-net Lipschitz upper bound

@@ -14,6 +14,7 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 | P1 | clothoid | `theories/ClothoidLength_unit.v` | `unit_line_discharges_window` — unit-speed straight inhabits the [sd,ed] contract; Fresnel stays clothoid-halley-coq | Qed + Technique park, 3-axiom |
 | P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; knot-span additivity; conditional primitive | Qed, 3-axiom |
 | P2 | arc | `theories/ArcMidSweep.v` | `valid_arc_sweep_nonzero`; `arc_mid_on_circle_param` | Qed, Category C (atan2; removal tracks AngleBetween) |
+| — | framework | `theories/BernsteinBasis.v` | `bern_partition`; `bern_elevate_2` (n=2 instance of `elevate_ctrl`); `bezier3_elevation_pointwise` re-proved through it | Qed, 3-axiom (#562 / 508-f) |
 
 Oracle `B` stays 8-coord cubic.  `red_length_unified_zoo_tests.py` is
 untouched.  No new 64-a r·θ definition.
@@ -42,3 +43,14 @@ uses the exact identity `dist = 2|sin(gap/2)|·σ(mid)`.  Route 1 does
 stays the Technique-park hypothesis.  Witness: any such E on the
 `rx=3, ry=4` quarter lies in `[3π/2, 4π/2]`.  Does not retire epic 508.
 Wrap-up is #566.  Does not remint SpeedIntegral.
+
+## 508-f (#562)
+
+`theories/BernsteinBasis.v` consolidates the Bernstein / rational
+plumbing that lived in `Bezier3Length.v`, `NurbsQuadraticLength.v`,
+and `NurbsGeneralLength.v`.  Public names stay (`bern2_*`, `bern3_*`,
+`bezier3_c0/c1/c2`, `norm_triple_le`, `nurbs2_den_lb`).  Elevation
+exactness is the n=2 instance of `elevate_ctrl` via `bern_elevate_2`.
+Non-negativity is `Rmult_le_pos` / `lra` — Flocq 4.2.1 `nra` cannot
+find a cubic witness (CI death on 48a5c3f). Does not retire epic 508.
+Wrap-up is #566.

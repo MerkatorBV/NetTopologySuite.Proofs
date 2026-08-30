@@ -1527,8 +1527,8 @@ are all instances.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
-| `Bezier3Length.v : bezier3_elevation_length` (+ `bezier3_elevation_pointwise`) | **Degree-elevation exactness (Bible A1):** `bezier3_pt p0 ((p0+2p1)/3) ((2p1+p2)/3) p2 = bezier2_pt p0 p1 p2` pointwise (a field identity — the elevated points divide by 3, so `field`, not `ring`, discharges it), hence `is_curve_length (bezier2 …) a b L ↔ is_curve_length (bezier3 elevated …) a b L` through `is_curve_length_ext` — storing quadratics as elevated cubics changes no metric length `[exact]` | 3 |
-| `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `bezier3_chord_le_combo`, `norm_triple_le`, `scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` — the CRUDE net bound, deliberately not the control-polygon / variation-diminishing length bound (that tight bound is the named next rung) `[exact]` | 3 |
+| `Bezier3Length.v : bezier3_elevation_length` (+ `bezier3_elevation_pointwise`, `BernsteinBasis.v : bern_elevate_2`) | **Degree-elevation exactness (Bible A1):** `bezier3_pt p0 ((p0+2p1)/3) ((2p1+p2)/3) p2 = bezier2_pt p0 p1 p2` pointwise as the n=2 instance of `elevate_ctrl` (`bern_elevate_2` on each coordinate), hence `is_curve_length (bezier2 …) a b L ↔ is_curve_length (bezier3 elevated …) a b L` through `is_curve_length_ext` — storing quadratics as elevated cubics changes no metric length `[exact]` | 3 |
+| `Bezier3Length.v : bezier3_length_upper` (+ `bezier3_length_upper_unit`, `bezier3_chord_le`, `bezier3_chord_le_combo`, `BernsteinBasis.v : norm_triple_le`, `BernsteinBasis.v : scaled_diff_norm`, `CurveLength.v : chain_le`, `curve_length_upper_of_chord_modulus`, `polyline_le_of_chord_modulus`) | **The control-net Lipschitz bound:** the divided-difference factorization + the vector triangle inequality (two `dist_triangle` hops) bound every chord by `3·max(\|d0\|,\|d1\|,\|d2\|)·(t−s)` on `[0,1]`, and the generic chord-modulus telescoping (at `F = 3·net_max·x`) gives `L ≤ 3·bezier3_net_max·(b−a)` for any `is_curve_length` value over `[a,b] ⊆ [0,1]` — the CRUDE net bound, deliberately not the control-polygon / variation-diminishing length bound (that tight bound is the named next rung) `[exact]` | 3 |
 
 ## Issue #508 — clothoid rung 1: arc-length parameterization + the generic primitive engine (`ClothoidLength.v`) <!-- feat:arc-len geom:cs -->
 
@@ -1748,3 +1748,25 @@ epic 508 (that is #566). Does not remint SpeedIntegral.
 |---|---|---|
 | `EllipseSpeedIntegral.v : ellipse_speed_integral_is_curve_length` (+ `ellipse_speed_uc`, `ellipse_chord_rate`, `ellipse_speed_bounds`, `ellipse_chord_eq_speed`) | **Elliptic pack instance (#508/#563, claimId: 508-d, witness: 508-d-elliptic-e):** `increment_squeezed E (ellipse_speed rx ry) a b` implies `is_curve_length (ellipse_param …) a b (E b − E a)`. UC is Hölder 1/2; chords equal `2|sin(gap/2)|·σ(mid)`. No Heine–Cantor, no Coquelicot. Does not retire epic 508 `[exact]` / `[conditional]` | 3 |
 | `EllipseSpeedIntegral.v : ellipse_34_quarter_E_sandwich` (+ `ellipse_E_increment_sandwich`, `ellipse_34_quarter_via_speed_integral`) | **3×4 quarter witness:** any squeezed E-increment on `[0, π/2]` lies in `[3π/2, 4π/2]`; the same E is a metric length through the pack `[exact]` / `[conditional]` | 3 |
+
+## Issue #508 — Bernstein / rational framework (`BernsteinBasis.v`) <!-- feat:arc-len geom:cs -->
+
+The Bézier and NURBS length lanes shared parallel Bernstein plumbing
+(`bern2_*` / `bern3_*` / `bezier3_c*` / `norm_triple_le`).  #562 /
+claimId `508-f` puts that in one file: `bern n i t` via the de
+Casteljau recurrence, `bern_partition` (`sum_f_R0`), non-negativity on
+`[0,1]`, closed-form aliases (unfold-compatible), `elevate_ctrl`, and
+the n=2 instance `bern_elevate_2`.  `bezier3_elevation_pointwise` is
+that instance on each coordinate.  The divided-difference combo
+(`chord_le_of_combo3`) and the rational denominator floor
+(`bern2_weighted_den_lb`) are here too.  Lane files re-base; public
+names do not shrink.  This letter does not retire epic 508 (that is
+#566).  It does not discharge 508-d / 508-e / 508-g.
+
+**NTS RGR Board catalog (#508 children).** `508-f` = #562 / Bernstein–NURBS shared plumbing (witness `508-f-bernstein`). Headline `BernsteinBasis.v : bern_elevate_2`. Instance `Bezier3Length.v : bezier3_elevation_pointwise`. Board pointer stays #562. Does not retire epic 508. `508-a` = #559, `508-b` = #560, and `508-c` = #561 are on `main`. Remaining children `508-d` `508-e` `508-g` `508-h` are not this letter.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `BernsteinBasis.v : bern_partition` (+ `bern_nonneg`, `bern2_partition`, `bern3_partition`) | **Partition of unity:** `sum_f_R0 (bern n · t) n = 1` by the de Casteljau recurrence; closed-form `bern2_*` / `bern3_*` match `bern 2` / `bern 3` `[exact]` | 3 |
+| `BernsteinBasis.v : bern_elevate_2` (+ `elevate_ctrl`, `Bezier3Length.v : bezier3_elevation_pointwise`) | **Degree elevation n=2:** the elevated cubic Bernstein combo equals the quadratic on each coordinate; `bezier3_elevation_pointwise` is that instance (Bible A1), not a fresh field identity `[exact]` | 3 |
+| `BernsteinBasis.v : chord_le_of_combo3` (+ `norm_triple_le`, `norm_pair_le`, `scaled_diff_norm`, `bern2_weighted_den_lb`) | **Shared combo / rational floor:** `|Δ| = ds·|Σ c_i v_i| ≤ ds·Σ c_i |v_i|`; quadratic weighted denominator ≥ `wmin` from partition of unity `[exact]` | 3 |
