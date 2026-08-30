@@ -328,9 +328,11 @@ static class Program
         // answers DEGENERATE for collinear controls. Semantics note: the
         // lane models a RING (the chain's first/last segments are always
         // adjacent there), so open-chain vectors appear only where that
-        // difference cannot bite; closed values map exactly. The remaining
-        // fail-closed contract row is the degenerate closed segment, which
-        // the oracle itself declines (DEGENERATE).
+        // difference cannot bite; closed values map exactly. Fail-closed
+        // contract rows: the degenerate closed segment (the oracle itself
+        // declines it, DEGENERATE), the flat-arc conditioning guard, and —
+        // since the rung-4 review — the tangency refusal band (exact
+        // tangencies the exact-rational oracle decides but doubles cannot).
         foreach (var v in Cases.RingSimple)
         {
             string stdin = $"RING_SIMPLE\n{v.Segs.Length}\n" + string.Join("\n", v.Segs) + "\n";
@@ -589,9 +591,20 @@ static class Cases
             gf => Cs(gf, (0, 0), (1, 1), (2, 2))),
         ("single_degenerate_closed", new[] { "A 1 0 0 1 1 0" }, "DEGENERATE", null,
             gf => Cs(gf, (1, 0), (0, 1), (1, 0))),
-        // Flipped by 615-h rung 2 (#630): multi-segment CS is decided.
-        ("two_arcs_tangent_at_vertex", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0" }, "SIMPLE", true,
+        // Flipped TWICE: rung 2 (#630) decided it, the rung-4 review
+        // fail-closed it again — the two circles are exactly tangent at the
+        // shared vertex, and inside the tangency band a touch cannot be
+        // told from a close crossing pair at double precision (wrong
+        // checked verdicts were demonstrated both ways). The exact-rational
+        // oracle decides SIMPLE; NTS refuses until #641's exact arithmetic.
+        ("two_arcs_tangent_at_vertex", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0" }, "SIMPLE", null,
             gf => Cs(gf, (0, 0), (1, 1), (2, 0), (3, -1), (4, 0))),
+        // Transversal replacement pin: both connecting vertices are genuine
+        // crossings (discriminants far above the band), so a multi-arc
+        // chain still gets a checked verdict.
+        ("two_arcs_transversal_at_vertex",
+            new[] { "A 0 0 1 1 2 0", "A 2 0 2.7071067811865475 -0.2928932188134525 3 -1" }, "SIMPLE", true,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (2.7071067811865475, -0.2928932188134525), (3, -1))),
         // Closed values map exactly onto the lane's ring semantics.
         ("full_circle_idiom_ring", new[] { "A 0 0 1 1 2 0", "A 2 0 1 -1 0 0" }, "SIMPLE", true,
             gf => Cs(gf, (0, 0), (1, 1), (2, 0), (1, -1), (0, 0))),
@@ -610,7 +623,12 @@ static class Cases
                 Cs(gf, (0, 0), (1, 1), (2, 0)),
                 gf.CreateLineString(new[] { new Coordinate(2, 0), new Coordinate(0, 0) }),
             }, gf)),
-        ("cc_line_tangent_arc", new[] { "A 0 0 1 1 2 0", "C 2 0 2 1", "C 2 1 0 1" }, "NOT_SIMPLE", false,
+        // Rung-4 review flip: both refuting contacts here are exact LINE
+        // tangencies (x = 2 at (2,0), y = 1 at (1,1)) — inside the
+        // circle-chord tangency band, where the old definite false rested
+        // on exact-zero discriminants. The exact-rational oracle still
+        // decides NOT_SIMPLE; NTS refuses until #641.
+        ("cc_line_tangent_arc", new[] { "A 0 0 1 1 2 0", "C 2 0 2 1", "C 2 1 0 1" }, "NOT_SIMPLE", null,
             gf => new CompoundCurve(new Curve[]
             {
                 Cs(gf, (0, 0), (1, 1), (2, 0)),
@@ -655,7 +673,9 @@ static class Cases
             gf => new CurvePolygon(Cs(gf, (0, 0), (2, 2), (4, 0), (2, -2), (0, 0)),
                 new Curve[] { Cs(gf, (3, 1), (5, 3), (7, 1), (5, -1), (3, 1)) }, gf)),
         // Internal tangency at (4,0): the oracle reports the boundary meet;
-        // ONE contact passes Desc 11, and Desc 12-14 stay fail-closed.
+        // NTS fail-closes in the kernel's tangency refusal band (rung-4
+        // review) — and even past it, ONE contact passes Desc 11 with
+        // Desc 12-14 still pending. Fail-closed either way (#641).
         ("cp_hole_tangent_internal",
             new[] { "A 0 0 2 2 4 0", "A 4 0 2 -2 0 0" },
             new[] { "A 2 0 3 1 4 0", "A 4 0 3 -1 2 0" },
