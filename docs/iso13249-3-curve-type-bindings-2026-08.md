@@ -113,9 +113,9 @@ per-segment start≠end distinctness (Desc 6): `CIRCULARSTRING (0 0, 1 1, 0 0)`
 constructs — deliberately, per ADR-0005's lenient intake. ST_IsValid ("tests
 if … well formed", §4.2.1.1 item 9) is the designated checker, and since
 `359b334` (ticket `615-g`) it answers a definite `false` for exactly this
-Desc-6 violation; values passing every rung-1 rule stay fail-closed (§6.2). No bulge/centre-angle representation exists
-on the branch (untracked gap; SQL-level API, low priority for a geometry
-library).
+Desc-6 violation; values passing every rung-1 rule stay fail-closed (§6.2).
+No bulge/centre-angle representation exists on the branch (untracked gap;
+SQL-level API, low priority for a geometry library).
 
 ### 2.2 ST_CompoundCurve (§4.2.13, §7.10.1)
 
