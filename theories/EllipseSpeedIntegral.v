@@ -63,6 +63,9 @@
    After [set (gap := t-s)] the chord-rate goal has [ss * gap],
    not [2 * xv * ss] (7d2c5cc L489). Prove [2 * xv = gap] with
    [Rinv_r]; do not [field] that scale.
+   [Rmult_le_compat_l] on [2 * M * (xv³/6)] unifies [(2*M)] with [2]
+   (2015aaa L513). Parenthesize [2 * (M * …)]; scale [xv=gap/2]
+   with [Rinv_mult_distr], not [field].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -509,17 +512,34 @@ Proof.
     rewrite Rabs_mult. rewrite (Rabs_right sm) by (apply Rle_ge; exact Hsm0).
     rewrite Rabs_left1 by lra.
     replace (- (sin xv - xv)) with (xv - sin xv) by ring.
-    apply (Rle_trans _ (2 * M * (xv * xv * xv / 6))).
+    apply (Rle_trans _ (2 * (M * (xv * xv * xv / 6)))).
     - apply Rmult_le_compat_l; [lra |].
       apply Rmult_le_compat; [exact Hsm0 | lra | exact HsmM | exact Hslack].
-    - unfold xv, gap, Rdiv. field. }
+    - apply Req_le.
+      rewrite <- H2xv.
+      unfold Rdiv.
+      replace ((2 * xv) * (2 * xv) * (2 * xv))
+        with (8 * (xv * xv * xv)) by ring.
+      replace (2 * (M * (xv * xv * xv * / 6)))
+        with ((2 * / 6) * (M * (xv * xv * xv))) by ring.
+      replace (M * (8 * (xv * xv * xv)) * / 24)
+        with ((8 * / 24) * (M * (xv * xv * xv))) by ring.
+      replace (8 * / 24) with (2 * / 6).
+      2:{ replace 24 with (4 * 6) by ring.
+          rewrite Rinv_mult_distr; [| lra | lra].
+          replace 8 with (2 * 4) by ring.
+          rewrite <- Rmult_assoc.
+          rewrite (Rmult_assoc 2 4 (/ 4)).
+          rewrite Rinv_r by lra.
+          rewrite Rmult_1_r. reflexivity. }
+      reflexivity. }
   assert (Harm2 : Rabs (2 * xv * sm - 2 * xv * ss)
                   <= gap * sqrt (K * (gap / 2))).
   { replace (2 * xv * sm - 2 * xv * ss) with (2 * (xv * (sm - ss))) by ring.
     rewrite Rabs_mult. rewrite (Rabs_right 2) by lra.
     rewrite Rabs_mult. rewrite (Rabs_right xv) by lra.
     replace (2 * (xv * Rabs (sm - ss))) with (gap * Rabs (sm - ss))
-      by (unfold xv, gap, Rdiv; field).
+      by (rewrite <- H2xv; ring).
     apply Rmult_le_compat_l; [exact Hgap0 |].
     unfold sm, ss, K, mid.
     replace (Rabs (ellipse_speed rx ry mid - ellipse_speed rx ry s))
