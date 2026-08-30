@@ -19,6 +19,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra Bool.
+From NTS.Proofs Require Import Real.
 From NTS.Proofs Require Import DE9IM Distance Orientation RelateMatrixTriangle
   GeneralTriangleSeparation
   RelateNGCore RelateNGDisjoint RelateNGTouchVertex.
