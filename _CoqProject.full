@@ -2787,9 +2787,14 @@ theories/RelateNGDisjointCells.v
 # #576 / 522-h (contains split): nine gtri cells of OGC 212FF1FF2 on
 # the #567 contains pair.  Names aa_matrix_contains_ogc; does not remint
 # aa_matrix_contains (shared 2FFFFFFF2 pin).  Qex: classifier IB is
-# empty while IB is dim-1.  Pointer remint is later.  Touch-edge and
-# overlap remain on #576.
+# empty while IB is dim-1.  Pointer remint is later.
 theories/RelateNGContainsCells.v
+# #576 / 522-h (touch-edge split): nine gtri cells of OGC FF2F11212 on
+# the frozen shared-edge pair.  Names aa_matrix_touch_edge_ogc; does
+# not remint aa_matrix_touch_vertical (shared FFFF1FFF2 pin).  Qex:
+# classifier IE is empty while IE is dim-2.  Pointer remint is later.
+# Overlap remains on #576.
+theories/RelateNGTouchEdgeCells.v
 # #575 / 522-f: UNSUPPORTED wire token + triangle fill pins.
 # Decline encodes as RWR_Unsupported (not a 9-cell).  Does not remint
 # aa_matrix_disjoint / triangle_pair_fill TPR_Disjoint.
