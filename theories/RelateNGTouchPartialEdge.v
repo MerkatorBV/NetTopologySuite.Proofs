@@ -28,7 +28,7 @@
 
 From Stdlib Require Import Reals Lra Bool.
 From NTS.Proofs Require Import Distance Orientation RelateMatrixTriangle
-  RelateNGCore RelateNGComplete.
+  RelateNGCore RelateNGDisjoint RelateNGComplete.
 Local Open Scope R_scope.
 
 Lemma hard_disjoint_no_partial_edge :
