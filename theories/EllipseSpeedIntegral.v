@@ -85,6 +85,8 @@
    [(x*gap)*/gap]. Use [rmul_cancel_rinv] / [rmul_cancel_linv].
    [{] after [replace] solves the continuation, not [A=B]
    (1ed0ee7 L633). Equality proofs must be [2:{ }] or [by].
+   The witness is [B = A] (90ac1a1 L644): [apply rmul_cancel_rinv]
+   sees [eps*/2 = eps*/2*gap*/gap]. [symmetry] before [apply].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -641,10 +643,12 @@ Proof.
           rewrite Rmult_1_l.
           reflexivity. }
         replace (eps / 2 * gap * / gap) with (eps / 2)
-          by (unfold Rdiv; apply (rmul_cancel_rinv (eps * / 2) gap Hgnz)).
+          by (unfold Rdiv; symmetry;
+              apply (rmul_cancel_rinv (eps * / 2) gap Hgnz)).
         apply (Rmult_le_reg_r 24); [lra |].
         replace (M * (gap * gap) / 24 * 24) with (M * (gap * gap))
-          by (unfold Rdiv; apply (rmul_cancel_linv (M * (gap * gap)) 24); lra).
+          by (unfold Rdiv; symmetry;
+              apply (rmul_cancel_linv (M * (gap * gap)) 24); lra).
         replace (eps / 2 * 24) with (12 * eps).
         2:{ unfold Rdiv.
           replace ((eps * / 2) * 24) with (eps * (/ 2 * 24)) by ring.
@@ -676,7 +680,7 @@ Proof.
           apply Rmult_le_compat_l; [apply Rmult_le_pos; lra |].
           unfold Rdiv. apply (Rmult_le_reg_r (M + 1)); [lra |].
           replace (M * / (M + 1) * (M + 1)) with M
-            by (apply (rmul_cancel_linv M (M + 1)); lra).
+            by (symmetry; apply (rmul_cancel_linv M (M + 1)); lra).
           lra. }
         lra.
       * (* gap √(K gap/2) ≤ (eps/2) gap *)
@@ -686,10 +690,12 @@ Proof.
         apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; lra |].
         replace (gap * sqrt (K * (gap / 2)) * / gap)
           with (sqrt (K * (gap / 2))).
-        2:{ rewrite (Rmult_comm gap (sqrt (K * (gap / 2)))).
+        2:{ symmetry.
+          rewrite (Rmult_comm gap (sqrt (K * (gap / 2)))).
           apply (rmul_cancel_rinv (sqrt (K * (gap / 2))) gap Hgnz). }
         replace (eps / 2 * gap * / gap) with (eps / 2)
-          by (unfold Rdiv; apply (rmul_cancel_rinv (eps * / 2) gap Hgnz)).
+          by (unfold Rdiv; symmetry;
+              apply (rmul_cancel_rinv (eps * / 2) gap Hgnz)).
         apply sqrt_le_1.
         -- apply Rmult_le_pos; [exact HK |].
            unfold Rdiv. apply Rmult_le_pos; [exact Hgap0 |].
@@ -726,7 +732,7 @@ Proof.
                    apply Rlt_le, Rinv_0_lt_compat. lra. }
                  unfold Rdiv. apply (Rmult_le_reg_r (K + 1)); [lra |].
                  replace (K * / (K + 1) * (K + 1)) with K
-                   by (apply (rmul_cancel_linv K (K + 1)); lra).
+                   by (symmetry; apply (rmul_cancel_linv K (K + 1)); lra).
                  lra.
               ** unfold Rdiv.
                  replace (eps / 2 * (eps / 2)) with (eps * eps / 4).
@@ -739,7 +745,7 @@ Proof.
                    ring. }
                  apply (Rmult_le_reg_r 8); [lra |].
                  replace (eps * eps * / 8 * 8) with (eps * eps)
-                   by (apply (rmul_cancel_linv (eps * eps) 8); lra).
+                   by (symmetry; apply (rmul_cancel_linv (eps * eps) 8); lra).
                  replace (eps * eps * / 4 * 8) with (2 * (eps * eps)).
                  2:{ replace ((eps * eps * / 4) * 8)
                      with (eps * eps * (/ 4 * 8)) by ring.
