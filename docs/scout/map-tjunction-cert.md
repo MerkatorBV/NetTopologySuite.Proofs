@@ -1,4 +1,4 @@
-# Map — T-junction / partial-edge-kiss certificate
+# Map — T-junction / partial-edge sliver certificate
 
 A wayfinder map. Charted 2026-08-30. This is **not** a GitHub child, **not**
 a remint of `522-j` / `522-m`, and **not** the line×line noding T-junction
@@ -62,9 +62,10 @@ because no B-vertex is strictly interior to A (the #570 pure-lens hole).
 The detector names the vertex-on-open-edge *configuration*. It does not
 establish `triangles_partial_overlap` and it does not establish
 interiors-disjoint touch. That is why fill stays `im_unsupported`.
-A one-sided dim-0 T is leftover `Ⅲ`
+An exterior-side one-sided T is leftover `Ⅲ`
 (`RelateNGComplete.v : onesided_t_pair_inhabits`), not this leftover.
-The interior-side stem is leftover `Ⅳ` (named only).
+The interior-side stem is leftover `Ⅳ` (named only). The xor is
+`Ⅲ∨Ⅳ` with one exterior witness.
 
 ## Why every wired detector misses
 
@@ -74,7 +75,7 @@ Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 → `touch_onesided_t_b` → `TPR_TouchOnesided` → `TPR_Unsupported`.
 Headline for leftover `Ⅰ`:
 `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
-Leftover `Ⅲ` detector:
+Leftover `Ⅲ` xor (`Ⅲ∨Ⅳ`, one exterior witness):
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`.
 
 | Detector | Why false on this pair |
@@ -100,11 +101,13 @@ No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predica
 | Line×line int×bnd | `RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`. #67 / S15d. IB dim-0. | steal as the triangle certificate |
 | Full shared edge `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | Frozen `TPR_TouchEdge` pin. | widen `shares_edge_b` to absorb the kiss |
 
-A **one-sided / non-collinear** vertex-in-open-edge T (BB dim 0) is
-leftover `Ⅲ` (`RelateNGComplete.v : onesided_t_pair_inhabits`;
+An **exterior-side one-sided T** is leftover `Ⅲ`
+(`RelateNGComplete.v : onesided_t_pair_inhabits`;
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`;
-exterior-side stem; `TPR_TouchOnesided`; fill still `im_unsupported`).
-The interior-side stem is leftover `Ⅳ` (named only). Not this leftover.
+`TPR_TouchOnesided`; fill still `im_unsupported`). Contact is
+collinear with the supporting edge. II empty is compiled; BB dim 0
+is not. The xor is `Ⅲ∨Ⅳ` with one exterior witness. The
+interior-side stem is leftover `Ⅳ` (named only). Not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -156,10 +159,10 @@ writes the detector.
 - **Fill.** The compiled pair is sliver overlap (II = 2, BB = 1). The
   designated TouchEdge pin is still `FFFF1FFF2`. Do not remint this
   constructor to a Touches fill. Remint is a different leftover.
-- **Family width.** This spec is the compiled collinear kiss. A dim-0
-  exterior-side T is leftover `Ⅲ`
+- **Family width.** This spec is the compiled mutual sliver. An
+  exterior-side one-sided T is leftover `Ⅲ`
   (`RelateNGComplete.v : onesided_t_pair_inhabits`). The interior-side
-  stem is leftover `Ⅳ` (named only).
+  stem is leftover `Ⅳ` (named only). The xor is `Ⅲ∨Ⅳ`.
 
 ## Frontier
 
@@ -169,7 +172,7 @@ Fill is still `im_unsupported`. Completeness stays false on `Ⅱ`.
 ```
 #577 finding ── triangle_pair_regime_incomplete_tjunction ── historical
 
-Ⅰ ── T-junction / partial-edge kiss ── bar 1 ── TPR_TouchPartialEdge
+Ⅰ ── mutual vertex-in-open-edge sliver ── bar 1 ── TPR_TouchPartialEdge
      pair (0,0)(2,0)(0,1) vs (1,0)(3,0)(2,1)
      decline golden moved to obtuse-at-v
 

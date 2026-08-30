@@ -27,10 +27,11 @@
    T-junction in `RelateNGTouchPartialEdge`.  Do not invent the
    obtuse-at-v certificate in this file.     Leftover `Ⅲ` is compiled
    below as an exterior-side stem (`onesided_t_pair_inhabits`); the
-   classifier emits `TPR_TouchOnesided` (ticket 22).  Fill stays
-   `im_unsupported`.  Leftover `Ⅳ` is the interior-side stem
-   (named only; the xor does not distinguish it from leftover `Ⅲ`).
-   Not an ADR-0004 remint.
+   xor emits `TPR_TouchOnesided` (ticket 22) — a Ⅲ∨Ⅳ configuration
+   class with one exterior witness, not a leftover-Ⅲ detector.  Fill
+   stays `im_unsupported`.  Leftover `Ⅳ` is the interior-side stem
+   (named only; the xor would fire if coords existed). Completeness
+   still Ⅱ. Not an ADR-0004 remint.
    `522-j` is the existing #577 ticket id.  The filtered-completeness
    retry (`522-m`) lives below: excluding the T-junction 12-tuple,
    completeness is still FALSE (obtuse-at-v).
@@ -447,15 +448,16 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Leftover Ⅲ — one-sided / non-collinear vertex-in-open-edge T.           *)
+(* Leftover Ⅲ — exterior-side one-sided T.                                  *)
 (*                                                                            *)
 (* Exterior-side stem (ticket 21).  A = (0,0)(2,0)(0,1),                      *)
 (* B = (1,0)(1/2,-1)(3/2,-1).  Both CCW.  B-vertex (1,0) sits in the open     *)
-(* base of A.  Not mutual (`touch_partial_edge_b` = false).  No shared        *)
-(* vertex.  Interiors opposite across y = 0, so II is empty (BB dim 0).       *)
-(* Classifier emits TPR_TouchOnesided (ticket 22).  Fill stays                 *)
-(* im_unsupported.  Detector lives in RelateNGTouchOnesided.  Do not          *)
-(* remint leftover Ⅰ.  Completeness stays false on leftover Ⅱ.               *)
+(* base of A (collinear with y = 0).  Not mutual (`touch_partial_edge_b`      *)
+(* = false).  No shared vertex.  Interiors opposite across y = 0, so II      *)
+(* is empty (`onesided_t_ii_empty`).  There is no `onesided_t_bb_dim0`.       *)
+(* Xor emits TPR_TouchOnesided (ticket 22) — Ⅲ∨Ⅳ with one exterior         *)
+(* witness, not a leftover-Ⅲ detector.  Fill stays im_unsupported.           *)
+(* Do not remint leftover Ⅰ.  Completeness stays false on leftover Ⅱ.       *)
 (* Leftover Ⅳ is the interior-side stem (named only).                         *)
 (* -------------------------------------------------------------------------- *)
 
