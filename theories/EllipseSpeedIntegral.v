@@ -51,6 +51,9 @@
    Rabs-sum arm — that makes the leftover [(t-s)*(1+1)]
    vs [2*(t-s)] (a299db8 L296, "not a valid ring equation").
    Prove [<= 2] via [1+1] then [replace (1+1) with 2].
+   [apply Req_le] on [1+1 <= ?b] instantiates [?b] as [1+1]
+   (974266b L302, leftover [(t-s)*(IPR 1 + IPR 1)]). Assert
+   [Rabs (sin t + sin s) <= 2] with a concrete conclusion.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -282,20 +285,20 @@ Proof.
   replace (sin t * sin t - sin s * sin s)
     with ((sin t - sin s) * (sin t + sin s)) by ring.
   rewrite Rabs_mult.
+  assert (Hsum2 : Rabs (sin t + sin s) <= 2).
+  { eapply Rle_trans; [apply Rabs_triang |].
+    pose proof (SIN_bound t) as HtB.
+    pose proof (SIN_bound s) as HsB.
+    apply (Rle_trans (Rabs (sin t) + Rabs (sin s)) (1 + 1) 2).
+    - apply Rplus_le_compat.
+      + apply Rabs_le. exact HtB.
+      + apply Rabs_le. exact HsB.
+    - apply Req_le. replace (1 + 1) with 2 by ring. reflexivity. }
   eapply Rle_trans.
   - apply Rmult_le_compat_l; [apply Rabs_pos |].
     apply Rmult_le_compat; [apply Rabs_pos | apply Rabs_pos | |].
     + apply sin_abs_lipschitz.
-    + eapply Rle_trans; [apply Rabs_triang |].
-      pose proof (SIN_bound t) as HtB.
-      pose proof (SIN_bound s) as HsB.
-      eapply Rle_trans.
-      * apply Rplus_le_compat.
-        -- apply Rabs_le. exact HtB.
-        -- apply Rabs_le. exact HsB.
-      * apply Req_le.
-        replace (1 + 1) with 2 by ring.
-        reflexivity.
+    + exact Hsum2.
   - rewrite (Rabs_right (t - s)) by lra.
     replace (Rabs (rx * rx - ry * ry) * ((t - s) * 2))
       with (2 * Rabs (rx * rx - ry * ry) * (t - s)) by ring.
