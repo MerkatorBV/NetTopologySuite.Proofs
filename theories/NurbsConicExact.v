@@ -283,11 +283,11 @@ Definition golden_numy (t : R) : R :=
 (* Cancel the weight √2/2. The only denominator is 2. *)
 Lemma twice_half_sqrt2 : forall x,
   2 * x * (sqrt 2 / 2) = x * sqrt 2.
-Proof. intro x. field. lra. Qed.
+Proof. intro x. field; try lra. Qed.
 
 Lemma twice_half_sqrt2_1 : forall x,
   2 * x * (sqrt 2 / 2 * 1) = x * sqrt 2.
-Proof. intro x. field. lra. Qed.
+Proof. intro x. field; try lra. Qed.
 
 Lemma golden_numx_poly : forall t,
   golden_numx t = (1 - t) * (1 - t) + t * (1 - t) * sqrt 2.
