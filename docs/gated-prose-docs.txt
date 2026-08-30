@@ -6,5 +6,6 @@ docs/relate-ng-status.md
 docs/scout/522-closing-summary.md
 docs/scout/map-522-leftovers.md
 docs/scout/map-tjunction-cert.md
+docs/scout/map-onesided-t-cert.md
 docs/scout/map-523.md
 docs/scout/spec-523.md

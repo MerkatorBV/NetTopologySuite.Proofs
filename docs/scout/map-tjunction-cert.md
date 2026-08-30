@@ -6,9 +6,10 @@ a remint of `522-j` / `522-m`, and **not** the line×line noding T-junction
 
 > **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
 > historical. Do **not** mint `522-n`. Leftover ids are repeated `Ⅰ`
-> marks. This leftover is **`Ⅰ`**. Obtuse-at-v is **`ⅠⅠ`**. Do not
+> marks. This leftover is **`Ⅰ`**. Obtuse-at-v is **`ⅠⅠ`**. The
+> one-sided / non-collinear vertex-in-open-edge T is **`ⅠⅠⅠ`**. Do not
 > swap them. Do not remint ADR-0004.
-> This map does not mint a GitHub child.
+> This map does not mint a GitHub child. `ⅠⅠⅠⅠ` is unused.
 
 topics: relate
 claimId: Ⅰ
@@ -82,10 +83,11 @@ No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predica
 | `(0,0)(1,0)(0,1)` vs `(2,0)(2,1)(3,0)` | RelatePrepared decline 12-tuple. B is **CW** (`gdbl < 0`). Domain-boundary, not the kiss. | use as the T-junction spec |
 | Line×line int×bnd | `RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`. #67 / S15d. IB dim-0. | steal as the triangle certificate |
 | Full shared edge `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | Frozen `TPR_TouchEdge` pin. | widen `shares_edge_b` to absorb the kiss |
+| (none compiled) | Leftover `ⅠⅠⅠ` one-sided / non-collinear vertex-in-open-edge T. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md). | invent a 12-tuple / steal `ⅠⅠⅠ` |
 
-A **non-collinear** vertex-in-open-edge T (BB dim 0) is not compiled.
-If a later letter wants that family, it is a **third** leftover, not this
-one.
+A **non-collinear** vertex-in-open-edge T (BB dim 0, no shared vertex)
+is leftover **`ⅠⅠⅠ`**. Chart: [`map-onesided-t-cert.md`](map-onesided-t-cert.md).
+**No compiled pair.** It is not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -112,8 +114,10 @@ Park: **research** (ADR-0002). The finding is compiled; the detector is not.
 5. **Classifier order.** After `touch_edge_b` (full shared edge wins).
    Do not reorder the four wired certificates.
 6. **Completeness stays false.** Wiring this pair does not prove
-   CCW-completeness. Obtuse-at-v remains. Do not claim
-   `triangle_pair_regime_ccw_incomplete` is obsolete.
+   CCW-completeness. Obtuse-at-v remains. Leftover `ⅠⅠⅠ` has no
+   compiled pair. Do not claim
+   `triangle_pair_regime_ccw_incomplete` is obsolete. Do not steal
+   leftover `ⅠⅠⅠ`.
 
 ## Decisions so far
 
@@ -123,19 +127,25 @@ Park: **research** (ADR-0002). The finding is compiled; the detector is not.
 - Certificates not invented in those letters.
 - Parent leftovers chart: #598 / `docs/scout/map-522-leftovers.md` (on `main`).
 - Leftover ids are Roman numerals. This leftover is `Ⅰ`. `522-n` is
-  not minted.
+  not minted. Leftover `ⅠⅠⅠ` is the one-sided / non-collinear
+  vertex-in-open-edge T (`map-onesided-t-cert.md`; no compiled pair).
+  `ⅠⅠⅠⅠ` is unused.
 
 ## Fog
 
 - **`ⅠⅠ`.** Obtuse-at-v. Finding
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Do not invent that detector in leftover `Ⅰ`.
+- **`ⅠⅠⅠ`.** One-sided / non-collinear vertex-in-open-edge T. Chart:
+  [`map-onesided-t-cert.md`](map-onesided-t-cert.md). No compiled pair.
+  Do not invent a 12-tuple or that detector here.
 - **Constructor vs reuse `TPR_TouchEdge`.** Technique, not this map.
 - **Fill.** Geometry of the kiss is areal Touches with BB dim 1. The
   designated TouchEdge pin is still `FFFF1FFF2`. Remint is a different
   leftover.
 - **Family width.** This spec is the compiled collinear kiss. A dim-0
-  T is unnamed and separate.
+  T (one-sided / non-collinear, no shared vertex) is leftover `ⅠⅠⅠ`
+  ([`map-onesided-t-cert.md`](map-onesided-t-cert.md)). No compiled pair.
 
 ## Frontier
 
@@ -154,5 +164,6 @@ not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
-ⅠⅠⅠ ──── unused
+ⅠⅠⅠ ──── one-sided / non-collinear vertex-in-open-edge T ── map-onesided-t-cert.md
+ⅠⅠⅠⅠ ── unused
 ```
