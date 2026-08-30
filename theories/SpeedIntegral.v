@@ -217,6 +217,138 @@ Proof.
   - rewrite Rabs_left in H by lra. lra.
 Qed.
 
+(* |x − y| = y − x when x ≤ y.  Pass the two sides explicitly —
+   keyed unification after `unfold circle_speed` cannot find
+   `Rabs (dist … − r·(t−s))` against `(fun _ => r) s`. *)
+Lemma rabs_of_deficit : forall x y, x <= y -> Rabs (x - y) = y - x.
+Proof.
+  intros x y Hxy.
+  rewrite Rabs_minus_sym.
+  apply Rabs_right.
+  lra.
+Qed.
+
+(* After `rewrite S_INR` the mesh end is `t0 + h + INR k · h`. *)
+Lemma plus_nonneg_tail_le : forall t0 h (k : nat) b,
+  0 <= h ->
+  t0 + h + INR k * h <= b ->
+  t0 + h <= b.
+Proof.
+  intros t0 h k b Hh Htop.
+  apply (Rle_trans (t0 + h) (t0 + h + INR k * h) b); [| exact Htop].
+  apply Rplus_le_compat_l.
+  apply Rmult_le_pos; [apply pos_INR | exact Hh].
+Qed.
+
+Lemma twenty_four_eps_pos : forall eps, 0 < eps -> 0 < 24 * eps.
+Proof.
+  intros eps Heps.
+  apply Rmult_lt_0_compat; lra.
+Qed.
+
+Lemma pos_lt_sq : forall x y, 0 <= x -> x < y -> x * x < y * y.
+Proof.
+  intros x y Hx Hxy.
+  assert (Hy : 0 < y) by (apply Rle_lt_trans with x; [exact Hx | exact Hxy]).
+  apply Rle_lt_trans with (r2 := x * y).
+  - apply Rmult_le_compat_l; [exact Hx | apply Rlt_le; exact Hxy].
+  - apply Rmult_lt_compat_r; [exact Hy | exact Hxy].
+Qed.
+
+Lemma rmin_sqrt_sq_bound : forall a b,
+  0 <= a ->
+  0 <= b ->
+  Rmin a (sqrt b) * Rmin a (sqrt b) <= b.
+Proof.
+  intros a b Ha Hb.
+  pose proof (Rmin_r a (sqrt b)) as Hm.
+  assert (Hsqrt : 0 <= sqrt b) by apply sqrt_pos.
+  assert (Hmin0 : 0 <= Rmin a (sqrt b))
+    by (apply Rmin_glb; [exact Ha | exact Hsqrt]).
+  apply Rsqr_incr_1 in Hm; [| exact Hmin0 | exact Hsqrt].
+  unfold Rsqr in Hm.
+  rewrite sqrt_sqrt in Hm by exact Hb.
+  exact Hm.
+Qed.
+
+(* Taylor remainder of the circle chord: r·gap − 2r·sin(gap/2) ≤ r·gap³/24
+   on 0 ≤ gap/2 ≤ 4.  Isolated so circle_chord_rate does not nra. *)
+Lemma circle_chord_taylor_slack : forall r gap,
+  0 <= r ->
+  0 <= gap ->
+  gap / 2 <= 4 ->
+  r * gap - 2 * r * sin (gap / 2)
+  <= r * (gap * gap * gap) / 24.
+Proof.
+  intros r gap Hr Hg Hx4.
+  assert (Hx : 0 <= gap / 2) by lra.
+  pose proof (sin_lower_taylor (gap / 2) Hx Hx4) as Htaylor.
+  apply Rle_trans with
+    (r2 := r * gap - 2 * r * (gap / 2 - (gap / 2) ^ 3 / 6)).
+  - apply Rplus_le_compat_l.
+    apply Ropp_le_contravar.
+    apply Rmult_le_compat_l; [lra | exact Htaylor].
+  - apply Req_le.
+    replace ((gap / 2) ^ 3) with (gap * gap * gap / 8)
+      by (unfold Rdiv; simpl; field).
+    unfold Rdiv. field.
+Qed.
+
+Lemma cubic_over_gap : forall r gap,
+  gap <> 0 ->
+  r * (gap * gap * gap) / 24 * / gap = r * (gap * gap) / 24.
+Proof.
+  intros r gap Hnz.
+  unfold Rdiv. field. exact Hnz.
+Qed.
+
+Lemma eps_gap_cancel : forall eps gap,
+  gap <> 0 ->
+  eps * gap * / gap = eps.
+Proof.
+  intros eps gap Hnz. field. exact Hnz.
+Qed.
+
+Lemma r_gap2_times_24 : forall r gap,
+  r * (gap * gap) / 24 * 24 = r * (gap * gap).
+Proof.
+  intros r gap. unfold Rdiv. field.
+Qed.
+
+Lemma r_gap2_over_r : forall r gap,
+  r <> 0 ->
+  r * (gap * gap) * / r = gap * gap.
+Proof.
+  intros r gap Hnz. field. exact Hnz.
+Qed.
+
+Lemma cubic_slack_le_eps_gap : forall r gap delta eps,
+  0 < r ->
+  0 <= gap ->
+  gap < delta ->
+  delta * delta <= 24 * eps / r ->
+  r * (gap * gap * gap) / 24 <= eps * gap.
+Proof.
+  intros r gap delta eps Hr Hg Hgd Hbound.
+  destruct (Req_dec gap 0) as [Hg0 | Hgnz].
+  - rewrite Hg0.
+    replace (r * (0 * 0 * 0) / 24) with 0 by (unfold Rdiv; ring).
+    rewrite Rmult_0_r. apply Rle_refl.
+  - assert (Hgappos : 0 < gap) by lra.
+    apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; exact Hgappos |].
+    rewrite (cubic_over_gap r gap Hgnz).
+    rewrite (eps_gap_cancel eps gap Hgnz).
+    apply (Rmult_le_reg_r 24); [lra |].
+    rewrite r_gap2_times_24.
+    replace (eps * 24) with (24 * eps) by ring.
+    apply (Rmult_le_reg_r (/ r)); [apply Rinv_0_lt_compat; exact Hr |].
+    rewrite (r_gap2_over_r r gap); [| lra].
+    replace (24 * eps * / r) with (24 * eps / r) by (unfold Rdiv; ring).
+    apply Rlt_le.
+    eapply Rlt_le_trans; [| exact Hbound].
+    apply pos_lt_sq; [exact Hg | exact Hgd].
+Qed.
+
 Lemma increment_near_left :
   forall F σ a b eps d s t,
     increment_squeezed F σ a b ->
@@ -259,7 +391,7 @@ Proof.
     rewrite S_INR in Htop.
     replace (t0 + (INR k + 1) * h) with (t0 + h + INR k * h) in Htop by ring.
     assert (Hth : t0 + h <= b).
-    { pose proof (pos_INR k). nra. }
+    { apply (plus_nonneg_tail_le t0 h k b); [lra | exact Htop]. }
     assert (Ha1 : a <= t0 + h) by lra.
     specialize (IH (t0 + h) Ha1 Htop).
     rewrite S_INR.
@@ -295,7 +427,7 @@ Proof.
     rewrite S_INR in Htop.
     replace (t0 + (INR k + 1) * h) with (t0 + h + INR k * h) in Htop by ring.
     assert (Hth : t0 + h <= b).
-    { pose proof (pos_INR k). nra. }
+    { apply (plus_nonneg_tail_le t0 h k b); [lra | exact Htop]. }
     assert (Ha1 : a <= t0 + h) by lra.
     specialize (IH (t0 + h) Ha1 Htop).
     rewrite S_INR.
@@ -501,85 +633,51 @@ Proof.
   destruct (Req_dec r 0) as [Hr0 | Hrnz].
   - exists 1. split; [lra |].
     intros s t _ Hst _ _.
-    subst r. unfold circle_speed.
+    subst r.
+    change (circle_speed 0 s) with 0.
     pose proof (circle_edge_le O 0 s t (Rle_refl 0) Hst) as Hch.
     pose proof (dist_nonneg (circle_param O 0 s) (circle_param O 0 t)) as Hnn.
     replace (0 * (t - s)) with 0 in Hch by ring.
-    assert (Hd0 : dist (circle_param O 0 s) (circle_param O 0 t) = 0) by lra.
+    assert (Hd0 : dist (circle_param O 0 s) (circle_param O 0 t) = 0)
+      by (apply Rle_antisym; [exact Hch | exact Hnn]).
     rewrite Hd0. rewrite Rminus_diag_eq by ring.
-    rewrite Rabs_R0. nra.
+    rewrite Rabs_R0.
+    apply Rmult_le_pos; lra.
   - assert (Hrpos : 0 < r) by lra.
     set (delta := Rmin 2 (sqrt (24 * eps / r))).
     exists delta.
+    assert (H24 : 0 < 24 * eps) by (apply twenty_four_eps_pos; exact Heps).
     assert (Hdpos : 0 < delta).
     { unfold delta. apply Rmin_glb_lt; [lra |].
-      apply sqrt_lt_R0. apply Rdiv_lt_0_compat; [nra | exact Hrpos]. }
+      apply sqrt_lt_R0.
+      apply Rdiv_lt_0_compat; [exact H24 | exact Hrpos]. }
     split; [exact Hdpos |].
     intros s t _ Hst _ Hdlt.
-    unfold circle_speed.
+    change (circle_speed r s) with r.
     set (gap := t - s).
     assert (Hgap0 : 0 <= gap) by (unfold gap; lra).
     assert (Hgap2 : gap < 2).
     { unfold gap. eapply Rlt_le_trans; [exact Hdlt |].
       unfold delta. apply Rmin_l. }
     pose proof (circle_edge_le O r s t Hr Hst) as Hup.
-    assert (Habs :
-      Rabs (dist (circle_param O r s) (circle_param O r t) - r * (t - s))
-      = r * (t - s) - dist (circle_param O r s) (circle_param O r t)).
-    { rewrite Rabs_minus_sym.
-      rewrite Rabs_right by lra.
-      reflexivity. }
-    rewrite Habs.
+    rewrite (rabs_of_deficit
+      (dist (circle_param O r s) (circle_param O r t))
+      (r * (t - s)) Hup).
     unfold circle_param.
     rewrite circle_chord_dist by exact Hr.
     assert (Hsinpos : 0 <= sin ((t - s) / 2)).
     { apply sin_ge_0; [lra |]. pose proof PI_ge_2. lra. }
-    rewrite (Rabs_right (sin ((t - s) / 2))) by lra.
-    assert (Hx : 0 <= gap / 2) by lra.
+    rewrite (Rabs_right (sin ((t - s) / 2))) by exact Hsinpos.
+    replace (t - s) with gap by (unfold gap; reflexivity).
     assert (Hx4 : gap / 2 <= 4) by lra.
-    pose proof (sin_lower_taylor (gap / 2) Hx Hx4) as Htaylor.
-    assert (Hcalc :
-      r * gap - 2 * r * sin (gap / 2)
-      <= r * gap - 2 * r * (gap / 2 - (gap / 2) ^ 3 / 6)).
-    { apply Rplus_le_compat_l, Ropp_le_contravar.
-      apply Rmult_le_compat_l; [lra | exact Htaylor]. }
-    unfold gap.
-    eapply Rle_trans.
-    { replace (t - s) with gap by reflexivity.
-      replace (2 * r * sin ((t - s) / 2)) with (2 * r * sin (gap / 2))
-        by (unfold gap; reflexivity).
-      exact Hcalc. }
-    replace (r * gap - 2 * r * (gap / 2 - (gap / 2) ^ 3 / 6))
-      with (r * (gap * gap * gap) / 24) by (unfold Rdiv; simpl; field).
-    destruct (Req_dec gap 0) as [Hg0 | Hgnz].
-    { rewrite Hg0. nra. }
-    assert (Hgappos : 0 < gap) by lra.
-    apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; exact Hgappos |].
-    replace (r * (gap * gap * gap) / 24 * / gap)
-      with (r * (gap * gap) / 24) by (unfold Rdiv; field; lra).
-    replace (eps * gap * / gap) with eps by (field; lra).
-    assert (Hgd : gap < delta) by (unfold gap; exact Hdlt).
-    assert (Hgapsq : gap * gap < delta * delta) by nra.
-    assert (Hbound : delta * delta <= 24 * eps / r).
-    { unfold delta.
-      pose proof (Rmin_r 2 (sqrt (24 * eps / r))) as Hm.
-      assert (Hsqrt : 0 <= sqrt (24 * eps / r)) by apply sqrt_pos.
-      assert (Hmin0 : 0 <= Rmin 2 (sqrt (24 * eps / r)))
-        by (apply Rmin_glb; lra).
-      apply Rsqr_incr_1 in Hm; [| exact Hmin0 | exact Hsqrt].
-      unfold Rsqr in Hm.
-      rewrite sqrt_sqrt in Hm
-        by (apply Rlt_le, Rdiv_lt_0_compat; [nra | exact Hrpos]).
-      exact Hm. }
-    apply Rmult_le_reg_r with (r := 24); [lra |].
-    replace (r * (gap * gap) / 24 * 24) with (r * (gap * gap))
-      by (field; lra).
-    replace (eps * 24) with (24 * eps) by ring.
-    apply Rmult_le_reg_r with (r := / r); [apply Rinv_0_lt_compat; exact Hrpos |].
-    replace (r * (gap * gap) * / r) with (gap * gap) by (field; lra).
-    replace (24 * eps * / r) with (24 * eps / r) by (unfold Rdiv; ring).
-    apply Rlt_le.
-    eapply Rlt_le_trans; [exact Hgapsq | exact Hbound].
+    pose proof (circle_chord_taylor_slack r gap Hr Hgap0 Hx4) as Hcalc.
+    eapply Rle_trans; [exact Hcalc |].
+    apply (cubic_slack_le_eps_gap r gap delta eps Hrpos Hgap0).
+    - unfold gap; exact Hdlt.
+    - unfold delta.
+      apply rmin_sqrt_sq_bound; [lra |].
+      apply Rlt_le.
+      apply Rdiv_lt_0_compat; [exact H24 | exact Hrpos].
 Qed.
 
 Theorem arc_r_theta_via_speed_integral : forall (O : Point) r a b,
