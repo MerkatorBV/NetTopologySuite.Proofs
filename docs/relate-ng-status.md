@@ -114,13 +114,16 @@ disguised as disjointness — that was #530.
   Headline `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`.
   Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
   (`RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed pair after leftover `Ⅴ`. Do not
+  discharged QEX on an unnamed pair after leftover `Ⅵ`. Do not
   bucket with leftover `Ⅰ`.
 - **Mixed-cone certificate** — leftover `Ⅴ` classified.
   Headline `RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`.
+  Fill stays `im_unsupported`.
+- **Same-cone certificate** — leftover `Ⅵ` classified.
+  Headline `RelateNGTouchSameCone.v : triangle_pair_regime_samecone`.
   Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
-  (`RelateNGTouchMixedCone.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed CCW pair. Do not mint leftover `Ⅵ`.
+  (`RelateNGTouchSameCone.v : triangle_pair_regime_ccw_stop`),
+  discharged QEX on an unnamed lens. Do not mint leftover `Ⅶ`.
 - **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with two
   witnesses. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token
