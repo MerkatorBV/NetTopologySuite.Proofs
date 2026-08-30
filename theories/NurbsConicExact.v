@@ -529,7 +529,9 @@ Proof.
     unfold Rdiv. rewrite Rmult_assoc, Rinv_l, Rmult_1_r by lra.
     replace (1 * (1 + w * (sqrt 2 - 1)))
       with (1 - w + w * sqrt 2) by ring.
-    apply Rplus_le_compat_r. lra.
+    (*  w·√2 ≤ 1−w + w·√2  is  0 ≤ 1−w.  Do not apply
+        Rplus_le_compat_r: the left side is not a sum. *)
+    lra.
 Qed.
 
 Lemma golden_u_pre : forall w,
