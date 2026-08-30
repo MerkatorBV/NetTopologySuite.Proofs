@@ -9,8 +9,8 @@ a GitHub child, **not** a remint of `522-j` / `522-m` / `522-i`, and
 > historical. Do **not** mint `522-n`. Leftover ids are precomposed
 > Roman numerals. This leftover is **`Ⅱ`**. The T-junction / partial-edge
 > sliver is **`Ⅰ`**. Do not swap them. Do not remint ADR-0004.
-> This map does not mint a GitHub child. Next unused is `Ⅴ` — ask
-> before assigning.
+> This map does not mint a GitHub child. Leftover `Ⅴ` is mixed-cone.
+> Do not mint leftover `Ⅵ`.
 
 topics: relate
 claimId: Ⅱ
@@ -30,7 +30,7 @@ Completeness is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). The
 filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
-The live cex is an unnamed mixed-cone pair (not leftover `Ⅴ`). Leftover
+The live cex is an unnamed CCW pair after leftover `Ⅴ`. Leftover
 `Ⅱ` itself is QED (`RelateNGTouchObtuse.v : leftover_ii_qed_or_qex`).
 This map charts the compiled leftover-`Ⅱ` pair, what it is not, and
 what a later letter must not steal.
@@ -89,14 +89,15 @@ Constructor `TPR_TouchObtuse` stays on `im_unsupported`
 CONTEXT Bar 1.
 
 Oracle / harness: `oracle/de9im_triangle_vectors.txt` `REGIME TOUCH_OBTUSE`
-(fill still `UNSUPPORTED`). Decline golden is the unnamed mixed-cone pair.
+(fill still `UNSUPPORTED`). Decline golden is an unnamed CCW pair after
+leftover `Ⅴ`.
 
 ## Why every wired detector misses
 
 Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 `touch_edge_b` → `contains_b` → `overlap_b` → `separated_b` →
 `touch_vertex_b` → leftover `Ⅰ` → leftover `Ⅲ∨Ⅳ` → leftover `Ⅱ` →
-`TPR_Unsupported`.
+leftover `Ⅴ` → `TPR_Unsupported`.
 
 | Detector | Why false on this pair |
 |---|---|
@@ -116,13 +117,13 @@ Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 | `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` | Leftover `Ⅰ` sliver. **No** shared vertex. `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. | bucket under one letter |
 | `(0,0)(1,0)(0,1)` vs `(2,0)(3,0)(2,1)` | #530 / #571 sentinel. Classified **disjoint**. | treat as the decline golden |
 | `(0,0)(2,0)(0,2)` vs `(0,0)(1/2,1/2)(-2,0)` | Ticket nudge. `RelateNGTouchVertexRegime.v : touchvertex_nudge_off`. Remaining B-vertex sits on A's side of `nA` (overlap, not a closed cone). | treat as obtuse-at-v |
-| `(0,0)(2,0)(0,2)` vs `(0,0)(-1,-1)(3,1)` | Unnamed mixed-cone completeness cex. Remaining B-vertices sit on **opposite** sides of `nA`. `RelateNGComplete.v : mixed_cone_pair_unsupported`. | mint leftover `Ⅴ` |
+| `(0,0)(2,0)(0,2)` vs `(0,0)(-1,-1)(3,1)` | Leftover `Ⅴ` mixed-cone. Classified **`TPR_MixedCone`**. Remaining B-vertices sit on **opposite** sides of `nA`. `RelateNGComplete.v : mixed_cone_pair_mixedcone`. | steal leftover `Ⅴ` |
 | `(0,0)(1,0)(0,1)` vs `(2,0)(2,1)(3,0)` | RelatePrepared decline 12-tuple. B is **CW** (`gdbl < 0`). Domain-boundary. | use as the obtuse spec |
 | Line×line int×bnd | `RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`. #67 / S15d. IB dim-0. | steal as the triangle certificate |
 | Full shared edge `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | Frozen `TPR_TouchEdge` pin. | widen `shares_edge_b` |
 
 A **dim-0 T** (vertex in an open edge, no shared vertex) is unnamed.
-Do not mint leftover `Ⅴ`. It is **not** this leftover.
+Leftover `Ⅴ` is mixed-cone. It is **not** this leftover.
 
 The four wired hard pairs (`RelateNGComplete.v : classified_hard_pairs`)
 classify. They are not this leftover
