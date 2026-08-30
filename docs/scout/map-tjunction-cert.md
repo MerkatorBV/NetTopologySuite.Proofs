@@ -65,8 +65,8 @@ interiors-disjoint touch. That is why fill stays `im_unsupported`.
 An exterior-side one-sided T is leftover `Ⅲ`
 (`RelateNGComplete.v : onesided_t_pair_inhabits`), not this leftover.
 The interior-side stem is leftover `Ⅳ`
-([`map-interior-side-cert.md`](map-interior-side-cert.md); named only).
-The xor is `Ⅲ∨Ⅳ` with one exterior witness.
+(`RelateNGComplete.v : interior_side_pair_inhabits`).
+The xor is `Ⅲ∨Ⅳ` with two compiled witnesses.
 
 ## Why every wired detector misses
 
@@ -76,8 +76,10 @@ Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 → `touch_onesided_t_b` → `TPR_TouchOnesided` → `TPR_Unsupported`.
 Headline for leftover `Ⅰ`:
 `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
-Leftover `Ⅲ` xor (`Ⅲ∨Ⅳ`, one exterior witness):
+Leftover `Ⅲ` xor (`Ⅲ∨Ⅳ`, two witnesses):
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`.
+Leftover `Ⅳ` headline:
+`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`.
 
 | Detector | Why false on this pair |
 |---|---|
@@ -107,9 +109,9 @@ An **exterior-side one-sided T** is leftover `Ⅲ`
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`;
 `TPR_TouchOnesided`; fill still `im_unsupported`). Contact is
 collinear with the supporting edge. II empty is compiled; BB dim 0
-is not. The xor is `Ⅲ∨Ⅳ` with one exterior witness. The
+is not. The xor is `Ⅲ∨Ⅳ` with two compiled witnesses. The
 interior-side stem is leftover `Ⅳ`
-([`map-interior-side-cert.md`](map-interior-side-cert.md); named only).
+(`RelateNGComplete.v : interior_side_pair_inhabits`).
 Not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
@@ -166,7 +168,7 @@ writes the detector.
   exterior-side one-sided T is leftover `Ⅲ`
   (`RelateNGComplete.v : onesided_t_pair_inhabits`). The interior-side
   stem is leftover `Ⅳ`
-  ([`map-interior-side-cert.md`](map-interior-side-cert.md)).
+  (`RelateNGComplete.v : interior_side_pair_inhabits`).
   The xor is `Ⅲ∨Ⅳ`.
 
 ## Frontier
@@ -188,6 +190,6 @@ not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
 Ⅲ ──── compiled exterior-side stem ── TPR_TouchOnesided (fill token)
-Ⅳ ──── interior-side stem ── map-interior-side-cert.md ── no compiled pair
+Ⅳ ──── interior-side stem ── TPR_TouchOnesided (fill token)
 Ⅴ ── unused ── ask before assigning
 ```

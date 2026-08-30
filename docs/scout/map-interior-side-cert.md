@@ -16,11 +16,12 @@ the line×line noding T-junction
 
 topics: relate
 claimId: Ⅳ
-witness: none
+witness: Ⅳ-interior-side-cex
 
 ## Destination
 
-**Name the interior-side family. There is no compiled pair.**
+**Name the interior-side family. Residue pair compiled
+(`RelateNGComplete.v : interior_side_pair_inhabits`).**
 
 Leftover `Ⅲ` compiled an **exterior-side** stem
 (`RelateNGComplete.v : onesided_t_pair_inhabits`). Interiors sit on
@@ -109,8 +110,8 @@ classify. They are not this leftover.
 
 ## If `/implement Ⅳ` is asked — implement rungs (not this map)
 
-Park: **research** (ADR-0002). There is **no** published compiled
-statement for this family.
+Park: **research** (ADR-0002). Residue pair compiled
+(`RelateNGComplete.v : interior_side_pair_inhabits`).
 
 1. **Compile a cex, or prove emptiness of the residue.** Do not invent
    a 12-tuple in prose and treat it as the spec. A later implement
@@ -167,9 +168,10 @@ statement for this family.
 
 ## Fog
 
-- **Inhabited or empty as `TPR_TouchOnesided`.** Open. Same-side
+- **Inhabited as `TPR_TouchOnesided`.** Residue pair
+  `RelateNGComplete.v : interior_side_pair_inhabits`. Same-side
   stems with a strict-interior B-vertex and a strict-exterior
-  B-vertex are `overlap_b`. The residue is the rest.
+  B-vertex remain leftover `522-b`.
 - **II cell.** Typically nonempty (same-side). Not leftover `Ⅲ`'s
   empty pin (`RelateNGComplete.v : onesided_t_ii_empty`). Do not
   call leftover `Ⅳ` areal Touches until II is compiled empty or
@@ -184,17 +186,16 @@ statement for this family.
 
 ## Frontier
 
-Leftover `Ⅳ` is named. There is no compiled pair. This map does
+Leftover `Ⅳ` is named. Residue pair compiled. This map does
 not invent a detector.
 
 ```
 family named ── same-side one-sided vertex-in-open-edge T
-     no compiled 12-tuple
-     xor already true; overlap_b may steal; II typically nonempty
+     residue pair ── interior_side_pair_inhabits
+     xor already true; overlap_b may steal; II nonempty
 
-Ⅳ ── research ── destination met (name only)
-     grill ── map-interior-side-grill.md ── ticket 26 takeable
-     /implement Ⅳ starts at ticket 26
+Ⅳ ── research ── destination met (name + pair)
+     grill ── map-interior-side-grill.md ── ticket 26 closed
 
 Ⅰ ── mutual same-side sliver ── map-tjunction-cert.md ── not this leftover
 Ⅱ ── obtuse-at-v ── 522-m finding ── not this leftover

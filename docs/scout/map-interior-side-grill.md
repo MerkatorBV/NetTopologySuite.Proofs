@@ -17,17 +17,19 @@ side-distinguishing detector. It does **not** remint
 
 topics: relate
 claimId: Ⅳ
-witness: none
+witness: Ⅳ-interior-side-cex
 
 ## Destination
 
 **Verify leftover `Ⅳ` against the leftover-`Ⅲ` compile and against
-CONTEXT.** Name what holds. Park what does not. Do not invent a
-12-tuple. Do not invent a side-distinguishing detector.
+CONTEXT.** Name what holds. Park what does not. Ticket 26 compiled
+the residue pair. Do not invent a side-distinguishing detector.
 
 ## Verdict
 
-The family is named. There is **no** compiled leftover-`Ⅳ` 12-tuple.
+The family is named. Ticket 26 compiled the residue pair
+(`RelateNGComplete.v : interior_side_pair_inhabits`). The compiled leftover-`Ⅳ` 12-tuple is
+`(0,0)(2,0)(0,1)` vs `(1,0)(5/4,1/4)(3/4,1/4)`.
 The compiled one-sided pair is leftover `Ⅲ`
 (`RelateNGComplete.v : onesided_t_pair_inhabits`) — exterior-side,
 II empty (`RelateNGComplete.v : onesided_t_ii_empty`). The xor
@@ -53,12 +55,12 @@ This grill does not mint a pair and call it the spec.
 
 ## Claims grilled live
 
-### 1. No compiled leftover-`Ⅳ` pair on this tree
+### 1. Residue pair compiled (ticket 26)
 
-**Confirmed.** The only onesided pair in `RelateNGComplete.v` is
-leftover `Ⅲ`, exterior-side
-(`RelateNGComplete.v : onesided_t_pair_inhabits`). There is no
-interior-side 12-tuple. The other compiled leftovers are leftover `Ⅰ`
+**Superseded by ticket 26.** The leftover-`Ⅲ` pair remains
+exterior-side (`RelateNGComplete.v : onesided_t_pair_inhabits`).
+The interior-side 12-tuple is now
+`RelateNGComplete.v : interior_side_pair_inhabits`. The other compiled leftovers are leftover `Ⅰ`
 (`RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`)
 and leftover `Ⅱ`
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
@@ -78,8 +80,8 @@ and leftover `Ⅱ`
 
 **Confirmed.** `RelateNGCore.v : touch_onesided_t_b` is
 `xorb (some_vertex_on_open_edges A B) (some_vertex_on_open_edges B A)`.
-No side test. True on leftover `Ⅲ`. Would be true on leftover `Ⅳ`
-the moment someone writes the coords. Classifier order
+No side test. True on leftover `Ⅲ`. True on leftover `Ⅳ`
+(`RelateNGComplete.v : interior_side_onesided_true`). Classifier order
 (`RelateNGCore.v : triangle_pair_regime`) emits `TPR_TouchOnesided`
 for any xor-true pair that missed the earlier arms. Do **not** remint
 the xor. A side-distinguishing boolean, if asked later, tests the
@@ -107,9 +109,10 @@ The residue is same-side one-sided pairs that miss this arm.
 ### 5. CONTEXT Bar 1 is not applicable
 
 **Confirmed miss — not a failed bar, an absent subject.** Bar 1 needs
-a classified leftover-`Ⅳ` pair and a designated witness matrix.
-There is no leftover-`Ⅳ` pair. The leftover-`Ⅲ` constructor is
-already on `im_unsupported`. `classify_triangle_pair` arm for
+a classified leftover-`Ⅳ` pair **and** a designated witness matrix.
+The pair is compiled (`RelateNGComplete.v : interior_side_pair_inhabits`).
+There is no leftover-`Ⅳ` matrix. The constructor is already on
+`im_unsupported`. `classify_triangle_pair` arm for
 `TPR_TouchOnesided` is `True` — leftover `Ⅰ` honesty, not CONTEXT
 Bar 1. Nothing that mentions `TPR_TouchOnesided` may be proved
 through `classify_triangle_pair`. Decline golden is leftover `Ⅱ`.
@@ -118,20 +121,17 @@ Do not emit `FFFFFFFFF`. Do not emit `FFFF1FFF2` or `FF2F11212` on
 leftover `Ⅳ` looks like overlap. The fill token is the only thing
 keeping those families from mixing.
 
-### 6. Uninhabited on the compiled tree
+### 6. Residue inhabited
 
-**Confirmed park — compiled tree, not geometry.** There is no
-published leftover-`Ⅳ` pair. Whether a same-side stem reaches
-`TPR_TouchOnesided` is open. Emptiness of that residue is allowed
-and would mean every same-side one-sided T is already
-`overlap_b` / `contains_b` / leftover `Ⅰ`. This grill does not mint
-coordinates and call them the spec.
+**Superseded by ticket 26.** The residue pair reaches
+`TPR_TouchOnesided` (`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`).
+`overlap_b` is false (`RelateNGComplete.v : interior_side_overlap_b_false`).
+II nonempty (`RelateNGComplete.v : interior_side_ii_nonempty`).
 
 ## Parks (ADR-0002)
 
-- **Research:** uninhabited on the compiled tree. No published
-  leftover-`Ⅳ` compiled statement. Gate: a cex in
-  `RelateNGComplete.v`, or a residue-empty theorem.
+- **Research:** residue pair compiled
+  (`RelateNGComplete.v : interior_side_pair_inhabits`).
 - **Sequencing:** side-distinguishing detector, constructor split,
   fill. All gated on the research park **and** an owner ask. The xor
   is already compiled. Do not invent a second detector as the first
@@ -149,39 +149,35 @@ steal `522-j` / `522-m` / `522-f` / `522-i` / `522-b`.
 
 ## If `/implement Ⅳ` is asked
 
-Read [`spec-interior-side.md`](spec-interior-side.md). First compile
-a residue witness or prove the residue empty (ticket 26). Do not
-invent a 12-tuple in prose and treat it as compiled. Do not remint
-the xor. Do not remint the fill. Completeness stays false on leftover
-`Ⅱ` until proved.
+Ticket 26 compiled the residue. Do not remint the xor. Do not remint
+the fill. Completeness stays false on leftover `Ⅱ` until proved.
 
 ## Decisions so far
 
 - Family named — #629 / [`map-interior-side-cert.md`](map-interior-side-cert.md).
 - Leftover `Ⅲ` compile — #628 /
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`.
-  `Ⅲ∨Ⅳ` xor, one exterior witness, fill token, completeness still
-  `Ⅱ`.
-- This grill — named; uninhabited on the compiled tree; Bar 1 not
-  applicable; residue inhabited-or-empty is open (ticket 26).
+  `Ⅲ∨Ⅳ` xor, two witnesses, fill token, completeness still `Ⅱ`.
+- This grill — named; Bar 1 not applicable (no matrix).
+- Ticket 26 — residue pair
+  `RelateNGComplete.v : interior_side_pair_inhabits`.
 - Spec / tickets — [`spec-interior-side.md`](spec-interior-side.md);
-  scout 23–25 closed; ticket 26 takeable.
+  scout 23–26 closed.
 
 ## Frontier
 
 ```
 family named ── #629 ── map-interior-side-cert.md
-     no compiled leftover-Ⅳ 12-tuple
+     residue pair ── interior_side_pair_inhabits
      this grill ── confirmed against the leftover-Ⅲ compile
 
 Ⅳ ── research #629 ── grill (this file) ── spec-interior-side.md
-     tickets 23–25 closed ── 26 compile residue or empty takeable
+     tickets 23–26 closed ── residue pair compiled
      xor already Ⅲ∨Ⅳ ── do not invent a detector
-     /implement Ⅳ starts at ticket 26
 
 Ⅰ ── mutual same-side sliver ── #609 ── not this leftover
 Ⅱ ── obtuse-at-v ── #611 ── live completeness cex
-Ⅲ ── exterior-side stem ── #628 ── Ⅲ∨Ⅳ xor, one exterior witness
+Ⅲ ── exterior-side stem ── #628 ── Ⅲ∨Ⅳ xor, two witnesses
 
 522-n ── not minted
 Ⅴ ── unused ── ask before assigning

@@ -20,7 +20,7 @@ open. claimId hangs on the leftover numeral. No GitHub children.
 
 | claimId | Scout | GitHub | Slice | Gate |
 |---|---|---|---|---|
-| `Ⅳ` | [26](../26-leftover-iv-compile-or-empty.md) | none | compile a residue cex or prove emptiness | — |
+| `Ⅳ` | [26](26-leftover-iv-compile-or-empty.md) | none | compile a residue cex or prove emptiness | closed |
 
 One ticket. The xor is already compiled
 (`RelateNGCore.v : touch_onesided_t_b`). A side-distinguishing

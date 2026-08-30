@@ -13,25 +13,27 @@ a side-distinguishing detector. It does **not** retire epic 522.
 
 topics: relate
 claimId: Ⅳ
-witness: none
+witness: Ⅳ-interior-side-cex
 
 ## Destination
 
-**Compile** a both-CCW 12-tuple that inhabits the residue, **or**
-prove the residue empty. The residue is a same-side one-sided T that
-misses leftover `Ⅰ`, leftover `Ⅲ`, `overlap_b`, `contains_b`, and
-`classified_hard_pairs`. The xor
-(`RelateNGCore.v : touch_onesided_t_b`) would then emit
+**Compiled.** Residue pair
+`RelateNGComplete.v : interior_side_pair_inhabits`. Headline
+`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`.
+A = `(0,0)(2,0)(0,1)`, B = `(1,0)(5/4,1/4)(3/4,1/4)`. Both CCW.
+Same-side (`RelateNGComplete.v : interior_side_same_side`).
+`overlap_b` false (`RelateNGComplete.v : interior_side_overlap_b_false`).
+II nonempty (`RelateNGComplete.v : interior_side_ii_nonempty`).
+The xor (`RelateNGCore.v : touch_onesided_t_b`) emits
 `TPR_TouchOnesided`. Fill stays `im_unsupported`. Completeness stays
 false (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`).
 
-CONTEXT **Regime** is not met until a leftover-`Ⅳ` pair is compiled
-(or emptiness is proved). CONTEXT **Bar 1** is not met until that
-pair is true geometry against the specified interior **and** a
-designated witness matrix is named. The first implement letter is
-allowed to stop at witness-scoped regime reachability (same honesty
-as leftover `Ⅰ` #609 and leftover `Ⅲ` #628). Do not call that stop
-CONTEXT Bar 1. Do not write a second detector.
+CONTEXT **Regime** reachability is witness-scoped
+(`RelateNGComplete.v : interior_side_pair_onesided`). CONTEXT **Bar 1**
+is not met: the pair is classified, but there is no designated
+witness matrix, and `classify_triangle_pair` stays `True`. Same
+honesty as leftover `Ⅰ` #609 and leftover `Ⅲ` #628. Do not call
+that stop CONTEXT Bar 1. Do not write a second detector.
 
 ## Why the grill is the source, not a re-grill
 
@@ -40,12 +42,12 @@ Do not re-verify them unless the tree moved:
 
 | Claim | Where |
 |---|---|
-| No compiled leftover-`Ⅳ` pair | `RelateNGComplete.v : onesided_t_pair_inhabits` is leftover `Ⅲ` |
+| Leftover-`Ⅳ` residue pair | `RelateNGComplete.v : interior_side_pair_inhabits` |
 | Leftover `Ⅲ` is opposite-side | `RelateNGComplete.v : onesided_t_ii_empty` |
 | Xor is `Ⅲ∨Ⅳ` | `RelateNGCore.v : touch_onesided_t_b` |
 | `overlap_b` may steal | `RelateNGCore.v : overlap_b`; leftover `522-b` |
-| Bar 1 not applicable | CONTEXT; no leftover-`Ⅳ` pair, no leftover-`Ⅳ` matrix |
-| Uninhabited on the compiled tree | research park; residue inhabited-or-empty is open |
+| Bar 1 not applicable | CONTEXT; pair compiled, no leftover-`Ⅳ` matrix |
+| Residue inhabited | `RelateNGComplete.v : interior_side_pair_inhabits` |
 
 ## Family (acceptance predicate, not a pair)
 
@@ -80,11 +82,12 @@ One letter. There is no detector slice.
 
 ### Slice A — compile a residue cex, or prove emptiness
 
-**Today.** No leftover-`Ⅳ` pair on the compiled tree. Completeness
-false on leftover `Ⅱ`. The xor is already compiled. Whether a
-same-side stem reaches `TPR_TouchOnesided` is open.
+**Today.** Residue pair compiled
+(`RelateNGComplete.v : interior_side_pair_inhabits`). Completeness
+false on leftover `Ⅱ`. The xor is already compiled and fires on
+this pair. Do not remint it.
 
-**After this slice.** Exactly one of:
+**After this slice.** Landed as (1):
 
 1. A named 12-tuple in `RelateNGComplete.v` that satisfies the family
    filter, with a finding that the classifier emits
@@ -104,7 +107,7 @@ boolean is a later leftover, and only if asked. Next unused is `Ⅴ`.
 
 ## Parks (ADR-0002)
 
-- **Research (slice A).** Uninhabited on the compiled tree.
+- **Research (slice A).** Residue pair compiled.
 - **Sequencing.** Side-distinguishing detector, constructor split,
   fill. Gated on slice A **and** an owner ask.
 - **Technique.** None.
