@@ -205,7 +205,7 @@ so the geometry-to-geometry minimum is exactly R — the clause delegates the
 *algorithm*, not *which point set* is measured. Branch today: `DistanceOp`
 fails closed for curved inputs (`Operation/Distance/DistanceOp.cs:98-99`).
 
-### 3.3 Envelope — `Red_Envelope_IncludesAxisExtremeBeyondControls` (:113)
+### 3.3 Envelope — formerly `Red_Envelope_IncludesAxisExtremeBeyondControls`, flipped green as `Envelope_IncludesAxisExtremeBeyondControls` (`CurveMetricsTests`)
 
 §5.1.19 (ST_Envelope Method, on ST_Geometry — **inherited, not arc-specific;
 there is no curve override**) Desc 2b: MINX/MINY/MAXX/MAXY are the minimum and

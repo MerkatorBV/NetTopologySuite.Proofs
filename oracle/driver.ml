@@ -3382,26 +3382,17 @@ let run_envelope_unified () =
     let ax = qf a.bx and ay = qf a.by_ in
     let bx = qf b.bx and by_ = qf b.by_ in
     let cx = qf c.bx and cy = qf c.by_ in
-    let d = Q.mul (Q.of_int 2)
-      (Q.add (Q.add (Q.mul ax (Q.sub by_ cy)) (Q.mul bx (Q.sub cy ay)))
-             (Q.mul cx (Q.sub ay by_))) in
-    if qeq d q0 then () (* Desc 8b: chord endpoints only *)
-    else begin
-      let na = Q.add (Q.mul ax ax) (Q.mul ay ay) in
-      let nb = Q.add (Q.mul bx bx) (Q.mul by_ by_) in
-      let nc = Q.add (Q.mul cx cx) (Q.mul cy cy) in
-      let ox = Q.div
-        (Q.add (Q.add (Q.mul na (Q.sub by_ cy)) (Q.mul nb (Q.sub cy ay)))
-               (Q.mul nc (Q.sub ay by_))) d in
-      let oy = Q.div
-        (Q.add (Q.add (Q.mul na (Q.sub cx bx)) (Q.mul nb (Q.sub ax cx)))
-               (Q.mul nc (Q.sub bx ax))) d in
+    match circumcentre_q (ax, ay) (bx, by_) (cx, cy) with
+    | None -> () (* Desc 8b: chord endpoints only *)
+    | Some (ox, oy, r2) ->
       let vax = Q.sub ax ox and vay = Q.sub ay oy in
       let vcx = Q.sub cx ox and vcy = Q.sub cy oy in
-      let r2 = Q.add (Q.mul vax vax) (Q.mul vay vay) in
       (* CCW sector from (sx, sy) to (ex_, ey): the traversal direction is
-         the sign of d (orient of A,B,C), so CW swaps the sector ends. *)
-      let ccw = Q.sign d > 0 in
+         the orientation of (A, B, C), so CW swaps the sector ends. *)
+      let orient =
+        Q.sub (Q.mul (Q.sub bx ax) (Q.sub cy ay))
+              (Q.mul (Q.sub by_ ay) (Q.sub cx ax)) in
+      let ccw = Q.sign orient > 0 in
       let (sx, sy, ex_, ey) =
         if ccw then (vax, vay, vcx, vcy) else (vcx, vcy, vax, vay) in
       let crossq ux uy vx vy = Q.sub (Q.mul ux vy) (Q.mul uy vx) in
@@ -3416,8 +3407,7 @@ let run_envelope_unified () =
           let r = sqrt (Q.to_float r2) in
           expand (Q.to_float ox +. r *. float_of_int ux)
                  (Q.to_float oy +. r *. float_of_int uy)
-        end) axis_units
-    end in
+        end) axis_units in
   Array.iter (function
     | `Chord (a, b) -> expand a.bx a.by_; expand b.bx b.by_
     | `Arc (a, b, c) -> expand_arc a b c) segs;
