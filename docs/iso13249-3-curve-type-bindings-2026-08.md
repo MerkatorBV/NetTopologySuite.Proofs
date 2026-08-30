@@ -126,14 +126,16 @@ library).
   components**.
 
 Branch: contiguity enforced with `Equals2D` at construction
-(`Curves/CompoundCurve.cs:75-86`) — consistent with the spec's default 2D
-reading of closedness (ST_IsClosed ignores z/m, §4.2.4.1 item 5), though the
-spec text for contiguity itself does not say "ignoring z". Empty components
-rejected (`CompoundCurve.cs:64-68`) — stricter than the spec, harmless.
-**Nested CompoundCurve components rejected** (`CompoundCurve.cs:69-74`;
-`IO/WKTReader.cs:1086-1087`; pinned by test
-`CurveWktTest.ReadRejectsNestedCompoundCurves`) — this **contradicts** the
-spec; see §6.1.
+(`Curves/CompoundCurve.cs:75-86` at e84458e) — consistent with the spec's
+default 2D reading of closedness (ST_IsClosed ignores z/m, §4.2.4.1 item 5),
+though the spec text for contiguity itself does not say "ignoring z". Empty
+components rejected (`CompoundCurve.cs:64-68` at e84458e) — stricter than
+the spec, harmless; scheduled to drop per ADR-0005 (#615 ticket `615-c`).
+**Nested CompoundCurve components: accepted and spliced flat since branch
+commit `ec005e3`** (2026-08-30, ticket `615-b`) — constructor and reader
+accept them per §7.10.1 and flatten into the component list, with
+contiguity checked across splice boundaries; the former rejection
+contradicted the spec (§6.1, retained as history).
 
 ### 2.3 ST_CurvePolygon (§4.2.15, §8.2.1)
 
@@ -259,10 +261,11 @@ items that follow it):
 Branch: keywords `WKTConstants.cs:47-63`; reader dispatch
 `IO/WKTReader.cs:768-773`; component/ring parsing `ReadCurveText`
 (`WKTReader.cs:1061-1094`) accepts the bare linestring body and tagged
-CIRCULARSTRING per grammar, **rejects nested COMPOUNDCURVE inside
-COMPOUNDCURVE** (contradiction, §6.1) while allowing COMPOUNDCURVE as a
-CURVEPOLYGON/MULTICURVE ring or member (`WKTReader.cs:1188-1204`, matching
-`<ring text>`). It additionally accepts a **tagged** `LINESTRING` component
+CIRCULARSTRING per grammar, and **since branch commit `ec005e3` accepts
+nested COMPOUNDCURVE inside COMPOUNDCURVE** (spliced flat by the
+constructor, §6.1) as it always did for COMPOUNDCURVE as a
+CURVEPOLYGON/MULTICURVE ring or member (`WKTReader.cs:1188-1204` at
+e84458e, matching `<ring text>`). It additionally accepts a **tagged** `LINESTRING` component
 (`WKTReader.cs:1071-1075`) — an input-side extension beyond the ISO grammar,
 documented in-code as GEOS/PostGIS compatibility; the writer emits conformant
 bare bodies for LineString components and tags for CircularString
@@ -306,7 +309,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 | CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | not enforced anywhere | **gap** — spec "shall"; belongs to IsValid work |
 | CS collinear triple → straight-line segment (§7.3.1 Desc 8b) | no arc math yet; semantics unimplemented | pending (metrics follow-up) |
 | CS bulge / centre-radius-angle representations (§7.3.1 Desc 13–15) | absent | untracked gap (SQL API surface; optional for NTS) |
-| CC components: **all** ST_Curve subtypes, nested CC included (§7.10.1 Desc 7; §5.1.67 `<curve text>`) | rejected (`CompoundCurve.cs:69-74`, `WKTReader.cs:1086-1087`; test `CurveWktTest.ReadRejectsNestedCompoundCurves`) | **contradiction** — see §6.1 |
+| CC components: **all** ST_Curve subtypes, nested CC included (§7.10.1 Desc 7; §5.1.67 `<curve text>`) | accepted and spliced flat, ctor + reader, since `ec005e3` (flatten tests in `CompoundCurveTest`/`CurveWktTest`) | ok — ADR-0005 Decision 2, landed 2026-08-30 (`615-b`) |
 | CC contiguity: end = next start (§7.10.1 Desc 7) | `Equals2D` check in ctor (`CompoundCurve.cs:75-86`) | ok (2D reading; spec default closedness is 2D, §4.2.4.1) |
 | CC empty components (spec silent; only null forbidden, §7.10.1 Desc 5) | rejected (`CompoundCurve.cs:64-68`) | stricter than spec, harmless |
 | CP rings are rings = closed ∧ simple, any ST_Curve (§8.2.1 Desc 2–3) | ctor: closed only (`CurvePolygon.cs:96-108`); simplicity deferred | partial; red-marked via IsSimple |
@@ -341,9 +344,15 @@ does), or model nesting. What is not tenable is citing SQL/MM for the
 rejection.
 
 **Decision of record (2026-08-30):** accept-and-flatten on intake —
-`docs/adr/ADR-0005-lenient-intake-strict-isvalid-curve-types.md` Decision 2;
-lands via #615 ticket `615-b`, which also retires this row and the `SUMMARY
-warn` below.
+`docs/adr/ADR-0005-lenient-intake-strict-isvalid-curve-types.md` Decision 2.
+
+**Landed (2026-08-30, branch commit `ec005e3`, ticket `615-b`):** constructor
+and reader accept nested compound components and splice them flat (depth-1 —
+a constructed CompoundCurve is already flat by induction); contiguity is
+checked on the flattened sequence; the rejection pins are replaced by five
+flatten tests; the doc comment now owns the flat model as normalization
+citing §7.10.1 and ADR-0005. This section is retained as the history of the
+finding; the `SUMMARY` below flipped `warn` → `ok` with this landing.
 
 ### 6.2 Arc-segment endpoint distinctness — spec stricter than the branch
 
@@ -422,4 +431,4 @@ spec-adjacent statements, checked:
 
 ---
 
-SUMMARY warn — branch rejects nested COMPOUNDCURVE components and mis-attributes that restriction to SQL/MM (`CompoundCurve.cs:27-29,69-74`, `WKTReader.cs:1086-1087`) while §7.10.1 Desc 7 and §5.1.67 `<curve text>`/`<ring text>` admit them; all other divergences are either red-test-marked fail-closed gaps (Length §7.1.2, Distance §5.1.41, Envelope §5.1.19 — the four Red tests in `CurveMetricsContractTests.cs`) or deferred-validity gaps (§7.3.1 Desc 6 distinctness, §8.2.1 ring simplicity) awaiting arc-aware IsValid/IsSimple.
+SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `ec005e3` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Remaining divergences are either red-test-marked fail-closed gaps (Length §7.1.2, Distance §5.1.41, Envelope §5.1.19 — the four Red tests in `CurveMetricsContractTests.cs`, tickets `615-d/e/f`) or deferred-validity gaps (§7.3.1 Desc 6 distinctness, §8.2.1 ring simplicity — tickets `615-g/h`) awaiting arc-aware IsValid/IsSimple.
