@@ -293,9 +293,9 @@ Proof.
            + t * t * (1 * 0))
       - ((sqrt 2 + (1 - sqrt 2) * t) * (sqrt 2 + (1 - sqrt 2) * t)
          - t * t) = 0).
-  { field_simplify.
-    all: try lra.
-    rewrite sqrt2_sqr. ring. }
+  { field_simplify; try lra.
+    try rewrite sqrt2_sqr.
+    ring. }
   lra.
 Qed.
 
@@ -312,9 +312,9 @@ Proof.
            + t * t * 1)
       - ((sqrt 2 + (1 - sqrt 2) * t) * (sqrt 2 + (1 - sqrt 2) * t)
          + t * t) = 0).
-  { field_simplify.
-    all: try lra.
-    rewrite sqrt2_sqr. ring. }
+  { field_simplify; try lra.
+    try rewrite sqrt2_sqr.
+    ring. }
   lra.
 Qed.
 
@@ -330,9 +330,9 @@ Proof.
            + 2 * (t * (1 - t)) * ((sqrt 2 / 2) * 1)
            + t * t * (1 * 1))
       - 2 * t * (sqrt 2 + (1 - sqrt 2) * t) = 0).
-  { field_simplify.
-    all: try lra.
-    rewrite sqrt2_sqr. ring. }
+  { field_simplify; try lra.
+    try rewrite sqrt2_sqr.
+    ring. }
   lra.
 Qed.
 
