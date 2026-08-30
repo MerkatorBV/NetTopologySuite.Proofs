@@ -70,8 +70,11 @@ A one-sided dim-0 T is leftover `ⅠⅠⅠ`
 Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 `touch_edge_b` → `contains_b` → `overlap_b` → `separated_b` →
 `touch_vertex_b` → `touch_partial_edge_b` → `TPR_TouchPartialEdge`
-→ `TPR_Unsupported`. Headline:
+→ `touch_onesided_t_b` → `TPR_TouchOnesided` → `TPR_Unsupported`.
+Headline for leftover `Ⅰ`:
 `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
+Leftover `ⅠⅠⅠ` detector:
+`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`.
 
 | Detector | Why false on this pair |
 |---|---|
@@ -98,7 +101,9 @@ No named predicate holds: `RelateNGDisjoint.v : relate_tjunction_pair_no_predica
 
 A **one-sided / non-collinear** vertex-in-open-edge T (BB dim 0) is
 leftover `ⅠⅠⅠ` (`RelateNGComplete.v : onesided_t_pair_inhabits`;
-exterior-side stem; still `TPR_Unsupported`). Not this leftover.
+`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`;
+exterior-side stem; `TPR_TouchOnesided`; fill still `im_unsupported`).
+Not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -172,6 +177,6 @@ not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
-ⅠⅠⅠ ──── compiled exterior-side stem ── still TPR_Unsupported
+ⅠⅠⅠ ──── compiled exterior-side stem ── TPR_TouchOnesided (fill token)
 ⅠⅠⅠⅠ ── unused ── ask before assigning
 ```

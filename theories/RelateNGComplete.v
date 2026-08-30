@@ -27,8 +27,8 @@
    T-junction in `RelateNGTouchPartialEdge`.  Do not invent the
    obtuse-at-v certificate in this file.  Leftover `ⅠⅠⅠ` is compiled
    below as an exterior-side stem (`onesided_t_pair_inhabits`); the
-   classifier still emits `TPR_Unsupported`.  Do not invent that
-   detector here (ticket 22).  Not an ADR-0004 remint.
+   classifier emits `TPR_TouchOnesided` (ticket 22).  Fill stays
+   `im_unsupported`.  Not an ADR-0004 remint.
    `522-j` is the existing #577 ticket id.  The filtered-completeness
    retry (`522-m`) lives below: excluding the T-junction 12-tuple,
    completeness is still FALSE (obtuse-at-v).
@@ -390,6 +390,11 @@ Proof.
   cbn [px py].
   repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
   repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  unfold touch_onesided_t_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
   reflexivity.
 Qed.
 
@@ -446,7 +451,8 @@ Qed.
 (* B = (1,0)(1/2,-1)(3/2,-1).  Both CCW.  B-vertex (1,0) sits in the open     *)
 (* base of A.  Not mutual (`touch_partial_edge_b` = false).  No shared        *)
 (* vertex.  Interiors opposite across y = 0, so II is empty (BB dim 0).       *)
-(* Classifier emits TPR_Unsupported.  Fill stays im_unsupported.              *)
+(* Classifier emits TPR_TouchOnesided (ticket 22).  Fill stays                 *)
+(* im_unsupported.                                                            *)
 (* Do not invent a detector here (ticket 22).  Do not remint leftover Ⅰ.      *)
 (* Completeness stays false on leftover ⅠⅠ.                                   *)
 (* -------------------------------------------------------------------------- *)
@@ -557,18 +563,39 @@ Proof.
   rewrite (edge_separates_b_false_l (mkPoint 0 1) (mkPoint 0 0) (mkPoint 2 0)
              (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))).
   2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
-  rewrite (edge_separates_b_false_l (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))
-             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  (* B's (1,0)–(1/2,-1): A's (0,0) is opposite the apex. Pin the
+     mid vertex (2,0) so lra never sees a 12-hypothesis Rlt_dec goal. *)
+  assert (E4 : edge_separates_b (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))
+                 (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1) = false).
+  { unfold edge_separates_b.
+    assert (Hprod : cross (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1))
+                        * cross (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint 2 0) >= 0).
+    { unfold cross; cbn [px py]; lra. }
+    assert (Hmid : opposite_sides_b
+                     (mkPoint 1 0) (mkPoint (1/2) (-1))
+                     (mkPoint (3/2) (-1)) (mkPoint 2 0) = false).
+    { apply opposite_sides_b_false_of_nlt. intros Hlt. lra. }
+    rewrite Hmid.
+    destruct (opposite_sides_b (mkPoint 1 0) (mkPoint (1/2) (-1))
+                (mkPoint (3/2) (-1)) (mkPoint 0 0)); reflexivity. }
+  rewrite E4.
   rewrite (edge_separates_b_false_l (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) (mkPoint 1 0)
              (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
-  assert (E6 : edge_separates_b (mkPoint (3/2) (-1)) (mkPoint 1 0) (mkPoint (1/2) (-1))
-                 (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
-      [ exfalso; lra | reflexivity ]. }
-  rewrite E6. reflexivity.
+  2: {
+    apply opposite_sides_b_false_of_nlt.
+    assert (Hprod : cross (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) (mkPoint 1 0)
+                        * cross (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) (mkPoint 0 0) >= 0).
+    { unfold cross; cbn [px py]; lra. }
+    intros Hlt. lra. }
+  rewrite (edge_separates_b_false_l (mkPoint (3/2) (-1)) (mkPoint 1 0) (mkPoint (1/2) (-1))
+             (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)).
+  2: {
+    apply opposite_sides_b_false_of_nlt.
+    assert (Hprod : cross (mkPoint (3/2) (-1)) (mkPoint 1 0) (mkPoint (1/2) (-1))
+                        * cross (mkPoint (3/2) (-1)) (mkPoint 1 0) (mkPoint 0 0) >= 0).
+    { unfold cross; cbn [px py]; lra. }
+    intros Hlt. lra. }
+  reflexivity.
 Qed.
 
 Lemma onesided_t_no_partial_edge :
@@ -582,9 +609,20 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma onesided_t_pair_unsupported :
+Lemma onesided_t_onesided_true :
+  touch_onesided_t_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = true.
+Proof.
+  unfold touch_onesided_t_b.
+  destruct onesided_t_one_sided as [HA HB].
+  rewrite HA, HB.
+  reflexivity.
+Qed.
+
+Lemma onesided_t_pair_onesided :
   triangle_pair_regime 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1)
-    = TPR_Unsupported.
+    = TPR_TouchOnesided.
 Proof.
   unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
   cbn [px py].
@@ -629,10 +667,11 @@ Proof.
   cbn [px py].
   repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
   rewrite onesided_t_no_partial_edge.
+  rewrite onesided_t_onesided_true.
   reflexivity.
 Qed.
 
-(* WITNESS {"claimId":"ⅠⅠⅠ","topic":"relate","lemma":"onesided_t_pair_unsupported","title":"Leftover ⅠⅠⅠ exterior-side stem compiles and still emits TPR_Unsupported","file":"theories/RelateNGComplete.v","witness":"ⅠⅠⅠ-onesided-t-cex","board":"leftover-ⅠⅠⅠ"} *)
+(* WITNESS {"claimId":"ⅠⅠⅠ","topic":"relate","lemma":"onesided_t_pair_onesided","title":"Leftover ⅠⅠⅠ exterior-side stem classifies as TPR_TouchOnesided","file":"theories/RelateNGComplete.v","witness":"ⅠⅠⅠ-onesided-t-cex","board":"leftover-ⅠⅠⅠ"} *)
 Theorem onesided_t_pair_inhabits :
   onesided_t_pair_coords 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1) /\
   0 < gdbl 0 0 2 0 0 1 /\
@@ -657,7 +696,7 @@ Theorem onesided_t_pair_inhabits :
   (forall p, ~ (0 < gtri 0 0 2 0 0 1 p /\
                 0 < gtri 1 0 (1/2) (-1) (3/2) (-1) p)) /\
   triangle_pair_regime 0 0 2 0 0 1 1 0 (1/2) (-1) (3/2) (-1)
-    = TPR_Unsupported.
+    = TPR_TouchOnesided.
 Proof.
   split; [repeat split; reflexivity|].
   split; [unfold gdbl; lra|].
@@ -673,7 +712,7 @@ Proof.
   split; [exact Hv2|].
   split; [exact Hv3|].
   split; [exact onesided_t_ii_empty|].
-  exact onesided_t_pair_unsupported.
+  exact onesided_t_pair_onesided.
 Qed.
 
 Print Assumptions triangle_pair_regime_incomplete_tjunction.
@@ -682,8 +721,9 @@ Print Assumptions classified_hard_pairs.
 Print Assumptions non_ccw_pair_no_overlap_disjoint_vertex.
 Print Assumptions triangle_pair_regime_ccw_incomplete_not_tjunction.
 Print Assumptions ccw_complete_except_tjunction_false.
-Print Assumptions onesided_t_pair_unsupported.
+Print Assumptions onesided_t_pair_onesided.
 Print Assumptions onesided_t_pair_inhabits.
+Print Assumptions onesided_t_onesided_true.
 Print Assumptions onesided_t_ii_empty.
 Print Assumptions onesided_t_B_on_open_base.
 Print Assumptions onesided_t_one_sided.

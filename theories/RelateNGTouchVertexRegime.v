@@ -617,6 +617,8 @@ Proof.
     [ | ].
   - exact (touch_vertex_b_triangles_touch _ _ _ _ _ _ _ _ _ _ _ _ Htv).
   - destruct (touch_partial_edge_b _ _ _ _ _ _);
+      [ discriminate | ].
+    destruct (touch_onesided_t_b _ _ _ _ _ _);
       discriminate.
 Qed.
 

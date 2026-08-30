@@ -194,6 +194,7 @@ Proof.
   - reflexivity.
   - reflexivity.
   - reflexivity.
+  - reflexivity.
 Qed.
 
 Theorem evaluate_coherent_agrees :
@@ -424,6 +425,19 @@ Proof.
   reflexivity.
 Qed.
 
+Lemma cw_pair_no_onesided :
+  touch_onesided_t_b
+    (mkPoint 0 0) (mkPoint 1 0) (mkPoint 0 1)
+    (mkPoint 2 0) (mkPoint 2 1) (mkPoint 3 0) = false.
+Proof.
+  unfold touch_onesided_t_b, some_vertex_on_open_edges,
+         vertex_on_open_edges, on_open_seg_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
 Lemma cw_pair_regime_unsupported :
   triangle_pair_regime 0 0 1 0 0 1 2 0 2 1 3 0 = TPR_Unsupported.
 Proof.
@@ -437,6 +451,7 @@ Proof.
   rewrite (touch_vertex_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
              (or_intror cw_B_gdbl_nlt)).
   rewrite cw_pair_no_partial_edge.
+  rewrite cw_pair_no_onesided.
   reflexivity.
 Qed.
 
