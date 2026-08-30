@@ -543,21 +543,22 @@ Proof.
     intros lo Halo Hch.
   - apply Hanti; lra.
   - destruct Hch as [Hlu Hch].
+    pose proof (chain_le tl u b Hch) as Hub'.
     apply chain_snoc.
-    + apply IH; [lra | exact Hch].
-    + apply Hanti; lra.
+    + apply (IH u); [lra | exact Hch].
+    + apply (Hanti lo u); lra.
 Qed.
 
 (* Reversing the visit order preserves polyline length (dist is symmetric). *)
 Lemma polyline_len_rev : forall (g : Curve) ts t u,
   polyline_len g t (ts ++ [u]) = polyline_len g u (rev ts ++ [t]).
 Proof.
-  intros g ts; induction ts as [|v tl IH]; intros t u; simpl.
-  - rewrite dist_sym. lra.
-  - rewrite IH.
+  intros g ts; induction ts as [|v tl IH]; intros t u.
+  - simpl. rewrite dist_sym. reflexivity.
+  - simpl. rewrite IH.
     rewrite <- app_assoc.
     rewrite (polyline_len_app_mid g (rev tl) u v [t]).
-    simpl. rewrite dist_sym. lra.
+    simpl. rewrite dist_sym, Rplus_0_r. apply Rplus_comm.
 Qed.
 
 Lemma inscribed_len_reflect : forall (g : Curve) a b l,
