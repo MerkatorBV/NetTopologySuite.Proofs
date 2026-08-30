@@ -83,6 +83,8 @@
    After [ring] regroups [x*gap*/gap], [rewrite Hginv] finds
    no subterm [gap * / gap] (e784f8f L615): left-assoc is
    [(x*gap)*/gap]. Use [rmul_cancel_rinv] / [rmul_cancel_linv].
+   [{] after [replace] solves the continuation, not [A=B]
+   (1ed0ee7 L633). Equality proofs must be [2:{ }] or [by].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -629,7 +631,7 @@ Proof.
         apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; lra |].
         replace (M * (gap * gap * gap) / 24 * / gap)
           with (M * (gap * gap) / 24).
-        { unfold Rdiv.
+        2:{ unfold Rdiv.
           rewrite <- (Rmult_assoc M (gap * gap) gap).
           rewrite (Rmult_assoc (M * (gap * gap) * gap) (/ 24) (/ gap)).
           rewrite (Rmult_assoc (M * (gap * gap)) gap (/ 24 * / gap)).
@@ -638,13 +640,13 @@ Proof.
           rewrite (Rinv_r gap Hgnz).
           rewrite Rmult_1_l.
           reflexivity. }
-        replace (eps / 2 * gap * / gap) with (eps / 2).
-        { unfold Rdiv. apply (rmul_cancel_rinv (eps * / 2) gap Hgnz). }
+        replace (eps / 2 * gap * / gap) with (eps / 2)
+          by (unfold Rdiv; apply (rmul_cancel_rinv (eps * / 2) gap Hgnz)).
         apply (Rmult_le_reg_r 24); [lra |].
-        replace (M * (gap * gap) / 24 * 24) with (M * (gap * gap)).
-        { unfold Rdiv. apply (rmul_cancel_linv (M * (gap * gap)) 24). lra. }
+        replace (M * (gap * gap) / 24 * 24) with (M * (gap * gap))
+          by (unfold Rdiv; apply (rmul_cancel_linv (M * (gap * gap)) 24); lra).
         replace (eps / 2 * 24) with (12 * eps).
-        { unfold Rdiv.
+        2:{ unfold Rdiv.
           replace ((eps * / 2) * 24) with (eps * (/ 2 * 24)) by ring.
           replace 24 with (2 * 12) by ring.
           rewrite <- (Rmult_assoc (/ 2) 2 12).
@@ -667,14 +669,14 @@ Proof.
               apply Rlt_le, Rinv_0_lt_compat. lra. }
         apply (Rle_trans _ (M * (6 * eps / (M + 1)))).
         { apply Rmult_le_compat_l; [exact HM | apply Rlt_le; exact Hgsq]. }
-        replace (M * (6 * eps / (M + 1))) with (6 * eps * (M / (M + 1))).
-        { unfold Rdiv. ring. }
+        replace (M * (6 * eps / (M + 1))) with (6 * eps * (M / (M + 1)))
+          by (unfold Rdiv; ring).
         apply (Rle_trans _ (6 * eps)).
         { replace (6 * eps) with (6 * eps * 1) at 2 by ring.
           apply Rmult_le_compat_l; [apply Rmult_le_pos; lra |].
           unfold Rdiv. apply (Rmult_le_reg_r (M + 1)); [lra |].
-          replace (M * / (M + 1) * (M + 1)) with M.
-          { apply (rmul_cancel_linv M (M + 1)). lra. }
+          replace (M * / (M + 1) * (M + 1)) with M
+            by (apply (rmul_cancel_linv M (M + 1)); lra).
           lra. }
         lra.
       * (* gap √(K gap/2) ≤ (eps/2) gap *)
@@ -684,10 +686,10 @@ Proof.
         apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; lra |].
         replace (gap * sqrt (K * (gap / 2)) * / gap)
           with (sqrt (K * (gap / 2))).
-        { rewrite (Rmult_comm gap (sqrt (K * (gap / 2)))).
+        2:{ rewrite (Rmult_comm gap (sqrt (K * (gap / 2)))).
           apply (rmul_cancel_rinv (sqrt (K * (gap / 2))) gap Hgnz). }
-        replace (eps / 2 * gap * / gap) with (eps / 2).
-        { unfold Rdiv. apply (rmul_cancel_rinv (eps * / 2) gap Hgnz). }
+        replace (eps / 2 * gap * / gap) with (eps / 2)
+          by (unfold Rdiv; apply (rmul_cancel_rinv (eps * / 2) gap Hgnz)).
         apply sqrt_le_1.
         -- apply Rmult_le_pos; [exact HK |].
            unfold Rdiv. apply Rmult_le_pos; [exact Hgap0 |].
@@ -706,14 +708,14 @@ Proof.
            ++ unfold Rdiv.
               replace (K * (eps * eps * / (4 * (K + 1)) * / 2))
                 with (K / (K + 1) * (eps * eps / 8)).
-              { unfold Rdiv.
+              2:{ unfold Rdiv.
                 assert (Hinv4K : / (4 * (K + 1)) = / 4 * / (K + 1)).
                 { apply Rinv_mult_distr; lra. }
                 rewrite Hinv4K.
                 replace (K * (eps * eps * (/ 4 * / (K + 1)) * / 2))
                   with (K * / (K + 1) * (eps * eps * (/ 4 * / 2))) by ring.
                 replace (/ 4 * / 2) with (/ 8).
-                { rewrite <- Rinv_mult_distr by lra.
+                2:{ rewrite <- Rinv_mult_distr by lra.
                   replace (4 * 2) with 8 by ring. reflexivity. }
                 ring. }
               apply (Rle_trans _ (eps * eps / 8)).
@@ -723,34 +725,34 @@ Proof.
                      [apply Rmult_le_pos; lra |].
                    apply Rlt_le, Rinv_0_lt_compat. lra. }
                  unfold Rdiv. apply (Rmult_le_reg_r (K + 1)); [lra |].
-                 replace (K * / (K + 1) * (K + 1)) with K.
-                 { apply (rmul_cancel_linv K (K + 1)). lra. }
+                 replace (K * / (K + 1) * (K + 1)) with K
+                   by (apply (rmul_cancel_linv K (K + 1)); lra).
                  lra.
               ** unfold Rdiv.
                  replace (eps / 2 * (eps / 2)) with (eps * eps / 4).
-                 { unfold Rdiv.
+                 2:{ unfold Rdiv.
                    replace ((eps * / 2) * (eps * / 2))
                      with (eps * eps * (/ 2 * / 2)) by ring.
                    replace (/ 2 * / 2) with (/ 4).
-                   { rewrite <- Rinv_mult_distr by lra.
+                   2:{ rewrite <- Rinv_mult_distr by lra.
                      replace (2 * 2) with 4 by ring. reflexivity. }
                    ring. }
                  apply (Rmult_le_reg_r 8); [lra |].
-                 replace (eps * eps * / 8 * 8) with (eps * eps).
-                 { apply (rmul_cancel_linv (eps * eps) 8). lra. }
+                 replace (eps * eps * / 8 * 8) with (eps * eps)
+                   by (apply (rmul_cancel_linv (eps * eps) 8); lra).
                  replace (eps * eps * / 4 * 8) with (2 * (eps * eps)).
-                 { replace ((eps * eps * / 4) * 8)
+                 2:{ replace ((eps * eps * / 4) * 8)
                      with (eps * eps * (/ 4 * 8)) by ring.
                    replace 8 with (4 * 2) by ring.
                    rewrite <- (Rmult_assoc (/ 4) 4 2).
                    rewrite Rinv_l by lra. ring. }
                  lra.
     + replace (eps / 2 * gap + eps / 2 * gap) with (eps * gap).
-      { unfold Rdiv.
+      2:{ unfold Rdiv.
         replace ((eps * / 2) * gap + (eps * / 2) * gap)
           with ((eps * / 2 + eps * / 2) * gap) by ring.
         replace (eps * / 2 + eps * / 2) with (eps * / 2 * 2).
-        { replace 2 with (1 + 1) by ring.
+        2:{ replace 2 with (1 + 1) by ring.
           rewrite Rmult_plus_distr_l. rewrite Rmult_1_r. reflexivity. }
         replace (eps * / 2 * 2 * gap) with (eps * (/ 2 * 2) * gap) by ring.
         rewrite Rinv_l by lra. ring. }
