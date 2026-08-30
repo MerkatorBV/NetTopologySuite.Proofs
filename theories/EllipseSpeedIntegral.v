@@ -80,6 +80,9 @@
    (f3cad32 L594). Do not [replace] the holder goal via
    [Rabs_minus_sym]; [ellipse_speed_holder s mid] already
    matches [Rabs (σ mid − σ s)].
+   After [ring] regroups [x*gap*/gap], [rewrite Hginv] finds
+   no subterm [gap * / gap] (e784f8f L615): left-assoc is
+   [(x*gap)*/gap]. Use [rmul_cancel_rinv] / [rmul_cancel_linv].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -239,6 +242,25 @@ Proof.
      - sin ((s + t) / 2 + (t - s) / 2)).
   - f_equal; [f_equal | f_equal]; field.
   - rewrite sin_minus, sin_plus. ring.
+Qed.
+
+(* [x * y * / y] is [(x*y)*/y], not [x*(y*/y)]. *)
+Lemma rmul_cancel_rinv : forall x y, y <> 0 -> x * y * / y = x.
+Proof.
+  intros x y Hy.
+  rewrite (Rmult_assoc x y (/ y)).
+  rewrite Rinv_r by exact Hy.
+  rewrite Rmult_1_r.
+  reflexivity.
+Qed.
+
+Lemma rmul_cancel_linv : forall x y, y <> 0 -> x * / y * y = x.
+Proof.
+  intros x y Hy.
+  rewrite (Rmult_assoc x (/ y) y).
+  rewrite Rinv_l by exact Hy.
+  rewrite Rmult_1_r.
+  reflexivity.
 Qed.
 
 (* Flocq [ring] refuses [(s+t)+(-s+-s) = t-s] (295a15b L567). *)
@@ -605,25 +627,22 @@ Proof.
         destruct (Req_dec gap 0) as [Hg0 | Hgnz].
         { rewrite Hg0. unfold Rdiv. lra. }
         apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; lra |].
-        assert (Hginv : gap * / gap = 1).
-        { apply Rinv_r. exact Hgnz. }
         replace (M * (gap * gap * gap) / 24 * / gap)
           with (M * (gap * gap) / 24).
         { unfold Rdiv.
-          replace (((M * (gap * gap * gap)) * / 24) * / gap)
-            with (M * (gap * gap) * (gap * / gap) * / 24) by ring.
-          rewrite Hginv. ring. }
+          rewrite <- (Rmult_assoc M (gap * gap) gap).
+          rewrite (Rmult_assoc (M * (gap * gap) * gap) (/ 24) (/ gap)).
+          rewrite (Rmult_assoc (M * (gap * gap)) gap (/ 24 * / gap)).
+          rewrite (Rmult_comm (/ 24) (/ gap)).
+          rewrite <- (Rmult_assoc gap (/ gap) (/ 24)).
+          rewrite (Rinv_r gap Hgnz).
+          rewrite Rmult_1_l.
+          reflexivity. }
         replace (eps / 2 * gap * / gap) with (eps / 2).
-        { unfold Rdiv.
-          replace ((eps * / 2) * gap * / gap)
-            with (eps * / 2 * (gap * / gap)) by ring.
-          rewrite Hginv. ring. }
+        { unfold Rdiv. apply (rmul_cancel_rinv (eps * / 2) gap Hgnz). }
         apply (Rmult_le_reg_r 24); [lra |].
         replace (M * (gap * gap) / 24 * 24) with (M * (gap * gap)).
-        { unfold Rdiv.
-          replace ((M * (gap * gap) * / 24) * 24)
-            with (M * (gap * gap) * (/ 24 * 24)) by ring.
-          rewrite Rinv_l by lra. ring. }
+        { unfold Rdiv. apply (rmul_cancel_linv (M * (gap * gap)) 24). lra. }
         replace (eps / 2 * 24) with (12 * eps).
         { unfold Rdiv.
           replace ((eps * / 2) * 24) with (eps * (/ 2 * 24)) by ring.
@@ -655,8 +674,7 @@ Proof.
           apply Rmult_le_compat_l; [apply Rmult_le_pos; lra |].
           unfold Rdiv. apply (Rmult_le_reg_r (M + 1)); [lra |].
           replace (M * / (M + 1) * (M + 1)) with M.
-          { rewrite (Rmult_assoc M (/ (M + 1)) (M + 1)).
-            rewrite Rinv_l by lra. ring. }
+          { apply (rmul_cancel_linv M (M + 1)). lra. }
           lra. }
         lra.
       * (* gap √(K gap/2) ≤ (eps/2) gap *)
@@ -664,18 +682,12 @@ Proof.
         { rewrite Hg0. unfold Rdiv.
           rewrite Rmult_0_l. rewrite Rmult_0_r. apply Rle_refl. }
         apply (Rmult_le_reg_r (/ gap)); [apply Rinv_0_lt_compat; lra |].
-        assert (Hginv : gap * / gap = 1).
-        { apply Rinv_r. exact Hgnz. }
         replace (gap * sqrt (K * (gap / 2)) * / gap)
           with (sqrt (K * (gap / 2))).
-        { replace (gap * sqrt (K * (gap / 2)) * / gap)
-            with (sqrt (K * (gap / 2)) * (gap * / gap)) by ring.
-          rewrite Hginv. ring. }
+        { rewrite (Rmult_comm gap (sqrt (K * (gap / 2)))).
+          apply (rmul_cancel_rinv (sqrt (K * (gap / 2))) gap Hgnz). }
         replace (eps / 2 * gap * / gap) with (eps / 2).
-        { unfold Rdiv.
-          replace ((eps * / 2) * gap * / gap)
-            with (eps * / 2 * (gap * / gap)) by ring.
-          rewrite Hginv. ring. }
+        { unfold Rdiv. apply (rmul_cancel_rinv (eps * / 2) gap Hgnz). }
         apply sqrt_le_1.
         -- apply Rmult_le_pos; [exact HK |].
            unfold Rdiv. apply Rmult_le_pos; [exact Hgap0 |].
@@ -712,8 +724,7 @@ Proof.
                    apply Rlt_le, Rinv_0_lt_compat. lra. }
                  unfold Rdiv. apply (Rmult_le_reg_r (K + 1)); [lra |].
                  replace (K * / (K + 1) * (K + 1)) with K.
-                 { rewrite (Rmult_assoc K (/ (K + 1)) (K + 1)).
-                   rewrite Rinv_l by lra. ring. }
+                 { apply (rmul_cancel_linv K (K + 1)). lra. }
                  lra.
               ** unfold Rdiv.
                  replace (eps / 2 * (eps / 2)) with (eps * eps / 4).
@@ -726,9 +737,7 @@ Proof.
                    ring. }
                  apply (Rmult_le_reg_r 8); [lra |].
                  replace (eps * eps * / 8 * 8) with (eps * eps).
-                 { replace ((eps * eps * / 8) * 8)
-                     with (eps * eps * (/ 8 * 8)) by ring.
-                   rewrite Rinv_l by lra. ring. }
+                 { apply (rmul_cancel_linv (eps * eps) 8). lra. }
                  replace (eps * eps * / 4 * 8) with (2 * (eps * eps)).
                  { replace ((eps * eps * / 4) * 8)
                      with (eps * eps * (/ 4 * 8)) by ring.
