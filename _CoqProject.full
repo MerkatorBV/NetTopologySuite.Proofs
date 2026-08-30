@@ -46,6 +46,11 @@ theories/EllipseLength.v
 # envelope).  General elliptic-E integrand is named (speed² sandwich) and
 # remains parked.  No closed form invented.  3-axiom.
 theories/EllipseLength_E.v
+# #508-f / #562: Bernstein / rational framework shared by the Bézier and
+# NURBS length lanes.  bern n i, partition of unity, elevate_ctrl at n=2,
+# combo chord bound, bern2_weighted_den_lb.  Lane files re-base here.
+# Does not grow CurveSegment or remint ADR-0004.  3-axiom.
+theories/BernsteinBasis.v
 # #508 Bezier rung 1: the cubic Bezier parameterization (oracle B token)
 # against the CurveLength spec.  Degree-elevation exactness (Bible A1) as an
 # is_curve_length iff, and the control-net Lipschitz upper bound

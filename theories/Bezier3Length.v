@@ -26,9 +26,11 @@
        `bezier3_length_upper` : L ≤ 3·max(|d0|,|d1|,|d2|)·(b−a)
      for any is_curve_length value over [a,b] ⊆ [0,1].  The lower bound is
      CurveLength.curve_length_ge_chord, free.  The shared factorization
-     (`bezier3_chord_le_combo`, over the named weights bezier3_c0/c1/c2)
-     also feeds Bezier3Polygon.v's TIGHT control-polygon bound; the
-     conditional exact tier is a future rung.
+     (`bezier3_chord_le_combo`, over the named weights bezier3_c0/c1/c2
+     in BernsteinBasis.v) also feeds Bezier3Polygon.v's TIGHT
+     control-polygon bound.  `bezier3_elevation_pointwise` is the n=2
+     instance of `bern_elevate_2` (#562 / 508-f).  The conditional
+     exact tier is a future rung.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
@@ -39,6 +41,7 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
+From NTS.Proofs Require Export BernsteinBasis.
 From NTS.Proofs Require Import Distance CurveLength.
 Import ListNotations.
 Local Open Scope R_scope.
@@ -76,13 +79,132 @@ Definition elevate_mid2 (p1 p2 : Point) : Point :=
 (* Degree-elevation exactness.                                                *)
 (* -------------------------------------------------------------------------- *)
 
+Lemma bezier2_px_bern : forall p0 p1 p2 t,
+  px (bezier2_pt p0 p1 p2 t)
+  = bern2_0 t * px p0 + bern2_1 t * px p1 + bern2_2 t * px p2.
+Proof.
+  intros p0 p1 p2 t.
+  unfold bezier2_pt, bern2_0, bern2_1, bern2_2; cbn [px py]. ring.
+Qed.
+
+Lemma bezier2_py_bern : forall p0 p1 p2 t,
+  py (bezier2_pt p0 p1 p2 t)
+  = bern2_0 t * py p0 + bern2_1 t * py p1 + bern2_2 t * py p2.
+Proof.
+  intros p0 p1 p2 t.
+  unfold bezier2_pt, bern2_0, bern2_1, bern2_2; cbn [px py]. ring.
+Qed.
+
+Lemma bezier3_px_bern : forall p0 p1 p2 p3 t,
+  px (bezier3_pt p0 p1 p2 p3 t)
+  = bern3_0 t * px p0 + bern3_1 t * px p1
+    + bern3_2 t * px p2 + bern3_3 t * px p3.
+Proof.
+  intros p0 p1 p2 p3 t.
+  unfold bezier3_pt, bern3_0, bern3_1, bern3_2, bern3_3; cbn [px py]. ring.
+Qed.
+
+Lemma bezier3_py_bern : forall p0 p1 p2 p3 t,
+  py (bezier3_pt p0 p1 p2 p3 t)
+  = bern3_0 t * py p0 + bern3_1 t * py p1
+    + bern3_2 t * py p2 + bern3_3 t * py p3.
+Proof.
+  intros p0 p1 p2 p3 t.
+  unfold bezier3_pt, bern3_0, bern3_1, bern3_2, bern3_3; cbn [px py]. ring.
+Qed.
+
+Definition ctrl_x (p0 p1 p2 : Point) (i : nat) : R :=
+  match i with O => px p0 | 1%nat => px p1 | _ => px p2 end.
+
+Definition ctrl_y (p0 p1 p2 : Point) (i : nat) : R :=
+  match i with O => py p0 | 1%nat => py p1 | _ => py p2 end.
+
+Lemma elevate_mid1_px_ctrl : forall p0 p1 p2,
+  px (elevate_mid1 p0 p1) = elevate_ctrl 2 (ctrl_x p0 p1 p2) 1%nat.
+Proof.
+  intros p0 p1 p2.
+  unfold elevate_mid1, elevate_ctrl, ctrl_x; cbn [px].
+  field. apply (S_INR_neq_0 2).
+Qed.
+
+Lemma elevate_mid1_py_ctrl : forall p0 p1 p2,
+  py (elevate_mid1 p0 p1) = elevate_ctrl 2 (ctrl_y p0 p1 p2) 1%nat.
+Proof.
+  intros p0 p1 p2.
+  unfold elevate_mid1, elevate_ctrl, ctrl_y; cbn [py].
+  field. apply (S_INR_neq_0 2).
+Qed.
+
+Lemma elevate_mid2_px_ctrl : forall p0 p1 p2,
+  px (elevate_mid2 p1 p2) = elevate_ctrl 2 (ctrl_x p0 p1 p2) 2%nat.
+Proof.
+  intros p0 p1 p2.
+  unfold elevate_mid2, elevate_ctrl, ctrl_x; cbn [px].
+  field. apply (S_INR_neq_0 2).
+Qed.
+
+Lemma elevate_mid2_py_ctrl : forall p0 p1 p2,
+  py (elevate_mid2 p1 p2) = elevate_ctrl 2 (ctrl_y p0 p1 p2) 2%nat.
+Proof.
+  intros p0 p1 p2.
+  unfold elevate_mid2, elevate_ctrl, ctrl_y; cbn [py].
+  field. apply (S_INR_neq_0 2).
+Qed.
+
+Lemma elevate_end_px_ctrl : forall p0 p1 p2,
+  px p2 = elevate_ctrl 2 (ctrl_x p0 p1 p2) 3%nat.
+Proof.
+  intros p0 p1 p2. unfold elevate_ctrl, ctrl_x. simpl. reflexivity.
+Qed.
+
+Lemma elevate_end_py_ctrl : forall p0 p1 p2,
+  py p2 = elevate_ctrl 2 (ctrl_y p0 p1 p2) 3%nat.
+Proof.
+  intros p0 p1 p2. unfold elevate_ctrl, ctrl_y. simpl. reflexivity.
+Qed.
+
+Lemma elevate_start_px_ctrl : forall p0 p1 p2,
+  px p0 = elevate_ctrl 2 (ctrl_x p0 p1 p2) 0%nat.
+Proof.
+  intros p0 p1 p2. unfold elevate_ctrl, ctrl_x. reflexivity.
+Qed.
+
+Lemma elevate_start_py_ctrl : forall p0 p1 p2,
+  py p0 = elevate_ctrl 2 (ctrl_y p0 p1 p2) 0%nat.
+Proof.
+  intros p0 p1 p2. unfold elevate_ctrl, ctrl_y. reflexivity.
+Qed.
+
+(* Framework proof: the pointwise identity is bern_elevate_2 on each
+   coordinate, with elevate_mid1/mid2 the n=2 instance of elevate_ctrl. *)
 Lemma bezier3_elevation_pointwise : forall p0 p1 p2 t,
   bezier3_pt p0 (elevate_mid1 p0 p1) (elevate_mid2 p1 p2) p2 t
   = bezier2_pt p0 p1 p2 t.
 Proof.
   intros p0 p1 p2 t.
-  unfold bezier3_pt, bezier2_pt, elevate_mid1, elevate_mid2; cbn [px py].
-  f_equal; field.
+  assert (Hx :
+    px (bezier3_pt p0 (elevate_mid1 p0 p1) (elevate_mid2 p1 p2) p2 t)
+    = px (bezier2_pt p0 p1 p2 t)).
+  { rewrite bezier3_px_bern, bezier2_px_bern.
+    rewrite (elevate_start_px_ctrl p0 p1 p2).
+    rewrite (elevate_mid1_px_ctrl p0 p1 p2).
+    rewrite (elevate_mid2_px_ctrl p0 p1 p2).
+    rewrite (elevate_end_px_ctrl p0 p1 p2).
+    symmetry. apply bern_elevate_2. }
+  assert (Hy :
+    py (bezier3_pt p0 (elevate_mid1 p0 p1) (elevate_mid2 p1 p2) p2 t)
+    = py (bezier2_pt p0 p1 p2 t)).
+  { rewrite bezier3_py_bern, bezier2_py_bern.
+    rewrite (elevate_start_py_ctrl p0 p1 p2).
+    rewrite (elevate_mid1_py_ctrl p0 p1 p2).
+    rewrite (elevate_mid2_py_ctrl p0 p1 p2).
+    rewrite (elevate_end_py_ctrl p0 p1 p2).
+    symmetry. apply bern_elevate_2. }
+  destruct (bezier3_pt p0 (elevate_mid1 p0 p1) (elevate_mid2 p1 p2) p2 t)
+    as [x3 y3] eqn:E3.
+  destruct (bezier2_pt p0 p1 p2 t) as [x2 y2] eqn:E2.
+  cbn [px py] in Hx, Hy.
+  rewrite Hx, Hy. reflexivity.
 Qed.
 
 (* WITNESS {"claimId":"bezier3length-bezier3-elevation-length","topic":"metric","lemma":"bezier3_elevation_length","title":"Degree elevation is exact: the elevated cubic carries the same is_curve_length values as the quadratic","file":"theories/Bezier3Length.v"} *)
@@ -108,89 +230,10 @@ Qed.
 Definition bezier3_net_max (p0 p1 p2 p3 : Point) : R :=
   Rmax (dist p0 p1) (Rmax (dist p1 p2) (dist p2 p3)).
 
-(* Positive scaling factors out of the Euclidean norm. *)
-Lemma scaled_diff_norm : forall c x y,
-  0 <= c ->
-  sqrt ((c*x) * (c*x) + (c*y) * (c*y)) = c * sqrt (x*x + y*y).
-Proof.
-  intros c x y Hc.
-  replace ((c*x) * (c*x) + (c*y) * (c*y))
-    with ((c*c) * (x*x + y*y)) by ring.
-  rewrite sqrt_mult;
-    [| pose proof (sqr_nonneg c); lra
-     | pose proof (sqr_nonneg x); pose proof (sqr_nonneg y); lra].
-  replace (c * c) with (Rsqr c) by (unfold Rsqr; ring).
-  rewrite sqrt_Rsqr by exact Hc.
-  reflexivity.
-Qed.
-
-(* Triangle inequality for a three-term nonnegative combination of vectors:
-   two dist_triangle hops through the partial sums. *)
-Lemma norm_triple_le : forall c0 c1 c2 x0 y0 x1 y1 x2 y2,
-  0 <= c0 -> 0 <= c1 -> 0 <= c2 ->
-  sqrt ((c0*x0 + c1*x1 + c2*x2) * (c0*x0 + c1*x1 + c2*x2)
-        + (c0*y0 + c1*y1 + c2*y2) * (c0*y0 + c1*y1 + c2*y2))
-  <= c0 * sqrt (x0*x0 + y0*y0) + c1 * sqrt (x1*x1 + y1*y1)
-     + c2 * sqrt (x2*x2 + y2*y2).
-Proof.
-  intros c0 c1 c2 x0 y0 x1 y1 x2 y2 Hc0 Hc1 Hc2.
-  set (A0 := mkPoint 0 0).
-  set (A1 := mkPoint (c0*x0) (c0*y0)).
-  set (A2 := mkPoint (c0*x0 + c1*x1) (c0*y0 + c1*y1)).
-  set (A3 := mkPoint (c0*x0 + c1*x1 + c2*x2) (c0*y0 + c1*y1 + c2*y2)).
-  assert (Hgoal : sqrt ((c0*x0 + c1*x1 + c2*x2) * (c0*x0 + c1*x1 + c2*x2)
-                        + (c0*y0 + c1*y1 + c2*y2) * (c0*y0 + c1*y1 + c2*y2))
-                  = dist A0 A3).
-  { unfold dist, dist_sq, A0, A3; cbn [px py]. f_equal. ring. }
-  assert (H01 : dist A0 A1 = c0 * sqrt (x0*x0 + y0*y0)).
-  { rewrite <- (scaled_diff_norm c0 x0 y0 Hc0).
-    unfold dist, dist_sq, A0, A1; cbn [px py]. f_equal. ring. }
-  assert (H12 : dist A1 A2 = c1 * sqrt (x1*x1 + y1*y1)).
-  { rewrite <- (scaled_diff_norm c1 x1 y1 Hc1).
-    unfold dist, dist_sq, A1, A2; cbn [px py]. f_equal. ring. }
-  assert (H23 : dist A2 A3 = c2 * sqrt (x2*x2 + y2*y2)).
-  { rewrite <- (scaled_diff_norm c2 x2 y2 Hc2).
-    unfold dist, dist_sq, A2, A3; cbn [px py]. f_equal. ring. }
-  rewrite Hgoal, <- H01, <- H12, <- H23.
-  pose proof (dist_triangle A0 A2 A3) as Ha.
-  pose proof (dist_triangle A0 A1 A2) as Hb.
-  lra.
-Qed.
-
-(* The divided-difference Bernstein-2 weights, shared with Bezier3Polygon.v:
-   B(t) - B(s) = (t-s)*(c0*d0 + c1*d1 + c2*d2) over the net edge vectors. *)
-Definition bezier3_c0 (s t : R) : R :=
-  3 - 3 * (s + t) + (s * s + s * t + t * t).
-Definition bezier3_c1 (s t : R) : R :=
-  3 * (s + t) - 2 * (s * s + s * t + t * t).
-Definition bezier3_c2 (s t : R) : R :=
-  s * s + s * t + t * t.
-
-Lemma bezier3_c_nonneg : forall s t,
-  0 <= s -> s <= t -> t <= 1 ->
-  0 <= bezier3_c0 s t /\ 0 <= bezier3_c1 s t /\ 0 <= bezier3_c2 s t.
-Proof.
-  intros s t Hs Hst Ht1.
-  unfold bezier3_c0, bezier3_c1, bezier3_c2.
-  split.
-  { replace (3 - 3 * (s + t) + (s * s + s * t + t * t))
-      with ((1 - s) * (1 - s) + (1 - s) * (1 - t) + (1 - t) * (1 - t))
-      by ring.
-    nra. }
-  split.
-  { pose proof (sqr_nonneg (s - t)) as Hsq. nra. }
-  nra.
-Qed.
-
-Lemma bezier3_c_sum : forall s t,
-  bezier3_c0 s t + bezier3_c1 s t + bezier3_c2 s t = 3.
-Proof.
-  intros s t. unfold bezier3_c0, bezier3_c1, bezier3_c2. ring.
-Qed.
-
 (* The SHARED chord bound both Bezier tiers consume: the divided-difference
-   factorization + the vector triangle inequality, with the net-edge
-   coefficients kept separate.  The crude 3*max bound (below) and the tight
+   factorization + the framework vector triangle inequality
+   (`chord_le_of_combo3`).  Cofactors bezier3_c0/c1/c2 live in
+   BernsteinBasis.v.  The crude 3*max bound (below) and the tight
    control-polygon modulus (Bezier3Polygon.v) are one bounding step away. *)
 Lemma bezier3_chord_le_combo : forall p0 p1 p2 p3 s t,
   0 <= s -> s <= t -> t <= 1 ->

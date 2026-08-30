@@ -13,6 +13,7 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 | P1 | clothoid | `theories/ClothoidLength_unit.v` | `unit_line_discharges_window` — unit-speed straight inhabits the [sd,ed] contract; Fresnel stays clothoid-halley-coq | Qed + Technique park, 3-axiom |
 | P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; knot-span additivity; conditional primitive | Qed, 3-axiom |
 | P2 | arc | `theories/ArcMidSweep.v` | `valid_arc_sweep_nonzero`; `arc_mid_on_circle_param` | Qed, Category C (atan2; removal tracks AngleBetween) |
+| — | framework | `theories/BernsteinBasis.v` | `bern_partition`; `bern_elevate_2` (n=2 instance of `elevate_ctrl`); `bezier3_elevation_pointwise` re-proved through it | Qed, 3-axiom (#562 / 508-f) |
 
 Oracle `B` stays 8-coord cubic.  `red_length_unified_zoo_tests.py` is
 untouched.  No new 64-a r·θ definition.
@@ -30,3 +31,12 @@ Heine–Cantor is **not** imported — uniform continuity stays a
 hypothesis (3-axiom allowlist).  Coquelicot / `RInt` (Route 2) is
 gated off this letter; host-lane metric files stay 3-axiom.  508-d
 (elliptic E) and 508-e (Fresnel) instantiate the pack.
+
+## 508-f (#562)
+
+`theories/BernsteinBasis.v` consolidates the Bernstein / rational
+plumbing that lived in `Bezier3Length.v`, `NurbsQuadraticLength.v`,
+and `NurbsGeneralLength.v`.  Public names stay (`bern2_*`, `bern3_*`,
+`bezier3_c0/c1/c2`, `norm_triple_le`, `nurbs2_den_lb`).  Elevation
+exactness is the n=2 instance of `elevate_ctrl` via `bern_elevate_2`.
+Does not retire epic 508.  Wrap-up is #566.
