@@ -110,10 +110,10 @@ Proofs #630 — see §5.
 Branch: constructor enforces "0, or odd and ≥ 3"
 (`Curves/CircularString.cs:56-70`) — matches Desc 7. It does **not** enforce
 per-segment start≠end distinctness (Desc 6): `CIRCULARSTRING (0 0, 1 1, 0 0)`
-constructs. Ill-formed-but-constructible is tolerable only because ST_IsValid
-("tests if … well formed", §4.2.1.1 item 9) is the designated checker and NTS
-validity checking for curves currently fails closed — the gap belongs to the
-IsValid work, not the constructor. No bulge/centre-angle representation exists
+constructs — deliberately, per ADR-0005's lenient intake. ST_IsValid ("tests
+if … well formed", §4.2.1.1 item 9) is the designated checker, and since
+`359b334` (ticket `615-g`) it answers a definite `false` for exactly this
+Desc-6 violation; values passing every rung-1 rule stay fail-closed (§6.2). No bulge/centre-angle representation exists
 on the branch (untracked gap; SQL-level API, low priority for a geometry
 library).
 
@@ -361,7 +361,7 @@ halves are round-trip-pinned
 | ST_Curve / ST_Surface not instantiable (§7.1.1, §8.1.1) | `Curve`, `Surface<T>` abstract (`Geometries/Curve.cs:10`, `Geometries/Surface.cs:16`) | ok |
 | ring = closed ∧ simple (§4.2.4) | `Curve.IsRing` (`Curve.cs:40`); `IsSimple` rung-1 partial since `b392590`: single-segment CS decided over the locus (arc injective in the angle, collinear → Desc-8b chord), `IsRing` checked-false for the open single segment; multi-segment + other curve types fail closed | ok (rung 1) — landed 2026-08-30 (`615-h`, #624); frontier continues at #630; oracle-pinned via `RING_SIMPLE`, see §5a |
 | CS well-formed ⇔ 2n+1 points, ≥3 (§7.3.1 Desc 7) | ctor enforces 0 or odd ≥3 (`CircularString.cs:56-70`) | ok |
-| CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | definite-false via `CurveValidity` rung 1 since `359b334` (constructs at intake per ADR-0005; IsValid returns false) | ok — landed 2026-08-30 (`615-g`); clean values stay fail-closed pending rung 2 (`615-h`) |
+| CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | definite-false via `CurveValidity` rung 1 since `359b334` (constructs at intake per ADR-0005; IsValid returns false) | ok — landed 2026-08-30 (`615-g`); clean values stay fail-closed pending rung 2 (the `615-h` lane, #630) |
 | CS collinear triple → straight-line segment (§7.3.1 Desc 8b) | `CircularArcGeometry.SegmentLength` maps a collinear triple to its start–end chord since `2ccd353`; pinned by `Length_CollinearTriple_IsChord` and the `collinear_chord` oracle vector | ok — landed 2026-08-30 (`615-d`) |
 | CS bulge / centre-radius-angle representations (§7.3.1 Desc 13–15) | absent | untracked gap (SQL API surface; optional for NTS) |
 | CC components: **all** ST_Curve subtypes, nested CC included (§7.10.1 Desc 7; §5.1.67 `<curve text>`) | accepted and spliced flat, ctor + reader, since `2c4c7bc` (flatten tests in `CompoundCurveTest`/`CurveWktTest`) | ok — ADR-0005 Decision 2, landed 2026-08-30 (`615-b`) |
@@ -387,6 +387,17 @@ halves are round-trip-pinned
 
 Harness: `ORACLE=oracle/oracle_bin dotnet run --project tests/CurveOracleBugHunt`
 (now platform-portable: direct exec off Windows; WSL path preserved on it).
+
+### 5b. Epic wrap-up gate run (ticket `615-j`, 2026-08-30)
+
+All four gates re-run end to end at fork `e00c00b` / Proofs `b7aa688`:
+
+| Gate | Result |
+|---|---|
+| Fork `Curves` + IO namespaces (`dotnet test --filter "FullyQualifiedName~Curves\|FullyQualifiedName~.IO."`) | 441 passed, 0 skipped; the only 4 failures are the pre-existing GML2 `WriteEmpty*` writer tests, reproduced bit-identically at the pristine base `e84458e` (re-verified in a worktree during the `615-i` review) — no curve or reader/writer regression. Every former `Red_` contract runs as a plain green test. |
+| Illustrator suite against the updated sibling (`dotnet test tools/WktUnicodeIllustrator.Tests`) | 53 passed, 0 skipped — exactly the umbrella's gate (curve facts live, not skipped: the sibling wiring sees the branch). |
+| Oracle differential (`CurveOracleBugHunt`, all lanes: ARC_LENGTH, LENGTH_UNIFIED, ENVELOPE_UNIFIED, ARC_DISTANCE, RELATE_MATRIX, chord≤arc invariant, RING_SIMPLE) | `SUMMARY ok=55 warn=0 bug_or_fail=0` — fully green, zero warnings. |
+| Proofs gauntlet (`make check`) | `ok=5 warn=0 bug=0 fail=0`. |
 
 ---
 
@@ -541,4 +552,4 @@ spec-adjacent statements, checked:
 
 ---
 
-SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Envelope is exact over the locus since `9111983` (ticket `615-e`) and point-to-curve Distance since `b829d42` (ticket `615-f`) — all four original Red metric contracts are green and the oracle differential runs `ok=49 warn=0 bug_or_fail=0`. The WKT/WKB small print landed with `ed40bf3` (ticket `615-i`): nested `<z m>` consistency enforced on read (the silent-coercion audit finding closed, §8 ledger), Table 15 alternate WKB codes accepted on read, and the tagged-LINESTRING tolerance documented as a deliberate deviation. The simplicity lane opened with `b392590` (ticket `615-h` rung 1, #624): single-segment CircularString `IsSimple` is decided over the locus and RING_SIMPLE-pinned (`ok=55 warn=0 bug_or_fail=0`). The remaining divergence is multi-segment/compound simplicity and its arc-arc dependents (§4.2.4 / §8.2.1 ring simplicity; curve×curve distance, NearestPoints; wiring decided simplicity into IsValid) — the `615-h` lane, continued at #630.
+SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Envelope is exact over the locus since `9111983` (ticket `615-e`) and point-to-curve Distance since `b829d42` (ticket `615-f`) — all four original Red metric contracts are green and the oracle differential runs `ok=49 warn=0 bug_or_fail=0`. The WKT/WKB small print landed with `ed40bf3` (ticket `615-i`): nested `<z m>` consistency enforced on read (the silent-coercion audit finding closed, §8 ledger), Table 15 alternate WKB codes accepted on read, and the tagged-LINESTRING tolerance documented as a deliberate deviation. The simplicity lane opened with `b392590` (ticket `615-h` rung 1, #624): single-segment CircularString `IsSimple` is decided over the locus and RING_SIMPLE-pinned (`ok=55 warn=0 bug_or_fail=0`). IsSimple rung 1 was hardened by review follow-up `e00c00b` (endpoint equality decided before any float orientation test; overflow counterexample pinned). The remaining divergence is multi-segment/compound simplicity and its arc-arc dependents (§4.2.4 / §8.2.1 ring simplicity; curve×curve distance, NearestPoints; wiring decided simplicity into IsValid) — the `615-h` lane, continued at #630. **Epic A+B scope wrapped 2026-08-30 (ticket `615-j`): all four gates re-run green end to end at fork `e00c00b` (§5b) — this document is the single source of truth for what is now true on the branch.**
