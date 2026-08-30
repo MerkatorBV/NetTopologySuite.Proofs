@@ -164,11 +164,11 @@ Proof.
   intros t Ht0 Ht1.
   apply Rlt_le_trans with (r2 := golden_w1).
   - exact golden_w1_pos.
-  - apply (nurbs2_den_lb golden_w0 golden_w1 golden_w2 golden_w1 t);
-      try lra.
+  - apply (nurbs2_den_lb golden_w0 golden_w1 golden_w2 golden_w1 t
+            Ht0 Ht1).
+    + unfold golden_w0. exact golden_w1_le_1.
     + apply Rle_refl.
-    + exact golden_w1_le_1.
-    + exact golden_w1_le_1.
+    + unfold golden_w2. exact golden_w1_le_1.
 Qed.
 
 Lemma golden_uden_pos : forall t,
