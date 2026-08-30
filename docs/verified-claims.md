@@ -905,6 +905,8 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#523 alphabet letter** (own paragraph). `CURVE_RELATE_MATRIX` refuses E/B (`failwith`, buffer shape). Harness `parse_relate_wire` / `ParseRelateWire` accept `FF?FF1212` as `("matrix", …)`. `lookup_matrix "FF?FF1212"` still fails. Lineal undistinguished cells and areal probe misses print `?`. C/A kernels that reported no contact keep `F`. Shared pins and the T-junction decline golden stay put. Does not remint `522-f`. Does not retire ticket 523.
 
+**NTS RGR Board catalog (#508 children).** `508-b` = #560 / orientation-reversing reparam (witness `508-b-reflect`). Headline `CurveLength.v : is_curve_length_reflect`. Instance `ArcRectifiable.v : arc_quarter_reflect_length`. Board pointer stays #560. Does not retire epic 508. Sibling `508-a` = #559 is a separate letter (PR #606). Remaining children `508-c`…`508-h` are not this letter.
+
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `RelateCurveMatrix.v : ii_cell_dim2_sound_gtri` | **Jordan cell dim (general triangle):** under `geom_de9im_pointset` for gtri self-geometry, `im_ii = Some 2` implies existence of interior point (`ii_has_dim2`) `[exact]` | 3 |
@@ -1661,12 +1663,7 @@ than a new induction. `ext` and `shift` stay independent. Funext-free,
 (`fun t => circle_param O r (π/2 − t)` on `[0, π/2]`) has length
 `r·π/2`. This letter does not retire epic 508 (that is #566).
 
-**NTS RGR Board catalog (#508 children).** `508-b` = #560 /
-orientation-reversing reparam (witness `508-b-reflect`). Headline
-`CurveLength.v : is_curve_length_reflect`. Instance
-`ArcRectifiable.v : arc_quarter_reflect_length`. Does not retire
-epic 508. Sibling `508-a` = #559 is a separate letter (not this
-branch). Remaining children `508-c`…`508-h` are not this letter.
+**NTS RGR Board catalog (#508 children).** `508-b` = #560 / orientation-reversing reparam (witness `508-b-reflect`). Headline `CurveLength.v : is_curve_length_reflect`. Instance `ArcRectifiable.v : arc_quarter_reflect_length`. Board pointer stays #560. Does not retire epic 508. Sibling `508-a` = #559 is a separate letter (PR #606). Remaining children `508-c`…`508-h` are not this letter.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|

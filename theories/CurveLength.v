@@ -40,6 +40,11 @@
    The arc obligation itself (r*theta satisfies is_curve_length for the
    circular-arc parameterization) is the NEXT rung, not this file.
 
+   WITNESS topic: metric · claimId: 508-b · witness: 508-b-reflect
+   macro: metric
+   lane: proofs
+   issue: #560 / #508
+
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.

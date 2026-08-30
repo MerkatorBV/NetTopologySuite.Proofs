@@ -33,6 +33,10 @@
    next rung.  This file stays on the explicit parameterization and is
    3-axiom.
 
+   Instance this letter: `arc_quarter_reflect_length` (#560 / 508-b,
+   witness 508-b-reflect) — quarter-circle reverse traversal. Real
+   instance of reflect, not a vacuous smoke.
+
    No `Admitted`, no `Axiom`, no `Parameter`.
 
    Author: NetTopologySuite.Proofs contributors
