@@ -460,6 +460,17 @@ theories/ArcTraversalBridge.v
 # No Admitteds; headlines Qed-closed.
 theories/ArcMidSweep.v
 
+# Category C (R-side, same atan lineage as ArcParamBridge.v): issue #559
+# / claimId 508-a.  nurbs2_golden_quarter_length pulls
+# Classical_Prop.classic through Stdlib Ratan.atan (Weierstrass φ and
+# the explicit tan preimage).  The 3-axiom route is closed: the reparam
+# contract demands an explicit preimage and forbids IVT, so atan is the
+# named inverse.  CurveLength / ArcRectifiable stay 3-axiom in their
+# own files.  Removal tracks AngleBetween's cleanup — do not lift C1
+# elsewhere.  No CurveSegment growth, no ADR-0004 remint, no new 64-a
+# r·θ.  No Admitteds; headline Qed-closed.
+theories/NurbsConicExact.v
+
 # Category C (R-side, same atan lineage as Atan2.v / AngleBetween.v): issue
 # #64 arc-span atan2 sector membership.  `arc_span_contains_atan2` and the
 # headline `arc_span_contains_atan2_iff_chord_sign` are built on

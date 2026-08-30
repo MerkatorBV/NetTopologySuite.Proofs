@@ -1669,3 +1669,22 @@ than a new induction. `ext` and `shift` stay independent. Funext-free,
 |---|---|---|
 | `CurveLength.v : is_curve_length_reflect` (+ `is_curve_length_reparam_anti`, `inscribed_len_reflect`, `polyline_len_rev`, `chain_map_anti`, `chain_snoc`) | **Reflection invariance (#508/#560, claimId: 508-b, witness: 508-b-reflect):** `is_curve_length g a b L` transfers to `t ↦ g (a+b−t)` over the same `[a,b]` — inscribed polylines reverse by `dist_sym`; anti-monotone `φ` is then reflect ∘ reparam, so `is_curve_length_reparam_anti` spends no new preimage induction. `ext` and `shift` stay independent. Does not retire epic 508 `[exact]` | 3 |
 | `ArcRectifiable.v : arc_quarter_reflect_length` | **Quarter circle backwards:** `circle_param O r` on `[0, π/2]` reflected as `t ↦ circle_param O r (π/2 − t)` still has metric length `r·π/2` `[exact]` | 3 |
+
+## Issue #508 — NURBS conic exact tier: golden quarter = π/2 (`NurbsConicExact.v`) <!-- feat:arc-len geom:cs,arc -->
+
+The named consumer of `is_curve_length_reparam`.  The oracle golden `N`
+vector (`P0=(1,0) w=1`, `P1=(1,1) w=√2/2`, `P2=(0,1) w=1` on `[0,1]`)
+traces the unit quarter circle via the Weierstrass map
+`φ(t) = 2·atan(t / (√2 + (1-√2)·t))` — not `2·atan(t)` — with explicit
+preimages `t = tan(θ/2)·√2 / (1 + tan(θ/2)·(√2-1))`.  The pointwise
+identity `circle_pt origin 1 (φ t) = nurbs2_pt golden t` on `[0,1]` is
+a field identity plus `cos`/`sin` of `2·atan`.  Then
+`arc_r_theta_is_curve_length` serves `1·(π/2 − 0)`, reparam transports
+it onto `circle ∘ φ`, and a windowed extensionality lands it on the
+golden `nurbs2_param`.  Category C (Stdlib `atan`); the 3-axiom engines
+stay 3-axiom in their own files.  This letter does not retire epic 508
+(that is #566).
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `NurbsConicExact.v : nurbs2_golden_quarter_length` (+ `golden_pt_on_circle`, `golden_phi_mono`, `golden_phi_surj`, `cos_2_atan`, `sin_2_atan`) | **Golden rational quarter circle:** `is_curve_length` of the oracle `N` vector on `[0,1]` equals `π/2` — Weierstrass `φ` is weakly monotone with explicit `tan` preimages (no IVT); the unit circle on `[0, π/2]` transfers by `is_curve_length_reparam` and windowed ext `[exact]` | 4 |
