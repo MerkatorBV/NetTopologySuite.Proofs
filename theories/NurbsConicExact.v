@@ -521,8 +521,10 @@ Proof.
     apply Rmult_le_pos; [exact Hw0 |].
     apply Rlt_le. pose proof sqrt2_gt_1. lra. }
   split.
-  - apply Rdiv_le_0_compat; [| exact Hden].
-    apply Rmult_le_pos; [exact Hw0 | apply Rlt_le, sqrt2_pos].
+  - unfold Rdiv.
+    apply Rmult_le_pos.
+    + apply Rmult_le_pos; [exact Hw0 | apply Rlt_le, sqrt2_pos].
+    + apply Rlt_le, Rinv_0_lt_compat. exact Hden.
   - apply (Rmult_le_reg_r (1 + w * (sqrt 2 - 1))); [exact Hden |].
     unfold Rdiv. rewrite Rmult_assoc, Rinv_l, Rmult_1_r by lra.
     replace (1 * (1 + w * (sqrt 2 - 1)))
