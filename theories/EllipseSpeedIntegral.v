@@ -35,6 +35,9 @@
    [sqrt y] (082ef13 L102, no subterm [sqrt x * sqrt y]).
    [rewrite <- Hmin2 in Hlo] looks for the product; Hlo has
    [Rmin (rx²,ry²)] (216ebce L153). Rewrite forward.
+   [rewrite (Rabs_right 2)] needs a subterm [Rabs 2]. Left-associated
+   [2 * cos * sin] becomes [Rabs (2 * cos)] after one [Rabs_mult]
+   (784051a L226). Parenthesize [2 * (cos * sin)].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -183,7 +186,7 @@ Qed.
 
 Lemma sin_s_minus_sin_t : forall s t,
   sin s - sin t
-  = - (2 * cos ((s + t) / 2) * sin ((t - s) / 2)).
+  = - (2 * (cos ((s + t) / 2) * sin ((t - s) / 2))).
 Proof.
   intros s t.
   transitivity
@@ -446,7 +449,7 @@ Proof.
   assert (Harm1' : Rabs (2 * sin xv * sm - 2 * xv * sm)
                    <= M * (gap * gap * gap) / 24).
   { replace (2 * sin xv * sm - 2 * xv * sm)
-      with (2 * sm * (sin xv - xv)) by ring.
+      with (2 * (sm * (sin xv - xv))) by ring.
     rewrite Rabs_mult. rewrite (Rabs_right 2) by lra.
     rewrite Rabs_mult. rewrite (Rabs_right sm) by (apply Rle_ge; exact Hsm0).
     rewrite Rabs_left1 by lra.
@@ -457,7 +460,7 @@ Proof.
     - unfold xv, gap, Rdiv. field. }
   assert (Harm2 : Rabs (2 * xv * sm - 2 * xv * ss)
                   <= gap * sqrt (K * (gap / 2))).
-  { replace (2 * xv * sm - 2 * xv * ss) with (2 * xv * (sm - ss)) by ring.
+  { replace (2 * xv * sm - 2 * xv * ss) with (2 * (xv * (sm - ss))) by ring.
     rewrite Rabs_mult. rewrite (Rabs_right 2) by lra.
     rewrite Rabs_mult. rewrite (Rabs_right xv) by lra.
     replace (2 * (xv * Rabs (sm - ss))) with (gap * Rabs (sm - ss))
