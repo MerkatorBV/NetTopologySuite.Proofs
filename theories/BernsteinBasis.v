@@ -69,6 +69,11 @@ Proof.
     nra.
 Qed.
 
+Lemma sum_f_R0_0 : forall f, sum_f_R0 f 0 = f 0%nat.
+Proof.
+  intros f. reflexivity.
+Qed.
+
 Lemma sum_f_R0_S : forall f n,
   sum_f_R0 f (S n) = sum_f_R0 f n + f (S n).
 Proof.
@@ -104,9 +109,13 @@ Lemma bern_Sn_sum_upto : forall n k t,
     + t * sum_f_R0 (fun i => match i with O => 0 | S i' => bern n i' t end) k.
 Proof.
   intros n k t. induction k as [|k IH].
-  - rewrite bern_Sn. ring.
+  - rewrite (sum_f_R0_0 (fun i => bern (S n) i t)).
+    rewrite (sum_f_R0_0 (fun i => bern n i t)).
+    rewrite (sum_f_R0_0 (fun i => match i with O => 0 | S i' => bern n i' t end)).
+    rewrite (bern_Sn n 0%nat t).
+    ring.
   - rewrite (sum_f_R0_S (fun i => bern (S n) i t) k).
-    rewrite bern_Sn.
+    rewrite (bern_Sn n (S k) t).
     rewrite IH.
     rewrite (sum_f_R0_S (fun i => bern n i t) k).
     rewrite (sum_f_R0_S (fun i => match i with O => 0 | S i' => bern n i' t end) k).
@@ -121,7 +130,7 @@ Proof.
   induction n as [|n IH]; intro t.
   - simpl. reflexivity.
   - rewrite bern_Sn_sum_upto.
-    rewrite sum_f_R0_S.
+    rewrite (sum_f_R0_S (fun i => bern n i t) n).
     rewrite IH.
     rewrite (bern_gt n (S n) t) by lia.
     rewrite (sum_f_R0_prev_bern n n t).
