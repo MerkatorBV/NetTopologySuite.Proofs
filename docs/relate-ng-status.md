@@ -90,7 +90,14 @@ disguised as disjointness — that was #530.
   whether the capstone consumed the ADR.
 - **Touches-vs-Share `LPR_Touches` fill split** (line×line). Companion of
   `line_pair_fill_share_ii_not_pinned_int_bnd_only`.
-- **`F` vs not-computed** on `CURVE_RELATE_MATRIX` — sibling #523, not a #522 child.
+- **`F` vs not-computed** on `CURVE_RELATE_MATRIX` — sibling #523, not a
+  #522 child. Grilled 2026-08-30: still open, not accepted. Coq emptiness
+  is `None` (`RelateCurveMatrix.v : cell_none_iff_empty`); the oracle
+  prints `F` for E/B `[]`, undistinguished lineal cells, and an 80×80
+  grid miss. EE is the established exception
+  (`RelateCurveMatrix.v : geom_de9im_ee_nonempty`). Whole-matrix Decline
+  is already honest (`RelateNGCore.v : relate_unsupported_no_predicate`).
+  Chart: [`scout/map-523.md`](scout/map-523.md).
 - **Empty/empty `relate`** — parked on the #522 epic (declines; ISO 13249-3
   if revisited).
 - **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not
