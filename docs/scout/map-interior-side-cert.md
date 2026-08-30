@@ -8,11 +8,11 @@ the line×line noding T-junction
 
 > **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
 > historical. Do **not** mint `522-n`. Leftover ids are precomposed
-> Roman numerals. This leftover is **`Ⅳ`**. The T-junction / partial-edge
-> kiss is **`Ⅰ`**. Obtuse-at-v is **`Ⅱ`**. The exterior-side one-sided
-> T is **`Ⅲ`**. Do not swap them. Do not remint ADR-0004. This map
-> does not mint a GitHub child. Next unused is **`Ⅴ`** — ask before
-> assigning.
+> Roman numerals. This leftover is **`Ⅳ`**. The mutual vertex-in-open-edge
+> sliver is **`Ⅰ`**. Obtuse-at-v is **`Ⅱ`**. The exterior-side one-sided
+> T is **`Ⅲ`**. The xor is `Ⅲ∨Ⅳ` with one exterior witness. Do not
+> swap them. Do not remint ADR-0004. This map does not mint a GitHub
+> child. Next unused is **`Ⅴ`** — ask before assigning.
 
 topics: relate
 claimId: Ⅳ
@@ -25,7 +25,7 @@ witness: none
 Leftover `Ⅲ` compiled an **exterior-side** stem
 (`RelateNGComplete.v : onesided_t_pair_inhabits`). Interiors sit on
 **opposite** sides of the supporting line, so II is empty
-(`RelateNGComplete.v : onesided_t_ii_empty`). The xor detector
+(`RelateNGComplete.v : onesided_t_ii_empty`). The xor
 (`RelateNGCore.v : touch_onesided_t_b`) does not test that side. This
 map assigns leftover **`Ⅳ`** to the **same-side** one-sided T and
 stops. It does **not** invent a 12-tuple. It does **not** invent a
@@ -95,7 +95,7 @@ built for a different contact:
 
 | Pair / object | What it is | Do not |
 |---|---|---|
-| `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` | Leftover `Ⅰ` kiss. Mutual. Same-side sliver. `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. | steal leftover `Ⅰ` |
+| `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)` | Leftover `Ⅰ` sliver. Mutual. Same-side. II = 2, BB = 1. `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. | steal leftover `Ⅰ` |
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)` | Leftover `Ⅱ` obtuse-at-v. Shared vertex. `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. | invent leftover `Ⅱ` |
 | `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)` | Leftover `Ⅲ` exterior-side stem. Opposite sides. II empty. `RelateNGComplete.v : onesided_t_pair_inhabits`. | steal leftover `Ⅲ` |
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(0,-2)` | #572 / `522-i`. Classified **`TPR_TouchVertex`**. `RelateNGComplete.v : classified_touchvertex_pair`. | remint `cone_separates_b` / steal `522-i` |
@@ -124,14 +124,14 @@ statement for this family.
    `RelateNGCore.v : touch_onesided_t_b`. The xor is load-bearing
    leftover-`Ⅲ` honesty. A new boolean, if asked, tests the side of
    the supporting line (or II emptiness) **after** the xor.
-3. **Do not remint the fill.** Leftover `Ⅲ` is II empty (BB dim 0)
-   and looks like areal Touches. Leftover `Ⅳ` is typically II
-   nonempty and looks like leftover `Ⅰ`'s sliver / overlap-adjacent.
-   The owner names a matrix **and** picks a side before any remint
-   of `TPR_TouchOnesided` off `im_unsupported`. Do not emit
-   `FFFFFFFFF`. Do not point the classifier at
-   `aa_matrix_touch_vertical` / `aa_matrix_touch_edge_ogc` /
-   `aa_matrix_partial_overlap`.
+3. **Do not remint the fill.** Leftover `Ⅲ` is II empty and looks
+   like areal Touches. Leftover `Ⅳ` is typically II nonempty and
+   looks like leftover `Ⅰ`'s sliver / overlap-adjacent. There is no
+   `onesided_t_bb_dim0`. The owner names a matrix **and** picks a
+   side before any remint of `TPR_TouchOnesided` off
+   `im_unsupported`. Do not emit `FFFFFFFFF`. Do not point the
+   classifier at `aa_matrix_touch_vertical` /
+   `aa_matrix_touch_edge_ogc` / `aa_matrix_partial_overlap`.
 4. **Constructor split is an owner call.** Reuse `TPR_TouchOnesided`
    vs add a constructor. This map does not pick. Reuse keeps leftover
    `Ⅲ` and leftover `Ⅳ` on one fill. A new constructor can stay on
@@ -193,7 +193,8 @@ family named ── same-side one-sided vertex-in-open-edge T
      xor already true; overlap_b may steal; II typically nonempty
 
 Ⅳ ── research ── destination met (name only)
-     /implement later: compile cex or prove residue empty
+     grill ── map-interior-side-grill.md ── ticket 26 takeable
+     /implement Ⅳ starts at ticket 26
 
 Ⅰ ── mutual same-side sliver ── map-tjunction-cert.md ── not this leftover
 Ⅱ ── obtuse-at-v ── 522-m finding ── not this leftover

@@ -1,0 +1,42 @@
+# Grill leftover `Ⅳ` — interior-side stem
+
+**Type:** grilling · **Map:** [#522 leftovers](../../map-522-leftovers.md)
+**Blocked by:** — · **Closed:** 2026-08-30 (grill written; leftover `Ⅳ` stays open)
+**claimId:** `Ⅳ` · **GitHub:** none · **witness:** none
+
+Living record: [`docs/scout/map-interior-side-grill.md`](../../map-interior-side-grill.md).
+Research chart: [`docs/scout/map-interior-side-cert.md`](../../map-interior-side-cert.md) (#629).
+Spec (later, ticket 24): [`docs/scout/spec-interior-side.md`](../../spec-interior-side.md).
+
+## Question
+
+Does leftover `Ⅳ` hold against the leftover-`Ⅲ` compile and against
+CONTEXT? Name what holds. Park what does not. Do not invent a
+12-tuple. Do not invent a side-distinguishing detector. Do not remint
+`RelateNGCore.v : touch_onesided_t_b`. Do not restage #609 / #611 /
+#628 / #629.
+
+## Resolution
+
+**Closed 2026-08-30 with the grill written.** Leftover `Ⅳ` stays
+open. CONTEXT Bar 1 is not applicable (no leftover-`Ⅳ` pair, no
+leftover-`Ⅳ` matrix).
+
+Satisfied (verify then cite):
+
+- No compiled leftover-`Ⅳ` coords in `RelateNGComplete.v`.
+- The compiled onesided pair is leftover `Ⅲ`
+  (`RelateNGComplete.v : onesided_t_pair_inhabits`;
+  `RelateNGComplete.v : onesided_t_ii_empty`).
+- The xor is `Ⅲ∨Ⅳ`
+  (`RelateNGCore.v : touch_onesided_t_b`;
+  `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`).
+- `overlap_b` may steal same-side stems
+  (`RelateNGCore.v : overlap_b`).
+- Completeness stays false
+  (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`).
+- Residue inhabited-or-empty is still open (research park, ADR-0002).
+
+Do **not** implement a cex or a detector here. Do **not** mint
+`522-n`. Do **not** mint `Ⅴ`. Do **not** steal leftover `Ⅰ` /
+`Ⅱ` / `Ⅲ`.
