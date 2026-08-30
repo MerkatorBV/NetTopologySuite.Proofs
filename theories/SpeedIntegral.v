@@ -483,7 +483,9 @@ Proof.
     assert (Habs :
       Rabs (dist (circle_param O r s) (circle_param O r t) - r * (t - s))
       = r * (t - s) - dist (circle_param O r s) (circle_param O r t)).
-    { rewrite Rabs_minus_sym, Rabs_right; lra. }
+    { rewrite Rabs_minus_sym.
+      rewrite Rabs_right by lra.
+      reflexivity. }
     rewrite Habs.
     unfold circle_param.
     rewrite circle_chord_dist by exact Hr.
