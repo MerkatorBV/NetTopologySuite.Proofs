@@ -315,7 +315,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 | ST_Curve / ST_Surface not instantiable (§7.1.1, §8.1.1) | `Curve`, `Surface<T>` abstract (`Geometries/Curve.cs:10`, `Geometries/Surface.cs:16`) | ok |
 | ring = closed ∧ simple (§4.2.4) | `Curve.IsRing` (`Curve.cs:40`); `IsSimple` fails closed (`Operation/Valid/IsSimpleOp.cs:165`) | definition ok; evaluation red-marked |
 | CS well-formed ⇔ 2n+1 points, ≥3 (§7.3.1 Desc 7) | ctor enforces 0 or odd ≥3 (`CircularString.cs:56-70`) | ok |
-| CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | not enforced anywhere | **gap** — spec "shall"; belongs to IsValid work |
+| CS arc end ≠ arc start per segment (§7.3.1 Desc 6) | definite-false via `CurveValidity` rung 1 since `359b334` (constructs at intake per ADR-0005; IsValid returns false) | ok — landed 2026-08-30 (`615-g`); clean values stay fail-closed pending rung 2 (`615-h`) |
 | CS collinear triple → straight-line segment (§7.3.1 Desc 8b) | no arc math yet; semantics unimplemented | pending (metrics follow-up) |
 | CS bulge / centre-radius-angle representations (§7.3.1 Desc 13–15) | absent | untracked gap (SQL API surface; optional for NTS) |
 | CC components: **all** ST_Curve subtypes, nested CC included (§7.10.1 Desc 7; §5.1.67 `<curve text>`) | accepted and spliced flat, ctor + reader, since `2c4c7bc` (flatten tests in `CompoundCurveTest`/`CurveWktTest`) | ok — ADR-0005 Decision 2, landed 2026-08-30 (`615-b`) |
@@ -387,6 +387,15 @@ Desc 6 lands in arc-aware IsValid rung 1 (definite-false detection), not the
 constructor: `docs/adr/ADR-0005-lenient-intake-strict-isvalid-curve-types.md`
 Decision 1; #615 tickets `615-c` (intake contract) and `615-g` (rung 1).
 
+**Landed (2026-08-30, branch commit `359b334`, ticket `615-g`):** the three
+curve classes override `IsValid` to the rung-1 `CurveValidity` check —
+definite `false` for the implemented rules (Desc 6, Desc 7 count shape,
+§7.10.1 Desc 3/7, §8.2.1 closure), fail-closed throw naming rung 2
+(ticket `615-h`) for everything cleaner; an unchecked `true` is never
+returned, the empty value stays `true`. The single-segment closed arc is
+now definitely invalid; the five-point full-circle idiom stays fail-closed
+until simplicity lands.
+
 ### 6.3 Ring simplicity for CurvePolygon — spec stricter than the constructor
 
 §8.2.1 Desc 2–3 require rings (closed **and simple**); the branch checks closed
@@ -449,4 +458,4 @@ spec-adjacent statements, checked:
 
 ---
 
-SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). Remaining divergences are either red-test-marked fail-closed gaps (Distance §5.1.41, Envelope §5.1.19 — the three Red tests in `CurveMetricsContractTests.cs`, tickets `615-e/f`) or deferred-validity gaps (§7.3.1 Desc 6 distinctness, §8.2.1 ring simplicity — tickets `615-g/h`) awaiting arc-aware IsValid/IsSimple.
+SUMMARY ok — the one contradiction (nested COMPOUNDCURVE rejection with a false SQL/MM attribution) was retired by branch commit `2c4c7bc` (2026-08-30, ticket `615-b`): components are accepted and spliced flat per §7.10.1 Desc 7 and §5.1.67, ADR-0005 Decision 2. Length is exact over the arc locus since `2ccd353` (ticket `615-d`, oracle-pinned — §5a). IsValid is rung-1 partial since `359b334` (ticket `615-g`: definite-false for the cheap clause rules, Desc 6 included; fail-closed otherwise). Remaining divergences are either red-test-marked fail-closed gaps (Distance §5.1.41, Envelope §5.1.19 — the three Red tests in `CurveMetricsContractTests.cs`, tickets `615-e/f`) or the simplicity half of validity (§4.2.4 / §8.2.1 — arc-arc intersection, ticket `615-h`).
