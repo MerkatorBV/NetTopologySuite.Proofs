@@ -127,7 +127,8 @@ Park: **research** (ADR-0002). The finding is compiled; the detector is not.
 
 ## Fog
 
-- **`ⅠⅠ`.** Obtuse-at-v. Finding
+- **`ⅠⅠ`.** Obtuse-at-v. Chart:
+  [`map-obtuse-cert.md`](map-obtuse-cert.md). Finding
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Do not invent that detector in leftover `Ⅰ`.
 - **Constructor vs reuse `TPR_TouchEdge`.** Technique, not this map.
@@ -148,7 +149,7 @@ Leftover `Ⅰ` is named. This map does not invent the detector.
      pair (0,0)(2,0)(0,1) vs (1,0)(3,0)(2,1)
      decline golden today
 
-ⅠⅠ ── obtuse-at-v ── 522-m finding ── not this leftover
+ⅠⅠ ── obtuse-at-v ── map-obtuse-cert.md ── not this leftover
 not this leftover ── line×line T ── #67
 not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins

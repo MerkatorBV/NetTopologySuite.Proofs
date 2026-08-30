@@ -48,8 +48,8 @@ Order of work: top-down from #64, with the freebie first.
 **Related living maps.** The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
-`/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss. Leftover `ⅠⅠ` is
-the obtuse-at-v certificate. Sibling #523 alphabet grill:
+`/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the T-junction / partial-edge kiss ([`map-tjunction-cert.md`](../map-tjunction-cert.md)). Leftover `ⅠⅠ` is
+the obtuse-at-v certificate ([`map-obtuse-cert.md`](../map-obtuse-cert.md)). Sibling #523 alphabet grill:
 [`docs/scout/map-523.md`](../map-523.md). Takeable spec:
 [`docs/scout/spec-523.md`](../spec-523.md). Alphabet letter landed:
 [`15`](closed/15-523-a-eb-refuse.md) `523-a`, [`16`](closed/16-523-b-cell-unknown.md)
@@ -70,7 +70,9 @@ accept ticket 523.
 | 10 · resync surviving bodies | #506's split queue emptying · ticket 09 |
 
 The next useful session is not another #523 letter. Owner resolve-or-accept
-is the gate for ticket 11 precondition 3. Do not start leftover `Ⅰ` or `ⅠⅠ`.
+is the gate for ticket 11 precondition 3. Leftover `ⅠⅠ` is named
+([`map-obtuse-cert.md`](../map-obtuse-cert.md)); `/implement` of `ⅠⅠ` is a
+later letter. Do not mint leftover `ⅠⅠⅠ`.
 
 Three epics retired on evidence, one deliberately not: **an epic closes only when
 its closure comment would be true.**
