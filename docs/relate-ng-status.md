@@ -93,12 +93,12 @@ disguised as disjointness — that was #530.
 - **`F` vs not-computed** on `CURVE_RELATE_MATRIX` — sibling #523, not a #522 child.
 - **Empty/empty `relate`** — parked on the #522 epic (declines; ISO 13249-3
   if revisited).
-- **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — carved off
-  #567 / `522-a` (witness `522-a-touch-edge-carve`). Not a predicate rewrite.
-  If minted, leftover letter `522-n`.
+- **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not
+  proved. Carve ready as #597. Chart: [`scout/map-522-leftovers.md`](scout/map-522-leftovers.md).
 - **Disjoint fill remint** (FFFFFFFFF → FF2FF1212) — unnamed. Not `522-f`.
-- **T-junction / obtuse certificates** — unnamed. Completeness tickets
-  recorded the findings and stopped. Leftover letter `522-n` if minted.
+- **T-junction / obtuse certificates** — unnamed, two leftovers.
+  Completeness tickets recorded the findings and stopped.
+  `522-n` is one unused letter; ask before assigning it to exactly one.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 
