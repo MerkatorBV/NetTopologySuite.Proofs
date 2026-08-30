@@ -280,23 +280,62 @@ Definition golden_numy (t : R) : R :=
   + bern2_1 t * (golden_w1 * py golden_p1)
   + bern2_2 t * (golden_w2 * py golden_p2).
 
+(* Cancel the weight √2/2. The only denominator is 2. *)
+Lemma twice_half_sqrt2 : forall x,
+  2 * x * (sqrt 2 / 2) = x * sqrt 2.
+Proof. intro x. field. lra. Qed.
+
+Lemma twice_half_sqrt2_1 : forall x,
+  2 * x * (sqrt 2 / 2 * 1) = x * sqrt 2.
+Proof. intro x. field. lra. Qed.
+
+Lemma golden_numx_poly : forall t,
+  golden_numx t = (1 - t) * (1 - t) + t * (1 - t) * sqrt 2.
+Proof.
+  intro t.
+  unfold golden_numx, golden_w0, golden_w1, golden_w2,
+         golden_p0, golden_p1, golden_p2, bern2_0, bern2_1, bern2_2.
+  cbn [px py].
+  rewrite (twice_half_sqrt2_1 (t * (1 - t))).
+  ring.
+Qed.
+
+Lemma golden_numy_poly : forall t,
+  golden_numy t = t * (1 - t) * sqrt 2 + t * t.
+Proof.
+  intro t.
+  unfold golden_numy, golden_w0, golden_w1, golden_w2,
+         golden_p0, golden_p1, golden_p2, bern2_0, bern2_1, bern2_2.
+  cbn [px py].
+  rewrite (twice_half_sqrt2_1 (t * (1 - t))).
+  ring.
+Qed.
+
+Lemma nurbs2_den_golden_poly : forall t,
+  nurbs2_den golden_w0 golden_w1 golden_w2 t
+  = (1 - t) * (1 - t) + t * (1 - t) * sqrt 2 + t * t.
+Proof.
+  intro t.
+  unfold nurbs2_den, golden_w0, golden_w1, golden_w2,
+         bern2_0, bern2_1, bern2_2.
+  rewrite (twice_half_sqrt2 (t * (1 - t))).
+  ring.
+Qed.
+
 Lemma two_numx_uden : forall t,
   2 * golden_numx t = golden_uden t * golden_uden t - t * t.
 Proof.
   intro t.
-  unfold golden_numx, golden_uden, golden_w0, golden_w1, golden_w2,
-         golden_p0, golden_p1, golden_p2, bern2_0, bern2_1, bern2_2.
-  cbn [px py].
-  assert (H :
-      2 * ((1 - t) * (1 - t) * (1 * 1)
-           + 2 * (t * (1 - t)) * ((sqrt 2 / 2) * 1)
-           + t * t * (1 * 0))
-      - ((sqrt 2 + (1 - sqrt 2) * t) * (sqrt 2 + (1 - sqrt 2) * t)
-         - t * t) = 0).
-  { field_simplify; try lra.
-    try rewrite sqrt2_sqr.
-    ring. }
-  lra.
+  rewrite golden_numx_poly.
+  unfold golden_uden.
+  set (s := sqrt 2).
+  assert (Hs : s * s = 2) by (unfold s; apply sqrt2_sqr).
+  replace (s + (1 - s) * t) with (s * (1 - t) + t) by ring.
+  replace ((s * (1 - t) + t) * (s * (1 - t) + t) - t * t)
+    with (s * s * ((1 - t) * (1 - t)) + 2 * s * (1 - t) * t)
+    by ring.
+  rewrite Hs.
+  ring.
 Qed.
 
 Lemma two_den_uden : forall t,
@@ -304,36 +343,26 @@ Lemma two_den_uden : forall t,
   = golden_uden t * golden_uden t + t * t.
 Proof.
   intro t.
-  unfold nurbs2_den, golden_uden, golden_w0, golden_w1, golden_w2,
-         bern2_0, bern2_1, bern2_2.
-  assert (H :
-      2 * ((1 - t) * (1 - t) * 1
-           + 2 * (t * (1 - t)) * (sqrt 2 / 2)
-           + t * t * 1)
-      - ((sqrt 2 + (1 - sqrt 2) * t) * (sqrt 2 + (1 - sqrt 2) * t)
-         + t * t) = 0).
-  { field_simplify; try lra.
-    try rewrite sqrt2_sqr.
-    ring. }
-  lra.
+  rewrite nurbs2_den_golden_poly.
+  unfold golden_uden.
+  set (s := sqrt 2).
+  assert (Hs : s * s = 2) by (unfold s; apply sqrt2_sqr).
+  replace (s + (1 - s) * t) with (s * (1 - t) + t) by ring.
+  replace ((s * (1 - t) + t) * (s * (1 - t) + t) + t * t)
+    with (s * s * ((1 - t) * (1 - t)) + 2 * s * (1 - t) * t
+          + 2 * (t * t))
+    by ring.
+  rewrite Hs.
+  ring.
 Qed.
 
 Lemma two_numy_uden : forall t,
   2 * golden_numy t = 2 * t * golden_uden t.
 Proof.
   intro t.
-  unfold golden_numy, golden_uden, golden_w0, golden_w1, golden_w2,
-         golden_p0, golden_p1, golden_p2, bern2_0, bern2_1, bern2_2.
-  cbn [px py].
-  assert (H :
-      2 * ((1 - t) * (1 - t) * (1 * 0)
-           + 2 * (t * (1 - t)) * ((sqrt 2 / 2) * 1)
-           + t * t * (1 * 1))
-      - 2 * t * (sqrt 2 + (1 - sqrt 2) * t) = 0).
-  { field_simplify; try lra.
-    try rewrite sqrt2_sqr.
-    ring. }
-  lra.
+  rewrite golden_numy_poly.
+  unfold golden_uden.
+  ring.
 Qed.
 
 Lemma golden_weierstrass_x : forall t,
