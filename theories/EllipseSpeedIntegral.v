@@ -541,20 +541,31 @@ Proof.
     replace (2 * (xv * Rabs (sm - ss))) with (gap * Rabs (sm - ss))
       by (rewrite <- H2xv; ring).
     apply Rmult_le_compat_l; [exact Hgap0 |].
-    unfold sm, ss, K, mid.
+    unfold sm, ss.
     replace (Rabs (ellipse_speed rx ry mid - ellipse_speed rx ry s))
       with (Rabs (ellipse_speed rx ry s - ellipse_speed rx ry mid))
       by (apply Rabs_minus_sym).
-    (* mid >= s: (s+t)/2 - s = (t-s)/2 = xv >= 0 *)
+    assert (Hmid_s : mid - s = xv).
+    { unfold mid, xv, gap.
+      apply (Rmult_eq_reg_r 2); [| lra].
+      unfold Rdiv.
+      rewrite Rmult_plus_distr_r.
+      replace ((s + t) * / 2 * 2) with (s + t).
+      2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. ring. }
+      replace (- s * 2) with (- (s * 2)) by ring.
+      replace ((t - s) * / 2 * 2) with (t - s).
+      2:{ rewrite Rmult_assoc. rewrite Rinv_l by lra. ring. }
+      ring. }
     assert (Hs_mid : s <= mid).
-    { unfold mid. apply (Rplus_le_reg_r (- s)).
-      replace ((s + t) / 2 - s) with ((t - s) / 2) by field.
-      unfold Rdiv. apply Rmult_le_pos; [lra |].
-      apply Rlt_le, Rinv_0_lt_compat. lra. }
+    { apply (Rplus_le_reg_r (- s)).
+      replace (s + - s) with 0 by ring.
+      replace (mid + - s) with (mid - s) by ring.
+      rewrite Hmid_s. exact Hxv0. }
     pose proof (ellipse_speed_holder rx ry s mid Hs_mid) as Hh.
     eapply Rle_trans; [exact Hh |].
     apply Req_le. f_equal.
-    unfold mid, K, gap. field. }
+    unfold K. rewrite Hmid_s.
+    unfold xv, Rdiv. reflexivity. }
   eapply Rle_trans.
   - apply Rplus_le_compat; [exact Harm1' | exact Harm2].
   - (* each arm ≤ (eps/2) gap *)
