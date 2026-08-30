@@ -69,6 +69,11 @@ theories/ClothoidLength_unit.v
 # and the weight-conditioned control-net Lipschitz bound
 # L <= 2*(wmax/wmin)^2 * max(net edge) * (b−a) on [a,b] ⊆ [0,1].  3-axiom.
 theories/NurbsQuadraticLength.v
+# #508-a / #559: golden rational quarter circle has metric length π/2.
+# Weierstrass φ(t) = 2·atan(t/(√2+(1-√2)·t)); reparam + ext onto the
+# golden nurbs2_param.  Category C (Stdlib atan / Ratan), same lineage
+# as ArcParamBridge.v.  Does not grow CurveSegment or remint ADR-0004.
+theories/NurbsConicExact.v
 # #508 NURBS P1: general degree (equal-weight rational cubic ↔ polynomial
 # cubic), knot-span additivity (curve_length_additive), and the
 # conditional exact primitive through curve_length_of_primitive.

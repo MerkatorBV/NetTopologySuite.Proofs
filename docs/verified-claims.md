@@ -905,7 +905,7 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#523 alphabet letter** (own paragraph). `CURVE_RELATE_MATRIX` refuses E/B (`failwith`, buffer shape). Harness `parse_relate_wire` / `ParseRelateWire` accept `FF?FF1212` as `("matrix", …)`. `lookup_matrix "FF?FF1212"` still fails. Lineal undistinguished cells and areal probe misses print `?`. C/A kernels that reported no contact keep `F`. Shared pins and the T-junction decline golden stay put. Does not remint `522-f`. Does not retire ticket 523.
 
-**NTS RGR Board catalog (#508 children).** `508-b` = #560 / orientation-reversing reparam (witness `508-b-reflect`). Headline `CurveLength.v : is_curve_length_reflect`. Instance `ArcRectifiable.v : arc_quarter_reflect_length`. Board pointer stays #560. Does not retire epic 508. Sibling `508-a` = #559 is a separate letter (PR #606). Remaining children `508-c`…`508-h` are not this letter.
+**NTS RGR Board catalog (#508 children).** `508-a` = #559 / golden rational quarter (witness `508-a-golden-quarter`) · `508-b` = #560 / orientation-reversing reparam (witness `508-b-reflect`). Headline this letter: `NurbsConicExact.v : nurbs2_golden_quarter_length`. Board pointer stays #559. Does not retire epic 508. Remaining children `508-c`…`508-h` are not this letter.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -1546,8 +1546,9 @@ witness meanwhile).
 The zoo's last lane opens at the degree the engines actually use: the
 degree-2 single-span `N` token is the RATIONAL QUADRATIC Bézier — the conic
 form (the oracle's golden vector pins the `w = √2/2` quarter circle at
-`π/2`; that exact value is MOTIVATION here, not a theorem — the conic exact
-tier is a later rung). Two unconditional results. First, the N ⊃ B token
+`π/2`; the exact value is now a theorem on `508-a` / #559 —
+`NurbsConicExact.v : nurbs2_golden_quarter_length`). Two unconditional
+results. First, the N ⊃ B token
 inclusion as a spec theorem: equal weights collapse the denominator
 (partition of unity), so the rational quadratic IS the polynomial quadratic
 pointwise and `is_curve_length` transfers as an iff — chaining through the
@@ -1669,3 +1670,24 @@ than a new induction. `ext` and `shift` stay independent. Funext-free,
 |---|---|---|
 | `CurveLength.v : is_curve_length_reflect` (+ `is_curve_length_reparam_anti`, `inscribed_len_reflect`, `polyline_len_rev`, `chain_map_anti`, `chain_snoc`) | **Reflection invariance (#508/#560, claimId: 508-b, witness: 508-b-reflect):** `is_curve_length g a b L` transfers to `t ↦ g (a+b−t)` over the same `[a,b]` — inscribed polylines reverse by `dist_sym`; anti-monotone `φ` is then reflect ∘ reparam, so `is_curve_length_reparam_anti` spends no new preimage induction. `ext` and `shift` stay independent. Does not retire epic 508 `[exact]` | 3 |
 | `ArcRectifiable.v : arc_quarter_reflect_length` | **Quarter circle backwards:** `circle_param O r` on `[0, π/2]` reflected as `t ↦ circle_param O r (π/2 − t)` still has metric length `r·π/2` `[exact]` | 3 |
+
+## Issue #508 — NURBS conic exact tier: golden quarter = π/2 (`NurbsConicExact.v`) <!-- feat:arc-len geom:cs,arc -->
+
+The named consumer of `is_curve_length_reparam`.  The oracle golden `N`
+vector (`P0=(1,0) w=1`, `P1=(1,1) w=√2/2`, `P2=(0,1) w=1` on `[0,1]`)
+traces the unit quarter circle via the Weierstrass map
+`φ(t) = 2·atan(t / (√2 + (1-√2)·t))` — not `2·atan(t)` — with explicit
+preimages `t = tan(θ/2)·√2 / (1 + tan(θ/2)·(√2-1))`.  The pointwise
+identity `circle_pt origin 1 (φ t) = nurbs2_pt golden t` on `[0,1]` is
+a field identity plus `cos`/`sin` of `2·atan`.  Then
+`arc_r_theta_is_curve_length` serves `1·(π/2 − 0)`, reparam transports
+it onto `circle ∘ φ`, and a windowed extensionality lands it on the
+golden `nurbs2_param`.  Category C (Stdlib `atan`); the 3-axiom engines
+stay 3-axiom in their own files.  This letter does not retire epic 508
+(that is #566).
+
+**NTS RGR Board catalog (#508 children).** `508-a` = #559 / golden rational quarter circle (witness `508-a-golden-quarter`). Headline `NurbsConicExact.v : nurbs2_golden_quarter_length`. Category C (`atan`), same lineage as `ArcParamBridge.v`. Differential pin: `oracle/red_length_unified_zoo_tests.py` nurbs_arc. `508-b` = #560 is already on `main`. Does not retire epic 508. Remaining children `508-c`…`508-h` are not this letter.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `NurbsConicExact.v : nurbs2_golden_quarter_length` (+ `golden_pt_on_circle`, `golden_phi_mono`, `golden_phi_surj`, `cos_2_atan`, `sin_2_atan`) | **Golden rational quarter circle (#508/#559, claimId: 508-a, witness: 508-a-golden-quarter):** `is_curve_length` of the oracle `N` vector on `[0,1]` equals `π/2` — Weierstrass `φ` is weakly monotone with explicit `tan` preimages (no IVT); the unit circle on `[0, π/2]` transfers by `is_curve_length_reparam` and windowed ext. Category C (`atan`). Does not retire epic 508 `[exact]` | 4 |
