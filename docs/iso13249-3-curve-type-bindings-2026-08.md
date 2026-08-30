@@ -340,6 +340,11 @@ it as a deliberate deviation), or accept-and-flatten on input (what PostGIS
 does), or model nesting. What is not tenable is citing SQL/MM for the
 rejection.
 
+**Decision of record (2026-08-30):** accept-and-flatten on intake —
+`docs/adr/ADR-0005-lenient-intake-strict-isvalid-curve-types.md` Decision 2;
+lands via #615 ticket `615-b`, which also retires this row and the `SUMMARY
+warn` below.
+
 ### 6.2 Arc-segment endpoint distinctness — spec stricter than the branch
 
 §7.3.1 Desc 6 says each arc segment's end point **shall** be distinct from its
@@ -349,6 +354,11 @@ count only). Not a behavioural contradiction — NTS defers value validity to
 `IsValid`, which fails closed — but the rule must land in arc-aware
 IsValid/IsSimple, and constructor-level enforcement is worth the interview's
 attention (it is cheap: pairwise `Equals2D` per segment).
+
+**Decision of record (2026-08-30):** the interview chose lenient intake —
+Desc 6 lands in arc-aware IsValid rung 1 (definite-false detection), not the
+constructor: `docs/adr/ADR-0005-lenient-intake-strict-isvalid-curve-types.md`
+Decision 1; #615 tickets `615-c` (intake contract) and `615-g` (rung 1).
 
 ### 6.3 Ring simplicity for CurvePolygon — spec stricter than the constructor
 
