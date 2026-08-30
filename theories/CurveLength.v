@@ -25,6 +25,10 @@
      - is_curve_length_reparam: any weakly monotone map with explicit
        preimages carries lengths over (t ↦ g (φ t)) — the general monotone
        form (ext stays orthogonal; shift also covers a > b)
+     - is_curve_length_reflect: t ↦ g (a+b−t) carries the same length
+       (the orientation-reversing half; #560 / 508-b)
+     - is_curve_length_reparam_anti: reflect ∘ reparam, so weakly
+       non-increasing φ with explicit preimages is not a new induction
        — all reparameterization invariances funext-free
      - curve_length_upper_of_chord_modulus (+ polyline_le_of_chord_modulus,
        chain_le) : a chord modulus F on [a,b] telescopes, so L <= F b − F a
@@ -35,6 +39,11 @@
    differential observation only (#508 differential datapoint, 2026-08-22).
    The arc obligation itself (r*theta satisfies is_curve_length for the
    circular-arc parameterization) is the NEXT rung, not this file.
+
+   WITNESS topic: metric · claimId: 508-b · witness: 508-b-reflect
+   macro: metric
+   lane: proofs
+   issue: #560 / #508
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -364,8 +373,9 @@ Print Assumptions is_curve_length_shift.
 (* previous preimage when consecutive samples coincide.  Both directions     *)
 (* hold under the same premises (the inscribed sets correspond both ways),   *)
 (* so the transfer is an equivalence.  Orientation-REVERSING maps (t ↦ 1−t,  *)
-(* an arc run backwards) are deliberately OUT OF SCOPE: that is a different  *)
-(* lemma (swap endpoints / compose with a reflection), not an instance.      *)
+(* an arc run backwards) are the next block: is_curve_length_reflect, then   *)
+(* is_curve_length_reparam_anti = reflect ∘ reparam.  ext and shift stay     *)
+(* independent — they are not instances of either form.                      *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma chain_map_mono : forall (phi : R -> R) a b,
@@ -477,3 +487,183 @@ Qed.
 
 Print Assumptions is_curve_length_reparam.
 Print Assumptions is_curve_length_reparam_inv.
+
+(* -------------------------------------------------------------------------- *)
+(* Orientation-reversing reparameterization (#560 / 508-b): reflection        *)
+(* ρ(t) = a+b−t sends a chain of [a,b] to the reversed chain.  polyline_len   *)
+(* of a reversed visit equals the original by dist_sym (rev induction).       *)
+(* A weakly non-increasing φ is then reflection ∘ a non-decreasing ψ, so      *)
+(* is_curve_length_reparam_anti reuses reparam_preimage_chain rather than     *)
+(* re-proving the order-repair induction.  ext and shift stay independent.    *)
+(* -------------------------------------------------------------------------- *)
+
+Definition reflect (a b t : R) : R := a + b - t.
+
+Lemma reflect_invo : forall a b t, reflect a b (reflect a b t) = t.
+Proof. intros a b t. unfold reflect. ring. Qed.
+
+Lemma reflect_left : forall a b, reflect a b a = b.
+Proof. intros a b. unfold reflect. ring. Qed.
+
+Lemma reflect_right : forall a b, reflect a b b = a.
+Proof. intros a b. unfold reflect. ring. Qed.
+
+Lemma reflect_anti : forall a b s t,
+  s <= t -> reflect a b t <= reflect a b s.
+Proof. intros a b s t H. unfold reflect. lra. Qed.
+
+Lemma map_reflect_invo : forall a b ts,
+  map (reflect a b) (map (reflect a b) ts) = ts.
+Proof.
+  intros a b ts; induction ts as [|u tl IH]; simpl.
+  - reflexivity.
+  - rewrite IH, reflect_invo. reflexivity.
+Qed.
+
+Lemma map_rev_reflect : forall a b ts,
+  map (reflect a b) (rev ts) = rev (map (reflect a b) ts).
+Proof.
+  intros a b ts; induction ts as [|u tl IH]; simpl.
+  - reflexivity.
+  - rewrite map_app, IH. reflexivity.
+Qed.
+
+(* Snoc form: a chain that ends by visiting m, then stepping to hi. *)
+Lemma chain_snoc : forall xs lo m hi,
+  chain lo xs m -> m <= hi -> chain lo (xs ++ [m]) hi.
+Proof.
+  induction xs as [|u xs IH]; simpl; intros lo m hi Hch Hmh.
+  - split; assumption.
+  - destruct Hch as [Hlu Hch]. split; [exact Hlu | apply IH; assumption].
+Qed.
+
+(* Weakly antitone image of a chain, reversed, is a chain. *)
+Lemma chain_map_anti : forall (phi : R -> R) a b,
+  (forall s t, a <= s -> s <= t -> t <= b -> phi t <= phi s) ->
+  forall ts lo,
+    a <= lo -> chain lo ts b ->
+    chain (phi b) (rev (map phi ts)) (phi lo).
+Proof.
+  intros phi a b Hanti ts; induction ts as [|u tl IH]; simpl;
+    intros lo Halo Hch.
+  - apply Hanti; lra.
+  - destruct Hch as [Hlu Hch].
+    pose proof (chain_le tl u b Hch) as Hub'.
+    apply chain_snoc.
+    + apply (IH u); [lra | exact Hch].
+    + apply (Hanti lo u); lra.
+Qed.
+
+(* (xs ++ [x]) ++ [y] = xs ++ x :: [y], proved by induction so we never
+   fight app_assoc's association. *)
+Lemma app_snoc_cons : forall (A : Type) (xs : list A) (x y : A),
+  (xs ++ [x]) ++ [y] = xs ++ x :: [y].
+Proof.
+  intros A xs x y; induction xs as [|z zs IH]; simpl.
+  - reflexivity.
+  - rewrite IH. reflexivity.
+Qed.
+
+(* Reversing the visit order preserves polyline length (dist is symmetric). *)
+Lemma polyline_len_rev : forall (g : Curve) ts t u,
+  polyline_len g t (ts ++ [u]) = polyline_len g u (rev ts ++ [t]).
+Proof.
+  intros g ts; induction ts as [|v tl IH]; intros t u.
+  - simpl. rewrite dist_sym. reflexivity.
+  - replace ((v :: tl) ++ [u]) with (v :: tl ++ [u]) by reflexivity.
+    simpl polyline_len.
+    rewrite IH.
+    change (rev (v :: tl)) with (rev tl ++ [v]).
+    rewrite (app_snoc_cons R (rev tl) v t).
+    rewrite (polyline_len_app_mid g (rev tl) u v [t]).
+    simpl polyline_len.
+    rewrite dist_sym, Rplus_0_r.
+    apply Rplus_comm.
+Qed.
+
+Lemma inscribed_len_reflect : forall (g : Curve) a b l,
+  inscribed_len (fun t => g (reflect a b t)) a b l <->
+  inscribed_len g a b l.
+Proof.
+  intros g a b l. split.
+  - intros (ts & Hch & Hl).
+    exists (rev (map (reflect a b) ts)). split.
+    + pose proof (chain_map_anti (reflect a b) a b
+                    (fun s t Hs Hst Ht => reflect_anti a b s t Hst)
+                    ts a (Rle_refl a) Hch) as Hrev.
+      rewrite reflect_right, reflect_left in Hrev. exact Hrev.
+    + rewrite Hl.
+      rewrite (polyline_len_compose g (reflect a b) (ts ++ [b]) a).
+      rewrite map_app. simpl. rewrite reflect_left, reflect_right.
+      rewrite (polyline_len_rev g (map (reflect a b) ts) b a).
+      reflexivity.
+  - intros (ts & Hch & Hl).
+    exists (rev (map (reflect a b) ts)). split.
+    + pose proof (chain_map_anti (reflect a b) a b
+                    (fun s t Hs Hst Ht => reflect_anti a b s t Hst)
+                    ts a (Rle_refl a) Hch) as Hrev.
+      rewrite reflect_right, reflect_left in Hrev. exact Hrev.
+    + rewrite Hl.
+      rewrite (polyline_len_compose g (reflect a b)
+                 (rev (map (reflect a b) ts) ++ [b]) a).
+      rewrite map_app. simpl. rewrite reflect_left, reflect_right.
+      rewrite map_rev_reflect, map_reflect_invo.
+      rewrite <- (polyline_len_rev g ts a b).
+      reflexivity.
+Qed.
+
+(* WITNESS {"claimId":"508-b","topic":"metric","lemma":"is_curve_length_reflect","title":"Metric length is invariant under parameter reflection t ↦ a+b−t","file":"theories/CurveLength.v","witness":"508-b-reflect","board":"#560"} *)
+
+Theorem is_curve_length_reflect : forall (g : Curve) (a b L : R),
+  is_curve_length g a b L ->
+  is_curve_length (fun t => g (a + b - t)) a b L.
+Proof.
+  intros g a b L [Hub Hlst].
+  split.
+  - intros l Hl. apply Hub. apply inscribed_len_reflect. exact Hl.
+  - intros M HM. apply Hlst. intros l Hl. apply HM.
+    apply inscribed_len_reflect. exact Hl.
+Qed.
+
+(* A weakly non-increasing φ with explicit preimages is reflection of a
+   weakly non-decreasing ψ(t) := φ(a+b−t).  The preimage-chain order-repair
+   is reused via is_curve_length_reparam; this is not a new induction. *)
+Corollary is_curve_length_reparam_anti :
+  forall (g : Curve) (phi : R -> R) a b L,
+    a <= b ->
+    (forall s t, a <= s -> s <= t -> t <= b -> phi t <= phi s) ->
+    (forall v, phi b <= v -> v <= phi a ->
+       exists u, a <= u /\ u <= b /\ phi u = v) ->
+    is_curve_length g (phi b) (phi a) L ->
+    is_curve_length (fun t => g (phi t)) a b L.
+Proof.
+  intros g phi a b L Hab Hanti Hsurj HL.
+  set (rho := fun t => a + b - t).
+  set (psi := fun t => phi (rho t)).
+  assert (Hmono : forall s t, a <= s -> s <= t -> t <= b -> psi s <= psi t).
+  { intros s t Hs Hst Ht. unfold psi, rho. apply Hanti; lra. }
+  assert (Hsurj' : forall v, psi a <= v -> v <= psi b ->
+                    exists u, a <= u /\ u <= b /\ psi u = v).
+  { intros v Hv1 Hv2.
+    unfold psi, rho in Hv1, Hv2.
+    replace (a + b - a) with b in Hv1 by ring.
+    replace (a + b - b) with a in Hv2 by ring.
+    destruct (Hsurj v Hv1 Hv2) as (w & Hwa & Hwb & Hph).
+    exists (a + b - w). split; [lra | split; [lra |]].
+    unfold psi, rho. replace (a + b - (a + b - w)) with w by ring.
+    exact Hph. }
+  assert (Hpsi : is_curve_length (fun t => g (psi t)) a b L).
+  { apply (is_curve_length_reparam g psi a b L Hab Hmono Hsurj').
+    unfold psi, rho.
+    replace (a + b - a) with b by ring.
+    replace (a + b - b) with a by ring.
+    exact HL. }
+  apply is_curve_length_reflect in Hpsi.
+  eapply is_curve_length_ext; [| exact Hpsi].
+  intros t. unfold psi, rho.
+    replace (a + b - (a + b - t)) with t by ring.
+    reflexivity.
+Qed.
+
+Print Assumptions is_curve_length_reflect.
+Print Assumptions is_curve_length_reparam_anti.

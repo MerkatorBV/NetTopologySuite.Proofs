@@ -33,6 +33,10 @@
    next rung.  This file stays on the explicit parameterization and is
    3-axiom.
 
+   Instance this letter: `arc_quarter_reflect_length` (#560 / 508-b,
+   witness 508-b-reflect) — quarter-circle reverse traversal. Real
+   instance of reflect, not a vacuous smoke.
+
    No `Admitted`, no `Axiom`, no `Parameter`.
 
    Author: NetTopologySuite.Proofs contributors
@@ -490,3 +494,25 @@ Proof.
 Qed.
 
 Print Assumptions arc_r_theta_is_curve_length.
+
+(* #560 / 508-b instance: the quarter circle traversed backwards carries
+   the same metric length r·π/2.  circle_param is the file's arc_param. *)
+Corollary arc_quarter_reflect_length : forall (O : Point) r,
+  0 <= r ->
+  is_curve_length (fun t => circle_param O r (PI / 2 - t))
+                  0 (PI / 2) (r * PI / 2).
+Proof.
+  intros O r Hr.
+  pose proof PI_RGT_0 as Hpi.
+  assert (Hab : 0 <= PI / 2) by lra.
+  assert (HL : is_curve_length (circle_param O r) 0 (PI / 2) (r * (PI / 2 - 0))).
+  { apply arc_r_theta_is_curve_length; [exact Hr | exact Hab]. }
+  replace (r * (PI / 2 - 0)) with (r * PI / 2) in HL by field.
+  apply is_curve_length_reflect in HL.
+  eapply is_curve_length_ext; [| exact HL].
+  intros t. unfold circle_param.
+  replace (0 + PI / 2 - t) with (PI / 2 - t) by ring.
+  reflexivity.
+Qed.
+
+Print Assumptions arc_quarter_reflect_length.
