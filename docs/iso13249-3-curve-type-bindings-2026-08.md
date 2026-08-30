@@ -164,13 +164,14 @@ empty shell matches Desc 17 (`CurvePolygon.cs:138`).
 
 ---
 
-## 3. The semantics behind the four Red tests
+## 3. The semantics behind the four Red tests (all flipped green)
 
-The branch's four deliberately-red contract tests
-(`test/NetTopologySuite.Tests.NUnit/Geometries/Curves/CurveMetricsContractTests.cs`)
-each encode a spec obligation. What the spec *actually* requires, honestly:
+The branch's four deliberately-red contract tests (originally in
+`CurveMetricsContractTests.cs`) each encoded a spec obligation. As of
+`b829d42` all four are flipped green in `CurveMetricsTests.cs` and the
+emptied Red fixture is deleted. What the spec *actually* requires, honestly:
 
-### 3.1 Length — `Red_Length_UnitSemicircle_IsPi` (:101)
+### 3.1 Length — formerly `Red_Length_UnitSemicircle_IsPi`, flipped green as `Length_UnitSemicircle_IsPi` (`CurveMetricsTests`)
 
 §7.1.2 (ST_Length Methods, on ST_Curve) Desc 2a: empty → null; otherwise
 "return the implementation-defined length of SELF". **The computation is
@@ -191,7 +192,7 @@ green and moved to `CurveMetricsTests`. Differential pin: all ARC_LENGTH and
 LENGTH_UNIFIED golden vectors agree with the oracle at rel < 1e-9 (run
 provenance below, §5a).
 
-### 3.2 Distance — `Red_Distance_PointToCircularString_CentreOfUnitSemicircle_IsRadius` (:68) and `..._Endpoint_IsZero` (:85)
+### 3.2 Distance — formerly `Red_Distance_PointToCircularString_CentreOfUnitSemicircle_IsRadius` and `..._Endpoint_IsZero`, flipped green as `Distance_CentreOfUnitSemicircle_IsRadius` and `Distance_Endpoint_IsZero` (`CurveMetricsTests`)
 
 §5.1.41 (ST_Distance Methods, on ST_Geometry) Desc 2a: empty operand → null;
 **"if SELF and ageometry spatially intersect, then return 0" is normative and
@@ -350,7 +351,7 @@ decoded (`(type & 0xffff) % 1000` cannot recover it) — acceptable in practice
 |---|---|---|---|
 | 2026-08-30, ticket `615-d` | `oracle_bin` rebuilt in-container via `make -C oracle` from this repo at `4e33e2c` (extraction unchanged) | fork branch at `2ccd353` + review follow-up `df5ba57` (CW-witness + unequal-radii vectors) | `SUMMARY ok=26 warn=7 bug_or_fail=0` — 7 legacy ARC_LENGTH + 7 LENGTH_UNIFIED vectors all `rel < 1e-9` (several bit-exact); the 7 WARNs are the honest fail-closed pendings for Envelope/Distance (`615-e/f`), flipped when those land |
 | 2026-08-30, ticket `615-e` | `oracle_bin` rebuilt with the new `ENVELOPE_UNIFIED` lane (exact-Q axis-crossing decisions, one float step on the extremes; allowlisted INTERFACE-BOUNDARY kernel `run_envelope_unified`) | fork branch at `9111983` | `SUMMARY ok=43 warn=6 bug_or_fail=0` — 5 ENVELOPE_UNIFIED vectors plus the legacy ENV probe all within `1e-12`/`rel < 1e-9` (axis extremes agree to the last ulp); the 6 WARNs are the Distance pendings (`615-f`) |
-| 2026-08-30, ticket `615-f` | same `oracle_bin` (the pre-existing ARC_DISTANCE lane pins this landing) | fork branch at `b829d42` | `SUMMARY ok=49 warn=0 bug_or_fail=0` — all six ARC_DISTANCE queries flipped WARN→OK (five bit-exact, one at `rel ≈ 1e-16`); **the curve differential harness is now fully green: zero warnings, zero bugs** |
+| 2026-08-30, ticket `615-f` | same `oracle_bin` (the pre-existing ARC_DISTANCE lane pins this landing) | fork branch at `b829d42` + review follow-up `61f4981` (collinear-overshoot chord pin, Desc 8b) | `SUMMARY ok=49 warn=0 bug_or_fail=0` — all six ARC_DISTANCE queries flipped WARN→OK (five bit-exact, one at `rel ≈ 1e-16`); **the curve differential harness is now fully green: zero warnings, zero bugs** |
 
 Harness: `ORACLE=oracle/oracle_bin dotnet run --project tests/CurveOracleBugHunt`
 (now platform-portable: direct exec off Windows; WSL path preserved on it).
@@ -440,7 +441,9 @@ throws is the frontier that needs arc-arc machinery (curve×curve distance,
 NearestPoints/IsWithinDistance, simplicity — the `615-h` lane), preferred over
 silently returning chord-approx numbers — which would satisfy the type
 signature while violating §7.3.1 Desc 8's definition of the value being
-measured. The remaining Red tests are the spec's side of that contract.
+measured. With the Red fixture emptied and deleted, the spec's side of that
+contract is now the green fail-closed pins (`CurveFailClosedTest`,
+`Distance_ArcToArc_StaysFailClosed`), which assert the frontier throws.
 
 ---
 
@@ -489,7 +492,8 @@ spec-adjacent statements, checked:
   choice, not a clause. Marked unverified.
 - **r·θ as "the" arc length and 1e-9 tolerances**: derived from the locus
   definition (§7.3.1 Desc 8a) + §7.1.2; the spec states no formula and no
-  precision. The Red tests' numeric expectations are quality bars.
+  precision. The metric tests' numeric expectations (formerly the Red
+  contracts') are quality bars.
 - **Nested-tag `<z m>` consistency enforcement in the NTS reader** (spec rule
   in §5.1.67): not audited on the branch; only outer-tag Z round-trip is
   test-covered (`CurveWktTest.ReadSupportsZOrdinates`).
