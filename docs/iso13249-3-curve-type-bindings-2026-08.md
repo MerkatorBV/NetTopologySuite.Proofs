@@ -394,7 +394,11 @@ definite `false` for the implemented rules (Desc 6, Desc 7 count shape,
 (ticket `615-h`) for everything cleaner; an unchecked `true` is never
 returned, the empty value stays `true`. The single-segment closed arc is
 now definitely invalid; the five-point full-circle idiom stays fail-closed
-until simplicity lands.
+until simplicity lands. The definite-false verdict carries its clause
+(`CurveValidity.TryFindDefiniteInvalidity`, review follow-up `505ffaa`).
+MultiCurve/MultiSurface have no rung-1 override: their members reach
+`IsValidOp`'s default fail-closed throw — no silent-true path, wiring them
+through the rung is `615-h`-lane work.
 
 ### 6.3 Ring simplicity for CurvePolygon — spec stricter than the constructor
 
