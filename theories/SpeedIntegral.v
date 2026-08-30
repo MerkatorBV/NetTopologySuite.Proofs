@@ -727,7 +727,8 @@ Proof.
       assert (Hsinpos : 0 <= sin ((t - s) / 2)).
       { apply sin_half_gap_nonneg; [exact Hst |].
         unfold gap in Hgap2; exact Hgap2. }
-      rewrite (Rabs_right (sin ((t - s) / 2))) by exact Hsinpos.
+      rewrite (Rabs_right (sin ((t - s) / 2)))
+        by (apply Rle_ge; exact Hsinpos).
       fold gap.
       assert (Hx4 : gap / 2 <= 4) by lra.
       pose proof (circle_chord_taylor_slack r gap Hr Hgap0 Hx4) as Hcalc.
