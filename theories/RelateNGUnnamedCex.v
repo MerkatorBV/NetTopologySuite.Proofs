@@ -191,6 +191,28 @@ Proof.
   reflexivity.
 Qed.
 
+(* Same-cone pair: remaining verts are both-pos vs the other triangle's
+   cone, so `cone_separates_b_false_of_arms` (nB-pos arm) does not
+   apply. Pin the two both-neg arms. `false || false` computes. *)
+Lemma unnamed_ccw_no_cone_separates :
+  cone_separates_b (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
+    (mkPoint 3 1) (mkPoint 1 3) = false.
+Proof.
+  unfold cone_separates_b.
+  rewrite (both_strict_neg_b_false_fst
+             (mkPoint 0 0)
+             (vec_sum_from (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2))
+             (mkPoint 3 1) (mkPoint 1 3)).
+  2: { unfold vec_sum_from, side_dot; cbn [px py]; lra. }
+  rewrite (both_strict_neg_b_false_fst
+             (mkPoint 0 0)
+             (vec_sum_from (mkPoint 0 0) (mkPoint 3 1) (mkPoint 1 3))
+             (mkPoint 2 0) (mkPoint 0 2)).
+  2: { unfold vec_sum_from, side_dot; cbn [px py]; lra. }
+  rewrite !andb_false_r.
+  reflexivity.
+Qed.
+
 Lemma unnamed_ccw_pair_unsupported :
   triangle_pair_regime 0 0 2 0 0 2 0 0 3 1 1 3 = TPR_Unsupported.
 Proof.
@@ -266,22 +288,7 @@ Proof.
             (mkPoint 0 0) (mkPoint 3 1) (mkPoint 1 3) = false).
   { unfold touch_vertex_from_v, others_fst, others_snd.
     rewrite (point_eqb_complete (mkPoint 0 0) (mkPoint 0 0) eq_refl).
-    (* Same-cone pair: B verts are both-pos vs nA, A verts both-pos vs
-       nB. `cone_separates_b_false_of_arms` wants the nB-pos arm, which
-       is true here, so pin the two both-neg arms instead. Do not
-       leave `is_vertex_b` for flocq `reflexivity` (opaque `Req_dec`). *)
-    unfold cone_separates_b.
-    rewrite (both_strict_neg_b_false_fst
-               (mkPoint 0 0)
-               (vec_sum_from (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2))
-               (mkPoint 3 1) (mkPoint 1 3)).
-    2: { unfold vec_sum_from, side_dot; cbn [px py]; lra. }
-    rewrite (both_strict_neg_b_false_fst
-               (mkPoint 0 0)
-               (vec_sum_from (mkPoint 0 0) (mkPoint 3 1) (mkPoint 1 3))
-               (mkPoint 2 0) (mkPoint 0 2)).
-    2: { unfold vec_sum_from, side_dot; cbn [px py]; lra. }
-    rewrite !andb_false_r, orb_false_r, andb_false_r.
+    rewrite unnamed_ccw_no_cone_separates, andb_false_r.
     reflexivity. }
   rewrite HA1, HA2, HA3.
   rewrite !orb_false_r, andb_false_r.
