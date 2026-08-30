@@ -336,6 +336,40 @@ Proof.
   intros r gap Hnz. field. exact Hnz.
 Qed.
 
+Lemma half_gap_lt_one : forall s t,
+  t - s < 2 ->
+  (t - s) / 2 < 1.
+Proof.
+  intros s t H.
+  apply (Rmult_lt_reg_r 2); [lra |].
+  replace ((t - s) / 2 * 2) with (t - s) by field.
+  replace (1 * 2) with 2 by ring.
+  exact H.
+Qed.
+
+Lemma half_gap_le_PI : forall s t,
+  t - s < 2 ->
+  (t - s) / 2 <= PI.
+Proof.
+  intros s t H.
+  pose proof PI_ge_2 as Hpi2.
+  apply Rlt_le.
+  apply Rlt_le_trans with 1.
+  - apply half_gap_lt_one; exact H.
+  - apply (Rle_trans 1 2 PI); [lra | exact Hpi2].
+Qed.
+
+Lemma sin_half_gap_nonneg : forall s t,
+  s <= t ->
+  t - s < 2 ->
+  0 <= sin ((t - s) / 2).
+Proof.
+  intros s t Hst Hgap.
+  apply sin_ge_0.
+  - apply Rdiv_le_0_compat; lra.
+  - apply half_gap_le_PI; exact Hgap.
+Qed.
+
 Lemma cubic_slack_le_eps_gap : forall r gap delta eps,
   0 < r ->
   0 <= gap ->
@@ -681,7 +715,8 @@ Proof.
       unfold circle_param.
       rewrite circle_chord_dist by exact Hr.
       assert (Hsinpos : 0 <= sin ((t - s) / 2)).
-      { apply sin_ge_0; [lra |]. pose proof PI_ge_2. lra. }
+      { apply sin_half_gap_nonneg; [exact Hst |].
+        unfold gap in Hgap2; exact Hgap2. }
       rewrite (Rabs_right (sin ((t - s) / 2))) by exact Hsinpos.
       fold gap.
       assert (Hx4 : gap / 2 <= 4) by lra.
