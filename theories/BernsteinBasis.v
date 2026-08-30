@@ -38,7 +38,10 @@ Local Open Scope R_scope.
    [Rmult_le_pos] / [Rplus_le_le_0_compat] / [lra] / [ring] —
    same class as SpeedIntegral. Do not reintroduce [nra] here.
    Nested goals under an induction [-] must use [+] / [*];
-   same-bullet nesting is a [Focus] error (6f0a32d L76). *)
+   same-bullet nesting is a [Focus] error (6f0a32d L76).
+   [field] on an already-reduced elevate identity leaves no
+   side-condition on flocq (8b5e655 L265, [No such goal]).
+   Do not [apply] after [field] unless a goal remains. *)
 
 (* -------------------------------------------------------------------------- *)
 (* Bernstein basis: de Casteljau recurrence.                                  *)
@@ -262,7 +265,9 @@ Lemma elevate_ctrl_2_1 : forall P,
 Proof.
   intros P. unfold elevate_ctrl.
   destruct (Nat.eq_dec 1 3) as [E|E]; [lia |].
-  simpl. field. apply (S_INR_neq_0 2).
+  (* flocq [simpl] already folds (S 2 - 1) to 2; host may not. *)
+  try (replace (S 2 - 1)%nat with 2%nat by reflexivity).
+  reflexivity.
 Qed.
 
 Lemma elevate_ctrl_2_2 : forall P,
@@ -271,7 +276,8 @@ Lemma elevate_ctrl_2_2 : forall P,
 Proof.
   intros P. unfold elevate_ctrl.
   destruct (Nat.eq_dec 2 3) as [E|E]; [lia |].
-  simpl. field. apply (S_INR_neq_0 2).
+  try (replace (S 2 - 2)%nat with 1%nat by reflexivity).
+  reflexivity.
 Qed.
 
 Theorem bern_elevate_2 : forall (P : nat -> R) t,
@@ -285,8 +291,8 @@ Proof.
   intros P t.
   rewrite elevate_ctrl_2_0, elevate_ctrl_2_1, elevate_ctrl_2_2, elevate_ctrl_2_3.
   unfold bern2_0, bern2_1, bern2_2, bern3_0, bern3_1, bern3_2, bern3_3.
-  field.
-  apply (S_INR_neq_0 2).
+  (* flocq [field] may close; host may leave INR 3 <> 0. *)
+  field; try apply (S_INR_neq_0 2).
 Qed.
 
 (* -------------------------------------------------------------------------- *)
