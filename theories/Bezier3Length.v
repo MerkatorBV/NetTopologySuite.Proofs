@@ -123,32 +123,32 @@ Lemma elevate_mid1_px_ctrl : forall p0 p1 p2,
   px (elevate_mid1 p0 p1) = elevate_ctrl 2 (ctrl_x p0 p1 p2) 1%nat.
 Proof.
   intros p0 p1 p2.
-  unfold elevate_mid1, elevate_ctrl, ctrl_x; cbn [px].
-  field. apply (S_INR_neq_0 2).
+  rewrite elevate_ctrl_2_1. rewrite inr_1, inr_2, inr_3.
+  unfold elevate_mid1, ctrl_x, Rdiv; cbn [px]. ring.
 Qed.
 
 Lemma elevate_mid1_py_ctrl : forall p0 p1 p2,
   py (elevate_mid1 p0 p1) = elevate_ctrl 2 (ctrl_y p0 p1 p2) 1%nat.
 Proof.
   intros p0 p1 p2.
-  unfold elevate_mid1, elevate_ctrl, ctrl_y; cbn [py].
-  field. apply (S_INR_neq_0 2).
+  rewrite elevate_ctrl_2_1. rewrite inr_1, inr_2, inr_3.
+  unfold elevate_mid1, ctrl_y, Rdiv; cbn [py]. ring.
 Qed.
 
 Lemma elevate_mid2_px_ctrl : forall p0 p1 p2,
   px (elevate_mid2 p1 p2) = elevate_ctrl 2 (ctrl_x p0 p1 p2) 2%nat.
 Proof.
   intros p0 p1 p2.
-  unfold elevate_mid2, elevate_ctrl, ctrl_x; cbn [px].
-  field. apply (S_INR_neq_0 2).
+  rewrite elevate_ctrl_2_2. rewrite inr_1, inr_2, inr_3.
+  unfold elevate_mid2, ctrl_x, Rdiv; cbn [px]. ring.
 Qed.
 
 Lemma elevate_mid2_py_ctrl : forall p0 p1 p2,
   py (elevate_mid2 p1 p2) = elevate_ctrl 2 (ctrl_y p0 p1 p2) 2%nat.
 Proof.
   intros p0 p1 p2.
-  unfold elevate_mid2, elevate_ctrl, ctrl_y; cbn [py].
-  field. apply (S_INR_neq_0 2).
+  rewrite elevate_ctrl_2_2. rewrite inr_1, inr_2, inr_3.
+  unfold elevate_mid2, ctrl_y, Rdiv; cbn [py]. ring.
 Qed.
 
 Lemma elevate_end_px_ctrl : forall p0 p1 p2,
