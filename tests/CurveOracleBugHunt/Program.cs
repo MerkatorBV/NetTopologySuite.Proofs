@@ -513,9 +513,15 @@ static class Cases
     /// OracleExpected is the verdict's first token (SIMPLE / NOT_SIMPLE /
     /// DEGENERATE). NtsExpected: a bool for a decided IsSimple, null for the
     /// fail-closed contract (NTS must throw NotSupportedException).
-    /// A collinear single segment is sent to the oracle AS its Desc-8b chord
-    /// ("C ..."): the lane's arc parser needs a circumcentre and calls
-    /// collinear arc controls DEGENERATE, while NTS reads them as the chord.
+    /// The degenerate closed single segment (start == end) is a THROW row:
+    /// the e00c00b endpoint-equality check runs before any float orientation
+    /// step but only routes that triple to the fail-closed throw — NTS
+    /// returns no verdict for it, matching the oracle's own DEGENERATE
+    /// decline. A collinear single segment is sent to the oracle AS its
+    /// Desc-8b chord ("C ..."): the lane's arc parser needs a circumcentre
+    /// and calls collinear arc controls DEGENERATE, while NTS reads them as
+    /// the chord. The bowtie is a classical LineString ring — a chord-only
+    /// NOT_SIMPLE protocol pin, not a curve-locus simplicity claim.
     /// </summary>
     public static readonly (string Name, string[] Segs, string OracleExpected, bool? NtsExpected, Func<GeometryFactory, Geometry> Geometry)[] RingSimple =
     {
