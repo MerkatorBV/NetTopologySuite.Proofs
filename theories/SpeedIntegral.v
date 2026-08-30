@@ -673,10 +673,10 @@ Proof.
     { unfold gap. eapply Rlt_le_trans; [exact Hdlt |].
       unfold delta. apply Rmin_l. }
     apply rabs_deficit_le.
-    - replace (circle_speed r s * (t - s)) with (r * (t - s))
+    { replace (circle_speed r s * (t - s)) with (r * (t - s))
         by (unfold circle_speed; reflexivity).
-      apply circle_edge_le; [exact Hr | exact Hst].
-    - replace (circle_speed r s * (t - s)) with (r * (t - s))
+      apply circle_edge_le; [exact Hr | exact Hst]. }
+    { replace (circle_speed r s * (t - s)) with (r * (t - s))
         by (unfold circle_speed; reflexivity).
       unfold circle_param.
       rewrite circle_chord_dist by exact Hr.
@@ -688,11 +688,11 @@ Proof.
       pose proof (circle_chord_taylor_slack r gap Hr Hgap0 Hx4) as Hcalc.
       eapply Rle_trans; [exact Hcalc |].
       apply (cubic_slack_le_eps_gap r gap delta eps Hrpos Hgap0).
-      + unfold gap; exact Hdlt.
-      + unfold delta.
+      { unfold gap; exact Hdlt. }
+      { unfold delta.
         apply rmin_sqrt_sq_bound; [lra |].
         apply Rlt_le.
-        apply Rdiv_lt_0_compat; [exact H24 | exact Hrpos].
+        apply Rdiv_lt_0_compat; [exact H24 | exact Hrpos]. } }
 Qed.
 
 Theorem arc_r_theta_via_speed_integral : forall (O : Point) r a b,
