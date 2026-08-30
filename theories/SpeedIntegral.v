@@ -457,7 +457,10 @@ Lemma increment_squeezed_const : forall c a b,
 Proof.
   intros c a b s t lo hi Has Hst Htb Hbd.
   assert (Hc : lo <= c <= hi) by (apply (Hbd s); lra).
-  nra.
+  replace (c * t - c * s) with (c * (t - s)) by ring.
+  split.
+  - apply Rmult_le_compat_r; lra.
+  - apply Rmult_le_compat_r; lra.
 Qed.
 
 Lemma uniformly_continuous_const : forall c a b,
@@ -477,12 +480,10 @@ Lemma constant_speed_premises : forall (g : Curve) c a b,
   speed_integral_premises g (fun _ => c) (fun t => c * t) a b.
 Proof.
   intros g c a b Hab Hc Hrate.
-  repeat split.
-  - exact Hab.
+  refine (conj Hab (conj _ (conj _ (conj _ Hrate)))).
   - intros t _ _. exact Hc.
   - apply uniformly_continuous_const.
   - apply increment_squeezed_const.
-  - exact Hrate.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
