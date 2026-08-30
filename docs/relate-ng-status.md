@@ -99,7 +99,7 @@ disguised as disjointness — that was #530.
   is already honest (`RelateNGCore.v : relate_unsupported_no_predicate`).
   Chart: [`scout/map-523.md`](scout/map-523.md). Spec:
   [`scout/spec-523.md`](scout/spec-523.md). Tickets: `523-a` /
-  `523-b` / `523-c` (15–17).
+  `523-b` / `523-c` (#603 #604 #605).
 - **Empty/empty `relate`** — parked on the #522 epic (declines; ISO 13249-3
   if revisited).
 - **`TPR_TouchEdge` exclusivity** vs the four gtri predicates — named, not

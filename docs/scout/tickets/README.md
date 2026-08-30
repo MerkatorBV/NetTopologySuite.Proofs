@@ -21,9 +21,9 @@ Order of work: top-down from #64, with the freebie first.
 | 12 | ~~[Grill #523 — `CURVE_RELATE_MATRIX` alphabet](closed/12-grill-523-curve-relate-alphabet.md)~~ **closed: decided not to resolve ticket 523** → [`map-523.md`](../map-523.md) | grilling | — |
 | 13 | ~~[Spec #523 — `CURVE_RELATE_MATRIX` alphabet](closed/13-spec-523-curve-relate-alphabet.md)~~ **closed: spec written; ticket 523 stays open** → [`spec-523.md`](../spec-523.md) | task | 12 |
 | 14 | ~~[Cut #523 spec into takeable tickets](closed/14-to-tickets-523.md)~~ **closed: tickets written; ticket 523 stays open** → `523-a` / `523-b` / `523-c` | task | 13 |
-| 15 | [`523-a` — E/B refuse](15-523-a-eb-refuse.md) | task | 14 |
-| 16 | [`523-b` — consumers accept `?` as a matrix cell](16-523-b-cell-unknown.md) | task | 14 |
-| 17 | [`523-c` — driver prints `?` where it did not compute](17-523-c-driver-alphabet.md) | task | 16 |
+| 15 | [`523-a` — E/B refuse](15-523-a-eb-refuse.md) → [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | task | 14 |
+| 16 | [`523-b` — consumers accept `?` as a matrix cell](16-523-b-cell-unknown.md) → [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | task | 14 |
+| 17 | [`523-c` — driver prints `?` where it did not compute](17-523-c-driver-alphabet.md) → [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | task | 16 / #604 |
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | [End #69's umbrella role and re-parent the standing epics](09-end-69-umbrella.md) | grilling | 11 (04–08 all closed) |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty**, 09 |
@@ -62,9 +62,9 @@ accept ticket 523.
 
 | Ticket | Waiting on |
 |---|---|
-| 15 · `523-a` E/B refuse | — (takeable) |
-| 16 · `523-b` consumer `?` cell | — (takeable; must land before 17) |
-| 17 · `523-c` driver alphabet | 16 |
+| 15 · `523-a` / #603 E/B refuse | — (takeable) |
+| 16 · `523-b` / #604 consumer `?` cell | — (takeable; must land before 17) |
+| 17 · `523-c` / #605 driver alphabet | 16 / #604 |
 | 11 · second pass at #67 | ADR-0003 consumed by the capstone work · ticket 523 (`523-a`…`523-c` landed, or an explicit accept) · #503's four defects. Precondition 1 largely met by #530. |
 | 09 · end #69's umbrella | ticket 11 |
 | 10 · resync surviving bodies | #506's split queue emptying · ticket 09 |

@@ -1,11 +1,11 @@
 # `523-c` — `CURVE_RELATE_MATRIX` prints `?` where it did not compute
 
 **Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** [`523-b` consumers](16-523-b-cell-unknown.md) · **Spec:** [`spec-523.md`](../spec-523.md) slice C
-**claimId:** `523-c` · **witness:** none yet
+**Blocked by:** [`523-b` / #604](16-523-b-cell-unknown.md) · **Spec:** [`spec-523.md`](../spec-523.md) slice C
+**claimId:** `523-c` · **GitHub:** [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) · **witness:** none yet
 
-> Part of ticket 523. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
-> Gate: `523-b` must land first so consumers do not reject the new
+> Umbrella: ticket 523 / #605. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
+> Gate: `523-b` / #604 must land first so consumers do not reject the new
 > cell glyph.
 
 ## Question
@@ -46,7 +46,7 @@ Grill cites (`origin/main` @ `5b7a934`; re-cite if they drift):
 Grid completeness (“miss ⇒ empty”) is a **research park**
 (ADR-0002). Not required to emit an honest `?`.
 
-E/B refuse is `523-a`, not this ticket. If `523-a` has not landed,
+E/B refuse is `523-a` / #603, not this ticket. If #603 has not landed,
 do not use an E/B pair as the alphabet witness.
 
 ## After this ticket

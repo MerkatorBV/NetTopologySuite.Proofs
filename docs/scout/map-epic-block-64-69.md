@@ -121,8 +121,8 @@ whatever its epic's body says about it.
   for E/B `[]`, undistinguished lineal cells, and an 80×80 grid miss.
   Living record: [`map-523.md`](map-523.md). Spec:
   [`spec-523.md`](spec-523.md). Tickets: `523-a` / `523-b` / `523-c`
-  (15–17). Ticket 11 precondition 3 remains unmet. Driver rewrite is
-  `/implement 523-a` or `/implement 523-b` (then `523-c`).
+  (#603 #604 #605). Ticket 11 precondition 3 remains unmet. Driver
+  rewrite is `/implement 523-a` or `/implement 523-b` (then `523-c`).
 - [Retire #67 — RelateNG matrix and boundary handling](tickets/closed/07-retire-67-relateng.md)
   — **decided NOT to close #67**, the first break from the pattern: its compute
   path answers `FFFFFFFFF` for unsupported pairs and classifies overlapping
@@ -136,7 +136,8 @@ whatever its epic's body says about it.
   Ticket 523 grilled 2026-08-30
   ([Grill #523](tickets/closed/12-grill-523-curve-relate-alphabet.md),
   [`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md),
-  `523-a` / `523-b` / `523-c`): still open, not accepted.
+  `523-a` / `523-b` / `523-c` = #603 #604 #605): still open, not
+  accepted.
 - [Retire #66 — precision models, snap rounding, OverlayNG](tickets/closed/06-retire-66-precision-and-overlay.md)
   — **closed**; residue is #517 tie-freeness, #518 the ownerless
   `fully_intersected` bridge, #519 guard 5, #520 the three OverlayNG hypotheses.

@@ -2,9 +2,9 @@
 
 **Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
 **Blocked by:** — · **Spec:** [`spec-523.md`](../spec-523.md) slice A
-**claimId:** `523-a` · **witness:** none yet
+**claimId:** `523-a` · **GitHub:** [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) · **witness:** none yet
 
-> Part of ticket 523. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
+> Umbrella: ticket 523 / #603. Does not retire that issue. Not leftover `ⅠⅠⅠ`.
 > Not a `522-*` letter.
 
 ## Question

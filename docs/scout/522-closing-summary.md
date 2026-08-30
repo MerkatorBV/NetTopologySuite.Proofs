@@ -58,7 +58,8 @@ Roman numerals. Do **not** mint `522-n`.
   #67 / ticket 11, not #522 children.
 - **`#523` `F` vs not-computed** — sibling. Grilled 2026-08-30
   ([`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md),
-  `523-a` / `523-b` / `523-c`); still open, not accepted.
+  `523-a` / `523-b` / `523-c` = #603 #604 #605); still open, not
+  accepted.
 - **Empty/empty relate** — parked on the epic.
 
 ## Surfaces that must agree

@@ -1,7 +1,7 @@
 # Retire #67 — second pass
 
 **Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** three of the four preconditions below — ADR-0003 unconsumed by the capstone, **ticket 523** open (grilled + specced + ticketed as `523-a` / `523-b` / `523-c`, not accepted; [`map-523.md`](../map-523.md), [`spec-523.md`](../spec-523.md)), **#503**'s four defects uncorrected. Precondition 1 is largely met by **#530**. See [Retire #67 — RelateNG](closed/07-retire-67-relateng.md) for why the first pass declined to close.
+**Blocked by:** three of the four preconditions below — ADR-0003 unconsumed by the capstone, **ticket 523** open (grilled + specced + ticketed as `523-a` / `523-b` / `523-c` = #603 #604 #605, not accepted; [`map-523.md`](../map-523.md), [`spec-523.md`](../spec-523.md)), **#503**'s four defects uncorrected. Precondition 1 is largely met by **#530**. See [Retire #67 — RelateNG](closed/07-retire-67-relateng.md) for why the first pass declined to close.
 
 > **Note, 2026-08-22.** #67 was briefly closed by accident: the ticket-07 commit's
 > subject line contained the substring `close #67` (in the phrase "decide NOT to
@@ -44,8 +44,8 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
 3. **#523 resolved or explicitly accepted.** *Grilled 2026-08-30
    ([`map-523.md`](../map-523.md), ticket 12). Spec written
    ([`spec-523.md`](../spec-523.md), ticket 13). Ticketed as
-   `523-a` / `523-b` / `523-c` (tickets 15–17). Still open. Not
-   accepted.* The three F-without-empty claims still hold
+   `523-a` / `523-b` / `523-c` (tickets 15–17, GitHub #603 #604
+   #605). Still open. Not accepted.* The three F-without-empty claims still hold
    (`RelateCurveMatrix.v : cell_none_iff_empty` is the Coq emptiness;
    the oracle prints `F` for E/B `[]`, undistinguished lineal cells, and
    an 80×80 grid miss). The second half of this precondition — record
