@@ -49,7 +49,7 @@ Order of work: top-down from #64, with the freebie first.
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the mutual vertex-in-open-edge sliver. Leftover `Ⅱ` is
-the obtuse-at-v certificate. Leftover `Ⅲ` is the exterior-side one-sided T (`Ⅲ∨Ⅳ` xor, one exterior witness, fill token, completeness still `Ⅱ`). Leftover `Ⅳ` is the interior-side stem ([`map-interior-side-cert.md`](../map-interior-side-cert.md); grill [`map-interior-side-grill.md`](../map-interior-side-grill.md); ticket [26](closed/26-leftover-iv-compile-or-empty.md) closed — `RelateNGComplete.v : interior_side_pair_inhabits`). Sibling #523 alphabet grill:
+the obtuse-at-v certificate. Leftover `Ⅲ` is the exterior-side one-sided T (`Ⅲ∨Ⅳ` xor, two compiled witnesses, one constructor / one fill token / one `True` arm, completeness still `Ⅱ`). Leftover `Ⅳ` is the interior-side stem ([`map-interior-side-cert.md`](../map-interior-side-cert.md); grill [`map-interior-side-grill.md`](../map-interior-side-grill.md); ticket [26](closed/26-leftover-iv-compile-or-empty.md) closed — `RelateNGComplete.v : interior_side_pair_inhabits`; not CONTEXT Bar 1). Sibling #523 alphabet grill:
 [`docs/scout/map-523.md`](../map-523.md). Takeable spec:
 [`docs/scout/spec-523.md`](../spec-523.md). Alphabet letter landed:
 [`15`](closed/15-523-a-eb-refuse.md) `523-a`, [`16`](closed/16-523-b-cell-unknown.md)

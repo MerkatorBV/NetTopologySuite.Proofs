@@ -8,12 +8,13 @@ side-distinguishing detector. It does **not** remint
 `RelateNGCore.v : touch_onesided_t_b`.
 
 > Research chart: [`map-interior-side-cert.md`](map-interior-side-cert.md)
-> (#629). Leftover `Ⅲ` compile is #628. This grill answers leftover
-> `Ⅳ` against that compiled tree: named; uninhabited on the compiled
-> tree; the xor is already a `Ⅲ∨Ⅳ` configuration class with one
-> exterior witness; `overlap_b` may steal same-side stems. CONTEXT
-> Bar 1 cannot apply. `/implement` compiles a residue witness or
-> proves the residue empty. It does not write a second detector.
+> (#629). Leftover `Ⅲ` compile is #628. Ticket 26 compiled the
+> residue pair. This grill is the compile-letter tense: named;
+> inhabited; the xor is a `Ⅲ∨Ⅳ` configuration class with two
+> compiled witnesses (one constructor, one fill token, one `True`
+> arm — not a side-aware detector). `overlap_b` may steal other
+> same-side stems. CONTEXT Bar 1 is not met. It does not write a
+> second detector. Completeness still `Ⅱ`.
 
 topics: relate
 claimId: Ⅳ
@@ -30,36 +31,40 @@ the residue pair. Do not invent a side-distinguishing detector.
 The family is named. Ticket 26 compiled the residue pair
 (`RelateNGComplete.v : interior_side_pair_inhabits`). The compiled leftover-`Ⅳ` 12-tuple is
 `(0,0)(2,0)(0,1)` vs `(1,0)(5/4,1/4)(3/4,1/4)`.
-The compiled one-sided pair is leftover `Ⅲ`
-(`RelateNGComplete.v : onesided_t_pair_inhabits`) — exterior-side,
-II empty (`RelateNGComplete.v : onesided_t_ii_empty`). The xor
+Leftover `Ⅲ` remains the exterior-side pair
+(`RelateNGComplete.v : onesided_t_pair_inhabits`) — II empty
+(`RelateNGComplete.v : onesided_t_ii_empty`). The xor
 (`RelateNGCore.v : touch_onesided_t_b`) is a `Ⅲ∨Ⅳ` configuration
-class with that one exterior witness
-(`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). It is
-not side-aware. Ticket 22's leftover-`Ⅲ` bar is met. “Detector for
-leftover `Ⅲ`” is not, and this grill does not make it one.
+class with two compiled witnesses
+(`RelateNGTouchOnesided.v : triangle_pair_regime_onesided` and
+`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`).
+One constructor, one fill token, one `True` arm. It is not
+side-aware and not a partition of one-sided T's. Ticket 22's
+leftover-`Ⅲ` bar is met. “Detector for leftover `Ⅲ`” is not.
 
 `overlap_b` sits earlier (`RelateNGCore.v : overlap_b`;
-`RelateNGCore.v : triangle_pair_regime`). A same-side stem with a
-strict-interior B-vertex and a strict-exterior B-vertex is leftover
-`522-b`, not this leftover. The residue is same-side xor-true pairs
-that miss `overlap_b` / `contains_b` / leftover `Ⅰ`. Whether that
-residue is inhabited is **open**. Completeness stays false on leftover
+`RelateNGCore.v : triangle_pair_regime`). On this pair: stem
+`gtri A = 0`, remaining B vertices `gtri A > 0`, none `gtri A < 0`.
+Vertex-stab misses. `contains_b` misses because the stem sits on
+`∂A`. II is nonempty at `(1, 1/6)` — compiled. So: DE-9IM overlap,
+`overlap_b` false. That is the residue, and the reason the fill
+token is load-bearing. Same-side stems that do have an exterior
+B-vertex remain leftover `522-b`. Completeness stays false on leftover
 `Ⅱ` (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`).
-CONTEXT **Bar 1** needs a classified leftover-`Ⅳ` pair and a
-designated witness matrix. There is neither. Fill stays
+A second `TPR_TouchOnesided` witness does not touch that theorem.
+CONTEXT **Bar 1** needs a designated witness matrix. There is none.
+`classify_triangle_pair` stays `True`. Fill stays
 `im_unsupported` (`RelateNGTouchOnesided.v : onesided_fill_still_unsupported`).
-This is a **research park** (ADR-0002).
-
-This grill does not mint a pair and call it the spec.
+This is a **research park** (ADR-0002). Regime reachability is not
+Bar 1.
 
 ## Claims grilled live
 
 ### 1. Residue pair compiled (ticket 26)
 
-**Superseded by ticket 26.** The leftover-`Ⅲ` pair remains
+**Closed by ticket 26.** The leftover-`Ⅲ` pair remains
 exterior-side (`RelateNGComplete.v : onesided_t_pair_inhabits`).
-The interior-side 12-tuple is now
+The interior-side 12-tuple is
 `RelateNGComplete.v : interior_side_pair_inhabits`. The other compiled leftovers are leftover `Ⅰ`
 (`RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`)
 and leftover `Ⅱ`
@@ -89,12 +94,20 @@ side of the supporting line **after** the xor.
 
 ### 4. `overlap_b` may steal same-side stems
 
-**Confirmed.** `RelateNGCore.v : overlap_b` needs a B-vertex with
-`0 < gtri A` and a B-vertex with `gtri A < 0`, plus a vertex of A
-strictly exterior to B. A same-side stem can fire that arm. Those
-pairs are leftover `522-b`
-(`RelateNGComplete.v : classified_overlap_pair`), not leftover `Ⅳ`.
-The residue is same-side one-sided pairs that miss this arm.
+**Confirmed, and not flattened on this pair.** `RelateNGCore.v : overlap_b`
+needs a B-vertex with `0 < gtri A` and a B-vertex with `gtri A < 0`,
+plus a vertex of A strictly exterior to B. This pair: stem
+`gtri A = 0` (`RelateNGComplete.v : interior_side_gtri_A_stem`);
+remaining B vertices `gtri A > 0`
+(`interior_side_gtri_A_e` / `interior_side_gtri_A_f`); none
+`gtri A < 0`. So `overlap_b` is false
+(`RelateNGComplete.v : interior_side_overlap_b_false`) while II is
+nonempty (`interior_side_ii_nonempty`) — DE-9IM overlap, detector
+miss. Same-side stems that do have an exterior B-vertex remain
+leftover `522-b`
+(`RelateNGComplete.v : classified_overlap_pair`). Emitting
+`FF2F11212` on `TPR_TouchOnesided` would still mix leftover `Ⅲ`
+(II empty) with this pair.
 
 | Detector | Why it is the wrong tool for leftover `Ⅳ` |
 |---|---|
@@ -123,10 +136,11 @@ keeping those families from mixing.
 
 ### 6. Residue inhabited
 
-**Superseded by ticket 26.** The residue pair reaches
+**Closed by ticket 26.** The residue pair reaches
 `TPR_TouchOnesided` (`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`).
 `overlap_b` is false (`RelateNGComplete.v : interior_side_overlap_b_false`).
 II nonempty (`RelateNGComplete.v : interior_side_ii_nonempty`).
+Not a designated matrix. Not CONTEXT Bar 1.
 
 ## Parks (ADR-0002)
 
@@ -150,7 +164,9 @@ steal `522-j` / `522-m` / `522-f` / `522-i` / `522-b`.
 ## If `/implement Ⅳ` is asked
 
 Ticket 26 compiled the residue. Do not remint the xor. Do not remint
-the fill. Completeness stays false on leftover `Ⅱ` until proved.
+the fill. Do not call regime reachability CONTEXT Bar 1.
+Completeness stays false on leftover `Ⅱ`. This letter does not
+move that theorem.
 
 ## Decisions so far
 

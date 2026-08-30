@@ -10,9 +10,11 @@ the line×line noding T-junction
 > historical. Do **not** mint `522-n`. Leftover ids are precomposed
 > Roman numerals. This leftover is **`Ⅳ`**. The mutual vertex-in-open-edge
 > sliver is **`Ⅰ`**. Obtuse-at-v is **`Ⅱ`**. The exterior-side one-sided
-> T is **`Ⅲ`**. The xor is `Ⅲ∨Ⅳ` with one exterior witness. Do not
-> swap them. Do not remint ADR-0004. This map does not mint a GitHub
-> child. Next unused is **`Ⅴ`** — ask before assigning.
+> T is **`Ⅲ`**. The xor is `Ⅲ∨Ⅳ` with two compiled witnesses
+> (one constructor, one fill token, one `True` arm — not a
+> side-aware detector). Do not swap them. Do not remint ADR-0004.
+> This map does not mint a GitHub child. Next unused is **`Ⅴ`**
+> — ask before assigning.
 
 topics: relate
 claimId: Ⅳ

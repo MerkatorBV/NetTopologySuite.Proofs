@@ -10,10 +10,10 @@
 
 ## Question
 
-Leftover `Ⅳ` is a named family with **no** compiled 12-tuple. The
-xor (`RelateNGCore.v : touch_onesided_t_b`) is already a `Ⅲ∨Ⅳ`
-configuration class with one exterior-side witness (leftover `Ⅲ`,
-#628). `overlap_b` may steal same-side stems (those are leftover
+Leftover `Ⅳ` is a named family that had **no** compiled 12-tuple
+at ask time. The xor (`RelateNGCore.v : touch_onesided_t_b`) was
+already a `Ⅲ∨Ⅳ` configuration class with leftover `Ⅲ` compiled
+(#628). `overlap_b` may steal same-side stems (those are leftover
 `522-b`). This letter compiles a residue witness or proves the
 residue empty. Do not invent the tuple in a comment and treat it as
 compiled. Do not remint the xor. Do not invent a detector.
@@ -26,15 +26,19 @@ A = `(0,0)(2,0)(0,1)`, B = `(1,0)(5/4,1/4)(3/4,1/4)`. Both CCW.
 Same A and contact as leftover `Ⅲ`; remaining B vertices sit on
 the interior side of `y = 0`
 (`RelateNGComplete.v : interior_side_same_side`). Not mutual.
-No shared vertex. `overlap_b` false
-(`RelateNGComplete.v : interior_side_overlap_b_false`). II nonempty
-(`RelateNGComplete.v : interior_side_ii_nonempty`). Classifier
-emits `TPR_TouchOnesided`
+No shared vertex. Stem `gtri A = 0`; remaining B vertices
+`gtri A > 0`; none `gtri A < 0`. So `overlap_b` false
+(`RelateNGComplete.v : interior_side_overlap_b_false`) while II is
+nonempty (`RelateNGComplete.v : interior_side_ii_nonempty`) —
+DE-9IM overlap, detector miss. Classifier emits
+`TPR_TouchOnesided`
 (`RelateNGComplete.v : interior_side_pair_inhabits`;
 `RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`).
-Fill stays `im_unsupported`. Completeness stays false on leftover
-`Ⅱ`. The xor was not reminted. No side-distinguishing detector.
-Not CONTEXT Bar 1. Epic `#522` stays OPEN.
+One constructor, one fill token, one `True` arm — not a side-aware
+detector. Fill stays `im_unsupported`. Completeness stays false on
+leftover `Ⅱ`. The xor was not reminted. Not CONTEXT Bar 1
+(regime reachability is not a designated matrix). Epic `#522`
+stays OPEN.
 
 ## Non-goals
 

@@ -18,14 +18,13 @@ CONTEXT? Name what holds. Park what does not. Do not invent a
 
 ## Resolution
 
-**Closed 2026-08-30 with the grill written.** Leftover `Ⅳ` stays
-open. CONTEXT Bar 1 is not applicable (no leftover-`Ⅳ` pair, no
-leftover-`Ⅳ` matrix).
+**Closed 2026-08-30 with the grill written.** CONTEXT Bar 1 is
+not applicable (no leftover-`Ⅳ` matrix). Ticket 26 later compiled
+the residue pair; this ticket does not.
 
-Satisfied (verify then cite):
+Satisfied at grill time (verify then cite):
 
-- No compiled leftover-`Ⅳ` coords in `RelateNGComplete.v`.
-- The compiled onesided pair is leftover `Ⅲ`
+- The compiled onesided pair then was leftover `Ⅲ`
   (`RelateNGComplete.v : onesided_t_pair_inhabits`;
   `RelateNGComplete.v : onesided_t_ii_empty`).
 - The xor is `Ⅲ∨Ⅳ`
@@ -35,8 +34,10 @@ Satisfied (verify then cite):
   (`RelateNGCore.v : overlap_b`).
 - Completeness stays false
   (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`).
-- Residue inhabited-or-empty is still open (research park, ADR-0002).
 
-Do **not** implement a cex or a detector here. Do **not** mint
-`522-n`. Do **not** mint `Ⅴ`. Do **not** steal leftover `Ⅰ` /
-`Ⅱ` / `Ⅲ`.
+**Later (ticket 26).** Residue pair compiled:
+`RelateNGComplete.v : interior_side_pair_inhabits`. Living grill
+tense is the compile letter
+([`map-interior-side-grill.md`](../../map-interior-side-grill.md)).
+Do **not** mint `522-n`. Do **not** mint `Ⅴ`. Do **not** steal
+leftover `Ⅰ` / `Ⅱ` / `Ⅲ`.

@@ -456,10 +456,11 @@ Qed.
 (* base of A (collinear with y = 0).  Not mutual (`touch_partial_edge_b`      *)
 (* = false).  No shared vertex.  Interiors opposite across y = 0, so II      *)
 (* is empty (`onesided_t_ii_empty`).  There is no `onesided_t_bb_dim0`.       *)
-(* Xor emits TPR_TouchOnesided (ticket 22) — Ⅲ∨Ⅳ with one exterior         *)
-(* witness, not a leftover-Ⅲ detector.  Fill stays im_unsupported.           *)
-(* Do not remint leftover Ⅰ.  Completeness stays false on leftover Ⅱ.       *)
-(* Leftover Ⅳ is compiled below (`interior_side_pair_inhabits`).              *)
+(* Xor emits TPR_TouchOnesided (ticket 22) — Ⅲ∨Ⅳ with two compiled         *)
+(* witnesses, not a leftover-Ⅲ detector and not a side-aware boolean.        *)
+(* Fill stays im_unsupported.  Do not remint leftover Ⅰ.  Completeness       *)
+(* stays false on leftover Ⅱ.  Leftover Ⅳ is compiled below                 *)
+(* (`interior_side_pair_inhabits`).  Not CONTEXT Bar 1.                      *)
 (* -------------------------------------------------------------------------- *)
 
 Definition onesided_t_pair_coords
