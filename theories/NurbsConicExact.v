@@ -27,6 +27,11 @@
    3-axiom in their own files.  No CurveSegment growth, no ADR-0004
    remint, no new 64-a r·θ.
 
+   WITNESS topic: metric · claimId: 508-a · witness: 508-a-golden-quarter
+   macro: metric
+   lane: proofs
+   issue: #559 / #508
+
    No `Admitted`, no `Axiom`, no `Parameter`.
 
    Author: NetTopologySuite.Proofs contributors
