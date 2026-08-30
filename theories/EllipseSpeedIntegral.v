@@ -93,7 +93,9 @@
    After that the second [sqrt_le_1] arm is [0 <= Rsqr (eps/2)],
    not [0 <= eps/2] (afa1be1 L711). [apply Rle_0_sqr].
    [lra] on [eps*eps <= 2*(eps*eps)] cannot witness [0 <= eps*eps]
-   (f700cec L764). Scale [1 <= 2] and [Rle_0_sqr].
+   (f700cec L764). [Rmult_le_compat_r] then unifies [r] as [8]
+   from [Rmult_le_reg_r 8] (789c7fa L767). Close with
+   [Rplus_le_reg_r] and [Rle_0_sqr].
    Do not [field] the ε/2 chord-rate arms ([gap*/gap], [/24*24],
    [eps/2*24], [/(K+1)], [eps/2+eps/2]). Cancel with [Rinv_r] /
    [Rinv_l] / [Rinv_mult_distr]. [a+a] is [1+1] times [a], not [2*a].
@@ -763,12 +765,19 @@ Proof.
                    replace 8 with (4 * 2) by ring.
                    rewrite <- (Rmult_assoc (/ 4) 4 2).
                    rewrite Rinv_l by lra. ring. }
-                 replace (eps * eps) with (1 * (eps * eps)) at 1 by ring.
-                 apply Rmult_le_compat_r.
-                 { replace (eps * eps) with (Rsqr eps)
-                     by (unfold Rsqr; reflexivity).
-                   apply Rle_0_sqr. }
-                 lra.
+                 apply (Rplus_le_reg_r (- (eps * eps))).
+                 rewrite Rplus_opp_r.
+                 replace (2 * (eps * eps) + - (eps * eps)) with (eps * eps).
+                 2:{ replace 2 with (1 + 1) by ring.
+                     rewrite Rmult_plus_distr_r.
+                     rewrite Rmult_1_l.
+                     rewrite Rplus_assoc.
+                     rewrite Rplus_opp_r.
+                     rewrite Rplus_0_r.
+                     reflexivity. }
+                 replace (eps * eps) with (Rsqr eps)
+                   by (unfold Rsqr; reflexivity).
+                 apply Rle_0_sqr.
     + replace (eps / 2 * gap + eps / 2 * gap) with (eps * gap).
       2:{ unfold Rdiv.
         replace ((eps * / 2) * gap + (eps * / 2) * gap)
