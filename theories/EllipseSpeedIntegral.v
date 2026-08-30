@@ -47,7 +47,10 @@
    [exact HtB]. Do not nest [+] under [+] (b233899 L288 Focus).
    Inner [Rplus_le_compat] arms use [*].
    [lra] on [(t-s)*2 <= 2*(t-s)] cannot find a witness
-   (860debe L294). [apply Req_le; ring].
+   (860debe L294). Do not [replace 2 with (1+1)] in the
+   Rabs-sum arm — that makes the leftover [(t-s)*(1+1)]
+   vs [2*(t-s)] (a299db8 L296, "not a valid ring equation").
+   Prove [<= 2] via [1+1] then [replace (1+1) with 2].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -286,14 +289,17 @@ Proof.
     + eapply Rle_trans; [apply Rabs_triang |].
       pose proof (SIN_bound t) as HtB.
       pose proof (SIN_bound s) as HsB.
-      replace 2 with (1 + 1) by ring.
-      apply Rplus_le_compat.
-      * apply Rabs_le. exact HtB.
-      * apply Rabs_le. exact HsB.
+      eapply Rle_trans.
+      * apply Rplus_le_compat.
+        -- apply Rabs_le. exact HtB.
+        -- apply Rabs_le. exact HsB.
+      * apply Req_le.
+        replace (1 + 1) with 2 by ring.
+        reflexivity.
   - rewrite (Rabs_right (t - s)) by lra.
-    replace (2 * Rabs (rx * rx - ry * ry) * (t - s))
-      with (Rabs (rx * rx - ry * ry) * (2 * (t - s))) by ring.
-    apply Req_le. ring.
+    replace (Rabs (rx * rx - ry * ry) * ((t - s) * 2))
+      with (2 * Rabs (rx * rx - ry * ry) * (t - s)) by ring.
+    apply Rle_refl.
 Qed.
 
 Lemma ellipse_speed_holder : forall rx ry s t,
