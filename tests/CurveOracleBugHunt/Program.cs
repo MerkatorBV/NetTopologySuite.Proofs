@@ -161,6 +161,48 @@ static class Program
                 Hit("BUG", $"LENU/{v.Name}", $"nts={ntsLen:G17} oracle={oracleLen:G17} rel={rel:G6}");
         }
 
+        Console.WriteLine("=== ENVELOPE_UNIFIED golden vectors (615-e) ===");
+        // NTS exact envelope (arc locus, §5.1.19 Desc 2b: endpoints + centre±r
+        // on crossed axis directions) against the oracle's ENVELOPE_UNIFIED
+        // lane (exact-Q crossing decisions, one float step on the extremes).
+        foreach (var v in Cases.EnvelopeUnified)
+        {
+            string stdin = $"ENVELOPE_UNIFIED\n{v.Segs.Length}\n" + string.Join("\n", v.Segs) + "\n";
+            string oOut;
+            try { oOut = Oracle.Run(stdin); }
+            catch (Exception ex) { Hit("FAIL", $"ENVU/{v.Name}", $"oracle: {ex.Message}"); continue; }
+
+            if (oOut is "NAN" or "EMPTY")
+            {
+                Hit("WARN", $"ENVU/{v.Name}", $"oracle={oOut}");
+                continue;
+            }
+            string[] parts = oOut.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length != 4)
+            {
+                Hit("FAIL", $"ENVU/{v.Name}", $"unexpected oracle output: {oOut}");
+                continue;
+            }
+            var env = v.Geometry(gf).EnvelopeInternal;
+            double[] nts = { env.MinX, env.MinY, env.MaxX, env.MaxY };
+            string[] side = { "minx", "miny", "maxx", "maxy" };
+            bool allOk = true;
+            for (int i = 0; i < 4; i++)
+            {
+                double o = Oracle.ParseHexFloat(parts[i]);
+                double abs = Math.Abs(nts[i] - o);
+                double rel = abs / Math.Max(Math.Abs(o), 1e-30);
+                if (abs > 1e-12 && rel > 1e-9)
+                {
+                    allOk = false;
+                    Hit("BUG", $"ENVU/{v.Name}", $"{side[i]}: nts={nts[i]:G17} oracle={o:G17}");
+                }
+            }
+            if (allOk)
+                Hit("OK", $"ENVU/{v.Name}",
+                    $"[{env.MinX:G17},{env.MinY:G17}]..[{env.MaxX:G17},{env.MaxY:G17}]");
+        }
+
         Console.WriteLine("=== WKT/WKB structural ===");
         foreach (var s in new[]
         {
@@ -276,6 +318,51 @@ static class Program
                 Hit("FAIL", $"INVAR/{a.Name}", $"endChord {endChord} > arc {oracleLen}");
             else
                 Hit("OK", $"INVAR/chord_le_arc/{a.Name}", $"chord={endChord:G9} arc={oracleLen:G9}");
+        }
+
+        Console.WriteLine("=== RING_SIMPLE vs NTS IsSimple rung 1 (615-h / #624) ===");
+        // Single-segment simplicity is decided on the branch (arc: injective
+        // sweep; collinear: the Desc-8b chord — sent to the oracle AS a chord,
+        // since the RING_SIMPLE lane's arc parser requires a circumcentre and
+        // answers DEGENERATE for collinear controls). The multi-segment case
+        // is the fail-closed frontier (Proofs #630): the oracle decides it,
+        // NTS must throw — both sides of that contract are pinned here.
+        foreach (var v in Cases.RingSimple)
+        {
+            string stdin = $"RING_SIMPLE\n{v.Segs.Length}\n" + string.Join("\n", v.Segs) + "\n";
+            string oOut;
+            try { oOut = Oracle.Run(stdin); }
+            catch (Exception ex) { Hit("FAIL", $"SIMPLE/{v.Name}", $"oracle: {ex.Message}"); continue; }
+
+            string oVerdict = oOut.Split(' ')[0];
+            if (oVerdict != v.OracleExpected)
+            {
+                Hit("FAIL", $"SIMPLE/{v.Name}", $"oracle={oOut} (exp {v.OracleExpected})");
+                continue;
+            }
+
+            var g = v.Geometry(gf);
+            bool? nts;
+            try { nts = g.IsSimple; }
+            catch (NotSupportedException) { nts = null; }
+
+            if (v.NtsExpected is bool expected)
+            {
+                if (nts == expected)
+                    Hit("OK", $"SIMPLE/{v.Name}", $"oracle={oOut} nts={nts}");
+                else
+                    Hit("BUG", $"SIMPLE/{v.Name}", $"oracle={oOut} nts={(object?)nts ?? "throw"} (exp {expected})");
+            }
+            else
+            {
+                // The frontier contract: the oracle decides, NTS stays
+                // fail-closed until the arc-arc rung (#630) lands.
+                if (nts is null)
+                    Hit("OK", $"SIMPLE/{v.Name}", $"oracle={oOut}; nts fail-closed (contract)");
+                else
+                    Hit("BUG", $"SIMPLE/{v.Name}",
+                        $"oracle={oOut}; nts answered {nts} but this row's contract is fail-closed");
+            }
         }
 
         Console.WriteLine();
@@ -420,6 +507,78 @@ static class Cases
                 Cs(gf, (1, 0), (2, 1), (3, 0)),
             }, gf)),
     };
+
+    /// <summary>
+    /// RING_SIMPLE vectors (Proofs #615 ticket 615-h, #624 rung 1).
+    /// OracleExpected is the verdict's first token (SIMPLE / NOT_SIMPLE /
+    /// DEGENERATE). NtsExpected: a bool for a decided IsSimple, null for the
+    /// fail-closed contract (NTS must throw NotSupportedException).
+    /// The degenerate closed single segment (start == end) is a THROW row:
+    /// the e00c00b endpoint-equality check runs before any float orientation
+    /// step but only routes that triple to the fail-closed throw — NTS
+    /// returns no verdict for it, matching the oracle's own DEGENERATE
+    /// decline. A collinear single segment is sent to the oracle AS its
+    /// Desc-8b chord ("C ..."): the lane's arc parser needs a circumcentre
+    /// and calls collinear arc controls DEGENERATE, while NTS reads them as
+    /// the chord. The bowtie is a classical LineString ring — a chord-only
+    /// NOT_SIMPLE protocol pin, not a curve-locus simplicity claim.
+    /// </summary>
+    public static readonly (string Name, string[] Segs, string OracleExpected, bool? NtsExpected, Func<GeometryFactory, Geometry> Geometry)[] RingSimple =
+    {
+        ("single_arc_semicircle", new[] { "A 1 0 0 1 -1 0" }, "SIMPLE", true,
+            gf => Cs(gf, (1, 0), (0, 1), (-1, 0))),
+        ("single_arc_major", new[] { "A 1 0 0 1 0 -1" }, "SIMPLE", true,
+            gf => Cs(gf, (1, 0), (0, 1), (0, -1))),
+        ("single_collinear_as_chord", new[] { "C 0 0 2 2" }, "SIMPLE", true,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 2))),
+        ("single_degenerate_closed", new[] { "A 1 0 0 1 1 0" }, "DEGENERATE", null,
+            gf => Cs(gf, (1, 0), (0, 1), (1, 0))),
+        ("two_arcs_tangent_at_vertex", new[] { "A 0 0 1 1 2 0", "A 2 0 3 -1 4 0" }, "SIMPLE", null,
+            gf => Cs(gf, (0, 0), (1, 1), (2, 0), (3, -1), (4, 0))),
+        ("bowtie_4chords", new[] { "C 0 0 2 2", "C 2 2 2 0", "C 2 0 0 2", "C 0 2 0 0" }, "NOT_SIMPLE", false,
+            gf => gf.CreateLineString(new[]
+            {
+                new Coordinate(0, 0), new Coordinate(2, 2), new Coordinate(2, 0),
+                new Coordinate(0, 2), new Coordinate(0, 0),
+            })),
+    };
+
+    /// <summary>
+    /// ENVELOPE_UNIFIED golden vectors (Proofs #615 ticket 615-e), mirroring
+    /// the fork's CurveMetricsTests envelope contracts.
+    /// </summary>
+    public static readonly (string Name, string[] Segs, Func<GeometryFactory, Geometry> Geometry)[] EnvelopeUnified =
+        BuildEnvelopeUnified();
+
+    private static (string, string[], Func<GeometryFactory, Geometry>)[] BuildEnvelopeUnified()
+    {
+        static double Rad(double d) => d * Math.PI / 180.0;
+        static string A(params double[] v) =>
+            "A " + string.Join(" ", v.Select(d => d.ToString("R", CultureInfo.InvariantCulture)));
+        double[] axisArc =
+        {
+            Math.Cos(Rad(-30)), Math.Sin(Rad(-30)),
+            Math.Cos(Rad(10)), Math.Sin(Rad(10)),
+            Math.Cos(Rad(50)), Math.Sin(Rad(50)),
+        };
+        return new (string, string[], Func<GeometryFactory, Geometry>)[]
+        {
+            ("axis_extreme_-30_50", new[] { A(axisArc) },
+                gf => Cs(gf, (axisArc[0], axisArc[1]), (axisArc[2], axisArc[3]), (axisArc[4], axisArc[5]))),
+            ("collinear_excludes_intermediate", new[] { "A 0 0 5 5 2 2" },
+                gf => Cs(gf, (0, 0), (5, 5), (2, 2))),
+            ("full_circle_5pt", new[] { "A 0 0 1 1 2 0", "A 2 0 1 -1 0 0" },
+                gf => Cs(gf, (0, 0), (1, 1), (2, 0), (1, -1), (0, 0))),
+            ("cw_major_arc_bulge", new[] { "A 0 0 5 10 10 0" },
+                gf => Cs(gf, (0, 0), (5, 10), (10, 0))),
+            ("compound_line_plus_arc", new[] { "C -3 0 1 0", "A 1 0 2 1 3 0" },
+                gf => new CompoundCurve(new Curve[]
+                {
+                    gf.CreateLineString(new[] { new Coordinate(-3, 0), new Coordinate(1, 0) }),
+                    Cs(gf, (1, 0), (2, 1), (3, 0)),
+                }, gf)),
+        };
+    }
 
     private static CircularString Cs(GeometryFactory gf, params (double x, double y)[] pts)
     {

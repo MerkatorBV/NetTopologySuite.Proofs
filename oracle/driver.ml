@@ -3338,6 +3338,83 @@ let run_length_unified () =
   end
   end
 
+(* ----- ENVELOPE_UNIFIED (#615 ticket 615-e): exact-locus AABB of a curve
+   path given as C/A segments (ISO/IEC 13249-3 subclause 5.1.19 Desc 2b over
+   7.3.1 Desc 8).  The axis-crossing DECISIONS are exact rational (centre in
+   Q from the same determinant as arc_invariants_q; sector containment via
+   Q cross products against the four exact unit axis directions, endpoint
+   inclusive; CW handled by swapping sector ends; the reflex case by the
+   sign of cross(vA, vC)).  Only the EMITTED extremes round: a crossed axis
+   contributes centre +- sqrt r2 on that axis -- the same one-float-step-
+   past-exact-algebra discipline as ARC_LENGTH, and the same primitive
+   double NTS's CircularArcGeometry.ExpandEnvelope computes.  A collinear
+   arc contributes its start/end chord endpoints only (Desc 8b: the
+   intermediate control point is not part of the locus).
+   Protocol:
+     ENVELOPE_UNIFIED
+     <n>
+     seg...          ("C x1 y1 x2 y2" | "A x1 y1 x2 y2 x3 y3"; zoo segments
+                      are not served here -- envelope pins ride each zoo
+                      landing per the #615 epic)
+   Output: "<minx> <miny> <maxx> <maxy>" (%h) | "NAN" | "EMPTY" (n = 0). *)
+let run_envelope_unified () =
+  let n = int_of_string (String.trim (input_line stdin)) in
+  let parse_seg () =
+    let toks = List.filter (fun s -> s <> "") (String.split_on_char ' ' (String.map (fun c -> if c='\t' then ' ' else c) (String.trim (input_line stdin)))) in
+    let p a b = { bx = float_of_string a; by_ = float_of_string b } in
+    match toks with
+    | "C" :: x1::y1::x2::y2::[] -> `Chord (p x1 y1, p x2 y2)
+    | "A" :: x1::y1::x2::y2::x3::y3::[] -> `Arc (p x1 y1, p x2 y2, p x3 y3)
+    | _ -> failwith "ENVELOPE_UNIFIED: bad seg (C/A only)" in
+  let segs = Array.init n (fun _ -> parse_seg ()) in
+  if n = 0 then print_endline "EMPTY" else begin
+  let all_nums = Array.to_list segs |> List.concat_map (function
+    | `Chord (a, b) -> [a.bx; a.by_; b.bx; b.by_]
+    | `Arc (a, b, c) -> [a.bx; a.by_; b.bx; b.by_; c.bx; c.by_]) in
+  if not (List.for_all finite_float all_nums) then print_endline "NAN" else begin
+  let minx = ref infinity and miny = ref infinity in
+  let maxx = ref neg_infinity and maxy = ref neg_infinity in
+  let expand x y =
+    if x < !minx then minx := x; if x > !maxx then maxx := x;
+    if y < !miny then miny := y; if y > !maxy then maxy := y in
+  let expand_arc a b c =
+    expand a.bx a.by_; expand c.bx c.by_;
+    let ax = qf a.bx and ay = qf a.by_ in
+    let bx = qf b.bx and by_ = qf b.by_ in
+    let cx = qf c.bx and cy = qf c.by_ in
+    match circumcentre_q (ax, ay) (bx, by_) (cx, cy) with
+    | None -> () (* Desc 8b: chord endpoints only *)
+    | Some (ox, oy, r2) ->
+      let vax = Q.sub ax ox and vay = Q.sub ay oy in
+      let vcx = Q.sub cx ox and vcy = Q.sub cy oy in
+      (* CCW sector from (sx, sy) to (ex_, ey): the traversal direction is
+         the orientation of (A, B, C), so CW swaps the sector ends. *)
+      let orient =
+        Q.sub (Q.mul (Q.sub bx ax) (Q.sub cy ay))
+              (Q.mul (Q.sub by_ ay) (Q.sub cx ax)) in
+      let ccw = Q.sign orient > 0 in
+      let (sx, sy, ex_, ey) =
+        if ccw then (vax, vay, vcx, vcy) else (vcx, vcy, vax, vay) in
+      let crossq ux uy vx vy = Q.sub (Q.mul ux vy) (Q.mul uy vx) in
+      let reflex = Q.sign (crossq sx sy ex_ ey) < 0 in
+      let axis_units = [| (1, 0); (0, 1); (-1, 0); (0, -1) |] in
+      Array.iter (fun (ux, uy) ->
+        let uxq = Q.of_int ux and uyq = Q.of_int uy in
+        let c1 = Q.sign (crossq sx sy uxq uyq) >= 0 in
+        let c2 = Q.sign (crossq uxq uyq ex_ ey) >= 0 in
+        let inside = if reflex then c1 || c2 else c1 && c2 in
+        if inside then begin
+          let r = sqrt (Q.to_float r2) in
+          expand (Q.to_float ox +. r *. float_of_int ux)
+                 (Q.to_float oy +. r *. float_of_int uy)
+        end) axis_units in
+  Array.iter (function
+    | `Chord (a, b) -> expand a.bx a.by_; expand b.bx b.by_
+    | `Arc (a, b, c) -> expand_arc a b c) segs;
+  Printf.printf "%h %h %h %h\n" !minx !miny !maxx !maxy
+  end
+  end
+
 let run_buffer_region () =
   let n = int_of_string (String.trim (input_line stdin)) in
   let parse_seg () =
@@ -4640,6 +4717,7 @@ let () =
        | "AREA_UNIFIED"             -> run_area_unified ()
        | "LENGTH_UNIFIED"           -> run_length_unified ()
        | "ARC_LEN_UNIFIED"          -> run_length_unified ()  (* alias for Rung 3 arc-len column *)
+       | "ENVELOPE_UNIFIED"         -> run_envelope_unified ()
        | "RING_SIMPLE"              -> run_ring_simple ()
        | "ARC_OFFSET_XY"            -> run_arc_offset_xy ()
        | "POINT_IN_CURVE_RING"      -> run_point_in_curve_ring ()
