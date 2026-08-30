@@ -287,7 +287,10 @@ jobs:
               make -f Makefile.gen -j"$(nproc)" --output-sync=target
             ' > /tmp/build_sync.log 2>&1 || {
               echo "::error::Corpus build failed; see /tmp/build_sync.log"
-              tail -50 /tmp/build_sync.log
+              grep -nE 'Error:|File "\./theories|Cannot find witness|Unable to unify|No primitive equality' \
+                /tmp/build_sync.log | head -80 || true
+              echo "----- tail -----"
+              tail -80 /tmp/build_sync.log
               exit 1
             }
           sudo chown -R "$(id -u):$(id -g)" .

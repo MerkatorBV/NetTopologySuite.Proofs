@@ -10,11 +10,11 @@
    Constructor `TPR_TouchPartialEdge` stays on `im_unsupported`
    (load-bearing; do not remint to a Touches fill). After
    `touch_edge_b`. False on `classified_hard_pairs` and the #567
-   contains pair. Completeness stays false (obtuse / Ⅱ).
+   contains pair. Completeness stays false (mixed-cone; not leftover `Ⅴ`).
    Do not steal 522-j / 522-m / 522-f. Do not mint 522-n. Do not
-   remint aa_matrix_*. Do not invent leftover Ⅱ. Leftover Ⅲ is
+   remint aa_matrix_*. Leftover Ⅱ classifies obtuse-at-v. Leftover Ⅲ is
    the exterior-side one-sided T. Leftover Ⅳ is the interior-side
-   stem (named only).
+   stem (compiled residue pair).
 
    WITNESS topic: relate · claimId: Ⅰ · witness: Ⅰ-partial-edge-bar1
    macro: relate

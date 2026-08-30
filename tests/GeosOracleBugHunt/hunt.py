@@ -136,11 +136,18 @@ RELATE_VECTORS = (
         "Leftover Ⅰ kiss. Classified; fill not named.",
     ),
     (
+        "TOUCH_OBTUSE",
+        "triangle_pair_fill TPR_TouchObtuse",
+        "token",
+        "UNSUPPORTED",
+        "Leftover Ⅱ obtuse-at-v. Classified; fill not named.",
+    ),
+    (
         "DECLINE",
         "triangle_pair_fill TPR_Unsupported",
         "token",
         "UNSUPPORTED",
-        "Obtuse-at-v leftover Ⅱ. T-junction pair classifies leftover Ⅰ.",
+        "Unnamed mixed-cone. Leftover Ⅱ classifies obtuse-at-v.",
     ),
 )
 

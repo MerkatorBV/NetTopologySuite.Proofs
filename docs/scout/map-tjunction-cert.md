@@ -33,7 +33,7 @@ A = `(0,0)(2,0)(0,1)`, B = `(1,0)(3,0)(2,1)`.
 Pinned as `tjunction_pair_coords` in `RelateNGComplete.v`. Both-CCW:
 `gdbl A = gdbl B = 2` (`RelateNGComplete.v : tjunction_pair_both_ccw`).
 Oracle / harness golden: `oracle/de9im_triangle_vectors.txt` `REGIME TOUCH_PARTIAL`
-(fill still `UNSUPPORTED`). Decline golden is now obtuse-at-v.
+(fill still `UNSUPPORTED`). Decline golden is the unnamed mixed-cone pair.
 `RelateNGOracleSurface.v : relate_tjunction_wire_unsupported` still holds
 because the fill is `im_unsupported`.
 
@@ -64,8 +64,9 @@ establish `triangles_partial_overlap` and it does not establish
 interiors-disjoint touch. That is why fill stays `im_unsupported`.
 An exterior-side one-sided T is leftover `Ⅲ`
 (`RelateNGComplete.v : onesided_t_pair_inhabits`), not this leftover.
-The interior-side stem is leftover `Ⅳ` (named only). The xor is
-`Ⅲ∨Ⅳ` with one exterior witness.
+The interior-side stem is leftover `Ⅳ`
+(`RelateNGComplete.v : interior_side_pair_inhabits`).
+The xor is `Ⅲ∨Ⅳ` with two compiled witnesses.
 
 ## Why every wired detector misses
 
@@ -75,8 +76,10 @@ Classifier order (`RelateNGCore.v : triangle_pair_regime`):
 → `touch_onesided_t_b` → `TPR_TouchOnesided` → `TPR_Unsupported`.
 Headline for leftover `Ⅰ`:
 `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`.
-Leftover `Ⅲ` xor (`Ⅲ∨Ⅳ`, one exterior witness):
+Leftover `Ⅲ` xor (`Ⅲ∨Ⅳ`, two witnesses):
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`.
+Leftover `Ⅳ` headline:
+`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`.
 
 | Detector | Why false on this pair |
 |---|---|
@@ -106,8 +109,10 @@ An **exterior-side one-sided T** is leftover `Ⅲ`
 `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`;
 `TPR_TouchOnesided`; fill still `im_unsupported`). Contact is
 collinear with the supporting edge. II empty is compiled; BB dim 0
-is not. The xor is `Ⅲ∨Ⅳ` with one exterior witness. The
-interior-side stem is leftover `Ⅳ` (named only). Not this leftover.
+is not. The xor is `Ⅲ∨Ⅳ` with two compiled witnesses. The
+interior-side stem is leftover `Ⅳ`
+(`RelateNGComplete.v : interior_side_pair_inhabits`).
+Not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -132,7 +137,7 @@ writes the detector.
 4. **Harness golden must move.** Today's decline vector **is this pair**.
    If the pair classifies, `REGIME DECLINE` in
    `oracle/de9im_triangle_vectors.txt` and the hunt selfcheck notes must
-   point at a still-unsupported pair (obtuse-at-v is the existing one).
+   point at a still-unsupported pair (mixed-cone is the existing one).
    Do not turn the decline into a confident `FFFFFFFFF`.
 5. **Classifier order.** After `touch_edge_b` (full shared edge wins).
    Do not reorder the four wired certificates.
@@ -162,7 +167,9 @@ writes the detector.
 - **Family width.** This spec is the compiled mutual sliver. An
   exterior-side one-sided T is leftover `Ⅲ`
   (`RelateNGComplete.v : onesided_t_pair_inhabits`). The interior-side
-  stem is leftover `Ⅳ` (named only). The xor is `Ⅲ∨Ⅳ`.
+  stem is leftover `Ⅳ`
+  (`RelateNGComplete.v : interior_side_pair_inhabits`).
+  The xor is `Ⅲ∨Ⅳ`.
 
 ## Frontier
 
@@ -174,15 +181,15 @@ Fill is still `im_unsupported`. Completeness stays false on `Ⅱ`.
 
 Ⅰ ── mutual vertex-in-open-edge sliver ── bar 1 ── TPR_TouchPartialEdge
      pair (0,0)(2,0)(0,1) vs (1,0)(3,0)(2,1)
-     decline golden moved to obtuse-at-v
+     decline golden moved to mixed-cone
 
-Ⅱ ── obtuse-at-v ── 522-m finding ── not this leftover
+Ⅱ ── obtuse-at-v ── TPR_TouchObtuse ── not this leftover
 not this leftover ── line×line T ── #67
 not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
 Ⅲ ──── compiled exterior-side stem ── TPR_TouchOnesided (fill token)
-Ⅳ ──── interior-side stem ── named ── xor does not distinguish from Ⅲ
+Ⅳ ──── interior-side stem ── TPR_TouchOnesided (fill token)
 Ⅴ ── unused ── ask before assigning
 ```

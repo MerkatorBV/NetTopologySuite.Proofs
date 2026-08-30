@@ -46,6 +46,11 @@ theories/EllipseLength.v
 # envelope).  General elliptic-E integrand is named (speed² sandwich) and
 # remains parked.  No closed form invented.  3-axiom.
 theories/EllipseLength_E.v
+# #508-d / #563: instantiate SpeedIntegral on the ellipse. UC of
+# ellipse_speed (Hölder 1/2) and chord_rate_tight are discharged.
+# increment_squeezed E σ stays the Technique-park primitive — Route 1
+# does not construct RInt. Witness: 3×4 quarter sandwich.  3-axiom.
+theories/EllipseSpeedIntegral.v
 # #508-f / #562: Bernstein / rational framework shared by the Bézier and
 # NURBS length lanes.  bern n i, partition of unity, elevate_ctrl at n=2,
 # combo chord bound, bern2_weighted_den_lb.  Lane files re-base here.
@@ -2796,9 +2801,16 @@ theories/RelateNGTouchPartialEdge.v
 # Leftover Ⅲ: exterior-side one-sided T. Ⅲ∨Ⅳ xor
 # touch_onesided_t_b; one exterior witness; constructor
 # TPR_TouchOnesided stays on im_unsupported (fill token). After
-# leftover Ⅰ. Completeness still Ⅱ. Not CONTEXT Bar 1. Does not
-# remint fills. Leftover Ⅳ is the interior-side stem (named only).
+# leftover Ⅰ. Completeness is mixed-cone (not leftover Ⅴ). Not
+# CONTEXT Bar 1. Does not remint fills. Leftover Ⅳ is the
+# interior-side stem (compiled residue pair).
 theories/RelateNGTouchOnesided.v
+# Leftover Ⅱ: closed-cone vertex kiss. Detector
+# touch_obtuse_vertex_b; constructor TPR_TouchObtuse stays on
+# im_unsupported. After leftover Ⅰ and leftover Ⅲ∨Ⅳ. Completeness
+# is mixed-cone (not leftover Ⅴ). Not CONTEXT Bar 1. Does not
+# remint cone_separates_b / aa_matrix_*.
+theories/RelateNGTouchObtuse.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE

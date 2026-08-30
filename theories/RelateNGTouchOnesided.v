@@ -1,32 +1,36 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNGTouchOnesided
    ----------------------------------------------------------------------------
-   Leftover Ⅲ: exterior-side one-sided T. Ⅲ∨Ⅳ xor, one
-   exterior witness, fill token, completeness still Ⅱ.
+   Leftover Ⅲ: exterior-side one-sided T. Leftover Ⅳ: interior-side
+   stem. Ⅲ∨Ⅳ xor, two witnesses, fill token, completeness mixed-cone.
 
-   Map: docs/scout/map-522-leftovers.md. Compiled pair
+   Map: docs/scout/map-522-leftovers.md. Compiled leftover-Ⅲ pair
    A = (0,0)(2,0)(0,1), B = (1,0)(1/2,-1)(3/2,-1) is an exterior-side
    stem. Contact (1,0) is collinear with A's base y = 0. II empty
    (`onesided_t_ii_empty`); there is no `onesided_t_bb_dim0`.
-   `touch_onesided_t_b` is the exclusive-or of the two
-   `some_vertex_on_open_edges` directions — a Ⅲ∨Ⅳ configuration
-   class, not a leftover-Ⅲ detector, and not a widening of leftover
-   Ⅰ's mutual `touch_partial_edge_b`. Constructor `TPR_TouchOnesided`
-   stays on `im_unsupported` (load-bearing: leftover Ⅲ looks like
-   areal Touches, leftover Ⅳ looks like overlap). After leftover Ⅰ
-   and after `touch_vertex_b`. Ticket 22 bar: true on leftover Ⅲ;
-   false on leftover Ⅰ (mutual), leftover Ⅱ, `classified_hard_pairs`,
-   and the #567 contains pair. Completeness stays false (obtuse / Ⅱ)
-   and is incomplete for leftover Ⅳ. `classify_triangle_pair` arm is
-   `True` — leftover Ⅰ honesty, not CONTEXT Bar 1. Nothing that
-   mentions `TPR_TouchOnesided` may be proved through
-   `classify_triangle_pair`. The xor would fire on leftover Ⅳ
-   (interior-side stem; named only) the moment someone writes the
-   coords. Do not steal 522-j / 522-m / 522-f / leftover Ⅰ.
-   Do not invent leftover Ⅱ. Do not compile leftover Ⅳ. Do not
-   mint 522-n / Ⅴ. Do not remint aa_matrix_*.
+   Compiled leftover-Ⅳ pair A = (0,0)(2,0)(0,1),
+   B = (1,0)(5/4,1/4)(3/4,1/4) is an interior-side stem
+   (`interior_side_pair_inhabits`). Same contact; remaining B
+   vertices sit on the interior side of y = 0. II nonempty
+   (`interior_side_ii_nonempty`). `overlap_b` is false
+   (`interior_side_overlap_b_false`). `touch_onesided_t_b` is the
+   exclusive-or of the two `some_vertex_on_open_edges` directions —
+   a Ⅲ∨Ⅳ configuration class, not a leftover-Ⅲ detector, and not
+   a widening of leftover Ⅰ's mutual `touch_partial_edge_b`.
+   Constructor `TPR_TouchOnesided` stays on `im_unsupported`
+   (load-bearing: leftover Ⅲ looks like areal Touches, leftover Ⅳ
+   looks like overlap). After leftover Ⅰ and after `touch_vertex_b`.
+   Ticket 22 bar: true on leftover Ⅲ; false on leftover Ⅰ (mutual),
+   leftover Ⅱ, `classified_hard_pairs`, and the #567 contains pair.
+   Completeness stays false (mixed-cone; not leftover `Ⅴ`).
+   `classify_triangle_pair` arm is `True` — leftover Ⅰ honesty,
+   not CONTEXT Bar 1. Nothing that mentions `TPR_TouchOnesided` may
+   be proved through `classify_triangle_pair`. Do not steal 522-j /
+   522-m / 522-f / leftover Ⅰ. Do not remint leftover Ⅱ. Do not
+   remint the xor. Do not mint 522-n / Ⅴ. Do not remint aa_matrix_*.
 
    WITNESS topic: relate · claimId: Ⅲ · witness: Ⅲ-onesided-t-xor
+   WITNESS topic: relate · claimId: Ⅳ · witness: Ⅳ-interior-side-xor
    macro: relate
    lane: proofs
    issue: leftover Ⅲ / #522
@@ -69,6 +73,14 @@ Lemma leftover_III_onesided_true :
     (mkPoint 1 0) (mkPoint (1/2) (-1)) (mkPoint (3/2) (-1)) = true.
 Proof.
   exact onesided_t_onesided_true.
+Qed.
+
+Lemma leftover_IV_onesided_true :
+  touch_onesided_t_b
+    (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 1)
+    (mkPoint 1 0) (mkPoint (5/4) (1/4)) (mkPoint (3/4) (1/4)) = true.
+Proof.
+  exact interior_side_onesided_true.
 Qed.
 
 Lemma hard_disjoint_no_onesided :
@@ -229,9 +241,19 @@ Proof.
   exact triangle_pair_fill_touch_onesided_eq.
 Qed.
 
+(* WITNESS {"claimId":"Ⅳ","topic":"relate","lemma":"triangle_pair_regime_interior_side","title":"Ⅲ∨Ⅳ xor reaches TPR_TouchOnesided on the compiled leftover-Ⅳ interior-side stem","file":"theories/RelateNGTouchOnesided.v","witness":"Ⅳ-interior-side-xor","board":"leftover-Ⅳ"} *)
+Theorem triangle_pair_regime_interior_side :
+  triangle_pair_regime 0 0 2 0 0 1 1 0 (5/4) (1/4) (3/4) (1/4)
+    = TPR_TouchOnesided.
+Proof.
+  exact interior_side_pair_onesided.
+Qed.
+
 Print Assumptions triangle_pair_regime_onesided.
 Print Assumptions leftover_I_no_onesided.
 Print Assumptions leftover_III_onesided_true.
+Print Assumptions leftover_IV_onesided_true.
+Print Assumptions triangle_pair_regime_interior_side.
 Print Assumptions classified_hard_pairs_no_onesided.
 Print Assumptions obtuse_no_onesided.
 Print Assumptions hard_contains_no_onesided.

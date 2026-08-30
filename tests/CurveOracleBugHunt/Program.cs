@@ -598,7 +598,8 @@ static class Cases
     };
 
     // Classifier pins from oracle/de9im_triangle_vectors.txt. Not OGC remints.
-    // #530 is DISJOINT, not the decline. Decline is obtuse-at-v (leftover Ⅱ).
+    // #530 is DISJOINT, not the decline. Decline is unnamed mixed-cone.
+    // Leftover Ⅱ classifies obtuse-at-v (fill still UNSUPPORTED).
     // The T-junction pair classifies leftover Ⅰ (fill still UNSUPPORTED).
     public static readonly (string Tag, string Key, string Kind, string Expected, string Provenance)[] RelateVectors =
     {
@@ -614,7 +615,9 @@ static class Cases
             "#572 / 522-i pair"),
         ("TOUCH_PARTIAL", "triangle_pair_fill TPR_TouchPartialEdge", "token", "UNSUPPORTED",
             "Leftover Ⅰ kiss. Classified; fill not named."),
+        ("TOUCH_OBTUSE", "triangle_pair_fill TPR_TouchObtuse", "token", "UNSUPPORTED",
+            "Leftover Ⅱ obtuse-at-v. Classified; fill not named."),
         ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
-            "Obtuse-at-v leftover Ⅱ. T-junction pair classifies leftover Ⅰ."),
+            "Unnamed mixed-cone. Leftover Ⅱ classifies obtuse-at-v."),
     };
 }

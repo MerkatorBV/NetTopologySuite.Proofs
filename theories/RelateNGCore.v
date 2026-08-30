@@ -454,20 +454,70 @@ Definition touch_partial_edge_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
   some_vertex_on_open_edges a1 a2 a3 b1 b2 b3
   && some_vertex_on_open_edges b1 b2 b3 a1 a2 a3.
 
-(* Leftover Ⅲ: exactly one direction of vertex-in-open-edge.
-   Not leftover Ⅰ (mutual). The xor also fires on leftover Ⅳ
-   (interior-side stem; named only). Do not widen
+(* Leftover Ⅲ / leftover Ⅳ: exactly one direction of
+   vertex-in-open-edge. Not leftover Ⅰ (mutual). The xor is a
+   Ⅲ∨Ⅳ configuration class (exterior-side leftover Ⅲ;
+   interior-side leftover Ⅳ). Do not widen
    `touch_partial_edge_b`. Pure `Req_dec_T` / `Rlt_dec` via the
    existing open-edge helpers. *)
 Definition touch_onesided_t_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
   xorb (some_vertex_on_open_edges a1 a2 a3 b1 b2 b3)
        (some_vertex_on_open_edges b1 b2 b3 a1 a2 a3).
 
+(* Leftover Ⅱ: closed cone at a shared vertex that misses the
+   *strict* cone (`cone_separates_b` / #572). Allow `side_dot = 0`
+   on a remaining B-vertex. Do not remint `cone_separates_b` or
+   `touch_vertex_b` — that vocab is the #572 / `522-i` certificate.
+   `negb cone_separates_b` keeps the boolean false on the wired
+   TouchVertex pair. Pure `Rlt_dec`. *)
+Definition both_closed_pos_b (v n p q : Point) : bool :=
+  (if Rlt_dec (side_dot v n p) 0 then false else true)
+  && (if Rlt_dec (side_dot v n q) 0 then false else true).
+
+Definition both_closed_neg_b (v n p q : Point) : bool :=
+  (if Rlt_dec 0 (side_dot v n p) then false else true)
+  && (if Rlt_dec 0 (side_dot v n q) then false else true).
+
+Definition closed_cone_separates_b (v a1 a2 b1 b2 : Point) : bool :=
+  let nA := vec_sum_from v a1 a2 in
+  let nB := vec_sum_from v b1 b2 in
+  (both_closed_pos_b v nA a1 a2 && both_closed_neg_b v nA b1 b2)
+  || (both_closed_pos_b v nB b1 b2 && both_closed_neg_b v nB a1 a2).
+
+Definition touch_obtuse_from_v (v a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  is_vertex_b v a1 a2 a3
+  && is_vertex_b v b1 b2 b3
+  && closed_cone_separates_b v
+       (others_fst v a1 a2 a3) (others_snd v a1 a2 a3)
+       (others_fst v b1 b2 b3) (others_snd v b1 b2 b3)
+  && negb (cone_separates_b v
+       (others_fst v a1 a2 a3) (others_snd v a1 a2 a3)
+       (others_fst v b1 b2 b3) (others_snd v b1 b2 b3)).
+
+Definition touch_obtuse_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    exactly_one_shared_from_a
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && (touch_obtuse_from_v (mkPoint ax ay)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || touch_obtuse_from_v (mkPoint bx by_)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || touch_obtuse_from_v (mkPoint cx cy)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
+  else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
-   certificate, a vertex-touch certificate, and leftover Ⅰ's collinear
+   certificate, a vertex-touch certificate, leftover Ⅰ's collinear
    partial-edge kiss (`touch_partial_edge_b`, after `touch_edge_b` so a
-   full shared edge still wins).  DECLINES on everything else.
+   full shared edge still wins), leftover Ⅲ∨Ⅳ (`touch_onesided_t_b`),
+   and leftover Ⅱ (`touch_obtuse_vertex_b`, after `touch_vertex_b` so
+   the strict cone still wins).  DECLINES on everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
@@ -476,11 +526,12 @@ Definition touch_onesided_t_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
    TPR_Unsupported.  Overlap is reachable when `overlap_b` fires (#570);
    disjoint is reachable when `separated_b` fires (#571); vertex-touch is
    reachable when `touch_vertex_b` fires (#572); leftover Ⅰ is reachable
-   when `touch_partial_edge_b` fires.  Leftover Ⅲ is reachable
-   when `touch_onesided_t_b` fires (after leftover Ⅰ). The xor also
-   fires on leftover Ⅳ (interior-side; named only). Obtuse-at-v
-   (leftover Ⅱ) still declines — completeness stays false (522-m).
-   Do not reorder the four wired certificates. *)
+   when `touch_partial_edge_b` fires.  Leftover Ⅲ∨Ⅳ is reachable
+   when `touch_onesided_t_b` fires (after leftover Ⅰ). Leftover Ⅱ
+   is reachable when `touch_obtuse_vertex_b` fires. Completeness stays
+   false on an unnamed mixed-cone shared-vertex pair (not leftover `Ⅴ`).
+   Do not reorder the four wired certificates. Do not remint
+   `cone_separates_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -501,6 +552,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
             (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
             (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   then TPR_TouchOnesided
+  else if touch_obtuse_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_TouchObtuse
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the
