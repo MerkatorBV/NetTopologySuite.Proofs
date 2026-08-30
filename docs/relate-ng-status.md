@@ -118,9 +118,10 @@ disguised as disjointness — that was #530.
   exterior witness. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token
   is load-bearing (`im_unsupported`). Not CONTEXT Bar 1.
-- **Interior-side stem** — leftover `Ⅳ`. Named only. The xor would
-  classify it as `TPR_TouchOnesided` the moment someone writes the
-  coords. Do not compile.
+- **Interior-side stem** — leftover `Ⅳ`. Named only. Chart:
+  [`scout/map-interior-side-cert.md`](scout/map-interior-side-cert.md).
+  The xor would classify it as `TPR_TouchOnesided` the moment someone
+  writes the coords. Do not compile.
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 

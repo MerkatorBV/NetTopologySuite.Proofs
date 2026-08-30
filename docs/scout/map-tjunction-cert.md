@@ -64,8 +64,9 @@ establish `triangles_partial_overlap` and it does not establish
 interiors-disjoint touch. That is why fill stays `im_unsupported`.
 An exterior-side one-sided T is leftover `Ⅲ`
 (`RelateNGComplete.v : onesided_t_pair_inhabits`), not this leftover.
-The interior-side stem is leftover `Ⅳ` (named only). The xor is
-`Ⅲ∨Ⅳ` with one exterior witness.
+The interior-side stem is leftover `Ⅳ`
+([`map-interior-side-cert.md`](map-interior-side-cert.md); named only).
+The xor is `Ⅲ∨Ⅳ` with one exterior witness.
 
 ## Why every wired detector misses
 
@@ -107,7 +108,9 @@ An **exterior-side one-sided T** is leftover `Ⅲ`
 `TPR_TouchOnesided`; fill still `im_unsupported`). Contact is
 collinear with the supporting edge. II empty is compiled; BB dim 0
 is not. The xor is `Ⅲ∨Ⅳ` with one exterior witness. The
-interior-side stem is leftover `Ⅳ` (named only). Not this leftover.
+interior-side stem is leftover `Ⅳ`
+([`map-interior-side-cert.md`](map-interior-side-cert.md); named only).
+Not this leftover.
 
 ## If `/implement Ⅰ` is asked — implement rungs (not this map)
 
@@ -162,7 +165,9 @@ writes the detector.
 - **Family width.** This spec is the compiled mutual sliver. An
   exterior-side one-sided T is leftover `Ⅲ`
   (`RelateNGComplete.v : onesided_t_pair_inhabits`). The interior-side
-  stem is leftover `Ⅳ` (named only). The xor is `Ⅲ∨Ⅳ`.
+  stem is leftover `Ⅳ`
+  ([`map-interior-side-cert.md`](map-interior-side-cert.md)).
+  The xor is `Ⅲ∨Ⅳ`.
 
 ## Frontier
 
@@ -183,6 +188,6 @@ not this leftover ── fill remint ── four shared pins
 
 522-n ── not minted
 Ⅲ ──── compiled exterior-side stem ── TPR_TouchOnesided (fill token)
-Ⅳ ──── interior-side stem ── named ── xor does not distinguish from Ⅲ
+Ⅳ ──── interior-side stem ── map-interior-side-cert.md ── no compiled pair
 Ⅴ ── unused ── ask before assigning
 ```
