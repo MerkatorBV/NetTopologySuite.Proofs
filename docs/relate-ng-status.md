@@ -114,13 +114,17 @@ disguised as disjointness — that was #530.
   `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`.
   Do not bucket with leftover `Ⅰ`. Detector not invented. Completeness
   still `Ⅱ`.
-- **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with one
-  exterior witness. Headline
+- **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with two
+  witnesses. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token
   is load-bearing (`im_unsupported`). Not CONTEXT Bar 1.
-- **Interior-side stem** — leftover `Ⅳ`. Named only. The xor would
-  classify it as `TPR_TouchOnesided` the moment someone writes the
-  coords. Do not compile.
+- **Interior-side stem** — leftover `Ⅳ`. Residue pair compiled.
+  `RelateNGComplete.v : interior_side_pair_inhabits`. Headline
+  `RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`.
+  Pair `(0,0)(2,0)(0,1)` vs `(1,0)(5/4,1/4)(3/4,1/4)`. Same-side;
+  `overlap_b` false; II nonempty. Fill stays `im_unsupported`.
+  Not CONTEXT Bar 1. Chart:
+  [`scout/map-interior-side-cert.md`](scout/map-interior-side-cert.md).
 - **Inherited JCT seam** for general-polygon Contains (not the rectangle
   special case). `point_in_ring_correct` remains conditional.
 

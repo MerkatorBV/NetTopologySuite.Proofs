@@ -61,7 +61,8 @@ Roman numerals. Do **not** mint `522-n`.
   ([`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md)).
   Children `523-a` / `523-b` / `523-c` (#603 #604 #605) landed;
   ticket 523 still open, not accepted. Do not steal leftover `Ⅲ`.
-  Leftover `Ⅳ` is the interior-side stem (named only).
+  Leftover `Ⅳ` is the interior-side stem
+  (`RelateNGComplete.v : interior_side_pair_inhabits`).
 - **Empty/empty relate** — parked on the epic.
 
 ## Surfaces that must agree
