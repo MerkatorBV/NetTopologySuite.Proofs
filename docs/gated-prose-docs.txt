@@ -1,0 +1,6 @@
+# One prose gate (#578 / 522-l). Each path must cite `Module.v : name`.
+# validate-claims.sh scans every listed file. Volatile counts stay out.
+docs/verified-claims.md
+TRIAGE_NTS_JTS_ISSUES.md
+docs/relate-ng-status.md
+docs/scout/522-closing-summary.md

@@ -184,6 +184,19 @@ exclusivity (`RelateMatrixTriangle.v`); `TPR_Unsupported` is a decline record,
 not a regime verdict.
 _Avoid_: case, mode
 
+**Decline**:
+A claim-free answer: the pair is not classified. In Coq that is
+`im_unsupported` / `TPR_Unsupported` (supports no `RelatePredicate`). On
+the oracle wire that is the token `UNSUPPORTED` in result position, never
+a 9-char matrix. A decline is not `FFFFFFFFF`.
+_Avoid_: error, unsupported matrix, empty matrix
+
+**Sentinel**:
+The honesty marker for a decline (`im_unsupported` in Coq; `UNSUPPORTED`
+on the wire). Distinct from a classified disjoint fill. The #530 /
+#571 pair is classified disjoint (FFFFFFFFF), not a sentinel.
+_Avoid_: default, fallback, catch-all (those hid a wrong matrix)
+
 **Relate bar level**:
 How much of a relate claim is proven. Bar 1: the classification itself is
 proven true geometry against the specified interior, the fill being the

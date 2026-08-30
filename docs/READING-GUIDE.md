@@ -414,7 +414,9 @@ completion docs ([`phase0-completion.md`](phase0-completion.md), [`phase1-comple
        (in-circle exact at `|coord| <= 2^11`; arc-line Scope A).
      - RelateNG / DE-9IM predicates → [`theories/DE9IM.v`](../theories/DE9IM.v),
        [`theories/RelateLineLine.v`](../theories/RelateLineLine.v), [`theories/RelateIntDetBound.v`](../theories/RelateIntDetBound.v)
-       (#67; see [`relate-ng-status.md`](relate-ng-status.md)).
+       (#67 living status: [`relate-ng-status.md`](relate-ng-status.md);
+       #522 wrap-up: [`scout/522-closing-summary.md`](scout/522-closing-summary.md)
+       and [`scout/map-522.md`](scout/map-522.md)).
   2. Read the soundness theorem statement (not its proof) for the
      algorithm you're touching.
 

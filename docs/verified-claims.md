@@ -895,6 +895,8 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#575 / `522-f` harness** (own paragraph so later letters do not fight the catalog line above). `GeosOracleBugHunt` / `CurveOracleBugHunt` now allowlist `UNSUPPORTED` in result position: a decline is a token, not a parse error. Golden vectors follow `oracle/de9im_triangle_vectors.txt` — T-junction is the token; the #530 / #571 sentinel is FFFFFFFFF. Does not remint any triangle fill. Ticket 575's Coq half is #588. Witness `522-f-harness-token`.
 
+**#578 / `522-l` wrap-up** (own paragraph). TRIAGE `#522` row, `CONTEXT.md` decline/sentinel glossary, one prose gate (`scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`), ticket-11 precondition 1, and [`docs/scout/522-closing-summary.md`](scout/522-closing-summary.md). Does not remint fills. Does not retire epic 522. Witness `522-l-wrap-up`.
+
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `RelateCurveMatrix.v : ii_cell_dim2_sound_gtri` | **Jordan cell dim (general triangle):** under `geom_de9im_pointset` for gtri self-geometry, `im_ii = Some 2` implies existence of interior point (`ii_has_dim2`) `[exact]` | 3 |
