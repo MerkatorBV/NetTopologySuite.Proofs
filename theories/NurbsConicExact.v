@@ -417,17 +417,17 @@ Proof.
   intros t Ht0 Ht1.
   unfold nurbs2_pt, circle_pt, golden_phi, golden_origin.
   apply point_ext; cbn [px py].
-  - rewrite Rplus_0_l, Rmult_1_l, cos_2_atan.
-    change (bern2_0 t * (golden_w0 * px golden_p0)
-            + bern2_1 t * (golden_w1 * px golden_p1)
-            + bern2_2 t * (golden_w2 * px golden_p2))
-      with (golden_numx t).
+  - (* Do not rewrite Rmult_1_l on the whole goal: the first 1* is
+       golden_w0 · px, not the circle's r=1. Pin it to the cosine. *)
+    rewrite Rplus_0_l.
+    rewrite (Rmult_1_l (cos (2 * atan (golden_u t)))).
+    rewrite cos_2_atan.
+    fold (golden_numx t).
     apply golden_weierstrass_x; assumption.
-  - rewrite Rplus_0_l, Rmult_1_l, sin_2_atan.
-    change (bern2_0 t * (golden_w0 * py golden_p0)
-            + bern2_1 t * (golden_w1 * py golden_p1)
-            + bern2_2 t * (golden_w2 * py golden_p2))
-      with (golden_numy t).
+  - rewrite Rplus_0_l.
+    rewrite (Rmult_1_l (sin (2 * atan (golden_u t)))).
+    rewrite sin_2_atan.
+    fold (golden_numy t).
     apply golden_weierstrass_y; assumption.
 Qed.
 
