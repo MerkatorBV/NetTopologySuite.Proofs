@@ -573,6 +573,11 @@ def hunt_relate_matrix() -> None:
 
 
 def main() -> int:
+    if len(sys.argv) > 1 and sys.argv[1] == "--selfcheck":
+        selfcheck_relate_token()
+        print()
+        print(f"SUMMARY\tok={ok}\twarn={warn}\tbug={bug}\tfail={fail}")
+        return 1 if (bug + fail) > 0 else 0
     print(f"GEOSOP={GEOSOP}")
     print(f"ORACLE={ORACLE}")
     selfcheck_relate_token()

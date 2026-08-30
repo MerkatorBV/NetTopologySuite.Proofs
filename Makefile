@@ -202,6 +202,7 @@ ci-guards:
 	bash scripts/check_oracle_handrolled.sh
 	python3 oracle/rocqref/check_jts_nts_equiv.py
 	python3 scripts/check_module_split.py
+	python3 tests/GeosOracleBugHunt/hunt.py --selfcheck
 	@echo ""
 	@echo "All guardrails passed (or see output above)."
 

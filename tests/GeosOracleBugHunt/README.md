@@ -9,7 +9,14 @@ Gates GEOS curve / predicate behaviour against NetTopologySuite.Proofs `oracle_b
 
 ## Run
 
+Full hunt is **local-only** (needs `geosop` + `oracle_bin`). The three
+PR jobs (corpus guardrails / Rocq 9.2.0 / theories-flocq) do not invoke
+`CurveOracleBugHunt`. The no-oracle REL selfcheck is in `make ci-guards`.
+
 ```bash
+# no oracle, no geosop — token allowlist only (#575 / 522-f)
+python3 hunt.py --selfcheck
+
 export GEOSOP=/path/to/geosop
 export ORACLE=/path/to/oracle_bin
 python3 hunt.py

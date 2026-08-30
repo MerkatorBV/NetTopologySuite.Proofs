@@ -44,6 +44,7 @@ jobs:
         #   check_deferred_registry_sync doc <-> Admitted-registry drift
         #   validate-claims              verified-claims.md references resolve
         #   check_oracle_handrolled      hand-rolled float-kernel ratchet
+        #   hunt.py --selfcheck          RELATE_MATRIX token allowlist (no oracle)
         # The macOS `rocq` job below no longer repeats these — this job is
         # the single source of the guardrail verdict on every PR and push.
         run: make ci-guards
