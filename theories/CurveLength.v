@@ -568,8 +568,8 @@ Proof.
   - replace ((v :: tl) ++ [u]) with (v :: tl ++ [u]) by reflexivity.
     simpl polyline_len.
     rewrite IH.
-    replace (rev (v :: tl) ++ [t]) with (rev tl ++ v :: [t]).
-    2: { simpl rev. apply app_snoc_cons. }
+    change (rev (v :: tl)) with (rev tl ++ [v]).
+    rewrite (app_snoc_cons R (rev tl) v t).
     rewrite (polyline_len_app_mid g (rev tl) u v [t]).
     simpl polyline_len.
     rewrite dist_sym, Rplus_0_r.
