@@ -179,7 +179,9 @@ Lemma dist_le_uniform_polyline : forall (g : Curve) m t0 h,
 Proof.
   intros g m; induction m as [|k IH]; intros t0 h;
     cbn [uniform_tail polyline_len].
-  - simpl. rewrite dist_refl. lra.
+  - simpl.
+    replace (t0 + 0 * h) with t0 by ring.
+    rewrite dist_refl. lra.
   - pose proof (IH (t0 + h) h) as Hind.
     rewrite S_INR.
     replace (t0 + (INR k + 1) * h) with (t0 + h + INR k * h) by ring.
