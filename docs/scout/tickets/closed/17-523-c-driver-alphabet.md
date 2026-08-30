@@ -62,3 +62,10 @@ implement leftover `Ⅰ` / `ⅠⅠ`. Do not mint `ⅠⅠⅠ`. Do not remint
 ADR-0004. Do not add a CONTEXT name for per-cell unknown unless
 `/domain-modeling` + owner accept. Do not comment on GitHub issue
 523 unless the user says `comment`.
+
+## Resolution
+
+**Closed 2026-08-30.** Lineal undistinguished cells and areal `-1`
+probe misses print `?`. C/A kernels that reported no contact keep `F`.
+EE stays `2`. Mode header names the probe and the exhausted-probe `?`.
+Witness `523-c-driver-unknown`. Ticket 523 stays open.

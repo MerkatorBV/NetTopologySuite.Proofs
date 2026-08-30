@@ -115,14 +115,15 @@ whatever its epic's body says about it.
   because the lane carries none of #67's failure modes and its docs already say
   "weak skeleton". Also #526 and two register gaps to #503.
 - [Grill #523 — `CURVE_RELATE_MATRIX` alphabet](tickets/closed/12-grill-523-curve-relate-alphabet.md)
-  — **decided NOT to resolve ticket 523 and NOT to accept it.** The three
-  F-without-empty claims still hold. Coq emptiness is `None`
-  (`RelateCurveMatrix.v : cell_none_iff_empty`); the oracle prints `F`
-  for E/B `[]`, undistinguished lineal cells, and an 80×80 grid miss.
+  — **decided NOT to resolve ticket 523 and NOT to accept it.** Children
+  `523-a` / `523-b` / `523-c` (#603 #604 #605) landed. The three
+  F-without-empty claims no longer hold in the driver: E/B `failwith`;
+  lineal undistinguished cells and an exhausted 80×80 probe print `?`;
+  C/A kernels that reported no contact still print `F`. EE stays `2`.
   Living record: [`map-523.md`](map-523.md). Spec:
-  [`spec-523.md`](spec-523.md). Tickets: `523-a` / `523-b` / `523-c`
-  (#603 #604 #605). Ticket 11 precondition 3 remains unmet. Driver
-  rewrite is `/implement 523-a` or `/implement 523-b` (then `523-c`).
+  [`spec-523.md`](spec-523.md). Ticket 11 precondition 3 remains unmet
+  (ticket 523 stays open, not accepted). Do not start another
+  `/implement` letter here.
 - [Retire #67 — RelateNG matrix and boundary handling](tickets/closed/07-retire-67-relateng.md)
   — **decided NOT to close #67**, the first break from the pattern: its compute
   path answers `FFFFFFFFF` for unsupported pairs and classifies overlapping
@@ -136,8 +137,8 @@ whatever its epic's body says about it.
   Ticket 523 grilled 2026-08-30
   ([Grill #523](tickets/closed/12-grill-523-curve-relate-alphabet.md),
   [`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md),
-  `523-a` / `523-b` / `523-c` = #603 #604 #605): still open, not
-  accepted.
+  `523-a` / `523-b` / `523-c` = #603 #604 #605): children landed;
+  ticket 523 still open, not accepted.
 - [Retire #66 — precision models, snap rounding, OverlayNG](tickets/closed/06-retire-66-precision-and-overlay.md)
   — **closed**; residue is #517 tie-freeness, #518 the ownerless
   `fully_intersected` bridge, #519 guard 5, #520 the three OverlayNG hypotheses.

@@ -63,3 +63,12 @@ is `523-c`, and it waits on this one.
 Do not remint `522-f`. Do not implement leftover `Ⅰ` / `ⅠⅠ`. Do not
 mint `ⅠⅠⅠ`. Do not emit `?` from the driver here. Do not comment on
 GitHub issue 523 unless the user says `comment`.
+
+## Resolution
+
+**Closed 2026-08-30.** Result parse accepts `?` in a 9-char
+(`parse_relate_wire("FF?FF1212")` → `("matrix", …)`). Catalog lookup
+still rejects `?` (`lookup_matrix "FF?FF1212"` fails). `RELATE_TOKENS`
+unchanged. Bare `?` is not Decline. Shared pins and the T-junction
+golden stay put. Witness `523-b-cell-unknown`. Same letter claimed
+`523-c` after this split. Ticket 523 stays open.

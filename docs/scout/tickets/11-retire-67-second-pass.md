@@ -1,7 +1,7 @@
 # Retire #67 — second pass
 
 **Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** three of the four preconditions below — ADR-0003 unconsumed by the capstone, **ticket 523** open (grilled + specced + ticketed as `523-a` / `523-b` / `523-c` = #603 #604 #605, not accepted; [`map-523.md`](../map-523.md), [`spec-523.md`](../spec-523.md)), **#503**'s four defects uncorrected. Precondition 1 is largely met by **#530**. See [Retire #67 — RelateNG](closed/07-retire-67-relateng.md) for why the first pass declined to close.
+**Blocked by:** three of the four preconditions below — ADR-0003 unconsumed by the capstone, **ticket 523** open (children `523-a` / `523-b` / `523-c` = #603 #604 #605 landed; ticket 523 not accepted; [`map-523.md`](../map-523.md), [`spec-523.md`](../spec-523.md)), **#503**'s four defects uncorrected. Precondition 1 is largely met by **#530**. See [Retire #67 — RelateNG](closed/07-retire-67-relateng.md) for why the first pass declined to close.
 
 > **Note, 2026-08-22.** #67 was briefly closed by accident: the ticket-07 commit's
 > subject line contained the substring `close #67` (in the phrase "decide NOT to
@@ -41,18 +41,15 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
    interior and reached through the bridge, rather than re-deferred. Today: 3/9
    cells for triangle touch (II `RelateNGTouchCells.v:204` guarded, BB `:337`, EE
    `:54`), 2/9 for rect touch (EE `RelateNGRect.v:160`, II `:305`).
-3. **#523 resolved or explicitly accepted.** *Grilled 2026-08-30
-   ([`map-523.md`](../map-523.md), ticket 12). Spec written
-   ([`spec-523.md`](../spec-523.md), ticket 13). Ticketed as
-   `523-a` / `523-b` / `523-c` (tickets 15–17, GitHub #603 #604
-   #605). Still open. Not accepted.* The three F-without-empty claims still hold
-   (`RelateCurveMatrix.v : cell_none_iff_empty` is the Coq emptiness;
-   the oracle prints `F` for E/B `[]`, undistinguished lineal cells, and
-   an 80×80 grid miss). The second half of this precondition — record
-   that the geometry-compute mode cannot yet be used as a differential
-   reference — is now written on that map. That is documentation of the
-   defect, not acceptance. The spec does not change this precondition's
-   language. Ticket 523 itself still blocks this ticket.
+3. **#523 resolved or explicitly accepted.** *Grilled + specced +
+   ticketed + implemented as `523-a` / `523-b` / `523-c` (#603 #604
+   #605). Ticket 523 stays open. Not accepted.* The three F-without-empty
+   claims no longer hold in the driver: E/B `failwith`; lineal
+   undistinguished cells and an exhausted 80×80 probe print `?`; C/A
+   kernels that reported no contact still print `F`. EE stays `2`.
+   Ticket 11 precondition 3 stays “resolved or explicitly accepted” —
+   landing the children does not retire ticket 523. Ticket 523 itself
+   still blocks this ticket.
 4. **The four documentation defects** from #503 corrected, since two of them
    *understated* what is proven and would make the closure evidence look
    thinner than it is. The stale S15l+ "regime DEFERRED" row lived in the

@@ -1,10 +1,10 @@
 # Spec — #523 `CURVE_RELATE_MATRIX` alphabet
 
-A takeable implementation spec. Written 2026-08-30 from the grill
+An implementation spec. Written 2026-08-30 from the grill
 ([`map-523.md`](map-523.md), ticket 12) plus issue #523 and ticket 11
-precondition 3. This is **not** a leftover numeral, **not** a remint of
-`522-n`, and **not** the driver rewrite. It does **not** retire ticket
-523.
+precondition 3. Letters `523-a` / `523-b` / `523-c` landed. This is
+**not** a leftover numeral, **not** a remint of `522-n`. It does
+**not** retire ticket 523.
 
 > Ticket 11 precondition 3 stays “#523 resolved or explicitly
 > accepted.” This spec does not accept the defect. The implement
@@ -158,13 +158,13 @@ It is not required to emit an honest `?`.
 
 ## Slices for `/implement` of ticket 523
 
-One letter may do all three. If split, this order is the gate graph:
+One letter did all three. The gate graph below is the record:
 
 | Slice | claimId | Ticket | What | Gate |
 |---|---|---|---|---|
-| **A** | `523-a` | [15](tickets/15-523-a-eb-refuse.md) / [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | E/B `failwith` (ask 2) | none |
-| **B** | `523-b` | [16](tickets/16-523-b-cell-unknown.md) / [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | Consumers accept `?` as a **matrix cell** only | none, but must land before C |
-| **C** | `523-c` | [17](tickets/17-523-c-driver-alphabet.md) / [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | Driver emits `?` / keeps `F` only when established; header + probe sentence (asks 1 and 3) | B / #604 |
+| **A** | `523-a` | [15](tickets/closed/15-523-a-eb-refuse.md) / [#603](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/603) | E/B `failwith` (ask 2) | closed |
+| **B** | `523-b` | [16](tickets/closed/16-523-b-cell-unknown.md) / [#604](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/604) | Result parse accepts `?` as a **matrix cell**; catalog lookup stays `F/0/1/2` | closed |
+| **C** | `523-c` | [17](tickets/closed/17-523-c-driver-alphabet.md) / [#605](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/605) | Driver emits `?` / keeps `F` only when established; header + probe sentence (asks 1 and 3) | closed |
 
 Done when:
 

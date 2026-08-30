@@ -102,6 +102,11 @@ let () =
      Printf.eprintf "FAIL lookup_matrix accepted UNSUPPORTED as a matrix key\n";
      exit 1
    with Invalid_argument _ -> ());
+  (try
+     ignore (lookup_matrix "FF?FF1212");
+     Printf.eprintf "FAIL lookup_matrix accepted ? as a catalog / fill key\n";
+     exit 1
+   with Invalid_argument _ -> ());
 
   (* additional TOUCH from first batch (consumption of rect oracles) *)
   assert_pred "aa_matrix_touch_vertical" "Touches" true;

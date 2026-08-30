@@ -43,3 +43,11 @@ Shared pins stay put (FFFFFFFFF / 2FFF1FFF2 / 2FFFFFFF2 / FFFF1FFF2).
 Decline golden stays `UNSUPPORTED`. Do not implement `523-b` / `523-c`
 here unless the same letter claims them. Do not mint `ⅠⅠⅠ`. Do not
 comment on GitHub issue 523 unless the user says `comment`.
+
+## Resolution
+
+**Closed 2026-08-30.** `run_curve_relate_matrix` `failwith`s when either
+argument has an `E` / `B` segment. No 9-char, not `UNSUPPORTED`. Same
+shape as `BUFFER_REGION` / `BUFFER_UNIFIED` / `ARC_BUFFER_SIMPLE`.
+Witness `523-a-eb-refuse`. Same letter also claimed `523-b` / `523-c`.
+Ticket 523 stays open.

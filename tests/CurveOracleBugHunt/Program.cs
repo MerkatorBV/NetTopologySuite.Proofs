@@ -172,6 +172,28 @@ static class Program
             {
                 Hit("OK", "REL/unknown_rejected", "unknown token is still a parse error");
             }
+
+            try
+            {
+                var (kind, val) = Oracle.ParseRelateWire("FF?FF1212");
+                if (kind == "matrix" && val == "FF?FF1212")
+                    Hit("OK", "REL/matrix_cell_unknown",
+                        "? is a matrix cell, not a third parse kind (523-b)");
+                else
+                    Hit("FAIL", "REL/matrix_cell_unknown", $"got {kind} {val}");
+            }
+            catch (Exception ex) { Hit("FAIL", "REL/matrix_cell_unknown", ex.Message); }
+
+            try
+            {
+                Oracle.ParseRelateWire("?");
+                Hit("FAIL", "REL/bare_unknown_rejected", "bare ? was accepted as Decline");
+            }
+            catch (Exception)
+            {
+                Hit("OK", "REL/bare_unknown_rejected",
+                    "bare ? is not Decline and not RELATE_TOKENS");
+            }
         }
 
         Console.WriteLine("=== RELATE_MATRIX golden vectors (oracle catalog; #575 / 522-f) ===");
@@ -253,7 +275,7 @@ static class Oracle
         string t = s.Trim();
         if (t == "UNSUPPORTED")
             return ("token", t);
-        if (t.Length == 9 && t.All(c => c is 'F' or '0' or '1' or '2'))
+        if (t.Length == 9 && t.All(c => c is 'F' or '0' or '1' or '2' or '?'))
             return ("matrix", t);
         throw new Exception(
             $"relate wire: not a 9-char matrix and not an allowlisted token: '{t}'");
