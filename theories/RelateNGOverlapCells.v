@@ -323,8 +323,8 @@ Proof.
   apply Rle_antisym.
   - apply Rle_trans with (gsB 1 0 0 1 p).
     + apply (gtri_le_gsB 0 0 1 0 0 1 p).
-    + rewrite HAb, Hsum. lra.
-  - apply gtri_nonneg_iff. rewrite HAa, HAb, HAc, Hsum. lra.
+    + rewrite HAb. lra.
+  - apply gtri_nonneg_iff. rewrite HAa, HAb, HAc. lra.
 Qed.
 
 Lemma overlap_bi_dim1 : gtri_cell_dim1 overlap_gtri_bi.
