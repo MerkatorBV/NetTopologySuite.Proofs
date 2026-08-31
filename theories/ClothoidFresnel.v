@@ -9,10 +9,11 @@
 
    Route 1 does not construct the Fresnel integrals (no Coquelicot /
    RInt; ADR-0001 route D stays consumer-gated). This letter discharges
-   the two analytic pack premises at unit speed σ ≡ 1, F = id:
+   the two analytic pack premises at unit speed σ ≡ 1,
+   F = fun t => 1 * t (matches constant_speed_premises; not bare id):
 
      uniformly_continuous_on (fun _ => 1)          (constant; free)
-     increment_squeezed (fun t => t) (fun _ => 1)  (free)
+     increment_squeezed (fun t => 1 * t) (fun _ => 1)
      chord_rate_tight (fresnel_curve Cx Cy) (fun _ => 1)
 
    The remaining Technique-park hypothesis is that Cx, Cy are primitives
@@ -73,6 +74,13 @@
    [(fun _ => 1) s * (t-s)]; [rewrite <- fresnel_vel_chord]
    then leaves [1 * dist]. [change] the constant function
    to [1], [rewrite Rmult_1_l], [fold gap] first.
+   CI death on 1a2063b L645: a global [rewrite <- fresnel_vel_chord]
+   after [fold gap] rewrites every [gap], including the
+   contract RHS [eps * gap], so the leftover is
+   [K * gap * gap <= eps * dist origin vel] and
+   [Rmult_le_compat_r] cannot unify [dist] with [gap].
+   Rewrite the subtracted occurrence only ([at 1]);
+   the factor on [eps] stays [gap].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -599,7 +607,12 @@ Proof.
   rewrite Rmult_1_l.
   fold gap.
   rewrite fresnel_chord_as_origin.
-  rewrite <- (fresnel_vel_chord s gap Hgap0).
+  (*
+    [rewrite <- fresnel_vel_chord] on [dist origin chord − gap]
+    must not touch the contract factor [eps * gap] (1a2063b L645).
+    Restrict to the subtracted occurrence.
+  *)
+  rewrite <- (fresnel_vel_chord s gap Hgap0) at 1.
   eapply Rle_trans.
   - apply (dist_abs_diff
              (mkPoint 0 0)
@@ -641,7 +654,6 @@ Proof.
           rewrite <- (Rmult_assoc (sqrt 2) (M * gap) gap).
           rewrite (Rmult_assoc (sqrt 2) M gap).
           reflexivity. }
-      replace (eps * (t - s)) with (eps * gap) by (unfold gap; reflexivity).
       apply Rmult_le_compat_r; [exact Hgap0 | apply Rlt_le; exact HKgap].
 Qed.
 
