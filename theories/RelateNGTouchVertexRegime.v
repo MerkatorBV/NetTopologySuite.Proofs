@@ -621,6 +621,8 @@ Proof.
     destruct (touch_onesided_t_b _ _ _ _ _ _);
       [ discriminate | ].
     destruct (touch_obtuse_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+      [ discriminate | ].
+    destruct (mixed_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
       discriminate.
 Qed.
 
@@ -881,9 +883,9 @@ Proof.
     as [Hlt | _]; [ contradiction | reflexivity ].
 Qed.
 
-(* Mixed-cone cex (not leftover `Ⅴ`): no vertex sits in an open edge.
+(* Leftover Ⅴ mixed-cone: no vertex sits in an open edge.
    Shared origin is an endpoint (nbetween), every other hit has
-   nonzero cross. Used by leftover-Ⅱ completeness, not a remint. *)
+   nonzero cross. Used by leftover-Ⅴ classify, not a remint. *)
 Lemma mixed_cone_no_open_A :
   some_vertex_on_open_edges
     (mkPoint 0 0) (mkPoint 2 0) (mkPoint 0 2)
@@ -955,6 +957,32 @@ Proof.
              ltac:(unfold cross; cbn [px py]; lra)).
   reflexivity.
 Qed.
+
+Lemma mixed_cone_vertex_b_true :
+  mixed_cone_vertex_b 0 0 2 0 0 2 0 0 (-1) (-1) 3 1 = true.
+Proof.
+  unfold mixed_cone_vertex_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 2 0 0 2)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 (-1) (-1) 3 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  unfold exactly_one_shared_from_a, is_vertex_b, point_eqb.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  unfold mixed_cone_from_v, others_fst, others_snd, is_vertex_b, point_eqb.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  unfold opposite_side_dot_b, closed_cone_separates_b,
+         both_closed_pos_b, both_closed_neg_b,
+         cone_separates_b, both_strict_pos_b, both_strict_neg_b,
+         vec_sum_from, side_dot.
+  cbn [px py].
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+(* Unnamed CCW completeness cex after leftover Ⅴ lives in
+   RelateNGUnnamedCex.v (split-gate: this file stays under 1234). *)
 
 (* Mutation replay (in-tree, #572; not an ADR-0004 mint).  Flip exactly
    one comparison below, rebuild this file, then restore the sign.

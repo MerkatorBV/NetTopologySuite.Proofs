@@ -2,7 +2,7 @@
    NetTopologySuite.Proofs.RelateNGTouchOnesided
    ----------------------------------------------------------------------------
    Leftover Ⅲ: exterior-side one-sided T. Leftover Ⅳ: interior-side
-   stem. Ⅲ∨Ⅳ xor, two witnesses, fill token, completeness mixed-cone.
+   stem. Ⅲ∨Ⅳ xor, two witnesses, fill token, completeness unnamed.
 
    Map: docs/scout/map-522-leftovers.md. Compiled leftover-Ⅲ pair
    A = (0,0)(2,0)(0,1), B = (1,0)(1/2,-1)(3/2,-1) is an exterior-side
@@ -22,12 +22,13 @@
    looks like overlap). After leftover Ⅰ and after `touch_vertex_b`.
    Ticket 22 bar: true on leftover Ⅲ; false on leftover Ⅰ (mutual),
    leftover Ⅱ, `classified_hard_pairs`, and the #567 contains pair.
-   Completeness stays false (mixed-cone; not leftover `Ⅴ`).
+   Completeness stays false (unnamed; leftover `Ⅴ` classifies
+   mixed-cone).
    `classify_triangle_pair` arm is `True` — leftover Ⅰ honesty,
    not CONTEXT Bar 1. Nothing that mentions `TPR_TouchOnesided` may
    be proved through `classify_triangle_pair`. Do not steal 522-j /
    522-m / 522-f / leftover Ⅰ. Do not remint leftover Ⅱ. Do not
-   remint the xor. Do not mint 522-n / Ⅴ. Do not remint aa_matrix_*.
+   remint the xor. Do not mint 522-n / `Ⅵ`. Do not remint aa_matrix_*.
 
    WITNESS topic: relate · claimId: Ⅲ · witness: Ⅲ-onesided-t-xor
    WITNESS topic: relate · claimId: Ⅳ · witness: Ⅳ-interior-side-xor

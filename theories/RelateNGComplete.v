@@ -6,8 +6,9 @@
    Ticket #577 asked completeness or a documented counterexample.
    Leftover `Ⅰ` classifies the T-junction as `TPR_TouchPartialEdge`.
    Leftover `Ⅱ` classifies obtuse-at-v as `TPR_TouchObtuse`.
-   Completeness is still FALSE: an unnamed mixed-cone pair emits
-   `TPR_Unsupported`. Do not mint leftover `Ⅴ`.
+   Leftover `Ⅴ` classifies mixed-cone as `TPR_MixedCone`.
+   Completeness is still FALSE: an unnamed CCW pair emits
+   `TPR_Unsupported`. Do not mint leftover `Ⅵ`.
 
    Hard pairs that DO classify are cited, not re-proved. Catalog
    ids: disjoint #571 / 522-c; overlap #570 / 522-b; vertex-touch
@@ -20,13 +21,14 @@
    Five names are not a partition. Leftover `Ⅲ`/`Ⅳ` share
    `TPR_TouchOnesided` (fill token). `522-j` is the #577 ticket
    id. `522-m` retries after excluding the T-junction: still
-   FALSE (mixed-cone). Not an ADR-0004 remint.
+   FALSE (unnamed CCW pair after leftover `Ⅴ`). Not an ADR-0004 remint.
 
    WITNESS topic: relate · claimId: 522-j · witness: 522-j-sentinel-cex
    WITNESS topic: relate · claimId: 522-m · witness: 522-m-complete-filtered
    WITNESS topic: relate · claimId: Ⅲ · witness: Ⅲ-onesided-t-cex
    WITNESS topic: relate · claimId: Ⅳ · witness: Ⅳ-interior-side-cex
    WITNESS topic: relate · claimId: Ⅱ · witness: Ⅱ-obtuse-cex
+   WITNESS topic: relate · claimId: Ⅴ · witness: Ⅴ-mixed-cone-cex
    macro: relate
    lane: proofs
    issue: #577 / #522
@@ -53,18 +55,18 @@ From NTS.Proofs Require Import GeneralTriangleJCT GeneralTriangleExterior
   TriangleValidPolygon JCTSeamAssembly PointInRingCorrect PointInRingTangents
   JordanCurveSeam TriangleContainmentConvex.
 From NTS.Proofs Require Import RelateNGCore RelateNGContains RelateNGOverlap
-  RelateNGDisjoint RelateNGTouchVertex RelateNGTouch.
+  RelateNGDisjoint RelateNGTouchVertex RelateNGUnnamedCex RelateNGTouch.
 
 Import ListNotations.
 Local Open Scope R_scope.
 
-(* Historical 522-j pair: leftover `Ⅰ` classifies; live cex is mixed-cone. *)
+(* Historical 522-j pair: leftover `Ⅰ` classifies; live cex is unnamed. *)
 
 Lemma tjunction_pair_both_ccw :
   0 < gdbl 0 0 2 0 0 1 /\ 0 < gdbl 1 0 3 0 2 1.
 Proof. unfold gdbl; split; lra. Qed.
 
-(** Leftover-Ⅰ classifies as [TPR_TouchPartialEdge]. Live cex is mixed-cone. *)
+(** Leftover-Ⅰ classifies as [TPR_TouchPartialEdge]. Live cex is unnamed. *)
 Theorem triangle_pair_regime_incomplete_tjunction :
   0 < gdbl 0 0 2 0 0 1 /\
   0 < gdbl 1 0 3 0 2 1 /\
@@ -193,8 +195,8 @@ Proof.
   exact (touch_vertex_b_false_of_non_ccw _ _ _ _ _ _ _ _ _ _ _ _ H).
 Qed.
 
-(* 522-m: leftover Ⅱ classified obtuse-at-v. Live cex is mixed-cone
-   A=(0,0)(2,0)(0,2) vs B=(0,0)(-1,-1)(3,1). Do not mint leftover `Ⅴ`. *)
+(* 522-m: leftover Ⅴ classified mixed-cone. Live cex is unnamed
+   A=(0,0)(2,0)(0,2) vs B=(0,0)(3,1)(1,3). Do not mint leftover `Ⅵ`. *)
 
 Definition tjunction_pair_coords
     (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Prop :=
@@ -393,7 +395,7 @@ Qed.
 
 (* WITNESS {"claimId":"Ⅱ","topic":"relate","lemma":"obtuse_pair_touch_obtuse","title":"Leftover Ⅱ obtuse-at-v classifies as TPR_TouchObtuse","file":"theories/RelateNGComplete.v","witness":"Ⅱ-obtuse-cex","board":"leftover-Ⅱ"} *)
 
-(* Mixed-cone cex (not leftover `Ⅴ`): A=(0,0)(2,0)(0,2), B=(0,0)(-1,-1)(3,1). *)
+(* Leftover Ⅴ mixed-cone: A=(0,0)(2,0)(0,2), B=(0,0)(-1,-1)(3,1). *)
 Definition mixed_cone_pair_coords
     (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Prop :=
   ax = 0 /\ ay = 0 /\ bx = 2 /\ by_ = 0 /\ cx = 0 /\ cy = 2 /\
@@ -481,8 +483,8 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma mixed_cone_pair_unsupported :
-  triangle_pair_regime 0 0 2 0 0 2 0 0 (-1) (-1) 3 1 = TPR_Unsupported.
+Lemma mixed_cone_pair_mixedcone :
+  triangle_pair_regime 0 0 2 0 0 2 0 0 (-1) (-1) 3 1 = TPR_MixedCone.
 Proof.
   unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
   cbn [px py].
@@ -569,10 +571,13 @@ Proof.
   rewrite mixed_cone_no_partial_edge.
   rewrite mixed_cone_no_onesided.
   rewrite mixed_cone_touch_obtuse_false.
+  rewrite mixed_cone_vertex_b_true.
   reflexivity.
 Qed.
 
-(* WITNESS {"claimId":"522-j","topic":"relate","lemma":"triangle_pair_regime_ccw_incomplete","title":"Classifier completeness is still false after leftover Ⅱ: mixed-cone shared vertex emits TPR_Unsupported","file":"theories/RelateNGComplete.v","witness":"522-j-sentinel-cex","board":"#577"} *)
+(* WITNESS {"claimId":"Ⅴ","topic":"relate","lemma":"mixed_cone_pair_mixedcone","title":"Leftover Ⅴ mixed-cone classifies as TPR_MixedCone","file":"theories/RelateNGComplete.v","witness":"Ⅴ-mixed-cone-cex","board":"leftover-Ⅴ"} *)
+
+(* WITNESS {"claimId":"522-j","topic":"relate","lemma":"triangle_pair_regime_ccw_incomplete","title":"Classifier completeness is still false after leftover Ⅴ: an unnamed CCW pair emits TPR_Unsupported","file":"theories/RelateNGComplete.v","witness":"522-j-sentinel-cex","board":"#577"} *)
 Theorem triangle_pair_regime_ccw_incomplete :
   exists ax ay bx by_ cx cy dx dy ex ey fx fy : R,
     0 < gdbl ax ay bx by_ cx cy /\
@@ -580,13 +585,13 @@ Theorem triangle_pair_regime_ccw_incomplete :
     triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
       = TPR_Unsupported.
 Proof.
-  exists 0, 0, 2, 0, 0, 2, 0, 0, (-1), (-1), 3, 1.
+  exists 0, 0, 2, 0, 0, 2, 0, 0, 3, 1, 1, 3.
   split; [unfold gdbl; lra|].
   split; [unfold gdbl; lra|].
-  exact mixed_cone_pair_unsupported.
+  exact unnamed_ccw_pair_unsupported.
 Qed.
 
-(* WITNESS {"claimId":"522-m","topic":"relate","lemma":"triangle_pair_regime_ccw_incomplete_not_tjunction","title":"Filtered CCW-completeness is still false: mixed-cone declines after the T-junction cex is excluded","file":"theories/RelateNGComplete.v","witness":"522-m-complete-filtered","board":"#522"} *)
+(* WITNESS {"claimId":"522-m","topic":"relate","lemma":"triangle_pair_regime_ccw_incomplete_not_tjunction","title":"Filtered CCW-completeness is still false: an unnamed pair declines after leftover Ⅴ classifies mixed-cone","file":"theories/RelateNGComplete.v","witness":"522-m-complete-filtered","board":"#522"} *)
 Theorem triangle_pair_regime_ccw_incomplete_not_tjunction :
   exists ax ay bx by_ cx cy dx dy ex ey fx fy : R,
     0 < gdbl ax ay bx by_ cx cy /\
@@ -595,11 +600,11 @@ Theorem triangle_pair_regime_ccw_incomplete_not_tjunction :
     triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
       = TPR_Unsupported.
 Proof.
-  exists 0, 0, 2, 0, 0, 2, 0, 0, (-1), (-1), 3, 1.
+  exists 0, 0, 2, 0, 0, 2, 0, 0, 3, 1, 1, 3.
   split; [unfold gdbl; lra|].
   split; [unfold gdbl; lra|].
-  split; [exact mixed_cone_pair_not_tjunction|].
-  exact mixed_cone_pair_unsupported.
+  split; [intros [Hax [Hay [Hbx [Hby [Hcx [Hcy _]]]]]]; lra|].
+  exact unnamed_ccw_pair_unsupported.
 Qed.
 
 Theorem ccw_complete_except_tjunction_false :
@@ -618,7 +623,7 @@ Proof.
   exact Hreg.
 Qed.
 
-(* Leftover Ⅲ — exterior-side stem. Completeness is mixed-cone. *)
+(* Leftover Ⅲ — exterior-side stem. Completeness is unnamed. *)
 
 Definition onesided_t_pair_coords
     (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Prop :=
@@ -903,7 +908,7 @@ Print Assumptions onesided_t_no_shared_vertex.
 (* has gtri A = 0).  Not mutual.  No shared vertex.  Not leftover Ⅰ /         *)
 (* Ⅱ / Ⅲ.  II nonempty at (1, 1/6).  Classifier emits                         *)
 (* TPR_TouchOnesided.  Fill stays im_unsupported.  Do not remint the          *)
-(* xor. Completeness is mixed-cone. Not CONTEXT Bar 1.                        *)
+(* xor. Completeness is unnamed. Not CONTEXT Bar 1.                           *)
 (* -------------------------------------------------------------------------- *)
 
 Definition interior_side_pair_coords

@@ -2789,9 +2789,14 @@ theories/RelateNGTouch.v
 theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v
 theories/RelateNGRect.v
+# Unnamed CCW completeness cex after leftover Ⅴ (not leftover Ⅵ).
+# Split out of RelateNGTouchVertexRegime.v so that file stays under
+# the 1234-line gate. Complete stays at the monolith floor.
+theories/RelateNGUnnamedCex.v
 # #577 / 522-j: leftover-decline finding.  Completeness is still
-# false (obtuse-at-v / leftover Ⅱ). The compiled T-junction pair
-# is leftover Ⅰ (classified TPR_TouchPartialEdge).
+# false (unnamed CCW pair after leftover Ⅴ). The compiled
+# T-junction pair is leftover Ⅰ (classified TPR_TouchPartialEdge).
+# Mixed-cone is leftover Ⅴ (classified TPR_MixedCone).
 theories/RelateNGComplete.v
 # Leftover Ⅰ: mutual vertex-in-open-edge sliver at bar 1.
 # touch_partial_edge_b; constructor TPR_TouchPartialEdge stays on
@@ -2801,16 +2806,22 @@ theories/RelateNGTouchPartialEdge.v
 # Leftover Ⅲ: exterior-side one-sided T. Ⅲ∨Ⅳ xor
 # touch_onesided_t_b; one exterior witness; constructor
 # TPR_TouchOnesided stays on im_unsupported (fill token). After
-# leftover Ⅰ. Completeness is mixed-cone (not leftover Ⅴ). Not
+# leftover Ⅰ. Completeness is unnamed after leftover Ⅴ. Not
 # CONTEXT Bar 1. Does not remint fills. Leftover Ⅳ is the
 # interior-side stem (compiled residue pair).
 theories/RelateNGTouchOnesided.v
 # Leftover Ⅱ: closed-cone vertex kiss. Detector
 # touch_obtuse_vertex_b; constructor TPR_TouchObtuse stays on
 # im_unsupported. After leftover Ⅰ and leftover Ⅲ∨Ⅳ. Completeness
-# is mixed-cone (not leftover Ⅴ). Not CONTEXT Bar 1. Does not
+# is unnamed after leftover Ⅴ. Not CONTEXT Bar 1. Does not
 # remint cone_separates_b / aa_matrix_*.
 theories/RelateNGTouchObtuse.v
+# Leftover Ⅴ: opposite-sign cone at a shared vertex. Detector
+# mixed_cone_vertex_b; constructor TPR_MixedCone stays on
+# im_unsupported. After leftover Ⅱ. Completeness is an unnamed
+# CCW pair (not leftover Ⅵ). Not CONTEXT Bar 1. Does not remint
+# cone_separates_b / touch_obtuse_vertex_b / aa_matrix_*.
+theories/RelateNGTouchMixedCone.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE

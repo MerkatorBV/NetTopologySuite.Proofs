@@ -1,0 +1,56 @@
+# Leftover `Ⅴ` — classify the mixed-cone pair
+
+**Type:** task · **Map:** [#522 leftovers](../../map-522-leftovers.md)
+**Blocked by:** — · **Closed:** 2026-08-30 (pair classified)
+**Spec:** [`map-mixed-cone-cert.md`](../../map-mixed-cone-cert.md)
+**claimId:** `Ⅴ` · **GitHub:** none · **witness:** `Ⅴ-mixed-cone-cex`
+
+> Umbrella: leftover `Ⅴ`. Does not retire epic 522. Not leftover
+> `Ⅰ`. Not leftover `Ⅱ`. Not leftover `Ⅲ`. Not leftover `Ⅳ`.
+> Not a `522-*` letter.
+
+## Question
+
+Leftover `Ⅴ` is the leftover-Ⅱ completeness residue
+A = `(0,0)(2,0)(0,2)`, B = `(0,0)(-1,-1)(3,1)`. Shared origin.
+`cone_separates_b` is false (opposite-sign `side_dot`). Sibling
+of leftover `Ⅱ` (same A; B third vertex `(1,-1)`, product 0) and
+of the #572 / `522-i` pair (same A; B third vertex `(0,-2)`).
+This letter writes a **new boolean**, not a remint of
+`cone_separates_b` / `touch_obtuse_vertex_b`. Completeness must
+stay false. Do not mint leftover `Ⅵ`.
+
+## Resolution
+
+**Closed 2026-08-30 with acceptance.** Pair classified.
+
+A = `(0,0)(2,0)(0,2)`, B = `(0,0)(-1,-1)(3,1)`. Both CCW.
+Shared origin. Opposite-sign cone plus `negb` of both strict and
+closed cones (`RelateNGCore.v : mixed_cone_vertex_b`). Classifier
+emits `TPR_MixedCone`
+(`RelateNGComplete.v : mixed_cone_pair_mixedcone`;
+`RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`).
+Fill stays `im_unsupported`. False on `classified_hard_pairs`
+(including #572), leftover `Ⅰ`, leftover `Ⅱ`, leftover `Ⅲ`,
+leftover `Ⅳ`, and the #567 contains pair. Completeness stays
+false on an unnamed CCW pair A = `(0,0)(2,0)(0,2)`,
+B = `(0,0)(3,1)(1,3)`
+(`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`).
+Epic #522 stop is QED ∨ QEX
+(`RelateNGTouchMixedCone.v : triangle_pair_regime_ccw_stop`),
+discharged QEX. Leftover `Ⅴ` itself is QED
+(`RelateNGTouchMixedCone.v : leftover_v_qed_or_qex`).
+`classify_triangle_pair` arm is `True` — leftover `Ⅰ` honesty,
+not CONTEXT Bar 1. `cone_separates_b` was not reminted. Epic
+`#522` stays OPEN.
+
+## Non-goals
+
+Do not remint `cone_separates_b` / `touch_vertex_b` /
+`touch_obtuse_vertex_b` / `touch_partial_edge_b` /
+`touch_onesided_t_b` / `shares_edge_b`. Do not remint
+`aa_matrix_*`. Do not emit `FFFF1FFF2` on `TPR_MixedCone`.
+Do not mint `522-n`. Do not mint `Ⅵ`. Do not steal leftover
+`Ⅰ` / `Ⅱ` / `Ⅲ` / `Ⅳ` / `522-j` / `522-m` / `522-f` /
+`522-i`. Do not claim completeness or Bar 1. Do not comment on a
+GitHub issue unless the user says `comment`.
