@@ -45,6 +45,12 @@
    CI death on e0dc2b1 L272: [Rabs_minus_sym heading s t] looks for
    [Rabs (hs − ht)]; the leftover after [cos_abs_lipschitz] is already
    [Rabs (ht − hs)]. Apply [fresnel_heading_lipschitz] directly.
+   CI death on e4ef3d9 L325: nested [lra] inside [Rmult_le_pos]
+   cannot find a witness for [0 <= t-s]. Pose [Hgap0] first and
+   pass it as [exact]; expand [(σ±K*gap)*gap] with [sub_mul_distr]
+   / [add_mul_distr], not [ring]. Same class: [1*(t-s)] is
+   [Rmult_1_l], and [e * sqrt 2 = K * gap * gap] is [Rmult_comm]
+   / [Rmult_assoc], not [ring].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -302,6 +308,22 @@ Proof.
   - rewrite (Rabs_left (x - c)) by lra. lra.
 Qed.
 
+Lemma sub_mul_distr : forall x y z,
+  (x - y) * z = x * z - y * z.
+Proof.
+  intros x y z.
+  unfold Rminus.
+  rewrite Rmult_plus_distr_r.
+  rewrite Ropp_mult_distr_l.
+  reflexivity.
+Qed.
+
+Lemma add_mul_distr : forall x y z,
+  (x + y) * z = x * z + y * z.
+Proof.
+  intros x y z. apply Rmult_plus_distr_r.
+Qed.
+
 Lemma increment_tracks_left :
   forall F σ a b s t K,
     increment_squeezed F σ a b ->
@@ -314,6 +336,7 @@ Proof.
   set (gap := t - s).
   set (lo := σ s - K * gap).
   set (hi := σ s + K * gap).
+  assert (Hgap0 : 0 <= gap) by (unfold gap; lra).
   assert (Hbd : forall u, s <= u -> u <= t -> lo <= σ u <= hi).
   { intros u Hus Hut.
     specialize (Hlip u Hus Hut).
@@ -321,13 +344,11 @@ Proof.
     unfold lo, hi, gap in *. lra. }
   pose proof (Hsq s t lo hi Has Hst Htb Hbd) as Hinc.
   unfold lo, hi, gap in Hinc.
-  apply rabs_of_two_sided.
-  - apply Rmult_le_pos; [apply Rmult_le_pos; [exact HK | lra] | lra].
-  - replace ((σ s - K * (t - s)) * (t - s))
-      with (σ s * (t - s) - K * (t - s) * (t - s)) in Hinc by ring.
-    replace ((σ s + K * (t - s)) * (t - s))
-      with (σ s * (t - s) + K * (t - s) * (t - s)) in Hinc by ring.
-    lra.
+  rewrite sub_mul_distr, add_mul_distr in Hinc.
+  apply (rabs_of_two_sided (F t - F s) (σ s * (t - s))
+           (K * (t - s) * (t - s))).
+  - apply Rmult_le_pos; [apply Rmult_le_pos; [exact HK | exact Hgap0] | exact Hgap0].
+  - exact Hinc.
 Qed.
 
 Lemma fresnel_Cx_tracks : forall Cx Cy a b s t,
@@ -378,13 +399,37 @@ Proof.
     lra.
 Qed.
 
+Lemma opp_minus : forall x y, y - x = - (x - y).
+Proof.
+  intros x y.
+  unfold Rminus.
+  rewrite Ropp_plus_distr.
+  rewrite Ropp_involutive.
+  apply Rplus_comm.
+Qed.
+
+Lemma sq_minus_comm : forall x y,
+  (x - y) * (x - y) = (y - x) * (y - x).
+Proof.
+  intros x y.
+  rewrite (opp_minus x y).
+  rewrite <- (Rsqr_neg (x - y)).
+  unfold Rsqr.
+  reflexivity.
+Qed.
+
 Lemma fresnel_chord_as_origin : forall Cx Cy s t,
   dist (fresnel_curve Cx Cy s) (fresnel_curve Cx Cy t)
   = dist (mkPoint 0 0) (mkPoint (Cx t - Cx s) (Cy t - Cy s)).
 Proof.
   intros Cx Cy s t.
-  unfold fresnel_curve, dist, dist_sq. simpl.
-  f_equal. ring.
+  unfold fresnel_curve, dist.
+  rewrite dist_sq_general.
+  rewrite dist_sq_pythagorean.
+  f_equal.
+  rewrite (sq_minus_comm (Cx s) (Cx t)).
+  rewrite (sq_minus_comm (Cy s) (Cy t)).
+  reflexivity.
 Qed.
 
 Lemma dist_of_coords : forall ax ay bx by,
@@ -399,6 +444,26 @@ Proof.
   intros x. pose proof (Rle_0_sqr x) as H. unfold Rsqr in H. exact H.
 Qed.
 
+(* Flocq [ring] has already refused similar factorizations in
+   EllipseSpeedIntegral.v. Expand [(v*g)*(v*g)] by hand. *)
+Lemma sq_scale : forall v g,
+  v * g * (v * g) = (v * v) * (g * g).
+Proof.
+  intros v g.
+  transitivity (Rsqr (v * g)).
+  - unfold Rsqr. reflexivity.
+  - rewrite Rsqr_mult. unfold Rsqr. reflexivity.
+Qed.
+
+Lemma two_sq : forall e, e * e + e * e = 2 * (e * e).
+Proof.
+  intros e.
+  replace 2 with (1 + 1) by ring.
+  rewrite Rmult_plus_distr_r.
+  rewrite Rmult_1_l.
+  reflexivity.
+Qed.
+
 Lemma fresnel_vel_chord : forall s gap,
   0 <= gap ->
   dist (mkPoint 0 0) (mkPoint (fresnel_vx s * gap) (fresnel_vy s * gap))
@@ -407,12 +472,11 @@ Proof.
   intros s gap Hg.
   unfold dist.
   rewrite dist_sq_pythagorean.
-  replace (fresnel_vx s * gap * (fresnel_vx s * gap)
-           + fresnel_vy s * gap * (fresnel_vy s * gap))
-    with ((fresnel_vx s * fresnel_vx s + fresnel_vy s * fresnel_vy s)
-          * (gap * gap)) by ring.
+  rewrite (sq_scale (fresnel_vx s) gap).
+  rewrite (sq_scale (fresnel_vy s) gap).
+  rewrite <- Rmult_plus_distr_r.
   rewrite fresnel_unit_speed.
-  replace (1 * (gap * gap)) with (gap * gap) by ring.
+  rewrite Rmult_1_l.
   rewrite sqrt_square by exact Hg.
   reflexivity.
 Qed.
@@ -422,11 +486,19 @@ Lemma sqrt_two_of_sq : forall e,
   sqrt (e * e + e * e) = e * sqrt 2.
 Proof.
   intros e He.
-  replace (e * e + e * e) with (2 * (e * e)) by ring.
+  rewrite two_sq.
   rewrite sqrt_mult; [| lra | apply prod_sqr_nonneg].
   replace (e * e) with (Rsqr e) by (unfold Rsqr; reflexivity).
   rewrite sqrt_Rsqr by exact He.
-  ring.
+  apply Rmult_comm.
+Qed.
+
+Lemma abs_mul_self : forall x, x * x = Rabs x * Rabs x.
+Proof.
+  intros x.
+  rewrite <- Rabs_mult.
+  apply Rabs_right.
+  apply Rle_ge, prod_sqr_nonneg.
 Qed.
 
 Lemma sq_le_of_abs : forall x e,
@@ -435,11 +507,9 @@ Lemma sq_le_of_abs : forall x e,
   x * x <= e * e.
 Proof.
   intros x e He Hx.
-  pose proof (prod_sqr_nonneg x) as Hx2.
-  pose proof (prod_sqr_nonneg e) as He2.
-  rewrite <- (Rabs_right (x * x)) by (apply Rle_ge; exact Hx2).
-  rewrite <- Rabs_mult.
-  rewrite (Rabs_right (e * e)) by (apply Rle_ge; exact He2).
+  rewrite (abs_mul_self x).
+  rewrite (abs_mul_self e).
+  rewrite (Rabs_right e) by (apply Rle_ge; exact He).
   apply Rmult_le_compat; [apply Rabs_pos | apply Rabs_pos | exact Hx | exact Hx].
 Qed.
 
@@ -496,7 +566,8 @@ Proof.
   intros s t Has Hst Htb Hdt.
   set (gap := t - s).
   assert (Hgap0 : 0 <= gap) by (unfold gap; lra).
-  replace (1 * (t - s)) with gap by (unfold gap; ring).
+  replace (1 * (t - s)) with gap
+    by (unfold gap; rewrite Rmult_1_l; reflexivity).
   rewrite fresnel_chord_as_origin.
   rewrite <- (fresnel_vel_chord s gap Hgap0).
   eapply Rle_trans.
@@ -519,7 +590,7 @@ Proof.
              + (Cy t - Cy s - fresnel_vy s * gap)
                * (Cy t - Cy s - fresnel_vy s * gap))
       with (dx * dx + dy * dy)
-      by (unfold dx, dy; ring).
+      by (unfold dx, dy; reflexivity).
     eapply Rle_trans.
     + apply sqrt_le_1.
       * apply Rplus_le_le_0_compat; apply prod_sqr_nonneg.
@@ -532,7 +603,11 @@ Proof.
       { apply (holder_window_lt K gap eps HK Hgap0 Heps).
         unfold gap, delta in *. exact Hdt. }
       replace (e * sqrt 2) with (K * gap * gap).
-      2:{ unfold e, K, M. ring. }
+      2:{ unfold e, K.
+          rewrite (Rmult_comm ((M * gap) * gap) (sqrt 2)).
+          rewrite <- (Rmult_assoc (sqrt 2) (M * gap) gap).
+          rewrite (Rmult_assoc (sqrt 2) M gap).
+          reflexivity. }
       replace (eps * (t - s)) with (eps * gap) by (unfold gap; reflexivity).
       apply Rmult_le_compat_r; [exact Hgap0 | apply Rlt_le; exact HKgap].
 Qed.
@@ -563,7 +638,7 @@ Theorem fresnel_is_curve_length :
     is_curve_length (fresnel_curve Cx Cy) a b (b - a).
 Proof.
   intros Cx Cy a b Hab Hpr.
-  replace (b - a) with ((fun t => t) b - (fun t => t) a) by ring.
+  change (b - a) with ((fun t => t) b - (fun t => t) a).
   apply (speed_integral_is_curve_length
            (fresnel_curve Cx Cy) (fun _ => 1) (fun t => t) a b).
   apply fresnel_speed_integral_premises; assumption.
@@ -577,7 +652,8 @@ Corollary fresnel_unit_window_length :
     is_curve_length (fresnel_curve Cx Cy) 0 1 1.
 Proof.
   intros Cx Cy Hpr.
-  replace 1 with (1 - 0) by ring.
+  replace 1 with (1 - 0).
+  2:{ unfold Rminus. rewrite Ropp_0. rewrite Rplus_0_r. reflexivity. }
   apply fresnel_is_curve_length; [lra | exact Hpr].
 Qed.
 
@@ -592,7 +668,7 @@ Proof.
   pose proof (speed_integral_chord_modulus
                 (fresnel_curve Cx Cy) (fun _ => 1) (fun u => u) a b
                 Hsip s t Has Hst Htb) as Hmod.
-  replace ((fun u => u) t - (fun u => u) s) with (t - s) in Hmod by ring.
+  change ((fun u => u) t - (fun u => u) s) with (t - s) in Hmod.
   exact Hmod.
 Qed.
 
@@ -613,7 +689,7 @@ Proof.
   exists d. split; [exact Hd |].
   intros s t Has Hst Htb Hdt.
   specialize (Htight s t Has Hst Htb Hdt).
-  replace ((fun u => u) t - (fun u => u) s) with (t - s) in Htight by ring.
+  change ((fun u => u) t - (fun u => u) s) with (t - s) in Htight.
   lra.
 Qed.
 
