@@ -66,6 +66,9 @@
    CI death on 2e24a57 L436: [Ropp_mult_distr_l] / unary minus
    notation does not expose [- ((x-y)*-(x-y))]. Use
    [eq_sym (Rmult_opp_opp d d)] instead of rewriting.
+   CI death on bcf6ac9 L521: [apply Rabs_right] is
+   [Rabs r = r], goal is [x*x = Rabs (x*x)]. Rewrite
+   [Rabs_right] on the product, then [reflexivity].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -518,8 +521,9 @@ Lemma abs_mul_self : forall x, x * x = Rabs x * Rabs x.
 Proof.
   intros x.
   rewrite <- Rabs_mult.
-  apply Rabs_right.
-  apply Rle_ge, prod_sqr_nonneg.
+  rewrite (Rabs_right (x * x)).
+  2:{ apply Rle_ge. apply prod_sqr_nonneg. }
+  reflexivity.
 Qed.
 
 Lemma sq_le_of_abs : forall x e,
