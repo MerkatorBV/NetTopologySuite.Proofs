@@ -10,6 +10,12 @@ Bible §4.2 `length()` is discharged in the ledger sense below: each zoo
 member has a named theorem against `CurveLength.v : is_curve_length`,
 or a named park. This is not "the zoo is unconditionally exact."
 
+**Merge comment (one sentence).** `M-LEN-ZOO` ✅ is paperwork-with-parks:
+clothoid unconditional is the unit line, ellipse unconditional is
+`rx=ry`, Bézier is an upper bound not `length()`, NURBS additivity is a
+list of already-proved spans — not a multi-span NURBS and not "the zoo
+is exact."
+
 ## Destination (met with the named parks)
 
 The canonical spec is `is_curve_length` (inscribed-polyline lub).
