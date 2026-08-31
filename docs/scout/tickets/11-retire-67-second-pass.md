@@ -43,13 +43,16 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
    `:54`), 2/9 for rect touch (EE `RelateNGRect.v:160`, II `:305`).
 3. **#523 resolved or explicitly accepted.** *Grilled + specced +
    ticketed + implemented as `523-a` / `523-b` / `523-c` (#603 #604
-   #605). Ticket 523 stays open. Not accepted.* The three F-without-empty
-   claims no longer hold in the driver: E/B `failwith`; lineal
-   undistinguished cells and an exhausted 80×80 probe print `?`; C/A
-   kernels that reported no contact still print `F`. EE stays `2`.
-   Ticket 11 precondition 3 stays “resolved or explicitly accepted” —
-   landing the children does not retire ticket 523. Ticket 523 itself
-   still blocks this ticket.
+   #605). Ticket 523 stop is QED ∨ QEX
+   (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`), discharged
+   QEX on `?`. Ticket 523 stays open. Not accepted.* The three
+   F-without-empty claims no longer hold in the driver: E/B
+   `failwith`; lineal undistinguished cells and an exhausted 80×80
+   probe print `?`; C/A kernels that reported no contact still print
+   `F`. EE stays `2`. Ticket 11 precondition 3 stays “resolved or
+   explicitly accepted” — landing the children and discharging the
+   stop QEX do not retire ticket 523. Ticket 523 itself still blocks
+   this ticket.
 4. **The four documentation defects** from #503 corrected, since two of them
    *understated* what is proven and would make the closure evidence look
    thinner than it is. The stale S15l+ "regime DEFERRED" row lived in the
