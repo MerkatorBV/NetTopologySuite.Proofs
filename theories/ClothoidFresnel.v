@@ -69,6 +69,10 @@
    CI death on bcf6ac9 L521: [apply Rabs_right] is
    [Rabs r = r], goal is [x*x = Rabs (x*x)]. Rewrite
    [Rabs_right] on the product, then [reflexivity].
+   CI death on f4b6f90 L599: [replace (1*(t-s))] misses
+   [(fun _ => 1) s * (t-s)]; [rewrite <- fresnel_vel_chord]
+   then leaves [1 * dist]. [change] the constant function
+   to [1], [rewrite Rmult_1_l], [fold gap] first.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -591,12 +595,16 @@ Proof.
   intros s t Has Hst Htb Hdt.
   set (gap := t - s).
   assert (Hgap0 : 0 <= gap) by (unfold gap; lra).
-  replace (1 * (t - s)) with gap
-    by (unfold gap; rewrite Rmult_1_l; reflexivity).
+  change ((fun _ : R => 1) s * (t - s)) with (1 * (t - s)).
+  rewrite Rmult_1_l.
+  fold gap.
   rewrite fresnel_chord_as_origin.
   rewrite <- (fresnel_vel_chord s gap Hgap0).
   eapply Rle_trans.
-  - apply dist_abs_diff.
+  - apply (dist_abs_diff
+             (mkPoint 0 0)
+             (mkPoint (Cx t - Cx s) (Cy t - Cy s))
+             (mkPoint (fresnel_vx s * gap) (fresnel_vy s * gap))).
   - set (dx := Cx t - Cx s - fresnel_vx s * gap).
     set (dy := Cy t - Cy s - fresnel_vy s * gap).
     set (e := M * gap * gap).
