@@ -54,6 +54,9 @@
    CI death on bb7888f L365: [fresnel_vx_lipschitz] yields
    [M*(u-s)]; [increment_tracks_left] asks for the uniform
    [M*(t-s)]. Lift with [Rmult_le_compat_l] and [u<=t].
+   CI death on df7e564 L427: [rewrite <- Rsqr_neg] looks for
+   [(- (x-y))²]; the goal is still a product. Fold both
+   sides to [Rsqr] first, then [opp_minus] + [Rsqr_neg].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -423,10 +426,12 @@ Lemma sq_minus_comm : forall x y,
   (x - y) * (x - y) = (y - x) * (y - x).
 Proof.
   intros x y.
+  transitivity (Rsqr (x - y)).
+  { unfold Rsqr. reflexivity. }
+  transitivity (Rsqr (y - x)).
+  2:{ unfold Rsqr. reflexivity. }
   rewrite (opp_minus x y).
-  rewrite <- (Rsqr_neg (x - y)).
-  unfold Rsqr.
-  reflexivity.
+  apply Rsqr_neg.
 Qed.
 
 Lemma fresnel_chord_as_origin : forall Cx Cy s t,
