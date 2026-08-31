@@ -57,7 +57,10 @@ interior-side stem (compiled residue pair; II nonempty). The xor
 (`RelateNGCore.v : touch_onesided_t_b`) is a `Ⅲ∨Ⅳ` configuration
 class with two compiled witnesses; it is not a leftover-`Ⅲ`
 detector. `Ⅴ` is mixed-cone (classified; fill token). Completeness
-is an unnamed CCW pair (not leftover `Ⅵ`). Do not swap them.
+is an unnamed CCW pair (not leftover `Ⅵ`). Epic #522 stop is
+QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`); leftover
+`Ⅰ`–`Ⅴ` are QED (`RelateNGEpic522.v : ticket_522_classified_qed_or_qex`).
+Do not swap them.
 Do not mint leftover `Ⅵ`.
 
 ## Leftover table
