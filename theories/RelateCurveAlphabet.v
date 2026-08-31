@@ -180,11 +180,11 @@ Theorem ticket_523_iso_qed_or_qex :
   (exists c : CurveRelateResult, ~ iso_result_cell c).
 Proof.
   left.
-  repeat split.
-  - exact I.
-  - exact I.
-  - exact I.
-  - exact I.
+  split; [exact I|].
+  split; [exact I|].
+  split; [exact I|].
+  split; [exact I|].
+  split.
   - exact dim_empty_encodes_F.
   - apply dim_to_result_never_unknown.
 Qed.
