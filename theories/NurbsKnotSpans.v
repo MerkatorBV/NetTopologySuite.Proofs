@@ -73,12 +73,12 @@ Proof.
   intros g k0 ks kend Ls.
   revert k0 Ls.
   induction ks as [|k ks' IH]; intros k0 Ls Hkv Hsp.
-  - destruct Ls as [|L Ls']; [contradiction Hsp |].
-    destruct Ls' as [|L2 rest]; [| contradiction Hsp].
+  - destruct Ls as [|L Ls']; [simpl in Hsp; contradiction Hsp |].
+    destruct Ls' as [|L2 rest]; [| simpl in Hsp; contradiction Hsp].
     unfold list_sum. simpl.
     replace (L + 0) with L by ring.
     exact Hsp.
-  - destruct Ls as [|L Ls']; [contradiction Hsp |].
+  - destruct Ls as [|L Ls']; [simpl in Hsp; contradiction Hsp |].
     destruct Hkv as [Hk0k Htail].
     destruct Hsp as [Hspan0 Hrest].
     unfold list_sum. simpl.
@@ -144,14 +144,9 @@ Lemma rot90_nurbs2_pt : forall p0 p1 p2 w0 w1 w2 t,
   = rot90 (nurbs2_pt p0 p1 p2 w0 w1 w2 t).
 Proof.
   intros p0 p1 p2 w0 w1 w2 t.
-  unfold nurbs2_pt, rot90. simpl.
+  unfold nurbs2_pt, rot90, nurbs2_den. simpl.
   apply point_ext; simpl.
-  - set (ny := bern2_0 t * (w0 * py p0) + bern2_1 t * (w1 * py p1)
-               + bern2_2 t * (w2 * py p2)).
-    replace (bern2_0 t * (w0 * - py p0) + bern2_1 t * (w1 * - py p1)
-             + bern2_2 t * (w2 * - py p2)) with (- ny)
-      by (unfold ny; ring).
-    symmetry. apply Ropp_div.
+  - rewrite <- Ropp_div. f_equal. ring.
   - reflexivity.
 Qed.
 
