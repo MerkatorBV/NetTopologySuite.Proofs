@@ -21,7 +21,7 @@ witness: Ⅴ-mixed-cone-cex
 without reminting `cone_separates_b` / `touch_obtuse_vertex_b`.**
 
 Ticket #577 asked either completeness (QED) or a documented counterexample
-(QEX). That stop is now a theorem:
+(QEX). Leftover `Ⅴ`'s letter stop is
 `RelateNGTouchMixedCone.v : triangle_pair_regime_ccw_stop` (discharged QEX).
 The filtered sibling is
 `RelateNGTouchMixedCone.v : triangle_pair_regime_ccw_stop_not_tjunction`.
@@ -31,6 +31,7 @@ filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
 The live cex is an unnamed CCW pair (not leftover `Ⅵ`). Leftover
 `Ⅴ` itself is QED (`RelateNGTouchMixedCone.v : leftover_v_qed_or_qex`).
+Epic #522 stop is QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`).
 
 ## The pair (compiled)
 

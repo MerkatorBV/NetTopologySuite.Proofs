@@ -22,7 +22,7 @@ witness: Ⅱ-obtuse-cex
 `cone_separates_b` / `touch_vertex_b`.**
 
 Ticket #577 asked either completeness (QED) or a documented counterexample
-(QEX). That stop is now a theorem:
+(QEX). Leftover `Ⅱ`'s letter stop is
 `RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop` (discharged QEX).
 The filtered sibling is
 `RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop_not_tjunction`.
@@ -32,6 +32,7 @@ filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
 The live cex is an unnamed CCW pair after leftover `Ⅴ`. Leftover
 `Ⅱ` itself is QED (`RelateNGTouchObtuse.v : leftover_ii_qed_or_qex`).
+Epic #522 stop is QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`).
 This map charts the compiled leftover-`Ⅱ` pair, what it is not, and
 what a later letter must not steal.
 
@@ -156,8 +157,9 @@ classify. They are not this leftover
 
 ## Frontier
 
-Leftover `Ⅱ` is compiled (QED). Epic #522 stop is QED ∨ QEX, discharged
-QEX on mixed-cone (`RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop`).
+Leftover `Ⅱ` is compiled (QED)
+(`RelateNGTouchObtuse.v : leftover_ii_qed_or_qex`). Epic #522 stop
+is QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`).
 
 ```
 #584 finding ── triangle_pair_regime_ccw_incomplete_not_tjunction ── still false

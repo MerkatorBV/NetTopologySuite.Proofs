@@ -2827,6 +2827,10 @@ theories/RelateNGTouchObtuse.v
 # CCW pair (not leftover Ⅵ). Not CONTEXT Bar 1. Does not remint
 # cone_separates_b / touch_obtuse_vertex_b / aa_matrix_*.
 theories/RelateNGTouchMixedCone.v
+# Epic #522 ticket-named QED ∨ QEX stop. Wraps
+# triangle_pair_regime_ccw_stop (QEX) and leftover Ⅰ–Ⅴ classify
+# (QED). Does not remint detectors / aa_matrix_* / 522-j. No Admitted.
+theories/RelateNGEpic522.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE
