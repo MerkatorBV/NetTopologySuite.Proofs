@@ -66,8 +66,12 @@
      - RelateNGTouchLens.v leftover `Ⅶ`: proper edge-cross
          detector `lens_edges_cross_b` reaches `TPR_Lens`
          (fill stays `im_unsupported`; not CONTEXT Bar 1).
-         Leftover `Ⅶ` is QED. Completeness is an unnamed
-         inside pair (not leftover `Ⅷ`).
+         Leftover `Ⅶ` is QED.
+     - RelateNGTouchInside.v leftover `Ⅷ`: A-inside-B
+         detector `inside_b` reaches `TPR_Inside`
+         (fill stays `im_unsupported`; not CONTEXT Bar 1).
+         Leftover `Ⅷ` is QED. Completeness is an unnamed
+         same-side shared-edge pair (not leftover `Ⅸ`).
      - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
          (#568 / 522-g): a strict-`gtri` point has an explicit open
          disk of strict points; a nondegenerate segment carries dim-1;

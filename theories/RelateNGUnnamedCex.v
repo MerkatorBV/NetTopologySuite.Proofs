@@ -2,8 +2,9 @@
    NetTopologySuite.Proofs.RelateNGUnnamedCex
    ----------------------------------------------------------------------------
    Leftover Ⅵ classify (same-cone), leftover Ⅶ classify (lens),
-   plus the unnamed inside-A completeness cex after leftover Ⅶ
-   (not leftover `Ⅷ`).
+   leftover Ⅷ classify (inside), plus the unnamed same-side
+   shared-edge completeness cex after leftover Ⅷ (not leftover
+   `Ⅸ`).
 
    Same-cone pair: A = (0,0)(2,0)(0,2), B = (0,0)(3,1)(1,3). Shared
    origin. Both remaining B verts have side_dot > 0 vs nA = (2,2) —
@@ -13,11 +14,15 @@
    interiors meet at (1,1), no shared vertex. Proper edge crosses.
    Classifies TPR_Lens.
 
-   Live cex: A = (1,1)(2,1)(1,2), B = (0,0)(4,0)(0,4). A sits
+   Inside pair: A = (1,1)(2,1)(1,2), B = (0,0)(4,0)(0,4). A sits
    strictly inside B; no B vertex in A; no edge crossings.
+   Classifies TPR_Inside.
+
+   Live cex: A = (0,0)(4,0)(0,4), B = (0,0)(4,0)(1,1). Shared edge,
+   same-side thirds; B's third vertex strictly inside A.
    Lives here so RelateNGTouchVertexRegime.v stays under the
    1234-line split gate and RelateNGComplete.v stays at the
-   monolith floor. Do not mint leftover `Ⅷ`. Do not steal 522-j /
+   monolith floor. Do not mint leftover `Ⅸ`. Do not steal 522-j /
    522-m.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
@@ -599,10 +604,9 @@ Qed.
 (* WITNESS {"claimId":"Ⅶ","topic":"relate","lemma":"lens_pair_lens","title":"Leftover Ⅶ lens classifies as TPR_Lens","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅶ-lens-cex","board":"leftover-Ⅶ"} *)
 
 (* -------------------------------------------------------------------------- *)
-(* Unnamed inside-A completeness cex after leftover Ⅶ. Not leftover `Ⅷ`.    *)
-(* A = (1,1)(2,1)(1,2), B = (0,0)(4,0)(0,4). Both CCW. A sits strictly       *)
-(* inside B. No B vertex in A. No edge crossings. overlap_b / contains_b      *)
-(* miss.                                                                      *)
+(* Leftover Ⅷ: A strictly inside B. A = (1,1)(2,1)(1,2),                      *)
+(* B = (0,0)(4,0)(0,4). Both CCW. No B vertex in A. No edge crossings.        *)
+(* overlap_b / contains_b miss. Classifies TPR_Inside.                        *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma inside_ccw_no_open_A :
@@ -787,8 +791,23 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma unnamed_ccw_pair_unsupported :
-  triangle_pair_regime 1 1 2 1 1 2 0 0 4 0 0 4 = TPR_Unsupported.
+Lemma inside_b_true :
+  inside_b 1 1 2 1 1 2 0 0 4 0 0 4 = true.
+Proof.
+  unfold inside_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 1 1))) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 2 1))) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 1 2))) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+  reflexivity.
+Qed.
+
+Lemma inside_pair_inside :
+  triangle_pair_regime 1 1 2 1 1 2 0 0 4 0 0 4 = TPR_Inside.
 Proof.
   unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
   cbn [px py].
@@ -837,5 +856,266 @@ Proof.
   rewrite inside_ccw_mixed_cone_false.
   rewrite inside_ccw_same_cone_false.
   rewrite inside_ccw_lens_false.
+  rewrite inside_b_true.
+  reflexivity.
+Qed.
+
+(* WITNESS {"claimId":"Ⅷ","topic":"relate","lemma":"inside_pair_inside","title":"Leftover Ⅷ inside classifies as TPR_Inside","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅷ-inside-cex","board":"leftover-Ⅷ"} *)
+
+(* -------------------------------------------------------------------------- *)
+(* Unnamed same-side shared-edge completeness cex after leftover Ⅷ.          *)
+(* Not leftover `Ⅸ`. A = (0,0)(4,0)(0,4), B = (0,0)(4,0)(1,1). Shared       *)
+(* edge; thirds same side; B's third vertex strictly inside A.               *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma nest_ccw_no_open_A :
+  some_vertex_on_open_edges
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false.
+Proof.
+  unfold some_vertex_on_open_edges, vertex_on_open_edges.
+  rewrite (on_open_seg_b_false_of_nbetween_fst
+             (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 4 0) (mkPoint 0 4) (mkPoint 0 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_snd
+             (mkPoint 0 4) (mkPoint 0 0) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_snd
+             (mkPoint 0 0) (mkPoint 4 0) (mkPoint 4 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_fst
+             (mkPoint 4 0) (mkPoint 0 4) (mkPoint 4 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 4) (mkPoint 0 0) (mkPoint 4 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 4 0) (mkPoint 0 4) (mkPoint 1 1)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 4) (mkPoint 0 0) (mkPoint 1 1)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_no_open_B :
+  some_vertex_on_open_edges
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1)
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false.
+Proof.
+  unfold some_vertex_on_open_edges, vertex_on_open_edges.
+  rewrite (on_open_seg_b_false_of_nbetween_fst
+             (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 4 0) (mkPoint 1 1) (mkPoint 0 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_snd
+             (mkPoint 1 1) (mkPoint 0 0) (mkPoint 0 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_snd
+             (mkPoint 0 0) (mkPoint 4 0) (mkPoint 4 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_nbetween_fst
+             (mkPoint 4 0) (mkPoint 1 1) (mkPoint 4 0)
+             ltac:(cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 1 1) (mkPoint 0 0) (mkPoint 4 0)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 4 0) (mkPoint 1 1) (mkPoint 0 4)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  rewrite (on_open_seg_b_false_of_ncross
+             (mkPoint 1 1) (mkPoint 0 0) (mkPoint 0 4)
+             ltac:(unfold cross; cbn [px py]; lra)).
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_no_separator :
+  some_edge_separates_b
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false.
+Proof.
+  unfold some_edge_separates_b.
+  assert (E1 : edge_separates_b (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false)
+    by leftover_vii_sep_false.
+  rewrite E1.
+  assert (E2 : edge_separates_b (mkPoint 4 0) (mkPoint 0 4) (mkPoint 0 0)
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false)
+    by leftover_vii_sep_false.
+  rewrite E2.
+  assert (E3 : edge_separates_b (mkPoint 0 4) (mkPoint 0 0) (mkPoint 4 0)
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false)
+    by leftover_vii_sep_false.
+  rewrite E3.
+  assert (E4 : edge_separates_b (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1)
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false)
+    by leftover_vii_sep_false.
+  rewrite E4.
+  assert (E5 : edge_separates_b (mkPoint 4 0) (mkPoint 1 1) (mkPoint 0 0)
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false)
+    by leftover_vii_sep_false.
+  rewrite E5.
+  assert (E6 : edge_separates_b (mkPoint 1 1) (mkPoint 0 0) (mkPoint 4 0)
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false)
+    by leftover_vii_sep_false.
+  rewrite E6.
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_no_partial_edge :
+  touch_partial_edge_b
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false.
+Proof.
+  unfold touch_partial_edge_b.
+  rewrite nest_ccw_no_open_A, nest_ccw_no_open_B.
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_no_onesided :
+  touch_onesided_t_b
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false.
+Proof.
+  unfold touch_onesided_t_b.
+  rewrite nest_ccw_no_open_A, nest_ccw_no_open_B.
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_touch_obtuse_false :
+  touch_obtuse_vertex_b 0 0 4 0 0 4 0 0 4 0 1 1 = false.
+Proof.
+  unfold touch_obtuse_vertex_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  unfold exactly_one_shared_from_a, is_vertex_b, point_eqb.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_mixed_cone_false :
+  mixed_cone_vertex_b 0 0 4 0 0 4 0 0 4 0 1 1 = false.
+Proof.
+  unfold mixed_cone_vertex_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  unfold exactly_one_shared_from_a, is_vertex_b, point_eqb.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_same_cone_false :
+  same_cone_vertex_b 0 0 4 0 0 4 0 0 4 0 1 1 = false.
+Proof.
+  unfold same_cone_vertex_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  unfold exactly_one_shared_from_a, is_vertex_b, point_eqb.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_lens_false :
+  lens_edges_cross_b 0 0 4 0 0 4 0 0 4 0 1 1 = false.
+Proof.
+  unfold lens_edges_cross_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  unfold some_edges_proper_cross_b, segments_proper_cross_b,
+         opposite_sides_b, cross.
+  cbn [px py].
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
+Lemma nest_ccw_inside_false :
+  inside_b 0 0 4 0 0 4 0 0 4 0 1 1 = false.
+Proof.
+  unfold inside_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 1 1 (mkPoint 0 0))) as [Hlt | _];
+    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+  reflexivity.
+Qed.
+
+Lemma unnamed_ccw_pair_unsupported :
+  triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 1 1 = TPR_Unsupported.
+Proof.
+  unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  unfold contains_b.
+  assert (Hcb : gtri 0 0 4 0 0 4 (mkPoint 0 0) <= 0).
+  { eapply Rle_trans; [ apply (gtri_le_gsA 0 0 4 0 0 4 (mkPoint 0 0)) | ].
+    unfold gsA; cbn [px py]; lra. }
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 0 0))) as [Hlt | _];
+    [ exfalso; lra | ].
+  unfold overlap_b, some_vertex_strict_pos, gtri_strict_pos_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 0 0))) as [H1 | _];
+    [ exfalso; lra | ].
+  assert (H20 : gtri 0 0 4 0 0 4 (mkPoint 4 0) <= 0).
+  { eapply Rle_trans; [ apply (gtri_le_gsA 0 0 4 0 0 4 (mkPoint 4 0)) | ].
+    unfold gsA; cbn [px py]; lra. }
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 4 0))) as [H2 | _];
+    [ exfalso; lra | ].
+  destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 1 1))) as [_ | H3];
+    [ | exfalso; apply H3; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+  unfold some_vertex_strict_neg, gtri_strict_neg_b.
+  destruct (Rlt_dec (gtri 0 0 4 0 0 4 (mkPoint 0 0)) 0) as [Hn0 | _];
+    [ exfalso; unfold gtri, gsA, gsB, gsC in Hn0; cbn [px py] in Hn0; lra | ].
+  destruct (Rlt_dec (gtri 0 0 4 0 0 4 (mkPoint 4 0)) 0) as [Hn4 | _];
+    [ exfalso; unfold gtri, gsA, gsB, gsC in Hn4; cbn [px py] in Hn4; lra | ].
+  destruct (Rlt_dec (gtri 0 0 4 0 0 4 (mkPoint 1 1)) 0) as [Hn1 | _];
+    [ exfalso; unfold gtri, gsA, gsB, gsC in Hn1; cbn [px py] in Hn1; lra | ].
+  rewrite !orb_false_r, andb_false_r.
+  unfold separated_b.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  rewrite nest_ccw_no_separator.
+  unfold touch_vertex_b, exactly_one_shared_from_a, is_vertex_b, point_eqb.
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
+    [ | exfalso; apply Hn; unfold gdbl; lra ].
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  rewrite nest_ccw_no_partial_edge.
+  rewrite nest_ccw_no_onesided.
+  rewrite nest_ccw_touch_obtuse_false.
+  rewrite nest_ccw_mixed_cone_false.
+  rewrite nest_ccw_same_cone_false.
+  rewrite nest_ccw_lens_false.
+  rewrite nest_ccw_inside_false.
   reflexivity.
 Qed.

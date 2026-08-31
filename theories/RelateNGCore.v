@@ -626,6 +626,18 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
       (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   else false else false.
 
+(* Leftover Ⅷ: A strictly inside B. B CCW; all three A vertices
+   strictly interior to B (`gtri B at A-vert > 0`). Not a remint of
+   `contains_b` (B-in-A) or `aa_matrix_contains`. No shared vertex
+   required; no edge-cross required. Pure `Rlt_dec`. Classifier
+   order already protects leftover Ⅰ–Ⅶ. *)
+Definition inside_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint ax ay)) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint bx by_)) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint cx cy)) then true
+  else false else false else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
    certificate, a vertex-touch certificate, leftover Ⅰ's collinear
@@ -635,8 +647,9 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    the strict cone still wins), leftover Ⅴ
    (`mixed_cone_vertex_b`, after leftover Ⅱ so a closed cone still
    wins), leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
-   so opposite-sign still wins), and leftover Ⅶ
-   (`lens_edges_cross_b`, after leftover Ⅵ).  DECLINES on
+   so opposite-sign still wins), leftover Ⅶ
+   (`lens_edges_cross_b`, after leftover Ⅵ), and leftover Ⅷ
+   (`inside_b`, after leftover Ⅶ).  DECLINES on
    everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
@@ -651,10 +664,11 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    is reachable when `touch_obtuse_vertex_b` fires. Leftover Ⅴ is
    reachable when `mixed_cone_vertex_b` fires. Leftover Ⅵ is
    reachable when `same_cone_vertex_b` fires. Leftover Ⅶ is
-   reachable when `lens_edges_cross_b` fires. Completeness stays
-   false on an unnamed inside pair (not leftover `Ⅷ`).
+   reachable when `lens_edges_cross_b` fires. Leftover Ⅷ is
+   reachable when `inside_b` fires. Completeness stays false on
+   an unnamed same-side shared-edge pair (not leftover `Ⅸ`).
    Do not reorder the four wired certificates. Do not remint
-   `cone_separates_b`. *)
+   `cone_separates_b`. Do not remint `contains_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -683,6 +697,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_SameCone
   else if lens_edges_cross_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Lens
+  else if inside_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Inside
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

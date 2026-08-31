@@ -2830,10 +2830,17 @@ theories/RelateNGTouchMixedCone.v
 theories/RelateNGTouchSameCone.v
 # Leftover Ⅶ: proper edge-cross lens. Detector
 # lens_edges_cross_b; constructor TPR_Lens stays on
-# im_unsupported. After leftover Ⅵ. Completeness is an unnamed
-# inside pair (not leftover Ⅷ). Not CONTEXT Bar 1. Does not remint
-# segments_proper_cross / overlap_b / aa_matrix_*.
+# im_unsupported. After leftover Ⅵ. Leftover Ⅷ classifies
+# the inside pair. Completeness is an unnamed same-side
+# shared-edge pair (not leftover Ⅸ). Not CONTEXT Bar 1.
+# Does not remint segments_proper_cross / overlap_b / aa_matrix_*.
 theories/RelateNGTouchLens.v
+# Leftover Ⅷ: A strictly inside B. Detector inside_b;
+# constructor TPR_Inside stays on im_unsupported. After leftover
+# Ⅶ. Completeness is an unnamed same-side shared-edge pair
+# (not leftover Ⅸ). Not CONTEXT Bar 1. Does not remint
+# contains_b / aa_matrix_contains / overlap_b / aa_matrix_*.
+theories/RelateNGTouchInside.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE
