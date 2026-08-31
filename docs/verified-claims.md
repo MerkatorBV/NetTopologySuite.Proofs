@@ -1798,3 +1798,32 @@ accept. Does not steal `508-e` / `508-g` / `508-h`. Wrap-up is #566.
 |---|---|---|
 | `ExactCurveEpic508.v : ticket_508_qed_or_qex` (+ `ellipse_not_curve_segment`, `clothoid_not_curve_segment`, `bezier_not_curve_segment`, `nurbs_not_curve_segment`) | **Epic #508 QED ∨ QEX:** every Bible zoo tag inhabits `CurveSegment`, or a documented tag does not. Discharged QEX on the ellipse `[exact]` | 3 |
 | `ExactCurveEpic508.v : ticket_508_carrier_qed_or_qex` (+ `curve_segment_chord_or_arc`) | **Year-1 circular carrier:** chord and circular-arc inhabit; every `CurveSegment` is `CSChord` or `CSArc` `[exact]` | 3 |
+
+## Issue #508 — Fresnel pack instance (`ClothoidFresnel.v`) <!-- feat:arc-len geom:arc -->
+
+#564 / claimId `508-e` is a #561 pack instance on the clothoid-shaped
+integrands `cos(t²/2)` and `sin(t²/2)`. It is not a Fresnel
+construction: there is still no `Cx` / `Cy` in the corpus, and Route 1
+does not produce `RInt`. Under `fresnel_primitives` (`increment_squeezed`
+on each coordinate) and `a ≤ b`, `fresnel_is_curve_length` gives
+`is_curve_length (fresnel_curve Cx Cy) a b (b − a)`. Uniform continuity
+of `σ ≡ 1` and `increment_squeezed (fun t => 1 * t) (fun _ => 1)` are
+free (`constant_speed_premises`; pack `F` is `fun t => 1 * t`, not bare
+`id`). The discharged analytic obligation is `chord_rate_tight` on a
+compact window. Ellipse #563 already instantiated the same pack on a
+curved speed; this letter is the first clothoid-shaped integrand, not
+the first curved pack use. The only concrete inhabitant of the clothoid
+window remains the straight line in `ClothoidLength_unit.v`.
+`fresnel_unit_window_length` is the same theorem with `b − a` rewritten
+by `Rminus_0_r` on `[0,1]`, not an independent witness.
+`fresnel_discharges_clothoid_window` is a K-token wiring check (same
+statement via `H_unit_chord` / `H_unit_approx`), not extra geometric
+content. Never global. Does not retire epic 508 (that is #566).
+Does not remint SpeedIntegral.
+
+**NTS RGR Board catalog (#508 children).** `508-e` = #564 / conditional Fresnel pack instance (witness `508-e-fresnel`). Headline `ClothoidFresnel.v : fresnel_is_curve_length`. `[0,1]` specialization `ClothoidFresnel.v : fresnel_unit_window_length`. Board pointer stays #564. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, and `508-f` = #562 are on `main`. Remaining children `508-g` `508-h` are not this letter.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ClothoidFresnel.v : fresnel_is_curve_length` (+ `fresnel_chord_rate`, `fresnel_speed_integral_premises`, `fresnel_primitives`) | **Conditional pack instance (#508/#564, claimId: 508-e, witness: 508-e-fresnel):** if `increment_squeezed Cx fresnel_vx` and `increment_squeezed Cy fresnel_vy` on `[a,b]`, then `is_curve_length (fresnel_curve Cx Cy) a b (b − a)`. Pack `F = fun t => 1 * t`. Speed constantly 1 (`cos²+sin²=1`). No inhabitant, no Heine–Cantor, no Coquelicot. Does not retire epic 508 `[conditional]` | 3 |
+| `ClothoidFresnel.v : fresnel_unit_window_length` | **`[0,1]` specialization:** same theorem with `1 − 0` peeled by `Rminus_0_r`; still conditional on primitives. Not an independent witness `[conditional]` | 3 |

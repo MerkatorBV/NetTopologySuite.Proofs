@@ -11,7 +11,8 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 | P0 | bezier | `theories/Bezier3Polygon.v` | `bezier3_length_le_polygon` — L ≤ control-polygon length on [0,1] | Qed, 3-axiom |
 | P1 | ellipse | `theories/EllipseLength_E.v` | `ellipse_circular_E_discharges` — rx=ry inhabits H_E_chord / H_E_approx at E(t)=r·t; general elliptic-E parked | Qed + Technique park, 3-axiom |
 | P1 | ellipse | `theories/EllipseSpeedIntegral.v` | `ellipse_speed_integral_is_curve_length` — UC + chord-rate of √σ²; increment_squeezed E σ is the remaining primitive | Qed + Technique park, 3-axiom (#563 / 508-d) |
-| P1 | clothoid | `theories/ClothoidLength_unit.v` | `unit_line_discharges_window` — unit-speed straight inhabits the [sd,ed] contract; Fresnel stays clothoid-halley-coq | Qed + Technique park, 3-axiom |
+| P1 | clothoid | `theories/ClothoidLength_unit.v` | `unit_line_discharges_window` — unit-speed straight inhabits the [sd,ed] contract; Euler-spiral integrals stay Route-1 primitives | Qed + Technique park, 3-axiom |
+| P1 | clothoid | `theories/ClothoidFresnel.v` | `fresnel_is_curve_length` — unit-speed pack at F=id; Cx, Cy increment_squeezed against (cos,sin)(t²/2); [0,1] length 1 | Qed + Technique park, 3-axiom (#564 / 508-e) |
 | P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; knot-span additivity; conditional primitive | Qed, 3-axiom |
 | P2 | arc | `theories/ArcMidSweep.v` | `valid_arc_sweep_nonzero`; `arc_mid_on_circle_param` | Qed, Category C (atan2; removal tracks AngleBetween) |
 | — | framework | `theories/BernsteinBasis.v` | `bern_partition`; `bern_elevate_2` (n=2 instance of `elevate_ctrl`); `bezier3_elevation_pointwise` re-proved through it | Qed, 3-axiom (#562 / 508-f) |
@@ -44,6 +45,22 @@ uses the exact identity `dist = 2|sin(gap/2)|·σ(mid)`.  Route 1 does
 stays the Technique-park hypothesis.  Witness: any such E on the
 `rx=3, ry=4` quarter lies in `[3π/2, 4π/2]`.  Does not retire epic 508.
 Wrap-up is #566.  Does not remint SpeedIntegral.
+
+## 508-e (#564)
+
+`theories/ClothoidFresnel.v` instantiates the pack on the genuine
+Fresnel clothoid. Heading `t²/2` is Lipschitz on a compact window
+(constant `Rmax(|a|,|b|)`), so a fine gap makes the coordinate
+increments a first-order match to the unit velocity
+(`cos²+sin²=1`) and the chord realizes the gap. Uniform continuity
+and `increment_squeezed id (fun _ => 1)` are free. Route 1 does
+**not** construct the Fresnel integrals — `increment_squeezed` on
+each coordinate stays the Technique-park hypothesis. ADR-0001
+route D (Coquelicot lane) stays consumer-gated. Witness: any such
+primitives on `[0,1]` have metric length exactly `1`. The same
+premises discharge `H_unit_chord` / `H_unit_approx` (never
+globally). Does not retire epic 508. Wrap-up is #566. Does not
+remint SpeedIntegral.
 
 ## 508-f (#562)
 

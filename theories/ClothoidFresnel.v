@@ -1,0 +1,631 @@
+(* ============================================================================
+   NetTopologySuite.Proofs.ClothoidFresnel
+   ----------------------------------------------------------------------------
+   Issue #564 / claimId 508-e: instantiate the #561 speed-integral pack
+   on the genuine Fresnel clothoid
+
+     g(t) = (Cx t, Cy t)
+     Cx' = cos(t²/2)    Cy' = sin(t²/2)
+
+   Route 1 does not construct the Fresnel integrals (no Coquelicot /
+   RInt; ADR-0001 route D stays consumer-gated). This letter discharges
+   the two analytic pack premises at unit speed σ ≡ 1, F = id:
+
+     uniformly_continuous_on (fun _ => 1)          (constant; free)
+     increment_squeezed (fun t => t) (fun _ => 1)  (free)
+     chord_rate_tight (fresnel_curve Cx Cy) (fun _ => 1)
+
+   The remaining Technique-park hypothesis is that Cx, Cy are primitives
+   of the Fresnel integrands (increment_squeezed). The heading t²/2 is
+   Lipschitz on any compact window, so a fine gap makes the increment
+   a first-order match to the unit velocity and the chord realizes the
+   gap. Then
+
+     fresnel_primitives Cx Cy a b
+       → is_curve_length (fresnel_curve Cx Cy) a b (b − a).
+
+   Witness: any such primitives on the [0, 1] window have metric
+   length exactly 1. The same premises discharge ClothoidLength.v's
+   H_unit_chord / H_unit_approx (never globally — the Euler spiral
+   wraps). ClothoidLength_unit.v's straight-line inhabitant stays;
+   this is the first curved instance.
+
+   Windowing is essential. Do not strengthen to all of R.
+   No CurveSegment growth, no ADR-0004 remint, no TRIAGE flip.
+   No Heine–Cantor. No `Admitted`, no `Axiom`, no `Parameter`.  3-axiom.
+
+   Author: NetTopologySuite.Proofs contributors
+   License: BSD-3-Clause (see LICENSE)
+   AI assistance disclosure: AI-drafted, human-reviewed.
+     Assisted-by: Cursor Grok 4.6
+   ========================================================================== *)
+
+From Stdlib Require Import Reals Lra.
+From NTS.Proofs Require Import Distance CurveLength ArcRectifiable
+                               SpeedIntegral ClothoidLength.
+Local Open Scope R_scope.
+
+(* -------------------------------------------------------------------------- *)
+(* Fresnel heading and integrands.                                            *)
+(* -------------------------------------------------------------------------- *)
+
+Definition fresnel_heading (t : R) : R := (t * t) / 2.
+
+Definition fresnel_vx (t : R) : R := cos (fresnel_heading t).
+Definition fresnel_vy (t : R) : R := sin (fresnel_heading t).
+
+Definition fresnel_curve (Cx Cy : R -> R) : Curve :=
+  fun t => mkPoint (Cx t) (Cy t).
+
+Definition fresnel_primitives (Cx Cy : R -> R) (a b : R) : Prop :=
+  increment_squeezed Cx fresnel_vx a b /\
+  increment_squeezed Cy fresnel_vy a b.
+
+Definition fresnel_window_lip (a b : R) : R :=
+  Rmax (Rabs a) (Rabs b).
+
+Lemma fresnel_unit_speed : forall t,
+  fresnel_vx t * fresnel_vx t + fresnel_vy t * fresnel_vy t = 1.
+Proof.
+  intros t.
+  unfold fresnel_vx, fresnel_vy.
+  pose proof (sin2_cos2 (fresnel_heading t)) as H.
+  unfold Rsqr in H.
+  rewrite (Rplus_comm (sin _ * sin _) (cos _ * cos _)) in H.
+  exact H.
+Qed.
+
+Lemma fresnel_window_lip_nonneg : forall a b,
+  0 <= fresnel_window_lip a b.
+Proof.
+  intros a b. unfold fresnel_window_lip.
+  apply (Rle_trans 0 (Rabs a)); [apply Rabs_pos | apply Rmax_l].
+Qed.
+
+Lemma abs_in_window : forall a b t,
+  a <= t -> t <= b ->
+  Rabs t <= fresnel_window_lip a b.
+Proof.
+  intros a b t Hat Htb.
+  unfold fresnel_window_lip.
+  destruct (Rle_dec 0 t) as [Ht0 | Htn].
+  - rewrite (Rabs_right t) by lra.
+    apply (Rle_trans t (Rabs b) (Rmax (Rabs a) (Rabs b))).
+    + assert (0 <= b) by lra.
+      rewrite (Rabs_right b) by lra. exact Htb.
+    + apply Rmax_r.
+  - rewrite (Rabs_left t) by lra.
+    apply (Rle_trans (- t) (Rabs a) (Rmax (Rabs a) (Rabs b))).
+    + assert (a < 0) by lra.
+      rewrite (Rabs_left a) by lra. lra.
+    + apply Rmax_l.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Trig Lipschitz (local copies; do not import EllipseSpeedIntegral).         *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma cos_s_minus_cos_t : forall s t,
+  cos s - cos t
+  = 2 * sin ((s + t) / 2) * sin ((t - s) / 2).
+Proof.
+  intros s t.
+  transitivity
+    (cos ((s + t) / 2 - (t - s) / 2)
+     - cos ((s + t) / 2 + (t - s) / 2)).
+  - f_equal; [f_equal | f_equal]; field.
+  - rewrite cos_minus, cos_plus. ring.
+Qed.
+
+Lemma sin_s_minus_sin_t : forall s t,
+  sin s - sin t
+  = - (2 * (cos ((s + t) / 2) * sin ((t - s) / 2))).
+Proof.
+  intros s t.
+  transitivity
+    (sin ((s + t) / 2 - (t - s) / 2)
+     - sin ((s + t) / 2 + (t - s) / 2)).
+  - f_equal; [f_equal | f_equal]; field.
+  - rewrite sin_minus, sin_plus. ring.
+Qed.
+
+Lemma cos_abs_le_1 : forall x, Rabs (cos x) <= 1.
+Proof.
+  intros x.
+  rewrite <- (Rabs_right 1) by lra.
+  apply Rsqr_le_abs_0.
+  unfold Rsqr.
+  pose proof (sin2_cos2 x) as Hsc. unfold Rsqr in Hsc.
+  pose proof (sqr_nonneg (sin x)) as Hs. unfold Rsqr in Hs.
+  lra.
+Qed.
+
+Lemma Rabs_sin_le_abs : forall x,
+  Rabs (sin x) <= Rabs x.
+Proof.
+  intros x.
+  destruct (Rle_dec 0 x) as [Hx | Hn].
+  - rewrite (Rabs_right x) by lra. apply Rabs_sin_le. exact Hx.
+  - rewrite (Rabs_left1 x) by lra.
+    rewrite <- (Rabs_Ropp (sin x)).
+    rewrite <- sin_neg.
+    apply Rabs_sin_le. lra.
+Qed.
+
+Lemma cos_abs_lipschitz : forall a b,
+  Rabs (cos a - cos b) <= Rabs (a - b).
+Proof.
+  intros a b.
+  rewrite cos_s_minus_cos_t.
+  rewrite Rabs_mult.
+  rewrite (Rabs_right 2) by lra.
+  eapply Rle_trans.
+  - apply Rmult_le_compat_l; [lra |].
+    rewrite Rabs_mult.
+    apply Rmult_le_compat_r; [apply Rabs_pos |].
+    pose proof (SIN_bound ((a + b) / 2)) as Hs.
+    apply Rabs_le. exact Hs.
+  - rewrite Rmult_1_l.
+    eapply Rle_trans.
+    + apply Rmult_le_compat_l; [lra |].
+      apply Rabs_sin_le_abs.
+    + unfold Rdiv.
+      rewrite Rabs_mult.
+      rewrite (Rabs_right (/ 2)) by lra.
+      rewrite (Rabs_minus_sym b a).
+      replace (2 * (Rabs (a - b) * / 2)) with (Rabs (a - b)).
+      2:{ rewrite <- Rmult_assoc.
+          rewrite (Rmult_comm 2 (Rabs (a - b))).
+          rewrite Rmult_assoc.
+          rewrite Rinv_r by lra.
+          rewrite Rmult_1_r.
+          reflexivity. }
+      apply Rle_refl.
+Qed.
+
+Lemma sin_abs_lipschitz : forall a b,
+  Rabs (sin a - sin b) <= Rabs (a - b).
+Proof.
+  intros a b.
+  rewrite sin_s_minus_sin_t.
+  rewrite Rabs_Ropp.
+  rewrite Rabs_mult.
+  rewrite (Rabs_right 2) by lra.
+  eapply Rle_trans.
+  - apply Rmult_le_compat_l; [lra |].
+    rewrite Rabs_mult.
+    apply Rmult_le_compat_r; [apply Rabs_pos |].
+    apply cos_abs_le_1.
+  - rewrite Rmult_1_l.
+    eapply Rle_trans.
+    + apply Rmult_le_compat_l; [lra |].
+      apply Rabs_sin_le_abs.
+    + unfold Rdiv.
+      rewrite Rabs_mult.
+      rewrite (Rabs_right (/ 2)) by lra.
+      rewrite (Rabs_minus_sym b a).
+      replace (2 * (Rabs (a - b) * / 2)) with (Rabs (a - b)).
+      2:{ rewrite <- Rmult_assoc.
+          rewrite (Rmult_comm 2 (Rabs (a - b))).
+          rewrite Rmult_assoc.
+          rewrite Rinv_r by lra.
+          rewrite Rmult_1_r.
+          reflexivity. }
+      apply Rle_refl.
+Qed.
+
+Lemma fresnel_heading_diff : forall s t,
+  fresnel_heading t - fresnel_heading s = (t - s) * (t + s) / 2.
+Proof.
+  intros s t. unfold fresnel_heading, Rdiv. ring.
+Qed.
+
+Lemma fresnel_heading_lipschitz : forall a b s t,
+  a <= s -> s <= t -> t <= b ->
+  Rabs (fresnel_heading t - fresnel_heading s)
+  <= fresnel_window_lip a b * (t - s).
+Proof.
+  intros a b s t Has Hst Htb.
+  rewrite fresnel_heading_diff.
+  unfold Rdiv.
+  rewrite Rabs_mult.
+  rewrite (Rabs_right (t - s)) by lra.
+  rewrite Rabs_mult.
+  rewrite (Rabs_right (/ 2)) by lra.
+  set (M := fresnel_window_lip a b).
+  assert (HM : 0 <= M) by (unfold M; apply fresnel_window_lip_nonneg).
+  assert (HsM : Rabs s <= M) by (unfold M; apply abs_in_window; lra).
+  assert (HtM : Rabs t <= M) by (unfold M; apply abs_in_window; lra).
+  apply (Rle_trans _ ((Rabs t + Rabs s) * / 2 * (t - s))).
+  - apply Rmult_le_compat_r; [lra |].
+    apply Rmult_le_compat_r; [apply Rlt_le, Rinv_0_lt_compat; lra |].
+    apply Rabs_triang.
+  - apply (Rle_trans _ (M * (t - s))).
+    + replace ((Rabs t + Rabs s) * / 2 * (t - s))
+        with ((Rabs t + Rabs s) / 2 * (t - s)) by (unfold Rdiv; reflexivity).
+      apply Rmult_le_compat_r; [lra |].
+      unfold Rdiv.
+      apply (Rmult_le_reg_r 2); [lra |].
+      rewrite Rmult_assoc.
+      rewrite Rinv_l by lra.
+      rewrite Rmult_1_r.
+      replace (M * 2) with (M + M) by ring.
+      apply Rplus_le_compat; [exact HtM | exact HsM].
+    + apply Rle_refl.
+Qed.
+
+Lemma fresnel_vx_lipschitz : forall a b s t,
+  a <= s -> s <= t -> t <= b ->
+  Rabs (fresnel_vx t - fresnel_vx s)
+  <= fresnel_window_lip a b * (t - s).
+Proof.
+  intros a b s t Has Hst Htb.
+  unfold fresnel_vx.
+  eapply Rle_trans; [apply cos_abs_lipschitz |].
+  rewrite (Rabs_minus_sym (fresnel_heading s) (fresnel_heading t)).
+  apply fresnel_heading_lipschitz; assumption.
+Qed.
+
+Lemma fresnel_vy_lipschitz : forall a b s t,
+  a <= s -> s <= t -> t <= b ->
+  Rabs (fresnel_vy t - fresnel_vy s)
+  <= fresnel_window_lip a b * (t - s).
+Proof.
+  intros a b s t Has Hst Htb.
+  unfold fresnel_vy.
+  eapply Rle_trans; [apply sin_abs_lipschitz |].
+  rewrite (Rabs_minus_sym (fresnel_heading s) (fresnel_heading t)).
+  apply fresnel_heading_lipschitz; assumption.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Increment of a primitive tracks the left-endpoint integrand.               *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma rabs_of_two_sided : forall x c e,
+  0 <= e ->
+  c - e <= x <= c + e ->
+  Rabs (x - c) <= e.
+Proof.
+  intros x c e He [Hlo Hhi].
+  destruct (Rle_dec 0 (x - c)) as [Hpos | Hneg].
+  - rewrite (Rabs_right (x - c)) by lra. lra.
+  - rewrite (Rabs_left (x - c)) by lra. lra.
+Qed.
+
+Lemma increment_tracks_left :
+  forall F σ a b s t K,
+    increment_squeezed F σ a b ->
+    0 <= K ->
+    a <= s -> s <= t -> t <= b ->
+    (forall u, s <= u -> u <= t -> Rabs (σ u - σ s) <= K * (t - s)) ->
+    Rabs (F t - F s - σ s * (t - s)) <= K * (t - s) * (t - s).
+Proof.
+  intros F σ a b s t K Hsq HK Has Hst Htb Hlip.
+  set (gap := t - s).
+  set (lo := σ s - K * gap).
+  set (hi := σ s + K * gap).
+  assert (Hbd : forall u, s <= u -> u <= t -> lo <= σ u <= hi).
+  { intros u Hus Hut.
+    specialize (Hlip u Hus Hut).
+    apply rabs_of_two_sided in Hlip.
+    - unfold lo, hi, gap in *. lra.
+    - apply Rmult_le_pos; [exact HK | unfold gap; lra]. }
+  pose proof (Hsq s t lo hi Has Hst Htb Hbd) as Hinc.
+  unfold lo, hi, gap in Hinc.
+  apply rabs_of_two_sided.
+  - apply Rmult_le_pos; [apply Rmult_le_pos; [exact HK | lra] | lra].
+  - replace ((σ s - K * (t - s)) * (t - s))
+      with (σ s * (t - s) - K * (t - s) * (t - s)) in Hinc by ring.
+    replace ((σ s + K * (t - s)) * (t - s))
+      with (σ s * (t - s) + K * (t - s) * (t - s)) in Hinc by ring.
+    lra.
+Qed.
+
+Lemma fresnel_Cx_tracks : forall Cx Cy a b s t,
+  fresnel_primitives Cx Cy a b ->
+  a <= s -> s <= t -> t <= b ->
+  Rabs (Cx t - Cx s - fresnel_vx s * (t - s))
+  <= fresnel_window_lip a b * (t - s) * (t - s).
+Proof.
+  intros Cx Cy a b s t [Hx _] Has Hst Htb.
+  apply (increment_tracks_left Cx fresnel_vx a b s t
+           (fresnel_window_lip a b) Hx
+           (fresnel_window_lip_nonneg a b) Has Hst Htb).
+  intros u Hus Hut.
+  apply (fresnel_vx_lipschitz a b s u Has Hus).
+  apply (Rle_trans u t b Hut Htb).
+Qed.
+
+Lemma fresnel_Cy_tracks : forall Cx Cy a b s t,
+  fresnel_primitives Cx Cy a b ->
+  a <= s -> s <= t -> t <= b ->
+  Rabs (Cy t - Cy s - fresnel_vy s * (t - s))
+  <= fresnel_window_lip a b * (t - s) * (t - s).
+Proof.
+  intros Cx Cy a b s t [_ Hy] Has Hst Htb.
+  apply (increment_tracks_left Cy fresnel_vy a b s t
+           (fresnel_window_lip a b) Hy
+           (fresnel_window_lip_nonneg a b) Has Hst Htb).
+  intros u Hus Hut.
+  apply (fresnel_vy_lipschitz a b s u Has Hus).
+  apply (Rle_trans u t b Hut Htb).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Euclidean comparison: | |p| − |q| | ≤ |p − q|.                             *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma dist_abs_diff : forall p q r,
+  Rabs (dist p q - dist p r) <= dist q r.
+Proof.
+  intros p q r.
+  destruct (Rle_dec 0 (dist p q - dist p r)) as [Hpos | Hneg].
+  - rewrite (Rabs_right (dist p q - dist p r)) by lra.
+    pose proof (dist_triangle p r q) as Htr.
+    rewrite (dist_sym r q) in Htr.
+    lra.
+  - rewrite (Rabs_left (dist p q - dist p r)) by lra.
+    pose proof (dist_triangle p q r) as Htr.
+    lra.
+Qed.
+
+Lemma fresnel_chord_as_origin : forall Cx Cy s t,
+  dist (fresnel_curve Cx Cy s) (fresnel_curve Cx Cy t)
+  = dist (mkPoint 0 0) (mkPoint (Cx t - Cx s) (Cy t - Cy s)).
+Proof.
+  intros Cx Cy s t.
+  unfold fresnel_curve, dist, dist_sq. simpl.
+  f_equal. ring.
+Qed.
+
+Lemma dist_of_coords : forall ax ay bx by,
+  dist (mkPoint ax ay) (mkPoint bx by)
+  = sqrt ((ax - bx) * (ax - bx) + (ay - by) * (ay - by)).
+Proof.
+  intros ax ay bx by. unfold dist, dist_sq. simpl. reflexivity.
+Qed.
+
+Lemma prod_sqr_nonneg : forall x, 0 <= x * x.
+Proof.
+  intros x. pose proof (Rle_0_sqr x) as H. unfold Rsqr in H. exact H.
+Qed.
+
+Lemma fresnel_vel_chord : forall s gap,
+  0 <= gap ->
+  dist (mkPoint 0 0) (mkPoint (fresnel_vx s * gap) (fresnel_vy s * gap))
+  = gap.
+Proof.
+  intros s gap Hg.
+  unfold dist.
+  rewrite dist_sq_pythagorean.
+  replace (fresnel_vx s * gap * (fresnel_vx s * gap)
+           + fresnel_vy s * gap * (fresnel_vy s * gap))
+    with ((fresnel_vx s * fresnel_vx s + fresnel_vy s * fresnel_vy s)
+          * (gap * gap)) by ring.
+  rewrite fresnel_unit_speed.
+  replace (1 * (gap * gap)) with (gap * gap) by ring.
+  rewrite sqrt_square by exact Hg.
+  reflexivity.
+Qed.
+
+Lemma sqrt_two_of_sq : forall e,
+  0 <= e ->
+  sqrt (e * e + e * e) = e * sqrt 2.
+Proof.
+  intros e He.
+  replace (e * e + e * e) with (2 * (e * e)) by ring.
+  rewrite sqrt_mult; [| lra | apply prod_sqr_nonneg].
+  replace (e * e) with (Rsqr e) by (unfold Rsqr; reflexivity).
+  rewrite sqrt_Rsqr by exact He.
+  ring.
+Qed.
+
+Lemma sq_le_of_abs : forall x e,
+  0 <= e ->
+  Rabs x <= e ->
+  x * x <= e * e.
+Proof.
+  intros x e He Hx.
+  pose proof (prod_sqr_nonneg x) as Hx2.
+  pose proof (prod_sqr_nonneg e) as He2.
+  rewrite <- (Rabs_right (x * x)) by (apply Rle_ge; exact Hx2).
+  rewrite <- Rabs_mult.
+  rewrite (Rabs_right (e * e)) by (apply Rle_ge; exact He2).
+  apply Rmult_le_compat; [apply Rabs_pos | apply Rabs_pos | exact Hx | exact Hx].
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* First-order chord-rate at unit speed.                                      *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma holder_window_lt : forall K gap eps,
+  0 <= K ->
+  0 <= gap ->
+  0 < eps ->
+  gap < eps / (K + 1) ->
+  K * gap < eps.
+Proof.
+  intros K gap eps HK Hg Heps Hdt.
+  destruct (Req_dec gap 0) as [Hg0 | Hgnz].
+  - rewrite Hg0. rewrite Rmult_0_r. exact Heps.
+  - assert (Hgp : 0 < gap).
+    { destruct Hg as [Hlt | Heq]; [exact Hlt |].
+      destruct Hgnz. symmetry. exact Heq. }
+    apply (Rlt_le_trans (K * gap) ((K + 1) * gap) eps).
+    + rewrite Rmult_plus_distr_r. rewrite Rmult_1_l.
+      rewrite <- (Rplus_0_r (K * gap)) at 1.
+      apply Rplus_lt_compat_l. exact Hgp.
+    + apply (Rmult_le_reg_r (/ (K + 1))).
+      * apply Rinv_0_lt_compat. lra.
+      * replace ((K + 1) * gap * / (K + 1)) with gap.
+        2:{ rewrite (Rmult_comm (K + 1)).
+            rewrite Rmult_assoc.
+            rewrite Rinv_r by lra.
+            rewrite Rmult_1_r. reflexivity. }
+        replace (eps * / (K + 1)) with (eps / (K + 1))
+          by (unfold Rdiv; reflexivity).
+        apply Rlt_le. exact Hdt.
+Qed.
+
+Lemma fresnel_chord_rate : forall Cx Cy a b,
+  fresnel_primitives Cx Cy a b ->
+  chord_rate_tight (fresnel_curve Cx Cy) (fun _ => 1) a b.
+Proof.
+  intros Cx Cy a b Hpr eps Heps.
+  set (M := fresnel_window_lip a b).
+  set (K := sqrt 2 * M).
+  assert (HM : 0 <= M) by (unfold M; apply fresnel_window_lip_nonneg).
+  assert (HK : 0 <= K).
+  { unfold K. apply Rmult_le_pos; [apply sqrt_pos | exact HM]. }
+  set (delta := eps / (K + 1)).
+  exists delta.
+  assert (Hdpos : 0 < delta).
+  { unfold delta, Rdiv.
+    apply Rmult_lt_0_compat; [exact Heps |].
+    apply Rinv_0_lt_compat. lra. }
+  split; [exact Hdpos |].
+  intros s t Has Hst Htb Hdt.
+  set (gap := t - s).
+  assert (Hgap0 : 0 <= gap) by (unfold gap; lra).
+  replace (1 * (t - s)) with gap by (unfold gap; ring).
+  rewrite fresnel_chord_as_origin.
+  rewrite <- (fresnel_vel_chord s gap Hgap0).
+  eapply Rle_trans.
+  - apply dist_abs_diff.
+  - set (dx := Cx t - Cx s - fresnel_vx s * gap).
+    set (dy := Cy t - Cy s - fresnel_vy s * gap).
+    set (e := M * gap * gap).
+    assert (He0 : 0 <= e).
+    { unfold e. apply Rmult_le_pos;
+        [apply Rmult_le_pos; [exact HM | exact Hgap0] | exact Hgap0]. }
+    assert (Hdx : Rabs dx <= e).
+    { unfold dx, e, M, gap.
+      apply (fresnel_Cx_tracks Cx Cy a b s t Hpr Has Hst Htb). }
+    assert (Hdy : Rabs dy <= e).
+    { unfold dy, e, M, gap.
+      apply (fresnel_Cy_tracks Cx Cy a b s t Hpr Has Hst Htb). }
+    rewrite dist_of_coords.
+    replace ((Cx t - Cx s - fresnel_vx s * gap)
+             * (Cx t - Cx s - fresnel_vx s * gap)
+             + (Cy t - Cy s - fresnel_vy s * gap)
+               * (Cy t - Cy s - fresnel_vy s * gap))
+      with (dx * dx + dy * dy)
+      by (unfold dx, dy; ring).
+    eapply Rle_trans.
+    + apply sqrt_le_1.
+      * apply Rplus_le_le_0_compat; apply prod_sqr_nonneg.
+      * apply Rplus_le_le_0_compat; apply prod_sqr_nonneg.
+      * apply Rplus_le_compat.
+        -- apply sq_le_of_abs; [exact He0 | exact Hdx].
+        -- apply sq_le_of_abs; [exact He0 | exact Hdy].
+    + rewrite (sqrt_two_of_sq e He0).
+      assert (HKgap : K * gap < eps).
+      { apply (holder_window_lt K gap eps HK Hgap0 Heps).
+        unfold gap, delta in *. exact Hdt. }
+      replace (e * sqrt 2) with (K * gap * gap).
+      2:{ unfold e, K, M. ring. }
+      apply Rmult_le_compat_r; [exact Hgap0 | apply Rlt_le; exact HKgap].
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Pack instance and headlines.                                               *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma fresnel_speed_integral_premises :
+  forall Cx Cy a b,
+    a <= b ->
+    fresnel_primitives Cx Cy a b ->
+    speed_integral_premises
+      (fresnel_curve Cx Cy) (fun _ => 1) (fun t => t) a b.
+Proof.
+  intros Cx Cy a b Hab Hpr.
+  apply (constant_speed_premises (fresnel_curve Cx Cy) 1 a b Hab).
+  - lra.
+  - apply fresnel_chord_rate. exact Hpr.
+Qed.
+
+(* WITNESS {"claimId":"508-e","topic":"metric","lemma":"fresnel_is_curve_length","title":"Increment-squeezed Fresnel primitives yield metric length b-a","file":"theories/ClothoidFresnel.v","witness":"508-e-fresnel","board":"#564"} *)
+
+Theorem fresnel_is_curve_length :
+  forall Cx Cy a b,
+    a <= b ->
+    fresnel_primitives Cx Cy a b ->
+    is_curve_length (fresnel_curve Cx Cy) a b (b - a).
+Proof.
+  intros Cx Cy a b Hab Hpr.
+  replace (b - a) with ((fun t => t) b - (fun t => t) a) by ring.
+  apply (speed_integral_is_curve_length
+           (fresnel_curve Cx Cy) (fun _ => 1) (fun t => t) a b).
+  apply fresnel_speed_integral_premises; assumption.
+Qed.
+
+(* WITNESS {"claimId":"508-e-unit-window","topic":"metric","lemma":"fresnel_unit_window_length","title":"[0,1] Fresnel window has metric length 1","file":"theories/ClothoidFresnel.v","witness":"508-e-fresnel","board":"#564"} *)
+
+Corollary fresnel_unit_window_length :
+  forall Cx Cy,
+    fresnel_primitives Cx Cy 0 1 ->
+    is_curve_length (fresnel_curve Cx Cy) 0 1 1.
+Proof.
+  intros Cx Cy Hpr.
+  replace 1 with (1 - 0) by ring.
+  apply fresnel_is_curve_length; [lra | exact Hpr].
+Qed.
+
+Lemma fresnel_H_unit_chord : forall Cx Cy a b s t,
+  a <= b ->
+  fresnel_primitives Cx Cy a b ->
+  a <= s -> s <= t -> t <= b ->
+  dist (fresnel_curve Cx Cy s) (fresnel_curve Cx Cy t) <= t - s.
+Proof.
+  intros Cx Cy a b s t Hab Hpr Has Hst Htb.
+  pose proof (fresnel_speed_integral_premises Cx Cy a b Hab Hpr) as Hsip.
+  pose proof (speed_integral_chord_modulus
+                (fresnel_curve Cx Cy) (fun _ => 1) (fun u => u) a b
+                Hsip s t Has Hst Htb) as Hmod.
+  replace ((fun u => u) t - (fun u => u) s) with (t - s) in Hmod by ring.
+  exact Hmod.
+Qed.
+
+Lemma fresnel_H_unit_approx : forall Cx Cy a b eps,
+  a <= b ->
+  fresnel_primitives Cx Cy a b ->
+  0 < eps ->
+  exists delta, 0 < delta /\
+    forall s t, a <= s -> s <= t -> t <= b -> t - s < delta ->
+      (t - s) - dist (fresnel_curve Cx Cy s) (fresnel_curve Cx Cy t)
+      <= eps * (t - s).
+Proof.
+  intros Cx Cy a b eps Hab Hpr Heps.
+  pose proof (fresnel_speed_integral_premises Cx Cy a b Hab Hpr) as Hsip.
+  destruct (speed_integral_tightness
+              (fresnel_curve Cx Cy) (fun _ => 1) (fun u => u) a b
+              Hsip eps Heps) as (d & Hd & Htight).
+  exists d. split; [exact Hd |].
+  intros s t Has Hst Htb Hdt.
+  specialize (Htight s t Has Hst Htb Hdt).
+  replace ((fun u => u) t - (fun u => u) s) with (t - s) in Htight by ring.
+  lra.
+Qed.
+
+(* WITNESS {"claimId":"508-e-clothoid-contract","topic":"metric","lemma":"fresnel_discharges_clothoid_window","title":"Fresnel primitives discharge the windowed K-token contract","file":"theories/ClothoidFresnel.v","witness":"508-e-fresnel","board":"#564"} *)
+
+Theorem fresnel_discharges_clothoid_window :
+  forall Cx Cy a b,
+    a <= b ->
+    fresnel_primitives Cx Cy a b ->
+    is_curve_length (fresnel_curve Cx Cy) a b (b - a).
+Proof.
+  intros Cx Cy a b Hab Hpr.
+  apply (clothoid_arclength_is_curve_length
+           (fresnel_curve Cx Cy) a b Hab).
+  - intros s t Hs Hst Ht.
+    apply (fresnel_H_unit_chord Cx Cy a b s t Hab Hpr Hs Hst Ht).
+  - intros eps Heps.
+    apply (fresnel_H_unit_approx Cx Cy a b eps Hab Hpr Heps).
+Qed.
+
+Print Assumptions fresnel_is_curve_length.
+Print Assumptions fresnel_unit_window_length.
+Print Assumptions fresnel_discharges_clothoid_window.
+Print Assumptions fresnel_chord_rate.
