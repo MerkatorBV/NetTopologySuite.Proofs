@@ -110,7 +110,12 @@ _Avoid_: exact (the Bible §2.2 property), stable (unqualified), bit-exact (stro
 The 1-D measure of a curve — the number the Bible §4.2 `length()` obligation owes and
 `LENGTH_UNIFIED` emits. Never confuse it with `List.length`: lemmas named `*_length`
 but proved by `length_map` are element counts stating no metric fact.
-_Avoid_: length (unqualified where a count could be meant), size
+Bible §4.2 satisfaction (what is proved vs parked) lives in
+`docs/scout/508-closing-summary.md`. The zoo is not unconditionally
+exact: elliptic E and Fresnel clothoid stay engine-conditional; oracle
+`LENGTH_UNIFIED` is still C/A. Owner review retires epic #508.
+_Avoid_: length (unqualified where a count could be meant), size,
+planned length zoo (the 508-* letters landed), unconditionally exact zoo
 
 ### Performance
 
