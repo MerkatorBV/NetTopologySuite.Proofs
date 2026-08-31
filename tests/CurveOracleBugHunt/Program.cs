@@ -623,7 +623,9 @@ static class Cases
             "Leftover Ⅴ mixed-cone. Classified; fill not named."),
         ("SAME_CONE", "triangle_pair_fill TPR_SameCone", "token", "UNSUPPORTED",
             "Leftover Ⅵ same-cone. Classified; fill not named."),
+        ("LENS", "triangle_pair_fill TPR_Lens", "token", "UNSUPPORTED",
+            "Leftover Ⅶ lens. Classified; fill not named."),
         ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
-            "Unnamed lens pair. Leftover Ⅵ classifies same-cone."),
+            "Unnamed inside pair. Leftover Ⅶ classifies the lens."),
     };
 }

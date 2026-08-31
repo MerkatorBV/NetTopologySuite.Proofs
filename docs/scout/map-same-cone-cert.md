@@ -9,7 +9,8 @@ a GitHub child, **not** a remint of `522-j` / `522-m` / `522-i`, and
 > historical. Do **not** mint `522-n`. Leftover ids are precomposed
 > Roman numerals. This leftover is **`Ⅵ`**. Do not swap it with `Ⅴ`.
 > Do not remint ADR-0004. This map does not mint a GitHub child.
-> Do not mint leftover `Ⅶ`.
+> Leftover `Ⅶ` is the lens letter (`map-lens-cert.md`).
+> Do not mint leftover `Ⅷ`.
 
 topics: relate
 claimId: Ⅵ
@@ -29,7 +30,8 @@ Completeness is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). The
 filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
-The live cex is an unnamed lens pair (not leftover `Ⅶ`). Leftover
+The live cex is an unnamed inside pair after leftover `Ⅶ`
+(`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Leftover
 `Ⅵ` itself is QED (`RelateNGTouchSameCone.v : leftover_vi_qed_or_qex`).
 
 ## The pair (compiled)
@@ -58,8 +60,9 @@ Constructor `TPR_SameCone` stays on `im_unsupported`
 `2FFF1FFF2`. `classify_triangle_pair` arm is `True`.
 
 Oracle / harness: `oracle/de9im_triangle_vectors.txt` `REGIME SAME_CONE`
-(fill still `UNSUPPORTED`). Decline golden is the unnamed lens pair
-A = `(0,0)(3,0)(0,3)`, B = `(2,-1)(2,2)(-1,2)`.
+(fill still `UNSUPPORTED`). Decline golden is the unnamed inside pair
+A = `(1,1)(2,1)(1,2)`, B = `(0,0)(4,0)(0,4)`. The lens pair is leftover
+`Ⅶ` (`RelateNGUnnamedCex.v : lens_pair_lens`).
 
 ## Nearby pairs that are **not** this leftover
 
@@ -68,6 +71,7 @@ A = `(0,0)(3,0)(0,3)`, B = `(2,-1)(2,2)(-1,2)`.
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-1,-1)(3,1)` | Leftover `Ⅴ`. Classified **`TPR_MixedCone`**. Opposite-sign `side_dot`. `RelateNGComplete.v : mixed_cone_pair_mixedcone`. | remint `mixed_cone_vertex_b` |
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)` | Leftover `Ⅱ`. Classified **`TPR_TouchObtuse`**. Product of `side_dot`s is 0. | remint `touch_obtuse_vertex_b` |
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(0,-2)` | #572 / `522-i`. Classified **`TPR_TouchVertex`**. Same-sign opposite cone. | remint `cone_separates_b` / steal `522-i` |
-| `(0,0)(3,0)(0,3)` vs `(2,-1)(2,2)(-1,2)` | Unnamed completeness cex. Lens; interiors meet; no shared vertex. `RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅶ` |
+| `(0,0)(3,0)(0,3)` vs `(2,-1)(2,2)(-1,2)` | Leftover `Ⅶ` lens. Classified **`TPR_Lens`**. `RelateNGUnnamedCex.v : lens_pair_lens`. | steal leftover `Ⅶ` |
+| `(1,1)(2,1)(1,2)` vs `(0,0)(4,0)(0,4)` | Unnamed completeness cex. A strictly inside B; no edge crossings. `RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅷ` |
 
-Do not mint leftover `Ⅶ`. Epic `#522` stays OPEN.
+Do not mint leftover `Ⅷ`. Epic `#522` stays OPEN.

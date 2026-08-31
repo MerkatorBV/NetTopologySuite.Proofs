@@ -62,8 +62,12 @@
      - RelateNGTouchSameCone.v leftover `Ⅵ`: same-sign cone
          detector `same_cone_vertex_b` reaches `TPR_SameCone`
          (fill stays `im_unsupported`; not CONTEXT Bar 1).
-         Leftover `Ⅵ` is QED. Completeness is an unnamed lens
-         pair (not leftover `Ⅶ`).
+         Leftover `Ⅵ` is QED.
+     - RelateNGTouchLens.v leftover `Ⅶ`: proper edge-cross
+         detector `lens_edges_cross_b` reaches `TPR_Lens`
+         (fill stays `im_unsupported`; not CONTEXT Bar 1).
+         Leftover `Ⅶ` is QED. Completeness is an unnamed
+         inside pair (not leftover `Ⅷ`).
      - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
          (#568 / 522-g): a strict-`gtri` point has an explicit open
          disk of strict points; a nondegenerate segment carries dim-1;

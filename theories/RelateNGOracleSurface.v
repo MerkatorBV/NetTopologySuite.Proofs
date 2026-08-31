@@ -13,7 +13,8 @@
    land on the right side of that cut. Leftover `Ⅰ`
    (`TPR_TouchPartialEdge`), leftover `Ⅲ`
    (`TPR_TouchOnesided`), and leftover `Ⅱ`
-   (`TPR_TouchObtuse` / `TPR_MixedCone` / `TPR_SameCone`) stay
+   (`TPR_TouchObtuse` / `TPR_MixedCone` / `TPR_SameCone` /
+   `TPR_Lens`) stay
    on the token side.
 
    Green (Qed):
@@ -358,11 +359,19 @@ Proof.
   exact encode_wire_unsupported.
 Qed.
 
+Theorem triangle_touch_lens_wire :
+  triangle_pair_wire TPR_Lens = RWR_Unsupported.
+Proof.
+  unfold triangle_pair_wire.
+  rewrite triangle_pair_fill_touch_lens_eq.
+  exact encode_wire_unsupported.
+Qed.
+
 (* TPR_TouchPartialEdge / TPR_TouchOnesided / TPR_TouchObtuse /
-   TPR_MixedCone / TPR_SameCone are classified but fill is still
-   the token. Keep them excluded so a matrix decode cannot swallow
-   leftover Ⅰ / leftover Ⅲ / leftover Ⅱ / leftover Ⅴ /
-   leftover Ⅵ. *)
+   TPR_MixedCone / TPR_SameCone / TPR_Lens are classified but fill
+   is still the token. Keep them excluded so a matrix decode cannot
+   swallow leftover Ⅰ / leftover Ⅲ / leftover Ⅱ / leftover Ⅴ /
+   leftover Ⅵ / leftover Ⅶ. *)
 Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_Unsupported ->
   r <> TPR_TouchPartialEdge ->
@@ -370,9 +379,10 @@ Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_TouchObtuse ->
   r <> TPR_MixedCone ->
   r <> TPR_SameCone ->
+  r <> TPR_Lens ->
   exists w, triangle_pair_wire r = RWR_Matrix w.
 Proof.
-  intros r H Hu Ho Hob Hm Hs.
+  intros r H Hu Ho Hob Hm Hs Hl.
   destruct r.
   - exists wm_disjoint; exact triangle_disjoint_wire.
   - exists wm_overlap; exact triangle_overlap_wire.
@@ -384,6 +394,7 @@ Proof.
   - contradiction Hob; reflexivity.
   - contradiction Hm; reflexivity.
   - contradiction Hs; reflexivity.
+  - contradiction Hl; reflexivity.
   - contradiction H; reflexivity.
 Qed.
 
