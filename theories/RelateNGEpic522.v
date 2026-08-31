@@ -34,7 +34,8 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals.
-From NTS.Proofs Require Import Distance RelateNGCore RelateNGTouchMixedCone.
+From NTS.Proofs Require Import Distance GeneralTriangleSeparation
+  RelateNGCore RelateNGTouchMixedCone.
 Local Open Scope R_scope.
 
 (* Epic #522 stop: completeness (QED) or a documented CCW
