@@ -1,7 +1,13 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNGTouchSameCone
    ----------------------------------------------------------------------------
-   Leftover Ⅵ: same-sign cone spill at a shared vertex.
+   Leftover Ⅵ: name the leftover-Ⅴ same-sign cone spill.
+
+   Accept as leftover-Ⅵ inhabitance. Reject as a same-cone
+   soundness result or an overlap theorem.
+   `triangle_pair_regime_samecone` is inhabitance, not soundness.
+   `classify_triangle_pair`'s TPR_SameCone arm is True — no
+   denotation. There is no TPR_SameCone ⇒ interiors meet.
 
    Map: docs/scout/map-same-cone-cert.md. Compiled pair
    A = (0,0)(2,0)(0,2), B = (0,0)(3,1)(1,3) is the leftover-Ⅴ
@@ -11,25 +17,33 @@
    TPR_MixedCone, opposite signs) and of leftover Ⅱ (B third
    vertex (1,−1) is TPR_TouchObtuse, product 0) and of #572
    (B third vertex (0,−2) is TPR_TouchVertex, same-sign opposite
-   cone). Detector `same_cone_vertex_b` is both-strict-pos plus
-   `negb` of both cones and of `mixed_cone_from_v` — not a remint
-   of `cone_separates_b` / `touch_vertex_b` / `touch_obtuse_vertex_b`
-   / `mixed_cone_vertex_b`. Constructor `TPR_SameCone` stays on
-   `im_unsupported` (load-bearing: do not emit `2FFF1FFF2`; that
-   pin is #570). After leftover Ⅴ. False on
+   cone). That taxonomy is real. Detector `same_cone_vertex_b` is
+   both-strict-pos plus `negb` of both cones and of
+   `mixed_cone_from_v` — not a remint of `cone_separates_b` /
+   `touch_vertex_b` / `touch_obtuse_vertex_b` /
+   `mixed_cone_vertex_b`. The `negb mixed_cone_from_v` is
+   classifier order written twice (`mixed_cone_from_v` is already
+   exclusive of `both_strict_pos`). Harmless, not content.
+   Constructor `TPR_SameCone` stays on `im_unsupported`
+   (load-bearing: do not emit `2FFF1FFF2`; that pin is #570).
+   This pair is DE-9IM overlap with a shared vertex and no
+   vertex-stab; parking it on a new constructor avoids the fill,
+   leftover policy, not a cone theorem. After leftover Ⅴ. False on
    `classified_hard_pairs`, leftover Ⅰ, leftover Ⅱ, leftover Ⅲ,
    leftover Ⅳ, leftover Ⅴ, and the #567 contains pair.
-   Completeness stays false on an unnamed lens pair (not leftover
-   `Ⅶ`). #577 Green is completeness (QED) or a documented cex
-   (QEX). `triangle_pair_regime_ccw_stop` is that disjunction,
-   discharged QEX. Leftover `Ⅵ` itself is QED
-   (`leftover_vi_qed_or_qex`). `classify_triangle_pair` arm is
-   `True` — leftover Ⅰ honesty, not CONTEXT Bar 1. Nothing that
-   mentions `TPR_SameCone` may be proved through
-   `classify_triangle_pair`. Do not steal 522-j / 522-m / 522-f /
-   522-i / leftover Ⅰ / leftover Ⅱ / leftover Ⅴ. Do not remint
-   `cone_separates_b`. Do not mint 522-n / `Ⅶ`. Do not remint
-   aa_matrix_*.
+   Completeness stays false on an unnamed lens pair. Leftover `Ⅶ`
+   is already written as #642. Relocating
+   `triangle_pair_regime_ccw_stop` here does not move #522 closer
+   to QED — the #577 disjunction copied into a third file.
+   `leftover_vi_qed_or_qex` is classified ∨ declined on the pair
+   just classified. `classified_hard_pairs_still_samecone` is
+   misnamed: those pairs stay Disjoint / Overlap / TouchVertex /
+   TouchEdge. `classify_triangle_pair` arm is `True` — leftover Ⅰ
+   honesty, not CONTEXT Bar 1. Nothing that mentions
+   `TPR_SameCone` may be proved through `classify_triangle_pair`.
+   Do not steal 522-j / 522-m / 522-f / 522-i / leftover Ⅰ /
+   leftover Ⅱ / leftover Ⅴ. Do not remint `cone_separates_b` /
+   `overlap_b`. Do not mint 522-n. Do not remint aa_matrix_*.
 
    WITNESS topic: relate · claimId: Ⅵ · witness: Ⅵ-same-cone-cex
    macro: relate
@@ -248,7 +262,7 @@ Proof.
   exact hard_contains_no_samecone.
 Qed.
 
-(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_samecone","title":"TPR_SameCone reachable on the compiled leftover-Ⅵ same-cone pair","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
+(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_samecone","title":"TPR_SameCone inhabitance on the compiled leftover-Ⅵ same-sign spill (not a same-cone denotation)","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
 Theorem triangle_pair_regime_samecone :
   triangle_pair_regime 0 0 2 0 0 2 0 0 3 1 1 3 = TPR_SameCone.
 Proof.
@@ -312,6 +326,8 @@ Proof.
   exact mixed_cone_pair_mixedcone.
 Qed.
 
+(* Misnamed: leftover Ⅰ / #570 / #572 / #567 still Disjoint /
+   Overlap / TouchVertex / TouchEdge. Not a TPR_SameCone claim. *)
 Theorem classified_hard_pairs_still_samecone :
   triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Disjoint /\
   triangle_pair_regime 0 0 1 0 0 1 (1/4) (1/4) (5/4) (1/4) (1/4) (5/4)
@@ -329,9 +345,10 @@ Proof.
 Qed.
 
 (* Epic #522 / #577 stop: completeness (QED) or a documented CCW
-   unsupported pair (QEX). Discharged QEX — unnamed lens, not leftover
-   `Ⅶ`. Leftover-Ⅵ classify does not take the left. Not a 522-j
-   remint. *)
+   unsupported pair (QEX). Discharged QEX — unnamed lens. The
+   #577 disjunction copied into a third file; does not move #522
+   closer to QED. Leftover-Ⅵ inhabitance does not take the left.
+   Not a 522-j remint. Leftover `Ⅶ` is already #642. *)
 (* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed lens","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
 Theorem triangle_pair_regime_ccw_stop :
   (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
@@ -369,8 +386,8 @@ Proof.
   exact triangle_pair_regime_ccw_incomplete_not_tjunction.
 Qed.
 
-(* Leftover Ⅵ Green: classify (QED) or remain the documented
-   unsupported (QEX). This letter is QED. *)
+(* Classified ∨ declined on the pair this letter just classified.
+   One more named bucket. Does not move epic #522 closer to QED. *)
 Theorem leftover_vi_qed_or_qex :
   triangle_pair_regime 0 0 2 0 0 2 0 0 3 1 1 3 = TPR_SameCone
   \/
