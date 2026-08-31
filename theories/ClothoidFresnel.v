@@ -60,6 +60,9 @@
    CI death on 3929a26 L451: binder [by] is a vernacular
    keyword ([forall ax ay bx by]). Rename the fourth
    coordinate to [cy].
+   CI death on b1fa7ac L438: [symmetry; apply Rsqr_neg] looks
+   for [x² = (-x)²] against [(-(x-y))² = (x-y)²]. Do not
+   use [Rsqr_neg]; expand [(-d)*(-d)] with [Ropp_mult_distr].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -429,13 +432,11 @@ Lemma sq_minus_comm : forall x y,
   (x - y) * (x - y) = (y - x) * (y - x).
 Proof.
   intros x y.
-  transitivity (Rsqr (x - y)).
-  { unfold Rsqr. reflexivity. }
-  transitivity (Rsqr (y - x)).
-  2:{ unfold Rsqr. reflexivity. }
   rewrite (opp_minus x y).
-  symmetry.
-  apply Rsqr_neg.
+  rewrite (Ropp_mult_distr_l (x - y) (- (x - y))).
+  rewrite (Ropp_mult_distr_r (x - y) (x - y)).
+  rewrite Ropp_involutive.
+  reflexivity.
 Qed.
 
 Lemma fresnel_chord_as_origin : forall Cx Cy s t,
