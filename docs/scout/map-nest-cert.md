@@ -29,8 +29,8 @@ Completeness is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). The
 filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
-The live cex is an unnamed swapped nest pair (not leftover
-`Ⅹ`). Leftover `Ⅸ` itself is QED
+The live cex after leftover `Ⅸ` was the swap (now leftover
+`Ⅹ` / `522-n`). Leftover `Ⅸ` itself is QED
 (`RelateNGTouchNest.v : leftover_ix_qed_or_qex`).
 
 ## The pair (compiled)
@@ -67,6 +67,7 @@ A = `(0,0)(4,0)(1,1)`, B = `(0,0)(4,0)(0,4)`.
 |---|---|---|
 | `(1,1)(2,1)(1,2)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅷ`. Classified **`TPR_Inside`**. No shared edge. | steal leftover `Ⅷ` |
 | `(0,0)(1,0)(0,1)` vs `(1,0)(1,1)(0,1)` | #567 touch-edge. Classified **`TPR_TouchEdge`**. Opposite sides. | remint `touch_edge_b` / emit `FF2F11212` |
-| `(0,0)(4,0)(1,1)` vs `(0,0)(4,0)(0,4)` | Unnamed completeness cex. Swap; `nest_b` is B-in-A only. `RelateNGNestCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅹ` |
+| `(0,0)(4,0)(1,1)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅹ` / `522-n`. Classified **`TPR_SwapNest`**. Swap; A-in-B. `RelateNGNestCex.v : swap_pair_swapnest`. | steal leftover `Ⅹ` / `522-n` |
 
-Do not mint leftover `Ⅹ`. Epic `#522` stays OPEN.
+Leftover `Ⅹ` / `522-n` classified the swap. Do not mint leftover
+`Ⅺ`. Epic `#522` stays OPEN.

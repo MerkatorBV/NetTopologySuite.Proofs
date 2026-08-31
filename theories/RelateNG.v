@@ -74,8 +74,12 @@
      - RelateNGTouchNest.v leftover `Ⅸ`: same-side shared-edge
          nest detector `nest_b` reaches `TPR_Nest`
          (fill stays `im_unsupported`; not CONTEXT Bar 1).
-         Leftover `Ⅸ` is QED. Completeness is an unnamed
-         swapped nest pair (not leftover `Ⅹ`).
+         Leftover `Ⅸ` is QED.
+     - RelateNGTouchSwapNest.v leftover `Ⅹ` / `522-n`: swap-nest
+         detector `swap_nest_b` reaches `TPR_SwapNest`
+         (fill stays `im_unsupported`; not CONTEXT Bar 1).
+         Leftover `Ⅹ` is QED. Completeness is an unnamed
+         identical CCW pair (not leftover `Ⅺ`).
      - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
          (#568 / 522-g): a strict-`gtri` point has an explicit open
          disk of strict points; a nondegenerate segment carries dim-1;

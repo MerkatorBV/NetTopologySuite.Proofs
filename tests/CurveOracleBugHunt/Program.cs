@@ -629,7 +629,9 @@ static class Cases
             "Leftover Ⅷ inside. Classified; fill not named."),
         ("NEST", "triangle_pair_fill TPR_Nest", "token", "UNSUPPORTED",
             "Leftover Ⅸ nest. Classified; fill not named."),
+        ("SWAPNEST", "triangle_pair_fill TPR_SwapNest", "token", "UNSUPPORTED",
+            "Leftover Ⅹ / 522-n swap nest. Classified; fill not named."),
         ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
-            "Unnamed swapped nest pair. Leftover Ⅸ classifies the nest pair."),
+            "Unnamed identical CCW pair. Leftover Ⅹ classifies the swap nest."),
     };
 }

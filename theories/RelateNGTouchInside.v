@@ -280,7 +280,7 @@ Proof.
 Qed.
 
 Theorem unnamed_ccw_still_unsupported :
-  triangle_pair_regime 0 0 4 0 1 1 0 0 4 0 0 4 = TPR_Unsupported.
+  triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 0 4 = TPR_Unsupported.
 Proof.
   exact unnamed_ccw_pair_unsupported.
 Qed.

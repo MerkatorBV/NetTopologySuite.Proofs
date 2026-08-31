@@ -666,6 +666,22 @@ Definition nest_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   else false else false.
 
+(* Leftover Ⅹ / 522-n: same-side shared-edge swap nest. Some
+   A-edge coincides with some B-edge and some A vertex is strictly
+   interior to B. Both CCW. Not a remint of `nest_b` (that detector
+   is B-in-A only), `inside_b` (all three A verts interior),
+   `contains_b`, or `touch_edge_b`. Pure `Rlt_dec` / `Req_dec_T`.
+   Classifier order already protects leftover Ⅰ–Ⅸ. *)
+Definition swap_nest_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_edges_share_b
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && some_vertex_strict_pos dx dy ex ey fx fy
+         (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+  else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
    certificate, a vertex-touch certificate, leftover Ⅰ's collinear
@@ -676,9 +692,10 @@ Definition nest_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    (`mixed_cone_vertex_b`, after leftover Ⅱ so a closed cone still
    wins), leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
    so opposite-sign still wins),    leftover Ⅶ
-   (`lens_edges_cross_b`, after leftover Ⅵ), leftover Ⅷ
-   (`inside_b`, after leftover Ⅶ), and leftover Ⅸ
-   (`nest_b`, after leftover Ⅷ).  DECLINES on
+   (`lens_edges_cross_b`, after leftover Ⅵ),    leftover Ⅷ
+   (`inside_b`, after leftover Ⅶ), leftover Ⅸ
+   (`nest_b`, after leftover Ⅷ), and leftover Ⅹ / `522-n`
+   (`swap_nest_b`, after leftover Ⅸ).  DECLINES on
    everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
@@ -695,11 +712,12 @@ Definition nest_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    reachable when `same_cone_vertex_b` fires. Leftover Ⅶ is
    reachable when `lens_edges_cross_b` fires. Leftover Ⅷ is
    reachable when `inside_b` fires. Leftover Ⅸ is reachable
-   when `nest_b` fires. Completeness stays false on an unnamed
-   swapped nest pair (not leftover `Ⅹ`).
+   when `nest_b` fires. Leftover Ⅹ / `522-n` is reachable
+   when `swap_nest_b` fires. Completeness stays false on an
+   unnamed identical CCW pair (not leftover `Ⅺ`).
    Do not reorder the four wired certificates. Do not remint
    `cone_separates_b`. Do not remint `contains_b`.
-   Do not remint `touch_edge_b`. *)
+   Do not remint `touch_edge_b`. Do not remint `nest_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -732,6 +750,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_Inside
   else if nest_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Nest
+  else if swap_nest_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_SwapNest
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

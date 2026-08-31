@@ -2847,10 +2847,15 @@ theories/RelateNGTouchLens.v
 theories/RelateNGTouchInside.v
 # Leftover Ⅸ: same-side shared-edge nest. Detector nest_b;
 # constructor TPR_Nest stays on im_unsupported. After leftover
-# Ⅷ. Completeness is an unnamed swapped nest pair
-# (not leftover Ⅹ). Not CONTEXT Bar 1. Does not remint
-# touch_edge_b / contains_b / overlap_b / aa_matrix_*.
+# Ⅷ. Completeness is leftover Ⅹ / 522-n. Not CONTEXT Bar 1.
+# Does not remint touch_edge_b / contains_b / overlap_b / aa_matrix_*.
 theories/RelateNGTouchNest.v
+# Leftover Ⅹ / 522-n: same-side shared-edge swap nest. Detector
+# swap_nest_b; constructor TPR_SwapNest stays on im_unsupported.
+# After leftover Ⅸ. Completeness is an unnamed identical CCW pair
+# (not leftover Ⅺ). Not CONTEXT Bar 1. Does not remint
+# nest_b / inside_b / contains_b / touch_edge_b / aa_matrix_*.
+theories/RelateNGTouchSwapNest.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE

@@ -72,6 +72,6 @@ B = `(0,0)(4,0)(1,1)`.
 | `(0,0)(1,0)(0,1)` vs `(1/4,1/4)(5/4,1/4)(1/4,5/4)` | #570 / `522-b`. Classified **`TPR_Overlap`**. Vertex stab. | remint `overlap_b` / emit `2FFF1FFF2` |
 | `(1,1)(2,1)(1,2)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅷ`. Classified **`TPR_Inside`**. A strictly inside B. `RelateNGUnnamedCex.v : inside_pair_inside`. | steal leftover `Ⅷ` |
 | `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Leftover `Ⅸ`. Classified **`TPR_Nest`**. Shared edge; B-in-A. `RelateNGNestCex.v : nest_pair_nest`. | steal leftover `Ⅸ` |
-| `(0,0)(4,0)(1,1)` vs `(0,0)(4,0)(0,4)` | Unnamed completeness cex. Swap; `nest_b` is B-in-A only. `RelateNGNestCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅹ` |
+| `(0,0)(4,0)(1,1)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅹ` / `522-n`. Classified **`TPR_SwapNest`**. Swap; A-in-B. `RelateNGNestCex.v : swap_pair_swapnest`. | steal leftover `Ⅹ` / `522-n` |
 
 Do not mint leftover `Ⅹ`. Epic `#522` stays OPEN.
