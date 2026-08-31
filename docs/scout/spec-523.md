@@ -2,9 +2,10 @@
 
 An implementation spec. Written 2026-08-30 from the grill
 ([`map-523.md`](map-523.md), ticket 12) plus issue #523 and ticket 11
-precondition 3. Letters `523-a` / `523-b` / `523-c` landed. This is
-**not** a leftover numeral, **not** a remint of `522-n`. It does
-**not** retire ticket 523.
+precondition 3. Letters `523-a` / `523-b` / `523-c` landed (QED). Ticket 523
+stop is QED ∨ QEX (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`),
+discharged QEX on `?`. This is **not** a leftover numeral, **not**
+a remint of `522-n`. It does **not** retire ticket 523.
 
 > Ticket 11 precondition 3 stays “#523 resolved or explicitly
 > accepted.” This spec does not accept the defect. The implement
@@ -221,9 +222,22 @@ Done when:
 - #511 — sibling shape, different modes.
 - #508 — zoo length; Year 1 stays circular.
 
+## QED ∨ QEX stop
+
+Children `523-a` / `523-b` / `523-c` remain QED. The ticket stop
+is QED ∨ QEX: every result glyph is ISO F/0/1/2, or a documented
+non-ISO cell exists. Discharged QEX
+(`RelateCurveAlphabet.v : ticket_523_qed_or_qex`) on `?`
+(`RelateCurveAlphabet.v : question_mark_not_iso_table13`). Coq
+`None` encodes as `F`, never `?`
+(`RelateCurveAlphabet.v : dim_to_result_never_unknown`;
+`RelateCurveMatrix.v : cell_none_iff_empty`). QEX is not owner
+accept. Do not remint `WireCell`. Do not steal `522-f`.
+
 ## Ticket 11
 
-Precondition 3 is **not met** by writing this spec. The geometry-
+Precondition 3 is **not met** by writing this spec, landing the
+children, or discharging the ticket stop QEX. The geometry-
 compute mode still cannot be used as a differential reference for
 cells it did not compute. After `/implement` of ticket 523 lands,
 that sentence is what becomes false — and only then.

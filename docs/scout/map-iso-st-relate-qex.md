@@ -69,7 +69,7 @@ No `?`. EE of two bounded areas in R² is **2**, never F
 | `ⅠⅠⅠⅠⅠⅠ` | Contains fill remint | `212FF1FF2` | `2FFFFFFF2` | fill-lag |
 | `ⅠⅠⅠⅠⅠⅠⅠ` | Touch-edge fill remint | `FF2F11212` | `FFFF1FFF2` | fill-lag |
 | `ⅠⅠⅠⅠⅠⅠⅠⅠ` | Empty / empty `ST_Relate` | `NULL` | `UNSUPPORTED` | empty |
-| `ⅠⅠⅠⅠⅠⅠⅠⅠⅠ` | F vs not-computed | `F/0/1/2` only | `?` in result 9-char; catalog rejects `?` | alphabet |
+| `ⅠⅠⅠⅠⅠⅠⅠⅠⅠ` | F vs not-computed | `F/0/1/2` only | `?` in result 9-char; catalog rejects `?`; ticket 523 stop QEX (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`) | alphabet |
 | `Ⅹ` | Nine-cell point-set DE-9IM | point-set Table 5 | gtri on bar-2 cells; `point_set` open | spec |
 
 `Ⅹ` in this catalog is stacked-numeral ten (also written
@@ -219,15 +219,19 @@ No `?`. EE of two bounded areas in R² is **2**, never F
   `?`. `RelateNGCore.v : relate_unsupported_no_predicate` stays
   whole-line Decline. Emptiness is `None`
   (`RelateCurveMatrix.v : cell_none_iff_empty`). EE stays `2`
-  (`RelateCurveMatrix.v : geom_de9im_ee_nonempty`). Chart:
-  [`map-523.md`](map-523.md).
+  (`RelateCurveMatrix.v : geom_de9im_ee_nonempty`). Coq `DimValue`
+  never encodes `?`
+  (`RelateCurveAlphabet.v : dim_to_result_never_unknown`). Chart:
+  [`map-523.md`](map-523.md). Ticket 523 stop is QED ∨ QEX
+  (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`), discharged
+  QEX on `?` (`RelateCurveAlphabet.v : question_mark_not_iso_table13`).
 - **Divergence:** ISO Table 13 has no unknown glyph. The field driver
   prints `?` where a probe did not run. Result parse accepts `?`;
   catalog fill keys do not. `?` is not a third parse kind and is
   not ISO-conformant.
 - **Do not:** steal `522-f`; mint leftover `ⅠⅠⅠ` from #523; put
-  `?` in `RELATE_TOKENS`
-- **Claim:** `523-b` / `523-c`
+  `?` in `RELATE_TOKENS`; remint `WireCell`
+- **Claim:** `523-b` / `523-c`; ticket stop QEX (not owner accept)
 
 ### `Ⅹ` · Nine-cell point-set DE-9IM
 

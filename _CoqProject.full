@@ -2742,6 +2742,11 @@ theories/RingContactSound.v
 # S13: cell-DIMENSION Jordan soundness closed (geom_de9im_cell_dimensions_sound
 # + boundary tie-in via RelateBoundary). Part of 4-item finish.
 theories/RelateCurveMatrix.v
+# Ticket 523 QED ∨ QEX stop: CURVE_RELATE_MATRIX result alphabet including
+# the 523-c '?'. ISO Table 13 / result F/0/1/2 have no '?'. DimValue None
+# encodes as F, never '?'. Discharged QEX on CRR_Unknown. Stdlib + DE9IM
+# only. Does not remint WireCell / 522-f. No Admitted.
+theories/RelateCurveAlphabet.v
 # Lineal boundary-meet bridge: curve_segments_meet (chord-chord contact) =>
 # geom_boundary witness => im_bb cell non-empty / ~ im_disjoint_ogc.  Closes the
 # bridge flagged deferred in RingContactSound.v for the LINEAL (chord) case

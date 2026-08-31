@@ -63,9 +63,11 @@ Roman numerals. Do **not** mint `522-n`.
   #67 / ticket 11, not #522 children.
 - **`#523` `F` vs not-computed** — sibling. Grilled 2026-08-30
   ([`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md)).
-  Children `523-a` / `523-b` / `523-c` (#603 #604 #605) landed;
-  ticket 523 still open, not accepted. Do not steal leftover `Ⅲ`.
-  Leftover `Ⅳ` is the interior-side stem
+  Children `523-a` / `523-b` / `523-c` (#603 #604 #605) landed
+  (QED). Ticket 523 stop is QED ∨ QEX
+  (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`), discharged
+  QEX on `?`. Ticket 523 still open, not accepted. Do not steal
+  leftover `Ⅲ`. Leftover `Ⅳ` is the interior-side stem
   (`RelateNGComplete.v : interior_side_pair_inhabits`).
 - **Empty/empty relate** — parked on the epic.
 - **ISO `ST_Relate` QEX Ⅰ–Ⅹ** — sibling catalog
