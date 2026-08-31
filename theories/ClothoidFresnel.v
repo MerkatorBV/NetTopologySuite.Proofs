@@ -57,6 +57,9 @@
    CI death on df7e564 L427: [rewrite <- Rsqr_neg] looks for
    [(- (x-y))²]; the goal is still a product. Fold both
    sides to [Rsqr] first, then [opp_minus] + [Rsqr_neg].
+   CI death on 3929a26 L451: binder [by] is a vernacular
+   keyword ([forall ax ay bx by]). Rename the fourth
+   coordinate to [cy].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -431,6 +434,7 @@ Proof.
   transitivity (Rsqr (y - x)).
   2:{ unfold Rsqr. reflexivity. }
   rewrite (opp_minus x y).
+  symmetry.
   apply Rsqr_neg.
 Qed.
 
@@ -448,11 +452,11 @@ Proof.
   reflexivity.
 Qed.
 
-Lemma dist_of_coords : forall ax ay bx by,
-  dist (mkPoint ax ay) (mkPoint bx by)
-  = sqrt ((ax - bx) * (ax - bx) + (ay - by) * (ay - by)).
+Lemma dist_of_coords : forall ax ay cx cy,
+  dist (mkPoint ax ay) (mkPoint cx cy)
+  = sqrt ((ax - cx) * (ax - cx) + (ay - cy) * (ay - cy)).
 Proof.
-  intros ax ay bx by. unfold dist, dist_sq. simpl. reflexivity.
+  intros ax ay cx cy. unfold dist, dist_sq. simpl. reflexivity.
 Qed.
 
 Lemma prod_sqr_nonneg : forall x, 0 <= x * x.
