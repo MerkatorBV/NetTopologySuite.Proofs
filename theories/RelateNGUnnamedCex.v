@@ -415,55 +415,53 @@ Proof.
   reflexivity.
 Qed.
 
+(* Kill [edge_separates_b] by leftover-Ⅵ E6 style: [lra] the first
+   [Rlt_dec] that is not actually [< 0]. [false_l] only sees q1. *)
+Ltac leftover_vii_sep_false :=
+  unfold edge_separates_b, opposite_sides_b, cross; cbn [px py];
+  first
+    [ destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
+        [ exfalso; lra | reflexivity ]
+    | destruct (Rlt_dec (_ * _) 0) as [_ | _];
+        [ destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
+            [ exfalso; lra | reflexivity ]
+        | reflexivity ]
+    | destruct (Rlt_dec (_ * _) 0) as [_ | _];
+        [ destruct (Rlt_dec (_ * _) 0) as [_ | _];
+            [ destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
+                [ exfalso; lra | reflexivity ]
+            | reflexivity ]
+        | reflexivity ] ].
+
 Lemma unnamed_ccw_no_separator :
   some_edge_separates_b
     (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)
     (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false.
 Proof.
   unfold some_edge_separates_b.
-  (* Mixed-sign far vertices: false_l only kills q1. Destruct all three
-     opposite_sides tests in the exact vertex order. *)
   assert (E1 : edge_separates_b (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)
-                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false)
+    by leftover_vii_sep_false.
   rewrite E1.
   assert (E2 : edge_separates_b (mkPoint 3 0) (mkPoint 0 3) (mkPoint 0 0)
-                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false)
+    by leftover_vii_sep_false.
   rewrite E2.
   assert (E3 : edge_separates_b (mkPoint 0 3) (mkPoint 0 0) (mkPoint 3 0)
-                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false)
+    by leftover_vii_sep_false.
   rewrite E3.
   assert (E4 : edge_separates_b (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2)
-                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false)
+    by leftover_vii_sep_false.
   rewrite E4.
   assert (E5 : edge_separates_b (mkPoint 2 2) (mkPoint (-1) 2) (mkPoint 2 (-1))
-                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false)
+    by leftover_vii_sep_false.
   rewrite E5.
   assert (E6 : edge_separates_b (mkPoint (-1) 2) (mkPoint 2 (-1)) (mkPoint 2 2)
-                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false)
+    by leftover_vii_sep_false.
   rewrite E6.
   reflexivity.
 Qed.
@@ -686,46 +684,28 @@ Lemma inside_ccw_no_separator :
 Proof.
   unfold some_edge_separates_b.
   assert (E1 : edge_separates_b (mkPoint 1 1) (mkPoint 2 1) (mkPoint 1 2)
-                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false)
+    by leftover_vii_sep_false.
   rewrite E1.
   assert (E2 : edge_separates_b (mkPoint 2 1) (mkPoint 1 2) (mkPoint 1 1)
-                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false)
+    by leftover_vii_sep_false.
   rewrite E2.
   assert (E3 : edge_separates_b (mkPoint 1 2) (mkPoint 1 1) (mkPoint 2 1)
-                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4) = false)
+    by leftover_vii_sep_false.
   rewrite E3.
   assert (E4 : edge_separates_b (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
-                 (mkPoint 1 1) (mkPoint 2 1) (mkPoint 1 2) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 1 1) (mkPoint 2 1) (mkPoint 1 2) = false)
+    by leftover_vii_sep_false.
   rewrite E4.
   assert (E5 : edge_separates_b (mkPoint 4 0) (mkPoint 0 4) (mkPoint 0 0)
-                 (mkPoint 1 1) (mkPoint 2 1) (mkPoint 1 2) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 1 1) (mkPoint 2 1) (mkPoint 1 2) = false)
+    by leftover_vii_sep_false.
   rewrite E5.
   assert (E6 : edge_separates_b (mkPoint 0 4) (mkPoint 0 0) (mkPoint 4 0)
-                 (mkPoint 1 1) (mkPoint 2 1) (mkPoint 1 2) = false).
-  { unfold edge_separates_b, opposite_sides_b, cross; cbn [px py].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [_ | _]; [| reflexivity].
-    destruct (Rlt_dec (_ * _) 0) as [Hbad | _]; [exfalso; lra | reflexivity]. }
+                 (mkPoint 1 1) (mkPoint 2 1) (mkPoint 1 2) = false)
+    by leftover_vii_sep_false.
   rewrite E6.
   reflexivity.
 Qed.
