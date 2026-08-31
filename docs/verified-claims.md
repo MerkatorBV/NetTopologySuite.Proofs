@@ -911,6 +911,8 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#523 QED ∨ QEX stop** (own paragraph). Ticket 523 stop is ISO result-alphabet completeness (QED) or a documented non-ISO cell (QEX). Discharged QEX (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`) on `?` (`RelateCurveAlphabet.v : question_mark_not_iso_table13`). ISO cells and Coq emptiness→`F` are QED (`RelateCurveAlphabet.v : ticket_523_iso_qed_or_qex`). Coq `DimValue` never encodes `?` (`RelateCurveAlphabet.v : dim_to_result_never_unknown`); emptiness stays `None` (`RelateCurveMatrix.v : cell_none_iff_empty`). Children `523-a` / `523-b` / `523-c` remain QED. QEX is not owner accept. Ticket 523 stays open. Ticket 11 precondition 3 still waits. Does not remint `WireCell`. Does not steal `522-f`. Does not mint `522-n`.
 
+**#508 QED ∨ QEX stop** (own paragraph). Epic #508 stop is zoo-on-`CurveSegment` (QED) or a documented missing constructor (QEX). Discharged QEX (`ExactCurveEpic508.v : ticket_508_qed_or_qex`) on the ellipse (`ExactCurveEpic508.v : ellipse_not_curve_segment`). Chord and circular-arc inhabit; every `CurveSegment` is `CSChord` or `CSArc` (`ExactCurveEpic508.v : ticket_508_carrier_qed_or_qex`). Children `508-a` / `508-b` / `508-c` / `508-d` / `508-f` remain QED. QEX is not owner accept. Epic #508 stays open. Wrap-up is #566. Does not steal `508-e` / `508-g` / `508-h`. Does not remint `CurveSegment`. Does not mint Exact* zoo types.
+
 **Leftover `Ⅰ` (this letter / #609; leftover numeral, not a 522-* board mint).** Mutual vertex-in-open-edge detector `touch_partial_edge_b`. Constructor `TPR_TouchPartialEdge`. The compiled pair is sliver overlap (II nonempty), not a kiss; fill stays `im_unsupported` (load-bearing). Witness `Ⅰ-partial-edge-bar1`. Completeness stays false: live 522-j / 522-m seed is an unnamed CCW pair (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). `classify_triangle_pair` arm is `True` — do not prove facts through it. Leftover `Ⅱ` is the obtuse-at-v certificate (`RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`). Leftover `Ⅲ` is the exterior-side one-sided T (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). Leftover `Ⅳ` is the interior-side stem (`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`). Do not remint leftover `Ⅱ`. Do not remint to a Touches fill. Epic `#522` stays OPEN.
 
 **Leftover `Ⅱ` (this letter; leftover numeral, not a 522-* board mint).** Closed-cone vertex kiss A=`(0,0)(2,0)(0,2)` vs B=`(0,0)(-2,0)(1,-1)`. Both CCW. Shared origin. Cone `side_dot = 0` on `(1,-1)`. Detector `touch_obtuse_vertex_b` is a closed cone plus `negb cone_separates_b` — not a remint of `cone_separates_b` / `touch_vertex_b` (#572). Constructor `TPR_TouchObtuse`. Witness `Ⅱ-obtuse-cex`. Fill stays `im_unsupported` (load-bearing: do not emit `FFFF1FFF2`). False on `classified_hard_pairs` (including #572), leftover `Ⅰ`, leftover `Ⅲ`, leftover `Ⅳ`, and the #567 contains pair. `classify_triangle_pair` arm is `True` — leftover `Ⅰ` honesty, not CONTEXT Bar 1. Completeness stays false on an unnamed CCW pair after leftover `Ⅴ` (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Leftover `Ⅱ` itself is QED (`RelateNGTouchObtuse.v : leftover_ii_qed_or_qex`). Epic #522 stop is QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`). Do not remint leftover `Ⅰ` / leftover `Ⅲ` / leftover `Ⅳ`. Do not mint `522-n`. Do not mint `Ⅵ`. Epic `#522` stays OPEN.
@@ -1779,3 +1781,20 @@ names do not shrink.  This letter does not retire epic 508 (that is
 | `BernsteinBasis.v : bern_partition` (+ `bern_nonneg`, `bern2_partition`, `bern3_partition`) | **Partition of unity:** `sum_f_R0 (bern n · t) n = 1` by the de Casteljau recurrence; closed-form `bern2_*` / `bern3_*` match `bern 2` / `bern 3` `[exact]` | 3 |
 | `BernsteinBasis.v : bern_elevate_2` (+ `elevate_ctrl`, `Bezier3Length.v : bezier3_elevation_pointwise`) | **Degree elevation n=2:** the elevated cubic Bernstein combo equals the quadratic on each coordinate; `bezier3_elevation_pointwise` is that instance (Bible A1), not a fresh field identity `[exact]` | 3 |
 | `BernsteinBasis.v : chord_le_of_combo3` (+ `norm_triple_le`, `norm_pair_le`, `scaled_diff_norm`, `bern2_weighted_den_lb`) | **Shared combo / rational floor:** `|Δ| = ds·|Σ c_i v_i| ≤ ds·Σ c_i |v_i|`; quadratic weighted denominator ≥ `wmin` from partition of unity `[exact]` | 3 |
+
+## Issue #508 — QED ∨ QEX stop (`ExactCurveEpic508.v`) <!-- feat:arc-len geom:arc,cs -->
+
+Epic #508 stop is zoo-on-`CurveSegment` (QED) or a documented missing
+constructor (QEX). The year-1 carrier is `CSChord | CSArc`. Ellipse,
+Bézier, clothoid, and NURBS have no constructor — the issue's
+carrier blocker, not a `CurveSegment` remint and not an Exact*
+zoo type. Discharged QEX on the ellipse. Chord and circular-arc
+inhabit; every inhabitant is one of those two. QEX is not owner
+accept. Does not steal `508-e` / `508-g` / `508-h`. Wrap-up is #566.
+
+**NTS RGR Board catalog (#508 children).** Epic stop witness `508-qed-qex` (claimId `508`, board `#508`). Headline `ExactCurveEpic508.v : ticket_508_qed_or_qex`. Carrier half `ExactCurveEpic508.v : ticket_508_carrier_qed_or_qex`. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, and `508-f` = #562 remain QED. Remaining children `508-e` `508-g` `508-h` are not this letter.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ExactCurveEpic508.v : ticket_508_qed_or_qex` (+ `ellipse_not_curve_segment`, `clothoid_not_curve_segment`, `bezier_not_curve_segment`, `nurbs_not_curve_segment`) | **Epic #508 QED ∨ QEX:** every Bible zoo tag inhabits `CurveSegment`, or a documented tag does not. Discharged QEX on the ellipse `[exact]` | 3 |
+| `ExactCurveEpic508.v : ticket_508_carrier_qed_or_qex` (+ `curve_segment_chord_or_arc`) | **Year-1 circular carrier:** chord and circular-arc inhabit; every `CurveSegment` is `CSChord` or `CSArc` `[exact]` | 3 |
