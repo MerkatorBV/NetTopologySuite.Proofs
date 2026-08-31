@@ -1,19 +1,23 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNGUnnamedCex
    ----------------------------------------------------------------------------
-   Leftover Ⅵ classify (same-cone) plus the unnamed lens completeness
-   cex after leftover Ⅵ (not leftover `Ⅶ`).
+   Leftover Ⅵ inhabitance (same-cone) plus the unnamed lens
+   completeness cex after leftover Ⅵ. Leftover `Ⅶ` is already
+   written as #642; this file does not mint it.
 
    Same-cone pair: A = (0,0)(2,0)(0,2), B = (0,0)(3,1)(1,3). Shared
    origin. Both remaining B verts have side_dot > 0 vs nA = (2,2) —
-   same cone, outside A; interiors meet. Classifies TPR_SameCone.
+   same-sign same half, outside A; interiors meet. Inhabits
+   TPR_SameCone. Not a denotation, not TPR_SameCone ⇒ interiors
+   meet, not an overlap remint. overlap_b stays vertex-stab.
 
    Live cex: A = (0,0)(3,0)(0,3), B = (2,-1)(2,2)(-1,2). Both CCW,
    interiors meet at (1,1), no shared vertex, no vertex-in-interior.
    Lives here so RelateNGTouchVertexRegime.v stays under the
    1234-line split gate and RelateNGComplete.v stays at the
-   monolith floor. Do not mint leftover `Ⅶ`. Do not steal 522-j /
-   522-m.
+   monolith floor. unnamed_ccw_no_separator uses leftover_vi_sep_false
+   (false_l only sees q1; flocq will not close a permuted rewrite).
+   Do not steal 522-j / 522-m.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
@@ -329,7 +333,7 @@ Proof.
   reflexivity.
 Qed.
 
-(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"same_cone_pair_samecone","title":"Leftover Ⅵ same-cone classifies as TPR_SameCone","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
+(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"same_cone_pair_samecone","title":"Leftover Ⅵ same-sign spill inhabits TPR_SameCone (not a same-cone denotation)","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
 
 (* -------------------------------------------------------------------------- *)
 (* Unnamed lens completeness cex after leftover Ⅵ. Not leftover `Ⅶ`.       *)
@@ -409,30 +413,56 @@ Proof.
   reflexivity.
 Qed.
 
+(* Kill [edge_separates_b] by leftover-Ⅵ E6 style: [lra] the first
+   [Rlt_dec] that is not actually [< 0]. [false_l] only sees q1.
+   The lens pair has B-(2,-1) opposite A's base; a permuted rewrite
+   misses the unfolded term and flocq will not close q1. *)
+Ltac leftover_vi_sep_false :=
+  unfold edge_separates_b, opposite_sides_b, cross; cbn [px py];
+  first
+    [ destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
+        [ exfalso; lra | reflexivity ]
+    | destruct (Rlt_dec (_ * _) 0) as [_ | _];
+        [ destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
+            [ exfalso; lra | reflexivity ]
+        | reflexivity ]
+    | destruct (Rlt_dec (_ * _) 0) as [_ | _];
+        [ destruct (Rlt_dec (_ * _) 0) as [_ | _];
+            [ destruct (Rlt_dec (_ * _) 0) as [Hbad | _];
+                [ exfalso; lra | reflexivity ]
+            | reflexivity ]
+        | reflexivity ] ].
+
 Lemma unnamed_ccw_no_separator :
   some_edge_separates_b
     (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)
     (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false.
 Proof.
   unfold some_edge_separates_b.
-  rewrite (edge_separates_b_false_l (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)
-             (mkPoint 2 2) (mkPoint 2 (-1)) (mkPoint (-1) 2)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
-  rewrite (edge_separates_b_false_l (mkPoint 3 0) (mkPoint 0 3) (mkPoint 0 0)
-             (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
-  rewrite (edge_separates_b_false_l (mkPoint 0 3) (mkPoint 0 0) (mkPoint 3 0)
-             (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
-  rewrite (edge_separates_b_false_l (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2)
-             (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
-  rewrite (edge_separates_b_false_l (mkPoint 2 2) (mkPoint (-1) 2) (mkPoint 2 (-1))
-             (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
-  rewrite (edge_separates_b_false_l (mkPoint (-1) 2) (mkPoint 2 (-1)) (mkPoint 2 2)
-             (mkPoint 3 0) (mkPoint 0 0) (mkPoint 0 3)).
-  2: { apply opposite_sides_b_false_of_nlt. unfold cross; cbn [px py]; lra. }
+  assert (E1 : edge_separates_b (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)
+                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false)
+    by leftover_vi_sep_false.
+  rewrite E1.
+  assert (E2 : edge_separates_b (mkPoint 3 0) (mkPoint 0 3) (mkPoint 0 0)
+                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false)
+    by leftover_vi_sep_false.
+  rewrite E2.
+  assert (E3 : edge_separates_b (mkPoint 0 3) (mkPoint 0 0) (mkPoint 3 0)
+                 (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2) = false)
+    by leftover_vi_sep_false.
+  rewrite E3.
+  assert (E4 : edge_separates_b (mkPoint 2 (-1)) (mkPoint 2 2) (mkPoint (-1) 2)
+                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false)
+    by leftover_vi_sep_false.
+  rewrite E4.
+  assert (E5 : edge_separates_b (mkPoint 2 2) (mkPoint (-1) 2) (mkPoint 2 (-1))
+                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false)
+    by leftover_vi_sep_false.
+  rewrite E5.
+  assert (E6 : edge_separates_b (mkPoint (-1) 2) (mkPoint 2 (-1)) (mkPoint 2 2)
+                 (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3) = false)
+    by leftover_vi_sep_false.
+  rewrite E6.
   reflexivity.
 Qed.
 
