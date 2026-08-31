@@ -63,6 +63,9 @@
    CI death on b1fa7ac L438: [symmetry; apply Rsqr_neg] looks
    for [x² = (-x)²] against [(-(x-y))² = (x-y)²]. Do not
    use [Rsqr_neg]; expand [(-d)*(-d)] with [Ropp_mult_distr].
+   CI death on 2e24a57 L436: [Ropp_mult_distr_l] / unary minus
+   notation does not expose [- ((x-y)*-(x-y))]. Use
+   [eq_sym (Rmult_opp_opp d d)] instead of rewriting.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -433,10 +436,7 @@ Lemma sq_minus_comm : forall x y,
 Proof.
   intros x y.
   rewrite (opp_minus x y).
-  rewrite (Ropp_mult_distr_l (x - y) (- (x - y))).
-  rewrite (Ropp_mult_distr_r (x - y) (x - y)).
-  rewrite Ropp_involutive.
-  reflexivity.
+  apply (eq_sym (Rmult_opp_opp (x - y) (x - y))).
 Qed.
 
 Lemma fresnel_chord_as_origin : forall Cx Cy s t,
