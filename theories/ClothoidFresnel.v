@@ -51,6 +51,9 @@
    / [add_mul_distr], not [ring]. Same class: [1*(t-s)] is
    [Rmult_1_l], and [e * sqrt 2 = K * gap * gap] is [Rmult_comm]
    / [Rmult_assoc], not [ring].
+   CI death on bb7888f L365: [fresnel_vx_lipschitz] yields
+   [M*(u-s)]; [increment_tracks_left] asks for the uniform
+   [M*(t-s)]. Lift with [Rmult_le_compat_l] and [u<=t].
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -362,8 +365,12 @@ Proof.
            (fresnel_window_lip a b) Hx
            (fresnel_window_lip_nonneg a b) Has Hst Htb).
   intros u Hus Hut.
-  apply (fresnel_vx_lipschitz a b s u Has Hus).
-  apply (Rle_trans u t b Hut Htb).
+  eapply Rle_trans.
+  - apply (fresnel_vx_lipschitz a b s u Has Hus).
+    apply (Rle_trans u t b Hut Htb).
+  - apply Rmult_le_compat_l.
+    + apply fresnel_window_lip_nonneg.
+    + lra.
 Qed.
 
 Lemma fresnel_Cy_tracks : forall Cx Cy a b s t,
@@ -377,8 +384,12 @@ Proof.
            (fresnel_window_lip a b) Hy
            (fresnel_window_lip_nonneg a b) Has Hst Htb).
   intros u Hus Hut.
-  apply (fresnel_vy_lipschitz a b s u Has Hus).
-  apply (Rle_trans u t b Hut Htb).
+  eapply Rle_trans.
+  - apply (fresnel_vy_lipschitz a b s u Has Hus).
+    apply (Rle_trans u t b Hut Htb).
+  - apply Rmult_le_compat_l.
+    + apply fresnel_window_lip_nonneg.
+    + lra.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
