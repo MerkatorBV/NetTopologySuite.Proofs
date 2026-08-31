@@ -15,6 +15,7 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 | P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; knot-span additivity; conditional primitive | Qed, 3-axiom |
 | P2 | arc | `theories/ArcMidSweep.v` | `valid_arc_sweep_nonzero`; `arc_mid_on_circle_param` | Qed, Category C (atan2; removal tracks AngleBetween) |
 | — | framework | `theories/BernsteinBasis.v` | `bern_partition`; `bern_elevate_2` (n=2 instance of `elevate_ctrl`); `bezier3_elevation_pointwise` re-proved through it | Qed, 3-axiom (#562 / 508-f) |
+| — | stop | `theories/ExactCurveEpic508.v` | `ticket_508_qed_or_qex` — zoo-on-CurveSegment (QED) or missing constructor (QEX); discharged QEX on the ellipse | Qed, 3-axiom (508-qed-qex) |
 
 Oracle `B` stays 8-coord cubic.  `red_length_unified_zoo_tests.py` is
 untouched.  No new 64-a r·θ definition.
@@ -54,3 +55,13 @@ exactness is the n=2 instance of `elevate_ctrl` via `bern_elevate_2`.
 Non-negativity is `Rmult_le_pos` / `lra` — Flocq 4.2.1 `nra` cannot
 find a cubic witness (CI death on 48a5c3f). Does not retire epic 508.
 Wrap-up is #566.
+
+## 508 QED ∨ QEX stop
+
+`theories/ExactCurveEpic508.v` is the ticket-named stop (same shape
+as #522 / #523). QED is zoo-on-`CurveSegment`. QEX is a documented
+missing constructor. Discharged QEX on the ellipse — the issue's
+carrier blocker (`CSChord | CSArc`). Chord and circular-arc inhabit;
+every inhabitant is one of those two. Not a `CurveSegment` remint.
+Not an Exact* zoo type. QEX is not owner accept. Does not steal
+508-e / 508-g / 508-h. Wrap-up is #566.

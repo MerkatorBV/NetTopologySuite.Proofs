@@ -78,6 +78,10 @@ theories/ClothoidLength.v
 # remains clothoid-halley-coq / ADR-0001 Technique park; never global.
 # 3-axiom.
 theories/ClothoidLength_unit.v
+# Epic #508 ticket-named QED ∨ QEX stop. Carrier is CSChord | CSArc.
+# Discharges QEX on the ellipse (no CurveSegment constructor).
+# Does not remint CurveSegment / Exact* zoo types. No Admitted.
+theories/ExactCurveEpic508.v
 # #508 NURBS rung 1: the degree-2 single-span N token (rational quadratic
 # Bezier, the conic form) against the CurveLength spec.  Equal-weights
 # degeneration as an is_curve_length iff (chained to the elevated cubic),
