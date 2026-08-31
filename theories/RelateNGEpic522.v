@@ -5,10 +5,11 @@
    as ticket 523).
 
    QEX: completeness of CCW `triangle_pair_regime` or a documented
-   unsupported pair. `ticket_522_qed_or_qex` restates
-   `RelateNGTouchMixedCone.v : triangle_pair_regime_ccw_stop` and
-   discharges right on the unnamed pair after leftover `Ⅴ`
-   (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`).
+   unsupported pair. `ticket_522_qed_or_qex` discharges right on the
+   unnamed pair after leftover `Ⅴ`
+   (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Not a
+   remint of leftover `Ⅴ`'s `triangle_pair_regime_ccw_stop` and not
+   a remint of `522-j`.
 
    QED: leftover `Ⅰ`–`Ⅴ` on `main` are classified.
    `ticket_522_classified_qed_or_qex` discharges left. Does not
@@ -33,14 +34,14 @@
      Assisted-by: Cursor Agent
    ========================================================================== *)
 
-From Stdlib Require Import Reals.
+From Stdlib Require Import Reals Lra.
 From NTS.Proofs Require Import Distance GeneralTriangleSeparation
-  RelateMatrixTriangle RelateNGCore RelateNGTouchMixedCone.
+  RelateMatrixTriangle RelateNGCore RelateNGUnnamedCex RelateNGTouchMixedCone.
 Local Open Scope R_scope.
 
 (* Epic #522 stop: completeness (QED) or a documented CCW
-   unsupported pair (QEX). Discharged QEX — unnamed after leftover
-   `Ⅴ`, not leftover `Ⅵ`. Not a 522-j remint. *)
+   unsupported pair (QEX). Discharged QEX on the unnamed pair after
+   leftover `Ⅴ`. Not leftover `Ⅵ`. Not a 522-j remint. *)
 (* WITNESS {"claimId":"522","topic":"relate","lemma":"ticket_522_qed_or_qex","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed pair","file":"theories/RelateNGEpic522.v","witness":"522-qed-qex","board":"#522"} *)
 Theorem ticket_522_qed_or_qex :
   (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
@@ -55,7 +56,11 @@ Theorem ticket_522_qed_or_qex :
      triangle_pair_regime ax ay bx by_ cx cy dx dy ex ey fx fy
        = TPR_Unsupported).
 Proof.
-  exact triangle_pair_regime_ccw_stop.
+  right.
+  exists 0, 0, 2, 0, 0, 2, 0, 0, 3, 1, 1, 3.
+  split; [unfold gdbl; lra|].
+  split; [unfold gdbl; lra|].
+  exact unnamed_ccw_pair_unsupported.
 Qed.
 
 (* Named leftovers on main are classified (QED) or the unnamed

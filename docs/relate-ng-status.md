@@ -112,10 +112,10 @@ disguised as disjointness — that was #530.
   Do **not** mint `522-n`.
 - **Obtuse-at-v certificate** — leftover `Ⅱ` classified.
   Headline `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`.
-  Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
-  (`RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed pair after leftover `Ⅴ`. Do not
-  bucket with leftover `Ⅰ`.
+  Fill stays `im_unsupported`. Leftover `Ⅱ` is QED
+  (`RelateNGTouchObtuse.v : leftover_ii_qed_or_qex`). Epic #522
+  stop is QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`).
+  Do not bucket with leftover `Ⅰ`.
 - **Mixed-cone certificate** — leftover `Ⅴ` classified.
   Headline `RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`.
   Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
