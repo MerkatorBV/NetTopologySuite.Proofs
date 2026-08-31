@@ -1,14 +1,15 @@
 (* ============================================================================
    NetTopologySuite.Proofs.ClothoidFresnel
    ----------------------------------------------------------------------------
-   Issue #564 / claimId 508-e: instantiate the #561 speed-integral pack
-   on the genuine Fresnel clothoid
+   Issue #564 / claimId 508-e: conditional pack instance; no inhabitant.
+   Instantiates the #561 speed-integral pack on the clothoid-shaped
+   integrands (cos,sin)(t²/2). Not a Fresnel construction: there is
+   still no Cx / Cy in the corpus, and Route 1 does not produce RInt.
 
      g(t) = (Cx t, Cy t)
      Cx' = cos(t²/2)    Cy' = sin(t²/2)
 
-   Route 1 does not construct the Fresnel integrals (no Coquelicot /
-   RInt; ADR-0001 route D stays consumer-gated). This letter discharges
+   ADR-0001 route D stays consumer-gated. This letter discharges
    the two analytic pack premises at unit speed σ ≡ 1,
    F = fun t => 1 * t (matches constant_speed_premises; not bare id):
 
@@ -17,7 +18,7 @@
      chord_rate_tight (fresnel_curve Cx Cy) (fun _ => 1)
 
    The remaining Technique-park hypothesis is that Cx, Cy are primitives
-   of the Fresnel integrands (increment_squeezed). The heading t²/2 is
+   of those integrands (increment_squeezed). The heading t²/2 is
    Lipschitz on any compact window, so a fine gap makes the increment
    a first-order match to the unit velocity and the chord realizes the
    gap. Then
@@ -25,11 +26,14 @@
      fresnel_primitives Cx Cy a b
        → is_curve_length (fresnel_curve Cx Cy) a b (b − a).
 
-   Witness: any such primitives on the [0, 1] window have metric
-   length exactly 1. The same premises discharge ClothoidLength.v's
-   H_unit_chord / H_unit_approx (never globally — the Euler spiral
-   wraps). ClothoidLength_unit.v's straight-line inhabitant stays;
-   this is the first curved instance.
+   The [0,1] specialization peels b−a by Rminus_0_r; it is not an
+   independent witness. fresnel_discharges_clothoid_window is the same
+   statement through H_unit_chord / H_unit_approx (K-token wiring,
+   not extra geometric content). Ellipse #563 already instantiated
+   the same pack on a curved speed; this letter is the first
+   clothoid-shaped integrand, not the first curved pack use.
+   ClothoidLength_unit.v's straight line remains the only concrete
+   inhabitant of the clothoid window.
 
    Windowing is essential. Do not strengthen to all of R.
    No CurveSegment growth, no ADR-0004 remint, no TRIAGE flip.
