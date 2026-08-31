@@ -68,6 +68,12 @@ Roman numerals. Do **not** mint `522-n`.
   Leftover `Ⅳ` is the interior-side stem
   (`RelateNGComplete.v : interior_side_pair_inhabits`).
 - **Empty/empty relate** — parked on the epic.
+- **ISO `ST_Relate` QEX Ⅰ–Ⅹ** — sibling catalog
+  ([`map-iso-st-relate-qex.md`](map-iso-st-relate-qex.md)). Stacked
+  numerals, not leftover `Ⅰ`–`Ⅹ`. That catalog’s `Ⅹ` is
+  `RelateCurveMatrix.v : geom_de9im_pointset`, not leftover `Ⅹ` /
+  `522-n`. Do not mint `522-n`. Do not write those numerals into
+  [`map-522-leftovers.md`](map-522-leftovers.md).
 
 ## Surfaces that must agree
 
