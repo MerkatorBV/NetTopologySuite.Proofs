@@ -263,7 +263,7 @@ Proof.
       + exact golden_half_span0.
       + exact golden_half_span1. }
   unfold Ls, list_sum in H. simpl in H.
-  replace (PI / 2 + (PI / 2 + 0)) with PI in H by field.
+  replace (PI / 2 + (PI / 2 + 0)) with PI in H by lra.
   exact H.
 Qed.
 
