@@ -16,6 +16,7 @@ children have their own live gate: [`docs/scout/map-522.md`](scout/map-522.md).
 | Is this theorem in the corpus? | [`verified-claims.md`](verified-claims.md) `#67` / `#522` rows |
 | What is the specified interior? | [ADR-0003](adr/ADR-0003-two-tier-interior-spec-parity-computation.md) |
 | What is the next #522 grab? | [`scout/map-522.md`](scout/map-522.md) |
+| What is the #522 design of record? | [`scout/522-status-2026-08-31.md`](scout/522-status-2026-08-31.md) |
 | Does #67 itself retire? | [`scout/tickets/11-retire-67-second-pass.md`](scout/tickets/11-retire-67-second-pass.md) |
 | Rect + triangle touch cells | [`rect-triangle-touch-milestone.md`](rect-triangle-touch-milestone.md) |
 | Clothoid leftovers | [`clothoid-open-questions-triage.md`](clothoid-open-questions-triage.md) |
@@ -124,9 +125,13 @@ disguised as disjointness — that was #530.
   Fill stays `im_unsupported`.
 - **Lens certificate** — leftover `Ⅶ` classified.
   Headline `RelateNGTouchLens.v : triangle_pair_regime_lens`.
+  Fill stays `im_unsupported`.
+- **Inside certificate** — leftover `Ⅷ` classified.
+  Headline `RelateNGTouchInside.v : triangle_pair_regime_inside`.
   Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
-  (`RelateNGTouchLens.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed inside pair. Do not mint leftover `Ⅷ`.
+  (`RelateNGTouchInside.v : triangle_pair_regime_ccw_stop`),
+  discharged QEX on an unnamed same-side shared-edge pair.
+  Do not mint leftover `Ⅸ`.
 - **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with two
   witnesses. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token
