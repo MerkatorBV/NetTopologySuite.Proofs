@@ -2,7 +2,9 @@
 
 A wayfinder map. Charted 2026-08-30. This is **not** a second copy of
 [`map-522.md`](map-522.md) and it is **not** a `wayfinder:map` GitHub
-issue. The epic comment stays the design of record. #589 stays closed.
+issue. The living design of record is
+[`522-status-2026-08-31.md`](522-status-2026-08-31.md)
+(the 2026-08-29 spec comment stays the original ticket map). #589 stays closed.
 
 > **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
 > historical. Do **not** mint `522-n`. Leftover ids are precomposed

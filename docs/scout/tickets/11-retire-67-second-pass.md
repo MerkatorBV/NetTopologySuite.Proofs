@@ -31,8 +31,10 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
      (`RelatePrepared.v : prepared_evaluate_cache_short_circuit`).
    - ✔ Bar 2 gtri cells on the wired regimes (disjoint / contains /
      touch-edge / overlap `*_ogc`). Classifier pins are **not** reminted.
-   - ✔ Completeness is false (T-junction; obtuse-at-v)
-     (`RelateNGComplete.v : triangle_pair_regime_incomplete_tjunction`).
+   - ✔ Completeness is false (unnamed same-side shared-edge pair after
+     leftover `Ⅷ`)
+     (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`;
+     stop `RelateNGTouchInside.v : triangle_pair_regime_ccw_stop`).
    - ~ Residue that is **not** a #522 honesty hole: fill remints, leftover
      certificates, `TPR_TouchEdge` exclusivity (#567 carve), nine-cell
      `geom_de9im_pointset`.

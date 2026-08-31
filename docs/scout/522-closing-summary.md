@@ -83,7 +83,11 @@ Roman numerals. Do **not** mint `522-n`.
 - TRIAGE row: `TRIAGE_NTS_JTS_ISSUES.md` `#522`
 - Ledger: `docs/verified-claims.md` `#522` catalog + split paragraphs
 - Living map: `docs/scout/map-522.md`
+- Leftovers chart: `docs/scout/map-522-leftovers.md`
 - Scholar Sam: `docs/relate-ng-status.md`
 - Ticket 11 precondition 1: `docs/scout/tickets/11-retire-67-second-pass.md`
+- Living design of record: [`522-status-2026-08-31.md`](522-status-2026-08-31.md)
+  (paste onto GitHub #522 when the tracker accepts a write; the
+  2026-08-29 spec comment stays the original ticket map)
 
 Prose gate: `scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`.
