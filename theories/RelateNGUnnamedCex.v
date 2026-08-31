@@ -2,8 +2,9 @@
    NetTopologySuite.Proofs.RelateNGUnnamedCex
    ----------------------------------------------------------------------------
    Leftover Ⅵ classify (same-cone), leftover Ⅶ classify (lens),
-   leftover Ⅷ classify (inside). Leftover Ⅸ nest / unnamed
-   swap live in RelateNGNestCex.v (re-exported here).
+   leftover Ⅷ classify (inside). Leftover Ⅸ nest, leftover
+   Ⅹ / 522-n swap, and the unnamed identical cex live in
+   RelateNGNestCex.v (re-exported here).
 
    Same-cone pair: A = (0,0)(2,0)(0,2), B = (0,0)(3,1)(1,3). Shared
    origin. Both remaining B verts have side_dot > 0 vs nA = (2,2) —
@@ -17,9 +18,9 @@
    strictly inside B; no B vertex in A; no edge crossings.
    Classifies TPR_Inside.
 
-   Nest pair and the unnamed swap live in RelateNGNestCex.v
-   (re-exported). Do not mint leftover `Ⅹ`. Do not steal
-   522-j / 522-m.
+   Nest pair, leftover Ⅹ swap, and the unnamed identical cex
+   live in RelateNGNestCex.v (re-exported). Do not mint leftover
+   `Ⅺ`. Do not steal 522-j / 522-m.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 

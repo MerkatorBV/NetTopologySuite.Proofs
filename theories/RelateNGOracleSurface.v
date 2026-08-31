@@ -14,7 +14,7 @@
    (`TPR_TouchPartialEdge`), leftover `Ⅲ`
    (`TPR_TouchOnesided`), and leftover `Ⅱ`
    (`TPR_TouchObtuse` / `TPR_MixedCone` / `TPR_SameCone` /
-   `TPR_Lens` / `TPR_Inside` / `TPR_Nest`) stay
+   `TPR_Lens` / `TPR_Inside` / `TPR_Nest` / `TPR_SwapNest`) stay
    on the token side.
 
    Green (Qed):
@@ -383,12 +383,21 @@ Proof.
   exact encode_wire_unsupported.
 Qed.
 
+Theorem triangle_touch_swapnest_wire :
+  triangle_pair_wire TPR_SwapNest = RWR_Unsupported.
+Proof.
+  unfold triangle_pair_wire.
+  rewrite triangle_pair_fill_touch_swapnest_eq.
+  exact encode_wire_unsupported.
+Qed.
+
 (* TPR_TouchPartialEdge / TPR_TouchOnesided / TPR_TouchObtuse /
-   TPR_MixedCone / TPR_SameCone / TPR_Lens / TPR_Inside / TPR_Nest
+   TPR_MixedCone / TPR_SameCone / TPR_Lens / TPR_Inside / TPR_Nest /
+   TPR_SwapNest
    are classified but fill is still the token. Keep them excluded
    so a matrix decode cannot swallow leftover Ⅰ / leftover Ⅲ /
    leftover Ⅱ / leftover Ⅴ / leftover Ⅵ / leftover Ⅶ /
-   leftover Ⅷ / leftover Ⅸ. *)
+   leftover Ⅷ / leftover Ⅸ / leftover Ⅹ. *)
 Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_Unsupported ->
   r <> TPR_TouchPartialEdge ->
@@ -399,9 +408,10 @@ Theorem classified_triangle_is_matrix : forall r,
   r <> TPR_Lens ->
   r <> TPR_Inside ->
   r <> TPR_Nest ->
+  r <> TPR_SwapNest ->
   exists w, triangle_pair_wire r = RWR_Matrix w.
 Proof.
-  intros r H Hu Ho Hob Hm Hs Hl Hi Hn.
+  intros r H Hu Ho Hob Hm Hs Hl Hi Hn Hsn.
   destruct r.
   - exists wm_disjoint; exact triangle_disjoint_wire.
   - exists wm_overlap; exact triangle_overlap_wire.
@@ -416,6 +426,7 @@ Proof.
   - contradiction Hl; reflexivity.
   - contradiction Hi; reflexivity.
   - contradiction Hn; reflexivity.
+  - contradiction Hsn; reflexivity.
   - contradiction H; reflexivity.
 Qed.
 
