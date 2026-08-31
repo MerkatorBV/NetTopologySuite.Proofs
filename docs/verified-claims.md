@@ -1827,3 +1827,36 @@ Does not remint SpeedIntegral.
 |---|---|---|
 | `ClothoidFresnel.v : fresnel_is_curve_length` (+ `fresnel_chord_rate`, `fresnel_speed_integral_premises`, `fresnel_primitives`) | **Conditional pack instance (#508/#564, claimId: 508-e, witness: 508-e-fresnel):** if `increment_squeezed Cx fresnel_vx` and `increment_squeezed Cy fresnel_vy` on `[a,b]`, then `is_curve_length (fresnel_curve Cx Cy) a b (b − a)`. Pack `F = fun t => 1 * t`. Speed constantly 1 (`cos²+sin²=1`). No inhabitant, no Heine–Cantor, no Coquelicot. Does not retire epic 508 `[conditional]` | 3 |
 | `ClothoidFresnel.v : fresnel_unit_window_length` | **`[0,1]` specialization:** same theorem with `1 − 0` peeled by `Rminus_0_r`; still conditional on primitives. Not an independent witness `[conditional]` | 3 |
+
+## Issue #508 — multi-span NURBS: knot-vector additivity (`NurbsKnotSpans.v`) <!-- feat:arc-len geom:cs -->
+
+#565 / claimId `508-g` is the n-span knot-vector carrier on top of
+`CurveLength.v : curve_length_additive`.  A knot vector is a weakly
+increasing `chain`.  `span_lengths` pairs one `is_curve_length` per
+consecutive window.  `NurbsKnotSpans.v : nurbs_spans_additive` inducts
+on the interior-knot list — empty interior is a single span; cons pays
+one `curve_length_additive` and the IH.  This is list/chain work, not
+new analysis.
+
+`NurbsGeneralLength.v : nurbs_knot_span_additive` stays the two-window
+special case on one curve.  This letter does not remint that identifier
+and does not evaluate Cox-de Boor multi-span NURBS.  Oracle `N` stays
+single-span.
+
+Instance: two golden quadratic spans glued at `(0,1)` on knots
+`[0; 1; 2]`.  Span 0 is `NurbsConicExact.v : nurbs2_golden_quarter_length`.
+Span 1 is the rotate-90 image (isometry of polyline lengths).  The
+piecewise `golden_half` agrees with each span on its window (glue at
+the knot).  `NurbsKnotSpans.v : golden_half_circle_length` is
+`π/2 + π/2 = π` — two 508-a quarters, not a new `π` theorem.
+Category C (`atan`) through 508-a only; `nurbs_spans_additive` stays
+3-axiom.  Does not retire epic 508 (that is #566).  Does not steal
+508-e / 508-h.  Board `#564` stays OPEN.  Does not flip TRIAGE
+M-LEN-ZOO.
+
+**NTS RGR Board catalog (#508 children).** `508-g` = #565 / multi-span NURBS knot-vector additivity (witness `508-g-nurbs-spans`). Headline `NurbsKnotSpans.v : nurbs_spans_additive`. Instance `NurbsKnotSpans.v : golden_half_circle_length`. Board pointer stays #565. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, `508-e` = #564 (board OPEN; no inhabitant), and `508-f` = #562 are on `main`. Remaining child is `508-h` only.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `NurbsKnotSpans.v : nurbs_spans_additive` (+ `knot_vector`, `span_lengths`, `list_sum`) | **Knot-vector span additivity (#508/#565, claimId: 508-g, witness: 508-g-nurbs-spans):** a weakly increasing knot chain with one `is_curve_length` per consecutive window has total metric length the sum of the span lengths — induction on interior knots over `curve_length_additive`. Not a remint of `nurbs_knot_span_additive`. Not Cox-de Boor. Oracle `N` stays single-span. Does not retire epic 508 `[exact]` | 3 |
+| `NurbsKnotSpans.v : golden_half_circle_length` (+ `golden_q2_length`, `golden_half_span0`, `golden_half_span1`, `golden_half_glue`) | **Two golden quarters:** first-quadrant + rotate-90 second-quadrant NURBS on `[0,2]` have metric length `π`. Glue at `(0,1)`. Category C through 508-a `atan`. Not a new `π` theorem `[exact]` | 4 |

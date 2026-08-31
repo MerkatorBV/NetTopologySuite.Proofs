@@ -103,6 +103,11 @@ theories/NurbsConicExact.v
 # conditional exact primitive through curve_length_of_primitive.
 # Single-span oracle N.  No ExactNurbsSegment.  3-axiom.
 theories/NurbsGeneralLength.v
+# #508-g / #565: knot-vector carrier + induction over spans, and the
+# two-golden-quarter half-circle instance (π/2 + π/2 = π).  Not a remint
+# of NurbsGeneralLength.nurbs_knot_span_additive.  Not Cox-de Boor.
+# Oracle N stays single-span.  Instance is Category C via 508-a atan.
+theories/NurbsKnotSpans.v
 # #508 arc P2 leftovers from #552: valid_arc ⇒ arc_sweep ≠ 0, and
 # arc_mid is a parameterized circumcircle point.  atan2 lane, 4-axiom
 # (docs/audit-exceptions.txt).  Does not start a new 64-a r·θ.
