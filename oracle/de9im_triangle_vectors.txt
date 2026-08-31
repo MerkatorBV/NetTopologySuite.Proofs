@@ -15,6 +15,8 @@
 #   TPR_SameCone          UNSUPPORTED  (leftover Ⅵ; fill not named)
 #   TPR_Lens              UNSUPPORTED  (leftover Ⅶ; fill not named)
 #   TPR_Inside            UNSUPPORTED  (leftover Ⅷ; fill not named)
+#   TPR_Nest              UNSUPPORTED  (leftover Ⅸ; fill not named)
+#   TPR_SwapNest          UNSUPPORTED  (leftover Ⅹ / 522-n; fill not named)
 #
 # Provenance (classifier witness pairs, not geometry computation):
 #   DISJOINT      #571 / 522-c sentinel (the #530 pair, now classified)
@@ -28,7 +30,9 @@
 #   SAME_CONE     leftover Ⅵ same-cone — classified, fill still UNSUPPORTED
 #   LENS          leftover Ⅶ lens — classified, fill still UNSUPPORTED
 #   INSIDE        leftover Ⅷ inside — classified, fill still UNSUPPORTED
-#   DECLINE       unnamed same-side shared-edge — NOT leftover Ⅷ (now classified)
+#   NEST          leftover Ⅸ nest — classified, fill still UNSUPPORTED
+#   SWAPNEST      leftover Ⅹ / 522-n swap nest — classified, fill still UNSUPPORTED
+#   DECLINE       unnamed identical CCW pair — NOT leftover Ⅹ (now classified)
 #
 # Oracle mode: RELATE_MATRIX now prints UNSUPPORTED for decline keys.
 
@@ -114,9 +118,23 @@ TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_Inside
 NOTES Leftover Ⅷ inside. Classified TPR_Inside; fill not named. Not a matrix.
 
-REGIME DECLINE
+REGIME NEST
 TRI_A 0 0  4 0  0 4
 TRI_B 0 0  4 0  1 1
 TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_Nest
+NOTES Leftover Ⅸ nest. Classified TPR_Nest; fill not named. Not a matrix.
+
+REGIME SWAPNEST
+TRI_A 0 0  4 0  1 1
+TRI_B 0 0  4 0  0 4
+TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_SwapNest
+NOTES Leftover Ⅹ / 522-n swap nest. Classified TPR_SwapNest; fill not named. Not a matrix.
+
+REGIME DECLINE
+TRI_A 0 0  4 0  0 4
+TRI_B 0 0  4 0  0 4
+TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_Unsupported
-NOTES Unnamed same-side shared-edge pair after leftover Ⅷ (not leftover Ⅸ). Not a matrix. Leftover Ⅷ classifies the inside pair.
+NOTES Unnamed identical CCW pair after leftover Ⅹ (not leftover Ⅺ). Not a matrix. Leftover Ⅹ classifies the swap nest.

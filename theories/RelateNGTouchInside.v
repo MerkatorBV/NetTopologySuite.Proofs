@@ -13,8 +13,8 @@
    stays on `im_unsupported` (load-bearing: do not emit
    `2FFFFFFF2`; that pin is #567). After leftover Ⅶ.
    False on leftover Ⅰ–Ⅶ regimes and the hard pairs (classifier
-   order). Completeness stays false on an unnamed same-side
-   shared-edge pair (not leftover `Ⅸ`). #577 Green is
+   order). Completeness stays false on an unnamed swapped nest
+   pair (not leftover `Ⅹ`). #577 Green is
    completeness (QED) or a documented cex (QEX).
    `triangle_pair_regime_ccw_stop` is that disjunction, discharged
    QEX. Leftover `Ⅷ` itself is QED (`leftover_viii_qed_or_qex`).
@@ -23,7 +23,7 @@
    proved through `classify_triangle_pair`. Do not steal 522-j /
    522-m / 522-f / 522-i / leftover Ⅰ–Ⅶ. Do not remint
    `contains_b` / `cone_separates_b` / `overlap_b`. Do not mint
-   522-n / `Ⅸ`. Do not remint aa_matrix_*.
+   522-n / `Ⅹ`. Do not remint aa_matrix_*.
 
    WITNESS topic: relate · claimId: Ⅷ · witness: Ⅷ-inside-cex
    macro: relate
@@ -280,14 +280,14 @@ Proof.
 Qed.
 
 Theorem unnamed_ccw_still_unsupported :
-  triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 1 1 = TPR_Unsupported.
+  triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 0 4 = TPR_Unsupported.
 Proof.
   exact unnamed_ccw_pair_unsupported.
 Qed.
 
 (* Epic #522 / #577 stop: completeness (QED) or a documented CCW
    unsupported pair (QEX). Discharged QEX — unnamed same-side
-   shared-edge pair, not leftover `Ⅸ`. Leftover-Ⅷ classify does
+   swapped nest pair, not leftover `Ⅹ`. Leftover-Ⅷ classify does
    not take the left. Not a 522-j remint. *)
 (* WITNESS {"claimId":"Ⅷ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed same-side shared-edge pair","file":"theories/RelateNGTouchInside.v","witness":"Ⅷ-inside-cex","board":"leftover-Ⅷ"} *)
 Theorem triangle_pair_regime_ccw_stop :

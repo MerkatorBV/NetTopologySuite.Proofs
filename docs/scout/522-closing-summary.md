@@ -24,7 +24,7 @@ the oracle wire. Never a confident `FFFFFFFFF` for an unclassified pair.
 | Disjoint bar 1 | classified | `RelateNGDisjoint.v : triangle_pair_regime_disjoint` |
 | Vertex-touch bar 1 | classified | `RelateNGTouchVertexRegime.v : triangle_pair_regime_touchvertex` |
 | Contains bar 1 | detector → closed containment | `RelateNGContainsBridge.v : contains_b_ccw_implies_closed_containment` |
-| Completeness | **false** (unnamed same-side shared-edge pair after leftover `Ⅷ`); stop is QED ∨ QEX | `RelateNGTouchInside.v : triangle_pair_regime_ccw_stop` |
+| Completeness | **false** (unnamed identical CCW pair after leftover `Ⅹ` / `522-n`); stop is QED ∨ QEX | `RelateNGTouchSwapNest.v : triangle_pair_regime_ccw_stop` |
 | Disjoint bar 2 gtri | FF2FF1212 | `RelateNGDisjointCells.v : sentinel_disjoint_ogc_gtri_cells` |
 | Contains bar 2 gtri | 212FF1FF2 | `RelateNGContainsCells.v : contains_pair_ogc_gtri_cells` |
 | Touch-edge bar 2 gtri | FF2F11212 | `RelateNGTouchEdgeCells.v : touch_edge_pair_ogc_gtri_cells` |
@@ -35,14 +35,14 @@ the oracle wire. Never a confident `FFFFFFFFF` for an unclassified pair.
 Classifier fills are **not** reminted. The shared pins stay FFFFFFFFF /
 2FFF1FFF2 / 2FFFFFFF2 / FFFF1FFF2. The OGC nine-cell names are `*_ogc`.
 
-Honest decline golden vector is an unnamed same-side shared-edge pair
-after leftover `Ⅷ`, not the #530 pair (that pair is classified disjoint).
+Honest decline golden vector is an unnamed identical CCW pair
+after leftover `Ⅹ` / `522-n`, not the #530 pair (that pair is classified disjoint).
 
 ## Named, not proved / not a #522 child
 
 These are not holes in the original honesty ask. Chart:
 [`map-522-leftovers.md`](map-522-leftovers.md). New leftover ids are
-Roman numerals. Do **not** mint `522-n`.
+Roman numerals. Leftover `Ⅹ` is board claimId `522-n`. Do **not** mint leftover `Ⅺ`.
 
 - **TouchEdge exclusivity** vs the four gtri predicates — named, not
   proved. Carved on `main` via #597.
@@ -66,8 +66,14 @@ Roman numerals. Do **not** mint `522-n`.
   Fill stays `im_unsupported`.
 - **Inside certificate** — leftover `Ⅷ` classified
   (`RelateNGTouchInside.v : triangle_pair_regime_inside`).
-  Fill stays `im_unsupported`. Completeness is an unnamed same-side
-  shared-edge pair (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`).
+  Fill stays `im_unsupported`.
+- **Nest certificate** — leftover `Ⅸ` classified
+  (`RelateNGTouchNest.v : triangle_pair_regime_nest`).
+  Fill stays `im_unsupported`.
+- **Swap-nest certificate** — leftover `Ⅹ` / `522-n` classified
+  (`RelateNGTouchSwapNest.v : triangle_pair_regime_swapnest`).
+  Fill stays `im_unsupported`. Completeness is an unnamed identical
+  CCW pair (`RelateNGNestCex.v : unnamed_ccw_pair_unsupported`).
 - **Nine-cell `geom_de9im_pointset`**, full noding, Touches-vs-Share —
   #67 / ticket 11, not #522 children.
 - **`#523` `F` vs not-computed** — sibling. Grilled 2026-08-30

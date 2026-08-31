@@ -26,7 +26,7 @@ stays `im_unsupported`. `classify_triangle_pair` arm is `True`.
 Epic #522 stop is QED ∨ QEX
 (`RelateNGTouchLens.v : triangle_pair_regime_ccw_stop`),
 discharged QEX on an unnamed inside pair
-(`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Leftover
+(`RelateNGNestCex.v : unnamed_ccw_pair_unsupported`). Leftover
 `Ⅶ` itself is QED (`RelateNGTouchLens.v : leftover_vii_qed_or_qex`).
 
 Do not remint leftover

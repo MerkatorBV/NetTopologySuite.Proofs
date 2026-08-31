@@ -10,7 +10,8 @@ a GitHub child, **not** a remint of `522-j` / `522-m` / `522-b`, and
 > Roman numerals. This leftover is **`Ⅶ`**. Do not swap it with `Ⅵ`.
 > Do not remint ADR-0004. This map does not mint a GitHub child.
 > Leftover `Ⅷ` is the inside pair (`map-inside-cert.md`).
-> Do not mint leftover `Ⅸ`.
+> Leftover `Ⅸ` classified the nest (`map-nest-cert.md`).
+> Do not mint leftover `Ⅹ`.
 
 topics: relate
 claimId: Ⅶ
@@ -30,8 +31,8 @@ Completeness is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). The
 filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
-The live cex is an unnamed same-side shared-edge pair after leftover
-`Ⅷ` (not leftover `Ⅸ`). Leftover
+The live cex is an unnamed swapped nest pair after leftover
+`Ⅸ` (not leftover `Ⅹ`). Leftover
 `Ⅶ` itself is QED (`RelateNGTouchLens.v : leftover_vii_qed_or_qex`).
 
 ## The pair (compiled)
@@ -70,6 +71,7 @@ B = `(0,0)(4,0)(1,1)`.
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-1,-1)(3,1)` | Leftover `Ⅴ`. Classified **`TPR_MixedCone`**. Opposite-sign `side_dot`. | remint `mixed_cone_vertex_b` |
 | `(0,0)(1,0)(0,1)` vs `(1/4,1/4)(5/4,1/4)(1/4,5/4)` | #570 / `522-b`. Classified **`TPR_Overlap`**. Vertex stab. | remint `overlap_b` / emit `2FFF1FFF2` |
 | `(1,1)(2,1)(1,2)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅷ`. Classified **`TPR_Inside`**. A strictly inside B. `RelateNGUnnamedCex.v : inside_pair_inside`. | steal leftover `Ⅷ` |
-| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Unnamed completeness cex. Shared edge; same-side thirds. `RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅸ` |
+| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Leftover `Ⅸ`. Classified **`TPR_Nest`**. Shared edge; B-in-A. `RelateNGNestCex.v : nest_pair_nest`. | steal leftover `Ⅸ` |
+| `(0,0)(4,0)(1,1)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅹ` / `522-n`. Classified **`TPR_SwapNest`**. Swap; A-in-B. `RelateNGNestCex.v : swap_pair_swapnest`. | steal leftover `Ⅹ` / `522-n` |
 
-Do not mint leftover `Ⅸ`. Epic `#522` stays OPEN.
+Do not mint leftover `Ⅹ`. Epic `#522` stays OPEN.

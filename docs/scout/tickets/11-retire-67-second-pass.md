@@ -33,7 +33,7 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
      touch-edge / overlap `*_ogc`). Classifier pins are **not** reminted.
    - ✔ Completeness is false (unnamed same-side shared-edge pair after
      leftover `Ⅷ`)
-     (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`;
+     (`RelateNGNestCex.v : unnamed_ccw_pair_unsupported`;
      stop `RelateNGTouchInside.v : triangle_pair_regime_ccw_stop`).
    - ~ Residue that is **not** a #522 honesty hole: fill remints, leftover
      certificates, `TPR_TouchEdge` exclusivity (#567 carve), nine-cell

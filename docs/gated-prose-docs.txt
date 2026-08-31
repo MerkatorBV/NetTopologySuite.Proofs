@@ -12,6 +12,8 @@ docs/scout/map-mixed-cone-cert.md
 docs/scout/map-same-cone-cert.md
 docs/scout/map-lens-cert.md
 docs/scout/map-inside-cert.md
+docs/scout/map-nest-cert.md
+docs/scout/map-swap-nest-cert.md
 docs/scout/map-interior-side-cert.md
 docs/scout/map-interior-side-grill.md
 docs/scout/spec-interior-side.md
