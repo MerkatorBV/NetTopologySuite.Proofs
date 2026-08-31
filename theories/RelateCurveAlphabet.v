@@ -15,12 +15,14 @@
    not a result cell. `DimValue` cannot encode it
    (`dim_to_result_never_unknown`).
 
-   QED: every `CURVE_RELATE_MATRIX` result glyph is ISO F/0/1/2.
+   QED: ISO result cells F/0/1/2, and Coq `None` encodes as `F`.
    QEX: a documented non-ISO glyph exists.
-   `ticket_523_qed_or_qex` is that disjunction, discharged QEX on
-   `CRR_Unknown`. Children `523-a` / `523-b` / `523-c` remain QED
-   (landed). This stop is not owner accept. Ticket 523 stays open.
-   Ticket 11 precondition 3 still waits.
+   `ticket_523_qed_or_qex` is the ticket-wide disjunction, discharged
+   QEX on `CRR_Unknown`. `ticket_523_iso_qed_or_qex` is this letter's
+   ISO cells / emptiness encoding, discharged QED. Children
+   `523-a` / `523-b` / `523-c` remain QED (landed). This stop is
+   not owner accept. Ticket 523 stays open. Ticket 11 precondition 3
+   still waits.
 
    Does not remint `RelateNGOracleSurface.v` `WireCell` (F/0/1/2 only;
    that surface is `522-f`). Does not put `?` in catalog keys or
@@ -167,6 +169,26 @@ Proof.
   exact question_mark_not_iso_result.
 Qed.
 
+(* This letter Green: ISO result cells and Coq emptiness→F (QED)
+   or the documented non-ISO glyph (QEX). The ISO cells are QED. *)
+Theorem ticket_523_iso_qed_or_qex :
+  (iso_result_cell CRR_F /\ iso_result_cell CRR_0 /\
+   iso_result_cell CRR_1 /\ iso_result_cell CRR_2 /\
+   dim_to_result None = Some CRR_F /\
+   dim_to_result None <> Some CRR_Unknown)
+  \/
+  (exists c : CurveRelateResult, ~ iso_result_cell c).
+Proof.
+  left.
+  repeat split.
+  - exact I.
+  - exact I.
+  - exact I.
+  - exact I.
+  - exact dim_empty_encodes_F.
+  - apply dim_to_result_never_unknown.
+Qed.
+
 Print Assumptions question_mark_not_iso_result.
 Print Assumptions question_mark_not_iso_table13.
 Print Assumptions unknown_neq_F.
@@ -174,3 +196,4 @@ Print Assumptions iso_result_iff_pattern.
 Print Assumptions dim_empty_encodes_F.
 Print Assumptions dim_to_result_never_unknown.
 Print Assumptions ticket_523_qed_or_qex.
+Print Assumptions ticket_523_iso_qed_or_qex.

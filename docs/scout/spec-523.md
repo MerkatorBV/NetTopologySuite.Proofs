@@ -228,7 +228,9 @@ Children `523-a` / `523-b` / `523-c` remain QED. The ticket stop
 is QED ∨ QEX: every result glyph is ISO F/0/1/2, or a documented
 non-ISO cell exists. Discharged QEX
 (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`) on `?`
-(`RelateCurveAlphabet.v : question_mark_not_iso_table13`). Coq
+(`RelateCurveAlphabet.v : question_mark_not_iso_table13`). ISO
+cells and Coq emptiness→`F` are QED
+(`RelateCurveAlphabet.v : ticket_523_iso_qed_or_qex`). Coq
 `None` encodes as `F`, never `?`
 (`RelateCurveAlphabet.v : dim_to_result_never_unknown`;
 `RelateCurveMatrix.v : cell_none_iff_empty`). QEX is not owner

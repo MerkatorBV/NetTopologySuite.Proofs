@@ -66,7 +66,9 @@ Roman numerals. Do **not** mint `522-n`.
   Children `523-a` / `523-b` / `523-c` (#603 #604 #605) landed
   (QED). Ticket 523 stop is QED ∨ QEX
   (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`), discharged
-  QEX on `?`. Ticket 523 still open, not accepted. Do not steal
+  QEX on `?`. ISO cells / emptiness→`F` are QED
+  (`RelateCurveAlphabet.v : ticket_523_iso_qed_or_qex`). Ticket
+  523 still open, not accepted. Do not steal
   leftover `Ⅲ`. Leftover `Ⅳ` is the interior-side stem
   (`RelateNGComplete.v : interior_side_pair_inhabits`).
 - **Empty/empty relate** — parked on the epic.

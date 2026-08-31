@@ -225,6 +225,8 @@ No `?`. EE of two bounded areas in R² is **2**, never F
   [`map-523.md`](map-523.md). Ticket 523 stop is QED ∨ QEX
   (`RelateCurveAlphabet.v : ticket_523_qed_or_qex`), discharged
   QEX on `?` (`RelateCurveAlphabet.v : question_mark_not_iso_table13`).
+  ISO cells / emptiness→`F` are QED
+  (`RelateCurveAlphabet.v : ticket_523_iso_qed_or_qex`).
 - **Divergence:** ISO Table 13 has no unknown glyph. The field driver
   prints `?` where a probe did not run. Result parse accepts `?`;
   catalog fill keys do not. `?` is not a third parse kind and is
