@@ -34,6 +34,14 @@
    No CurveSegment growth, no ADR-0004 remint, no TRIAGE flip.
    No Heine–Cantor. No `Admitted`, no `Axiom`, no `Parameter`.  3-axiom.
 
+   Flocq association (same pins as EllipseSpeedIntegral.v):
+   [rewrite (Rabs_right 2)] needs a subterm [Rabs 2]. Left-associated
+   [2 * sin * sin] becomes [Rabs (2 * sin)] after one [Rabs_mult].
+   Parenthesize [2 * (sin * sin)]. Same for heading
+   [((t-s)*(t+s))*/2]: Rabs_mult first, then [Rabs_right (/2)],
+   then Rabs_mult to expose [Rabs (t-s)]. Do not [field] those
+   scales — cancel with [Rinv_r] / [Rinv_l].
+
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
@@ -107,7 +115,7 @@ Qed.
 
 Lemma cos_s_minus_cos_t : forall s t,
   cos s - cos t
-  = 2 * sin ((s + t) / 2) * sin ((t - s) / 2).
+  = 2 * (sin ((s + t) / 2) * sin ((t - s) / 2)).
 Proof.
   intros s t.
   transitivity
@@ -228,30 +236,29 @@ Proof.
   intros a b s t Has Hst Htb.
   rewrite fresnel_heading_diff.
   unfold Rdiv.
-  rewrite Rabs_mult.
-  rewrite (Rabs_right (t - s)) by lra.
-  rewrite Rabs_mult.
-  rewrite (Rabs_right (/ 2)) by lra.
   set (M := fresnel_window_lip a b).
   assert (HM : 0 <= M) by (unfold M; apply fresnel_window_lip_nonneg).
   assert (HsM : Rabs s <= M) by (unfold M; apply abs_in_window; lra).
   assert (HtM : Rabs t <= M) by (unfold M; apply abs_in_window; lra).
-  apply (Rle_trans _ ((Rabs t + Rabs s) * / 2 * (t - s))).
-  - apply Rmult_le_compat_r; [lra |].
-    apply Rmult_le_compat_r; [apply Rlt_le, Rinv_0_lt_compat; lra |].
+  rewrite Rabs_mult.
+  rewrite (Rabs_right (/ 2)) by lra.
+  rewrite Rabs_mult.
+  rewrite (Rabs_right (t - s)) by lra.
+  apply (Rle_trans _ ((t - s) * (Rabs t + Rabs s) * / 2)).
+  - apply Rmult_le_compat_r; [apply Rlt_le, Rinv_0_lt_compat; lra |].
+    apply Rmult_le_compat_l; [lra |].
     apply Rabs_triang.
-  - apply (Rle_trans _ (M * (t - s))).
-    + replace ((Rabs t + Rabs s) * / 2 * (t - s))
-        with ((Rabs t + Rabs s) / 2 * (t - s)) by (unfold Rdiv; reflexivity).
-      apply Rmult_le_compat_r; [lra |].
-      unfold Rdiv.
-      apply (Rmult_le_reg_r 2); [lra |].
-      rewrite Rmult_assoc.
-      rewrite Rinv_l by lra.
-      rewrite Rmult_1_r.
-      replace (M * 2) with (M + M) by ring.
+  - apply (Rle_trans _ ((t - s) * (M + M) * / 2)).
+    + apply Rmult_le_compat_r; [apply Rlt_le, Rinv_0_lt_compat; lra |].
+      apply Rmult_le_compat_l; [lra |].
       apply Rplus_le_compat; [exact HtM | exact HsM].
-    + apply Rle_refl.
+    + replace (M + M) with (M * 2) by ring.
+      rewrite (Rmult_assoc (t - s) (M * 2) (/ 2)).
+      rewrite (Rmult_assoc M 2 (/ 2)).
+      rewrite Rinv_r by lra.
+      rewrite Rmult_1_r.
+      rewrite (Rmult_comm (t - s) M).
+      apply Rle_refl.
 Qed.
 
 Lemma fresnel_vx_lipschitz : forall a b s t,
