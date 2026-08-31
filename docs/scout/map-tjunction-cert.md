@@ -4,11 +4,11 @@ A wayfinder map. Charted 2026-08-30. This is **not** a GitHub child, **not**
 a remint of `522-j` / `522-m`, and **not** the line×line noding T-junction
 (`RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`).
 
-> **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
-> historical. Do **not** mint `522-n`. Leftover ids are precomposed
+> Closed ticket ids (`522-a` … `522-m`) stay historical. Leftover
+> `Ⅹ` is board claimId **`522-n`**. Leftover ids are precomposed
 > Roman numerals. This leftover is **`Ⅰ`**. Obtuse-at-v is **`Ⅱ`**.
-> Do not swap them. Do not remint ADR-0004.
-> This map does not mint a GitHub child.
+> Do not swap them. Do not remint ADR-0004 for later leftovers.
+> This map does not mint a GitHub child. Do not mint leftover `Ⅺ`.
 
 topics: relate
 claimId: Ⅰ
@@ -150,8 +150,9 @@ writes the detector.
 - Honest decline wire token is this pair — #588 + #595 / `522-f`.
 - Certificates not invented in those letters.
 - Parent leftovers chart: #598 / `docs/scout/map-522-leftovers.md` (on `main`).
-- Leftover ids are Roman numerals. This leftover is `Ⅰ`. `522-n` is
-  not minted.
+- Leftover ids are Roman numerals. This leftover is `Ⅰ`. Leftover
+  `Ⅹ` / `522-n` is the swap nest (named; not this leftover). Do
+  not mint leftover `Ⅺ`.
 
 ## Fog
 
@@ -186,8 +187,8 @@ not this leftover ── line×line T ── #67
 not this leftover ── widen shares_edge_b ── TouchEdge leftover
 not this leftover ── fill remint ── four shared pins
 
-522-n ── not minted
 Ⅲ ──── compiled exterior-side stem ── TPR_TouchOnesided (fill token)
 Ⅳ ──── interior-side stem ── map-interior-side-cert.md ── no compiled pair
-Ⅴ ── unused ── ask before assigning
+Ⅹ ──── swap nest / 522-n ── named ── not this leftover ── not compiled here
+Ⅺ ── unused ── do not mint
 ```

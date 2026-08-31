@@ -142,10 +142,13 @@ coordinates and call them the spec.
 ## Not this leftover
 
 Not leftover `Ⅰ` / #609. Not leftover `Ⅱ` / #611. Not leftover
-`Ⅲ` / #628. Not #570 overlap. Not #572 TouchVertex. Not line×line
-IB. Not a remint of `aa_matrix_*`. Not a remint of
-`touch_onesided_t_b`. Do not mint `522-n`. Do not mint `Ⅴ`. Do not
-steal `522-j` / `522-m` / `522-f` / `522-i` / `522-b`.
+`Ⅲ` / #628. Not leftover `Ⅹ` / `522-n` (swap nest
+A=`(0,0)(4,0)(1,1)` vs B=`(0,0)(4,0)(0,4)`; shared full edge; not
+a one-sided stem). Not #570 overlap. Not #572 TouchVertex. Not
+line×line IB. Not a remint of `aa_matrix_*`. Not a remint of
+`touch_onesided_t_b`. Leftover `Ⅴ`–`Ⅸ` live on later stacks.
+Do not mint leftover `Ⅺ`. Do not steal `522-j` / `522-m` /
+`522-f` / `522-i` / `522-b`.
 
 ## If `/implement Ⅳ` is asked
 
@@ -182,7 +185,8 @@ family named ── #629 ── map-interior-side-cert.md
 Ⅰ ── mutual same-side sliver ── #609 ── not this leftover
 Ⅱ ── obtuse-at-v ── #611 ── live completeness cex
 Ⅲ ── exterior-side stem ── #628 ── Ⅲ∨Ⅳ xor, one exterior witness
+Ⅹ ── swap nest / 522-n ── named ── not this leftover ── not compiled here
 
-522-n ── not minted
-Ⅴ ── unused ── ask before assigning
+522-n ── leftover Ⅹ ── named (swap nest)
+Ⅺ ── unused ── do not mint
 ```

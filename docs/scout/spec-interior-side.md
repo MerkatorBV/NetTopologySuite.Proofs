@@ -4,8 +4,8 @@ A takeable implementation spec. Written 2026-08-30 from the grill
 ([`map-interior-side-grill.md`](map-interior-side-grill.md)) plus the
 research chart ([`map-interior-side-cert.md`](map-interior-side-cert.md),
 #629) and the leftover-`Ⅲ` compile (#628). This is **not** leftover
-`Ⅰ`, **not** leftover `Ⅱ`, **not** leftover `Ⅲ`, and **not** a remint
-of `522-n`. It does **not** invent a 12-tuple. It does **not** invent
+`Ⅰ`, **not** leftover `Ⅱ`, **not** leftover `Ⅲ`, and **not** leftover
+`Ⅹ` / `522-n`. It does **not** invent a 12-tuple. It does **not** invent
 a side-distinguishing detector. It does **not** retire epic 522.
 
 > `/implement Ⅳ` is the later letter. That letter must not treat
@@ -100,7 +100,9 @@ Do **not** remint `RelateNGCore.v : touch_onesided_t_b`. Do **not**
 emit `FFFFFFFFF` / `FFFF1FFF2` / `FF2F11212`. Do **not** move the
 decline golden unless the golden pair itself classifies. Do **not**
 remint leftover `Ⅰ` or leftover `Ⅲ` fills. A side-distinguishing
-boolean is a later leftover, and only if asked. Next unused is `Ⅴ`.
+boolean is a later leftover, and only if asked. Leftover `Ⅹ` /
+`522-n` is the swap nest (not this leftover). Do not mint leftover
+`Ⅺ`.
 
 ## Parks (ADR-0002)
 
@@ -115,4 +117,5 @@ Do not invent a 12-tuple. Do not remint the xor. Do not remint the
 fill. Do not claim CONTEXT Bar 1. Do not prove leftover-`Ⅳ` facts
 through `classify_triangle_pair`. Do not steal leftover `Ⅰ` /
 leftover `Ⅱ` / leftover `Ⅲ` / `522-j` / `522-m` / `522-f` /
-`522-b` / `522-i`. Do not mint `522-n`. Do not mint `Ⅴ`.
+`522-b` / `522-i`. Do not steal leftover `Ⅹ` / `522-n`. Do not
+mint leftover `Ⅺ`.

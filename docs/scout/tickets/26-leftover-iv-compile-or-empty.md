@@ -5,7 +5,8 @@
 **claimId:** `Ⅳ` · **GitHub:** none · **witness:** none
 
 > Umbrella: leftover `Ⅳ`. Does not retire epic 522. Not leftover
-> `Ⅰ`. Not leftover `Ⅱ`. Not leftover `Ⅲ`. Not a `522-*` letter.
+> `Ⅰ`. Not leftover `Ⅱ`. Not leftover `Ⅲ`. Not leftover `Ⅹ` /
+> `522-n`. Do not mint leftover `Ⅺ`.
 
 ## Question
 
@@ -59,15 +60,16 @@ unless the golden pair itself classifies. Completeness stays false
 remint `touch_onesided_t_b`.
 
 A side-distinguishing boolean is a later leftover, and only if
-asked. Next unused is `Ⅴ`.
+asked. Leftover `Ⅹ` / `522-n` is the swap nest (not this leftover).
+Do not mint leftover `Ⅺ`.
 
 ## Non-goals
 
 Do not invent a prose 12-tuple and treat it as compiled. Do not
 write a detector. Do not remint `touch_onesided_t_b` /
 `touch_partial_edge_b` / `cone_separates_b` / `shares_edge_b` /
-`overlap_b`. Do not remint `aa_matrix_*`. Do not mint `522-n`.
-Do not mint `Ⅴ`. Do not steal leftover `Ⅰ` / `Ⅱ` / `Ⅲ` /
+`overlap_b`. Do not remint `aa_matrix_*`. Do not steal leftover
+`Ⅹ` / `522-n`. Do not mint leftover `Ⅺ`. Do not steal leftover `Ⅰ` / `Ⅱ` / `Ⅲ` /
 `522-j` / `522-m` / `522-f` / `522-b` / `522-i`. Do not pile onto
 #609, #611, #628, #629, or a `508-*` branch. Do not comment on a
 GitHub issue unless the user says `comment`.

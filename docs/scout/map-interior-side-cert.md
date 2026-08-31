@@ -6,13 +6,15 @@ A wayfinder map. Charted 2026-08-30. This is **not** a GitHub child,
 the line×line noding T-junction
 (`RelateNodingLineLineMeet.v : segments_int_bnd_touches_ib_cell`).
 
-> **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
-> historical. Do **not** mint `522-n`. Leftover ids are precomposed
+> Closed ticket ids (`522-a` … `522-m`) stay historical. Leftover
+> `Ⅹ` is board claimId **`522-n`**. Leftover ids are precomposed
 > Roman numerals. This leftover is **`Ⅳ`**. The mutual vertex-in-open-edge
 > sliver is **`Ⅰ`**. Obtuse-at-v is **`Ⅱ`**. The exterior-side one-sided
 > T is **`Ⅲ`**. The xor is `Ⅲ∨Ⅳ` with one exterior witness. Do not
-> swap them. Do not remint ADR-0004. This map does not mint a GitHub
-> child. Next unused is **`Ⅴ`** — ask before assigning.
+> swap them. Do not remint ADR-0004 for later leftovers. This map
+> does not mint a GitHub child. Leftover `Ⅴ`–`Ⅸ` live on later
+> stacks. Leftover `Ⅹ` / `522-n` is the swap nest. Do not mint
+> leftover `Ⅺ`.
 
 topics: relate
 claimId: Ⅳ
@@ -163,7 +165,9 @@ statement for this family.
   `Ⅳ` minted as the interior-side stem. This letter is the `Ⅳ`
   detail chart.
 - Parent leftovers chart: `docs/scout/map-522-leftovers.md`.
-- `522-n` is not minted. `Ⅴ` is unused.
+- Leftover `Ⅹ` / `522-n` is the swap nest (named; not compiled
+  on this leftover-`Ⅳ` grill tree). Leftover `Ⅴ`–`Ⅸ` live on
+  later stacks. Do not mint leftover `Ⅺ`.
 
 ## Fog
 
@@ -180,7 +184,9 @@ statement for this family.
   different leftover from this chart.
 - **Leftover `Ⅲ`.** Compiled exterior-side stem. Do not remint that
   pair. Do not treat the xor as leftover-`Ⅳ`-complete.
-- **`Ⅴ`.** Unused. Ask before assigning it.
+- **`Ⅹ` / `522-n`.** Swap nest. Named. Not this leftover. Not
+  compiled on this leftover-`Ⅳ` grill tree. Do not mint leftover
+  `Ⅺ`.
 
 ## Frontier
 
@@ -199,11 +205,12 @@ family named ── same-side one-sided vertex-in-open-edge T
 Ⅰ ── mutual same-side sliver ── map-tjunction-cert.md ── not this leftover
 Ⅱ ── obtuse-at-v ── 522-m finding ── not this leftover
 Ⅲ ── opposite-side stem ── TPR_TouchOnesided (fill token) ── not this leftover
+Ⅹ ── swap nest / 522-n ── named ── not this leftover ── not compiled here
 not this leftover ── #570 overlap ── classified_overlap_pair
 not this leftover ── #572 TouchVertex ── classified_touchvertex_pair
 not this leftover ── fill remint ── owner names matrix and side
 not this leftover ── widen touch_onesided_t_b ── leftover Ⅲ honesty
 
-522-n ── not minted
-Ⅴ ── unused ── ask before assigning
+522-n ── leftover Ⅹ ── named (swap nest)
+Ⅺ ── unused ── do not mint
 ```
