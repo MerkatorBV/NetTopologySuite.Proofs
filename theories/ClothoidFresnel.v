@@ -41,6 +41,10 @@
    [((t-s)*(t+s))*/2]: Rabs_mult first, then [Rabs_right (/2)],
    then Rabs_mult to expose [Rabs (t-s)]. Do not [field] those
    scales — cancel with [Rinv_r] / [Rinv_l].
+   CI death on 7bbdee1 L161: [Rabs_right 2] with no [Rabs 2].
+   CI death on e0dc2b1 L272: [Rabs_minus_sym heading s t] looks for
+   [Rabs (hs − ht)]; the leftover after [cos_abs_lipschitz] is already
+   [Rabs (ht − hs)]. Apply [fresnel_heading_lipschitz] directly.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -269,7 +273,6 @@ Proof.
   intros a b s t Has Hst Htb.
   unfold fresnel_vx.
   eapply Rle_trans; [apply cos_abs_lipschitz |].
-  rewrite (Rabs_minus_sym (fresnel_heading s) (fresnel_heading t)).
   apply fresnel_heading_lipschitz; assumption.
 Qed.
 
@@ -281,7 +284,6 @@ Proof.
   intros a b s t Has Hst Htb.
   unfold fresnel_vy.
   eapply Rle_trans; [apply sin_abs_lipschitz |].
-  rewrite (Rabs_minus_sym (fresnel_heading s) (fresnel_heading t)).
   apply fresnel_heading_lipschitz; assumption.
 Qed.
 
