@@ -117,7 +117,7 @@ Lemma polyline_len_isometry :
     polyline_len (fun u => f (g u)) t ts = polyline_len g t ts.
 Proof.
   intros f g ts; induction ts as [|u tl IH]; intros t Hf; simpl.
-  - apply Hf.
+  - reflexivity.
   - rewrite Hf, (IH u Hf). reflexivity.
 Qed.
 
