@@ -649,12 +649,23 @@ Qed.
 (* Pack instance and headlines.                                               *)
 (* -------------------------------------------------------------------------- *)
 
+Lemma one_times : forall t, 1 * t = t.
+Proof.
+  intros t. apply Rmult_1_l.
+Qed.
+
+Lemma one_times_diff : forall s t, 1 * t - 1 * s = t - s.
+Proof.
+  intros s t.
+  rewrite (one_times t). rewrite (one_times s). reflexivity.
+Qed.
+
 Lemma fresnel_speed_integral_premises :
   forall Cx Cy a b,
     a <= b ->
     fresnel_primitives Cx Cy a b ->
     speed_integral_premises
-      (fresnel_curve Cx Cy) (fun _ => 1) (fun t => t) a b.
+      (fresnel_curve Cx Cy) (fun _ => 1) (fun t => 1 * t) a b.
 Proof.
   intros Cx Cy a b Hab Hpr.
   apply (constant_speed_premises (fresnel_curve Cx Cy) 1 a b Hab).
@@ -671,9 +682,9 @@ Theorem fresnel_is_curve_length :
     is_curve_length (fresnel_curve Cx Cy) a b (b - a).
 Proof.
   intros Cx Cy a b Hab Hpr.
-  change (b - a) with ((fun t => t) b - (fun t => t) a).
+  rewrite <- (one_times_diff a b).
   apply (speed_integral_is_curve_length
-           (fresnel_curve Cx Cy) (fun _ => 1) (fun t => t) a b).
+           (fresnel_curve Cx Cy) (fun _ => 1) (fun t => 1 * t) a b).
   apply fresnel_speed_integral_premises; assumption.
 Qed.
 
@@ -699,9 +710,9 @@ Proof.
   intros Cx Cy a b s t Hab Hpr Has Hst Htb.
   pose proof (fresnel_speed_integral_premises Cx Cy a b Hab Hpr) as Hsip.
   pose proof (speed_integral_chord_modulus
-                (fresnel_curve Cx Cy) (fun _ => 1) (fun u => u) a b
+                (fresnel_curve Cx Cy) (fun _ => 1) (fun u => 1 * u) a b
                 Hsip s t Has Hst Htb) as Hmod.
-  change ((fun u => u) t - (fun u => u) s) with (t - s) in Hmod.
+  rewrite (one_times_diff s t) in Hmod.
   exact Hmod.
 Qed.
 
@@ -717,12 +728,12 @@ Proof.
   intros Cx Cy a b eps Hab Hpr Heps.
   pose proof (fresnel_speed_integral_premises Cx Cy a b Hab Hpr) as Hsip.
   destruct (speed_integral_tightness
-              (fresnel_curve Cx Cy) (fun _ => 1) (fun u => u) a b
+              (fresnel_curve Cx Cy) (fun _ => 1) (fun u => 1 * u) a b
               Hsip eps Heps) as (d & Hd & Htight).
   exists d. split; [exact Hd |].
   intros s t Has Hst Htb Hdt.
   specialize (Htight s t Has Hst Htb Hdt).
-  change ((fun u => u) t - (fun u => u) s) with (t - s) in Htight.
+  rewrite (one_times_diff s t) in Htight.
   lra.
 Qed.
 
