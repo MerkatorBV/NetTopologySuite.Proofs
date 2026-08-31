@@ -308,9 +308,8 @@ Proof.
   assert (Hbd : forall u, s <= u -> u <= t -> lo <= σ u <= hi).
   { intros u Hus Hut.
     specialize (Hlip u Hus Hut).
-    apply rabs_of_two_sided in Hlip.
-    - unfold lo, hi, gap in *. lra.
-    - apply Rmult_le_pos; [exact HK | unfold gap; lra]. }
+    apply rabs_le_both in Hlip.
+    unfold lo, hi, gap in *. lra. }
   pose proof (Hsq s t lo hi Has Hst Htb Hbd) as Hinc.
   unfold lo, hi, gap in Hinc.
   apply rabs_of_two_sided.
@@ -525,6 +524,7 @@ Proof.
         unfold gap, delta in *. exact Hdt. }
       replace (e * sqrt 2) with (K * gap * gap).
       2:{ unfold e, K, M. ring. }
+      replace (eps * (t - s)) with (eps * gap) by (unfold gap; reflexivity).
       apply Rmult_le_compat_r; [exact Hgap0 | apply Rlt_le; exact HKgap].
 Qed.
 
