@@ -4,11 +4,11 @@ A wayfinder map. Charted 2026-08-30. This is **not** a second copy of
 [`map-522.md`](map-522.md) and it is **not** a `wayfinder:map` GitHub
 issue. The epic comment stays the design of record. #589 stays closed.
 
-> **Do not mint letters.** Closed ticket ids (`522-a` … `522-m`) stay
-> historical. Do **not** mint `522-n`. Leftover ids are precomposed
-> Roman numerals (`Ⅰ`, `Ⅱ`, `Ⅲ`, `Ⅳ`, …), not `522-*` letters
-> and not repeated `Ⅰ` marks. Do not remint ADR-0004. Do not mint
-> GitHub children from this map.
+> Closed ticket ids (`522-a` … `522-m`) stay historical. Leftover
+> `Ⅹ` is the first leftover that **is** a `522-*` board mint:
+> claimId **`522-n`**. Later leftovers stay precomposed Roman
+> numerals. Do **not** mint leftover `Ⅺ`. Do not remint ADR-0004
+> for later leftovers. Do not mint GitHub children from this map.
 
 topics: relate
 claimId: none
@@ -17,12 +17,13 @@ witness: none
 ## Destination
 
 **Name the residue so the next `/implement` cannot steal a closed
-`522-*` letter or invent `522-n`.**
+`522-*` letter or invent leftover `Ⅺ`.**
 
 The #522 honesty ask and wired-triangle bar 1 → bar 2 are done
 ([`522-closing-summary.md`](522-closing-summary.md)). What remains is
 **named leftover work** (`Ⅰ` sliver bar 1; `Ⅱ` live cex, no
-detector; `Ⅲ∨Ⅳ` xor with one exterior witness; `Ⅳ` named only),
+detector; `Ⅲ∨Ⅳ` xor with one exterior witness; `Ⅳ` named only;
+`Ⅴ`–`Ⅸ` on later stacks; `Ⅹ` / `522-n` swap nest named),
 #67 / sibling residue, or owner sign-off on the epic. After this
 letter the residue is not “unnamed proof work, leftover `Ⅰ`.”
 
@@ -57,7 +58,10 @@ interior-side stem (named only). The xor
 class with one exterior-side witness; it is not a leftover-`Ⅲ`
 detector. Completeness-false-on-`Ⅱ` is true and incomplete: `Ⅱ` has
 no detector, and `Ⅳ` is inhabited-or-empty in the same sense `Ⅲ`
-was. Do not swap them. Next unused is `Ⅴ` — ask before assigning.
+was. Leftover `Ⅴ`–`Ⅸ` live on later stacks; they are not compiled
+on this leftover-`Ⅳ` grill tree. Leftover `Ⅹ` / `522-n` is the
+swap nest (named here; not compiled on this tree). Do not swap them.
+Do not mint leftover `Ⅺ`.
 
 ## Leftover table
 
@@ -66,12 +70,13 @@ Value and priority are orthogonal.
 
 | Id | Leftover | Kind | Park | Status | Do not |
 |---|---|---|---|---|---|
-| `Ⅰ` | Mutual vertex-in-open-edge sliver | #522-adjacent | research | Bar 1 landed. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. Compiled pair is II = 2, BB = 1 — a sliver, not a kiss. Fill stays `im_unsupported`. | steal `522-j` / `522-m` / `522-f`; remint fills; bucket obtuse under `Ⅰ`; mint `522-n` |
+| `Ⅰ` | Mutual vertex-in-open-edge sliver | #522-adjacent | research | Bar 1 landed. Chart: [`map-tjunction-cert.md`](map-tjunction-cert.md). Headline `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(3,0)(2,1)`. Compiled pair is II = 2, BB = 1 — a sliver, not a kiss. Fill stays `im_unsupported`. | steal `522-j` / `522-m` / `522-f`; remint fills; bucket obtuse under `Ⅰ`; steal leftover `Ⅹ` / `522-n` |
 | — | TouchEdge exclusivity vs the four gtri predicates | #522-adjacent | technique | Named leftover, no numeral. Carved by #597 (`522-a-touch-edge-carve`), not proved. | treat the carve as exclusivity; remint frozen anchors |
 | — | Classifier fill remints (`aa_matrix_*` → `*_ogc`) | #522-adjacent | sequencing | Unnamed. Four shared pins; disjoint blocked by `pat_disjoint`. Not `522-f`. | remint in a harness letter; steal `522-f` / `522-d` / `522-h` |
 | `Ⅱ` | Obtuse-at-v certificate | #522-adjacent | research | Named. Finding `RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`. Pair `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(1,-1)`. Shared vertex; cone `side_dot = 0`. No detector. Completeness-false-on-`Ⅱ` hides that `Ⅳ` is also open. | invent the detector; steal `522-m`; bucket under `Ⅰ` |
-| `Ⅲ` | Exterior-side one-sided T | #522-adjacent | research | Exterior-side pair compiled. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. Contact `(1,0)` is collinear with A's base `y = 0`. II empty (`RelateNGComplete.v : onesided_t_ii_empty`) — not a compiled BB-dim-0 cell; there is no `onesided_t_bb_dim0`. Xor is `Ⅲ∨Ⅳ` with one exterior witness. Fill token is load-bearing (`im_unsupported`). `classify_triangle_pair` arm is `True` — leftover `Ⅰ` honesty, not CONTEXT Bar 1. Completeness stays false on leftover `Ⅱ`. | remint leftover `Ⅰ`; invent leftover `Ⅱ`; compile leftover `Ⅳ`; emit `FFFFFFFFF` / `FFFF1FFF2` / `FF2F11212`; claim Bar 1; claim a leftover-`Ⅲ` detector; mint `522-n` / `Ⅴ` |
-| `Ⅳ` | Interior-side stem | #522-adjacent | research | Named only. The xor would classify an interior-side stem as `TPR_TouchOnesided` the moment someone writes the coords. Boolean is not side-aware. Looks like overlap; leftover `Ⅲ` looks like areal Touches. One constructor, one `True` arm, one `im_unsupported` — fill token keeps those families from mixing. | compile leftover `Ⅳ`; invent a side-distinguishing detector; remint the fill; steal leftover `Ⅲ`; mint `522-n` / `Ⅴ` |
+| `Ⅲ` | Exterior-side one-sided T | #522-adjacent | research | Exterior-side pair compiled. Headline `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Pair `(0,0)(2,0)(0,1)` vs `(1,0)(1/2,-1)(3/2,-1)`. Contact `(1,0)` is collinear with A's base `y = 0`. II empty (`RelateNGComplete.v : onesided_t_ii_empty`) — not a compiled BB-dim-0 cell; there is no `onesided_t_bb_dim0`. Xor is `Ⅲ∨Ⅳ` with one exterior witness. Fill token is load-bearing (`im_unsupported`). `classify_triangle_pair` arm is `True` — leftover `Ⅰ` honesty, not CONTEXT Bar 1. Completeness stays false on leftover `Ⅱ`. | remint leftover `Ⅰ`; invent leftover `Ⅱ`; compile leftover `Ⅳ`; emit `FFFFFFFFF` / `FFFF1FFF2` / `FF2F11212`; claim Bar 1; claim a leftover-`Ⅲ` detector; steal leftover `Ⅹ` / `522-n`; mint leftover `Ⅺ` |
+| `Ⅳ` | Interior-side stem | #522-adjacent | research | Named. Chart: [`map-interior-side-cert.md`](map-interior-side-cert.md). Grill: [`map-interior-side-grill.md`](map-interior-side-grill.md). Spec: [`spec-interior-side.md`](spec-interior-side.md). Ticket 26 takeable. The xor would classify an interior-side stem as `TPR_TouchOnesided` the moment someone writes the coords. Boolean is not side-aware. `overlap_b` may steal same-side stems (`RelateNGCore.v : overlap_b`). Looks like overlap; leftover `Ⅲ` looks like areal Touches. One constructor, one `True` arm, one `im_unsupported` — fill token keeps those families from mixing. | compile leftover `Ⅳ` from this table; invent a side-distinguishing detector; remint the fill; steal leftover `Ⅲ`; steal leftover `Ⅹ` / `522-n`; mint leftover `Ⅺ` |
+| `Ⅹ` | Swap nest / `522-n` | #522 / `522-n` | research | Named. First leftover that is a `522-*` board mint (claimId `522-n`). Pair A=`(0,0)(4,0)(1,1)` vs B=`(0,0)(4,0)(0,4)`. Both CCW. Shared full edge. Thirds same side. A's third strictly in B. Not leftover `Ⅳ` (leftover `Ⅳ` is a one-sided stem with no shared full edge; leftover `Ⅰ` is the mutual sliver `RelateNGTouchPartialEdge.v : triangle_pair_regime_touchpartial`; leftover `Ⅲ` is the exterior stem `RelateNGComplete.v : onesided_t_pair_inhabits`). Not compiled on this leftover-`Ⅳ` grill tree. Leftover `Ⅴ`–`Ⅸ` live on later stacks. Do not mint leftover `Ⅺ`. | steal `522-j` / `522-m`; remint leftover `Ⅳ`; compile leftover `Ⅹ` from this grill; mint leftover `Ⅺ` |
 | — | Nine-cell `geom_de9im_pointset` | #67 / ticket 11 | technique | ADR-0003 half-open leftover. | mint as a #522 child |
 | — | Full RelateNG noding + Touches-vs-Share | #67 | sequencing | Off-dispatch `relate` already declines honestly. | mint as a #522 child |
 | — | `F` vs not-computed on `CURVE_RELATE_MATRIX` | sibling #523 | sequencing | Ticket 11 precondition 3. | steal a closed `522-*` letter |
@@ -92,7 +97,9 @@ Value and priority are orthogonal.
   vertex-in-open-edge sliver. `Ⅱ` = obtuse-at-v. `Ⅲ` = exterior-side
   one-sided T (compiled pair; `Ⅲ∨Ⅳ` xor; one exterior witness;
   fill token). `Ⅳ` = interior-side stem (named only). Completeness
-  still `Ⅱ`. `522-n` is not minted.
+  still `Ⅱ`. Leftover `Ⅴ`–`Ⅸ` live on later stacks. Leftover
+  `Ⅹ` / `522-n` is the swap nest (named here; not compiled on this
+  leftover-`Ⅳ` grill tree). Do not mint leftover `Ⅺ`.
 
 ## Fog
 
@@ -106,16 +113,24 @@ Value and priority are orthogonal.
   (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`) is
   `Ⅲ∨Ⅳ` with one exterior witness, not a leftover-`Ⅲ` detector.
   II empty is compiled. BB dim 0 is not. Fill stays `im_unsupported`.
-- **`Ⅳ`** is the interior-side stem. Named only. The xor would
-  classify it as `TPR_TouchOnesided` the moment someone writes the
-  coords. Do not compile. Next unused is `Ⅴ` — ask before assigning.
+- **`Ⅳ`** is the interior-side stem. Chart:
+  [`map-interior-side-cert.md`](map-interior-side-cert.md). Grill:
+  [`map-interior-side-grill.md`](map-interior-side-grill.md). Spec:
+  [`spec-interior-side.md`](spec-interior-side.md). Ticket 26
+  takeable. The xor would classify it as `TPR_TouchOnesided` the
+  moment someone writes the coords. Do not compile from this table.
+  Leftover `Ⅹ` / `522-n` is the swap nest (named here; not compiled
+  on this leftover-`Ⅳ` grill tree). Do not mint leftover `Ⅺ`.
 
 ## Frontier
 
 Leftover `Ⅰ` bar 1 is landed. Leftover `Ⅱ` is still named only.
 Leftover `Ⅲ` is one exterior-side witness of a `Ⅲ∨Ⅳ` xor;
-fill stays `im_unsupported`. Leftover `Ⅳ` is named only.
-Completeness still `Ⅱ`.
+fill stays `im_unsupported`. Leftover `Ⅳ` is grilled
+([`map-interior-side-grill.md`](map-interior-side-grill.md));
+ticket 26 takeable. Completeness still `Ⅱ`. Leftover `Ⅴ`–`Ⅸ`
+live on later stacks. Leftover `Ⅹ` / `522-n` is the swap nest
+(named here; not compiled on this leftover-`Ⅳ` grill tree).
 
 ```
 #522 honesty + wired bar 1/2 ════════════════════ done (#596 wrap-up)
@@ -123,7 +138,9 @@ Completeness still `Ⅱ`.
 Ⅰ ──────── mutual vertex-in-open-edge sliver ── bar 1 ── TPR_TouchPartialEdge
 Ⅱ ─────── obtuse-at-v certificate ── research ── finding #584 (live cex)
 Ⅲ∨Ⅳ xor ── one exterior witness ── TPR_TouchOnesided (fill token)
-Ⅳ ───── interior-side stem ── named ── xor would fire if coords existed
+Ⅳ ───── interior-side stem ── grilled ── ticket 26 takeable (no pair)
+Ⅴ–Ⅸ ── later stacks ── not compiled on this leftover-Ⅳ grill tree
+Ⅹ ─────── swap-nest certificate ── named ── 522-n ── not compiled here
 unnamed ── TouchEdge exclusivity ── technique ── carve #597 on main
 unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 
@@ -131,6 +148,5 @@ unnamed ── fill remints (4 shared pins) ── sequencing ── not 522-f
 #523 ────── F vs not-computed
 parked ──── empty/empty
 
-522-n ── not minted
-Ⅴ ── unused ── ask before assigning
+Ⅺ ── unused ── do not mint
 ```

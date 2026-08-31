@@ -49,7 +49,7 @@ Order of work: top-down from #64, with the freebie first.
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the mutual vertex-in-open-edge sliver. Leftover `Ⅱ` is
-the obtuse-at-v certificate. Leftover `Ⅲ` is the exterior-side one-sided T (`Ⅲ∨Ⅳ` xor, one exterior witness, fill token, completeness still `Ⅱ`). Leftover `Ⅳ` is the interior-side stem (named only). Sibling #523 alphabet grill:
+the obtuse-at-v certificate. Leftover `Ⅲ` is the exterior-side one-sided T (`Ⅲ∨Ⅳ` xor, one exterior witness, fill token, completeness still `Ⅱ`). Leftover `Ⅳ` is the interior-side stem ([`map-interior-side-cert.md`](../map-interior-side-cert.md); grill [`map-interior-side-grill.md`](../map-interior-side-grill.md); ticket [26](26-leftover-iv-compile-or-empty.md) takeable). Leftover `Ⅴ`–`Ⅸ` live on later stacks. Leftover `Ⅹ` / `522-n` is the swap nest (named; not compiled on this leftover-`Ⅳ` grill tree). Do not mint leftover `Ⅺ`. Sibling #523 alphabet grill:
 [`docs/scout/map-523.md`](../map-523.md). Takeable spec:
 [`docs/scout/spec-523.md`](../spec-523.md). Alphabet letter landed:
 [`15`](closed/15-523-a-eb-refuse.md) `523-a`, [`16`](closed/16-523-b-cell-unknown.md)
@@ -71,7 +71,8 @@ accept ticket 523.
 
 The next useful session is not another #523 letter. Owner resolve-or-accept
 is the gate for ticket 11 precondition 3. Do not start leftover `Ⅰ` or `Ⅱ`.
-Do not compile leftover `Ⅳ`.
+Do not compile leftover `Ⅳ`. Do not steal leftover `Ⅹ` / `522-n`.
+Do not mint leftover `Ⅺ`.
 
 Three epics retired on evidence, one deliberately not: **an epic closes only when
 its closure comment would be true.**
