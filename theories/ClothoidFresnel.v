@@ -87,9 +87,11 @@
    unify [1] with [1-0]. Pose [fresnel_is_curve_length]
    first; [rewrite Rminus_0_r] on the length only.
    CI death on c2cfe7e L739: [rewrite one_times_diff in Hmod]
-   looks for [1*t - 1*s]. Flocq reduces [1*t] to [t], so
-   [Hmod] is already [dist <= t-s]. [rewrite ?one_times_diff]
-   peels on host and is a no-op on flocq. Same on Htight.
+   looks for [1*t - 1*s]; flocq keeps the beta-redex
+   [(fun u => 1*u) t - (fun u => 1*u) s], so the rewrite
+   finds nothing. [rewrite ?] then no-ops and [exact Hmod]
+   dies (6d4edcf L749) on [1*t - 1*s] vs [t-s].
+   [cbv beta] first, then peel. Same on Htight.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -741,11 +743,13 @@ Proof.
                 (fresnel_curve Cx Cy) (fun _ => 1) (fun u => 1 * u) a b
                 Hsip s t Has Hst Htb) as Hmod.
   (*
-    2026-08-31 CI death at rewrite one_times_diff in Hmod (L739):
-    flocq reduces [1*t] to [t], so the subterm [1*t - 1*s] is
-    already gone. Host still has it. [rewrite ?] peels when present.
+    2026-08-31 CI death at rewrite one_times_diff (c2cfe7e L739)
+    / exact Hmod (6d4edcf L749): flocq leaves
+    [(fun u => 1*u) t - (fun u => 1*u) s], which is not a
+    syntactic [1*t - 1*s]. Beta-reduce, then peel.
   *)
-  rewrite ?(one_times_diff s t) in Hmod.
+  cbv beta in Hmod.
+  rewrite (one_times_diff s t) in Hmod.
   exact Hmod.
 Qed.
 
@@ -766,7 +770,8 @@ Proof.
   exists d. split; [exact Hd |].
   intros s t Has Hst Htb Hdt.
   specialize (Htight s t Has Hst Htb Hdt).
-  rewrite ?(one_times_diff s t) in Htight.
+  cbv beta in Htight.
+  rewrite (one_times_diff s t) in Htight.
   exact Htight.
 Qed.
 
