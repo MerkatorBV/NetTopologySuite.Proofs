@@ -13,7 +13,8 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 | P1 | ellipse | `theories/EllipseSpeedIntegral.v` | `ellipse_speed_integral_is_curve_length` — UC + chord-rate of √σ²; increment_squeezed E σ is the remaining primitive | Qed + Technique park, 3-axiom (#563 / 508-d) |
 | P1 | clothoid | `theories/ClothoidLength_unit.v` | `unit_line_discharges_window` — unit-speed straight inhabits the [sd,ed] contract; Euler-spiral integrals stay Route-1 primitives | Qed + Technique park, 3-axiom |
 | P1 | clothoid | `theories/ClothoidFresnel.v` | `fresnel_is_curve_length` — unit-speed pack at `F = fun t => 1 * t`; Cx, Cy increment_squeezed against (cos,sin)(t²/2); conditional, no inhabitant | Qed + Technique park, 3-axiom (#564 / 508-e) |
-| P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; knot-span additivity; conditional primitive | Qed, 3-axiom |
+| P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; two-window `nurbs_knot_span_additive`; conditional primitive | Qed, 3-axiom |
+| P1 | nurbs | `theories/NurbsKnotSpans.v` | `nurbs_spans_additive` — knot-vector induction; instance `golden_half_circle_length` (two 508-a quarters) | Qed, 3-axiom additivity / Category C instance (#565 / 508-g) |
 | P2 | arc | `theories/ArcMidSweep.v` | `valid_arc_sweep_nonzero`; `arc_mid_on_circle_param` | Qed, Category C (atan2; removal tracks AngleBetween) |
 | — | framework | `theories/BernsteinBasis.v` | `bern_partition`; `bern_elevate_2` (n=2 instance of `elevate_ctrl`); `bezier3_elevation_pointwise` re-proved through it | Qed, 3-axiom (#562 / 508-f) |
 | — | stop | `theories/ExactCurveEpic508.v` | `ticket_508_qed_or_qex` — zoo-on-CurveSegment (QED) or missing constructor (QEX); discharged QEX on the ellipse | Qed, 3-axiom (508-qed-qex) |
@@ -78,6 +79,17 @@ exactness is the n=2 instance of `elevate_ctrl` via `bern_elevate_2`.
 Non-negativity is `Rmult_le_pos` / `lra` — Flocq 4.2.1 `nra` cannot
 find a cubic witness (CI death on 48a5c3f). Does not retire epic 508.
 Wrap-up is #566.
+
+## 508-g (#565)
+
+`theories/NurbsKnotSpans.v` is the n-span knot-vector carrier.
+`nurbs_spans_additive` inducts on interior knots over
+`curve_length_additive`.  It does not remint
+`NurbsGeneralLength.nurbs_knot_span_additive` (two-window special
+case).  Not Cox-de Boor.  Oracle `N` stays single-span.  Instance
+`golden_half_circle_length` glues two 508-a golden quarters
+(`π/2 + π/2 = π`); Category C through `atan` only.  Does not
+retire epic 508.  Wrap-up is #566.  Board #564 stays OPEN.
 
 ## 508 QED ∨ QEX stop
 
