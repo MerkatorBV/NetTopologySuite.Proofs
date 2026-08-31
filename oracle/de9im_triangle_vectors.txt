@@ -28,7 +28,8 @@
 #   SAME_CONE     leftover Ⅵ same-cone — classified, fill still UNSUPPORTED
 #   LENS          leftover Ⅶ lens — classified, fill still UNSUPPORTED
 #   INSIDE        leftover Ⅷ inside — classified, fill still UNSUPPORTED
-#   DECLINE       unnamed same-side shared-edge — NOT leftover Ⅷ (now classified)
+#   NEST          leftover Ⅸ nest — classified, fill still UNSUPPORTED
+#   DECLINE       unnamed swapped nest — NOT leftover Ⅸ (now classified)
 #
 # Oracle mode: RELATE_MATRIX now prints UNSUPPORTED for decline keys.
 
@@ -114,9 +115,16 @@ TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_Inside
 NOTES Leftover Ⅷ inside. Classified TPR_Inside; fill not named. Not a matrix.
 
-REGIME DECLINE
+REGIME NEST
 TRI_A 0 0  4 0  0 4
 TRI_B 0 0  4 0  1 1
 TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_Nest
+NOTES Leftover Ⅸ nest. Classified TPR_Nest; fill not named. Not a matrix.
+
+REGIME DECLINE
+TRI_A 0 0  4 0  1 1
+TRI_B 0 0  4 0  0 4
+TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_Unsupported
-NOTES Unnamed same-side shared-edge pair after leftover Ⅷ (not leftover Ⅸ). Not a matrix. Leftover Ⅷ classifies the inside pair.
+NOTES Unnamed swapped nest pair after leftover Ⅸ (not leftover Ⅹ). Not a matrix. Leftover Ⅸ classifies the nest pair.

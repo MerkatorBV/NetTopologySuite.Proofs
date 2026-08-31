@@ -19,8 +19,8 @@
    pin is #570). After leftover Ⅴ. False on
    `classified_hard_pairs`, leftover Ⅰ, leftover Ⅱ, leftover Ⅲ,
    leftover Ⅳ, leftover Ⅴ, and the #567 contains pair.
-   Completeness stays false on an unnamed same-side shared-edge
-   pair after leftover `Ⅷ`. #577 Green is completeness (QED) or a documented cex
+   Completeness stays false on an unnamed swapped nest pair
+   after leftover `Ⅸ`. #577 Green is completeness (QED) or a documented cex
    (QEX). `triangle_pair_regime_ccw_stop` is that disjunction,
    discharged QEX. Leftover `Ⅵ` itself is QED
    (`leftover_vi_qed_or_qex`). `classify_triangle_pair` arm is
@@ -323,14 +323,14 @@ Proof.
 Qed.
 
 Theorem unnamed_ccw_still_unsupported :
-  triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 1 1 = TPR_Unsupported.
+  triangle_pair_regime 0 0 4 0 1 1 0 0 4 0 0 4 = TPR_Unsupported.
 Proof.
   exact unnamed_ccw_pair_unsupported.
 Qed.
 
 (* Epic #522 / #577 stop: completeness (QED) or a documented CCW
    unsupported pair (QEX). Discharged QEX — unnamed same-side
-   shared-edge pair after leftover `Ⅷ`. Leftover-Ⅵ classify does
+   swapped nest pair after leftover `Ⅸ`. Leftover-Ⅵ classify does
    not take the left. Not a 522-j remint. *)
 (* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed same-side shared-edge pair after leftover Ⅷ","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
 Theorem triangle_pair_regime_ccw_stop :

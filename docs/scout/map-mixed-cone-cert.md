@@ -10,7 +10,8 @@ a GitHub child, **not** a remint of `522-j` / `522-m` / `522-i`, and
 > Roman numerals. This leftover is **`Ⅴ`**. Do not swap it with `Ⅱ`.
 > Do not remint ADR-0004. This map does not mint a GitHub child.
 > Leftover `Ⅵ` is same-cone. Leftover `Ⅶ` is the lens.
-> Leftover `Ⅷ` is the inside pair. Do not mint leftover `Ⅸ`.
+> Leftover `Ⅷ` is the inside pair. Leftover `Ⅸ` classified the nest.
+> Do not mint leftover `Ⅹ`.
 
 topics: relate
 claimId: Ⅴ
@@ -30,8 +31,8 @@ Completeness is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). The
 filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
-The live cex after leftover `Ⅷ` is an unnamed same-side shared-edge
-pair (not leftover `Ⅸ`). Leftover `Ⅴ` itself is QED
+The live cex after leftover `Ⅸ` is an unnamed swapped nest
+pair (not leftover `Ⅹ`). Leftover `Ⅴ` itself is QED
 (`RelateNGTouchMixedCone.v : leftover_v_qed_or_qex`).
 
 ## The pair (compiled)
@@ -59,10 +60,11 @@ Constructor `TPR_MixedCone` stays on `im_unsupported`
 `FFFF1FFF2`. `classify_triangle_pair` arm is `True`.
 
 Oracle / harness: `oracle/de9im_triangle_vectors.txt` `REGIME TOUCH_MIXED`
-(fill still `UNSUPPORTED`). Decline golden after leftover `Ⅷ` is the
-unnamed same-side shared-edge pair A = `(0,0)(4,0)(0,4)`, B = `(0,0)(4,0)(1,1)`.
+(fill still `UNSUPPORTED`). Decline golden after leftover `Ⅸ` is the
+unnamed swapped nest pair A = `(0,0)(4,0)(1,1)`, B = `(0,0)(4,0)(0,4)`.
 The lens pair is leftover `Ⅶ` (`RelateNGUnnamedCex.v : lens_pair_lens`).
 The inside pair is leftover `Ⅷ` (`RelateNGUnnamedCex.v : inside_pair_inside`).
+The nest pair is leftover `Ⅸ` (`RelateNGNestCex.v : nest_pair_nest`).
 
 ## Nearby pairs that are **not** this leftover
 
@@ -73,6 +75,7 @@ The inside pair is leftover `Ⅷ` (`RelateNGUnnamedCex.v : inside_pair_inside`).
 | `(0,0)(2,0)(0,2)` vs `(0,0)(3,1)(1,3)` | Leftover `Ⅵ` same-cone. Classified **`TPR_SameCone`**. Same-sign spill. `RelateNGUnnamedCex.v : same_cone_pair_samecone`. | steal leftover `Ⅵ` |
 | `(0,0)(3,0)(0,3)` vs `(2,-1)(2,2)(-1,2)` | Leftover `Ⅶ` lens. Classified **`TPR_Lens`**. `RelateNGUnnamedCex.v : lens_pair_lens`. | steal leftover `Ⅶ` |
 | `(1,1)(2,1)(1,2)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅷ`. Classified **`TPR_Inside`**. A strictly inside B. `RelateNGUnnamedCex.v : inside_pair_inside`. | steal leftover `Ⅷ` |
-| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Unnamed completeness cex. Shared edge; same-side thirds. `RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅸ` |
+| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Leftover `Ⅸ`. Classified **`TPR_Nest`**. Shared edge; B-in-A. `RelateNGNestCex.v : nest_pair_nest`. | steal leftover `Ⅸ` |
+| `(0,0)(4,0)(1,1)` vs `(0,0)(4,0)(0,4)` | Unnamed completeness cex. Swap; `nest_b` is B-in-A only. `RelateNGNestCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅹ` |
 
-Do not mint leftover `Ⅸ`. Epic `#522` stays OPEN.
+Do not mint leftover `Ⅹ`. Epic `#522` stays OPEN.

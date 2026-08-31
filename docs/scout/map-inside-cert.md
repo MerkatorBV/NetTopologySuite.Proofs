@@ -9,7 +9,8 @@ a GitHub child, **not** a remint of `522-j` / `522-m` / `522-h`, and
 > historical. Do **not** mint `522-n`. Leftover ids are precomposed
 > Roman numerals. This leftover is **`Ⅷ`**. Do not swap it with `Ⅶ`.
 > Do not remint ADR-0004. This map does not mint a GitHub child.
-> Do not mint leftover `Ⅸ`.
+> Leftover `Ⅸ` classified the nest (`map-nest-cert.md`).
+> Do not mint leftover `Ⅹ`.
 
 topics: relate
 claimId: Ⅷ
@@ -29,8 +30,8 @@ Completeness is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). The
 filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
-The live cex is an unnamed same-side shared-edge pair (not leftover
-`Ⅸ`). Leftover `Ⅷ` itself is QED
+The live cex is an unnamed swapped nest pair after leftover `Ⅸ`
+(not leftover `Ⅹ`). Leftover `Ⅷ` itself is QED
 (`RelateNGTouchInside.v : leftover_viii_qed_or_qex`).
 
 ## The pair (compiled)
@@ -55,8 +56,8 @@ Constructor `TPR_Inside` stays on `im_unsupported`
 `2FFFFFFF2`. `classify_triangle_pair` arm is `True`.
 
 Oracle / harness: `oracle/de9im_triangle_vectors.txt` `REGIME INSIDE`
-(fill still `UNSUPPORTED`). Decline golden is the unnamed same-side
-shared-edge pair A = `(0,0)(4,0)(0,4)`, B = `(0,0)(4,0)(1,1)`.
+(fill still `UNSUPPORTED`). Decline golden is the unnamed swapped
+nest pair A = `(0,0)(4,0)(1,1)`, B = `(0,0)(4,0)(0,4)`.
 
 ## Nearby pairs that are **not** this leftover
 
@@ -64,6 +65,6 @@ shared-edge pair A = `(0,0)(4,0)(0,4)`, B = `(0,0)(4,0)(1,1)`.
 |---|---|---|
 | `(0,0)(3,0)(0,3)` vs `(2,-1)(2,2)(-1,2)` | Leftover `Ⅶ`. Classified **`TPR_Lens`**. Proper edge-cross. `RelateNGUnnamedCex.v : lens_pair_lens`. | steal leftover `Ⅶ` |
 | `(0,0)(1,0)(0,1)` vs `(1/4,1/4)(1/2,1/4)(1/4,1/2)` | #567 contains. Classified **`TPR_Contains`**. B-in-A. | remint `contains_b` / emit `2FFFFFFF2` |
-| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Unnamed completeness cex. Shared edge; same-side thirds. `RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅸ` |
+| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Leftover `Ⅸ`. Classified **`TPR_Nest`**. Shared edge; B-in-A. `RelateNGNestCex.v : nest_pair_nest`. | steal leftover `Ⅸ` |
 
-Do not mint leftover `Ⅸ`. Epic `#522` stays OPEN.
+Do not mint leftover `Ⅹ`. Epic `#522` stays OPEN.

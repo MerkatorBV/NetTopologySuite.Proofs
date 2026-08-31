@@ -128,10 +128,13 @@ disguised as disjointness — that was #530.
   Fill stays `im_unsupported`.
 - **Inside certificate** — leftover `Ⅷ` classified.
   Headline `RelateNGTouchInside.v : triangle_pair_regime_inside`.
+  Fill stays `im_unsupported`.
+- **Nest certificate** — leftover `Ⅸ` classified.
+  Headline `RelateNGTouchNest.v : triangle_pair_regime_nest`.
   Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
-  (`RelateNGTouchInside.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed same-side shared-edge pair.
-  Do not mint leftover `Ⅸ`.
+  (`RelateNGTouchNest.v : triangle_pair_regime_ccw_stop`),
+  discharged QEX on an unnamed swapped nest pair.
+  Do not mint leftover `Ⅹ`.
 - **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with two
   witnesses. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token

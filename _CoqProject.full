@@ -2789,9 +2789,13 @@ theories/RelateNGTouch.v
 theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v
 theories/RelateNGRect.v
+# Leftover Ⅸ nest pair + unnamed swapped-nest cex. Split out of
+# RelateNGUnnamedCex.v so that file stays under the 1234-line gate.
+theories/RelateNGNestCex.v
 # Unnamed CCW completeness cex after leftover Ⅴ (not leftover Ⅵ).
 # Split out of RelateNGTouchVertexRegime.v so that file stays under
 # the 1234-line gate. Complete stays at the monolith floor.
+# Re-exports RelateNGNestCex.
 theories/RelateNGUnnamedCex.v
 # #577 / 522-j: leftover-decline finding.  Completeness is still
 # false (unnamed CCW pair after leftover Ⅴ). The compiled
@@ -2841,6 +2845,12 @@ theories/RelateNGTouchLens.v
 # (not leftover Ⅸ). Not CONTEXT Bar 1. Does not remint
 # contains_b / aa_matrix_contains / overlap_b / aa_matrix_*.
 theories/RelateNGTouchInside.v
+# Leftover Ⅸ: same-side shared-edge nest. Detector nest_b;
+# constructor TPR_Nest stays on im_unsupported. After leftover
+# Ⅷ. Completeness is an unnamed swapped nest pair
+# (not leftover Ⅹ). Not CONTEXT Bar 1. Does not remint
+# touch_edge_b / contains_b / overlap_b / aa_matrix_*.
+theories/RelateNGTouchNest.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE

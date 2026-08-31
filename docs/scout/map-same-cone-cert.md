@@ -11,7 +11,8 @@ a GitHub child, **not** a remint of `522-j` / `522-m` / `522-i`, and
 > Do not remint ADR-0004. This map does not mint a GitHub child.
 > Leftover `Ⅶ` is the lens letter (`map-lens-cert.md`).
 > Leftover `Ⅷ` is the inside pair (`map-inside-cert.md`).
-> Do not mint leftover `Ⅸ`.
+> Leftover `Ⅸ` classified the nest (`map-nest-cert.md`).
+> Do not mint leftover `Ⅹ`.
 
 topics: relate
 claimId: Ⅵ
@@ -31,8 +32,8 @@ Completeness is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). The
 filtered retry is still false
 (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete_not_tjunction`).
-The live cex is an unnamed same-side shared-edge pair after leftover
-`Ⅷ` (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Leftover
+The live cex is an unnamed swapped nest pair after leftover
+`Ⅸ` (`RelateNGNestCex.v : unnamed_ccw_pair_unsupported`). Leftover
 `Ⅵ` itself is QED (`RelateNGTouchSameCone.v : leftover_vi_qed_or_qex`).
 
 ## The pair (compiled)
@@ -75,6 +76,7 @@ The inside pair is leftover `Ⅷ` (`RelateNGUnnamedCex.v : inside_pair_inside`).
 | `(0,0)(2,0)(0,2)` vs `(0,0)(-2,0)(0,-2)` | #572 / `522-i`. Classified **`TPR_TouchVertex`**. Same-sign opposite cone. | remint `cone_separates_b` / steal `522-i` |
 | `(0,0)(3,0)(0,3)` vs `(2,-1)(2,2)(-1,2)` | Leftover `Ⅶ` lens. Classified **`TPR_Lens`**. `RelateNGUnnamedCex.v : lens_pair_lens`. | steal leftover `Ⅶ` |
 | `(1,1)(2,1)(1,2)` vs `(0,0)(4,0)(0,4)` | Leftover `Ⅷ`. Classified **`TPR_Inside`**. A strictly inside B. `RelateNGUnnamedCex.v : inside_pair_inside`. | steal leftover `Ⅷ` |
-| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Unnamed completeness cex. Shared edge; same-side thirds. `RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅸ` |
+| `(0,0)(4,0)(0,4)` vs `(0,0)(4,0)(1,1)` | Leftover `Ⅸ`. Classified **`TPR_Nest`**. Shared edge; B-in-A. `RelateNGNestCex.v : nest_pair_nest`. | steal leftover `Ⅸ` |
+| `(0,0)(4,0)(1,1)` vs `(0,0)(4,0)(0,4)` | Unnamed completeness cex. Swap; `nest_b` is B-in-A only. `RelateNGNestCex.v : unnamed_ccw_pair_unsupported`. | mint leftover `Ⅹ` |
 
-Do not mint leftover `Ⅸ`. Epic `#522` stays OPEN.
+Do not mint leftover `Ⅹ`. Epic `#522` stays OPEN.
