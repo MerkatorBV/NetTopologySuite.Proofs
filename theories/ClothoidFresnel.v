@@ -81,6 +81,11 @@
    [Rmult_le_compat_r] cannot unify [dist] with [gap].
    Rewrite the subtracted occurrence only ([at 1]);
    the factor on [eps] stays [gap].
+   CI death on 12a6ed7 L713: [replace 1 with (1-0)] rewrites
+   every [1], including the window endpoint, so the leftover
+   is [is_curve_length g 0 (1-0) (1-0)] and apply cannot
+   unify [1] with [1-0]. Pose [fresnel_is_curve_length]
+   first; [rewrite Rminus_0_r] on the length only.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -708,9 +713,16 @@ Corollary fresnel_unit_window_length :
     is_curve_length (fresnel_curve Cx Cy) 0 1 1.
 Proof.
   intros Cx Cy Hpr.
-  replace 1 with (1 - 0).
-  2:{ unfold Rminus. rewrite Ropp_0. rewrite Rplus_0_r. reflexivity. }
-  apply fresnel_is_curve_length; [lra | exact Hpr].
+  (*
+    2026-08-31 CI death at apply fresnel_is_curve_length (L713):
+    [replace 1 with (1-0)] rewrites both the window [b] and the
+    length, leaving [is_curve_length g 0 (1-0) (1-0)]. Pose the
+    [b-a] fact first; peel [1-0] with [Rminus_0_r] only.
+  *)
+  assert (Hab : 0 <= 1) by lra.
+  pose proof (fresnel_is_curve_length Cx Cy 0 1 Hab Hpr) as Hlen.
+  rewrite Rminus_0_r in Hlen.
+  exact Hlen.
 Qed.
 
 Lemma fresnel_H_unit_chord : forall Cx Cy a b s t,
@@ -746,7 +758,7 @@ Proof.
   intros s t Has Hst Htb Hdt.
   specialize (Htight s t Has Hst Htb Hdt).
   rewrite (one_times_diff s t) in Htight.
-  lra.
+  exact Htight.
 Qed.
 
 (* WITNESS {"claimId":"508-e-clothoid-contract","topic":"metric","lemma":"fresnel_discharges_clothoid_window","title":"Fresnel primitives discharge the windowed K-token contract","file":"theories/ClothoidFresnel.v","witness":"508-e-fresnel","board":"#564"} *)
