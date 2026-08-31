@@ -2828,11 +2828,14 @@ theories/RelateNGTouchMixedCone.v
 # lens pair (not leftover Ⅶ). Not CONTEXT Bar 1. Does not remint
 # cone_separates_b / mixed_cone_vertex_b / overlap_b / aa_matrix_*.
 theories/RelateNGTouchSameCone.v
-# Leftover Ⅶ: proper edge-cross lens. Detector
-# lens_edges_cross_b; constructor TPR_Lens stays on
-# im_unsupported. After leftover Ⅵ. Completeness is an unnamed
-# inside pair (not leftover Ⅷ). Not CONTEXT Bar 1. Does not remint
-# segments_proper_cross / overlap_b / aa_matrix_*.
+# Leftover Ⅶ: name the leftover-Ⅵ edge-cross residue.
+# Detector lens_edges_cross_b is a transversal edge pair after
+# prior arms, not a lens denotation. Constructor TPR_Lens stays
+# on im_unsupported (missing overlap_b clause parked, not fixed).
+# segments_proper_cross_b is a _b remint; the noding Prop is
+# identifier-untouched only. After leftover Ⅵ. Completeness is
+# nested containment (not leftover Ⅷ). Not CONTEXT Bar 1.
+# Does not remint overlap_b / aa_matrix_*.
 theories/RelateNGTouchLens.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +

@@ -1,27 +1,42 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNGTouchLens
    ----------------------------------------------------------------------------
-   Leftover Ⅶ: proper edge-cross lens.
+   Leftover Ⅶ: name the leftover-Ⅵ completeness residue.
+
+   Accept as leftover-Ⅶ classification. Reject as a lens theorem
+   or an overlap theorem. Constructor is “escaped every prior arm,
+   then some edges cross,” not “this configuration is a lens.”
+   `triangle_pair_regime_lens` is inhabitance, not soundness.
+   `classify_triangle_pair`'s TPR_Lens arm is True — no denotation.
 
    Map: docs/scout/map-lens-cert.md. Compiled pair
-   A = (0,0)(3,0)(0,3), B = (2,-1)(2,2)(-1,2) is the leftover-Ⅵ
-   completeness residue. Both CCW. (1,1) is strictly in both
-   interiors. No shared vertex. `overlap_b` misses (no vertex
-   stab). A's hypotenuse x+y=3 crosses B's vertical x=2 at (2,1).
-   Detector `lens_edges_cross_b` is a boolean proper-cross of some
-   A-edge with some B-edge (`opposite_sides_b` both ways) — not a
-   remint of the noding-lane Prop `segments_proper_cross`.
-   Constructor `TPR_Lens` stays on `im_unsupported` (load-bearing:
-   do not emit `2FFF1FFF2`; that pin is #570). After leftover Ⅵ.
-   False on leftover Ⅰ–Ⅵ regimes and the hard pairs (classifier
-   order). Completeness stays false on an unnamed inside pair
-   (not leftover `Ⅷ`). #577 Green is completeness (QED) or a
-   documented cex (QEX). `triangle_pair_regime_ccw_stop` is that
-   disjunction, discharged QEX. Leftover `Ⅶ` itself is QED
-   (`leftover_vii_qed_or_qex`). `classify_triangle_pair` arm is
-   `True` — leftover Ⅰ honesty, not CONTEXT Bar 1. Nothing that
-   mentions `TPR_Lens` may be proved through
-   `classify_triangle_pair`. Do not steal 522-j / 522-m / 522-f /
+   A = (0,0)(3,0)(0,3), B = (2,-1)(2,2)(-1,2). Both CCW. (1,1) is
+   strictly in both interiors. No shared vertex. `overlap_b` is
+   still a vertex-stab certificate and misses. A's hypotenuse
+   x+y=3 crosses B's vertical x=2 at (2,1). That is the missing
+   overlap_b clause; this letter parks it on TPR_Lens instead of
+   widening the certificate. Fill stays `im_unsupported`
+   (load-bearing: do not emit `2FFF1FFF2`; that pin is #570).
+
+   Detector `lens_edges_cross_b` is both-CCW plus a transversal
+   edge pair (`opposite_sides_b` both ways). It does not mention
+   interiors, lenses, or area-2 II. Leftover Ⅰ / Ⅴ / Ⅵ and the
+   hard overlap pair also have proper edge crosses; they stay off
+   TPR_Lens because they fire earlier. Order is exclusive, not
+   the predicate. `segments_proper_cross_b` is the remint the
+   honesty clause allowed under a `_b` suffix; the noding-lane
+   Prop `segments_proper_cross` is identifier-untouched only.
+
+   After leftover Ⅵ. Completeness stays false on a nested
+   containment pair (A strictly inside B; contains_b is one-sided).
+   Not leftover `Ⅷ` in this letter. Relocating
+   `triangle_pair_regime_ccw_stop` here does not move #522 closer
+   to QED — one more named bucket. `leftover_vii_qed_or_qex` is
+   classified ∨ declined on the pair just classified.
+   `classified_hard_pairs_still_lens` is misnamed: those pairs
+   stay Disjoint / Overlap / TouchVertex / TouchEdge.
+   `classify_triangle_pair` arm is `True` — leftover Ⅰ honesty,
+   not CONTEXT Bar 1. Do not steal 522-j / 522-m / 522-f /
    522-i / leftover Ⅰ–Ⅵ. Do not remint `cone_separates_b` /
    `overlap_b`. Do not mint 522-n / `Ⅷ`. Do not remint
    aa_matrix_*.
@@ -174,7 +189,7 @@ Proof.
   exact hard_contains_no_lens.
 Qed.
 
-(* WITNESS {"claimId":"Ⅶ","topic":"relate","lemma":"triangle_pair_regime_lens","title":"TPR_Lens reachable on the compiled leftover-Ⅶ lens pair","file":"theories/RelateNGTouchLens.v","witness":"Ⅶ-lens-cex","board":"leftover-Ⅶ"} *)
+(* WITNESS {"claimId":"Ⅶ","topic":"relate","lemma":"triangle_pair_regime_lens","title":"TPR_Lens inhabitance on the compiled leftover-Ⅶ edge-cross pair (not a lens denotation)","file":"theories/RelateNGTouchLens.v","witness":"Ⅶ-lens-cex","board":"leftover-Ⅶ"} *)
 Theorem triangle_pair_regime_lens :
   triangle_pair_regime 0 0 3 0 0 3 2 (-1) 2 2 (-1) 2 = TPR_Lens.
 Proof.
@@ -245,6 +260,8 @@ Proof.
   exact same_cone_pair_samecone.
 Qed.
 
+(* Misnamed: leftover Ⅰ / #570 / #572 / #567 still Disjoint /
+   Overlap / TouchVertex / TouchEdge. Not a TPR_Lens claim. *)
 Theorem classified_hard_pairs_still_lens :
   triangle_pair_regime 0 0 1 0 0 1 2 0 3 0 2 1 = TPR_Disjoint /\
   triangle_pair_regime 0 0 1 0 0 1 (1/4) (1/4) (5/4) (1/4) (1/4) (5/4)
@@ -302,8 +319,8 @@ Proof.
   exact triangle_pair_regime_ccw_incomplete_not_tjunction.
 Qed.
 
-(* Leftover Ⅶ Green: classify (QED) or remain the documented
-   unsupported (QEX). This letter is QED. *)
+(* Classified ∨ declined on the pair this letter just classified.
+   One more named bucket. Does not move epic #522 closer to QED. *)
 Theorem leftover_vii_qed_or_qex :
   triangle_pair_regime 0 0 3 0 0 3 2 (-1) 2 2 (-1) 2 = TPR_Lens
   \/

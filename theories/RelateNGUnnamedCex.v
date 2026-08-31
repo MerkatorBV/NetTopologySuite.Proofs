@@ -1,20 +1,22 @@
 (* ============================================================================
    NetTopologySuite.Proofs.RelateNGUnnamedCex
    ----------------------------------------------------------------------------
-   Leftover Ⅵ classify (same-cone), leftover Ⅶ classify (lens),
-   plus the unnamed inside-A completeness cex after leftover Ⅶ
-   (not leftover `Ⅷ`).
+   Leftover Ⅵ classify (same-cone), leftover Ⅶ classify
+   (named edge-cross residue; inhabitance, not a lens denotation),
+   plus nested-containment completeness cex after leftover Ⅶ
+   (not leftover `Ⅷ` in this letter).
 
    Same-cone pair: A = (0,0)(2,0)(0,2), B = (0,0)(3,1)(1,3). Shared
    origin. Both remaining B verts have side_dot > 0 vs nA = (2,2) —
    same cone, outside A; interiors meet. Classifies TPR_SameCone.
 
-   Lens pair: A = (0,0)(3,0)(0,3), B = (2,-1)(2,2)(-1,2). Both CCW,
-   interiors meet at (1,1), no shared vertex. Proper edge crosses.
-   Classifies TPR_Lens.
+   Leftover-Ⅶ pair: A = (0,0)(3,0)(0,3), B = (2,-1)(2,2)(-1,2).
+   Both CCW, interiors meet at (1,1), no shared vertex. overlap_b
+   still vertex-stab and misses. A transversal edge pair exists.
+   Classifies TPR_Lens after prior arms miss.
 
    Live cex: A = (1,1)(2,1)(1,2), B = (0,0)(4,0)(0,4). A sits
-   strictly inside B; no B vertex in A; no edge crossings.
+   strictly inside B; contains_b is one-sided; no edge crossings.
    Lives here so RelateNGTouchVertexRegime.v stays under the
    1234-line split gate and RelateNGComplete.v stays at the
    monolith floor. Do not mint leftover `Ⅷ`. Do not steal 522-j /
@@ -337,10 +339,10 @@ Qed.
 (* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"same_cone_pair_samecone","title":"Leftover Ⅵ same-cone classifies as TPR_SameCone","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
 
 (* -------------------------------------------------------------------------- *)
-(* Leftover Ⅶ lens pair. Was the unnamed cex after leftover Ⅵ.              *)
-(* A = (0,0)(3,0)(0,3), B = (2,-1)(2,2)(-1,2). Both CCW. (1,1) is           *)
-(* strictly in both interiors. No shared vertex. overlap_b misses.            *)
-(* Proper edge-cross classifies TPR_Lens.                                     *)
+(* Leftover Ⅶ named edge-cross residue. Was the unnamed cex after           *)
+(* leftover Ⅵ. A = (0,0)(3,0)(0,3), B = (2,-1)(2,2)(-1,2). Both CCW.        *)
+(* (1,1) is strictly in both interiors. No shared vertex. overlap_b           *)
+(* still vertex-stab and misses. Transversal edge pair inhabits TPR_Lens.     *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma unnamed_ccw_no_open_A :
@@ -596,13 +598,13 @@ Proof.
   reflexivity.
 Qed.
 
-(* WITNESS {"claimId":"Ⅶ","topic":"relate","lemma":"lens_pair_lens","title":"Leftover Ⅶ lens classifies as TPR_Lens","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅶ-lens-cex","board":"leftover-Ⅶ"} *)
+(* WITNESS {"claimId":"Ⅶ","topic":"relate","lemma":"lens_pair_lens","title":"Leftover Ⅶ edge-cross pair inhabits TPR_Lens (not a lens denotation)","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅶ-lens-cex","board":"leftover-Ⅶ"} *)
 
 (* -------------------------------------------------------------------------- *)
-(* Unnamed inside-A completeness cex after leftover Ⅶ. Not leftover `Ⅷ`.    *)
-(* A = (1,1)(2,1)(1,2), B = (0,0)(4,0)(0,4). Both CCW. A sits strictly       *)
-(* inside B. No B vertex in A. No edge crossings. overlap_b / contains_b      *)
-(* miss.                                                                      *)
+(* Nested-containment completeness cex after leftover Ⅶ. Not leftover `Ⅷ`  *)
+(* in this letter. A = (1,1)(2,1)(1,2), B = (0,0)(4,0)(0,4). Both CCW.       *)
+(* A sits strictly inside B. contains_b is one-sided (B-in-A). No edge        *)
+(* crossings. overlap_b / contains_b miss.                                    *)
 (* -------------------------------------------------------------------------- *)
 
 Lemma inside_ccw_no_open_A :

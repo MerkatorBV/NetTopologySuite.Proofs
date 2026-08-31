@@ -597,13 +597,18 @@ Definition same_cone_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
           (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
   else false else false.
 
-(* Leftover Ⅶ: proper open-segment crossing of some A-edge with
-   some B-edge. Boolean, not a remint of the noding-lane Prop
-   `segments_proper_cross`. Endpoints of each segment sit strictly
-   on opposite sides of the other (`opposite_sides_b` / `Rlt_dec`).
-   Shared-edge / T-junction / one-sided T contacts are collinear or
-   T-meets (product 0), so they miss. Classifier order already
-   protects leftover Ⅰ–Ⅵ. *)
+(* Leftover Ⅶ: a transversal edge pair exists. Boolean
+   `segments_proper_cross_b` is the remint the honesty clause
+   allowed under a `_b` suffix; the noding-lane Prop
+   `segments_proper_cross` is identifier-untouched only.
+   Endpoints of each segment sit strictly on opposite sides of
+   the other (`opposite_sides_b` / `Rlt_dec`). Shared-edge /
+   T-junction / one-sided T contacts are collinear or T-meets
+   (product 0), so they miss. The predicate is not exclusive to
+   leftover Ⅶ: leftover Ⅰ / Ⅴ / Ⅵ and the hard overlap pair
+   also cross. Classifier order, not the boolean, keeps them
+   off TPR_Lens. Not a lens denotation and not an overlap_b
+   widening. *)
 Definition segments_proper_cross_b (a1 a2 b1 b2 : Point) : bool :=
   opposite_sides_b a1 a2 b1 b2 && opposite_sides_b b1 b2 a1 a2.
 
@@ -636,7 +641,8 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    (`mixed_cone_vertex_b`, after leftover Ⅱ so a closed cone still
    wins), leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
    so opposite-sign still wins), and leftover Ⅶ
-   (`lens_edges_cross_b`, after leftover Ⅵ).  DECLINES on
+   (`lens_edges_cross_b`, after leftover Ⅵ — order, not an
+   exclusive lens predicate).  DECLINES on
    everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
@@ -651,8 +657,9 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    is reachable when `touch_obtuse_vertex_b` fires. Leftover Ⅴ is
    reachable when `mixed_cone_vertex_b` fires. Leftover Ⅵ is
    reachable when `same_cone_vertex_b` fires. Leftover Ⅶ is
-   reachable when `lens_edges_cross_b` fires. Completeness stays
-   false on an unnamed inside pair (not leftover `Ⅷ`).
+   reachable when `lens_edges_cross_b` fires after every prior
+   arm misses (inhabitance, not a lens denotation). Completeness
+   stays false on a nested containment pair (not leftover `Ⅷ`).
    Do not reorder the four wired certificates. Do not remint
    `cone_separates_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
