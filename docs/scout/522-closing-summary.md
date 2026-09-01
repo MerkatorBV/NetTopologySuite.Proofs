@@ -85,6 +85,6 @@ Roman numerals. Do **not** mint `522-n`.
 - Ledger: `docs/verified-claims.md` `#522` catalog + split paragraphs
 - Living map: `docs/scout/map-522.md`
 - Scholar Sam: `docs/relate-ng-status.md`
-- Ticket 11 precondition 1: `docs/scout/tickets/11-retire-67-second-pass.md`
+- Ticket 11 precondition 1: `docs/scout/tickets/closed/11-retire-67-second-pass.md` (overtaken 2026-09-01)
 
 Prose gate: `scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`.

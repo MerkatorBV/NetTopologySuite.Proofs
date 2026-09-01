@@ -16,7 +16,7 @@ children have their own live gate: [`docs/scout/map-522.md`](scout/map-522.md).
 | Is this theorem in the corpus? | [`verified-claims.md`](verified-claims.md) `#67` / `#522` rows |
 | What is the specified interior? | [ADR-0003](adr/ADR-0003-two-tier-interior-spec-parity-computation.md) |
 | What is the next #522 grab? | [`scout/map-522.md`](scout/map-522.md) |
-| Does #67 itself retire? | [`scout/tickets/11-retire-67-second-pass.md`](scout/tickets/11-retire-67-second-pass.md) |
+| Does #67 itself retire? | [`scout/tickets/closed/11-retire-67-second-pass.md`](scout/tickets/closed/11-retire-67-second-pass.md) (overtaken; owner already retired the GitHub object) |
 | Rect + triangle touch cells | [`rect-triangle-touch-milestone.md`](rect-triangle-touch-milestone.md) |
 | Clothoid leftovers | [`clothoid-open-questions-triage.md`](clothoid-open-questions-triage.md) |
 | Why the triage was written | [`history/issue-67-relateng-triage.md`](history/issue-67-relateng-triage.md) |

@@ -37,7 +37,7 @@ the BI and side-E\* cells *nonempty* against a matrix specifying `F`. That
 mismatch is the nine-cell capstone leftover recorded on
 [`docs/relate-ng-status.md`](../relate-ng-status.md) (still open) and tracked
 for a second pass at #67 in
-[`docs/scout/tickets/11-retire-67-second-pass.md`](../scout/tickets/11-retire-67-second-pass.md).
+[`docs/scout/tickets/closed/11-retire-67-second-pass.md`](../scout/tickets/closed/11-retire-67-second-pass.md) (overtaken 2026-09-01).
 
 The same convention appears on the oracle side — `POINT_IN_CURVE_RING`'s header
 says boundary cases are excluded by strict inequalities *"as in
