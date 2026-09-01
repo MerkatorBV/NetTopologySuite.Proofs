@@ -87,6 +87,11 @@ theories/ExactCurveEpic508.v
 # chord_rate discharged on a compact window. Route 1 does not
 # construct RInt. Never global. 3-axiom.
 theories/ClothoidFresnel.v
+# #508-e / #564 inhabitant: Stdlib RiemannInt of (cos,sin)(t²/2) from 0
+# yields concrete fresnel_Cx / fresnel_Cy; discharges fresnel_primitives
+# on every window; [0,1] length exactly 1. Category C (RiemannInt →
+# classic). Does not remint ClothoidFresnel.v. Never global.
+theories/ClothoidFresnelInhab.v
 # #508 NURBS rung 1: the degree-2 single-span N token (rational quadratic
 # Bezier, the conic form) against the CurveLength spec.  Equal-weights
 # degeneration as an is_curve_length iff (chained to the elevated cubic),

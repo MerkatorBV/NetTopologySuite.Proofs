@@ -913,7 +913,7 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#508 QED ∨ QEX stop** (own paragraph). Epic #508 stop is zoo-on-`CurveSegment` (QED) or a documented missing constructor (QEX). Discharged QEX (`ExactCurveEpic508.v : ticket_508_qed_or_qex`) on the ellipse (`ExactCurveEpic508.v : ellipse_not_curve_segment`). Chord and circular-arc inhabit; every `CurveSegment` is `CSChord` or `CSArc` (`ExactCurveEpic508.v : ticket_508_carrier_qed_or_qex`). Children `508-a` / `508-b` / `508-c` / `508-d` / `508-f` remain QED. QEX is not owner accept. Epic #508 stays open. Wrap-up is #566. Does not steal `508-e` / `508-g` / `508-h`. Does not remint `CurveSegment`. Does not mint Exact* zoo types.
 
-**#566 / `508-h` wrap-up** (own paragraph). TRIAGE `M-LEN-ZOO` row, `CONTEXT.md` Metric length sweep, one prose gate (`scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`), and [`docs/scout/508-closing-summary.md`](scout/508-closing-summary.md). Does not remint 508-g theorems. Does not remint `SpeedIntegral.v` / `ClothoidLength_unit.v` / `ClothoidFresnel.v` / `nurbs_knot_span_additive`. Does not close #508. Board #564 stays OPEN. QEX is not owner accept. Witness `508-h-wrap-up`.
+**#566 / `508-h` wrap-up** (own paragraph). TRIAGE `M-LEN-ZOO` row, `CONTEXT.md` Metric length sweep, one prose gate (`scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`), and [`docs/scout/508-closing-summary.md`](scout/508-closing-summary.md). Does not remint 508-g theorems. Does not remint `SpeedIntegral.v` / `ClothoidLength_unit.v` / `ClothoidFresnel.v` / `nurbs_knot_span_additive`. Does not close #508. Fresnel inhabitant is a later #564 letter (`ClothoidFresnelInhab.v`); QEX is not owner accept. Witness `508-h-wrap-up`.
 
 **Leftover `Ⅰ` (this letter / #609; leftover numeral, not a 522-* board mint).** Mutual vertex-in-open-edge detector `touch_partial_edge_b`. Constructor `TPR_TouchPartialEdge`. The compiled pair is sliver overlap (II nonempty), not a kiss; fill stays `im_unsupported` (load-bearing). Witness `Ⅰ-partial-edge-bar1`. Completeness stays false: live 522-j / 522-m seed is an unnamed CCW pair (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). `classify_triangle_pair` arm is `True` — do not prove facts through it. Leftover `Ⅱ` is the obtuse-at-v certificate (`RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`). Leftover `Ⅲ` is the exterior-side one-sided T (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). Leftover `Ⅳ` is the interior-side stem (`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`). Do not remint leftover `Ⅱ`. Do not remint to a Touches fill. Epic `#522` stays OPEN.
 
@@ -1801,34 +1801,35 @@ accept. Does not steal `508-e` / `508-g` / `508-h`. Wrap-up is #566.
 | `ExactCurveEpic508.v : ticket_508_qed_or_qex` (+ `ellipse_not_curve_segment`, `clothoid_not_curve_segment`, `bezier_not_curve_segment`, `nurbs_not_curve_segment`) | **Epic #508 QED ∨ QEX:** every Bible zoo tag inhabits `CurveSegment`, or a documented tag does not. Discharged QEX on the ellipse `[exact]` | 3 |
 | `ExactCurveEpic508.v : ticket_508_carrier_qed_or_qex` (+ `curve_segment_chord_or_arc`) | **Year-1 circular carrier:** chord and circular-arc inhabit; every `CurveSegment` is `CSChord` or `CSArc` `[exact]` | 3 |
 
-## Issue #508 — Fresnel pack instance (`ClothoidFresnel.v`) <!-- feat:arc-len geom:arc -->
+## Issue #508 — Fresnel pack + inhabitant (`ClothoidFresnel.v`, `ClothoidFresnelInhab.v`) <!-- feat:arc-len geom:arc -->
 
-#564 / claimId `508-e` is a #561 pack instance on the clothoid-shaped
-integrands `cos(t²/2)` and `sin(t²/2)`. It is not a Fresnel
-construction: there is still no `Cx` / `Cy` in the corpus, and Route 1
-does not produce `RInt`. Under `fresnel_primitives` (`increment_squeezed`
-on each coordinate) and `a ≤ b`, `fresnel_is_curve_length` gives
-`is_curve_length (fresnel_curve Cx Cy) a b (b − a)`. Uniform continuity
-of `σ ≡ 1` and `increment_squeezed (fun t => 1 * t) (fun _ => 1)` are
-free (`constant_speed_premises`; pack `F` is `fun t => 1 * t`, not bare
-`id`). The discharged analytic obligation is `chord_rate_tight` on a
-compact window. Ellipse #563 already instantiated the same pack on a
-curved speed; this letter is the first clothoid-shaped integrand, not
-the first curved pack use. The only concrete inhabitant of the clothoid
-window remains the straight line in `ClothoidLength_unit.v`.
-`fresnel_unit_window_length` is the same theorem with `b − a` rewritten
-by `Rminus_0_r` on `[0,1]`, not an independent witness.
-`fresnel_discharges_clothoid_window` is a K-token wiring check (same
-statement via `H_unit_chord` / `H_unit_approx`), not extra geometric
-content. Never global. Does not retire epic 508 (that is #566).
-Does not remint SpeedIntegral.
+#564 / claimId `508-e` has two layers. The pack
+(`ClothoidFresnel.v`) is a #561 instance on the clothoid-shaped
+integrands `cos(t²/2)` and `sin(t²/2)`: under `fresnel_primitives` and
+`a ≤ b`, `fresnel_is_curve_length` gives
+`is_curve_length (fresnel_curve Cx Cy) a b (b − a)`. Pack `F` is
+`fun t => 1 * t`. The discharged analytic obligation is
+`chord_rate_tight` on a compact window. 3-axiom; does not remint
+`SpeedIntegral.v`.
 
-**NTS RGR Board catalog (#508 children).** `508-e` = #564 / conditional Fresnel pack instance (witness `508-e-fresnel`). Headline `ClothoidFresnel.v : fresnel_is_curve_length`. `[0,1]` specialization `ClothoidFresnel.v : fresnel_unit_window_length`. Board pointer stays #564. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, and `508-f` = #562 are on `main`. Remaining children `508-g` `508-h` are not this letter.
+The inhabitant (`ClothoidFresnelInhab.v`) defines
+`fresnel_Cx(t) = ∫₀ᵗ cos(u²/2) du` and `fresnel_Cy` likewise via Stdlib
+`RiemannInt` (Route 1 / in-corpus; ADR-0001 Coquelicot lane stays
+consumer-gated for Halley). Then `fresnel_primitives_inhab` holds for
+every `a ≤ b`, and `fresnel_unit_window_length_inhab` is metric length
+exactly `1` on `[0,1]` — the first curved unconditional clothoid
+window. Category C via `RiemannInt` → `classic`
+(`docs/audit-exceptions.txt`). Never global. Does not retire epic 508
+(that is #566). Does not remint `ClothoidFresnel.v`.
+
+**NTS RGR Board catalog (#508 children).** `508-e` = #564 / Fresnel pack + inhabitant (witness `508-e-fresnel-inhab`). Headline `ClothoidFresnelInhab.v : fresnel_param_is_curve_length`. `[0,1]` instance `ClothoidFresnelInhab.v : fresnel_unit_window_length_inhab`. Pack layer witness `508-e-fresnel`. Board #564. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, and `508-f` = #562 are on `main`. Remaining children `508-g` `508-h` are not this letter.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
-| `ClothoidFresnel.v : fresnel_is_curve_length` (+ `fresnel_chord_rate`, `fresnel_speed_integral_premises`, `fresnel_primitives`) | **Conditional pack instance (#508/#564, claimId: 508-e, witness: 508-e-fresnel):** if `increment_squeezed Cx fresnel_vx` and `increment_squeezed Cy fresnel_vy` on `[a,b]`, then `is_curve_length (fresnel_curve Cx Cy) a b (b − a)`. Pack `F = fun t => 1 * t`. Speed constantly 1 (`cos²+sin²=1`). No inhabitant, no Heine–Cantor, no Coquelicot. Does not retire epic 508 `[conditional]` | 3 |
-| `ClothoidFresnel.v : fresnel_unit_window_length` | **`[0,1]` specialization:** same theorem with `1 − 0` peeled by `Rminus_0_r`; still conditional on primitives. Not an independent witness `[conditional]` | 3 |
+| `ClothoidFresnel.v : fresnel_is_curve_length` (+ `fresnel_chord_rate`, `fresnel_speed_integral_premises`, `fresnel_primitives`) | **Conditional pack instance (#508/#564, claimId: 508-e, witness: 508-e-fresnel):** if `increment_squeezed Cx fresnel_vx` and `increment_squeezed Cy fresnel_vy` on `[a,b]`, then `is_curve_length (fresnel_curve Cx Cy) a b (b − a)`. Pack `F = fun t => 1 * t`. Speed constantly 1. No Heine–Cantor, no Coquelicot `[conditional]` | 3 |
+| `ClothoidFresnel.v : fresnel_unit_window_length` | **`[0,1]` specialization of the pack:** still conditional on primitives `[conditional]` | 3 |
+| `ClothoidFresnelInhab.v : fresnel_param_is_curve_length` (+ `fresnel_Cx`, `fresnel_Cy`, `fresnel_primitives_inhab`) | **Concrete Fresnel inhabitant (#508/#564, witness: 508-e-fresnel-inhab):** Stdlib RiemannInt of `(cos,sin)(t²/2)` from 0; length `b − a` on any window `[exact]` | C |
+| `ClothoidFresnelInhab.v : fresnel_unit_window_length_inhab` | **`[0,1]` curved unconditional window:** metric length exactly `1` `[exact]` | C |
 
 ## Issue #508 — multi-span NURBS: knot-vector additivity (`NurbsKnotSpans.v`) <!-- feat:arc-len geom:cs -->
 
@@ -1853,10 +1854,10 @@ the knot).  `NurbsKnotSpans.v : golden_half_circle_length` is
 `π/2 + π/2 = π` — two 508-a quarters, not a new `π` theorem.
 Category C (`atan`) through 508-a only; `nurbs_spans_additive` stays
 3-axiom.  Does not retire epic 508 (that is #566).  Does not steal
-508-e / 508-h.  Board `#564` stays OPEN.  Does not flip TRIAGE
-M-LEN-ZOO.
+508-e / 508-h.  Fresnel inhabitant is a separate #564 letter.
+Does not flip TRIAGE M-LEN-ZOO.
 
-**NTS RGR Board catalog (#508 children).** `508-g` = #565 / multi-span NURBS knot-vector additivity (witness `508-g-nurbs-spans`). Headline `NurbsKnotSpans.v : nurbs_spans_additive`. Instance `NurbsKnotSpans.v : golden_half_circle_length`. Board pointer stays #565. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, `508-e` = #564 (board OPEN; no inhabitant), and `508-f` = #562 are on `main`. Remaining child is `508-h` only.
+**NTS RGR Board catalog (#508 children).** `508-g` = #565 / multi-span NURBS knot-vector additivity (witness `508-g-nurbs-spans`). Headline `NurbsKnotSpans.v : nurbs_spans_additive`. Instance `NurbsKnotSpans.v : golden_half_circle_length`. Board pointer stays #565. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, `508-e` = #564 (Fresnel pack + inhabitant), and `508-f` = #562 are on `main`. Remaining child is `508-h` only.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -1870,15 +1871,16 @@ M-LEN-ZOO.
 engine-conditional vs out of scope). The Bible §4.2 satisfaction
 statement is [`docs/scout/508-closing-summary.md`](scout/508-closing-summary.md).
 This letter does not remint 508-g theorems and does not evaluate
-Cox-de Boor. Board `#564` stays OPEN (Fresnel pack, no inhabitant).
+Cox-de Boor. Fresnel inhabitant is `ClothoidFresnelInhab.v` (#564).
 QEX (`ExactCurveEpic508.v : ticket_508_qed_or_qex`) is not owner
 accept. This letter does not retire epic 508.
 
-**NTS RGR Board catalog (#508 children).** `508-h` = #566 / epic wrap-up (witness `508-h-wrap-up`). Headline the scout/TRIAGE citations. Board pointer stays #566. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, `508-e` = #564 (board OPEN), `508-f` = #562, and `508-g` = #565 are on `main`. Remaining 508-* children: none. Epic #508 stays open.
+**NTS RGR Board catalog (#508 children).** `508-h` = #566 / epic wrap-up (witness `508-h-wrap-up`). Headline the scout/TRIAGE citations. Board pointer stays #566. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, `508-e` = #564 (Fresnel pack + inhabitant), `508-f` = #562, and `508-g` = #565 are on `main`. Remaining 508-* children: none. Epic #508 stays open.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `ArcRectifiable.v : arc_r_theta_is_curve_length` | **Wrap-up pin (CircularArc):** `r·θ` is the metric length. Not reminted here `[exact]` | 3 |
 | `NurbsKnotSpans.v : nurbs_spans_additive` | **Wrap-up pin (knot list):** span lengths sum. Not reminted here; not Cox-de Boor `[exact]` | 3 |
-| `ClothoidFresnel.v : fresnel_is_curve_length` | **Wrap-up park (clothoid):** engine-conditional; no inhabitant. Board #564 stays OPEN `[conditional]` | 3 |
+| `ClothoidFresnel.v : fresnel_is_curve_length` | **Wrap-up park (clothoid pack):** engine-conditional; inhabitant is `ClothoidFresnelInhab.v` `[conditional]` | 3 |
+| `ClothoidFresnelInhab.v : fresnel_unit_window_length_inhab` | **Wrap-up park (clothoid inhabitant):** `[0,1]` length 1 via Stdlib RiemannInt `[exact]` | C |
 | `ExactCurveEpic508.v : ticket_508_qed_or_qex` | **Wrap-up park (carrier):** QEX on missing Exact* constructors. Not owner accept `[exact]` | 3 |
