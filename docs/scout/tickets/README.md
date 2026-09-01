@@ -27,6 +27,8 @@ Order of work: top-down from #64, with the freebie first.
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | ~~[End #69's umbrella role and re-parent the standing epics](closed/09-end-69-umbrella.md)~~ **closed** → [`69-closing-summary.md`](../69-closing-summary.md); no replacement umbrella | grilling | 11 (04–08 all closed) |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty** · 09 done |
+| 31 | ~~[Chart CURVEPOLYGON type honesty](closed/31-curvepolygon-type-chart.md)~~ **closed** → [`map-curvepolygon.md`](../map-curvepolygon.md) | grilling | — |
+| 32 | [Silent POLYGON collapse — CURVEPOLYGON type honesty](32-curvepolygon-silent-polygon-collapse.md) | implement | 31 · **HOLD implement** |
 
 ```
 01 ══════════════════════════════════════ closed 2026-08-22 (#482)
@@ -45,7 +47,15 @@ Order of work: top-down from #64, with the freebie first.
                                      (69-closing-summary.md)
 ```
 
-**Related living maps.** The #522 children (bar 1 → bar 2) have their own
+**Related living maps.** CURVEPOLYGON type honesty (TRIAGE CRV-CP):
+[`docs/scout/map-curvepolygon.md`](../map-curvepolygon.md). Ticket
+[31](closed/31-curvepolygon-type-chart.md) closed as the chart.
+Ticket [32](32-curvepolygon-silent-polygon-collapse.md) names the
+silent-POLYGON leftover. HOLD implement stands. Do not remint `#509`.
+Do not steal COMPOUNDCURVE flatten-elimination (tickets 29 / 30 live
+on PR #656). Off JTS #7.
+
+The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the mutual vertex-in-open-edge sliver. Leftover `Ⅱ` is
@@ -72,6 +82,8 @@ on the #506 queue. Ticket 523 stays open, not accepted.
 | 11 · second pass at #67 | closed: overtaken |
 | 09 · end #69's umbrella | closed — owner-retire packet written; GitHub object stays for owner review |
 | 10 · resync surviving bodies | #506's split queue emptying |
+| 31 · CURVEPOLYGON chart | closed — [`map-curvepolygon.md`](../map-curvepolygon.md) |
+| 32 · silent-polygon-collapse | named leftover — HOLD implement stands |
 
 The next useful session on this map is not another wayfinder letter.
 Owner review of [`69-closing-summary.md`](../69-closing-summary.md)

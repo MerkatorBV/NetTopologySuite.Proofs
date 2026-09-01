@@ -16,3 +16,4 @@ docs/scout/spec-interior-side.md
 docs/scout/map-523.md
 docs/scout/spec-523.md
 docs/scout/map-iso-st-relate-qex.md
+docs/scout/map-curvepolygon.md
