@@ -463,6 +463,14 @@ def _as_float(v):
         return None
 
 
+# Bible zoo members that are not JTS Year-1. Caption only — do not invent
+# timings. JTS Year-1 is ExactCircularArc; these are library work, not
+# lasers the jts curve PR still owes.
+YEAR2_ZOO_TYPES = frozenset({
+    "ExactEllipticalArc", "ExactCubicBezier", "ExactClothoid", "ExactNurbsSegment",
+})
+
+
 def _gate_has_rows(g):
     rows = g.get("rows") if isinstance(g, dict) else None
     return isinstance(rows, list) and len(rows) > 0
@@ -515,23 +523,31 @@ def laser_ratchet_html(lr):
     types = lr.get("types") or []
 
     # ---- curve-type coverage of the ratchet
+    # Year-2 zoo chips are HOLD library work, not a red "JTS still owes
+    # four Exact* types" debt on the curve PR.
     chips = []
     for t in types:
+        name = t.get("name") or "?"
+        note = t.get("note") or ""
         if t.get("measured"):
             bg, fg, mark = "#dcfce7", "#166534", "✅ measured"
         elif t.get("implemented"):
             bg, fg, mark = "#fef9c3", "#854d0e", "⚠️ unmeasured"
+        elif name in YEAR2_ZOO_TYPES:
+            bg, fg, mark = "#f1f5f9", "#334155", "library work, not JTS PR 7"
+            if "library work" not in note.lower():
+                note = (note + " — " if note else "") + \
+                       "Year-2 zoo: library work, not JTS PR 7"
         else:
             bg, fg, mark = "#fee2e2", "#991b1b", "❌ not implemented"
         chips.append(f'<span class="chip" style="border-color:{fg};background:{bg}'
-                     f';color:{fg}" title="{e(t.get("note") or "")}"><b>{e(t.get("name") or "?")}</b>'
+                     f';color:{fg}" title="{e(note)}"><b>{e(name)}</b>'
                      f'&nbsp;{mark}</span>')
-    n_meas = sum(1 for t in types if t.get("measured"))
-    n_types = len(types)
-    types_html = (f'<p class="muted"><b>{n_meas} of {n_types}</b> named '
-                  f'laser types exist at all — the ratchet is "measured per curve '
-                  f'type", so it is satisfied for one type out of five.</p>'
-                  f'<div class="chips">' + "".join(chips) + "</div>")
+    types_html = (
+        f'<p class="muted">JTS Year-1 is <b>ExactCircularArc</b> (measured). '
+        f'The Year-2 zoo types are <b>library work, not JTS PR 7</b> — not '
+        f'missing lasers that PR still owes.</p>'
+        f'<div class="chips">' + "".join(chips) + "</div>")
 
     # ---- primitive (per-curve-type) gates
     prows = ""

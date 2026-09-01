@@ -12,9 +12,9 @@
 # A path-filter push is not useful here — the numbers originate in jts.
 #
 # If the upstream file is not there yet, fail clearly (emitter not landed)
-# rather than writing fake numbers. Do not invent ExactEllipticalArc /
-# ExactCubicBezier / ExactClothoid / ExactNurbsSegment timings. HOLD:
-# 64-a Proofs sweep, N-SS expand, SHARED_SNAPPED_RAY, Year-2 zoo types.
+# rather than writing fake numbers. Year-2 zoo types are library work,
+# not JTS PR 7 — copy implemented:false as jts sends them; do not invent
+# timings. HOLD: 64-a Proofs sweep, N-SS expand, SHARED_SNAPPED_RAY.
 #
 # pages.yml is unchanged: it still rebuilds Pages when this JSON changes.
 # A GITHUB_TOKEN push to main does not retrigger other workflows, so after
@@ -126,7 +126,7 @@ jobs:
             --base "${DEFAULT_BRANCH}" \
             --head "$BRANCH" \
             --title "chore(laser): vendor laser-ratchet.json from jts ${TIP}" \
-            --body "Vendored \`${DEST_PATH}\` from \`${UPSTREAM_REPO}@${UPSTREAM_REF}\` tip \`${TIP}\`. \`git log -- ${DEST_PATH}\` is the history. Timings are not theorems. HOLD on 64-a / Year-2 zoo / N-SS."
+            --body "Vendored \`${DEST_PATH}\` from \`${UPSTREAM_REPO}@${UPSTREAM_REF}\` tip \`${TIP}\`. \`git log -- ${DEST_PATH}\` is the history. Timings are not theorems. Year-2 zoo is library work, not JTS PR 7. HOLD on 64-a / N-SS."
           echo "committed=true" >> "$GITHUB_OUTPUT"
           echo "mode=pr" >> "$GITHUB_OUTPUT"
 

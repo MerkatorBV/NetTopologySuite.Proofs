@@ -6,10 +6,10 @@
 # docs/laser-ratchet.json.  The copy is the observatory's version history
 # (`git log -- docs/laser-ratchet.json`).
 #
-# This is a vendor step, not a theorem.  Timings are not proofs.  The script
-# never invents ExactEllipticalArc / ExactCubicBezier / ExactClothoid /
-# ExactNurbsSegment numbers, never starts a 64-a sweep, and refuses to write
-# when the upstream file is missing or not Pages-compatible.
+# This is a vendor step, not a theorem.  Timings are not proofs.  Year-2
+# zoo types are library work, not JTS PR 7 — copy implemented:false as
+# jts sends them; never invent their timings.  Never start a 64-a sweep.
+# Refuse to write when the upstream file is missing or not Pages-compatible.
 #
 # Usage:
 #   python3 scripts/vendor_laser_ratchet.py validate PATH
