@@ -27,6 +27,8 @@ Order of work: top-down from #64, with the freebie first.
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | ~~[End #69's umbrella role and re-parent the standing epics](closed/09-end-69-umbrella.md)~~ **closed** → [`69-closing-summary.md`](../69-closing-summary.md); no replacement umbrella | grilling | 11 (04–08 all closed) |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty** · 09 done |
+| 33 | ~~[Chart MULTICURVE type honesty](closed/33-multicurve-type-chart.md)~~ **closed** → [`map-multicurve.md`](../map-multicurve.md) | grilling | — |
+| 34 | [Silent MultiLineString collapse — MULTICURVE type honesty](34-multicurve-silent-multilinestring-collapse.md) | implement | 33 · **HOLD implement** |
 
 ```
 01 ══════════════════════════════════════ closed 2026-08-22 (#482)
@@ -45,7 +47,16 @@ Order of work: top-down from #64, with the freebie first.
                                      (69-closing-summary.md)
 ```
 
-**Related living maps.** The #522 children (bar 1 → bar 2) have their own
+**Related living maps.** MULTICURVE type honesty (TRIAGE CRV-MC):
+[`docs/scout/map-multicurve.md`](../map-multicurve.md). Ticket
+[33](closed/33-multicurve-type-chart.md) closed as the chart.
+Ticket [34](34-multicurve-silent-multilinestring-collapse.md) names
+the silent-MULTILINESTRING leftover. HOLD implement stands. Do not
+steal COMPOUNDCURVE flatten-elimination (tickets 29 / 30 live on
+PR #656) or CURVEPOLYGON silent POLYGON collapse (tickets 31 / 32
+live on PR #657). Do not remint `#509`. Off JTS #7.
+
+The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the mutual vertex-in-open-edge sliver. Leftover `Ⅱ` is
@@ -72,6 +83,8 @@ on the #506 queue. Ticket 523 stays open, not accepted.
 | 11 · second pass at #67 | closed: overtaken |
 | 09 · end #69's umbrella | closed — owner-retire packet written; GitHub object stays for owner review |
 | 10 · resync surviving bodies | #506's split queue emptying |
+| 33 · MULTICURVE chart | closed — [`map-multicurve.md`](../map-multicurve.md) |
+| 34 · silent-multilinestring-collapse | named leftover — HOLD implement stands |
 
 The next useful session on this map is not another wayfinder letter.
 Owner review of [`69-closing-summary.md`](../69-closing-summary.md)
