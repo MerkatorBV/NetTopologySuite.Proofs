@@ -50,14 +50,20 @@ Used by `/wayfinder`. The **map** is a single issue with **child** issues as tic
 
 Facts a skill should know before writing to this tracker (audited 2026-08-22):
 
-- **Open issues are proof _programs_, not tasks** — epics `#64`–`#69` plus
-  extended programs (`#423` metrics, `#424` hulls, `#425` coverage), each with a
-  horizon label (`Immediate` / `Urgent` / `Expectant` / `Non-urgent`).
+- **Open issues are proof _programs_, not tasks** — the early block
+  `#64`–`#68` is retired; tracker `#69` is owner-retire ready
+  (`docs/scout/69-closing-summary.md`). Standing programs (`#423`
+  metrics, `#424` hulls, `#425` coverage, plus later epics) stand
+  alone, each with a horizon label (`Immediate` / `Urgent` /
+  `Expectant` / `Non-urgent`).
 - **`TRIAGE_NTS_JTS_ISSUES.md` is the declared source of record** for per-epic
   status and the upstream-issue → epic wire map. Prefer updating it over
-  duplicating status into issue bodies.
-- **Dependencies are expressed in prose, not GitHub machinery** — `Umbrella: #69`
-  lines, `_Part of the … batch (#64–#68)._` footers, and per-epic
+  duplicating status into issue bodies. There is **no replacement
+  umbrella** for `#423`/`#424`/`#425`.
+- **Dependencies are expressed in prose, not GitHub machinery** —
+  historical `Umbrella: #69` lines on `#423`/`#424`/`#425` are stale
+  (ticket 10 rewrites surviving bodies after the `#506` queue drains),
+  `_Part of the … batch (#64–#68)._` footers, and per-epic
   `### Blocker status` sections. No issue currently uses task lists, sub-issues,
   or native dependencies. A wayfinder map introducing them is a new convention
   here; the body-convention fallbacks above are the low-friction option.

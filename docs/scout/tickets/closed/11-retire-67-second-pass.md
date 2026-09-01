@@ -1,7 +1,8 @@
 # Retire #67 — second pass
 
 **Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** three of the four preconditions below — ADR-0003 unconsumed by the capstone, **ticket 523** open (children `523-a` / `523-b` / `523-c` = #603 #604 #605 landed; ticket 523 not accepted; [`map-523.md`](../map-523.md), [`spec-523.md`](../spec-523.md)), **#503**'s four defects uncorrected. Precondition 1 is largely met by **#530**. See [Retire #67 — RelateNG](closed/07-retire-67-relateng.md) for why the first pass declined to close.
+**Claimed:** wayfinder 2026-09-01 · **Closed:** 2026-09-01 (overtaken)
+**Blocked by:** three of the four preconditions below — ADR-0003 unconsumed by the capstone, **ticket 523** open (children `523-a` / `523-b` / `523-c` = #603 #604 #605 landed; ticket 523 not accepted; [`map-523.md`](../../map-523.md), [`spec-523.md`](../../spec-523.md)), **#503**'s four defects uncorrected. Precondition 1 is largely met by **#530**. See [Retire #67 — RelateNG](07-retire-67-relateng.md) for why the first pass declined to close.
 
 > **Note, 2026-08-22.** #67 was briefly closed by accident: the ticket-07 commit's
 > subject line contained the substring `close #67` (in the phrase "decide NOT to
@@ -74,3 +75,30 @@ Residue that will still need placing at that point, none of it blocking:
 Do **not** re-litigate: the II-cell guard is maximal (`RelateNGTouchRED.v:170`,
 Qed) and `touch_int_ext_exclusion` (`RelateNGTouch.v:200`) is unconditional. Both
 are results.
+
+## Resolution
+
+**Overtaken 2026-09-01. This ticket does not re-decide #67.**
+
+The GitHub object was retired by the owner on 2026-08-23
+(`closed_at` 2026-08-23T04:04:28Z, actor `grootstebozewolf`, no
+`commit_id`). That event is later than the accidental keyword
+closure of 2026-08-22 and later than the reopen note above. Ticket 09
+was waiting on this file; blocking the umbrella on a second-pass
+grilling of an already-retired object would keep the tracker open
+forever.
+
+Preconditions 2–4 of the Question are **not** claimed met. Ticket
+523 stays open and is not accepted
+(`RelateCurveAlphabet.v : ticket_523_qed_or_qex`, discharged QEX).
+#503 stays open. ADR-0003 consumption by a nine-cell capstone stays
+a park on [`map-522-leftovers.md`](../../map-522-leftovers.md)
+(`geom_de9im_pointset`). Residue placement does not change:
+
+- nine-cell remainder / half-open ring inclusion — ADR-0003 park
+- leftover `Ⅰ`–`Ⅴ` — [`map-522-leftovers.md`](../../map-522-leftovers.md)
+- alphabet / F vs not-computed — #523
+- register defects — #503
+
+Do not remint closed `522-*` letters. Do not mint leftover `Ⅺ`.
+Do not reopen #67 from ticket 09.
