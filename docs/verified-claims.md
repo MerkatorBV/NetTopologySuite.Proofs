@@ -913,6 +913,8 @@ Skeletons + helpers + guarded dim soundness landed. Rect + triangle helpers + EE
 
 **#508 QED ∨ QEX stop** (own paragraph). Epic #508 stop is zoo-on-`CurveSegment` (QED) or a documented missing constructor (QEX). Discharged QEX (`ExactCurveEpic508.v : ticket_508_qed_or_qex`) on the ellipse (`ExactCurveEpic508.v : ellipse_not_curve_segment`). Chord and circular-arc inhabit; every `CurveSegment` is `CSChord` or `CSArc` (`ExactCurveEpic508.v : ticket_508_carrier_qed_or_qex`). Children `508-a` / `508-b` / `508-c` / `508-d` / `508-f` remain QED. QEX is not owner accept. Epic #508 stays open. Wrap-up is #566. Does not steal `508-e` / `508-g` / `508-h`. Does not remint `CurveSegment`. Does not mint Exact* zoo types.
 
+**#566 / `508-h` wrap-up** (own paragraph). TRIAGE `M-LEN-ZOO` row, `CONTEXT.md` Metric length sweep, one prose gate (`scripts/validate-claims.sh` over `docs/gated-prose-docs.txt`), and [`docs/scout/508-closing-summary.md`](scout/508-closing-summary.md). Does not remint 508-g theorems. Does not remint `SpeedIntegral.v` / `ClothoidLength_unit.v` / `ClothoidFresnel.v` / `nurbs_knot_span_additive`. Does not close #508. Board #564 stays OPEN. QEX is not owner accept. Witness `508-h-wrap-up`.
+
 **Leftover `Ⅰ` (this letter / #609; leftover numeral, not a 522-* board mint).** Mutual vertex-in-open-edge detector `touch_partial_edge_b`. Constructor `TPR_TouchPartialEdge`. The compiled pair is sliver overlap (II nonempty), not a kiss; fill stays `im_unsupported` (load-bearing). Witness `Ⅰ-partial-edge-bar1`. Completeness stays false: live 522-j / 522-m seed is an unnamed CCW pair (`RelateNGComplete.v : triangle_pair_regime_ccw_incomplete`). `classify_triangle_pair` arm is `True` — do not prove facts through it. Leftover `Ⅱ` is the obtuse-at-v certificate (`RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`). Leftover `Ⅲ` is the exterior-side one-sided T (`RelateNGTouchOnesided.v : triangle_pair_regime_onesided`). Leftover `Ⅳ` is the interior-side stem (`RelateNGTouchOnesided.v : triangle_pair_regime_interior_side`). Do not remint leftover `Ⅱ`. Do not remint to a Touches fill. Epic `#522` stays OPEN.
 
 **Leftover `Ⅱ` (this letter; leftover numeral, not a 522-* board mint).** Closed-cone vertex kiss A=`(0,0)(2,0)(0,2)` vs B=`(0,0)(-2,0)(1,-1)`. Both CCW. Shared origin. Cone `side_dot = 0` on `(1,-1)`. Detector `touch_obtuse_vertex_b` is a closed cone plus `negb cone_separates_b` — not a remint of `cone_separates_b` / `touch_vertex_b` (#572). Constructor `TPR_TouchObtuse`. Witness `Ⅱ-obtuse-cex`. Fill stays `im_unsupported` (load-bearing: do not emit `FFFF1FFF2`). False on `classified_hard_pairs` (including #572), leftover `Ⅰ`, leftover `Ⅲ`, leftover `Ⅳ`, and the #567 contains pair. `classify_triangle_pair` arm is `True` — leftover `Ⅰ` honesty, not CONTEXT Bar 1. Completeness stays false on an unnamed CCW pair after leftover `Ⅴ` (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Leftover `Ⅱ` itself is QED (`RelateNGTouchObtuse.v : leftover_ii_qed_or_qex`). Epic #522 stop is QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`). Do not remint leftover `Ⅰ` / leftover `Ⅲ` / leftover `Ⅳ`. Do not mint `522-n`. Do not mint `Ⅵ`. Epic `#522` stays OPEN.
@@ -1414,8 +1416,8 @@ The ADR-0004 / CONTEXT.md "Metric length" spec lane: `is_curve_length g a b L`
 is `is_lub` of the inscribed-polyline-length set (classical rectifiable
 length, integration-free, stated as a predicate so no completeness axiom is
 spent constructing `L`). Every #508 zoo obligation states its formula against
-this spec. Arc `r·θ` rectifiability is the next rung; these are the base
-facts.
+this spec. Arc `r·θ` rectifiability landed (`ArcRectifiable.v : arc_r_theta_is_curve_length`).
+Wrap-up is #566 / [`docs/scout/508-closing-summary.md`](scout/508-closing-summary.md).
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
@@ -1860,3 +1862,23 @@ M-LEN-ZOO.
 |---|---|---|
 | `NurbsKnotSpans.v : nurbs_spans_additive` (+ `knot_vector`, `span_lengths`, `list_sum`) | **Knot-vector span additivity (#508/#565, claimId: 508-g, witness: 508-g-nurbs-spans):** a weakly increasing knot chain with one `is_curve_length` per consecutive window has total metric length the sum of the span lengths — induction on interior knots over `curve_length_additive`. Not a remint of `nurbs_knot_span_additive`. Not Cox-de Boor. Oracle `N` stays single-span. Does not retire epic 508 `[exact]` | 3 |
 | `NurbsKnotSpans.v : golden_half_circle_length` (+ `golden_q2_length`, `golden_half_span0`, `golden_half_span1`, `golden_half_glue`) | **Two golden quarters:** first-quadrant + rotate-90 second-quadrant NURBS on `[0,2]` have metric length `π`. Glue at `(0,1)`. Category C through 508-a `atan`. Not a new `π` theorem `[exact]` | 4 |
+
+## Issue #508 — wrap-up: M-LEN-ZOO + Bible §4.2 satisfaction (`508-h`) <!-- feat:arc-len geom:arc,cs -->
+
+#566 / claimId `508-h` is paperwork after the letters. TRIAGE
+`M-LEN-ZOO` flips to ✅ with scope notes (unconditional vs
+engine-conditional vs out of scope). The Bible §4.2 satisfaction
+statement is [`docs/scout/508-closing-summary.md`](scout/508-closing-summary.md).
+This letter does not remint 508-g theorems and does not evaluate
+Cox-de Boor. Board `#564` stays OPEN (Fresnel pack, no inhabitant).
+QEX (`ExactCurveEpic508.v : ticket_508_qed_or_qex`) is not owner
+accept. This letter does not retire epic 508.
+
+**NTS RGR Board catalog (#508 children).** `508-h` = #566 / epic wrap-up (witness `508-h-wrap-up`). Headline the scout/TRIAGE citations. Board pointer stays #566. `508-a` = #559, `508-b` = #560, `508-c` = #561, `508-d` = #563, `508-e` = #564 (board OPEN), `508-f` = #562, and `508-g` = #565 are on `main`. Remaining 508-* children: none. Epic #508 stays open.
+
+| `file : theorem` | Meaning | Ax |
+|---|---|---|
+| `ArcRectifiable.v : arc_r_theta_is_curve_length` | **Wrap-up pin (CircularArc):** `r·θ` is the metric length. Not reminted here `[exact]` | 3 |
+| `NurbsKnotSpans.v : nurbs_spans_additive` | **Wrap-up pin (knot list):** span lengths sum. Not reminted here; not Cox-de Boor `[exact]` | 3 |
+| `ClothoidFresnel.v : fresnel_is_curve_length` | **Wrap-up park (clothoid):** engine-conditional; no inhabitant. Board #564 stays OPEN `[conditional]` | 3 |
+| `ExactCurveEpic508.v : ticket_508_qed_or_qex` | **Wrap-up park (carrier):** QEX on missing Exact* constructors. Not owner accept `[exact]` | 3 |
