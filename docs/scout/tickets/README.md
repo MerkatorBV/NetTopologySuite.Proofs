@@ -27,6 +27,8 @@ Order of work: top-down from #64, with the freebie first.
 | 08 | ~~[Retire #68 — Delaunay triangulation and Voronoi diagrams](closed/08-retire-68-delaunay-voronoi.md)~~ **closed** → #525 (global tier), #526 | grilling | — |
 | 09 | ~~[End #69's umbrella role and re-parent the standing epics](closed/09-end-69-umbrella.md)~~ **closed** → [`69-closing-summary.md`](../69-closing-summary.md); no replacement umbrella | grilling | 11 (04–08 all closed) |
 | 10 | [Resync surviving issue bodies to corpus state](10-resync-surviving-bodies.md) | task | **#506 queue empty** · 09 done |
+| 35 | ~~[Chart MULTISURFACE type honesty](closed/35-multisurface-type-chart.md)~~ **closed** → [`map-multisurface.md`](../map-multisurface.md) | grilling | — |
+| 36 | [Silent MultiPolygon collapse — MULTISURFACE type honesty](36-multisurface-silent-multipolygon-collapse.md) | implement | 35 · **HOLD implement** |
 
 ```
 01 ══════════════════════════════════════ closed 2026-08-22 (#482)
@@ -45,7 +47,16 @@ Order of work: top-down from #64, with the freebie first.
                                      (69-closing-summary.md)
 ```
 
-**Related living maps.** The #522 children (bar 1 → bar 2) have their own
+**Related living maps.** MULTISURFACE type honesty (TRIAGE CRV-MS):
+[`docs/scout/map-multisurface.md`](../map-multisurface.md). Ticket
+[35](closed/35-multisurface-type-chart.md) closed as the chart.
+Ticket [36](36-multisurface-silent-multipolygon-collapse.md) names
+the silent-MULTIPOLYGON leftover. HOLD implement stands. Do not
+steal COMPOUNDCURVE ticket 30 (PR #656), CURVEPOLYGON ticket 32
+(PR #657), or MULTICURVE ticket 34 (PR #658). Do not remint `#509`.
+Off JTS #7.
+
+The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the mutual vertex-in-open-edge sliver. Leftover `Ⅱ` is
@@ -72,6 +83,8 @@ on the #506 queue. Ticket 523 stays open, not accepted.
 | 11 · second pass at #67 | closed: overtaken |
 | 09 · end #69's umbrella | closed — owner-retire packet written; GitHub object stays for owner review |
 | 10 · resync surviving bodies | #506's split queue emptying |
+| 35 · MULTISURFACE chart | closed — [`map-multisurface.md`](../map-multisurface.md) |
+| 36 · silent-multipolygon-collapse | named leftover — HOLD implement stands |
 
 The next useful session on this map is not another wayfinder letter.
 Owner review of [`69-closing-summary.md`](../69-closing-summary.md)
