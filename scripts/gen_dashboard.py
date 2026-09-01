@@ -443,6 +443,10 @@ def _ratio_badge(ratio, slack):
     """Green when the ratchet holds, red when it does not."""
     if ratio is None:
         return '<span class="muted">—</span>'
+    try:
+        ratio = float(ratio)
+    except (TypeError, ValueError):
+        return '<span class="muted">—</span>'
     ok = ratio <= slack
     bg, fg = ("#dcfce7", "#166534") if ok else ("#fee2e2", "#991b1b")
     mark = "✅" if ok else "❌"
@@ -450,71 +454,143 @@ def _ratio_badge(ratio, slack):
             f'padding:1px 6px;white-space:nowrap">{mark}&nbsp;{ratio:.3f}×</span>')
 
 
+def _as_float(v):
+    if v is None or v == "":
+        return None
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def _gate_has_rows(g):
+    rows = g.get("rows") if isinstance(g, dict) else None
+    return isinstance(rows, list) and len(rows) > 0
+
+
+def _fmt_ms_pair(laser, chainsaw, digits=3, extra_class=""):
+    lf, cf = _as_float(laser), _as_float(chainsaw)
+    if lf is None or cf is None:
+        return '<td class="muted">—</td>'
+    cls = "num" + (f" {extra_class}" if extra_class else "")
+    return f'<td class="{cls}">{lf:.{digits}f} / {cf:.{digits}f} ms</td>'
+
+
+def _render_operation_gate(h, slack):
+    """One harness block. Tolerates missing red_* and extra keys (chord_path)."""
+    note = f' — {h["note"]}' if h.get("note") else ""
+    module = h.get("module") or "—"
+    chainsaw_leg = h.get("chainsaw_leg") or "—"
+    html_rows = (f'<tr style="background:#f8fafc"><td colspan="6">'
+                 f'<b>{e(h.get("harness") or "?")}</b> <span class="muted">· {e(module)}'
+                 f' · chainsaw leg: {e(chainsaw_leg)}{e(note)}</span></td></tr>')
+    for r in h.get("rows") or []:
+        red_ratio = _as_float(r.get("red_ratio"))
+        if red_ratio is None and r.get("red_laser") is None:
+            red = '<td class="muted" colspan="2">not transcribed</td>'
+        else:
+            red = (_fmt_ms_pair(r.get("red_laser"), r.get("red_chainsaw"),
+                               extra_class="muted")
+                   + f'<td class="num">{_ratio_badge(red_ratio, slack)}</td>')
+        extra = ('<span class="muted">chord path</span>'
+                 if r.get("chord_path") else "")
+        now_l, now_c = _as_float(r.get("now_laser")), _as_float(r.get("now_chainsaw"))
+        if now_l is None or now_c is None:
+            now = '<td class="muted">—</td>'
+        else:
+            now = f'<td class="num">{now_l:.3f} / {now_c:.3f} ms</td>'
+        html_rows += (f'<tr><td>{e(r.get("case") or "")}</td>{red}'
+                      f'{now}'
+                      f'<td class="num">{_ratio_badge(_as_float(r.get("now_ratio")), slack)}</td>'
+                      f'<td>{extra}</td></tr>')
+    return html_rows
+
+
 def laser_ratchet_html(lr):
     if not lr:
         return ('<p class="muted">No <code>docs/laser-ratchet.json</code> — '
                 'perf section skipped.</p>')
-    slack = lr["contract"]["slack"]
-    prov  = lr["provenance"]
+    slack = _as_float((lr.get("contract") or {}).get("slack")) or 1.15
+    prov  = lr.get("provenance") or {}
+    types = lr.get("types") or []
 
     # ---- curve-type coverage of the ratchet
     chips = []
-    for t in lr["types"]:
-        if t["measured"]:
+    for t in types:
+        if t.get("measured"):
             bg, fg, mark = "#dcfce7", "#166534", "✅ measured"
-        elif t["implemented"]:
+        elif t.get("implemented"):
             bg, fg, mark = "#fef9c3", "#854d0e", "⚠️ unmeasured"
         else:
             bg, fg, mark = "#fee2e2", "#991b1b", "❌ not implemented"
         chips.append(f'<span class="chip" style="border-color:{fg};background:{bg}'
-                     f';color:{fg}" title="{e(t["note"])}"><b>{e(t["name"])}</b>'
+                     f';color:{fg}" title="{e(t.get("note") or "")}"><b>{e(t.get("name") or "?")}</b>'
                      f'&nbsp;{mark}</span>')
-    n_meas = sum(1 for t in lr["types"] if t["measured"])
-    types_html = (f'<p class="muted"><b>{n_meas} of {len(lr["types"])}</b> named '
+    n_meas = sum(1 for t in types if t.get("measured"))
+    n_types = len(types)
+    types_html = (f'<p class="muted"><b>{n_meas} of {n_types}</b> named '
                   f'laser types exist at all — the ratchet is "measured per curve '
                   f'type", so it is satisfied for one type out of five.</p>'
                   f'<div class="chips">' + "".join(chips) + "</div>")
 
     # ---- primitive (per-curve-type) gates
     prows = ""
-    for g in lr["primitive_gates"]:
-        laser_ms    = g["laser_ns"] / 1e6
-        chainsaw_ms = g["chainsaw_ns"] / 1e6
-        prows += (f'<tr><td><code>{e(g["id"])}</code></td>'
-                  f'<td>{e(g["op"])}</td>'
-                  f'<td class="num" title="{g["laser_ns"]} ns">{laser_ms:.1f} ms</td>'
-                  f'<td class="num" title="{g["chainsaw_ns"]} ns">{chainsaw_ms:.1f} ms</td>'
-                  f'<td class="num">{_ratio_badge(g["ratio"], slack)}</td>'
-                  f'<td class="muted">{e(g["stat"])} over {g["calls"]:,} calls · '
-                  f'{e(g["conditions"])}</td></tr>')
+    for g in lr.get("primitive_gates") or []:
+        laser_ns = _as_float(g.get("laser_ns"))
+        chainsaw_ns = _as_float(g.get("chainsaw_ns"))
+        ratio = _as_float(g.get("ratio"))
+        if ratio is None and laser_ns is not None and chainsaw_ns:
+            ratio = laser_ns / chainsaw_ns
+        if laser_ns is None or chainsaw_ns is None:
+            laser_cell = '<td class="muted">—</td>'
+            chainsaw_cell = '<td class="muted">—</td>'
+        else:
+            laser_cell = (f'<td class="num" title="{g["laser_ns"]} ns">'
+                          f'{laser_ns / 1e6:.1f} ms</td>')
+            chainsaw_cell = (f'<td class="num" title="{g["chainsaw_ns"]} ns">'
+                             f'{chainsaw_ns / 1e6:.1f} ms</td>')
+        calls = g.get("calls")
+        calls_txt = f"{calls:,} calls" if isinstance(calls, int) else "calls n/a"
+        stat = g.get("stat") or "—"
+        conditions = g.get("conditions") or ""
+        prows += (f'<tr><td><code>{e(g.get("id") or "?")}</code></td>'
+                  f'<td>{e(g.get("op") or "")}</td>'
+                  f'{laser_cell}{chainsaw_cell}'
+                  f'<td class="num">{_ratio_badge(ratio, slack)}</td>'
+                  f'<td class="muted">{e(stat)} over {calls_txt} · '
+                  f'{e(conditions)}</td></tr>')
 
-    # ---- operation-level gates, red baseline vs current
+    # ---- operation-level gates, plus formerly-ungauged harnesses that now
+    # carry rows (jts may leave them under ungauged_gates or move them).
+    operation_gates = list(lr.get("operation_gates") or [])
+    still_ungauged = []
+    for u in lr.get("ungauged_gates") or []:
+        if _gate_has_rows(u):
+            operation_gates.append(u)
+        else:
+            still_ungauged.append(u)
+
     orows = ""
-    for h in lr["operation_gates"]:
-        note = f' — {h["note"]}' if h.get("note") else ""
-        orows += (f'<tr style="background:#f8fafc"><td colspan="6">'
-                  f'<b>{e(h["harness"])}</b> <span class="muted">· {e(h["module"])}'
-                  f' · chainsaw leg: {e(h["chainsaw_leg"])}{e(note)}</span></td></tr>')
-        for r in h["rows"]:
-            if r.get("red_ratio") is None:
-                red = '<td class="muted" colspan="2">not transcribed</td>'
-            else:
-                red = (f'<td class="num muted">{r["red_laser"]:.3f} / '
-                       f'{r["red_chainsaw"]:.3f} ms</td>'
-                       f'<td class="num">{_ratio_badge(r["red_ratio"], slack)}</td>')
-            orows += (f'<tr><td>{e(r["case"])}</td>{red}'
-                      f'<td class="num">{r["now_laser"]:.3f} / '
-                      f'{r["now_chainsaw"]:.3f} ms</td>'
-                      f'<td class="num">{_ratio_badge(r["now_ratio"], slack)}</td>'
-                      f'<td></td></tr>')
+    for h in operation_gates:
+        orows += _render_operation_gate(h, slack)
 
-    ungauged = ", ".join(f'<code>{e(u["harness"])}</code>'
-                         for u in lr["ungauged_gates"])
-    caveats = "".join(f"<li>{e(c)}</li>" for c in prov["caveats"])
+    ungauged = ", ".join(f'<code>{e(u.get("harness") or "?")}</code>'
+                         for u in still_ungauged)
+    if still_ungauged:
+        ungauged_html = (
+            f'<h3>Gates live but unmeasured</h3>'
+            f'<p class="muted">A 1.15× assertion is armed in each of these, but no '
+            f'numbers have been transcribed: {ungauged}.</p>')
+    else:
+        ungauged_html = ""
+
+    caveats = "".join(f"<li>{e(c)}</li>" for c in (prov.get("caveats") or []))
+    pr = prov.get("pr")
+    pr_bit = f' PR&nbsp;#{e(pr)},' if pr is not None else ""
 
     return (
-        f'<p><b>Contract:</b> <code>{e(lr["contract"]["expr"])}</code> · '
-        f'{e(lr["contract"]["scope"])}</p>'
+        f'<p><b>Contract:</b> <code>{e((lr.get("contract") or {}).get("expr") or "")}</code> · '
+        f'{e((lr.get("contract") or {}).get("scope") or "")}</p>'
         f'{types_html}'
         f'<h3>Per-curve-type ratchet — ExactCircularArc</h3>'
         f'<table><thead><tr><th>Gate</th><th>Operation</th><th>Laser</th>'
@@ -529,14 +605,12 @@ def laser_ratchet_html(lr):
         f'<th>Red ratio</th><th>Current laser / chainsaw</th>'
         f'<th>Current ratio</th><th></th></tr></thead>'
         f'<tbody>{orows}</tbody></table>'
-        f'<h3>Gates live but unmeasured</h3>'
-        f'<p class="muted">A 1.15× assertion is armed in each of these, but no '
-        f'numbers have been transcribed: {ungauged}.</p>'
+        f'{ungauged_html}'
         f'<h3>Provenance</h3>'
-        f'<p class="muted">Imported {e(prov["imported"])} from '
-        f'<code>{e(prov["source_repo"])}</code> PR&nbsp;#{prov["pr"]}, branch '
-        f'<code>{e(prov["branch"])}</code>, tip <code>{e(prov["tip"])}</code>. '
-        f'Method: {e(prov["method"])}.</p>'
+        f'<p class="muted">Imported {e(prov.get("imported") or "")} from '
+        f'<code>{e(prov.get("source_repo") or "")}</code>{pr_bit} branch '
+        f'<code>{e(prov.get("branch") or "")}</code>, tip <code>{e(prov.get("tip") or "")}</code>. '
+        f'Method: {e(prov.get("method") or "")}.</p>'
         f'<ul class="muted" style="font-size:12px;line-height:1.6">{caveats}</ul>')
 
 

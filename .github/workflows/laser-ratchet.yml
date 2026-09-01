@@ -1,0 +1,143 @@
+# Vendor docs/laser-ratchet.json from the jts Year-1 circular feed.
+#
+# This observatory is NOT a JTS test runner. Timings are not theorems.
+# The file is hand-transcribed today (day-zero hole: jts tip c956b50d,
+# imported 2026-08-22). Upstream (grootstebozewolf/jts, branch
+# feature/sfa-curve-rgr) is being taught to emit doc/laser-ratchet.json
+# (jts uses doc/, this repo uses docs/) and may fire repository_dispatch
+# type laser-ratchet. This job copies that feed when it exists and differs.
+# git log -- docs/laser-ratchet.json is the version history.
+#
+# Do not add a cron: day-zero means on laser work, not a daily poll.
+# A path-filter push is not useful here — the numbers originate in jts.
+#
+# If the upstream file is not there yet, fail clearly (emitter not landed)
+# rather than writing fake numbers. Do not invent ExactEllipticalArc /
+# ExactCubicBezier / ExactClothoid / ExactNurbsSegment timings. HOLD:
+# 64-a Proofs sweep, N-SS expand, SHARED_SNAPPED_RAY, Year-2 zoo types.
+#
+# pages.yml is unchanged: it still rebuilds Pages when this JSON changes.
+# A GITHUB_TOKEN push to main does not retrigger other workflows, so after
+# a successful default-branch commit this job workflow_dispatch-es pages.yml.
+
+name: Vendor laser ratchet
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [laser-ratchet]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: laser-ratchet-vendor
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  UPSTREAM_REPO: grootstebozewolf/jts
+  UPSTREAM_REF: feature/sfa-curve-rgr
+  UPSTREAM_PATH: doc/laser-ratchet.json
+  DEST_PATH: docs/laser-ratchet.json
+
+jobs:
+  vendor:
+    name: Vendor docs/laser-ratchet.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch jts doc/laser-ratchet.json
+        id: fetch
+        run: |
+          set -euo pipefail
+          URL="https://raw.githubusercontent.com/${UPSTREAM_REPO}/${UPSTREAM_REF}/${UPSTREAM_PATH}"
+          echo "Fetching ${URL}"
+          CODE=$(curl -sS -L -o /tmp/upstream-laser-ratchet.json -w "%{http_code}" "$URL")
+          if [ "$CODE" = "404" ]; then
+            echo "::error::jts emitter not landed: ${UPSTREAM_REPO}@${UPSTREAM_REF} has no ${UPSTREAM_PATH}. Day-zero hole remains; refusing to write fake numbers."
+            exit 1
+          fi
+          if [ "$CODE" != "200" ]; then
+            echo "::error::unexpected HTTP ${CODE} fetching ${URL}"
+            exit 1
+          fi
+          if [ ! -s /tmp/upstream-laser-ratchet.json ]; then
+            echo "::error::jts emitter returned an empty ${UPSTREAM_PATH}; refusing to write fake numbers."
+            exit 1
+          fi
+          echo "fetched HTTP ${CODE} ($(wc -c < /tmp/upstream-laser-ratchet.json) bytes)"
+
+      - name: Validate and apply if the feed differs
+        id: apply
+        run: |
+          set -euo pipefail
+          python3 scripts/vendor_laser_ratchet.py apply \
+            /tmp/upstream-laser-ratchet.json \
+            --dest "${DEST_PATH}"
+
+      - name: Commit vendored JSON (or open a PR)
+        id: commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          if [ "${{ steps.apply.outputs.changed }}" != "true" ]; then
+            echo "No-op: ${DEST_PATH} already matches upstream."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            echo "mode=noop" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          TIP="${{ steps.apply.outputs.tip }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "${DEST_PATH}"
+          if git diff --cached --quiet; then
+            echo "No-op after apply: working tree matches HEAD."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            echo "mode=noop" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -m "chore(laser): vendor laser-ratchet.json from jts ${TIP}"
+
+          if git pull --rebase origin "${DEFAULT_BRANCH}" && \
+             git push origin "HEAD:${DEFAULT_BRANCH}"; then
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+            echo "mode=main" >> "$GITHUB_OUTPUT"
+            echo "Pushed vendor commit to ${DEFAULT_BRANCH}."
+            exit 0
+          fi
+
+          echo "Direct push to ${DEFAULT_BRANCH} refused; opening a PR."
+          SAFE_TIP=$(printf '%s' "$TIP" | tr -c 'A-Za-z0-9._-' '-' | cut -c1-40)
+          BRANCH="chore/vendor-laser-ratchet-${SAFE_TIP}"
+          git checkout -B "$BRANCH"
+          git push -u origin "$BRANCH"
+          gh pr create \
+            --base "${DEFAULT_BRANCH}" \
+            --head "$BRANCH" \
+            --title "chore(laser): vendor laser-ratchet.json from jts ${TIP}" \
+            --body "Vendored \`${DEST_PATH}\` from \`${UPSTREAM_REPO}@${UPSTREAM_REF}\` tip \`${TIP}\`. \`git log -- ${DEST_PATH}\` is the history. Timings are not theorems. HOLD on 64-a / Year-2 zoo / N-SS."
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+          echo "mode=pr" >> "$GITHUB_OUTPUT"
+
+      - name: Rebuild Pages after a default-branch vendor commit
+        if: steps.commit.outputs.mode == 'main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          # GITHUB_TOKEN commits do not retrigger pages.yml's push filter.
+          # Dispatch keeps that workflow as the Pages publisher (not weakened).
+          gh workflow run pages.yml --ref "${DEFAULT_BRANCH}"
+          echo "Dispatched pages.yml on ${DEFAULT_BRANCH}."
