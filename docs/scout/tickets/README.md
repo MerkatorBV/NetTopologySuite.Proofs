@@ -45,7 +45,11 @@ Order of work: top-down from #64, with the freebie first.
                                      (69-closing-summary.md)
 ```
 
-**Related living maps.** The #522 children (bar 1 → bar 2) have their own
+**Related living maps.** Hausdorff function grill (discrete vs
+directed locus; NTS#812 still open):
+[`docs/scout/map-hausdorff-functions.md`](../map-hausdorff-functions.md).
+Do not remint `423-a`. Do not take ticket 10 for that inventory.
+The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:
 [`docs/scout/map-522-leftovers.md`](../map-522-leftovers.md).
 `/wayfinder 522 leftovers` refreshes the leftovers chart. Leftover `Ⅰ` is the mutual vertex-in-open-edge sliver. Leftover `Ⅱ` is

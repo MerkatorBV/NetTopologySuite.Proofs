@@ -117,6 +117,48 @@ exact: elliptic E and Fresnel clothoid stay engine-conditional; oracle
 _Avoid_: length (unqualified where a count could be meant), size,
 planned length zoo (the 508-* letters landed), unconditionally exact zoo
 
+### Distance metrics
+
+Function inventory: [`docs/scout/map-hausdorff-functions.md`](docs/scout/map-hausdorff-functions.md).
+Formal cluster stays epic #423. Do not remint `423-a`.
+
+**Discrete Hausdorff**:
+Vertex (optionally densified-segment) max-min. JTS / NTS / GEOS
+`DiscreteHausdorffDistance`. Under-estimates the locus value:
+discrete ≤ continuous, and densify fraction → 0 approaches the
+locus value. Already on NTS develop.
+_Avoid_: Directed Hausdorff, Hausdorff (unqualified), DHD (JTS uses
+that abbreviation for both the discrete class and the locus class)
+
+**Oriented discrete**:
+One-sided discrete max-min (`orientedDistance` / NTS
+`OrientedDistance`). Still vertices or densified chords.
+_Avoid_: Directed Hausdorff (the locus class)
+
+**Directed Hausdorff**:
+Locus max-min over every point of A, not just vertices. Asymmetric.
+JTS `DirectedHausdorffDistance` (JTS #1182). Not on NTS develop
+(NTS#812 still open) and not on GEOS. Symmetric Hausdorff is the
+max of the two directed values.
+_Avoid_: Discrete Hausdorff, oriented discrete, DHD
+
+**Densify fraction**:
+Segment-length fraction in `(0, 1]` used by
+`DiscreteHausdorffDistance`. Not a map-unit tolerance.
+_Avoid_: distance tolerance, accuracy, densify (unqualified)
+
+**Distance tolerance**:
+JTS `DirectedHausdorffDistance` accuracy in coordinate units — how
+close the realizing pair is to the true max-min. Not a densify
+fraction and not a free-end clip.
+_Avoid_: densify fraction, clip
+
+**Fully within distance**:
+JTS `DirectedHausdorffDistance.isFullyWithinDistance` — every point
+of A is within `maxDistance` of B. Not `Geometry.isWithinDistance`
+(nearest-point, not Hausdorff).
+_Avoid_: isWithinDistance (the nearest-point predicate)
+
 ### Performance
 
 **Laser**:

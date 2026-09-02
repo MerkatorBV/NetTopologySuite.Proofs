@@ -182,7 +182,7 @@ spending further proof effort — several are stale.
 | [NetTopologySuite/NetTopologySuite#815](https://github.com/NetTopologySuite/NetTopologySuite/issues/815) | [#64](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/64) | `core` | OffsetCurve miter track → arc/core companion (buffer detail still #65) |
 | [NetTopologySuite/NetTopologySuite#814](https://github.com/NetTopologySuite/NetTopologySuite/issues/814) | [#814](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/814) | `core` | 1:1 NTS → Proofs mirror epic |
 | [NetTopologySuite/NetTopologySuite#813](https://github.com/NetTopologySuite/NetTopologySuite/issues/813) | [#68](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/68) | `mesh` | Mesh / triangulation |
-| [NetTopologySuite/NetTopologySuite#812](https://github.com/NetTopologySuite/NetTopologySuite/issues/812) | [#423](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/423) | `metric` | Metric / distance cluster |
+| [NetTopologySuite/NetTopologySuite#812](https://github.com/NetTopologySuite/NetTopologySuite/issues/812) | [#423](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/423) | `metric` | Directed Hausdorff port still open. Engine grill: [`docs/scout/map-hausdorff-functions.md`](docs/scout/map-hausdorff-functions.md). Discrete + oriented discrete already on NTS develop; locus class is not |
 | [NetTopologySuite/NetTopologySuite#810](https://github.com/NetTopologySuite/NetTopologySuite/issues/810) | [#425](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/issues/425) | `coverage` | Coverage cleaner / gap-overlap |
 
 ### Topic palette (macro)
@@ -195,7 +195,7 @@ spending further proof effort — several are stale.
 | `relate` | #67 | DE-9IM / RelateNG / prepared (67-a matrix · 67-b boundary · 67-c exterior-row pin) |
 | `mesh` | #68 | Delaunay / Voronoi / local DT |
 | `koc` | #410 | Koc compound-curve alignment |
-| `metric` | #423 | Distance / Hausdorff / Frechet cluster |
+| `metric` | #423 | Distance / Hausdorff / Frechet cluster. Engine surface: [`docs/scout/map-hausdorff-functions.md`](docs/scout/map-hausdorff-functions.md) |
 | `coverage` | #425 | Coverage validation / cleaning |
 | `hull` | #424 | Convex / minimum bounding hulls (424-a MBT · 424-b H-CV extrema) |
 
@@ -345,7 +345,11 @@ witness: <fixture or none>
 4. **#66** — finish remaining precision/overlay gaps (mostly there).
 5. **#68** — Delaunay / Voronoi on top of the now-proven `inCircle_R`.
 6. **#423** — Formal proofs for distance metrics: directed/discrete Hausdorff
-   and Fréchet correctness (`metric`; Distance / Hausdorff / Frechet cluster).
+   and Fréchet correctness (`metric`). `423-a` / `423-b` Green. Remaining
+   Proofs asks stay the two ticket-10 lines (densification bound;
+   `HAUSDORFF_DIRECTED` / `HAUSDORFF_SYMM`). JTS locus class is unported
+   on NTS develop (NTS#812). Engine grill:
+   [`docs/scout/map-hausdorff-functions.md`](docs/scout/map-hausdorff-functions.md).
 7. **#424** — Formal proofs for hull constructions: minimum bounding triangle,
    convex hull, enclosing-shape invariants (`hull`).
 8. **#425** — Formal proofs for polygonal coverage: validity, gap/overlap
