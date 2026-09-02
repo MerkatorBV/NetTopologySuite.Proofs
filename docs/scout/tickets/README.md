@@ -48,6 +48,8 @@ Order of work: top-down from #64, with the freebie first.
 **Related living maps.** Hausdorff function grill (discrete vs
 directed locus; NTS#812 still open):
 [`docs/scout/map-hausdorff-functions.md`](../map-hausdorff-functions.md).
+Implement spec (NTS + GEOS; Notion tickets `NTS-812` / `GEOS-DHD`):
+[`docs/scout/spec-hausdorff-functions.md`](../spec-hausdorff-functions.md).
 Do not remint `423-a`. Do not take ticket 10 for that inventory.
 The #522 children (bar 1 → bar 2) have their own
 frontier: [`docs/scout/map-522.md`](../map-522.md). Wrap-up leftovers:

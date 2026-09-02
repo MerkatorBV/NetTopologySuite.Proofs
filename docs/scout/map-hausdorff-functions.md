@@ -145,13 +145,9 @@ owns the issue-body resync. This grill does not take ticket 10.
 
 ## What a later `/implement` may own
 
-One NTS letter, new branch off `develop`, not the SQL/MM honesty
-branch: port `DirectedHausdorffDistance` to the NTS#812 API.
-Prepared mode, `tolerance` as accuracy, `isFullyWithinDistance`,
-symmetric `HausdorffDistance`. Do not flatten it into
-`DiscreteHausdorffDistance.OrientedDistance`. Do not ship
-`feat/d-hf-curve-hausdorff` as the answer. GEOS is a separate
-letter. Proofs densify-bound and oracle modes stay on #423.
+Spec: [`spec-hausdorff-functions.md`](spec-hausdorff-functions.md).
+Tickets on the Notion NTS RGR Board (`NTS-812`, `GEOS-DHD`), not
+GitHub issues. Do not remint `423-a`. Do not take ticket 10.
 
 ## Parks
 
