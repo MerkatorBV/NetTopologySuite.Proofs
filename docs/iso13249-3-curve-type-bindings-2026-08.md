@@ -40,6 +40,12 @@ TYPE` definitions in clauses 5–8):
 | ST_Curve | ST_Geometry | **no** (`NOT INSTANTIABLE`) | §4.2.4 / §7.1.1 | `Curve` (abstract), `Geometries/Curve.cs:10` |
 | ST_LineString | ST_Curve | yes | §4.2.5 / §7.2.1 | `LineString` |
 | ST_CircularString | ST_Curve | yes | §4.2.6 / §7.3.1 | `Curves/CircularString.cs:36` |
+| ST_Circle | ST_Curve | yes | §4.2.7 | absent — **not an optional extra** |
+| ST_GeodesicString | ST_Curve | yes | §4.2.8 | absent — **not an optional extra** |
+| ST_EllipticalCurve | ST_Curve | yes | §4.2.9 | absent — **not an optional extra** |
+| ST_NURBSCurve | ST_Curve | yes | §4.2.10 | absent — **not an optional extra** |
+| ST_Clothoid | ST_Curve | yes | §4.2.11 | absent — **not an optional extra** |
+| ST_SpiralCurve | ST_Curve | yes | §4.2.12 | absent — **not an optional extra** |
 | ST_CompoundCurve | ST_Curve | yes | §4.2.13 / §7.10.1 | `Curves/CompoundCurve.cs:36` |
 | ST_Surface | ST_Geometry | **no** | §4.2.14 / §8.1.1 | `Surface<T>` (abstract), `Geometries/Surface.cs:16` |
 | ST_CurvePolygon | ST_Surface | yes | §4.2.15 / §8.2.1 | `Curves/CurvePolygon.cs:38` (`Surface<Curve>`) |
@@ -47,14 +53,17 @@ TYPE` definitions in clauses 5–8):
 | ST_MultiCurve | ST_GeomCollection | "may be instantiable" | §4.2.25 | `Curves/MultiCurve.cs:19` |
 | ST_MultiSurface | ST_GeomCollection | "may be instantiable" | §4.2.27 | `Curves/MultiSurface.cs:19` |
 
-The spec also defines further instantiable ST_Curve subtypes the branch does not
-model: ST_Circle (§4.2.7), ST_GeodesicString (§4.2.8), ST_EllipticalCurve
-(§4.2.9), ST_NURBSCurve (§4.2.10), ST_Clothoid (§4.2.11), ST_SpiralCurve
-(§4.2.12 — spiral types "initially limited to" clothoid, bloss, biquadratic,
-sine, cosine). These are the CONTEXT.md "expansion backlog", verified present in
-the spec. §4.2.1 also explicitly permits an implementation to add subtypes and
-to interpose types, provided subtype relationships are preserved — this is the
-clause that legitimises `Curve`/`Surface<T>` as interposed abstractions.
+ST_Circle, ST_GeodesicString, ST_EllipticalCurve, ST_NURBSCurve,
+ST_Clothoid, and ST_SpiralCurve (spiral types "initially limited to"
+clothoid, bloss, biquadratic, sine, cosine) are instantiable ST_Curve
+subtypes in the §4.2.1 hierarchy. They are **not optional extras**.
+The NTS curve-foundation branch does not yet carry them. GEOS and
+NTS WKT name them and refuse; calling them "Unknown type" is a lie.
+§4.2.1 also permits an implementation to add subtypes and to interpose
+types, provided subtype relationships are preserved — that clause
+legitimises `Curve`/`Surface<T>` as interposed abstractions, not a
+licence to drop these types from the model. Do not remint `508-*`.
+Do not grow `CurveSegment`.
 
 ST_Curve semantics that bind every curve subtype (§4.2.4):
 
@@ -267,6 +276,25 @@ items that follow it):
   itself admits any count ≥ 1; the odd-count ≥ 3 rule is semantic
   well-formedness (§7.3.1 Desc 7), enforced when the produced point array feeds
   `NEW ST_CircularString` (§5.1.67 item e).
+- `CIRCLE [ <z m> ] <circle text>` — `EMPTY` or exactly three points
+  (§4.2.7). Oracle mode `SQLMM_WKT` parses this as type identity.
+- `GEODESICSTRING [ <z m> ] <geodesicstring text>` — `EMPTY` or a
+  parenthesised point list, count ≥ 2 (§4.2.8). Same oracle mode.
+- `ELLIPTICALCURVE [ <z m> ] <elliptical text>` — `EMPTY` or named
+  fields `AFFINEPLACEMENT`, `UAXISLENGTH`, `VAXISLENGTH` (and the
+  start/end angles when present) (§4.2.9). Instantiable; not UNKNOWN.
+- `NURBSCURVE [ <z m> ] <nurbs text>` — `EMPTY` or `DEGREE`, `KNOTS`,
+  `CONTROLPOINTS` as weighted points (§4.2.10 / §7.7). Structural
+  parse only; the `N` length token stays a projection, not this mode.
+- `CLOTHOID [ <z m> ] <clothoid text>` — `EMPTY` or `AFFINEPLACEMENT`
+  (`LOCATION`, `REFERENCEDIRECTIONS`), `SCALEFACTOR`, `STARTDISTANCE`,
+  `ENDDISTANCE` (§4.2.11 / §7.8). Structural parse only; the `K`
+  length token stays a projection.
+- `SPIRALCURVE [ <z m> ] <spiralcurve text>` — `EMPTY` or `SPIRALTYPE`
+  `<spiraltype text>` plus optional `AFFINEPLACEMENT` / `LENGTH` /
+  `STARTCURVATURE` / `ENDCURVATURE` (§4.2.12 / §7.9 / ST_SpiralType
+  §7.9.7). The text lexer for `<spiraltype text>` is a documented
+  deviation: see §8.
 - `COMPOUNDCURVE [ <z m> ] <compoundcurve text>`, components are `<curve
   text>` ::= **bare** `<linestring text body>` (a parenthesised point list with
   *no* LINESTRING keyword) | tagged `<circularstring text representation>` |
@@ -549,6 +577,19 @@ spec-adjacent statements, checked:
 - **Published-IS wording**: citations are from the DIS ballot text of the 5th
   edition (N 2593). No claim here was found only in ballot-specific front
   matter, but clause-item numbering in the published 2016 IS could differ.
+- **SPIRALTYPE text lexer**: the standard defines `<spiraltype text>` as
+  free-form `<letters>`, and §5.1.68 length-prefixes the value in WKB, so
+  the value set is open — §4.2.12 lists `clothoid`, `bloss`,
+  `biquadratic`, `sine` and `cosine` only as the *initial* set. Text has
+  no length prefix, and `<letters>` admits the characters that would end
+  the value, so oracle `SQLMM_WKT` reads a spiral type up to the comma
+  or parenthesis that terminates it. Interior spaces are preserved:
+  `SPIRALTYPE Wiener Bogen` parses as an open-set extension (LandXML /
+  railway alignment name; not a new SQL/MM type and not Koc compound).
+  A name containing a comma or a parenthesis is the one case this
+  grammar cannot represent — the leftover token after the terminator
+  is `REFUSE`, not a type value. Pinned by `oracle/red_sqlmm_wkt_tests.py`.
+  Do not remint `508-*`. Do not grow `CurveSegment`.
 
 ---
 
