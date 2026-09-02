@@ -10,6 +10,7 @@ in-repo source of record:
 | `oracle/*_vectors.txt`, `*_tests.txt` | differential oracle modes + vector counts |
 | `docs/admitted-counterexamples.txt`, `docs/admitted-deferred-proofs.txt` | Admitted registry footprint |
 | `docs/oracle-handrolled-allowlist.txt` | frozen interface-boundary kernels |
+| `docs/laser-ratchet.json` | Laser vs chainsaw timings (vendored from jts; `git log` is the history) |
 
 ## What it is — and isn't
 
@@ -34,6 +35,10 @@ self-contained HTML file (inline CSS, no CDN).
 ## Publishing
 
 `.github/workflows/pages.yml` regenerates and deploys to GitHub Pages on every
-push to `main` touching the inputs above. One-time setup: **Settings → Pages →
-Source = "GitHub Actions"**. The committed `index.html` is a generated preview
-so the page is viewable directly in the repo too.
+push to `main` touching the inputs above (including `docs/laser-ratchet.json`).
+`.github/workflows/laser-ratchet.yml` vendors that file from
+`grootstebozewolf/jts@feature/sfa-curve-rgr` (`doc/laser-ratchet.json`) on
+`workflow_dispatch` or `repository_dispatch` type `laser-ratchet`. One-time
+setup: **Settings → Pages → Source = "GitHub Actions"**. The committed
+`index.html` is a generated preview so the page is viewable directly in the
+repo too.
