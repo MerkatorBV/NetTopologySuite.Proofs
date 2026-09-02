@@ -12,7 +12,7 @@ types, ADR-0004 remint) are untouched.  Year-1 engine stays circular-only.
 | P1 | ellipse | `theories/EllipseLength_E.v` | `ellipse_circular_E_discharges` — rx=ry inhabits H_E_chord / H_E_approx at E(t)=r·t; general elliptic-E parked | Qed + Technique park, 3-axiom |
 | P1 | ellipse | `theories/EllipseSpeedIntegral.v` | `ellipse_speed_integral_is_curve_length` — UC + chord-rate of √σ²; increment_squeezed E σ is the remaining primitive | Qed + Technique park, 3-axiom (#563 / 508-d) |
 | P1 | clothoid | `theories/ClothoidLength_unit.v` | `unit_line_discharges_window` — unit-speed straight inhabits the [sd,ed] contract; Euler-spiral integrals stay Route-1 primitives | Qed + Technique park, 3-axiom |
-| P1 | clothoid | `theories/ClothoidFresnel.v` | `fresnel_is_curve_length` — unit-speed pack at `F = fun t => 1 * t`; Cx, Cy increment_squeezed against (cos,sin)(t²/2); conditional, no inhabitant | Qed + Technique park, 3-axiom (#564 / 508-e) |
+| P1 | clothoid | `theories/ClothoidFresnel.v` + `ClothoidFresnelInhab.v` | pack `fresnel_is_curve_length` (3-axiom conditional); inhabitant `fresnel_unit_window_length_inhab` via Stdlib RiemannInt of (cos,sin)(t²/2) — `[0,1]` length 1 | Qed + inhabitant, Category C (#564 / 508-e) |
 | P1 | nurbs | `theories/NurbsGeneralLength.v` | equal-weight rational cubic ↔ cubic; two-window `nurbs_knot_span_additive`; conditional primitive | Qed, 3-axiom |
 | P1 | nurbs | `theories/NurbsKnotSpans.v` | `nurbs_spans_additive` — knot-vector induction; instance `golden_half_circle_length` (two 508-a quarters) | Qed, 3-axiom additivity / Category C instance (#565 / 508-g) |
 | P2 | arc | `theories/ArcMidSweep.v` | `valid_arc_sweep_nonzero`; `arc_mid_on_circle_param` | Qed, Category C (atan2; removal tracks AngleBetween) |
@@ -51,24 +51,21 @@ Wrap-up is #566.  Does not remint SpeedIntegral.
 ## 508-e (#564)
 
 `theories/ClothoidFresnel.v` is a #561 pack instance on the
-clothoid-shaped integrands `(cos,sin)(t²/2)`, not a Fresnel
-construction: there is still no `Cx` / `Cy` inhabitant, and Route 1
-does not produce `RInt`. Heading `t²/2` is Lipschitz on a compact
-window (constant `Rmax(|a|,|b|)`), so a fine gap makes the
-coordinate increments a first-order match to the unit velocity
-(`cos²+sin²=1`) and the chord realizes the gap. Uniform continuity
-of `σ ≡ 1` and `increment_squeezed (fun t => 1 * t) (fun _ => 1)`
-are free (`constant_speed_premises`; pack `F` is `fun t => 1 * t`,
-not bare `id`). `increment_squeezed` on each coordinate stays the
-Technique-park hypothesis. ADR-0001 route D (Coquelicot lane)
-stays consumer-gated. Ellipse #563 already instantiated the same
-pack on a curved speed; this is the first clothoid-shaped
-integrand, not the first curved pack use. The `[0,1]` length-1
-claim is the same theorem with `b − a` peeled by `Rminus_0_r`.
-`fresnel_discharges_clothoid_window` is a K-token wiring check
-(same statement via `H_unit_chord` / `H_unit_approx`), not extra
-geometric content. Never global. Does not retire epic 508.
-Wrap-up is #566. Does not remint SpeedIntegral.
+clothoid-shaped integrands `(cos,sin)(t²/2)`: under
+`fresnel_primitives` (`increment_squeezed` on each coordinate),
+`fresnel_is_curve_length` gives length `b − a`. Heading `t²/2` is
+Lipschitz on a compact window; `chord_rate_tight` discharges.
+Uniform continuity of `σ ≡ 1` and pack `F = fun t => 1 * t` are
+free. Never global. 3-axiom.
+
+`theories/ClothoidFresnelInhab.v` supplies the concrete inhabitant
+`fresnel_Cx` / `fresnel_Cy` as Stdlib `RiemannInt` of those
+integrands from 0 (Route 1 / in-corpus; ADR-0001 Coquelicot lane
+stays consumer-gated for Halley). Then
+`fresnel_primitives_inhab` is unconditional for every `a ≤ b`, and
+`fresnel_unit_window_length_inhab` is metric length exactly `1` on
+`[0,1]`. Category C via `RiemannInt` → `classic`. Does not remint
+`ClothoidFresnel.v`. Does not retire epic 508. Wrap-up is #566.
 
 ## 508-f (#562)
 
@@ -90,7 +87,7 @@ Wrap-up is #566.
 case).  Not Cox-de Boor.  Oracle `N` stays single-span.  Instance
 `golden_half_circle_length` glues two 508-a golden quarters
 (`π/2 + π/2 = π`); Category C through `atan` only.  Does not
-retire epic 508.  Wrap-up is #566.  Board #564 stays OPEN.
+retire epic 508.  Wrap-up is #566.  Board #564 inhabitant landed.
 
 ## 508 QED ∨ QEX stop
 
@@ -110,5 +107,6 @@ notes. Bible §4.2 satisfaction is
 Does not remint `NurbsKnotSpans.v : nurbs_spans_additive` or
 `NurbsKnotSpans.v : golden_half_circle_length`. Does not remint
 `SpeedIntegral.v` / `ClothoidLength_unit.v` / `ClothoidFresnel.v`.
-Board #564 stays OPEN. QEX is not owner accept. This letter does
+Fresnel inhabitant is a later #564 letter (`ClothoidFresnelInhab.v`).
+QEX is not owner accept. This letter does
 not retire epic 508. Owner review does.
