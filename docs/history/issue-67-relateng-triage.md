@@ -11,7 +11,7 @@
 >   `#67` and `#522` sections; `validate-claims` gates the names)
 > - Scholar Sam on-ramp: [`docs/relate-ng-status.md`](../relate-ng-status.md)
 > - #522 live gate: [`docs/scout/map-522.md`](../scout/map-522.md)
-> - Second pass at #67: [`docs/scout/tickets/11-retire-67-second-pass.md`](../scout/tickets/11-retire-67-second-pass.md)
+> - Second pass at #67: [`docs/scout/tickets/closed/11-retire-67-second-pass.md`](../scout/tickets/closed/11-retire-67-second-pass.md) (overtaken 2026-09-01)
 > - Interior convention: [`docs/adr/ADR-0003-two-tier-interior-spec-parity-computation.md`](../adr/ADR-0003-two-tier-interior-spec-parity-computation.md)
 >
 > The body below is the 2026-07-era triage, retained for institutional memory.

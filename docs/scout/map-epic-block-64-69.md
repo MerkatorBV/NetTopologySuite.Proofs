@@ -11,12 +11,14 @@ session. Charted 2026-08-22.
 ## Destination
 
 **The early epic block — #64, #65, #66, #67, #68, #69 — reaches zero open.**
-Each of the six either closes with an evidence pointer, or its live residue is
-re-expressed as a subtask or a clearly-stated new epic before it closes.
+Each of the six either retires with an evidence pointer, or its live residue is
+re-expressed as a subtask or a clearly-stated new epic before it retires.
 
 Anything numbered above that block is by definition **not** legacy: #423
 (metrics), #424 (hulls) and #425 (coverage) stand on their own as clearly-stated
 new epics, and #482 is a subtask. #69's umbrella role ends with the block.
+Owner-retire packet: [`69-closing-summary.md`](69-closing-summary.md).
+This map does not retire the GitHub object.
 
 ## Notes
 
@@ -56,9 +58,11 @@ in the relevant lane doc. Name what is *not* covered and where it went.
 **An epic closes only when the closure comment would be true.** Three of the block
 closed on scope achieved, where the amber was named conditionals and flagged
 frontiers. #67 did not, because its compute path returns confidently wrong answers
-with no marker — see **ADR-0003** for the convention that unblocks it and
-[Retire #67 — second pass](tickets/11-retire-67-second-pass.md) for the retry. The
-destination is worth less than an honest tracker.
+with no marker — see **ADR-0003** for the convention that unblocks it.
+The GitHub object was later retired by the owner (2026-08-23);
+[Retire #67 — second pass](tickets/closed/11-retire-67-second-pass.md)
+is overtaken, not a second-pass accept. The destination is worth less
+than an honest tracker.
 
 **Vocabulary is load-bearing here.** Per **ADR-0002** (as amended), parks are
 named by *what is missing*, because that predicts how each graduates: a
@@ -132,8 +136,10 @@ whatever its epic's body says about it.
   nine-cell capstone is settled as **ADR-0003** (two-tier: OGC open interior
   specifies, half-open parity computes, guarded bridge between) — which also
   reclassifies four of the six GEOS WARNs from undecided to expected. Also #523
-  (`F` conflated with not-computed) and four doc defects to #503. Closure moves to
-  [Retire #67 — second pass](tickets/11-retire-67-second-pass.md).
+  (`F` conflated with not-computed) and four doc defects to #503. The
+  second pass is [overtaken](tickets/closed/11-retire-67-second-pass.md)
+  — owner already retired the GitHub object; ticket 523 stays open,
+  not accepted.
   Ticket 523 grilled 2026-08-30
   ([Grill #523](tickets/closed/12-grill-523-curve-relate-alphabet.md),
   [`map-523.md`](map-523.md), [`spec-523.md`](spec-523.md),
@@ -163,12 +169,21 @@ whatever its epic's body says about it.
   #509 V-CP Jordan, #510 the three arc conditionals, #511 the elliptic no-op,
   #503 register accuracy. The float-mode caveat was already documented per-mode;
   only `oracle/CONSUMERS.md` lacked a pointer, now added.
+- [Retire #67 — second pass](tickets/closed/11-retire-67-second-pass.md)
+  — **overtaken.** Owner retired the GitHub object on 2026-08-23
+  (manual, no commit keyword). Preconditions 2–4 stay unmet; ticket
+  523 stays open, not accepted. Residue stays on #523, leftover
+  `Ⅰ`–`Ⅴ`, ADR-0003 / `geom_de9im_pointset`, and #503. Does not
+  reopen #67.
+- [End #69's umbrella role](tickets/closed/09-end-69-umbrella.md)
+  — **no replacement umbrella.** #423 / #424 / #425 and every
+  successor epic stand alone. Owner-retire packet:
+  [`69-closing-summary.md`](69-closing-summary.md). Leftover TAGs
+  that still named #69 are parks (M-DIM / AT-* / LRF-* research;
+  S-* technique). Do not remint `69-a`. Do not mint `69-b`. This
+  letter does not retire the GitHub object.
 
 ## Not yet specified
-
-- **How #69's umbrella role formally ends.** Whether #423/#424/#425 need a
-  replacement umbrella, a project board, or nothing at all, cannot be settled
-  until the block's closures reveal what residue lands where.
 - **#66's parked items.** C2 off-grid completeness and the arc Hobby analog were
   parked by decision; whether each becomes a documented non-goal or a new epic
   depends on how #66's ticket reads the parking.

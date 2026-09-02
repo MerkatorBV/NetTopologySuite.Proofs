@@ -78,6 +78,20 @@ theories/ClothoidLength.v
 # remains clothoid-halley-coq / ADR-0001 Technique park; never global.
 # 3-axiom.
 theories/ClothoidLength_unit.v
+# Epic #508 ticket-named QED ∨ QEX stop. Carrier is CSChord | CSArc.
+# Discharges QEX on the ellipse (no CurveSegment constructor).
+# Does not remint CurveSegment / Exact* zoo types. No Admitted.
+theories/ExactCurveEpic508.v
+# #508-e / #564: #561 pack instance on (cos,sin)(t²/2) at σ≡1,
+# F = fun t => 1 * t. Cx, Cy stay increment_squeezed (no inhabitant).
+# chord_rate discharged on a compact window. Route 1 does not
+# construct RInt. Never global. 3-axiom.
+theories/ClothoidFresnel.v
+# #508-e / #564 inhabitant: Stdlib RiemannInt of (cos,sin)(t²/2) from 0
+# yields concrete fresnel_Cx / fresnel_Cy; discharges fresnel_primitives
+# on every window; [0,1] length exactly 1. Category C (RiemannInt →
+# classic). Does not remint ClothoidFresnel.v. Never global.
+theories/ClothoidFresnelInhab.v
 # #508 NURBS rung 1: the degree-2 single-span N token (rational quadratic
 # Bezier, the conic form) against the CurveLength spec.  Equal-weights
 # degeneration as an is_curve_length iff (chained to the elevated cubic),
@@ -94,6 +108,11 @@ theories/NurbsConicExact.v
 # conditional exact primitive through curve_length_of_primitive.
 # Single-span oracle N.  No ExactNurbsSegment.  3-axiom.
 theories/NurbsGeneralLength.v
+# #508-g / #565: knot-vector carrier + induction over spans, and the
+# two-golden-quarter half-circle instance (π/2 + π/2 = π).  Not a remint
+# of NurbsGeneralLength.nurbs_knot_span_additive.  Not Cox-de Boor.
+# Oracle N stays single-span.  Instance is Category C via 508-a atan.
+theories/NurbsKnotSpans.v
 # #508 arc P2 leftovers from #552: valid_arc ⇒ arc_sweep ≠ 0, and
 # arc_mid is a parameterized circumcircle point.  atan2 lane, 4-axiom
 # (docs/audit-exceptions.txt).  Does not start a new 64-a r·θ.
@@ -2742,6 +2761,11 @@ theories/RingContactSound.v
 # S13: cell-DIMENSION Jordan soundness closed (geom_de9im_cell_dimensions_sound
 # + boundary tie-in via RelateBoundary). Part of 4-item finish.
 theories/RelateCurveMatrix.v
+# Ticket 523 QED ∨ QEX stop: CURVE_RELATE_MATRIX result alphabet including
+# the 523-c '?'. ISO Table 13 / result F/0/1/2 have no '?'. DimValue None
+# encodes as F, never '?'. Discharged QEX on CRR_Unknown. Stdlib + DE9IM
+# only. Does not remint WireCell / 522-f. No Admitted.
+theories/RelateCurveAlphabet.v
 # Lineal boundary-meet bridge: curve_segments_meet (chord-chord contact) =>
 # geom_boundary witness => im_bb cell non-empty / ~ im_disjoint_ogc.  Closes the
 # bridge flagged deferred in RingContactSound.v for the LINEAL (chord) case
@@ -2828,6 +2852,11 @@ theories/RelateNGTouchMixedCone.v
 # lens pair (not leftover Ⅶ). Not CONTEXT Bar 1. Does not remint
 # cone_separates_b / mixed_cone_vertex_b / overlap_b / aa_matrix_*.
 theories/RelateNGTouchSameCone.v
+# Epic #522 ticket-named QED ∨ QEX stop. Wraps
+# triangle_pair_regime_ccw_stop (QEX on the unnamed lens after
+# leftover Ⅵ) and leftover Ⅰ–Ⅵ classify (QED). Does not remint
+# detectors / aa_matrix_* / 522-j. No Admitted.
+theories/RelateNGEpic522.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
 # sentinel IE dim-2 disk.  Does not remint aa_matrix_disjoint (IE

@@ -110,7 +110,54 @@ _Avoid_: exact (the Bible §2.2 property), stable (unqualified), bit-exact (stro
 The 1-D measure of a curve — the number the Bible §4.2 `length()` obligation owes and
 `LENGTH_UNIFIED` emits. Never confuse it with `List.length`: lemmas named `*_length`
 but proved by `length_map` are element counts stating no metric fact.
-_Avoid_: length (unqualified where a count could be meant), size
+Bible §4.2 satisfaction (what is proved vs parked) lives in
+`docs/scout/508-closing-summary.md`. The zoo is not unconditionally
+exact: elliptic E and Fresnel clothoid stay engine-conditional; oracle
+`LENGTH_UNIFIED` is still C/A. Owner review retires epic #508.
+_Avoid_: length (unqualified where a count could be meant), size,
+planned length zoo (the 508-* letters landed), unconditionally exact zoo
+
+### Distance metrics
+
+Function inventory: [`docs/scout/map-hausdorff-functions.md`](docs/scout/map-hausdorff-functions.md).
+Formal cluster stays epic #423. Do not remint `423-a`.
+
+**Discrete Hausdorff**:
+Vertex (optionally densified-segment) max-min. JTS / NTS / GEOS
+`DiscreteHausdorffDistance`. Under-estimates the locus value:
+discrete ≤ continuous, and densify fraction → 0 approaches the
+locus value. Already on NTS develop.
+_Avoid_: Directed Hausdorff, Hausdorff (unqualified), DHD (JTS uses
+that abbreviation for both the discrete class and the locus class)
+
+**Oriented discrete**:
+One-sided discrete max-min (`orientedDistance` / NTS
+`OrientedDistance`). Still vertices or densified chords.
+_Avoid_: Directed Hausdorff (the locus class)
+
+**Directed Hausdorff**:
+Locus max-min over every point of A, not just vertices. Asymmetric.
+JTS `DirectedHausdorffDistance` (JTS #1182). Not on NTS develop
+(NTS#812 still open) and not on GEOS. Symmetric Hausdorff is the
+max of the two directed values.
+_Avoid_: Discrete Hausdorff, oriented discrete, DHD
+
+**Densify fraction**:
+Segment-length fraction in `(0, 1]` used by
+`DiscreteHausdorffDistance`. Not a map-unit tolerance.
+_Avoid_: distance tolerance, accuracy, densify (unqualified)
+
+**Distance tolerance**:
+JTS `DirectedHausdorffDistance` accuracy in coordinate units — how
+close the realizing pair is to the true max-min. Not a densify
+fraction and not a free-end clip.
+_Avoid_: densify fraction, clip
+
+**Fully within distance**:
+JTS `DirectedHausdorffDistance.isFullyWithinDistance` — every point
+of A is within `maxDistance` of B. Not `Geometry.isWithinDistance`
+(nearest-point, not Hausdorff).
+_Avoid_: isWithinDistance (the nearest-point predicate)
 
 ### Performance
 

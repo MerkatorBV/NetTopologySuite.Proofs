@@ -12,7 +12,7 @@ surfaces the same stack.
 
 | Idea | Examples |
 |------|----------|
-| Board epic | Issues **#64–#69** plus extended epics (**#410** koc, **#423** metric, **#424** hull, **#425** coverage, **#814** / **#1200** core mirrors) — full wire table in [`TRIAGE_NTS_JTS_ISSUES.md`](../TRIAGE_NTS_JTS_ISSUES.md) §Wire map |
+| Board epic | Retired block **#64–#68**; tracker **#69** is owner-retire ready ([`docs/scout/69-closing-summary.md`](scout/69-closing-summary.md)). Standing epics (**#410** koc, **#423** metric, **#424** hull, **#425** coverage, **#814** / **#1200** core mirrors) stand alone — full wire table in [`TRIAGE_NTS_JTS_ISSUES.md`](../TRIAGE_NTS_JTS_ISSUES.md) §Wire map |
 | Topic tag | `topic: core`, `buffer`, `precision`, `relate`, `mesh`, `koc`, `metric`, `coverage`, `hull`, … |
 | Role | Human-scale “where does this live?” and blast-cone epicenter |
 

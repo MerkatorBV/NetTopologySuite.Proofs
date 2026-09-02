@@ -1,7 +1,7 @@
 # Resync surviving issue bodies to corpus state
 
 **Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
-**Blocked by:** **#506** *Module split campaign* — its queue must be **empty**, not merely the epic open (see [Open the module-split queue epic](closed/03-open-module-split-queue-epic.md)) · [End #69's umbrella role](09-end-69-umbrella.md)
+**Blocked by:** **#506** *Module split campaign* — its queue must be **empty**, not merely the epic open (see [Open the module-split queue epic](closed/03-open-module-split-queue-epic.md)) · ~~[End #69's umbrella role](closed/09-end-69-umbrella.md)~~ ✔
 
 ## Question
 
@@ -24,7 +24,9 @@ Scope — only issues that survive this map:
 - **#425 coverage** — one of six asks stands, at witness scope
   (`coverage_gap_overlap_cleaner` is a constant function on a single two-cell
   witness). Say so.
-- Any successor epic this map opened, plus **#69** if it survived in some form.
+- Any successor epic this map opened. **#69 is owner-retire ready**
+  ([`69-closing-summary.md`](../69-closing-summary.md)); this ticket
+  does not own its stale GitHub body.
 
 Corpus-wide facts to state once and correctly, since several bodies contradict
 them: **zero** proofs remain admitted anywhere in `theories/` or

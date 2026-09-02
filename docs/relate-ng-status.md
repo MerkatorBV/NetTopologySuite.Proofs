@@ -16,7 +16,7 @@ children have their own live gate: [`docs/scout/map-522.md`](scout/map-522.md).
 | Is this theorem in the corpus? | [`verified-claims.md`](verified-claims.md) `#67` / `#522` rows |
 | What is the specified interior? | [ADR-0003](adr/ADR-0003-two-tier-interior-spec-parity-computation.md) |
 | What is the next #522 grab? | [`scout/map-522.md`](scout/map-522.md) |
-| Does #67 itself retire? | [`scout/tickets/11-retire-67-second-pass.md`](scout/tickets/11-retire-67-second-pass.md) |
+| Does #67 itself retire? | [`scout/tickets/closed/11-retire-67-second-pass.md`](scout/tickets/closed/11-retire-67-second-pass.md) (overtaken; owner already retired the GitHub object) |
 | Rect + triangle touch cells | [`rect-triangle-touch-milestone.md`](rect-triangle-touch-milestone.md) |
 | Clothoid leftovers | [`clothoid-open-questions-triage.md`](clothoid-open-questions-triage.md) |
 | Why the triage was written | [`history/issue-67-relateng-triage.md`](history/issue-67-relateng-triage.md) |
@@ -112,18 +112,21 @@ disguised as disjointness — that was #530.
   Do **not** mint `522-n`.
 - **Obtuse-at-v certificate** — leftover `Ⅱ` classified.
   Headline `RelateNGTouchObtuse.v : triangle_pair_regime_obtuse`.
-  Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
-  (`RelateNGTouchObtuse.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed pair after leftover `Ⅵ`. Do not
-  bucket with leftover `Ⅰ`.
+  Fill stays `im_unsupported`. Leftover `Ⅱ` is QED
+  (`RelateNGTouchObtuse.v : leftover_ii_qed_or_qex`). Epic #522
+  stop is QED ∨ QEX (`RelateNGEpic522.v : ticket_522_qed_or_qex`).
+  Do not bucket with leftover `Ⅰ`.
 - **Mixed-cone certificate** — leftover `Ⅴ` classified.
   Headline `RelateNGTouchMixedCone.v : triangle_pair_regime_mixedcone`.
   Fill stays `im_unsupported`.
 - **Same-cone certificate** — leftover `Ⅵ` classified.
   Headline `RelateNGTouchSameCone.v : triangle_pair_regime_samecone`.
   Fill stays `im_unsupported`. Epic #522 stop is QED ∨ QEX
-  (`RelateNGTouchSameCone.v : triangle_pair_regime_ccw_stop`),
-  discharged QEX on an unnamed lens. Do not mint leftover `Ⅶ`.
+  (`RelateNGEpic522.v : ticket_522_qed_or_qex`),
+  discharged QEX on an unnamed lens after leftover `Ⅵ`. Leftover
+  `Ⅰ`–`Ⅵ` are classified
+  (`RelateNGEpic522.v : ticket_522_classified_qed_or_qex`). Leftover
+  `Ⅶ` is already #642.
 - **Exterior-side one-sided T** — leftover `Ⅲ`. `Ⅲ∨Ⅳ` xor with two
   witnesses. Headline
   `RelateNGTouchOnesided.v : triangle_pair_regime_onesided`. Fill token
