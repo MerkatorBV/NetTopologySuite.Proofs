@@ -80,12 +80,30 @@ headline as the noding discharge, then forgets every hyp
 `hobby_lemma_4_3_no_proper` and `hobby_lemma_4_3` are `Abort`, so they
 are not apply-poison.
 
-Print Assumptions on the cited headline is the snap-layer
-`Classical_Prop.classic` lineage already listed in
-`docs/audit-exceptions.txt` (HobbyTheorem_b64.v). Probe PA is emitted
-by the flocq smoke step (`scripts/hunt_probe_smoke.sh`). Run
-`33719604495` failed the smoke (`Point` not in scope) while the job
-stayed green — `| tee` without `pipefail`. Not a captured PA log.
+Print Assumptions captured from flocq smoke on `3515626` (run
+`33720186385`, job “Smoke hunt probes”).
+
+`Hlemma43_uninhabitable` (first block):
+
+```
+ClassicalDedekindReals.sig_not_dec
+ClassicalDedekindReals.sig_forall_dec
+FunctionalExtensionality.functional_extensionality_dep
+Classical_Prop.classic
+```
+
+`collapse_pair_only_at_endpoints` (second block):
+
+```
+ClassicalDedekindReals.sig_forall_dec
+FunctionalExtensionality.functional_extensionality_dep
+```
+
+`classic` is the snap-layer lineage already listed in
+`docs/audit-exceptions.txt` for `HobbyTheorem_b64.v` /
+`HobbyCounterexample_b64.v`. The probe is off `_CoqProject.full`, so
+`audit_axioms.sh` does not see these blocks. No extra axiom beyond that
+lineage.
 
 ## Not a fix
 
@@ -105,5 +123,5 @@ aborted `hobby_lemma_4_3` under a new binder. Probe:
 at `fully_intersected_snap_of_nodable`. Leaves open #66.
 Do not wrap the false hyp. Joost/Jeroen: promote or stand down.
 
-OUTCOME: PARTIAL (flocq smoke on `dadbbf3` failed: `injection` on
-`Point` equality takes one name; `f_equal px` is the close).
+OUTCOME: LANDED (flocq smoke on `3515626` compiled the probe; both
+theorems Qed; PA logged above).

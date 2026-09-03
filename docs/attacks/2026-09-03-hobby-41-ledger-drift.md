@@ -65,4 +65,5 @@ Phase 2 ledger still counts an uninhabitable `[cond]` and omits the
 Qed nodable replacement. Companion: `2026-09-03-hobby-hlemma43-uninhabitable.md`.
 Leaves open #66. Joost/Jeroen: promote or stand down.
 
-OUTCOME: PARTIAL (companion probe not yet shown as `.vo` on this host).
+OUTCOME: LANDED (companion probe Qed on flocq smoke `3515626`; this
+ticket is ledger-only and does not need its own `.vo`).
