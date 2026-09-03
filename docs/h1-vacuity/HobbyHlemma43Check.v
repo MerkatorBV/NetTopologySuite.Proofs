@@ -62,7 +62,8 @@ Proof.
   destruct Honly as [Hnp | Hshare].
   - exact (Hnp snapped_proper).
   - rewrite snap_A0, snap_A1, snap_B0, snap_B1 in Hshare.
-    destruct Hshare as [E | [E | [E | E]]]; injection E as Hx Hy; cbn in Hx; lra.
+    destruct Hshare as [E | [E | [E | E]]];
+      apply (f_equal px) in E; cbn in E; lra.
 Qed.
 
 Print Assumptions Hlemma43_uninhabitable.

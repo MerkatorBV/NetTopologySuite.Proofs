@@ -105,5 +105,5 @@ aborted `hobby_lemma_4_3` under a new binder. Probe:
 at `fully_intersected_snap_of_nodable`. Leaves open #66.
 Do not wrap the false hyp. Joost/Jeroen: promote or stand down.
 
-OUTCOME: PARTIAL (flocq smoke on `9fa683b` failed to compile the
-probe; job stayed green until `pipefail`).
+OUTCOME: PARTIAL (flocq smoke on `dadbbf3` failed: `injection` on
+`Point` equality takes one name; `f_equal px` is the close).
