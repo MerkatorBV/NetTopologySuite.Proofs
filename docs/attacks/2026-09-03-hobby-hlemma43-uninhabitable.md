@@ -1,0 +1,89 @@
+# ATTACK hobby-hlemma43-uninhabitable
+- claimId: none
+- file:lemma: theories-flocq/HobbyTheorem_b64.v:hobby_theorem_4_1_conditional
+- class: uninhabitable
+- epic: #66
+- topic: binary64
+- verdict: QEX-uninhabitable
+- H1-shaped: yes
+
+Target behaviour: snap-rounding of a `fully_intersected` arrangement stays
+`fully_intersected` (Hobby 1999, Theorem 4.1).
+
+## Repro
+
+```sh
+# After a Flocq-lane build that produces HobbyCounterexample_b64.vo:
+rocq c -Q theories NTS.Proofs -Q theories-flocq NTS.Proofs.Flocq \
+  docs/attacks/HobbyHlemma43Check.v
+```
+
+Grep the hyp against the aborted lemma and the only-at-endpoints disjunct:
+
+```sh
+rg -n -A8 'Definition segments_intersect_only_at_endpoints' theories-flocq/HobbyTheorem_b64.v
+rg -n -A20 'Theorem hobby_theorem_4_1_conditional' theories-flocq/HobbyTheorem_b64.v
+rg -n 'hobby_lemma_4_3_no_proper_is_false|originals_no_proper|snapped_proper' \
+  theories-flocq/HobbyCounterexample_b64.v
+```
+
+Probe theorems (both end `Qed.`):
+
+- `collapse_pair_only_at_endpoints` — the collapse pair inhabits the hyp's premise
+- `Hlemma43_uninhabitable` — the named premise derives `False`
+
+## What collapses
+
+`hobby_theorem_4_1_conditional` takes a named premise `Hlemma43`:
+
+```
+forall s1 s2, segments_intersect_only_at_endpoints s1 s2 ->
+  snapped images of the singletons, if distinct, meet only at endpoints.
+```
+
+`segments_intersect_only_at_endpoints` is `~ proper \/ share_endpoint`
+(HobbyTheorem_b64.v). The comment says "or not at all." Parallel segments
+`A = (0, 0.7)–(10, 0.7)` and `B = (3, 1.3)–(7, 1.3)` share no point, so
+`~ proper` holds, so the premise is inhabited
+(`HobbyCounterexample_b64.originals_no_proper`). Their unit-grid snaps
+overlap properly at `(5, 1)` and share no endpoint
+(`snapped_proper`). Therefore `Hlemma43` is the same false universal as
+the `Abort`ed `hobby_lemma_4_3`. Nobody can discharge it. The headline
+Qeds by assuming a hyp that derives `False` — the overlay H1 shape.
+
+The file header and `docs/hobby-lemma-4-3-no-proper-refutation.md` still
+call the headline "unaffected" because it "merely assumes" the premise.
+Assuming a false premise is how `overlay_ng_correct_conditional` became
+uninstantiable.
+
+## Consumer chain
+
+no live apply of `hobby_theorem_4_1_conditional`.
+`theories-flocq/OverlayBridge.v:snap_noding_bridge` comments the
+headline as the noding discharge, then forgets every hyp
+(`intros A B _ _ _; apply valid_topology_graph_build_graph`).
+`theories-flocq/NodingSeparation_b64.v` applys only the true half
+`hobby_lemma_4_3_shared_endpoint`. The false halves
+`hobby_lemma_4_3_no_proper` and `hobby_lemma_4_3` are `Abort`, so they
+are not apply-poison.
+
+Print Assumptions on the cited headline is the snap-layer
+`Classical_Prop.classic` lineage already listed in
+`docs/audit-exceptions.txt` (HobbyTheorem_b64.v). No extra axiom.
+
+## Not a fix
+
+Do not add a new named hyp `H_noded` / `H_arrangement` so the same
+false universal still Qeds. That re-creates H1. The inhabit-able
+replacement already exists: `NodingSeparation_b64.fully_intersected_snap_of_nodable`
+under `pairwise_nodable` (share an endpoint or axis-separated by more
+than one grid unit). Re-point the headline onto that predicate; do not
+wrap `Hlemma43`.
+
+## Promote?
+
+`hobby_theorem_4_1_conditional` is QEX-uninhabitable, not an honest
+`[cond]`. `Hlemma43` is the aborted `hobby_lemma_4_3` under a new
+binder. Probe: `docs/attacks/HobbyHlemma43Check.v`. Honest discharge
+already lives at `fully_intersected_snap_of_nodable`. Leaves open #66.
+Do not wrap the false hyp. Joost/Jeroen: promote or stand down.
