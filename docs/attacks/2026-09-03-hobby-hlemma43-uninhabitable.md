@@ -3,22 +3,31 @@
 - file:lemma: theories-flocq/HobbyTheorem_b64.v:hobby_theorem_4_1_conditional
 - class: uninhabitable
 - epic: #66
-- topic: binary64
+- topic: overlay
 - verdict: QEX-uninhabitable
 - H1-shaped: yes
 
 Target behaviour: snap-rounding of a `fully_intersected` arrangement stays
 `fully_intersected` (Hobby 1999, Theorem 4.1).
 
+Attacked binder: the **anonymous second premise** of
+`HobbyTheorem_b64.v : hobby_theorem_4_1_conditional` (the `forall s1 s2,
+segments_intersect_only_at_endpoints s1 s2 -> …` arrow). Prose alias
+Hlemma43 lives in `docs/hobby-lemma-4-3-no-proper-refutation.md`; it is
+not a `Hypothesis` ident in the `.v`.
+
 ## Repro
 
 ```sh
 # After a Flocq-lane build that produces HobbyCounterexample_b64.vo:
+bash scripts/hunt_probe_smoke.sh
+# or:
 rocq c -Q theories NTS.Proofs -Q theories-flocq NTS.Proofs.Flocq \
-  docs/attacks/HobbyHlemma43Check.v
+  docs/h1-vacuity/HobbyHlemma43Check.v
 ```
 
-Grep the hyp against the aborted lemma and the only-at-endpoints disjunct:
+Grep the second arrow against the aborted lemma and the only-at-endpoints
+disjunct:
 
 ```sh
 rg -n -A8 'Definition segments_intersect_only_at_endpoints' theories-flocq/HobbyTheorem_b64.v
@@ -27,32 +36,36 @@ rg -n 'hobby_lemma_4_3_no_proper_is_false|originals_no_proper|snapped_proper' \
   theories-flocq/HobbyCounterexample_b64.v
 ```
 
-Probe theorems (both end `Qed.`):
+Probe theorems (both must end `Qed.` on the flocq smoke):
 
-- `collapse_pair_only_at_endpoints` — the collapse pair inhabits the hyp's premise
-- `Hlemma43_uninhabitable` — the named premise derives `False`
+- `collapse_pair_only_at_endpoints` — the collapse pair inhabits the
+  second premise's antecedent
+- `Hlemma43_uninhabitable` — the reconstructed second premise derives
+  `False`
 
 ## What collapses
 
-`hobby_theorem_4_1_conditional` takes a named premise `Hlemma43`:
+`hobby_theorem_4_1_conditional` is
 
 ```
-forall s1 s2, segments_intersect_only_at_endpoints s1 s2 ->
-  snapped images of the singletons, if distinct, meet only at endpoints.
+fully_intersected A ->
+  (forall s1 s2, only_at_endpoints s1 s2 -> snapped singletons stay only_at_endpoints) ->
+  fully_intersected (snap_round_segments A).
 ```
 
 `segments_intersect_only_at_endpoints` is `~ proper \/ share_endpoint`
 (HobbyTheorem_b64.v). The comment says "or not at all." Parallel segments
 `A = (0, 0.7)–(10, 0.7)` and `B = (3, 1.3)–(7, 1.3)` share no point, so
-`~ proper` holds, so the premise is inhabited
+`~ proper` holds, so the antecedent is inhabited
 (`HobbyCounterexample_b64.originals_no_proper`). Their unit-grid snaps
 overlap properly at `(5, 1)` and share no endpoint
-(`snapped_proper`). Therefore `Hlemma43` is the same false universal as
-the `Abort`ed `hobby_lemma_4_3`. Nobody can discharge it. The headline
-Qeds by assuming a hyp that derives `False` — the overlay H1 shape.
+(`snapped_proper`). Therefore the second premise is the same false
+universal as the `Abort`ed `hobby_lemma_4_3`. Nobody can discharge it.
+The headline Qeds as `fully_intersected A -> False -> …` — the overlay
+H1 shape.
 
 The file header and `docs/hobby-lemma-4-3-no-proper-refutation.md` still
-call the headline "unaffected" because it "merely assumes" the premise.
+call the headline "unaffected" because it "merely assumes" that arrow.
 Assuming a false premise is how `overlay_ng_correct_conditional` became
 uninstantiable.
 
@@ -69,7 +82,9 @@ are not apply-poison.
 
 Print Assumptions on the cited headline is the snap-layer
 `Classical_Prop.classic` lineage already listed in
-`docs/audit-exceptions.txt` (HobbyTheorem_b64.v). No extra axiom.
+`docs/audit-exceptions.txt` (HobbyTheorem_b64.v). Probe PA is emitted
+by the flocq smoke step (`scripts/hunt_probe_smoke.sh`); this ticket
+does not yet paste a log.
 
 ## Not a fix
 
@@ -78,12 +93,16 @@ false universal still Qeds. That re-creates H1. The inhabit-able
 replacement already exists: `NodingSeparation_b64.fully_intersected_snap_of_nodable`
 under `pairwise_nodable` (share an endpoint or axis-separated by more
 than one grid unit). Re-point the headline onto that predicate; do not
-wrap `Hlemma43`.
+wrap the second premise.
 
 ## Promote?
 
-`hobby_theorem_4_1_conditional` is QEX-uninhabitable, not an honest
-`[cond]`. `Hlemma43` is the aborted `hobby_lemma_4_3` under a new
-binder. Probe: `docs/attacks/HobbyHlemma43Check.v`. Honest discharge
-already lives at `fully_intersected_snap_of_nodable`. Leaves open #66.
+`HobbyTheorem_b64.v : hobby_theorem_4_1_conditional` is
+QEX-uninhabitable, not an honest `[cond]`. The second premise is the
+aborted `hobby_lemma_4_3` under a new binder. Probe:
+`docs/h1-vacuity/HobbyHlemma43Check.v`. Honest discharge already lives
+at `fully_intersected_snap_of_nodable`. Leaves open #66.
 Do not wrap the false hyp. Joost/Jeroen: promote or stand down.
+
+OUTCOME: PARTIAL (probe on the flocq smoke path; `.vo` not yet shown
+on this host).

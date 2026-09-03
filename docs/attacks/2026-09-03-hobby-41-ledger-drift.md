@@ -3,7 +3,7 @@
 - file:lemma: theories-flocq/HobbyTheorem_b64.v:hobby_theorem_4_1_conditional
 - class: ledger-drift
 - epic: #66
-- topic: binary64
+- topic: overlay
 - verdict: ledger-drift
 - H1-shaped: no
 
@@ -34,7 +34,7 @@ Three-column drift:
 
 | surface | what it says |
 |---|---|
-| kernel | `Hlemma43` is uninhabitable (companion ticket). The inhabit-able theorem is `NodingSeparation_b64.fully_intersected_snap_of_nodable` under `pairwise_nodable`. Both `.v` files live only in `_CoqProject.full`. |
+| kernel | The anonymous second premise of `hobby_theorem_4_1_conditional` is uninhabitable (companion ticket). The inhabit-able theorem is `NodingSeparation_b64.fully_intersected_snap_of_nodable` under `pairwise_nodable`. Both `.v` files live only in `_CoqProject.full`. |
 | ledger | `docs/verified-claims.md` Phase 2 still cites `hobby_theorem_4_1_conditional` as the live `[cond]` headline ("assuming Lemma 4.3's no-proper half"). Zero rows for the nodable replacement. |
 | dashboard | Observatory Phase 2 mix treats that `[cond]` as a coverage theorem. Host-lane `make host` never builds the cited `.v` (relic-proven until a full-lane compile). No oracle mode claims Hobby 4.1 vectors — this is ledger-vs-kernel, not a 0-vector mode. |
 
@@ -42,13 +42,14 @@ Three-column drift:
 header still call the headline "unaffected." That prose is the
 observatory's blind spot: `[cond]` is filed as an honest gap after the
 false lemma was `Abort`ed, so the scanners do not re-classify the
-binder that remains.
+anonymous second arrow that remains.
 
 ## Consumer chain
 
 no live apply of the cited headline (see companion uninhabitable
 ticket). `validate-claims.sh` will keep passing: the orphan check only
-asks whether the identifier exists, not whether the hyp is inhabited.
+asks whether the identifier exists, not whether the second premise is
+inhabited.
 
 ## Not a fix
 
@@ -56,10 +57,12 @@ Do not add a ledger row that repeats `hobby_theorem_4_1_conditional`
 under a new claimId, and do not mint a named hyp so the `[cond]` badge
 can stay. Re-point the Phase 2 row onto
 `fully_intersected_snap_of_nodable` after a human FIX, or drop the
-`[cond]` row. Wrapping the false hyp to keep the badge is H1.
+`[cond]` row. Wrapping the false second premise to keep the badge is H1.
 
 ## Promote?
 
 Phase 2 ledger still counts an uninhabitable `[cond]` and omits the
 Qed nodable replacement. Companion: `2026-09-03-hobby-hlemma43-uninhabitable.md`.
 Leaves open #66. Joost/Jeroen: promote or stand down.
+
+OUTCOME: PARTIAL (companion probe not yet shown as `.vo` on this host).

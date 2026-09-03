@@ -295,6 +295,19 @@ jobs:
             }
           sudo chown -R "$(id -u):$(id -g)" .
 
+      - name: Smoke hunt probes (docs/h1-vacuity)
+        # Qed-claiming hunt probes live next to the H1 pair and are
+        # evidence, not _CoqProject.full product modules.  Compile them
+        # here so a probe that claims Qed is a checked fact (Print
+        # Assumptions lands in this step's log).
+        run: |
+          chmod -R a+rwX .
+          docker run --rm -v "$PWD:/workspace" -w /workspace \
+            nts-proofs-flocq:ci \
+            bash -lc 'bash scripts/hunt_probe_smoke.sh' \
+            | tee /tmp/hunt_probe_smoke.log
+          sudo chown -R "$(id -u):$(id -g)" .
+
       - name: Update per-file Print Assumptions chunks
         run: bash scripts/ci_update_palog.sh /tmp/build_sync.log
 

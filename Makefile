@@ -36,7 +36,7 @@ SHELL := /bin/bash
 ROCQ := $(shell command -v rocq 2>/dev/null || command -v coqc 2>/dev/null || echo "")
 
 # Phony targets only — this file never produces real build artefacts.
-.PHONY: help status host full check ci-guards ci-pr ci-full theories-changed oracle oracle-ffi clean-env env-info
+.PHONY: help status host full check ci-guards ci-pr ci-full theories-changed oracle oracle-ffi clean-env env-info hunt-probes
 
 # Base ref for `make theories-changed` (override: make theories-changed BASE=main).
 BASE ?= origin/main
@@ -215,9 +215,16 @@ ci-pr: ci-guards host
 # ci-full — the full local gate: guardrails + the whole corpus
 # (`_CoqProject.full`, needs Flocq) + the oracle binary.  Matches what
 # `main` re-validates end to end on every merge.
-ci-full: ci-guards full oracle oracle-ffi
+ci-full: ci-guards full hunt-probes oracle oracle-ffi
 	@echo ""
 	@echo "Full local gate complete."
+
+# hunt-probes — compile Qed-claiming hunt probes under docs/h1-vacuity/
+# that are off the product _CoqProject.full graph.  Needs a prior `make
+# full` (HobbyCounterexample_b64.vo).  CI's flocq job runs the same
+# script after the corpus compile.
+hunt-probes:
+	bash scripts/hunt_probe_smoke.sh
 
 # theories-changed — incremental local rebuild: only the theories/ files
 # changed vs BASE (default origin/main) plus their transitive reverse-

@@ -1,12 +1,16 @@
 (* ============================================================================
-   NetTopologySuite.Proofs.Attacks.HobbyHlemma43Check
+   NetTopologySuite.Proofs.H1Vacuity.HobbyHlemma43Check
    ----------------------------------------------------------------------------
-   Hunt probe: the named premise of hobby_theorem_4_1_conditional
-   (Hlemma43) is uninhabitable.  Same parallel-collapse pair as
-   HobbyCounterexample_b64.  Not a product module.
+   Hunt probe: the *anonymous second premise* of
+   hobby_theorem_4_1_conditional is uninhabitable.  Same parallel-collapse
+   pair as HobbyCounterexample_b64.  Evidence, not a product headline.
 
    Target behaviour: snap-rounding of a fully_intersected arrangement
    stays fully_intersected (Hobby 1999, Theorem 4.1).
+
+   Hlemma43 is house slang from docs/hobby-lemma-4-3-no-proper-refutation.md.
+   It is NOT a Hypothesis / ident in HobbyTheorem_b64.v.  The Definition
+   below reconstructs the second arrow of hobby_theorem_4_1_conditional.
 
    No `Admitted`, no `Axiom`, no `Parameter`.
 
@@ -21,7 +25,8 @@ From NTS.Proofs.Flocq Require Import HobbyTheorem_b64 HobbyCounterexample_b64.
 Import ListNotations.
 Local Open Scope R_scope.
 
-(* The named premise of hobby_theorem_4_1_conditional, copied verbatim. *)
+(* Probe alias for the anonymous second premise of
+   hobby_theorem_4_1_conditional, copied verbatim.  Not a kernel binder. *)
 Definition Hlemma43 : Prop :=
   forall s1 s2 : Point * Point,
     segments_intersect_only_at_endpoints s1 s2 ->
@@ -31,12 +36,12 @@ Definition Hlemma43 : Prop :=
       sigma1 <> sigma2 ->
       segments_intersect_only_at_endpoints sigma1 sigma2.
 
-(* B: the hyp's premise is inhabited — ~proper is enough for only_at_endpoints. *)
+(* B: the second premise's antecedent is inhabited — ~proper suffices. *)
 Theorem collapse_pair_only_at_endpoints :
   segments_intersect_only_at_endpoints (A0, A1) (B0, B1).
 Proof. unfold segments_intersect_only_at_endpoints. left. exact originals_no_proper. Qed.
 
-(* A: Hlemma43 derives False from that inhabitant + the snapped overlap. *)
+(* A: that reconstructed second premise derives False. *)
 Theorem Hlemma43_uninhabitable : Hlemma43 -> False.
 Proof.
   intros H.
