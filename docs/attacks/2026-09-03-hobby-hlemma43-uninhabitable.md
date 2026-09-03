@@ -83,8 +83,9 @@ are not apply-poison.
 Print Assumptions on the cited headline is the snap-layer
 `Classical_Prop.classic` lineage already listed in
 `docs/audit-exceptions.txt` (HobbyTheorem_b64.v). Probe PA is emitted
-by the flocq smoke step (`scripts/hunt_probe_smoke.sh`); this ticket
-does not yet paste a log.
+by the flocq smoke step (`scripts/hunt_probe_smoke.sh`). Run
+`33719604495` failed the smoke (`Point` not in scope) while the job
+stayed green — `| tee` without `pipefail`. Not a captured PA log.
 
 ## Not a fix
 
@@ -104,5 +105,5 @@ aborted `hobby_lemma_4_3` under a new binder. Probe:
 at `fully_intersected_snap_of_nodable`. Leaves open #66.
 Do not wrap the false hyp. Joost/Jeroen: promote or stand down.
 
-OUTCOME: PARTIAL (probe on the flocq smoke path; `.vo` not yet shown
-on this host).
+OUTCOME: PARTIAL (flocq smoke on `9fa683b` failed to compile the
+probe; job stayed green until `pipefail`).

@@ -301,6 +301,7 @@ jobs:
         # here so a probe that claims Qed is a checked fact (Print
         # Assumptions lands in this step's log).
         run: |
+          set -o pipefail
           chmod -R a+rwX .
           docker run --rm -v "$PWD:/workspace" -w /workspace \
             nts-proofs-flocq:ci \

@@ -21,7 +21,9 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals Lra List.
-From NTS.Proofs.Flocq Require Import HobbyTheorem_b64 HobbyCounterexample_b64.
+From NTS.Proofs Require Import Distance.
+From NTS.Proofs.Flocq Require Import HotPixel_b64 HobbyTheorem_b64
+                               HobbyCounterexample_b64.
 Import ListNotations.
 Local Open Scope R_scope.
 
