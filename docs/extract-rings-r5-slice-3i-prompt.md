@@ -21,7 +21,7 @@ item of `docs/extract-faces.md`.
 
 `noded_segments`, `noded_labeled_graph`, `fully_intersected` and the
 deferred statement itself live in **`theories-flocq/`** — this session needs
-the Flocq-buildable container (`Dockerfile`, Rocq 9.1.1 + Flocq 4.2.2) or
+the Flocq-buildable container (`Dockerfile`, Rocq 9.2.0 + Flocq 4.2.2) or
 the host fallback **including step 4** (`docs/development-environment.md`).
 Confirm `make -f Makefile.gen theories-flocq/OverlayBridge.vo` builds before
 writing anything.

@@ -1,6 +1,6 @@
 # Retire #67 — RelateNG matrix and boundary handling
 
-**Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
+**Type:** grilling · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Blocked by:** — · **Closed:** 2026-08-22 (decision: **do not** close #67 yet)
 
 ## Question

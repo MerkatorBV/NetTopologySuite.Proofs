@@ -75,5 +75,5 @@ Phase 3's, with `arc_close_to_curves` swapped for the conclusion.
 
 All seven files are classic-free (no snap-layer contact).
 `ArcIntersectIVT.v` adds Stdlib `IVT_cor` / `Ranalysis_reg`, within the
-allowlist. None in [`audit-exceptions.txt`](audit-exceptions.txt). No
+allowlist. None in [`audit-exceptions.txt`](../../audit-exceptions.txt). No
 `Admitted` / `Axiom` / `Parameter`.

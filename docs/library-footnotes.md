@@ -35,7 +35,7 @@ Delaunay modules. One cite per paper, at its best home.
 | Paper | DOI | Suggested future module | Why not cited now |
 |---|---|---|---|
 | Garcia-Castellanos & Lombardo 2007, *Poles of inaccessibility* | 10.1080/14702540801897809 | **teaching-only**: eval/Claim9005a.v (9005-a, Green) — the planar teaching instance of the definition (PIA = LEC centre, pinned by exactly three closest shoreline points, on the rational triangle) | Authoritative PIA definition, but **on the sphere**. The corpus is planar throughout; plane MIC/LEC ≠ spherical PIA, and Table 1's coordinates are not test oracles for anything here — so still NO `theories/` cite (false ancestry). The spherical gap stays open on board card #9005. |
-| Chin, Snoeyink & Wang 1999, *Finding the Medial Axis of a Simple Polygon in Linear Time* | 10.1007/PL00009429 | `MedialAxis.v` (new) — or the "MIC centre lies on the medial axis" bridge lemma | No medial-axis content exists (`grep -i medial` over `theories/`, `theories-flocq/`, `docs/` returns nothing). `RingClearance.v` proves a sup-metric clearance ball around an off-ring point, which is a *corridor* fact for the face-walk, not a skeleton. |
+| Chin, Snoeyink & Wang 1999, *Finding the Medial Axis of a Simple Polygon in Linear Time* | 10.1007/PL00009429 | `MedialAxis.v` (new) — or the "MIC centre lies on the medial axis" bridge lemma | No medial-axis content exists.  (`grep -i medial` now returns three hits, but all are *negative*: two scope exclusions in `LargestEmptyCircle.v` and `MaximumInscribedCircle.v` — "no medial axis (#9006)" — and this file.  The conclusion stands; only the one-line evidence had gone stale.  The board card for the lane is #9006.) `RingClearance.v` proves a sup-metric clearance ball around an off-ring point, which is a *corridor* fact for the face-walk, not a skeleton. |
 | Lee 1982, *Medial Axis Transformation of a Planar Shape* | 10.1109/TPAMI.1982.4767267 | same `MedialAxis.v`, as the O(n log n) predecessor | Same reason. See the misnomer note below — this is **not** Lee–Drysdale 1981. |
 | Beyhan, Güler & Tağa 2020, *An algorithm for maximum inscribed circle based on Voronoi diagrams* (MICGIS) | 10.1007/s10109-020-00325-3 | MIC lane, as the Voronoi + Apollonius alternative | The MIC module now exists (`MaximumInscribedCircle.v`, 9004-a surface + unit-square witness) but carries no Voronoi/Apollonius content, so a MICGIS cite there would still be false ancestry. Would be a new epic, not a footnote. Zhai's "days vs seconds" comparison is Zhai's measurement and is not reproduced anywhere in this repo. |
 | Bentley 1975, *Multidimensional Binary Search Trees Used for Associative Searching* | 10.1145/361002.361007 | `KdTree.v` (new; NTS #814 / k-NN) | No spatial index is formalised. `MonotoneChain*.v` is JTS monotone-chain lineage (a different structure), and nothing in the corpus states a height, visit, or nearest-neighbour bound. |
@@ -92,13 +92,13 @@ dispositions (4.2 CLOSED by Qed; 4.3-no-proper moved to
 last place still asserting the old state. Both header sentences now match the
 registry.
 
-**Recorded, not rewritten.** `docs/hobby-theorem-proof-structure.md` still
-carries the same superseded narrative in three places — the §-header status
-line ("two supporting lemmas Admitted with registered deferred-proof entries"),
-the §4 bullet calling `hobby_lemma_4_3_no_proper` "Admitted", and §6 "The
-precise gap" tabulating "Two Admitteds". It also states `hobby_lemma_4_3` is
-"Qed-closed by composition", where the file `Abort`s it because the composition
-needs the refuted half. That is a status-document rewrite, not a footnote edit,
-and it is deliberately out of scope for this literature pass — recorded here in
-the same spirit as the misnomers above, for whoever owns the registry
-narrative.
+**Recorded, then fixed.**  `docs/hobby-theorem-proof-structure.md` carried the
+same superseded narrative in three places when this pass was written on
+2026-08-15 — the §-header status line, the §4 bullet calling
+`hobby_lemma_4_3_no_proper` "Admitted", and §6 "The precise gap" tabulating
+"Two Admitteds" — plus the claim that `hobby_lemma_4_3` is "Qed-closed by
+composition" where the file `Abort`s it.  That document was corrected the very
+next day by the docs honesty pass (b18408c, 2026-08-16); it now reads "No live
+Admitteds; the deferred-proof registry is empty" and addresses the composition
+point directly.  Nothing is outstanding here.  The note is kept, rather than
+deleted, as the record of a gap that was found and closed.

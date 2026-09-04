@@ -6,6 +6,57 @@ oracle and pictures the cases under scrutiny.
 
 ## Language
 
+### Abbreviations
+
+The initialisms that carry the most weight in the corpus. If a term you need is
+not here, that is a signal — see `docs/agents/domain.md`.
+
+**JCT**:
+The **Jordan curve theorem**. In this corpus it names a *polygonal* statement:
+the correspondence `point_in_ring` ⟺ `geometric_interior` for rings
+(`point_in_ring_correct`), not the classical theorem for arbitrary simple closed
+curves. The corpus does not prove classical JCT and does not depend on it. Note
+`coq-fourcolor`'s `planar_Jordan` is a *combinatorial* Jordan property (no
+Moebius paths in planar hypermaps) and is not this statement either — see
+`docs/ecosystem-search-2026-05-29.md`.
+_Avoid_: Jordan (unqualified), Jordan curve theorem (when the polygonal
+statement is meant)
+
+**DCEL**:
+**Doubly connected edge list** — the half-edge structure the face-extraction and
+ray-parity machinery walk (`dart`, `next`, `face`, orbits). `coq-fourcolor`'s
+`Record hypermap` with its three mutually-inverse permutations is equivalent to
+it.
+_Avoid_: quad-edge (that is Guibas–Stolfi's structure, which this corpus does
+not use)
+
+**QED ∨ QEX**:
+The disjunctive stop condition for a lane: it closes either by a completed proof
+(**QED**) or by a **documented counterexample** (**QEX**). Both are green; a
+refutation that is Qed-closed and registered is a result, not a failure.
+_Avoid_: failed, blocked (for a QEX outcome)
+
+**RGR**:
+The slice pattern: Read (grep fallback) → Red (analytical test) → Green (minimal
+reuse) → Refactor (tiny + comment) → Pin + Cake + oracle match → Accept.
+_Avoid_: red-green-refactor (the corpus's cycle has six steps, not three)
+
+**MIC**:
+**Maximum inscribed circle** — the largest disk contained in a region, with both
+the containment and the maximiser (`MaximumInscribedCircle.v`, board #9004).
+
+**LEC**:
+**Largest empty circle** — the largest disk avoiding a point set
+(`LargestEmptyCircle.v`, board #9006 for the medial-axis lane).
+
+**PIA**:
+**Pole of inaccessibility** — the point furthest from a shoreline. The
+authoritative definition (Garcia-Castellanos & Lombardo 2007,
+doi:10.1080/14702540801897809) is **on the sphere**; this corpus is planar
+throughout, so plane MIC/LEC ≠ spherical PIA. The spherical gap is board #9005.
+_Avoid_: treating PIA and LEC centre as interchangeable outside the planar
+teaching instance
+
 ### Curve types
 
 topic: docs

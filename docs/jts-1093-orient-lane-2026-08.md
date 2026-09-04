@@ -54,8 +54,16 @@ Claims (PR body): tighter ⇒ fewer DD misses; fewer/more predictable branches;
 theoretically and practically faster. **No new tests** — behaviour should match
 existing predicate tests except speed.
 
-Reference: Ozaki, Ogita, Rump, Oishi (2011/2016),
+Reference: Ozaki, Ogita, Rump, Oishi,
 [doi:10.1007/s10543-015-0574-9](https://doi.org/10.1007/s10543-015-0574-9).
+
+> **Not the same paper as the other Ozaki citation in this corpus.**  The
+> four authors published more than once, and the previous "(2011/2016)"
+> label here could not be told apart from the entry in
+> [`audit-phase3-overlay.md`](audit-phase3-overlay.md) §6, which is
+> *Tight and efficient enclosure of matrix multiplication by using optimized
+> BLAS*, Numer. Linear Algebra Appl. 18:237-248 (2011),
+> doi:10.1002/nla.724.  Cite each by DOI, not by author-year.
 
 ---
 

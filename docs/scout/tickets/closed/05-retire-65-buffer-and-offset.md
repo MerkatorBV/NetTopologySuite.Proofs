@@ -1,6 +1,6 @@
 # Retire #65 — buffer and offset curves
 
-**Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
+**Type:** grilling · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Blocked by:** — · **Closed:** 2026-08-22
 
 ## Question

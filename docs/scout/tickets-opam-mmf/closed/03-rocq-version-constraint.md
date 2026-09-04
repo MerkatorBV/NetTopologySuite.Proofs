@@ -1,6 +1,6 @@
 # Decide the Rocq version constraint
 
-**Type:** grilling · **Map:** [An MMF release bar for the opam packages](../map-opam-mmf-release-bar.md)
+**Type:** grilling · **Map:** [An MMF release bar for the opam packages](../../map-opam-mmf-release-bar.md)
 **Blocked by:** nothing — takeable
 
 ## Question

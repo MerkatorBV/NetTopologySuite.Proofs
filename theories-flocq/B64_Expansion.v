@@ -7,8 +7,10 @@
    expansion is a sequence of binary64 values representing an exact sum;
    for Stage D we need lengths up to 16 (Shewchuk's `orient2dexact`).
    General expansion arithmetic with `compress` / renormalization is the
-   multi-month engagement BJMP 2017 published -- we skip that here in
-   favor of fixed-length tuples that bypass renormalization entirely.
+   multi-month engagement Boldo, Joldes, Muller and Popescu published
+   (ITP 2017, doi:10.1007/978-3-319-66107-0_7; "BJMP" elsewhere in this
+   corpus) -- we skip that here in favor of fixed-length tuples that
+   bypass renormalization entirely.
 
    This file ships the data structure + non-overlap predicate +
    foundational sum/sign lemmas.  The straight-line composition into

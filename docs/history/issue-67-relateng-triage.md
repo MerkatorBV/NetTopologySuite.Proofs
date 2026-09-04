@@ -226,7 +226,7 @@ The recommended path forward:
   `dist_sq(start,end) = 2·dist_sq(center,start)·(1 − cos sweep)`, built on a
   provider-agnostic `law_of_cosines_equal_norm` over `cos_angle_between`); the
   clothoid lane's remaining open questions are triaged in
-  [`clothoid-open-questions-triage.md`](clothoid-open-questions-triage.md).
+  [`clothoid-open-questions-triage.md`](../clothoid-open-questions-triage.md).
 - **S11 (done):** `RELATE_MATRIX` / `RELATE_PREDICATE` oracle modes.
 - **S12b (done):** the `to_geometry` ↔ linearised-rectangle point-set bridge
   (`RelateCurveAreaPoint.v : point_in_rect_curve_geometry_iff_polygon`, 0 axioms);

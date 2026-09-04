@@ -978,7 +978,7 @@ Definition cascade_h_chain_statement : Prop :=
 (* Gap: the invariant's bound is roughly **2^53 too loose**.  Closing the   *)
 (* gap requires showing that `h_prev` is not merely below `ulp(q)/2` but   *)
 (* far below it -- specifically below `ulp(h)/2`.  This needs the          *)
-(* magnitude bookkeeping of Shewchuk §4 (provenance + sort ordering +      *)
+(* magnitude bookkeeping of Shewchuk §2.4 (provenance + sort ordering +    *)
 (* per-source nonoverlap) that the invariant alone does not encode.        *)
 (* -------------------------------------------------------------------------- *)
 

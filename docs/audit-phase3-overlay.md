@@ -360,8 +360,14 @@ trail:
 
   - **Shewchuk (1997)** -- "Adaptive Precision Floating-Point
     Arithmetic and Fast Robust Geometric Predicates."  *Discrete
-    & Computational Geometry* 18:305-363.  Theorem 13 (orient2d
-    expansion).  Foundation for Phase 0 Stage D.
+    & Computational Geometry* 18:305-363.  doi:10.1007/PL00009321.
+    Theorem 13 lives in **§2.4 (Expansion Addition)** and concerns
+    summing expansions; §4 is the separate application to the
+    orientation and incircle tests.  Foundation for Phase 0 Stage D.
+    NB: an earlier Carnegie-Mellon tech report (Dec 1995, title
+    suffixed "in C") circulates widely; the section, theorem and
+    page numbers used throughout this corpus are those of the 1997
+    DCG article above.
 
   - **Hobby (1999)** -- "Practical Segment Intersection with Finite
     Precision Output."  *Computational Geometry: Theory and
@@ -369,12 +375,16 @@ trail:
     arrangement remains fully-intersected), Lemma 4.2 p.211
     (monotone coordinate), Lemma 4.3 pp.211-212 (endpoint
     preservation).  Snap region R^- definition p.210.
+    doi:10.1016/S0925-7721(99)00021-8 (note the literal parentheses
+    in the DOI -- naive link extraction truncates it).  NB: this
+    paper circulated as a 1993 submission for six years; the page
+    numbers above are those of the 1999 published version.
 
   - **Fortune and Van Wyk (1996)** -- "Static Analysis Yields
     Efficient Exact Integer Arithmetic for Computational Geometry."
     *ACM TOG* 15(3):223-248.  §4.1 maxerr formula, Figure 3
-    operation counts.  Foundation for Phase 0 Stage A filter
-    bounds.
+    operation counts.  doi:10.1145/231731.231735.  Foundation for
+    Phase 0 Stage A filter bounds.
 
   - **Ozaki, Ogita, Rump, Oishi (2011)** -- "Tight and efficient
     enclosure of matrix multiplication by using optimized BLAS."
@@ -383,6 +393,45 @@ trail:
     background.  (NB: the Phase 0 Stage A orient2d filter bound itself
     derives from Shewchuk (1997) and the Fortune-Van Wyk (1996) static
     error analysis above, *not* from this paper.)
+
+  - **Priest (1991)** -- "Algorithms for Arbitrary Precision
+    Floating Point Arithmetic."  *Proceedings of the Tenth Symposium
+    on Computer Arithmetic*, pages 132-143.  IEEE Computer Society
+    Press.  Shewchuk 1997 names Priest as the source his expansion
+    methods are "closely related to, and occasionally taken directly
+    from" (p. 307).  Priest's variant sums two *nonoverlapping*
+    expansions and guarantees only overlap-by-at-most-one-digit,
+    requiring a renormalization step; Shewchuk's Theorem 13 instead
+    takes *strongly nonoverlapping* input and needs none.  The
+    distinction is exactly the gap our refuted headline fell into
+    (see theories-flocq/B64_Shewchuk_Thm13_counterexample.v).
+    Priest also uses a different definition of "expansion"
+    (exponents differing by at least p; Shewchuk 1997 p. 309 n. 1).
+
+  - **Priest (1992)** -- "On Properties of Floating Point
+    Arithmetics: Numerical Stability and the Cost of Accurate
+    Computations."  Ph.D. thesis, Department of Mathematics,
+    University of California at Berkeley.  Dated November 1992 by
+    Shewchuk 1997 and 1993 by Fortune and Van Wyk 1996; the two
+    bibliographies disagree, so pin this one before citing it.
+
+  - **Guibas and Stolfi (1985)** -- "Primitives for the Manipulation
+    of General Subdivisions and the Computation of Voronoi
+    Diagrams."  *ACM Transactions on Graphics* 4(2):74-123.  Source
+    of the in-circle determinant sign convention and the Delaunay
+    flip criterion used across the #68 lane, where it has until now
+    appeared only as the bare eponym "Guibas-Stolfi".  Cited for the
+    convention and the criterion only: the paper's subject is the
+    *quad-edge* structure, which this corpus does not use (it uses
+    a DCEL).
+
+  - **Dekker (1971)** -- "A Floating-Point Technique for Extending
+    the Available Precision."  *Numerische Mathematik* 18:224-242.
+    doi:10.1007/BF01397083.  Source of the `DekkerPair` splitting
+    and product bookkeeping.  Dekker p. 225 also records the
+    ancestry of the TwoSum correction term (Moller 1965, Kahan 1965,
+    Babuska 1968, Knuth 1969) -- note that Dekker cites Knuth's
+    1969 first edition where Shewchuk 1997 cites the 1981 second.
 
   - **OGC 06-103r4** -- "OpenGIS Implementation Standard for
     Geographic information -- Simple feature access -- Part 1:

@@ -309,7 +309,7 @@ inputs.  Shewchuk's Theorem 13 argument shows:
 - The key inductive step uses BOTH chains' nonoverlap properties to
   bound the new error `h_i`'s magnitude relative to `q_i`.
 
-This is Shewchuk's paper §4's argument, which is one page of dense
+This is Shewchuk's paper §2.4's argument, which is one page of dense
 magnitude bookkeeping.  Coq formalisation will need to track
 provenance explicitly (either via an auxiliary list-indexing
 predicate or by carrying provenance in the cascade state).
@@ -317,9 +317,28 @@ predicate or by carrying provenance in the cascade state).
 ## §5. References
 
 - Shewchuk, "Adaptive Precision Floating-Point Arithmetic and Fast
-  Robust Geometric Predicates" (1997), Theorem 13.
-- BJMP ITP 2017 (HAL hal-01512417) §4: formalises a similar primitive
-  (`Add` in their terminology) for general expansion arithmetic.
+  Robust Geometric Predicates", *Discrete & Computational Geometry*
+  18:305-363 (1997), doi:10.1007/PL00009321.  Theorem 13 is in
+  **§2.4 (Expansion Addition)**; its hypothesis is *strongly
+  nonoverlapping*, a property strictly between nonoverlapping and
+  nonadjacent ("a zero bit must occur in the expansion at least once
+  every p + 1 bits").  Shewchuk states in the same section that
+  FAST-EXPANSION-SUM does **not** preserve plain nonoverlapping, and
+  gives his own four-bit counterexample -- worth reading beside our
+  `B64_Shewchuk_Thm13_counterexample.v`.
+- **BJMP** = Boldo, Joldes, Muller, Popescu, "Formal Verification of a
+  Floating-Point Expansion Renormalization Algorithm", *Interactive
+  Theorem Proving* (ITP 2017), LNCS, pages 98-113,
+  doi:10.1007/978-3-319-66107-0_7 (preprint: HAL hal-01512417).  §4
+  formalises a similar primitive (`Add` in their terminology) for
+  general expansion arithmetic.
+- Priest, "Algorithms for Arbitrary Precision Floating Point
+  Arithmetic", *Proc. Tenth Symposium on Computer Arithmetic*,
+  132-143 (1991).  Shewchuk's acknowledged antecedent (1997 p. 307).
+  Priest's variant of the same algorithm takes *nonoverlapping* input
+  and guarantees only overlap-by-at-most-one-digit plus a
+  renormalization step; the gap between his guarantee and Shewchuk's
+  is where our refuted headline sat.
 
 ## §6. Route 2 (list-indexing invariant) -- selected design
 
