@@ -320,6 +320,9 @@ jobs:
         # docs/audit-exceptions.txt.
         run: |
           bash scripts/ci_assemble_palog.sh > /tmp/audit_input.log
+          # Hunt probes are off _CoqProject.full; their smoke PA must
+          # still hit the allowlist / audit-exceptions gate.
+          cat /tmp/hunt_probe_smoke.log >> /tmp/audit_input.log
           bash scripts/audit_axioms.sh /tmp/audit_input.log
 
       - name: Refresh corpus manifest

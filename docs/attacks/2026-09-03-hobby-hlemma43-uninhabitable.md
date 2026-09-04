@@ -99,11 +99,10 @@ ClassicalDedekindReals.sig_forall_dec
 FunctionalExtensionality.functional_extensionality_dep
 ```
 
-`classic` is the snap-layer lineage already listed in
-`docs/audit-exceptions.txt` for `HobbyTheorem_b64.v` /
-`HobbyCounterexample_b64.v`. The probe is off `_CoqProject.full`, so
-`audit_axioms.sh` does not see these blocks. No extra axiom beyond that
-lineage.
+`classic` is the snap-layer lineage. The probe is listed in
+`docs/audit-exceptions.txt` and the flocq smoke log (prefixed
+`ROCQ compile`) is concatenated into the axiom-audit input. No extra
+axiom beyond that lineage.
 
 ## Not a fix
 
@@ -120,7 +119,8 @@ wrap the second premise.
 QEX-uninhabitable, not an honest `[cond]`. The second premise is the
 aborted `hobby_lemma_4_3` under a new binder. Probe:
 `docs/h1-vacuity/HobbyHlemma43Check.v`. Honest discharge already lives
-at `fully_intersected_snap_of_nodable`. Leaves open #66.
+at `fully_intersected_snap_of_nodable`. Tracker #66 stands completed
+(2026-08-22); this ticket is a status-table correction, not a reopen.
 Do not wrap the false hyp. Joost/Jeroen: promote or stand down.
 
 OUTCOME: LANDED (flocq smoke on `3515626` compiled the probe; both

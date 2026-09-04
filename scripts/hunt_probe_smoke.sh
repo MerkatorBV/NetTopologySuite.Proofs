@@ -47,6 +47,8 @@ PROBES=(
 fail=0
 for probe in "${PROBES[@]}"; do
   echo "[hunt-probes] rocq c $probe"
+  # Marker so scripts/audit_axioms.sh attributes the following PA blocks.
+  echo "ROCQ compile $probe"
   if ! rocq c -Q theories NTS.Proofs -Q theories-flocq NTS.Proofs.Flocq "$probe"
   then
     echo "[hunt-probes] FAIL: $probe" >&2

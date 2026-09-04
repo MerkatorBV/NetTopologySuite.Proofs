@@ -12,7 +12,7 @@
    It is NOT a Hypothesis / ident in HobbyTheorem_b64.v.  The Definition
    below reconstructs the second arrow of hobby_theorem_4_1_conditional.
 
-   No `Admitted`, no `Axiom`, no `Parameter`.
+   Qed-only; no axioms, no parameters.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
