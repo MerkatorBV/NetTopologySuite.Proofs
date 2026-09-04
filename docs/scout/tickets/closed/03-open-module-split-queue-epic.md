@@ -1,6 +1,6 @@
 # Open the module-split queue epic
 
-**Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
+**Type:** task · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Blocked by:** [Write the module-split gate](02-module-split-gate-policy-and-guard.md)
 
 ## Question

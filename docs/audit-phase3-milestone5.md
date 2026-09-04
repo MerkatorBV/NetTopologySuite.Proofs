@@ -540,7 +540,7 @@ existing JCT formalization:
   - Check coq-community: <https://github.com/coq-community>.
   - Check coqdocjs / coq-projects-search: keyword "jordan curve".
 
-If found: add to `_CoqProject.full` if compatible with the Rocq 9.1.1 +
+If found: add to `_CoqProject.full` if compatible with the Rocq 9.2.0 +
 Flocq 4.2.2 toolchain.  If not compatible: defer.
 
 If not found: defer.  State `point_in_ring_correct` as `Admitted` with

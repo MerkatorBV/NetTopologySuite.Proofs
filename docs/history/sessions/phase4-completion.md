@@ -13,21 +13,21 @@ Two decisions were settled in the audit before any `.v` file:
 20+ sessions with an arc-snap-rounding research gap); and **parallel
 typeclasses** (`HasArcIntersect` alongside `HasIntersect`) over a
 refactor. See
-[`audit-phase4-chord-overfitting.md`](audit-phase4-chord-overfitting.md).
+[`audit-phase4-chord-overfitting.md`](../../audit-phase4-chord-overfitting.md).
 
 ## Shipped (Qed-closed)
 
-**Types** — [`theories/CurveGeometry.v`](../theories/CurveGeometry.v):
+**Types** — [`theories/CurveGeometry.v`](../../../theories/CurveGeometry.v):
 `CircularArc` (three control points), the curve geometry hierarchy,
 `to_geometry : CurveGeometry -> nat -> Geometry` (the chord-approx
 bridge), `valid_curve_geometry`.
 
-**Orientation** — [`theories/ArcOrient.v`](../theories/ArcOrient.v):
+**Orientation** — [`theories/ArcOrient.v`](../../../theories/ArcOrient.v):
 `inCircle_R` (three-point circumcircle test), `arc_orient`.
 
 **Intersection + IVT** —
-[`theories/ArcIntersect.v`](../theories/ArcIntersect.v),
-[`theories/ArcIntersectIVT.v`](../theories/ArcIntersectIVT.v):
+[`theories/ArcIntersect.v`](../../../theories/ArcIntersect.v),
+[`theories/ArcIntersectIVT.v`](../../../theories/ArcIntersectIVT.v):
 arc-chord / arc-arc predicates, and
 `chord_crosses_arc_circle_implies_circle_intersection` — a sign change
 on the chord implies a real circumcircle crossing, via `IVT_cor` on the
@@ -35,15 +35,15 @@ continuous polynomial `inCircle_along_chord`. This was the only piece
 needing real analysis; it was deferred behind the predicate interface
 across S4–S7 and closed in its own cycle.
 
-**Hot-pixel** — [`theories/ArcHotPixel.v`](../theories/ArcHotPixel.v):
+**Hot-pixel** — [`theories/ArcHotPixel.v`](../../../theories/ArcHotPixel.v):
 `arc_passes_through_hot_pixel` (circle-rectangle decision procedure),
 parameterised by `scale` as in Phase 2.
 
-**Sagitta** — [`theories/ArcChordApprox.v`](../theories/ArcChordApprox.v):
+**Sagitta** — [`theories/ArcChordApprox.v`](../../../theories/ArcChordApprox.v):
 `arc_center_equidistant`, `sagitta`, the chord-vs-arc bound
 `sagitta_le_arc_radius`, the Pythagorean radius identity.
 
-**Headline** — [`theories/ArcOverlay.v`](../theories/ArcOverlay.v):
+**Headline** — [`theories/ArcOverlay.v`](../../../theories/ArcOverlay.v):
 
 ```coq
 Theorem arc_overlay_correct_chord_approx :
@@ -112,7 +112,7 @@ is a separate, clearly-scoped program.
 3. `Flatten()` dovetail — consumer-driven.
 4. Region-level semantics — Option A entry point.
 5. Arc snap-rounding — Phase 5, if a consumer asks for exact arcs (the
-   [`audit-phase4-curves.md`](audit-phase4-curves.md) §5 tripwire, ~2031).
+   [`audit-phase4-curves.md`](../../audit-phase4-curves.md) §5 tripwire, ~2031).
 
 ## Audit
 
@@ -121,4 +121,4 @@ is a separate, clearly-scoped program.
 - All Phase 4 files are classic-free (they don't touch the snap layer).
   `ArcIntersectIVT.v` adds Stdlib `IVT_cor` / `Ranalysis_reg`, within the
   same axiom allowlist. None appear in
-  [`audit-exceptions.txt`](audit-exceptions.txt).
+  [`audit-exceptions.txt`](../../audit-exceptions.txt).

@@ -12,9 +12,16 @@
 
    i.e. EACH component must lie within a HALF-ULP of its predecessor.  That is
    the correct postcondition of a SINGLE TwoSum's (high, low) pair, but it is
-   strictly stronger than Shewchuk's "(strongly) nonoverlapping", which only
-   forbids overlapping significand bits.  `fast_expansion_sum` of several terms
-   emits bit-disjoint components that are NOT within a half-ulp.
+   strictly stronger than the hypothesis Theorem 13 actually carries.  That
+   hypothesis is Shewchuk's "strongly nonoverlapping" (§2.4), a distinct
+   property sitting strictly between nonoverlapping and nonadjacent:
+
+       nonadjacent  ⊂  strongly nonoverlapping  ⊂  nonoverlapping
+
+   characterised by "a zero bit must occur in the expansion at least once
+   every p + 1 bits".  It is weaker than our half-ulp condition, which is why
+   `fast_expansion_sum` of several terms emits bit-disjoint components that
+   are NOT within a half-ulp.
 
    Concrete witness.  Take the value 257 = 256 + 1:
      - `256` and `1` are bit-disjoint (a legitimate Shewchuk expansion), but

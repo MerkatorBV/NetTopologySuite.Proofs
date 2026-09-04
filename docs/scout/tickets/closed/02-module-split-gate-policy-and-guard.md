@@ -1,6 +1,6 @@
 # Write the module-split gate: policy and ratchet guard
 
-**Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
+**Type:** task · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Blocked by:** —
 
 ## Question

@@ -1,6 +1,6 @@
 # Collect the community verdict on the `rocq-*` rename
 
-**Type:** task · **Map:** [An MMF release bar for the opam packages](../map-opam-mmf-release-bar.md)
+**Type:** task · **Map:** [An MMF release bar for the opam packages](../../map-opam-mmf-release-bar.md)
 **Blocked by:** nothing — takeable
 
 ## Question

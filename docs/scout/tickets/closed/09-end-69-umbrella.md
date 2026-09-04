@@ -1,6 +1,6 @@
 # End #69's umbrella role and re-parent the standing epics
 
-**Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
+**Type:** grilling · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Claimed:** wayfinder 2026-09-01 · **Closed:** 2026-09-01
 **Blocked by:** ~~[#64](04-retire-64-arc-primitives.md)~~ ✔ · ~~[#65](05-retire-65-buffer-and-offset.md)~~ ✔ · ~~[#66](06-retire-66-precision-and-overlay.md)~~ ✔ · ~~[#68](08-retire-68-delaunay-voronoi.md)~~ ✔ · ~~[Retire #67 — second pass](11-retire-67-second-pass.md)~~ ✔ overtaken (owner already retired the GitHub object; this ticket does not re-grill #67)
 

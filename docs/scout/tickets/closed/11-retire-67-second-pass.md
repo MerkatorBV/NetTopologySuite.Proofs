@@ -1,13 +1,13 @@
 # Retire #67 — second pass
 
-**Type:** grilling · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
+**Type:** grilling · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Claimed:** wayfinder 2026-09-01 · **Closed:** 2026-09-01 (overtaken)
 **Blocked by:** three of the four preconditions below — ADR-0003 unconsumed by the capstone, **ticket 523** open (children `523-a` / `523-b` / `523-c` = #603 #604 #605 landed; ticket 523 not accepted; [`map-523.md`](../../map-523.md), [`spec-523.md`](../../spec-523.md)), **#503**'s four defects uncorrected. Precondition 1 is largely met by **#530**. See [Retire #67 — RelateNG](07-retire-67-relateng.md) for why the first pass declined to close.
 
 > **Note, 2026-08-22.** #67 was briefly closed by accident: the ticket-07 commit's
 > subject line contained the substring `close #67` (in the phrase "decide NOT to
 > close #67"), which GitHub read as a directive. Reopened, with the convention
-> recorded in [`docs/agents/issue-tracker.md`](../../agents/issue-tracker.md).
+> recorded in [`docs/agents/issue-tracker.md`](../../../agents/issue-tracker.md).
 > The decision to keep it open was never revisited.
 
 ## Question
@@ -20,8 +20,8 @@ blocking defects are gone: **does #67 close, and where does its residue go?**
 Preconditions to check before re-deciding — each is a specific, checkable fact:
 
 1. **#522 honesty + wired triangle bars** — *met as of 2026-08-30; wrap-up
-   is [`docs/scout/522-closing-summary.md`](../522-closing-summary.md). Living
-   frontier: [`docs/scout/map-522.md`](../map-522.md). Epic #522 stays open
+   is [`docs/scout/522-closing-summary.md`](../../522-closing-summary.md). Living
+   frontier: [`docs/scout/map-522.md`](../../map-522.md). Epic #522 stays open
    until owner sign-off.*
    - ✔ Fallthrough is `im_unsupported` (`RelateNGCore.v : relate_unsupported_no_predicate`).
    - ✔ Overlapping triangles classify overlap, not disjoint
@@ -59,7 +59,7 @@ Preconditions to check before re-deciding — each is a specific, checkable fact
    thinner than it is. The stale S15l+ "regime DEFERRED" row lived in the
    pre-#530 triage; that file is archived (`docs/history/issue-67-relateng-triage.md`)
    and the living citation is `touch_triangles_regime_cells_ii_bb_ee` on
-   [`docs/relate-ng-status.md`](../../relate-ng-status.md). The other register
+   [`docs/relate-ng-status.md`](../../../relate-ng-status.md). The other register
    defects remain #503's.
 
 Residue that will still need placing at that point, none of it blocking:

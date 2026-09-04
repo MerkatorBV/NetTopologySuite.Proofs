@@ -1,6 +1,6 @@
 # Close #482 — Shewchuk half-ulp counterexample retip
 
-**Type:** task · **Map:** [Retire the epic block #64–#69](../map-epic-block-64-69.md)
+**Type:** task · **Map:** [Retire the epic block #64–#69](../../map-epic-block-64-69.md)
 **Blocked by:** —
 
 ## Question
