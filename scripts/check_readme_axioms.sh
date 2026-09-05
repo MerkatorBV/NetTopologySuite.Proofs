@@ -6,9 +6,10 @@
 # the fenced code block immediately following the README's axiom-claim
 # sentence and compares them against `docs/axiom-allowlist.txt`.  Fails if
 # the two diverge.  The marker accepts both phrasings the README has used
-# ("The only axioms used are ...", and, since the 2026-08 prose pass,
-# "The corpus introduces exactly three axioms of its own ...") so a prose
-# edit that keeps the fenced block does not break extraction.
+# ("The only axioms used are ..."; the 2026-08 prose pass's "The corpus
+# introduces exactly three axioms of its own ..."; and the current "The
+# corpus enforces a three-axiom allowlist ...") so a prose edit that keeps
+# the fenced block does not break extraction.
 #
 # Catches: silent drift of the README's documented axiom claim away from
 # the enforced allowlist that CI's audit step honours.
@@ -44,7 +45,7 @@ sed -e 's/#.*//' -e 's/[[:space:]]//g' -e '/^$/d' "$ALLOWLIST" \
 # We scan forward to the next ``` fence, capture lines until the next
 # ``` fence.
 perl -ne '
-  if (/The only axioms used are|introduces exactly three axioms/)
+  if (/The only axioms used are|introduces exactly three axioms|enforces a three-axiom allowlist/)
                                         { $m = 1; next; }
   if ($m && /^```/ && !$b)              { $b = 1; next; }
   if ($m && /^```/ &&  $b)              { exit; }
