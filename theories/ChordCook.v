@@ -306,6 +306,62 @@ Proof.
 Qed.
 
 (* --------------------------------------------------------------------------
+   CASE 3 -- det = 0.  Splits in two, and only one half is a miss.
+
+   `chord_det = 0` says the directions are parallel.  Two sub-cases:
+
+     (3a) PARALLEL, DISTINCT LINES: some endpoint of CD is off line AB.
+          Then nothing on [CD] ever reaches line AB, so the pieces are
+          disjoint.  Qed below.
+     (3b) COLLINEAR: all four points on one line.  This is where OVERLAP
+          lives, and where the QEX below comes from.  Not a miss and not a
+          point constructor: the intersection can be a subsegment.
+
+   For (3a) the affine identity does all the work again.  det = 0 gives
+   orient A B D = orient A B C by `orient_diff_AB`, so the convex
+   combination along [CD] is CONSTANT and equal to that common value.  One
+   endpoint off the line therefore keeps the whole piece off it.
+   -------------------------------------------------------------------------- *)
+
+Lemma orient_const_along_parallel :
+  forall A B C D (s : R),
+    chord_det A B C D = 0 ->
+    orient A B (chord_eval C D s) = orient A B C.
+Proof.
+  intros A B C D s Hdet.
+  rewrite orient_affine_third.
+  assert (Heq : orient A B D = orient A B C).
+  { pose proof (orient_diff_AB A B C D) as H. rewrite Hdet in H. lra. }
+  rewrite Heq. ring.
+Qed.
+
+Theorem chord_parallel_distinct_miss :
+  forall A B C D : Point,
+    chord_det A B C D = 0 ->
+    orient A B C <> 0 ->
+    forall t s : R, chord_eval A B t <> chord_eval C D s.
+Proof.
+  intros A B C D Hdet Hoff t s Hmeet.
+  apply Hoff.
+  rewrite <- (orient_const_along_parallel A B C D s Hdet).
+  rewrite <- Hmeet.
+  apply orient_on_own_chord.
+Qed.
+
+(* (3b) COLLINEAR is not proved here.  Under `det = 0` AND
+   `orient A B C = 0` every point involved lies on one line, and the meeting
+   condition reduces to a one-dimensional parameter equation: writing
+   C = chord_eval A B c and D = chord_eval A B d (which exist because
+   A <> B), the pieces meet at (t,s) exactly when t = (1-s)*c + s*d.  The
+   intersection is then a subsegment whenever [0,1] and the interval spanned
+   by c and d share positive length -- which is the OVERLAP outcome, not a
+   point, and so not something a point constructor may return.
+
+   `chord_split_noded_hypothesis_free_false` below is an instance of exactly
+   this sub-case: it is the specification of the missing lemma, not a
+   substitute for it. *)
+
+(* --------------------------------------------------------------------------
    SPLIT-NODED, and why the obvious statement of it is false.
 
    The intended third lemma is: once no pair of G1 satisfies both strict
@@ -384,4 +440,5 @@ Print Assumptions chord_hit_unique.
 Print Assumptions orient_affine_third.
 Print Assumptions same_side_orient_nonzero.
 Print Assumptions chord_miss.
+Print Assumptions chord_parallel_distinct_miss.
 Print Assumptions chord_split_noded_hypothesis_free_false.
