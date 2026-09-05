@@ -1,0 +1,54 @@
+# Lemmas under constructor -- the ADR-0007 debt, frozen.
+#
+# Every entry here is Qed and true.  What it is not is a statement about the
+# geometry a caller handed in: it consumes `fully_intersected` or
+# `pairwise_nodable` as a HYPOTHESIS, and that premise is exactly the sentence
+# "the cook already ran".  Until an oracle produces the arrangement, a proof
+# downstream of that premise is a proof about whatever the oracle emitted, not
+# about the input segments.
+#
+# Enforced by scripts/check_constructor_gate.py, which fails when this file
+# and the tree disagree.  The gate does NOT break the build on the debt below;
+# it freezes it.  Adding a line requires a justification comment above it.
+# Removing a line means the lemma stopped consuming nodedness -- which is the
+# outcome the route is for.
+#
+# Why this gate exists alongside mutation testing: a mutation checker asks
+# "does this sentence weigh anything".  Mutate `fully_intersected` in
+# `fully_intersected G -> snap_ok G` and the proof breaks, so the checker
+# reports the hypothesis as load-bearing.  It is -- that is the problem.  An
+# ABSENT constructor is not a mutation of any existing term, so mutation
+# cannot see it.  This gate asks the other question: is the sentence about the
+# input we accepted.
+#
+# Route out (ADR-0007, and the three obligations):
+#   1. two-segment intersection: construct P with t,s; prove emptiness when
+#      disjoint; classify overlap separately.  First rung Qed in
+#      theories/ChordCook.v (`chord_hit`).
+#   2. insert the points: cut every segment at every constructed point; then
+#      two segments meet iff they share an endpoint.  THAT is
+#      `fully_intersected`, as a conclusion.
+#   3. round to a grid: two rounded edges meet iff they share an endpoint.
+#      Do not assume (2) when proving (3).
+
+# Hobby 4.1.  The archetype: `fully_intersected G -> fully_intersected (snap G)`.
+# It both consumes and produces nodedness, which does NOT excuse it -- the
+# input's nodedness is assumed, so the theorem is about an arrangement someone
+# else built.  This is obligation (3) proved against the conclusion of (2).
+theories-flocq/HobbyTheorem_b64.v :: hobby_theorem_4_1_conditional
+
+# The "noding discharge" that is not one.  `pairwise_nodable` requires every
+# distinct pair to share an endpoint OR be separated, so the case a noder
+# exists for -- two pieces properly crossing -- is excluded by the hypothesis.
+# The file names it correctly as "the true precondition".  Discharging
+# `fully_intersected` from it moves the quantifier up a level.
+theories-flocq/NodingSeparation_b64.v :: fully_intersected_snap_of_nodable
+theories-flocq/NodingSeparation_b64.v :: buffer_offset_nodable
+
+# Overlay.  Labelling assigns each directed edge a location relative to the
+# other operand, which is well defined only if the edge does not cross that
+# operand in its interior.  These take that as given.
+theories-flocq/OverlayBridge.v :: snap_noding_bridge
+theories-flocq/OverlayCorrectness.v :: overlay_ng_correct_backward
+theories-flocq/OverlayCorrectness.v :: overlay_ng_correct_conditional
+theories-flocq/OverlayCorrectness.v :: overlay_ng_correct_forward

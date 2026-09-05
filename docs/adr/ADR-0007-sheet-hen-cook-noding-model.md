@@ -201,6 +201,19 @@ here.
 - Hobby (1999), *Practical Segment Intersection with Finite Precision
   Output*, Comp. Geom. 13:199–214, doi:10.1016/S0925-7721(99)00021-8.
   Theorem 4.1, under a noded hypothesis.
+- Bertolazzi, Bevilacqua & Frego (2020), *Efficient intersection between
+  splines of clothoids*, Mathematics and Computers in Simulation
+  176:57–72, doi:10.1016/j.matcom.2019.10.001.  `I` for the clothoid
+  class: tangent triangles, an AABB tree to cull pairs, then a
+  curve-level check.  It carries the existence-and-uniqueness statement
+  the class needs — “if all the conditions (i), (ii) and (iii) are true,
+  then the two clothoid arcs C1 and C2 have exactly one and only one
+  intersection, which lies in T1 ∩ T2” — the clothoid analogue of
+  `chord_hit`.  Cited nowhere in the corpus today: it has only the
+  papers that BUILD a clothoid (Bertolazzi & Frego 2015,
+  doi:10.1002/mma.3114, the G1 fit and the Fresnel expansions), none
+  that intersect two of them.  A numerical constructor, hence a
+  realisation and not a kernel statement.
 - `theories-flocq/NodingSeparation_b64.v` — `pairwise_nodable`.
 - `theories/Dart.v:50`, `theories/DartNextSpec.v` — the current dart and its
   decidable equality.
