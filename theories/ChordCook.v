@@ -50,10 +50,12 @@
        ClassicalDedekindReals.sig_forall_dec
        FunctionalExtensionality.functional_extensionality_dep
 
-   No `Classical_Prop.classic`, and not even `sig_not_dec` -- below the
-   corpus's three-axiom floor.  That is structural, not luck: existence of
-   the crossing point is the vanishing of two linear forms, and the file
-   never reaches the Flocq format layer where `classic` enters elsewhere.
+   That is a SUBSET of the corpus's three-axiom allowlist, not something
+   below it: `sig_forall_dec` is Dedekind choice and is still an axiom.  The
+   precise claim is narrower and is the one that matters here -- no excluded
+   middle is used for the EXISTENCE of the crossing, which is the vanishing
+   of two linear forms.  The file also never reaches the Flocq format layer,
+   which is where `Classical_Prop.classic` enters elsewhere in the corpus.
    Emitted by the `Print Assumptions` block at the end, so the audit reads it
    from the build log rather than from this comment.
 
@@ -63,7 +65,7 @@
      Assisted-by: Claude
    ========================================================================== *)
 
-From Stdlib Require Import Reals Lra.
+From Stdlib Require Import Reals Lra Lists.List.
 From NTS.Proofs Require Import Distance.
 
 Open Scope R_scope.
@@ -231,6 +233,145 @@ Proof.
   - destruct (Rmult_integral _ _ Hds) as [H | H]; [ lra | contradiction ].
 Qed.
 
+(* --------------------------------------------------------------------------
+   THE MISS LEMMA.
+
+   If the four orientations are nonzero and the two products are not both
+   negative, the pieces are disjoint.
+
+   The whole argument is one algebraic fact: `orient A B _` is AFFINE in its
+   third argument, so a point of [CD] carries the convex combination
+   (1-s)*orient(A,B,C) + s*orient(A,B,D).  Two orientations of the same
+   strict sign therefore never produce zero on [0,1], and a point of [AB] has
+   orientation zero against AB.  No case analysis on the geometry.
+   -------------------------------------------------------------------------- *)
+
+Lemma orient_affine_third :
+  forall P Q C D (s : R),
+    orient P Q (chord_eval C D s)
+    = (1 - s) * orient P Q C + s * orient P Q D.
+Proof. intros; unfold orient, chord_eval; simpl; ring. Qed.
+
+Lemma orient_on_own_chord :
+  forall A B (t : R), orient A B (chord_eval A B t) = 0.
+Proof. intros; unfold orient, chord_eval; simpl; ring. Qed.
+
+(* Same strict sign on both endpoints: nothing on [CD] reaches line AB. *)
+Lemma same_side_orient_nonzero :
+  forall A B C D (s : R),
+    0 <= s <= 1 ->
+    0 < orient A B C * orient A B D ->
+    orient A B (chord_eval C D s) <> 0.
+Proof.
+  intros A B C D s Hs Hpos.
+  rewrite orient_affine_third.
+  (* both factors positive, or both negative *)
+  destruct (total_order_T (orient A B C) 0) as [[Hc | Hc] | Hc].
+  - assert (Hd : orient A B D < 0) by nra. nra.
+  - rewrite Hc in Hpos. nra.
+  - assert (Hd : 0 < orient A B D) by nra. nra.
+Qed.
+
+Theorem chord_miss :
+  forall A B C D : Point,
+    orient A B C <> 0 -> orient A B D <> 0 ->
+    orient C D A <> 0 -> orient C D B <> 0 ->
+    ~ (orient A B C * orient A B D < 0 /\ orient C D A * orient C D B < 0) ->
+    forall t s : R,
+      0 <= t <= 1 -> 0 <= s <= 1 ->
+      chord_eval A B t <> chord_eval C D s.
+Proof.
+  intros A B C D HC HD HA HB Hnot t s Ht Hs Hmeet.
+  (* Products of nonzeros are nonzero, so each is strictly signed. *)
+  assert (Hp : orient A B C * orient A B D <> 0)
+    by (intro Hz; destruct (Rmult_integral _ _ Hz); contradiction).
+  assert (Hq : orient C D A * orient C D B <> 0)
+    by (intro Hz; destruct (Rmult_integral _ _ Hz); contradiction).
+  (* Not both negative, so at least one pair lies strictly on one side. *)
+  assert (Hside : 0 < orient A B C * orient A B D
+                  \/ 0 < orient C D A * orient C D B).
+  { destruct (total_order_T (orient A B C * orient A B D) 0) as [[H1|H1]|H1].
+    - right. destruct (total_order_T (orient C D A * orient C D B) 0)
+        as [[H2|H2]|H2]; [ exfalso; apply Hnot; split; assumption
+                         | contradiction | exact H2 ].
+    - contradiction.
+    - left; exact H1. }
+  destruct Hside as [Hside | Hside].
+  - (* C and D strictly on one side of AB: [CD] never meets line AB. *)
+    apply (same_side_orient_nonzero A B C D s Hs Hside).
+    rewrite <- Hmeet. apply orient_on_own_chord.
+  - (* A and B strictly on one side of CD: [AB] never meets line CD. *)
+    apply (same_side_orient_nonzero C D A B t Ht Hside).
+    rewrite Hmeet. apply orient_on_own_chord.
+Qed.
+
+(* --------------------------------------------------------------------------
+   SPLIT-NODED, and why the obvious statement of it is false.
+
+   The intended third lemma is: once no pair of G1 satisfies both strict
+   product inequalities, any meeting of two pieces is at an endpoint --
+   i.e. `fully_intersected` as a CONCLUSION.
+
+   Stated with only that hypothesis it is REFUTABLE, and the refutation is
+   exactly the case the route says to classify separately: collinear overlap.
+   Take four points on the x-axis,
+
+       A = (0,0)   B = (2,0)   C = (1,0)   D = (3,0)
+
+   Every orientation among them is 0, so every product is 0 and the
+   "no crossing pair remains" hypothesis holds VACUOUSLY.  Yet [AB] and [CD]
+   share the subsegment from (1,0) to (2,0): t = 3/4 and s = 1/4 both land on
+   (3/2, 0), and neither parameter is an endpoint.
+
+   So the hypothesis-free form cannot be Qed.  QEX, with the witness below.
+   The repair is not to strengthen the no-crossing hypothesis but to exclude
+   the parallel case, `chord_det <> 0`, which is what "classify overlap
+   separately" means in the type.  That corrected statement is the next rung
+   and is NOT proved here.
+   -------------------------------------------------------------------------- *)
+
+Definition cex_A : Point := mkPoint 0 0.
+Definition cex_B : Point := mkPoint 2 0.
+Definition cex_C : Point := mkPoint 1 0.
+Definition cex_D : Point := mkPoint 3 0.
+
+Definition cex_G1 : list (Point * Point) :=
+  cons (cex_A, cex_B) (cons (cex_C, cex_D) nil).
+
+Theorem chord_split_noded_hypothesis_free_false :
+  exists (G1 : list (Point * Point)) (AB CD : Point * Point) (t s : R),
+    (forall X Y : Point * Point,
+        In X G1 -> In Y G1 ->
+        orient (fst X) (snd X) (fst Y) * orient (fst X) (snd X) (snd Y) < 0 ->
+        orient (fst Y) (snd Y) (fst X) * orient (fst Y) (snd Y) (snd X) < 0 ->
+        False)
+    /\ In AB G1 /\ In CD G1
+    /\ 0 <= t <= 1 /\ 0 <= s <= 1
+    /\ chord_eval (fst AB) (snd AB) t = chord_eval (fst CD) (snd CD) s
+    /\ t <> 0 /\ t <> 1 /\ s <> 0 /\ s <> 1.
+Proof.
+  exists cex_G1, (cex_A, cex_B), (cex_C, cex_D), (3/4), (1/4).
+  repeat split.
+  - (* every orientation among four collinear points vanishes *)
+    intros X Y HX HY H1 H2.
+    unfold cex_G1 in HX, HY; simpl in HX, HY.
+    destruct HX as [HX | [HX | HX]]; try contradiction; subst X;
+    destruct HY as [HY | [HY | HY]]; try contradiction; subst Y;
+    unfold orient, cex_A, cex_B, cex_C, cex_D in H1; simpl in H1; lra.
+  - unfold cex_G1; simpl; left; reflexivity.
+  - unfold cex_G1; simpl; right; left; reflexivity.
+  - lra.
+  - lra.
+  - lra.
+  - lra.
+  - unfold chord_eval, cex_A, cex_B, cex_C, cex_D; simpl.
+    apply f_equal2; lra.
+  - lra.
+  - lra.
+  - lra.
+  - lra.
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* Assumption audit.                                                          *)
 (* -------------------------------------------------------------------------- *)
@@ -240,3 +381,7 @@ Print Assumptions det_nonzero_of_opposite.
 Print Assumptions ratio_in_open_unit.
 Print Assumptions chord_hit.
 Print Assumptions chord_hit_unique.
+Print Assumptions orient_affine_third.
+Print Assumptions same_side_orient_nonzero.
+Print Assumptions chord_miss.
+Print Assumptions chord_split_noded_hypothesis_free_false.
