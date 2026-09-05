@@ -522,6 +522,146 @@ Proof.
 Qed.
 
 (* --------------------------------------------------------------------------
+   FROM FOUR POINTS TO THE CLASSIFICATION.
+
+   `chord_collinear_overlap` speaks about parameters c, d that are already on
+   the line of AB.  OverlayNG's COLLINEAR branch starts from four
+   `Coordinate`s.  This is the step between: given the degeneracies, project
+   C and D onto AB's parameter line and hand the classification the numbers
+   it needs.
+   -------------------------------------------------------------------------- *)
+
+Theorem chord_collinear_from_points :
+  forall A B C D : Point,
+    (px A <> px B \/ py A <> py B) ->
+    orient A B C = 0 ->
+    orient A B D = 0 ->
+    exists c d : R,
+      C = chord_eval A B c /\
+      D = chord_eval A B d /\
+      forall lo hi,
+        classify_collinear c d = CollOverlap lo hi ->
+        lo < hi /\
+        (forall t : R, lo <= t <= hi ->
+           0 <= t <= 1 /\
+           (exists s : R, 0 <= s <= 1 /\
+              chord_eval A B t = chord_eval C D s)).
+Proof.
+  intros A B C D Hne HC HD.
+  destruct (collinear_param_exists A B C Hne HC) as [c Hc].
+  destruct (collinear_param_exists A B D Hne HD) as [d Hd].
+  exists c, d.
+  split; [ exact Hc | ].
+  split; [ exact Hd | ].
+  intros lo hi Hcl.
+  rewrite Hc, Hd.
+  apply (chord_collinear_overlap A B c d Hne lo hi Hcl).
+Qed.
+
+(* --------------------------------------------------------------------------
+   THE CONVERSE OF THE PARAMETER BOUND.
+
+   `ratio_in_open_unit` sends opposite strict signs to a parameter inside
+   (0,1).  Split-noded needs the other direction: a meeting strictly inside
+   BOTH pieces forces both product inequalities, so a list with no crossing
+   pair can only meet at endpoints.
+   -------------------------------------------------------------------------- *)
+
+Lemma open_unit_ratio_back :
+  forall a d : R,
+    d <> 0 -> 0 < a / d < 1 -> a * (a - d) < 0.
+Proof.
+  intros a d Hd [Hlo Hhi].
+  assert (Hd2 : 0 < d * d)
+    by (pose proof (Rlt_0_sqr d Hd) as Hs; unfold Rsqr in Hs; exact Hs).
+  assert (Har : a = (a / d) * d) by (field; exact Hd).
+  set (r := a / d) in *.
+  clearbody r.
+  (* Substitute explicitly and expose the product shape: nra neither uses the
+     defining equation nor finds the factorisation on its own. *)
+  assert (Hrr : r * (r - 1) < 0) by nra.
+  rewrite Har.
+  replace (r * d * (r * d - d)) with ((d * d) * (r * (r - 1))) by ring.
+  nra.
+Qed.
+
+Theorem chord_interior_meet_crosses :
+  forall A B C D : Point,
+    chord_det A B C D <> 0 ->
+    forall t s : R,
+      0 < t < 1 -> 0 < s < 1 ->
+      chord_eval A B t = chord_eval C D s ->
+      orient A B C * orient A B D < 0 /\
+      orient C D A * orient C D B < 0.
+Proof.
+  intros A B C D Hdet t s Ht Hs Hmeet.
+  (* The meeting is the unique one, so t and s are the Cramer quotients. *)
+  assert (Hsame : chord_eval A B (chord_t A B C D)
+                  = chord_eval C D (chord_s A B C D)).
+  { unfold chord_eval, chord_t, chord_s, orient, chord_det in *.
+    apply f_equal2; field; assumption. }
+  destruct (chord_hit_unique A B C D Hdet t s (chord_t A B C D)
+              (chord_s A B C D) Hmeet Hsame) as [Ht' Hs'].
+  subst t s.
+  split.
+  - (* s in (0,1) gives the AB-side product *)
+    (* chord_s IS (- orient A B C) / det, so the converse bound applies with
+       a := - orient A B C directly.  Its conclusion
+       (-c) * ((-c) - det) < 0 is c * (c + det) < 0, and orient_diff_AB gives
+       orient A B D = c + det. *)
+    assert (Hb : (- orient A B C) * ((- orient A B C) - chord_det A B C D) < 0).
+    { apply open_unit_ratio_back; [ exact Hdet | ].
+      unfold chord_s in Hs. exact Hs. }
+    pose proof (orient_diff_AB A B C D) as Hdiff. nra.
+  - (* t in (0,1) gives the CD-side product *)
+    assert (Ha : orient C D A * (orient C D A - chord_det A B C D) < 0)
+      by (apply open_unit_ratio_back; [ exact Hdet | exact Ht ]).
+    pose proof (orient_diff_CD A B C D) as Hdiff. nra.
+Qed.
+
+(* --------------------------------------------------------------------------
+   SPLIT-NODED, non-degenerate branch.  `fully_intersected` as a CONCLUSION.
+
+   For a list whose pairs no longer properly cross, any meeting of two
+   non-parallel pieces is at an endpoint.  That sentence is what every
+   overlay headline currently takes as a hypothesis.
+
+   The parallel and collinear pairs still need the same treatment; this is
+   the branch `chord_interior_meet_crosses` unlocks, and it is stated over a
+   LIST rather than a pair.
+   -------------------------------------------------------------------------- *)
+
+Theorem chord_split_noded_nondegenerate :
+  forall G1 : list (Point * Point),
+    (forall AB CD : Point * Point,
+        In AB G1 -> In CD G1 ->
+        ~ (orient (fst AB) (snd AB) (fst CD)
+             * orient (fst AB) (snd AB) (snd CD) < 0
+           /\ orient (fst CD) (snd CD) (fst AB)
+                * orient (fst CD) (snd CD) (snd AB) < 0)) ->
+    forall (AB CD : Point * Point) (t s : R),
+      In AB G1 -> In CD G1 ->
+      chord_det (fst AB) (snd AB) (fst CD) (snd CD) <> 0 ->
+      0 <= t <= 1 -> 0 <= s <= 1 ->
+      chord_eval (fst AB) (snd AB) t = chord_eval (fst CD) (snd CD) s ->
+      t = 0 \/ t = 1 \/ s = 0 \/ s = 1.
+Proof.
+  intros G1 Hno AB CD t s HAB HCD Hdet Ht Hs Hmeet.
+  destruct (total_order_T t 0) as [[H0 | H0] | H0]; [ lra | left; exact H0 | ].
+  destruct (total_order_T t 1) as [[H1 | H1] | H1];
+    [ | right; left; exact H1 | lra ].
+  destruct (total_order_T s 0) as [[H2 | H2] | H2];
+    [ lra | right; right; left; exact H2 | ].
+  destruct (total_order_T s 1) as [[H3 | H3] | H3];
+    [ | right; right; right; exact H3 | lra ].
+  (* Strictly interior on both pieces: the crossing test must have fired. *)
+  exfalso.
+  destruct (chord_interior_meet_crosses (fst AB) (snd AB) (fst CD) (snd CD)
+              Hdet t s (conj H0 H1) (conj H2 H3) Hmeet) as [P1 P2].
+  exact (Hno AB CD HAB HCD (conj P1 P2)).
+Qed.
+
+(* --------------------------------------------------------------------------
    SPLIT-NODED, and why the obvious statement of it is false.
 
    The intended third lemma is: once no pair of G1 satisfies both strict
