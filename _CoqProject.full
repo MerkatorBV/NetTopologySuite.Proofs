@@ -3375,6 +3375,12 @@ theories-flocq/B64_nonoverlap_head.v
 # nonoverlap inputs e=[2^60;1], f=[-(2^60-256)] -- so fast_expansion_sum's
 # strong-nonoverlap postcondition is false as stated.  No deferred-headline dep.
 theories-flocq/B64_Shewchuk_Thm13_counterexample.v
+# Shewchuk's nonoverlapping relation (1997 p.309 n.2) as `overlap_within 0`,
+# the one-bit-slack relaxation as `overlap_within 1`, and where the corpus's
+# half-ulp `strict_succ_b64` sits relative to both.  Predicate layer only --
+# proves nothing about fast_expansion_sum.  Both links of the ordering are
+# shown strict by witnesses: (256,1) and (256,256).
+theories-flocq/B64_Overlap_Hierarchy.v
 # Shewchuk Theorem 13, §4.A verification (gating O1 integration):
 # vm_compute cascade traces refuting pathB_fires_only_when_output_compressed_empty.
 # Three cross-sign concrete witnesses (Traces A/B/C) on Route-2 cascade_state;
