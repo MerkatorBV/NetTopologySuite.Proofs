@@ -32,33 +32,40 @@
 #      hypothesis.
 #   2. insert the points: cut every segment at every constructed point; then
 #      two segments meet iff they share an endpoint.  THAT is
-#      `fully_intersected`, as a conclusion.  PARTLY done for chords in exact
-#      reals -- see the overlap caveat below:
-#      `cook` in theories/ChordCook.v is the constructor, `cook_noded` its
-#      invariant, `cook_split_noded` the conclusion with NO hypothesis on the
-#      input family, and `cook_covers` / `cook_within` prove the image is the
-#      input as a point set (without them `fun _ => nil` would qualify).
+#      `fully_intersected`, as a conclusion.  CLOSED for chords in exact
+#      reals with non-degenerate members, in theories/ChordCook.v:
+#
+#        cook   -- cuts at proper crossings only.  `cook_noded`,
+#                  `cook_split_noded`.  The "if" half.
+#        cook2  -- also cuts at the projected endpoints of collinear members
+#                  (`coll_params`) and dedups with `nodup`.
+#                  `cook2_split_noded_strict` is the "only if" half: two
+#                  pieces meeting away from their endpoints are the same
+#                  piece, or that piece reversed.  No collinear disjunct.
+#        cook_covers / cook_within (and the cook2 forms) prove the image is
+#                  the input as a point set, so `fun _ => nil` does not
+#                  qualify.
+#
 #      Termination is structural: for straight pieces one pass is a fixed
 #      point, because a proper crossing of two pieces is a proper crossing of
-#      their parents (`subchord_cross_parent`).
+#      their parents (`subchord_cross_parent`), and because every cut
+#      parameter of a collinear neighbour transports back
+#      (`cut_param_transport`).
 #
-#      THE OVERLAP CAVEAT.  `crosses` is the two strict orientation products,
-#      so collinear overlap is not a crossing and `cook` does not cut at it.
-#      `cook_split_noded` accordingly still permits an interior meeting when
-#      both orientations vanish.  Two overlapping input chords therefore leave
-#      two overlapping output chords, and obligation (2) reads "meet IFF share
-#      an endpoint" -- the "only if" half is not yet true of `cook G`.
-#      OverlayNG's COLLINEAR merge is still ahead of this file on that case.
-#      Until `split_one` also cuts at the projected endpoints of collinear
-#      members and the result is deduplicated, (2) is not closed.
+#      WHAT IS STILL ASSUMED.  `cook2_split_noded_strict` takes
+#      non-degeneracy of every member as a hypothesis; a point-chord has no
+#      direction to project onto.  `cook2` runs on such input and
+#      `cook2_noded` still holds, but the strict conclusion is withheld.
+#      Orientation is not normalised: a piece and its reverse remain two
+#      entries and the theorem names the twin explicitly.
 #
 #      This does NOT discharge anything below.  Every entry below is stated
-#      in binary64 over the corpus graph type; `cook` runs on a list of
+#      in binary64 over the corpus graph type; `cook2` runs on a list of
 #      chords in R.  Three gaps separate them: the number type, the piece
 #      classes (arcs and clothoids have no oracle, hence Decline), and the
-#      graph (`cook G` is a list, not a DCEL -- no vertex identity, no
-#      rotation system, no faces).  What `cook` supplies is the SHAPE such a
-#      discharge must have.
+#      graph (`cook2 G` is a list, not a DCEL -- no vertex identity, no
+#      rotation system, no faces, no labelling against a second operand).
+#      What `cook2` supplies is the SHAPE such a discharge must have.
 #   3. round to a grid: two rounded edges meet iff they share an endpoint.
 #      OPEN.  Do not assume (2) when proving (3).
 

@@ -70,46 +70,80 @@
        so cutting at the parents' parameters leaves nothing to cut.  That
        argument is specific to straight pieces and does not carry to arcs.
 
+     cook2 / cook2_noded / cook2_split_noded_strict / cook2_nodup /
+     cook2_covers / cook2_within
+       OVERLAP AS ONE PIECE.  `crosses` is the two strict orientation
+       products, so collinear overlap is invisible to `cook`: two
+       overlapping input chords leave two overlapping output chords, and
+       obligation (2) -- "two segments meet IFF they share an endpoint" --
+       keeps only its "if" half.  `cook2` cuts additionally at the projected
+       endpoints of every collinear member (`coll_params`), and dedups with
+       `nodup`.  `cook2_split_noded_strict` is then the "only if" half:
+
+         In P (cook2 G) -> In Q (cook2 G) -> gamma_P(t) = gamma_Q(s) ->
+         t = 0 \/ t = 1 \/ s = 0 \/ s = 1 \/ P = Q \/ P = (snd Q, fst Q)
+
+       No collinear disjunct.  Two pieces that meet away from their
+       endpoints ARE the same piece, or that piece reversed -- and `nodup`
+       makes the list carry it once.
+
+       The engine is `cut_param_transport`: every cut parameter of a
+       collinear neighbour transports to a cut parameter of this chord.  A
+       crossing of the neighbour with a third member E is a crossing of THIS
+       chord with E whenever the crossing point falls strictly inside it
+       (`interior_root_gives_cross`), and an endpoint of a member collinear
+       with the neighbour is an endpoint of a member collinear with this
+       chord.  So the two subdivisions agree on the overlap, and the
+       intervals must coincide.
+
    WHAT IS NOT PROVED, and what that costs.
 
+     - NON-DEGENERATE INPUT IS A HYPOTHESIS.  `cook2_split_noded_strict`
+       assumes every member of G has two distinct endpoints (`nondeg`).  A
+       degenerate point-chord is not handled: its `proj_param` has no
+       meaning and the transport argument has no direction to project onto.
+       `cook2` still RUNS on such input and `cook2_noded` still holds; only
+       the strict conclusion is withheld.  Rejecting or promoting
+       degenerate members is a decision this file does not make.
+     - `cook` ITSELF STILL HAS THE OVERLAP GAP.  `cook_split_noded` keeps
+       its collinear disjunct and that is correct for `cook`, which does not
+       cut at overlaps.  The strict statement belongs to `cook2` only.
+     - ORIENTATION IS NOT NORMALISED.  A piece and its reverse are two
+       entries; `nodup` does not merge them, and the strict theorem names
+       the twin explicitly.  Under ADR-0007 that is right -- a chicken and
+       its twin are two directed uses of one egg -- but this file has no
+       egg, so it is a list quirk here rather than a structure.
      - THE GRID.  Rounding to Lambda = h*Z^2 and showing two rounded edges
        meet iff they share an endpoint.  Obligation (3).  Not attempted, and
-       when it is, it must not assume `cook_split_noded`.
+       when it is, it must not assume `cook2_split_noded_strict`.
      - IDENTITY.  Whether two hits at the same point of the sheet are one
        hen or two.  In exact reals `cook` sidesteps this: the two pieces
-       adjacent at a cut carry the SAME Point value, by construction.  The
-       question is a floating-point question and is untouched here.  Open in
-       ADR-0007.
+       adjacent at a cut carry the SAME Point value, by construction, and
+       `chord_eq_dec` decides it.  The question is a floating-point
+       question and is untouched here.  Open in ADR-0007.
      - ANYTHING BUT CHORDS.  Arcs, clothoids and the rest have no `I` here,
        so the cook has nothing to cut them at.  Under ADR-0007 that is
        Decline, not a proof.
      - Bounded-bit-length and floating realisations (Priest 1991 section 7,
        doi:10.1109/ARITH.1991.145549).  Everything here is exact reals, and
-       `chord_t` is a real quotient, not a rounded float.  A binary64 `cook`
+       `chord_t` is a real quotient, not a rounded float.  A binary64 cook
        is a different theorem and is not implied by this one.
-     - THE GRAPH.  `cook G` is a LIST of pairwise non-crossing chords.  It
-       is not a DCEL: no vertex identification, no rotation system, no
-       darts, no faces, no labelling against a second operand.
-
-     - OVERLAP AS ONE PIECE.  `crosses` is the two strict orientation
-       products, so collinear overlap is not a crossing and `cook` does not
-       cut at it.  `cook_split_noded` still permits an interior meeting when
-       both orientations vanish: two overlapping input chords leave two
-       overlapping output chords.  Obligation (2) reads "meet IFF share an
-       endpoint"; the "only if" half is therefore NOT true of `cook G`.
-       Closing it means cutting also at the projected endpoints of collinear
-       members and deduplicating -- not proved here.
+     - THE GRAPH.  `cook2 G` is a LIST of chords that pairwise meet only at
+       endpoints.  It is not a DCEL: no vertex identification, no rotation
+       system, no darts, no faces, no labelling against a second operand.
+       Nothing here decides which operand a piece came from, which is what
+       CAP, CUP, SUB and XOR differ by.
 
    ACCOUNTING.  CAP, CUP, SUB and XOR (SQL/MM 5.1.31--36) are four filters
-   over one noded graph.  The crossing half of the noding step now exists
-   for chords in exact reals; the overlap half does not, the graph does not,
-   and neither does any labelling.  So all four
-   still stand at zero, and nothing in this file is a fraction of an overlay
-   operation.  No hypothesis has been deleted from any corpus theorem
-   either: the seven entries in docs/lemmas-under-constructor.txt are stated
-   in binary64 over the corpus graph type, not over a list of chords in R,
-   so `cook` does not discharge them.  It shows the shape such a discharge
-   would have.
+   over one noded graph.  Obligation (2) is now closed for chords in exact
+   reals with non-degenerate members: `cook2 G` is noded in both halves of
+   "meet iff shared endpoint".  The graph is still not built and no
+   labelling exists, so all four operations still stand at zero, and nothing
+   in this file is a fraction of any of them.  No hypothesis has been
+   deleted from any corpus theorem either: the seven entries in
+   docs/lemmas-under-constructor.txt are stated in binary64 over the corpus
+   graph type, not over a list of chords in R, so `cook2` does not discharge
+   them.  It shows the shape such a discharge would have.
 
    AXIOM FOOTPRINT, measured 2026-09-05 on Rocq 9.2.0.  Two axioms:
 
@@ -1080,57 +1114,60 @@ Proof.
     [ reflexivity | lra ].
 Qed.
 
-Definition cross_params (AB : Point * Point) (G : list (Point * Point))
-  : list R :=
-  map (fun CD => chord_t (fst AB) (snd AB) (fst CD) (snd CD))
-      (filter (crosses_b AB) G).
+(* --------------------------------------------------------------------------
+   The cook, parameterised by its cut set.  `cook` below is this at the
+   crossing-only cut set; `cook2` is the same machine at the cut set that
+   also carries collinear endpoints.
+   -------------------------------------------------------------------------- *)
 
-Definition split_one (G : list (Point * Point)) (AB : Point * Point)
+Definition pieces (f : Point * Point -> list R) (G : list (Point * Point))
   : list (Point * Point) :=
-  map (fun ab => subchord (fst AB) (snd AB) (fst ab) (snd ab))
-      (cut_all (cross_params AB G)).
+  flat_map (fun AB =>
+              map (fun ab => subchord (fst AB) (snd AB) (fst ab) (snd ab))
+                  (cut_all (f AB))) G.
 
-Definition cook (G : list (Point * Point)) : list (Point * Point) :=
-  flat_map (split_one G) G.
-
-Lemma cook_shape :
-  forall (G : list (Point * Point)) (P : Point * Point),
-    In P (cook G) ->
+Lemma pieces_shape :
+  forall (f : Point * Point -> list R) (G : list (Point * Point))
+         (P : Point * Point),
+    In P (pieces f G) ->
     exists (AB : Point * Point) (ab : R * R),
-      In AB G /\ In ab (cut_all (cross_params AB G))
+      In AB G /\ In ab (cut_all (f AB))
       /\ P = subchord (fst AB) (snd AB) (fst ab) (snd ab).
 Proof.
-  intros G P Hin.
-  apply (proj1 (in_flat_map (split_one G) G P)) in Hin.
+  intros f G P Hin.
+  apply (proj1 (in_flat_map _ G P)) in Hin.
   destruct Hin as [AB [HAB Hin]].
-  unfold split_one in Hin.
   apply (proj1 (in_map_iff _ _ _)) in Hin.
   destruct Hin as [ab [Heq Hab]].
   exists AB, ab.
   repeat split; [ exact HAB | exact Hab | symmetry; exact Heq ].
 Qed.
 
-Lemma cook_member :
-  forall (G : list (Point * Point)) (AB : Point * Point) (ab : R * R),
-    In AB G -> In ab (cut_all (cross_params AB G)) ->
-    In (subchord (fst AB) (snd AB) (fst ab) (snd ab)) (cook G).
+Lemma pieces_member :
+  forall (f : Point * Point -> list R) (G : list (Point * Point))
+         (AB : Point * Point) (ab : R * R),
+    In AB G -> In ab (cut_all (f AB)) ->
+    In (subchord (fst AB) (snd AB) (fst ab) (snd ab)) (pieces f G).
 Proof.
-  intros G AB ab HAB Hab.
-  apply (proj2 (in_flat_map (split_one G) G _)).
+  intros f G AB ab HAB Hab.
+  apply (proj2 (in_flat_map _ G _)).
   exists AB. split; [ exact HAB | ].
-  unfold split_one.
   apply (proj2 (in_map_iff _ _ _)).
   exists ab. split; [ reflexivity | exact Hab ].
 Qed.
 
-(* THE INVARIANT.  No two pieces of the cooked family cross properly. *)
-Theorem cook_noded :
-  forall (G : list (Point * Point)) (P Q : Point * Point),
-    In P (cook G) -> In Q (cook G) -> ~ crosses P Q.
+(* THE INVARIANT, for any cut set that contains the crossing parameters. *)
+Theorem pieces_noded :
+  forall (f : Point * Point -> list R) (G : list (Point * Point)),
+    (forall AB CD : Point * Point,
+        In AB G -> In CD G -> crosses AB CD ->
+        In (chord_t (fst AB) (snd AB) (fst CD) (snd CD)) (f AB)) ->
+    forall P Q : Point * Point,
+      In P (pieces f G) -> In Q (pieces f G) -> ~ crosses P Q.
 Proof.
-  intros G P Q HP HQ Hcross.
-  destruct (cook_shape G P HP) as [AB [ab [HABG [Hab HPeq]]]].
-  destruct (cook_shape G Q HQ) as [CD [cd [HCDG [Hcd HQeq]]]].
+  intros f G Hf P Q HP HQ Hcross.
+  destruct (pieces_shape f G P HP) as [AB [ab [HABG [Hab HPeq]]]].
+  destruct (pieces_shape f G Q HQ) as [CD [cd [HCDG [Hcd HQeq]]]].
   destruct (cut_all_bounds _ _ Hab) as [Ha0 [Hab1 Hb1]].
   destruct (cut_all_bounds _ _ Hcd) as [Hc0 [Hcd1 Hd1]].
   subst P Q.
@@ -1138,7 +1175,6 @@ Proof.
   set (C := fst CD) in *. set (D := snd CD) in *.
   set (a := fst ab) in *. set (b := snd ab) in *.
   set (c := fst cd) in *. set (d := snd cd) in *.
-  (* the parents cross properly *)
   assert (Hpar : orient A B C * orient A B D < 0
                  /\ orient C D A * orient C D B < 0).
   { apply (subchord_cross_parent A B C D a b c d);
@@ -1146,7 +1182,6 @@ Proof.
   destruct Hpar as [Hpar1 Hpar2].
   assert (Hdet : chord_det A B C D <> 0)
     by (apply det_nonzero_of_opposite; exact Hpar2).
-  (* the pieces meet strictly inside both *)
   destruct Hcross as [HC1 HC2].
   unfold subchord in HC1, HC2; simpl in HC1, HC2.
   pose proof (chord_hit (chord_eval A B a) (chord_eval A B b)
@@ -1159,29 +1194,110 @@ Proof.
                     (chord_eval C D c) (chord_eval C D d)) in *.
   clearbody u v.
   rewrite !subchord_reparam in Hmeet.
-  (* the parents meet at chord_t / chord_s *)
   pose proof (chord_hit A B C D Hpar1 Hpar2) as HH2.
   cbv zeta in HH2.
   destruct HH2 as [Hw1 [Hw2 Hmeet2]].
   destruct (chord_hit_unique A B C D Hdet
               (a + u * (b - a)) (c + v * (d - c))
               (chord_t A B C D) (chord_s A B C D) Hmeet Hmeet2) as [Ht Hs].
-  (* so the parent crossing parameter lies strictly inside (a,b) *)
   assert (Hinside : a < chord_t A B C D < b) by nra.
-  (* but AB was cut at exactly that parameter *)
-  assert (Hcp : In (chord_t A B C D) (cross_params AB G)).
-  { unfold cross_params.
-    apply (proj2 (in_map_iff _ _ _)).
-    exists CD. split; [ reflexivity | ].
-    apply (proj2 (filter_In _ _ _)).
-    split; [ exact HCDG | ].
-    apply crosses_b_intro. unfold crosses. split; assumption. }
-  apply (cut_all_excludes (cross_params AB G) (chord_t A B C D) ab Hcp Hab).
+  assert (Hcp : In (chord_t A B C D) (f AB))
+    by (apply Hf; [ exact HABG | exact HCDG | unfold crosses; split; assumption ]).
+  apply (cut_all_excludes (f AB) (chord_t A B C D) ab Hcp Hab).
   exact Hinside.
 Qed.
 
-(* THE CONCLUSION.  `fully_intersected` for the cooked family, with no
-   hypothesis whatsoever about the input family. *)
+Lemma ratio_in_closed_unit :
+  forall x y : R, 0 < y -> 0 <= x <= y -> 0 <= x / y <= 1.
+Proof.
+  intros x y Hy Hx.
+  assert (Hx2 : x = (x / y) * y) by (field; lra).
+  set (r := x / y) in *. clearbody r.
+  split; nra.
+Qed.
+
+Theorem pieces_covers :
+  forall (f : Point * Point -> list R) (G : list (Point * Point))
+         (AB : Point * Point) (t : R),
+    In AB G -> 0 <= t <= 1 ->
+    exists (P : Point * Point) (u : R),
+      In P (pieces f G) /\ 0 <= u <= 1
+      /\ chord_eval (fst P) (snd P) u = chord_eval (fst AB) (snd AB) t.
+Proof.
+  intros f G AB t HAB Ht.
+  destruct (cut_all_covers (f AB) t Ht) as [ab [Hab Hbd]].
+  destruct (cut_all_bounds _ _ Hab) as [Ha0 [Hab1 Hb1]].
+  assert (Hne : snd ab - fst ab <> 0) by lra.
+  exists (subchord (fst AB) (snd AB) (fst ab) (snd ab)).
+  exists ((t - fst ab) / (snd ab - fst ab)).
+  split; [ apply pieces_member; assumption | split ].
+  - apply ratio_in_closed_unit; lra.
+  - unfold subchord; simpl.
+    rewrite subchord_reparam.
+    replace (fst ab + (t - fst ab) / (snd ab - fst ab) * (snd ab - fst ab))
+      with t by (field; exact Hne).
+    reflexivity.
+Qed.
+
+Theorem pieces_within :
+  forall (f : Point * Point -> list R) (G : list (Point * Point))
+         (P : Point * Point) (u : R),
+    In P (pieces f G) -> 0 <= u <= 1 ->
+    exists (AB : Point * Point) (t : R),
+      In AB G /\ 0 <= t <= 1
+      /\ chord_eval (fst AB) (snd AB) t = chord_eval (fst P) (snd P) u.
+Proof.
+  intros f G P u HP Hu.
+  destruct (pieces_shape f G P HP) as [AB [ab [HABG [Hab HPeq]]]].
+  destruct (cut_all_bounds _ _ Hab) as [Ha0 [Hab1 Hb1]].
+  exists AB, (fst ab + u * (snd ab - fst ab)).
+  split; [ exact HABG | split ].
+  - split; nra.
+  - subst P. unfold subchord; simpl.
+    rewrite subchord_reparam. reflexivity.
+Qed.
+
+(* --------------------------------------------------------------------------
+   COOK 1: cut at proper crossings only.
+   -------------------------------------------------------------------------- *)
+
+Definition cross_params (AB : Point * Point) (G : list (Point * Point))
+  : list R :=
+  map (fun CD => chord_t (fst AB) (snd AB) (fst CD) (snd CD))
+      (filter (crosses_b AB) G).
+
+Definition split_one (G : list (Point * Point)) (AB : Point * Point)
+  : list (Point * Point) :=
+  map (fun ab => subchord (fst AB) (snd AB) (fst ab) (snd ab))
+      (cut_all (cross_params AB G)).
+
+Definition cook (G : list (Point * Point)) : list (Point * Point) :=
+  pieces (fun AB => cross_params AB G) G.
+
+Lemma cook_alt : forall G, cook G = flat_map (split_one G) G.
+Proof. reflexivity. Qed.
+
+Lemma cross_params_spec :
+  forall (G : list (Point * Point)) (AB CD : Point * Point),
+    In CD G -> crosses AB CD ->
+    In (chord_t (fst AB) (snd AB) (fst CD) (snd CD)) (cross_params AB G).
+Proof.
+  intros G AB CD HCD Hx.
+  unfold cross_params.
+  apply (proj2 (in_map_iff _ _ _)).
+  exists CD. split; [ reflexivity | ].
+  apply (proj2 (filter_In _ _ _)).
+  split; [ exact HCD | apply crosses_b_intro; exact Hx ].
+Qed.
+
+Theorem cook_noded :
+  forall (G : list (Point * Point)) (P Q : Point * Point),
+    In P (cook G) -> In Q (cook G) -> ~ crosses P Q.
+Proof.
+  intros G. apply pieces_noded.
+  intros AB CD HAB HCD Hx. apply cross_params_spec; assumption.
+Qed.
+
 Corollary cook_split_noded :
   forall (G : list (Point * Point)) (P Q : Point * Point) (t s : R),
     In P (cook G) -> In Q (cook G) ->
@@ -1196,41 +1312,13 @@ Proof.
   intros X Y HX HY. exact (cook_noded G X Y HX HY).
 Qed.
 
-(* --------------------------------------------------------------------------
-   The cook is not the empty function: its image is exactly the input, as a
-   point set.  cook_noded alone is satisfied by `fun _ => nil`.
-   -------------------------------------------------------------------------- *)
-
-Lemma ratio_in_closed_unit :
-  forall x y : R, 0 < y -> 0 <= x <= y -> 0 <= x / y <= 1.
-Proof.
-  intros x y Hy Hx.
-  assert (Hx2 : x = (x / y) * y) by (field; lra).
-  set (r := x / y) in *. clearbody r.
-  split; nra.
-Qed.
-
 Theorem cook_covers :
   forall (G : list (Point * Point)) (AB : Point * Point) (t : R),
     In AB G -> 0 <= t <= 1 ->
     exists (P : Point * Point) (u : R),
       In P (cook G) /\ 0 <= u <= 1
       /\ chord_eval (fst P) (snd P) u = chord_eval (fst AB) (snd AB) t.
-Proof.
-  intros G AB t HAB Ht.
-  destruct (cut_all_covers (cross_params AB G) t Ht) as [ab [Hab Hbd]].
-  destruct (cut_all_bounds _ _ Hab) as [Ha0 [Hab1 Hb1]].
-  assert (Hne : snd ab - fst ab <> 0) by lra.
-  exists (subchord (fst AB) (snd AB) (fst ab) (snd ab)).
-  exists ((t - fst ab) / (snd ab - fst ab)).
-  split; [ apply cook_member; assumption | split ].
-  - apply ratio_in_closed_unit; lra.
-  - unfold subchord; simpl.
-    rewrite subchord_reparam.
-    replace (fst ab + (t - fst ab) / (snd ab - fst ab) * (snd ab - fst ab))
-      with t by (field; exact Hne).
-    reflexivity.
-Qed.
+Proof. intros G. apply pieces_covers. Qed.
 
 Theorem cook_within :
   forall (G : list (Point * Point)) (P : Point * Point) (u : R),
@@ -1238,15 +1326,714 @@ Theorem cook_within :
     exists (AB : Point * Point) (t : R),
       In AB G /\ 0 <= t <= 1
       /\ chord_eval (fst AB) (snd AB) t = chord_eval (fst P) (snd P) u.
+Proof. intros G. apply pieces_within. Qed.
+
+(* --------------------------------------------------------------------------
+   COOK 2: also cut at the projected endpoints of collinear members.
+
+   `crosses` is the two strict orientation products, so collinear overlap is
+   invisible to `cook`.  Two overlapping input chords leave two overlapping
+   output chords, and obligation (2) -- "two segments meet IFF they share an
+   endpoint" -- keeps only its "if" half.  The repair is to project the
+   endpoints of every collinear member onto the chord and cut there as well.
+   `cook2_split_noded_strict` is then the "only if" half: distinct pieces
+   that are not each other's twin meet only at an endpoint.
+   -------------------------------------------------------------------------- *)
+
+Definition nondeg (P : Point * Point) : Prop :=
+  px (fst P) <> px (snd P) \/ py (fst P) <> py (snd P).
+
+Definition proj_param (A B X : Point) : R :=
+  if Rzero_dec (px B - px A)
+  then (py X - py A) / (py B - py A)
+  else (px X - px A) / (px B - px A).
+
+Lemma proj_param_correct :
+  forall A B X : Point,
+    nondeg (A, B) -> orient A B X = 0 ->
+    X = chord_eval A B (proj_param A B X).
+Proof.
+  intros A B X Hnd Hor. unfold proj_param, nondeg in *; simpl in Hnd.
+  destruct (Rzero_dec (px B - px A)) as [Hx | Hx].
+  - apply collinear_param_y; [ | exact Hor ].
+    destruct Hnd as [H | H]; [ exfalso; apply H; lra | intro Hc; apply H; lra ].
+  - apply collinear_param_x; [ exact Hx | exact Hor ].
+Qed.
+
+Lemma chord_eval_inj :
+  forall (A B : Point) (x y : R),
+    nondeg (A, B) -> chord_eval A B x = chord_eval A B y -> x = y.
+Proof.
+  intros A B x y Hnd Heq.
+  pose proof (f_equal px Heq) as Hx; simpl in Hx.
+  pose proof (f_equal py Heq) as Hy; simpl in Hy.
+  unfold nondeg in Hnd; simpl in Hnd.
+  destruct Hnd as [H | H].
+  - assert (Hd : px B - px A <> 0) by (intro Hc; apply H; lra).
+    assert (Hz : (x - y) * (px B - px A) = 0).
+    { replace ((x - y) * (px B - px A))
+        with (((1 - x) * px A + x * px B) - ((1 - y) * px A + y * px B))
+        by ring.
+      rewrite Hx. ring. }
+    apply Rmult_integral in Hz.
+    destruct Hz as [Hz | Hz]; [ lra | contradiction ].
+  - assert (Hd : py B - py A <> 0) by (intro Hc; apply H; lra).
+    assert (Hz : (x - y) * (py B - py A) = 0).
+    { replace ((x - y) * (py B - py A))
+        with (((1 - x) * py A + x * py B) - ((1 - y) * py A + y * py B))
+        by ring.
+      rewrite Hy. ring. }
+    apply Rmult_integral in Hz.
+    destruct Hz as [Hz | Hz]; [ lra | contradiction ].
+Qed.
+
+Lemma proj_param_eval :
+  forall (A B : Point) (x : R),
+    nondeg (A, B) -> proj_param A B (chord_eval A B x) = x.
+Proof.
+  intros A B x Hnd.
+  symmetry.
+  apply (chord_eval_inj A B); [ exact Hnd | ].
+  apply proj_param_correct; [ exact Hnd | apply orient_on_own_chord ].
+Qed.
+
+Lemma chord_eval_zero : forall A B : Point, chord_eval A B 0 = A.
+Proof. intros A B; unfold chord_eval; destruct A; simpl; apply f_equal2; ring. Qed.
+
+Lemma chord_eval_one : forall A B : Point, chord_eval A B 1 = B.
+Proof. intros A B; unfold chord_eval; destruct B; simpl; apply f_equal2; ring. Qed.
+
+(* Transport between two chords on one line. *)
+
+Lemma coll_orient_transport :
+  forall (A B C D X : Point) (sg tu : R),
+    C = chord_eval A B sg -> D = chord_eval A B tu ->
+    orient C D X = (tu - sg) * orient A B X.
+Proof. intros A B C D X sg tu HC HD. subst C D. apply subchord_orient. Qed.
+
+Lemma coll_eval_transport :
+  forall (A B C D : Point) (sg tu x : R),
+    C = chord_eval A B sg -> D = chord_eval A B tu ->
+    chord_eval C D x = chord_eval A B (sg + x * (tu - sg)).
+Proof. intros A B C D sg tu x HC HD. subst C D. apply subchord_reparam. Qed.
+
+(* Two affine forms vanishing at two distinct parameters vanish outright. *)
+Lemma two_affine_zero :
+  forall u v c d : R,
+    c <> d ->
+    (1 - c) * u + c * v = 0 -> (1 - d) * u + d * v = 0 -> u = 0 /\ v = 0.
+Proof.
+  intros u v c d Hcd H1 H2.
+  assert (Hz : (d - c) * (u - v) = 0).
+  { replace ((d - c) * (u - v))
+      with (((1 - c) * u + c * v) - ((1 - d) * u + d * v)) by ring.
+    rewrite H1, H2. ring. }
+  apply Rmult_integral in Hz.
+  destruct Hz as [Hz | Hz]; [ exfalso; apply Hcd; lra | ].
+  assert (Huv : u = v) by lra.
+  subst v.
+  assert (Hu : u = 0) by (ring_simplify in H1; lra).
+  split; [ exact Hu | exact Hu ].
+Qed.
+
+(* An affine form with a root strictly inside has strictly opposite ends. *)
+Lemma affine_root_opposite :
+  forall u v g : R,
+    0 < g < 1 -> (1 - g) * u + g * v = 0 -> ~ (u = 0 /\ v = 0) -> u * v < 0.
+Proof.
+  intros u v g Hg Heq Hnz.
+  destruct (Rzero_dec u) as [Hu | Hu].
+  - exfalso. apply Hnz. split; [ exact Hu | subst u; nra ].
+  - assert (Hu2 : 0 < u * u)
+      by (pose proof (Rlt_0_sqr u Hu) as Hs; unfold Rsqr in Hs; lra).
+    assert (Hkey : g * (u * v) + (1 - g) * (u * u) = 0).
+    { replace (g * (u * v) + (1 - g) * (u * u))
+        with (u * ((1 - g) * u + g * v)) by ring.
+      rewrite Heq. ring. }
+    nra.
+Qed.
+
+Lemma both_zero_contra :
+  forall A B E1 E2 : Point,
+    orient A B E1 * orient A B E2 < 0 ->
+    ~ (orient E1 E2 A = 0 /\ orient E1 E2 B = 0).
+Proof.
+  intros A B E1 E2 Hlt [H1 H2].
+  assert (Hdet : chord_det A B E1 E2 = 0)
+    by (rewrite <- orient_diff_CD; lra).
+  pose proof (orient_diff_AB A B E1 E2) as Hd2.
+  rewrite Hdet in Hd2.
+  assert (Heq : orient A B E1 = orient A B E2) by lra.
+  rewrite Heq in Hlt. nra.
+Qed.
+
+(* A point strictly inside AB lying on line E forces AB to cross E properly. *)
+Lemma interior_root_gives_cross :
+  forall (A B E1 E2 : Point) (g : R),
+    0 < g < 1 ->
+    orient A B E1 * orient A B E2 < 0 ->
+    orient E1 E2 (chord_eval A B g) = 0 ->
+    orient E1 E2 A * orient E1 E2 B < 0.
+Proof.
+  intros A B E1 E2 g Hg Hcross Hroot.
+  rewrite orient_affine_third in Hroot.
+  apply (affine_root_opposite _ _ g Hg Hroot).
+  apply (both_zero_contra A B E1 E2 Hcross).
+Qed.
+
+Lemma not_between :
+  forall x lo hi : R, ~ (lo < x < hi) -> x <= lo \/ hi <= x.
+Proof.
+  intros x lo hi H.
+  destruct (Rle_or_lt x lo) as [Hl | Hl]; [ left; exact Hl | right ].
+  destruct (Rle_or_lt hi x) as [Hr | Hr]; [ exact Hr | ].
+  exfalso. apply H. split; assumption.
+Qed.
+
+(* --------------------------------------------------------------------------
+   The enlarged cut set.
+   -------------------------------------------------------------------------- *)
+
+Definition collinear_b (P Q : Point * Point) : bool :=
+  if Rzero_dec (orient (fst P) (snd P) (fst Q))
+  then if Rzero_dec (orient (fst P) (snd P) (snd Q)) then true else false
+  else false.
+
+Lemma collinear_b_intro :
+  forall P Q : Point * Point,
+    orient (fst P) (snd P) (fst Q) = 0 ->
+    orient (fst P) (snd P) (snd Q) = 0 ->
+    collinear_b P Q = true.
+Proof.
+  intros P Q H1 H2. unfold collinear_b.
+  destruct (Rzero_dec (orient (fst P) (snd P) (fst Q))) as [Hy | Hn];
+    [ | contradiction ].
+  destruct (Rzero_dec (orient (fst P) (snd P) (snd Q))) as [Hy2 | Hn2];
+    [ reflexivity | contradiction ].
+Qed.
+
+Lemma collinear_b_elim :
+  forall P Q : Point * Point,
+    collinear_b P Q = true ->
+    orient (fst P) (snd P) (fst Q) = 0 /\ orient (fst P) (snd P) (snd Q) = 0.
+Proof.
+  intros P Q H. unfold collinear_b in H.
+  destruct (Rzero_dec (orient (fst P) (snd P) (fst Q))) as [Hy | Hn];
+    [ | discriminate ].
+  destruct (Rzero_dec (orient (fst P) (snd P) (snd Q))) as [Hy2 | Hn2];
+    [ split; assumption | discriminate ].
+Qed.
+
+Definition coll_params (AB : Point * Point) (G : list (Point * Point))
+  : list R :=
+  flat_map (fun CD =>
+              if collinear_b AB CD
+              then proj_param (fst AB) (snd AB) (fst CD)
+                   :: proj_param (fst AB) (snd AB) (snd CD) :: nil
+              else nil) G.
+
+Definition cut_params2 (AB : Point * Point) (G : list (Point * Point))
+  : list R :=
+  cross_params AB G ++ coll_params AB G.
+
+Definition split_one2 (G : list (Point * Point)) (AB : Point * Point)
+  : list (Point * Point) :=
+  map (fun ab => subchord (fst AB) (snd AB) (fst ab) (snd ab))
+      (cut_all (cut_params2 AB G)).
+
+Definition point_eq_dec (p q : Point) : {p = q} + {p <> q}.
+Proof.
+  destruct (Rzero_dec (px p - px q)) as [Hx | Hx].
+  - destruct (Rzero_dec (py p - py q)) as [Hy | Hy].
+    + left. destruct p as [px1 py1]; destruct q as [px2 py2]; simpl in *.
+      apply f_equal2; lra.
+    + right. intro E. apply Hy. rewrite E. lra.
+  - right. intro E. apply Hx. rewrite E. lra.
+Defined.
+
+Definition chord_eq_dec (x y : Point * Point) : {x = y} + {x <> y}.
+Proof.
+  destruct x as [x1 x2]; destruct y as [y1 y2].
+  destruct (point_eq_dec x1 y1) as [E1 | N1];
+    [ | right; intro E; inversion E; contradiction ].
+  destruct (point_eq_dec x2 y2) as [E2 | N2];
+    [ | right; intro E; inversion E; contradiction ].
+  left; subst; reflexivity.
+Defined.
+
+(* The cooked family, deduplicated: one entry per distinct piece. *)
+Definition cook2 (G : list (Point * Point)) : list (Point * Point) :=
+  nodup chord_eq_dec (pieces (fun AB => cut_params2 AB G) G).
+
+Lemma cook2_In :
+  forall (G : list (Point * Point)) (P : Point * Point),
+    In P (cook2 G) <-> In P (pieces (fun AB => cut_params2 AB G) G).
+Proof. intros G P. apply nodup_In. Qed.
+
+Theorem cook2_nodup : forall G : list (Point * Point), NoDup (cook2 G).
+Proof. intros G. apply NoDup_nodup. Qed.
+
+Lemma coll_params_spec :
+  forall (G : list (Point * Point)) (AB CD : Point * Point),
+    In CD G -> collinear_b AB CD = true ->
+    In (proj_param (fst AB) (snd AB) (fst CD)) (coll_params AB G)
+    /\ In (proj_param (fst AB) (snd AB) (snd CD)) (coll_params AB G).
+Proof.
+  intros G AB CD HCD Hcol.
+  split.
+  - apply (proj2 (in_flat_map _ G _)). exists CD. split; [ exact HCD | ].
+    rewrite Hcol. simpl. left; reflexivity.
+  - apply (proj2 (in_flat_map _ G _)). exists CD. split; [ exact HCD | ].
+    rewrite Hcol. simpl. right; left; reflexivity.
+Qed.
+
+Lemma coll_params_elim :
+  forall (G : list (Point * Point)) (AB : Point * Point) (e : R),
+    In e (coll_params AB G) ->
+    exists CD : Point * Point,
+      In CD G /\ collinear_b AB CD = true
+      /\ (e = proj_param (fst AB) (snd AB) (fst CD)
+          \/ e = proj_param (fst AB) (snd AB) (snd CD)).
+Proof.
+  intros G AB e Hin.
+  apply (proj1 (in_flat_map _ G e)) in Hin.
+  destruct Hin as [CD [HCD Hin]].
+  exists CD.
+  destruct (collinear_b AB CD) eqn:Hcol; simpl in Hin; [ | contradiction ].
+  split; [ exact HCD | split; [ reflexivity | ] ].
+  destruct Hin as [E | [E | []]];
+    [ left; symmetry; exact E | right; symmetry; exact E ].
+Qed.
+
+Lemma cross_params_elim :
+  forall (G : list (Point * Point)) (AB : Point * Point) (e : R),
+    In e (cross_params AB G) ->
+    exists CD : Point * Point,
+      In CD G /\ crosses AB CD
+      /\ e = chord_t (fst AB) (snd AB) (fst CD) (snd CD).
+Proof.
+  intros G AB e Hin.
+  unfold cross_params in Hin.
+  apply (proj1 (in_map_iff _ _ _)) in Hin.
+  destruct Hin as [CD [Heq Hin]].
+  apply (proj1 (filter_In _ _ _)) in Hin.
+  destruct Hin as [HCD Hb].
+  exists CD.
+  split; [ exact HCD | split; [ | symmetry; exact Heq ] ].
+  unfold crosses.
+  unfold crosses_b in Hb.
+  destruct (Rlt_dec (orient (fst AB) (snd AB) (fst CD)
+                     * orient (fst AB) (snd AB) (snd CD)) 0) as [Hy | Hn];
+    [ | discriminate ].
+  destruct (Rlt_dec (orient (fst CD) (snd CD) (fst AB)
+                     * orient (fst CD) (snd CD) (snd AB)) 0) as [Hy2 | Hn2];
+    [ split; assumption | discriminate ].
+Qed.
+
+(* Endpoints of a cut interval are 0, 1, or one of the cut parameters. *)
+
+Lemma insert_cut_endpoints :
+  forall (Pr : R -> Prop) (r : R) (iv : list (R * R)),
+    Pr r ->
+    (forall p, In p iv -> (fst p = 0 \/ Pr (fst p)) /\ (snd p = 1 \/ Pr (snd p))) ->
+    forall ab, In ab (insert_cut r iv) ->
+      (fst ab = 0 \/ Pr (fst ab)) /\ (snd ab = 1 \/ Pr (snd ab)).
+Proof.
+  intros Pr r iv Hr. induction iv as [| p rest IH]; simpl; intros Hold ab Hin.
+  - contradiction.
+  - assert (Hp : (fst p = 0 \/ Pr (fst p)) /\ (snd p = 1 \/ Pr (snd p)))
+      by (apply Hold; left; reflexivity).
+    assert (Hrest : forall q, In q rest ->
+                      (fst q = 0 \/ Pr (fst q)) /\ (snd q = 1 \/ Pr (snd q)))
+      by (intros q Hq; apply Hold; right; exact Hq).
+    destruct (Rlt_dec (fst p) r) as [H1 | H1].
+    + destruct (Rlt_dec r (snd p)) as [H2 | H2].
+      * destruct Hin as [E | [E | Hin]].
+        -- subst ab; simpl; split; [ apply Hp | right; exact Hr ].
+        -- subst ab; simpl; split; [ right; exact Hr | apply Hp ].
+        -- apply (IH Hrest); exact Hin.
+      * destruct Hin as [E | Hin];
+          [ subst ab; exact Hp | apply (IH Hrest); exact Hin ].
+    + destruct Hin as [E | Hin];
+        [ subst ab; exact Hp | apply (IH Hrest); exact Hin ].
+Qed.
+
+Lemma cut_all_endpoint_in :
+  forall (ts : list R) (ab : R * R),
+    In ab (cut_all ts) ->
+    (fst ab = 0 \/ In (fst ab) ts) /\ (snd ab = 1 \/ In (snd ab) ts).
+Proof.
+  induction ts as [| r ts IH]; simpl; intros ab Hin.
+  - destruct Hin as [E | Hno]; [ | contradiction ].
+    subst ab; simpl; split; left; reflexivity.
+  - apply (insert_cut_endpoints (fun x => r = x \/ In x ts) r (cut_all ts));
+      [ left; reflexivity | | exact Hin ].
+    intros p Hp. destruct (IH p Hp) as [Hf Hs].
+    split.
+    + destruct Hf as [E | E]; [ left; exact E | right; right; exact E ].
+    + destruct Hs as [E | E]; [ left; exact E | right; right; exact E ].
+Qed.
+
+(* --------------------------------------------------------------------------
+   Transporting a cut parameter of one chord onto a collinear one.
+   -------------------------------------------------------------------------- *)
+
+Lemma cut_param_transport :
+  forall (G : list (Point * Point)) (A B C D : Point) (e : R),
+    (forall X, In X G -> nondeg X) ->
+    In (A, B) G -> In (C, D) G ->
+    orient A B C = 0 -> orient A B D = 0 ->
+    In e (cut_params2 (C, D) G) ->
+    0 < proj_param A B (chord_eval C D e) < 1 ->
+    In (proj_param A B (chord_eval C D e)) (cut_params2 (A, B) G).
+Proof.
+  intros G A B C D e Hnd HAB HCD HC0 HD0 He Hg01.
+  assert (HndAB : nondeg (A, B)) by (apply Hnd; exact HAB).
+  assert (HndCD : nondeg (C, D)) by (apply Hnd; exact HCD).
+  set (sg := proj_param A B C).
+  set (tu := proj_param A B D).
+  assert (HCeq : C = chord_eval A B sg)
+    by (apply proj_param_correct; assumption).
+  assert (HDeq : D = chord_eval A B tu)
+    by (apply proj_param_correct; assumption).
+  assert (Hk : tu - sg <> 0).
+  { intro Hz.
+    assert (HCD2 : C = D) by (rewrite HCeq, HDeq; f_equal; lra).
+    unfold nondeg in HndCD; simpl in HndCD.
+    destruct HndCD as [H | H]; apply H; rewrite HCD2; reflexivity. }
+  (* the point being transported *)
+  set (X := chord_eval C D e).
+  assert (HXline : orient A B X = 0).
+  { assert (H0 : orient C D X = 0) by (unfold X; apply orient_on_own_chord).
+    rewrite (coll_orient_transport A B C D X sg tu HCeq HDeq) in H0.
+    apply Rmult_integral in H0.
+    destruct H0 as [H0 | H0]; [ contradiction | exact H0 ]. }
+  assert (HXeq : X = chord_eval A B (proj_param A B X))
+    by (apply proj_param_correct; assumption).
+  apply in_app_or in He.
+  destruct He as [Hcross | Hcoll].
+  - (* e was a proper crossing of CD with some member E *)
+    destruct (cross_params_elim G (C, D) e Hcross) as [E [HEG [HxCD Heeq]]].
+    destruct E as [E1 E2]; simpl in HxCD, Heeq.
+    destruct HxCD as [Hx1 Hx2].
+    assert (HndE : nondeg (E1, E2)) by (apply Hnd; exact HEG).
+    (* AB crosses E properly as well *)
+    assert (HABE : orient A B E1 * orient A B E2 < 0).
+    { apply (scale_prod_neg (tu - sg)).
+      rewrite <- (coll_orient_transport A B C D E1 sg tu HCeq HDeq).
+      rewrite <- (coll_orient_transport A B C D E2 sg tu HCeq HDeq).
+      exact Hx1. }
+    (* X is the crossing point, so it lies on line E *)
+    pose proof (chord_hit C D E1 E2 Hx1 Hx2) as HH.
+    cbv zeta in HH.
+    destruct HH as [_ [_ Hmeet]].
+    assert (HXE : X = chord_eval E1 E2 (chord_s C D E1 E2)).
+    { unfold X. rewrite Heeq. exact Hmeet. }
+    assert (Hroot : orient E1 E2 (chord_eval A B (proj_param A B X)) = 0).
+    { rewrite <- HXeq. rewrite HXE. apply orient_on_own_chord. }
+    assert (HEAB : orient E1 E2 A * orient E1 E2 B < 0)
+      by (apply (interior_root_gives_cross A B E1 E2 (proj_param A B X));
+          assumption).
+    assert (Hdet : chord_det A B E1 E2 <> 0)
+      by (apply det_nonzero_of_opposite; exact HEAB).
+    pose proof (chord_hit A B E1 E2 HABE HEAB) as HH2.
+    cbv zeta in HH2.
+    destruct HH2 as [_ [_ Hmeet2]].
+    assert (Hparam : proj_param A B X = chord_t A B E1 E2).
+    { destruct (chord_hit_unique A B E1 E2 Hdet
+                  (proj_param A B X) (chord_s C D E1 E2)
+                  (chord_t A B E1 E2) (chord_s A B E1 E2)) as [Hq _];
+        [ rewrite <- HXeq; exact HXE | exact Hmeet2 | exact Hq ]. }
+    unfold cut_params2. apply in_or_app. left.
+    rewrite Hparam.
+    apply (cross_params_spec G (A, B) (E1, E2));
+      [ exact HEG | simpl; split; assumption ].
+  - (* e was a projected endpoint of a member collinear with CD *)
+    destruct (coll_params_elim G (C, D) e Hcoll) as [F [HFG [Hcol Hpick]]].
+    destruct (collinear_b_elim _ _ Hcol) as [HF1 HF2]; simpl in HF1, HF2.
+    assert (HndF : nondeg F) by (apply Hnd; exact HFG).
+    (* F is collinear with AB as well *)
+    assert (HFA1 : orient A B (fst F) = 0).
+    { rewrite (coll_orient_transport A B C D (fst F) sg tu HCeq HDeq) in HF1.
+      apply Rmult_integral in HF1.
+      destruct HF1 as [H | H]; [ contradiction | exact H ]. }
+    assert (HFA2 : orient A B (snd F) = 0).
+    { rewrite (coll_orient_transport A B C D (snd F) sg tu HCeq HDeq) in HF2.
+      apply Rmult_integral in HF2.
+      destruct HF2 as [H | H]; [ contradiction | exact H ]. }
+    assert (HcolAB : collinear_b (A, B) F = true)
+      by (apply collinear_b_intro; simpl; assumption).
+    destruct (coll_params_spec G (A, B) F HFG HcolAB) as [Hm1 Hm2].
+    simpl in Hm1, Hm2.
+    unfold cut_params2. apply in_or_app. right.
+    (* X is that endpoint of F *)
+    destruct Hpick as [E | E].
+    + assert (HXF : X = fst F).
+      { unfold X. rewrite E. symmetry.
+        apply proj_param_correct; [ exact HndCD | exact HF1 ]. }
+      rewrite HXF. exact Hm1.
+    + assert (HXF : X = snd F).
+      { unfold X. rewrite E. symmetry.
+        apply proj_param_correct; [ exact HndCD | exact HF2 ]. }
+      rewrite HXF. exact Hm2.
+Qed.
+
+(* No endpoint of a collinear neighbour's piece lies strictly inside a piece. *)
+Lemma coll_endpoint_excluded :
+  forall (G : list (Point * Point)) (A B C D : Point) (ab cd : R * R) (e : R),
+    (forall X, In X G -> nondeg X) ->
+    In (A, B) G -> In (C, D) G ->
+    orient A B C = 0 -> orient A B D = 0 ->
+    In ab (cut_all (cut_params2 (A, B) G)) ->
+    In cd (cut_all (cut_params2 (C, D) G)) ->
+    (e = fst cd \/ e = snd cd) ->
+    ~ (fst ab < proj_param A B (chord_eval C D e) < snd ab).
+Proof.
+  intros G A B C D ab cd e Hnd HAB HCD HC0 HD0 Hab Hcd He Hinside.
+  destruct (cut_all_bounds _ _ Hab) as [Ha0 [Hab1 Hb1]].
+  assert (Hg01 : 0 < proj_param A B (chord_eval C D e) < 1) by lra.
+  assert (Hmem : In (proj_param A B (chord_eval C D e)) (cut_params2 (A, B) G)).
+  { destruct (cut_all_endpoint_in _ _ Hcd) as [Hcz Hdo].
+    destruct He as [E | E]; subst e.
+    - destruct Hcz as [E0 | Hin].
+      + rewrite E0, chord_eval_zero.
+        unfold cut_params2. apply in_or_app. right.
+        assert (Hcol : collinear_b (A, B) (C, D) = true)
+          by (apply collinear_b_intro; simpl; assumption).
+        destruct (coll_params_spec G (A, B) (C, D) HCD Hcol) as [Hm1 _].
+        simpl in Hm1. exact Hm1.
+      + apply cut_param_transport; assumption.
+    - destruct Hdo as [E1 | Hin].
+      + rewrite E1, chord_eval_one.
+        unfold cut_params2. apply in_or_app. right.
+        assert (Hcol : collinear_b (A, B) (C, D) = true)
+          by (apply collinear_b_intro; simpl; assumption).
+        destruct (coll_params_spec G (A, B) (C, D) HCD Hcol) as [_ Hm2].
+        simpl in Hm2. exact Hm2.
+      + apply cut_param_transport; assumption. }
+  apply (cut_all_excludes (cut_params2 (A, B) G) _ ab Hmem Hab).
+  exact Hinside.
+Qed.
+
+(* --------------------------------------------------------------------------
+   COOK 2's guarantees.
+   -------------------------------------------------------------------------- *)
+
+Theorem cook2_noded :
+  forall (G : list (Point * Point)) (P Q : Point * Point),
+    In P (cook2 G) -> In Q (cook2 G) -> ~ crosses P Q.
+Proof.
+  intros G P Q HP HQ.
+  apply (proj1 (cook2_In G P)) in HP.
+  apply (proj1 (cook2_In G Q)) in HQ.
+  revert P Q HP HQ.
+  apply pieces_noded.
+  intros AB CD HAB HCD Hx.
+  unfold cut_params2. apply in_or_app. left.
+  apply cross_params_spec; assumption.
+Qed.
+
+Theorem cook2_covers :
+  forall (G : list (Point * Point)) (AB : Point * Point) (t : R),
+    In AB G -> 0 <= t <= 1 ->
+    exists (P : Point * Point) (u : R),
+      In P (cook2 G) /\ 0 <= u <= 1
+      /\ chord_eval (fst P) (snd P) u = chord_eval (fst AB) (snd AB) t.
+Proof.
+  intros G AB t HAB Ht.
+  destruct (pieces_covers (fun X => cut_params2 X G) G AB t HAB Ht)
+    as [P [u [HP [Hu Heq]]]].
+  exists P, u.
+  split; [ apply (proj2 (cook2_In G P)); exact HP | split; assumption ].
+Qed.
+
+Theorem cook2_within :
+  forall (G : list (Point * Point)) (P : Point * Point) (u : R),
+    In P (cook2 G) -> 0 <= u <= 1 ->
+    exists (AB : Point * Point) (t : R),
+      In AB G /\ 0 <= t <= 1
+      /\ chord_eval (fst AB) (snd AB) t = chord_eval (fst P) (snd P) u.
 Proof.
   intros G P u HP Hu.
-  destruct (cook_shape G P HP) as [AB [ab [HABG [Hab HPeq]]]].
+  apply (proj1 (cook2_In G P)) in HP.
+  apply (pieces_within (fun X => cut_params2 X G) G P u HP Hu).
+Qed.
+
+Corollary cook2_split_noded :
+  forall (G : list (Point * Point)) (P Q : Point * Point) (t s : R),
+    In P (cook2 G) -> In Q (cook2 G) ->
+    0 <= t <= 1 -> 0 <= s <= 1 ->
+    chord_eval (fst P) (snd P) t = chord_eval (fst Q) (snd Q) s ->
+    t = 0 \/ t = 1 \/ s = 0 \/ s = 1
+    \/ (orient (fst P) (snd P) (fst Q) = 0
+        /\ orient (fst P) (snd P) (snd Q) = 0).
+Proof.
+  intros G P Q t s HP HQ Ht Hs Hmeet.
+  apply (chord_split_noded (cook2 G)); try assumption.
+  intros X Y HX HY. exact (cook2_noded G X Y HX HY).
+Qed.
+
+(* THE "ONLY IF" HALF.  Two pieces of `cook2 G` that meet away from their
+   endpoints are the same piece, or the same piece reversed.  The collinear
+   escape hatch of `cook_split_noded` is gone. *)
+Theorem cook2_split_noded_strict :
+  forall (G : list (Point * Point)) (P Q : Point * Point) (t s : R),
+    (forall X, In X G -> nondeg X) ->
+    In P (cook2 G) -> In Q (cook2 G) ->
+    0 <= t <= 1 -> 0 <= s <= 1 ->
+    chord_eval (fst P) (snd P) t = chord_eval (fst Q) (snd Q) s ->
+    t = 0 \/ t = 1 \/ s = 0 \/ s = 1 \/ P = Q \/ P = (snd Q, fst Q).
+Proof.
+  intros G P Q t s Hnd HP HQ Ht Hs Hmeet.
+  destruct (total_order_T t 0) as [[Hta | Hta] | Hta];
+    [ exfalso; lra | left; exact Hta | ].
+  destruct (total_order_T t 1) as [[Htb | Htb] | Htb];
+    [ | right; left; exact Htb | exfalso; lra ].
+  destruct (total_order_T s 0) as [[Hsa | Hsa] | Hsa];
+    [ exfalso; lra | right; right; left; exact Hsa | ].
+  destruct (total_order_T s 1) as [[Hsb | Hsb] | Hsb];
+    [ | right; right; right; left; exact Hsb | exfalso; lra ].
+  right; right; right; right.
+  (* the collinear case is the only one left *)
+  pose proof (cook2_split_noded G P Q t s HP HQ Ht Hs Hmeet) as Hcase.
+  assert (Hcol : orient (fst P) (snd P) (fst Q) = 0
+                 /\ orient (fst P) (snd P) (snd Q) = 0)
+    by (destruct Hcase as [E | [E | [E | [E | E]]]];
+        solve [ exfalso; lra | exact E ]).
+  clear Hcase.
+  apply (proj1 (cook2_In G P)) in HP.
+  apply (proj1 (cook2_In G Q)) in HQ.
+  destruct (pieces_shape _ G P HP) as [AB [ab [HABG [Hab HPeq]]]].
+  destruct (pieces_shape _ G Q HQ) as [CD [cd [HCDG [Hcd HQeq]]]].
   destruct (cut_all_bounds _ _ Hab) as [Ha0 [Hab1 Hb1]].
-  exists AB, (fst ab + u * (snd ab - fst ab)).
-  split; [ exact HABG | split ].
-  - split; nra.
-  - subst P. unfold subchord; simpl.
-    rewrite subchord_reparam. reflexivity.
+  destruct (cut_all_bounds _ _ Hcd) as [Hc0 [Hcd1 Hd1]].
+  destruct AB as [A B]; destruct CD as [C D].
+  destruct ab as [a b]; destruct cd as [c d].
+  simpl in Hab, Hcd, Ha0, Hab1, Hb1, Hc0, Hcd1, Hd1.
+  subst P Q.
+  unfold subchord in Hcol, Hmeet; simpl in Hcol, Hmeet.
+  destruct Hcol as [Hcol1 Hcol2].
+  assert (HndAB : nondeg (A, B)) by (apply Hnd; exact HABG).
+  assert (HndCD : nondeg (C, D)) by (apply Hnd; exact HCDG).
+  (* strip the piece scaling from the orientations *)
+  rewrite subchord_orient in Hcol1, Hcol2.
+  assert (Hba : b - a <> 0) by lra.
+  assert (Hq1 : orient A B (chord_eval C D c) = 0)
+    by (apply Rmult_integral in Hcol1;
+        destruct Hcol1 as [H | H]; [ contradiction | exact H ]).
+  assert (Hq2 : orient A B (chord_eval C D d) = 0)
+    by (apply Rmult_integral in Hcol2;
+        destruct Hcol2 as [H | H]; [ contradiction | exact H ]).
+  rewrite orient_affine_third in Hq1, Hq2.
+  assert (Hcdne : c <> d) by lra.
+  destruct (two_affine_zero _ _ c d Hcdne Hq1 Hq2) as [HC0 HD0].
+  (* transport CD onto AB's parameter *)
+  set (sg := proj_param A B C).
+  set (tu := proj_param A B D).
+  assert (HCeq : C = chord_eval A B sg)
+    by (apply proj_param_correct; assumption).
+  assert (HDeq : D = chord_eval A B tu)
+    by (apply proj_param_correct; assumption).
+  assert (Hk : tu - sg <> 0).
+  { intro Hz.
+    assert (HCD2 : C = D) by (rewrite HCeq, HDeq; f_equal; lra).
+    unfold nondeg in HndCD; simpl in HndCD.
+    destruct HndCD as [H | H]; apply H; rewrite HCD2; reflexivity. }
+  assert (HevC : forall x, chord_eval C D x = chord_eval A B (sg + x * (tu - sg)))
+    by (intro x; apply (coll_eval_transport A B C D sg tu x HCeq HDeq)).
+  (* AB is collinear with CD too *)
+  assert (HA0 : orient C D A = 0).
+  { rewrite (coll_orient_transport A B C D A sg tu HCeq HDeq).
+    unfold orient; ring. }
+  assert (HB0 : orient C D B = 0).
+  { rewrite (coll_orient_transport A B C D B sg tu HCeq HDeq).
+    unfold orient; ring. }
+  (* the four exclusions *)
+  assert (Hex1 : ~ (a < sg + c * (tu - sg) < b)).
+  { intro Hbad. apply (coll_endpoint_excluded G A B C D (a, b) (c, d) c
+                         Hnd HABG HCDG HC0 HD0 Hab Hcd
+                         (or_introl eq_refl)).
+    simpl. rewrite HevC. rewrite proj_param_eval by exact HndAB. exact Hbad. }
+  assert (Hex2 : ~ (a < sg + d * (tu - sg) < b)).
+  { intro Hbad. apply (coll_endpoint_excluded G A B C D (a, b) (c, d) d
+                         Hnd HABG HCDG HC0 HD0 Hab Hcd
+                         (or_intror eq_refl)).
+    simpl. rewrite HevC. rewrite proj_param_eval by exact HndAB. exact Hbad. }
+  (* AB's endpoints, seen from CD *)
+  set (u := proj_param C D (chord_eval A B a)).
+  set (w := proj_param C D (chord_eval A B b)).
+  assert (Hau : a = sg + u * (tu - sg)).
+  { apply (chord_eval_inj A B); [ exact HndAB | ].
+    rewrite <- HevC.
+    apply proj_param_correct; [ exact HndCD | ].
+    rewrite (coll_orient_transport A B C D (chord_eval A B a) sg tu HCeq HDeq).
+    rewrite orient_on_own_chord. ring. }
+  assert (Hbw : b = sg + w * (tu - sg)).
+  { apply (chord_eval_inj A B); [ exact HndAB | ].
+    rewrite <- HevC.
+    apply proj_param_correct; [ exact HndCD | ].
+    rewrite (coll_orient_transport A B C D (chord_eval A B b) sg tu HCeq HDeq).
+    rewrite orient_on_own_chord. ring. }
+  assert (Hex3 : ~ (c < u < d)).
+  { intro Hbad. apply (coll_endpoint_excluded G C D A B (c, d) (a, b) a
+                         Hnd HCDG HABG HA0 HB0 Hcd Hab
+                         (or_introl eq_refl)).
+    simpl. exact Hbad. }
+  assert (Hex4 : ~ (c < w < d)).
+  { intro Hbad. apply (coll_endpoint_excluded G C D A B (c, d) (a, b) b
+                         Hnd HCDG HABG HA0 HB0 Hcd Hab
+                         (or_intror eq_refl)).
+    simpl. exact Hbad. }
+  (* the meeting parameter, in AB's coordinate *)
+  rewrite !subchord_reparam in Hmeet.
+  rewrite HevC in Hmeet.
+  assert (Hth : a + t * (b - a)
+                = sg + (c + s * (d - c)) * (tu - sg))
+    by (apply (chord_eval_inj A B); [ exact HndAB | exact Hmeet ]).
+  apply not_between in Hex1. apply not_between in Hex2.
+  apply not_between in Hex3. apply not_between in Hex4.
+  assert (Hth1 : a < a + t * (b - a) < b) by nra.
+  assert (Hmid : c < c + s * (d - c) < d) by nra.
+  set (k := tu - sg) in *.
+  clearbody k.
+  set (th := a + t * (b - a)) in *.
+  clearbody th.
+  set (m := c + s * (d - c)) in *.
+  clearbody m.
+  assert (Hgoal : (a = sg + c * k /\ b = sg + d * k)
+                  \/ (a = sg + d * k /\ b = sg + c * k)).
+  { destruct (Rdichotomy _ _ Hk) as [Hneg | Hpos].
+    - (* k < 0 : the transport reverses order *)
+      right.
+      assert (Hbg : b <= sg + c * k) by (destruct Hex1 as [H | H]; nra).
+      assert (Hda : sg + d * k <= a) by (destruct Hex2 as [H | H]; nra).
+      assert (Hcw : c <= w) by nra.
+      assert (Hud : u <= d) by nra.
+      assert (Hwu : w < u) by nra.
+      assert (Hdu : d <= u) by (destruct Hex3 as [H | H]; lra).
+      assert (Hwc : w <= c) by (destruct Hex4 as [H | H]; lra).
+      assert (Hu2 : u = d) by lra.
+      assert (Hw2 : w = c) by lra.
+      rewrite Hu2 in Hau. rewrite Hw2 in Hbw.
+      split; [ exact Hau | exact Hbw ].
+    - (* k > 0 : order preserved *)
+      left.
+      assert (Hga : sg + c * k <= a) by (destruct Hex1 as [H | H]; nra).
+      assert (Hbd : b <= sg + d * k) by (destruct Hex2 as [H | H]; nra).
+      assert (Hcu : c <= u) by nra.
+      assert (Hwd : w <= d) by nra.
+      assert (Huw : u < w) by nra.
+      assert (Huc : u <= c) by (destruct Hex3 as [H | H]; lra).
+      assert (Hdw : d <= w) by (destruct Hex4 as [H | H]; lra).
+      assert (Hu2 : u = c) by lra.
+      assert (Hw2 : w = d) by lra.
+      rewrite Hu2 in Hau. rewrite Hw2 in Hbw.
+      split; [ exact Hau | exact Hbw ]. }
+  unfold subchord; simpl.
+  rewrite !HevC.
+  destruct Hgoal as [[E1 E2] | [E1 E2]].
+  - left. rewrite E1, E2. reflexivity.
+  - right. simpl. rewrite E1, E2. reflexivity.
 Qed.
 
 (* --------------------------------------------------------------------------
@@ -1338,6 +2125,12 @@ Print Assumptions chord_collinear_from_points.
 Print Assumptions chord_interior_meet_crosses.
 Print Assumptions chord_split_noded.
 Print Assumptions cook_noded.
+Print Assumptions cook2_noded.
+Print Assumptions cook2_nodup.
+Print Assumptions cook2_split_noded.
+Print Assumptions cook2_split_noded_strict.
+Print Assumptions cook2_covers.
+Print Assumptions cook2_within.
 Print Assumptions cook_split_noded.
 Print Assumptions cook_covers.
 Print Assumptions cook_within.
