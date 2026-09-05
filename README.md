@@ -3,16 +3,19 @@
 [![build proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs/actions/workflows/ci.yml/badge.svg)](https://github.com/MerkatorBV/NetTopologySuite.Proofs/actions/workflows/ci.yml)
 [![dashboard](https://github.com/MerkatorBV/NetTopologySuite.Proofs/actions/workflows/pages.yml/badge.svg)](https://github.com/MerkatorBV/NetTopologySuite.Proofs/actions/workflows/pages.yml)
 
-📊 **[Observatory dashboard](https://grootstebozewolf.github.io/NetTopologySuite.Proofs/)** — a generated status view of the corpus (cited theorems by regime, per-issue verdicts, oracle coverage, trust footprint). Reports only in-repo source of record and deep-links out to [JTS](https://github.com/locationtech/jts) / [NTS](https://github.com/NetTopologySuite/NetTopologySuite); not a JTS/NTS test runner. See [`dashboard/`](dashboard/).
+📊 **[Observatory dashboard](https://merkatorbv.github.io/NetTopologySuite.Proofs/)** — a generated status view of the corpus (cited theorems by regime, per-issue verdicts, oracle coverage, trust footprint). Reports only in-repo source of record and deep-links out to [JTS](https://github.com/locationtech/jts) / [NTS](https://github.com/NetTopologySuite/NetTopologySuite); not a JTS/NTS test runner. See [`dashboard/`](dashboard/).
 
 Mechanically-checked proofs of load-bearing geometry facts used by
 [NetTopologySuite](https://github.com/NetTopologySuite/NetTopologySuite),
 written in [Rocq Prover](https://rocq-prover.org/). Every theorem ends
-with `Qed.`, and there are no live `Admitted` theorems. This is a proof
+with `Qed.`, and there are no live `Admitted` theorems. The twelve
+`Defined.` in the tree all close a `Definition` — decidability procedures
+that have to compute — and none of them closes a theorem. This is a proof
 corpus, not a verified implementation of NTS.
 
-The corpus introduces exactly three axioms of its own — the standard trio
-bundled with Rocq's classical real arithmetic library:
+The corpus enforces a three-axiom allowlist. None of the three is declared
+here — all three ship with Rocq's Stdlib, and reach the corpus through its
+classical real arithmetic:
 
 ```
 ClassicalDedekindReals.sig_not_dec
@@ -20,11 +23,20 @@ ClassicalDedekindReals.sig_forall_dec
 FunctionalExtensionality.functional_extensionality_dep
 ```
 
-That trio is the entire *corpus-introduced* axiom set. Some host-lane
-files and the Flocq lane inherit further axioms from their dependencies,
-so the three above are a floor on what a given module rests on, not a
-ceiling. Long-form invariant,
-roadmap, and build notes live in
+The trio is a **ceiling**, not a floor. A module may rest on fewer:
+`Distance.dist_sq_nonneg` uses only `sig_forall_dec` and
+`functional_extensionality_dep`, and never `sig_not_dec`. Whatever a module
+does rest on is emitted by its own `Print Assumptions` block, so the audit
+reads the footprint from the build log rather than from prose.
+
+The ceiling has named exceptions rather than silent ones: 17 files under
+`theories/` and 74 files under `theories-flocq/` inherit further axioms
+from their dependencies — in the Flocq lane typically
+`Classical_Prop.classic`, by way of the binary64 format layer. They are
+listed in
+[`docs/audit-exceptions.txt`](docs/audit-exceptions.txt), and the axiom audit
+fails on any file that surfaces an off-allowlist axiom without being on that
+list. Long-form invariant, roadmap, and build notes live in
 [`docs/READING-GUIDE.md`](docs/READING-GUIDE.md#long-form-corpus-notes-off-the-readme-first-screen).
 
 > **Licence.** [BSD-3-Clause](LICENSE), matching NetTopologySuite. The corpus is not archived for citation, so there is no DOI.
@@ -74,9 +86,14 @@ make help
 make host
 ```
 
-`make host` builds the 47 foundational Stdlib-only modules. The full
-corpus (520 registered modules) is the pinned container. Toolchain:
-**Rocq 9.2.0 + Flocq 4.2.2**.
+`make host` builds the 51 modules in `_CoqProject`, the foundational
+Stdlib-only layer. The full corpus is 567 registered modules —
+478 registered under `theories/` and 89 registered under
+`theories-flocq/` — and is the pinned container.
+Toolchain: **Rocq 9.2.0 + Flocq 4.2.2**. These four counts are checked
+against `_CoqProject` / `_CoqProject.full` by
+[`scripts/check_readme_counts.py`](scripts/check_readme_counts.py) in
+`make ci-guards`, so they cannot drift again.
 
 ## What this is not
 
