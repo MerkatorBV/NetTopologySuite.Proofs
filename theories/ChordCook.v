@@ -348,18 +348,178 @@ Proof.
   apply orient_on_own_chord.
 Qed.
 
-(* (3b) COLLINEAR is not proved here.  Under `det = 0` AND
-   `orient A B C = 0` every point involved lies on one line, and the meeting
-   condition reduces to a one-dimensional parameter equation: writing
-   C = chord_eval A B c and D = chord_eval A B d (which exist because
-   A <> B), the pieces meet at (t,s) exactly when t = (1-s)*c + s*d.  The
-   intersection is then a subsegment whenever [0,1] and the interval spanned
-   by c and d share positive length -- which is the OVERLAP outcome, not a
-   point, and so not something a point constructor may return.
+(* --------------------------------------------------------------------------
+   (3b) COLLINEAR -- the reduction to one dimension.
 
-   `chord_split_noded_hypothesis_free_false` below is an instance of exactly
-   this sub-case: it is the specification of the missing lemma, not a
-   substitute for it. *)
+   Under `orient A B C = 0` and A <> B, C lies on the line through A and B,
+   so it HAS a parameter: C = chord_eval A B c.  Same for D.  Once both are
+   parameters, the meeting condition stops being geometry:
+
+       chord_eval A B t = chord_eval C D s   <->   t = (1-s)*c + s*d
+
+   and the intersection of the two pieces is the intersection of [0,1] with
+   the interval spanned by c and d.  Empty, one point, or a subsegment --
+   the three outcomes, now an interval question on R with no DOI attached.
+
+   These two lemmas are what make `chord_collinear` a one-dimensional
+   classification rather than a plane-geometry case analysis.  The
+   classification itself is the next term.
+   -------------------------------------------------------------------------- *)
+
+(* The parameter comes from whichever component of B - A is nonzero.  The
+   division is introduced once, as an equation, so nothing below has to
+   divide. *)
+Lemma collinear_param_x :
+  forall A B C : Point,
+    px B - px A <> 0 ->
+    orient A B C = 0 ->
+    C = chord_eval A B ((px C - px A) / (px B - px A)).
+Proof.
+  intros A B C Hx Hor.
+  unfold orient in Hor. unfold chord_eval.
+  destruct C as [cx cy]; simpl in *.
+  remember ((cx - px A) / (px B - px A)) as k eqn:Hk.
+  assert (Hkx : k * (px B - px A) = cx - px A)
+    by (rewrite Hk; field; exact Hx).
+  assert (Hky : k * (py B - py A) = cy - py A).
+  { apply (Rmult_eq_reg_l (px B - px A)); [ nra | exact Hx ]. }
+  apply f_equal2; nra.
+Qed.
+
+Lemma collinear_param_y :
+  forall A B C : Point,
+    py B - py A <> 0 ->
+    orient A B C = 0 ->
+    C = chord_eval A B ((py C - py A) / (py B - py A)).
+Proof.
+  intros A B C Hy Hor.
+  unfold orient in Hor. unfold chord_eval.
+  destruct C as [cx cy]; simpl in *.
+  remember ((cy - py A) / (py B - py A)) as k eqn:Hk.
+  assert (Hky : k * (py B - py A) = cy - py A)
+    by (rewrite Hk; field; exact Hy).
+  assert (Hkx : k * (px B - px A) = cx - px A).
+  { apply (Rmult_eq_reg_l (py B - py A)); [ nra | exact Hy ]. }
+  apply f_equal2; nra.
+Qed.
+
+Lemma collinear_param_exists :
+  forall A B C : Point,
+    (px A <> px B \/ py A <> py B) ->
+    orient A B C = 0 ->
+    exists c : R, C = chord_eval A B c.
+Proof.
+  intros A B C Hne Hor.
+  destruct (total_order_T (px B - px A) 0) as [[Hx | Hx] | Hx].
+  - eexists. apply collinear_param_x; [ lra | exact Hor ].
+  - assert (Hy : py B - py A <> 0)
+      by (destruct Hne as [H | H]; [ exfalso; apply H; lra | lra ]).
+    eexists. apply collinear_param_y; [ exact Hy | exact Hor ].
+  - eexists. apply collinear_param_x; [ lra | exact Hor ].
+Qed.
+
+Lemma collinear_meet_iff :
+  forall A B (c d t s : R),
+    (px A <> px B \/ py A <> py B) ->
+    (chord_eval A B t = chord_eval (chord_eval A B c) (chord_eval A B d) s
+     <-> t = (1 - s) * c + s * d).
+Proof.
+  intros A B c d t s Hne.
+  unfold chord_eval; simpl.
+  split.
+  - intro H. injection H as Hx Hy.
+    destruct Hne as [Hn | Hn]; nra.
+  - intro H. subst t. apply f_equal2; ring.
+Qed.
+
+(* --------------------------------------------------------------------------
+   (3b) COLLINEAR -- the three outcomes.
+
+   With both pieces reduced to parameters on AB, the intersection is
+   [0,1] cap [min c d, max c d].  Write
+
+       lo = Rmax 0 (Rmin c d)      hi = Rmin 1 (Rmax c d)
+
+   Then lo > hi is MISS, lo = hi is a single shared point, and lo < hi is a
+   shared SUBSEGMENT.  The last is the case overlay actually meets in
+   cadastral data, and it is the one a point constructor must refuse: the
+   answer is an interval, so `chord_hit` has nothing to return.
+
+   `chord_collinear_overlap` is that constructor.  It does not produce one
+   vertex; it produces the whole shared parameter interval, which is what
+   CAP of two overlapping chords has to be.
+   -------------------------------------------------------------------------- *)
+
+Inductive CollinearMeet : Type :=
+  | CollMiss
+  | CollTouch   (t : R)
+  | CollOverlap (lo hi : R).
+
+Definition classify_collinear (c d : R) : CollinearMeet :=
+  let lo := Rmax 0 (Rmin c d) in
+  let hi := Rmin 1 (Rmax c d) in
+  match total_order_T lo hi with
+  | inleft (left _)  => CollOverlap lo hi
+  | inleft (right _) => CollTouch lo
+  | inright _        => CollMiss
+  end.
+
+(* The shared subsegment is genuinely shared: EVERY parameter in [lo,hi]
+   is a meeting point of the two pieces.  Not a vertex -- an interval. *)
+Theorem chord_collinear_overlap :
+  forall A B (c d : R),
+    (px A <> px B \/ py A <> py B) ->
+    forall lo hi,
+      classify_collinear c d = CollOverlap lo hi ->
+      lo < hi /\
+      (forall t : R, lo <= t <= hi ->
+        0 <= t <= 1 /\
+        (exists s : R, 0 <= s <= 1 /\
+          chord_eval A B t
+          = chord_eval (chord_eval A B c) (chord_eval A B d) s)).
+Proof.
+  intros A B c d Hne lo hi Hcl.
+  unfold classify_collinear in Hcl.
+  destruct (total_order_T (Rmax 0 (Rmin c d)) (Rmin 1 (Rmax c d)))
+    as [[Hlt | Heq] | Hgt]; try discriminate.
+  injection Hcl as Hlo Hhi. subst lo hi.
+  split; [ exact Hlt | ].
+  intros t Ht.
+  (* Bounds on Rmin/Rmax, supplied explicitly: lra cannot reason about them. *)
+  assert (Hmax0 : 0 <= Rmax 0 (Rmin c d)) by apply Rmax_l.
+  assert (Hmin1 : Rmin 1 (Rmax c d) <= 1) by apply Rmin_l.
+  assert (Hminle : Rmin c d <= Rmax 0 (Rmin c d)) by apply Rmax_r.
+  assert (Hmaxge : Rmin 1 (Rmax c d) <= Rmax c d) by apply Rmin_r.
+  assert (H01 : 0 <= t <= 1) by lra.
+  assert (Hin : Rmin c d <= t <= Rmax c d) by lra.
+  split; [ exact H01 | ].
+  (* A degenerate interval cannot satisfy lo < hi. *)
+  assert (Hcd : c <> d).
+  { intro Hz. subst d.
+    replace (Rmin c c) with c in *
+      by (unfold Rmin; destruct (Rle_dec c c); reflexivity).
+    replace (Rmax c c) with c in *
+      by (unfold Rmax; destruct (Rle_dec c c); reflexivity).
+    lra. }
+  assert (Hdc : d - c <> 0) by lra.
+  exists ((t - c) / (d - c)).
+  assert (Hs : t - c = ((t - c) / (d - c)) * (d - c)) by (field; exact Hdc).
+  set (r := (t - c) / (d - c)) in *.
+  clearbody r.
+  split.
+  - destruct (Rle_dec c d) as [Hle | Hle].
+    + replace (Rmin c d) with c in Hin
+        by (unfold Rmin; destruct (Rle_dec c d); [ reflexivity | lra ]).
+      replace (Rmax c d) with d in Hin
+        by (unfold Rmax; destruct (Rle_dec c d); [ reflexivity | lra ]).
+      nra.
+    + replace (Rmin c d) with d in Hin
+        by (unfold Rmin; destruct (Rle_dec c d); [ lra | reflexivity ]).
+      replace (Rmax c d) with c in Hin
+        by (unfold Rmax; destruct (Rle_dec c d); [ lra | reflexivity ]).
+      nra.
+  - apply (collinear_meet_iff A B c d t r Hne). nra.
+Qed.
 
 (* --------------------------------------------------------------------------
    SPLIT-NODED, and why the obvious statement of it is false.
@@ -441,4 +601,8 @@ Print Assumptions orient_affine_third.
 Print Assumptions same_side_orient_nonzero.
 Print Assumptions chord_miss.
 Print Assumptions chord_parallel_distinct_miss.
+Print Assumptions collinear_param_x.
+Print Assumptions collinear_param_exists.
+Print Assumptions collinear_meet_iff.
+Print Assumptions chord_collinear_overlap.
 Print Assumptions chord_split_noded_hypothesis_free_false.
