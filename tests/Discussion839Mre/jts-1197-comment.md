@@ -30,8 +30,8 @@ No production API / behaviour change.
 | Track | PR | Role |
 |---|---|---|
 | **Characterization** | **this PR (#1197)** | DD limits + Rocq vectors (tests) |
-| **Production filter** | [#1093](https://github.com/locationtech/jts/pull/1093) | Ozaki Stage A swap — independent differential **GREEN** on 45 vectors vs exact orient ([write-up](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/jts-1093-orient-lane-2026-08.md)) |
+| **Production filter** | [#1093](https://github.com/locationtech/jts/pull/1093) | Ozaki Stage A swap — independent differential **GREEN** on 45 vectors vs exact orient ([write-up](https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/jts-1093-orient-lane-2026-08.md)) |
 
 Happy to squash if preferred. Ready for review / merge whenever maintainers have a slot.
 
-*(Affiliation: [NetTopologySuite.Proofs](https://github.com/grootstebozewolf/NetTopologySuite.Proofs) — formal precision/predicate companion, not a JTS committer review.)*
+*(Affiliation: [NetTopologySuite.Proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs) — formal precision/predicate companion, not a JTS committer review.)*

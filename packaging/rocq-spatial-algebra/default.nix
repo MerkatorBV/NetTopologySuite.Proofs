@@ -10,7 +10,7 @@
 }:
 coqPackages.mkCoqDerivation {
   pname = "rocq-spatial-algebra";
-  owner = "grootstebozewolf";
+  owner = "MerkatorBV";
   version = "0.1.0";
   src = ./.;
   # Pure Stdlib; zero external Coq dependencies, zero axioms.

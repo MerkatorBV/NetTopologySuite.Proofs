@@ -8,7 +8,7 @@ We mirrored **three** Stage A shapes in pure double and gated them against an in
 - **Ozaki mirror (this PR):** `errbound = |detleft + detright| * 3.3306690621773724e-16`, CERTAIN iff `|det| >= errbound`.
 - **Corpus Shewchuk Stage A:** detsum + `ccwerrboundA = (3+16ε)ε` (ε = 2⁻⁵³).
 
-Write-up + table: [jts-1093-orient-lane](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/jts-1093-orient-lane-2026-08.md) (`oracle/jts1093_orient_vectors.txt`, 45 vectors).
+Write-up + table: [jts-1093-orient-lane](https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/jts-1093-orient-lane-2026-08.md) (`oracle/jts1093_orient_vectors.txt`, 45 vectors).
 
 ### Results
 | Check | Result |
@@ -39,4 +39,4 @@ So on this table the PR’s claim holds in miniature: the master constant escala
 ### Bottom line
 From an independent exact-orient gate, this filter swap looks **sound and slightly tighter** than master, and **aligned with** a Shewchuk-constant Stage A rather than the historical `1e-15` guard. Happy to re-run if you add more near-collinear fixtures to the suite.
 
-*(Affiliation: [NetTopologySuite.Proofs](https://github.com/grootstebozewolf/NetTopologySuite.Proofs) — formal precision/predicate companion, not a JTS committer review.)*
+*(Affiliation: [NetTopologySuite.Proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs) — formal precision/predicate companion, not a JTS committer review.)*

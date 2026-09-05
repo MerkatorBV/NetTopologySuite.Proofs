@@ -9,7 +9,7 @@ Thanks for the clear MRE and screenshots — there are really **two separate que
 
 Local Delaunay legality is the **empty-circle** test (Shewchuk / Guibas–Stolfi): for a CCW triangle `ABC` and opposite vertex `D` of the shared-edge quad, the edge is strictly illegal iff the oriented in-circle determinant is **positive**.
 
-We re-ran your sites on **NTS 2.6.0** with your scale (`1e5` + round), `Tolerance = 0.1`, sites = constraints = the polygon, and checked **every internal edge** against that criterion (via the extracted `b64_inCircle` kernel from [NetTopologySuite.Proofs](https://github.com/grootstebozewolf/NetTopologySuite.Proofs) — same arithmetic as the Phase 5 `nts_rocq_in_circle` FFI):
+We re-ran your sites on **NTS 2.6.0** with your scale (`1e5` + round), `Tolerance = 0.1`, sites = constraints = the polygon, and checked **every internal edge** against that criterion (via the extracted `b64_inCircle` kernel from [NetTopologySuite.Proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs) — same arithmetic as the Phase 5 `nts_rocq_in_circle` FFI):
 
 | Metric | Result (NTS 2.6.0) |
 |---|---|
@@ -56,4 +56,4 @@ If 1.15.3 still keeps exterior faces after the same filter, that is best treated
 
 Happy to dig further if you can confirm whether the green edge is a **constraint** segment and/or whether the exterior-filter bug still appears after upgrading.
 
-*(Repro notes / empty-circle criterion write-up: [nts-discussion-839-scout](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/nts-discussion-839-scout.md) in NetTopologySuite.Proofs.)*
+*(Repro notes / empty-circle criterion write-up: [nts-discussion-839-scout](https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/nts-discussion-839-scout.md) in NetTopologySuite.Proofs.)*

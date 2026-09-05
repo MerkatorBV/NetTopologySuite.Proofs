@@ -6,7 +6,7 @@ Thanks for leaving this draft open — scoped from the NetTopologySuite.Proofs s
 - mukoki’s 2017 beanshell (MCIndexSnapRounder + scale 1 vs 100) — historical mixed precision (integer **nodes**, full-precision **ends** at scale=1).
 - Modern production path: `BufferOp` → `ScaledNoder(SnapRoundingNoder(PM(1)), fixedPM.getScale())`.
 
-Write-up + MRE: [jts-90-scalednoder-lane](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/jts-90-scalednoder-lane-2026-08.md)  
+Write-up + MRE: [jts-90-scalednoder-lane](https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/jts-90-scalednoder-lane-2026-08.md)  
 (`dotnet run --project tests/Discussion839Mre -c Release -- --jts90`)
 
 ### Results
@@ -28,4 +28,4 @@ Write-up + MRE: [jts-90-scalednoder-lane](https://github.com/grootstebozewolf/Ne
 
 Happy to re-run the MRE if you land a revised patch.
 
-*(Affiliation: [NetTopologySuite.Proofs](https://github.com/grootstebozewolf/NetTopologySuite.Proofs) — formal snap/precision companion, not a JTS committer review.)*
+*(Affiliation: [NetTopologySuite.Proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs) — formal snap/precision companion, not a JTS committer review.)*
