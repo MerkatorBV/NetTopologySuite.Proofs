@@ -4,7 +4,7 @@ Thanks for keeping this open — design-history note from the NetTopologySuite.P
 Stage A Shewchuk in-circle filter (coords translated so `P` is origin) with permanent-scaled `iccerrboundA`, then escalate when uncertain. That filter-then-escalate shape is exactly what #1212 and #1094 still use. Maintainer notes from 2018 (`isInCircleDDFast`, unit tests) aged well.
 
 ### Numbers (Stage A only vs extracted `b64_inCircle`)
-Write-up: [jts-311-incircle-lane](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/jts-311-incircle-lane-2026-08.md) (`oracle/jts311_incircle_history.txt`, 22 vectors).
+Write-up: [jts-311-incircle-lane](https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/jts-311-incircle-lane-2026-08.md) (`oracle/jts311_incircle_history.txt`, 22 vectors).
 
 | Check | Result |
 |---|---|
@@ -22,4 +22,4 @@ GEOS955 / JTS#1171 subset still shows why escalation exists: Stage A **ZERO/UNCE
 ### Bottom line
 Valuable as the **first open sketch** of robust in-circle Stage A in JTS. For production merge we point at **#1212** (Stage A + DDNormalized + `Vertex.isCCW` → `Orientation.index`); corpus gates for the tip are already green.
 
-*(Affiliation: [NetTopologySuite.Proofs](https://github.com/grootstebozewolf/NetTopologySuite.Proofs) — formal mesh/predicate companion, not a JTS committer review.)*
+*(Affiliation: [NetTopologySuite.Proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs) — formal mesh/predicate companion, not a JTS committer review.)*

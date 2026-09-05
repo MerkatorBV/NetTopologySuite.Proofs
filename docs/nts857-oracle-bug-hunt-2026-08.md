@@ -3,7 +3,7 @@
 **Date**: 2026-08-08  
 **NTS branch**: `feat/curves-structure-wkt-foundation` (`NetTopologySuite` @ curves foundation + GEOS WKB dovetail)  
 **Oracle**: CI artifact `oracle-bin-linux` from  
-[actions/runs/31253549636](https://github.com/grootstebozewolf/NetTopologySuite.Proofs/actions/runs/31253549636)  
+[actions/runs/31253549636](https://github.com/MerkatorBV/NetTopologySuite.Proofs/actions/runs/31253549636)  
 (artifact id `9020854736`) → `.ci-artifacts/oracle-bin-linux/oracle_bin`  
 **Harness**: `tests/CurveOracleBugHunt` (WSL-invoked oracle, ProjectReference to NTS)
 
@@ -118,7 +118,7 @@ Oracle is invoked via `wsl -e …/oracle_bin` with modes `ARC_LENGTH` / `ARC_DIS
 
 | Item | Value |
 |---|---|
-| Run | https://github.com/grootstebozewolf/NetTopologySuite.Proofs/actions/runs/31253549636 |
+| Run | https://github.com/MerkatorBV/NetTopologySuite.Proofs/actions/runs/31253549636 |
 | Artifact | `oracle-bin-linux` (id 9020854736) |
 | Local path | `.ci-artifacts/oracle-bin-linux/oracle_bin` |
 | Also present | `.ci-artifacts/libntsrocq-linux-x64/libntsrocq.so` (unused this pass) |

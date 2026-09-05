@@ -3,7 +3,7 @@
 Machine-checked **robust geometric predicates for binary64 (IEEE-754 double)
 coordinates**, with `Qed`-closed soundness against exact arithmetic — extracted
 as a small, self-contained Rocq library from
-[NetTopologySuite.Proofs](https://github.com/grootstebozewolf/NetTopologySuite.Proofs).
+[NetTopologySuite.Proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs).
 
 Every theorem ends in `Qed`. The only axioms are the standard classical-reals
 decidability and functional extensionality used throughout the parent corpus

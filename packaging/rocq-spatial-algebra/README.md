@@ -2,7 +2,7 @@
 
 A tiny, **dependency-free, axiom-free** Rocq library of spatial-relation
 algebra, extracted from
-[NetTopologySuite.Proofs](https://github.com/grootstebozewolf/NetTopologySuite.Proofs).
+[NetTopologySuite.Proofs](https://github.com/MerkatorBV/NetTopologySuite.Proofs).
 
 Two independent modules, both `Qed`-closed and **"Closed under the global
 context"** (zero axioms — no classical reals, no functional extensionality),

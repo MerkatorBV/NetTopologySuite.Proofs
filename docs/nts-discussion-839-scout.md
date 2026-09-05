@@ -249,7 +249,7 @@ what parity must say about them. It does not re-execute the MRE.
 > `Locate != Exterior` (boundary-tolerant) and a current NTS 2.x build — 1.15.3 is old.  
 > Ray-crossing edge cases the robust locator must get right (vertex graze, horizontal edge at
 > query height, half-open boundary) are documented with WKT vectors in
-> https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/nts-oracle-gallery.md
+> https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/nts-oracle-gallery.md
 >
 > **Practical suggestions.**  
 > - Verify legality with an explicit in-circle test on the quad (don’t rely on the screenshot).  

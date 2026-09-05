@@ -802,11 +802,11 @@ TEMPLATE = """<!DOCTYPE html>
      number on this page is generated from in-repo source of record; nothing is
      hand-maintained.</p>
   <div class="pills-top">
-    <a href="https://github.com/grootstebozewolf/NetTopologySuite.Proofs">Proofs repo</a>
+    <a href="https://github.com/MerkatorBV/NetTopologySuite.Proofs">Proofs repo</a>
     <a href="https://github.com/NetTopologySuite/NetTopologySuite">NTS (.NET port)</a>
     <a href="https://github.com/locationtech/jts">JTS (Java reference)</a>
     <a href="https://github.com/locationtech/jts/issues/1195">JTS#1195 Curve EPIC</a>
-    <a href="https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/macro-meso-micro.md">Macro · Meso · Micro</a>
+    <a href="https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/macro-meso-micro.md">Macro · Meso · Micro</a>
   </div>
 </div></header>
 
@@ -824,7 +824,7 @@ TEMPLATE = """<!DOCTYPE html>
       ~thousands of statements are not maintained as a flat list — they are a
       <b>three-scale stack</b> tied to board epics (#64–#69), modules, and
       machine tags. Full write-up:
-      <a href="https://github.com/grootstebozewolf/NetTopologySuite.Proofs/blob/main/docs/macro-meso-micro.md"><code>docs/macro-meso-micro.md</code></a>.</p>
+      <a href="https://github.com/MerkatorBV/NetTopologySuite.Proofs/blob/main/docs/macro-meso-micro.md"><code>docs/macro-meso-micro.md</code></a>.</p>
     <div class="scales">
       <div class="scale macro">
         <div class="tag">Macro</div>

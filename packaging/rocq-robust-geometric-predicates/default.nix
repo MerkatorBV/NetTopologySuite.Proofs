@@ -9,7 +9,7 @@
 }:
 coqPackages.mkCoqDerivation {
   pname = "rocq-robust-geometric-predicates";
-  owner = "grootstebozewolf";
+  owner = "MerkatorBV";
   version = "0.1.0";
   src = ./.;
   propagatedBuildInputs = [ coqPackages.flocq ];
