@@ -104,7 +104,7 @@ def parse_claims():
         if m:
             raw = m.group(1).strip()
             # strip trailing HTML comment to get display title
-            title = re.sub(r'\s*<!--.*?-->', '', raw).strip()
+            title = re.sub(r'\s*<!--[\s\S]*?-->', '', raw).strip()
             # parse feat/geom tags from the comment
             feat_m = re.search(r'feat:([\w,\-]+)', raw)
             geom_m = re.search(r'geom:([\w,]+)', raw)
