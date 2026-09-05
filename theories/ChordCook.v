@@ -14,36 +14,68 @@
    was wrong.  A vanishing determinant is Overlap or disjointness -- an
    outcome, not a refusal.
 
-   WHAT IS PROVED HERE (Qed): the HIT lemma.
+   WHAT IS PROVED HERE (Qed).  The pair oracle is complete: for two chords
+   on the sheet, every configuration is decided.
 
-     If orient(A,B,C)*orient(A,B,D) < 0 and orient(C,D,A)*orient(C,D,B) < 0
-     then there are t, s in the OPEN interval (0,1) with
-     gamma_AB(t) = gamma_CD(s), and they are unique.
+     chord_hit / chord_hit_unique
+       Proper crossing.  If orient(A,B,C)*orient(A,B,D) < 0 and
+       orient(C,D,A)*orient(C,D,B) < 0 then there are UNIQUE t, s in the
+       OPEN interval (0,1) with gamma_AB(t) = gamma_CD(s).  The two strict
+       products give the denominator for free -- orient(C,D,A) -
+       orient(C,D,B) = det, and opposite signs make a difference nonzero --
+       so no non-degeneracy hypothesis is assumed and no case analysis on
+       det is performed.
 
-   The two strict products are the standard proper-crossing test.  They give
-   the denominator for free: orient(C,D,A) - orient(C,D,B) = det, and
-   opposite signs make a difference nonzero, so no separate non-degeneracy
-   hypothesis is needed and no case analysis on det is performed.
+     chord_miss
+       Same side.  If C and D are strictly on one side of AB, no pair of
+       parameters in [0,1] meets.  Empty, not Decline.
 
-   WHAT IS NOT PROVED, in the order ADR-0007's route puts them:
+     chord_parallel_distinct_miss
+       det = 0 with orient(A,B,C) <> 0: parallel and distinct, disjoint.
 
-     - MISS.  Four nonzero orientations whose products are not both negative
-       imply the pieces are disjoint.  Not attempted.
-     - SPLIT-NODED.  After splitting every properly crossing pair at its
-       parameter and identifying the new endpoints, any two pieces that meet
-       do so at a shared endpoint.  THAT sentence is `fully_intersected`, and
-       under ADR-0007 it must be the CONCLUSION of the cook rather than a
-       hypothesis.  Every corpus theorem that currently takes
-       `fully_intersected` as input is waiting on it.  Not attempted.
-     - OVERLAP.  Collinear pieces meeting in a segment of positive length are
-       a separate case and not a point constructor.  Not attempted.
-     - Bounded-bit-length and floating realisations (LN; Priest 1991 §7,
-       doi:10.1109/ARITH.1991.145549).  Not attempted.
-     - IDENTITY.  Whether two hits at the same point of the sheet are one hen
-       or two.  Open in ADR-0007 and open here.
+     chord_collinear_overlap / chord_collinear_from_points
+       det = 0 with both orientations 0: the meet is an interval in the
+       parameter, classified by `classify_collinear` as CollMiss, CollTouch
+       or CollOverlap.  An overlap is a shared SUBSEGMENT, not a point, and
+       therefore not something the point constructor may return.
 
-   So this file does not yet let anything delete `fully_intersected` from a
-   hypothesis list.  It supplies the first of the three lemmas that would.
+     chord_split_noded
+       The pairwise conclusion.  On a family G1 in which no two members
+       cross properly, any meeting of two members happens at an endpoint of
+       one of them, or else the two are collinear -- in which case the meet
+       is the subsegment `chord_collinear_overlap` produces.  This is
+       stated with NO det <> 0 guard: the degenerate cases are inside the
+       disjunction rather than excluded by hypothesis.
+
+     chord_split_noded_hypothesis_free_false
+       The QEX.  Dropping the no-crossing hypothesis makes the statement
+       FALSE, witnessed by A=(0,0), B=(2,0), C=(1,0), D=(3,0), where
+       t = 3/4 and s = 1/4 both evaluate to (3/2,0) with no endpoint and no
+       proper crossing.  Collinear overlap is the obstruction, and it is why
+       the collinear disjunct above is not decoration.
+
+   WHAT IS NOT PROVED, and what that costs.
+
+     - THE LOOP (the cook).  There is no function here sending an arbitrary
+       family G0 to a G1 satisfying `chord_split_noded`'s hypothesis, and no
+       termination argument for one.  Until that exists, this file proves a
+       property OF a noded family; it does not node anything.  That is the
+       whole distance between `fully_intersected` as a hypothesis and
+       `fully_intersected` as a conclusion, and it is not crossed here.
+     - THE GRID.  Rounding to Lambda = h*Z^2 and showing two rounded edges
+       meet iff they share an endpoint.  Obligation (3).  Not attempted, and
+       when it is, it must not assume the conclusion of the loop.
+     - IDENTITY.  Whether two hits at the same point of the sheet are one
+       hen or two.  Open in ADR-0007 and open here.
+     - Bounded-bit-length and floating realisations (Priest 1991 section 7,
+       doi:10.1109/ARITH.1991.145549).  Everything here is exact reals.
+
+   ACCOUNTING.  CAP, CUP, SUB and XOR (SQL/MM 5.1.31--36) are four filters
+   over ONE noded graph.  With no graph, all four stand at zero.  Nothing in
+   this file is a fraction of an overlay operation; these are lemmas that an
+   overlay is permitted to call once something builds the graph.  No
+   hypothesis has been deleted from any corpus theorem: see
+   docs/lemmas-under-constructor.txt, still seven entries.
 
    AXIOM FOOTPRINT, measured 2026-09-05 on Rocq 9.2.0.  Two axioms:
 
@@ -662,6 +694,76 @@ Proof.
 Qed.
 
 (* --------------------------------------------------------------------------
+   SPLIT-NODED without the det <> 0 guard.
+
+   The guarded version above excludes exactly the branch OverlayNG fails on.
+   Dropping the guard means the conclusion has to change: for a collinear
+   pair the meeting genuinely IS interior, so "endpoint or nothing" is false
+   -- that is `chord_split_noded_hypothesis_free_false` below.
+
+   The honest trichotomy names the escape instead of forbidding it.  Once no
+   pair properly crosses, a meeting is either at an endpoint, or the pair is
+   collinear -- in which case the intersection is the shared subsegment
+   `chord_collinear_overlap` produces, not a vertex.  No pair is left
+   unaccounted for and no degenerate case is guarded away.
+   -------------------------------------------------------------------------- *)
+
+(* Vanishing is decidable from the Reals ORDER axioms; `total_order_T` is
+   informative, so no excluded middle enters through the case split. *)
+Definition Rzero_dec (x : R) : {x = 0} + {x <> 0}.
+Proof.
+  destruct (total_order_T x 0) as [[H | H] | H].
+  - right; lra.
+  - left; exact H.
+  - right; lra.
+Defined.
+
+Theorem chord_split_noded :
+  forall G1 : list (Point * Point),
+    (forall AB CD : Point * Point,
+        In AB G1 -> In CD G1 ->
+        ~ (orient (fst AB) (snd AB) (fst CD)
+             * orient (fst AB) (snd AB) (snd CD) < 0
+           /\ orient (fst CD) (snd CD) (fst AB)
+                * orient (fst CD) (snd CD) (snd AB) < 0)) ->
+    forall (AB CD : Point * Point) (t s : R),
+      In AB G1 -> In CD G1 ->
+      0 <= t <= 1 -> 0 <= s <= 1 ->
+      chord_eval (fst AB) (snd AB) t = chord_eval (fst CD) (snd CD) s ->
+      t = 0 \/ t = 1 \/ s = 0 \/ s = 1
+      \/ (orient (fst AB) (snd AB) (fst CD) = 0
+          /\ orient (fst AB) (snd AB) (snd CD) = 0).
+Proof.
+  intros G1 Hno AB CD t s HAB HCD Ht Hs Hmeet.
+  destruct (Rzero_dec (chord_det (fst AB) (snd AB) (fst CD) (snd CD)))
+    as [Hdet | Hdet].
+  - (* det = 0: parallel.  Either some endpoint is off the line, and then
+       nothing meets at all, or the pair is collinear. *)
+    destruct (Rzero_dec (orient (fst AB) (snd AB) (fst CD))) as [Hc | Hc].
+    + (* collinear: orient A B D = orient A B C = 0 by orient_diff_AB *)
+      right; right; right; right.
+      split; [ exact Hc | ].
+      pose proof (orient_diff_AB (fst AB) (snd AB) (fst CD) (snd CD)) as Hdiff.
+      rewrite Hdet in Hdiff. lra.
+    + (* parallel, distinct lines: the meeting is impossible *)
+      exfalso.
+      exact (chord_parallel_distinct_miss (fst AB) (snd AB) (fst CD) (snd CD)
+               Hdet Hc t s Hmeet).
+  - (* det <> 0: a strictly interior meeting would force both products. *)
+    destruct (total_order_T t 0) as [[H0 | H0] | H0]; [ lra | left; exact H0 | ].
+    destruct (total_order_T t 1) as [[H1 | H1] | H1];
+      [ | right; left; exact H1 | lra ].
+    destruct (total_order_T s 0) as [[H2 | H2] | H2];
+      [ lra | right; right; left; exact H2 | ].
+    destruct (total_order_T s 1) as [[H3 | H3] | H3];
+      [ | right; right; right; left; exact H3 | lra ].
+    exfalso.
+    destruct (chord_interior_meet_crosses (fst AB) (snd AB) (fst CD) (snd CD)
+                Hdet t s (conj H0 H1) (conj H2 H3) Hmeet) as [P1 P2].
+    exact (Hno AB CD HAB HCD (conj P1 P2)).
+Qed.
+
+(* --------------------------------------------------------------------------
    SPLIT-NODED, and why the obvious statement of it is false.
 
    The intended third lemma is: once no pair of G1 satisfies both strict
@@ -745,4 +847,7 @@ Print Assumptions collinear_param_x.
 Print Assumptions collinear_param_exists.
 Print Assumptions collinear_meet_iff.
 Print Assumptions chord_collinear_overlap.
+Print Assumptions chord_collinear_from_points.
+Print Assumptions chord_interior_meet_crosses.
+Print Assumptions chord_split_noded.
 Print Assumptions chord_split_noded_hypothesis_free_false.

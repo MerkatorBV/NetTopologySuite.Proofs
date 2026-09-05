@@ -23,13 +23,25 @@
 #
 # Route out (ADR-0007, and the three obligations):
 #   1. two-segment intersection: construct P with t,s; prove emptiness when
-#      disjoint; classify overlap separately.  First rung Qed in
-#      theories/ChordCook.v (`chord_hit`).
+#      disjoint; classify overlap separately.  DONE, Qed, in
+#      theories/ChordCook.v: `chord_hit` and `chord_hit_unique` (proper
+#      crossing, unique t,s in (0,1)), `chord_miss` and
+#      `chord_parallel_distinct_miss` (emptiness), `chord_collinear_overlap`
+#      and `chord_collinear_from_points` (overlap as a subsegment, not a
+#      point).  The pair oracle is complete and takes no non-degeneracy
+#      hypothesis.
 #   2. insert the points: cut every segment at every constructed point; then
 #      two segments meet iff they share an endpoint.  THAT is
-#      `fully_intersected`, as a conclusion.
+#      `fully_intersected`, as a conclusion.  OPEN.  `chord_split_noded`
+#      proves the second half -- on a family with no proper crossing, a meet
+#      is an endpoint or a collinear overlap -- and
+#      `chord_split_noded_hypothesis_free_false` is the Qed'd counterexample
+#      showing the hypothesis cannot simply be dropped.  The first half, the
+#      LOOP that sends an arbitrary family to such a family, together with
+#      its termination, does not exist.  Nothing below is discharged by the
+#      second half alone.
 #   3. round to a grid: two rounded edges meet iff they share an endpoint.
-#      Do not assume (2) when proving (3).
+#      OPEN.  Do not assume (2) when proving (3).
 
 # Hobby 4.1.  The archetype: `fully_intersected G -> fully_intersected (snap G)`.
 # It both consumes and produces nodedness, which does NOT excuse it -- the
