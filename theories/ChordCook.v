@@ -91,9 +91,19 @@
        is not a DCEL: no vertex identification, no rotation system, no
        darts, no faces, no labelling against a second operand.
 
+     - OVERLAP AS ONE PIECE.  `crosses` is the two strict orientation
+       products, so collinear overlap is not a crossing and `cook` does not
+       cut at it.  `cook_split_noded` still permits an interior meeting when
+       both orientations vanish: two overlapping input chords leave two
+       overlapping output chords.  Obligation (2) reads "meet IFF share an
+       endpoint"; the "only if" half is therefore NOT true of `cook G`.
+       Closing it means cutting also at the projected endpoints of collinear
+       members and deduplicating -- not proved here.
+
    ACCOUNTING.  CAP, CUP, SUB and XOR (SQL/MM 5.1.31--36) are four filters
-   over one noded graph.  The noding step now exists for chords in exact
-   reals; the graph does not, and neither does any labelling.  So all four
+   over one noded graph.  The crossing half of the noding step now exists
+   for chords in exact reals; the overlap half does not, the graph does not,
+   and neither does any labelling.  So all four
    still stand at zero, and nothing in this file is a fraction of an overlay
    operation.  No hypothesis has been deleted from any corpus theorem
    either: the seven entries in docs/lemmas-under-constructor.txt are stated

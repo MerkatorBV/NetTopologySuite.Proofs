@@ -32,7 +32,8 @@
 #      hypothesis.
 #   2. insert the points: cut every segment at every constructed point; then
 #      two segments meet iff they share an endpoint.  THAT is
-#      `fully_intersected`, as a conclusion.  DONE for chords in exact reals:
+#      `fully_intersected`, as a conclusion.  PARTLY done for chords in exact
+#      reals -- see the overlap caveat below:
 #      `cook` in theories/ChordCook.v is the constructor, `cook_noded` its
 #      invariant, `cook_split_noded` the conclusion with NO hypothesis on the
 #      input family, and `cook_covers` / `cook_within` prove the image is the
@@ -40,6 +41,16 @@
 #      Termination is structural: for straight pieces one pass is a fixed
 #      point, because a proper crossing of two pieces is a proper crossing of
 #      their parents (`subchord_cross_parent`).
+#
+#      THE OVERLAP CAVEAT.  `crosses` is the two strict orientation products,
+#      so collinear overlap is not a crossing and `cook` does not cut at it.
+#      `cook_split_noded` accordingly still permits an interior meeting when
+#      both orientations vanish.  Two overlapping input chords therefore leave
+#      two overlapping output chords, and obligation (2) reads "meet IFF share
+#      an endpoint" -- the "only if" half is not yet true of `cook G`.
+#      OverlayNG's COLLINEAR merge is still ahead of this file on that case.
+#      Until `split_one` also cuts at the projected endpoints of collinear
+#      members and the result is deduplicated, (2) is not closed.
 #
 #      This does NOT discharge anything below.  Every entry below is stated
 #      in binary64 over the corpus graph type; `cook` runs on a list of
