@@ -477,3 +477,7 @@ _Avoid_: noder (the full loop), snap-rounding (not 𝓘)
 The pairwise intersection oracle has no algorithm for this egg pair on
 this sheet. Distinct from relate Decline and from Empty (disjoint images).
 _Avoid_: empty (the disjoint 𝓘 outcome), unsupported matrix
+
+## ADR-0007 Ready for BDFL
+
+See `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md` § Ready for BDFL; `ticket_0007_cook_term_qed_or_qex` in `Adr0007NodingEpic.v` (witness 0007-cook-term). Status stays Proposed.
