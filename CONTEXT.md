@@ -469,9 +469,19 @@ _Avoid_: dart (coordinate pair), edge (unqualified)
 
 **Cook / 𝓘**:
 The pairwise constructor: Hit `(p*, tᵢ, tⱼ)`, Empty (disjoint images),
-or 𝓘 Decline (no algorithm). Predicates never mint hens. Snap-rounding
-is a different constructor under already-noded `G`. Display is a view.
-_Avoid_: noder (the full loop), snap-rounding (not 𝓘)
+or 𝓘 Decline (no algorithm). Predicates never mint hens. On a Hit the
+cook may `split(t)` and mint one hen (letter after Accept; not the
+bag loop). Pairwise
+interior split of chords is finite (width measure); bag-level
+termination and confluence of the repeat-until-noded loop remain
+obligations of 𝓘 families. binary64 is a coordinate realization of
+points of `S`, not a second sheet. OverlayNGRobust is a snap-sequence
+`S → Λ`, not 𝓘. Snap-rounding is a different constructor under
+already-noded `G`. Display is a view. A **kiss** (tangent eggs,
+discriminant zero) is not a shared endpoint; CRV-TOUCH owns the
+certificate and keeps three tangency decision procedures live. Arc
+cook termination is a sister card.
+_Avoid_: noder (the full loop), snap-rounding (not 𝓘), kiss (for a shared endpoint)
 
 **𝓘 Decline** (ADR-0007 cook):
 The pairwise intersection oracle has no algorithm for this egg pair on
