@@ -485,3 +485,7 @@ See `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md` § Ready for BDFL; `ticke
 ## ADR-0007 and CRV-TOUCH
 
 Accept of ADR-0007 is vocabulary law that CRV-TOUCH assumes; kiss/tangency, binary64 sheet vs kiss, arc cook termination, and any ADR-0006 cook-mode stay on the Notion CRV-TOUCH map (NTS RGR Board). Status stays Proposed until BDFL Accept.
+
+## ADR-0007 Accepted
+
+ADR-0007 (sheet/hen/cook) **Accepted** 2026-09-07 by Joost (BDFL). Soft gaps closed; see `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md`. CRV-TOUCH assumes this vocabulary; kiss/FP noder remain on that map.
