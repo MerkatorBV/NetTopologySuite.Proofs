@@ -1,14 +1,16 @@
 # ADR-0007 — The noding constructor is part of the specification: sheet, hen, cook
 
-| Field         | Value                                                        |
+| Field | Value |
 |---------------|--------------------------------------------------------------|
-| **Order**     | ADR-0007                                                     |
-| **Status**    | **Proposed** — awaiting BDFL approval                        |
-| **Deciders**  | Joost (BDFL); proposed by Jeroen Bloemscheer                 |
-| **Date**      | 2026-09-05                                                   |
-| **Superseded by** | — (none)                                                 |
+| **Order** | ADR-0007 |
+| **Status** | **Proposed** — supporting shapes landed; awaiting BDFL |
+| **Deciders** | Joost (BDFL); proposed by Jeroen Bloemscheer |
+| **Date** | 2026-09-05 |
+| **Superseded by** | — (none) |
 
 Status lifecycle: *Proposed → Accepted / Rejected → (possibly) Superseded*.
+
+QEX is not acceptance. These supporting shapes do not close the ADR.
 
 ---
 
@@ -203,18 +205,55 @@ here.
   Theorem 4.1, under a noded hypothesis.
 - Bertolazzi, Bevilacqua & Frego (2020), *Efficient intersection between
   splines of clothoids*, Mathematics and Computers in Simulation
-  176:57–72, doi:10.1016/j.matcom.2019.10.001.  `I` for the clothoid
+  176:57–72, doi:10.1016/j.matcom.2019.10.001. `I` for the clothoid
   class: tangent triangles, an AABB tree to cull pairs, then a
-  curve-level check.  It carries the existence-and-uniqueness statement
+  curve-level check. It carries the existence-and-uniqueness statement
   the class needs — “if all the conditions (i), (ii) and (iii) are true,
   then the two clothoid arcs C1 and C2 have exactly one and only one
   intersection, which lies in T1 ∩ T2” — the clothoid analogue of
-  `chord_hit`.  Cited nowhere in the corpus today: it has only the
+  `chord_hit`. Cited nowhere in the corpus today: it has only the
   papers that BUILD a clothoid (Bertolazzi & Frego 2015,
   doi:10.1002/mma.3114, the G1 fit and the Fresnel expansions), none
-  that intersect two of them.  A numerical constructor, hence a
+  that intersect two of them. A numerical constructor, hence a
   realisation and not a kernel statement.
 - `theories-flocq/NodingSeparation_b64.v` — `pairwise_nodable`.
 - `theories/Dart.v:50`, `theories/DartNextSpec.v` — the current dart and its
   decidable equality.
 - `theories-flocq/ArcCircle_b64_compute.v` — the one-sided filter.
+
+---
+
+## Supporting shapes (addendum, 2026-09-07)
+
+Host-lane vocabulary and ticket-named QED ∨ QEX stops for Joost's
+conditional acceptance. Not a noder. Not a `Geometry` subclass. Not a
+remint of `CurveSegment` / Exact* zoo types / `Dart` / Hobby.
+QEX is not BDFL accept. **Status stays Proposed.**
+
+Modules: `theories/SheetHenCook.v` (sheet / hen / egg / chicken / `𝓘` /
+first-cook scope) and `theories/Adr0007NodingEpic.v` (ticket stops).
+Registered in `_CoqProject` (host / pure-R / Stdlib lane).
+
+**ADR-0006 coupling.** Testable `𝓘` / cook results sit on the accepted
+Oracle line protocol (`docs/adr/ADR-0006-oracle-protocol-is-the-test-surface.md`).
+This cut mints no keyword and no second external seam (no FFI pin, no
+RocqRefRunner dispatch). Comment + this cross-link is the coupling.
+
+### Acceptance checklist (four prior review conditions)
+
+| # | Condition | Stop | Arm | Lemma |
+|---|-----------|------|-----|-------|
+| 1 | Identity policy sketch (structural hen minting) | `Adr0007NodingEpic.v : ticket_0007_identity_qed_or_qex` | **QED** — `ShareOne` yields one hen | `SheetHenCook.v : share_one_same_hen` |
+| 1b | Numeric `dart_eq_dec` does not decide vertex identity | `Adr0007NodingEpic.v : ticket_0007_dart_eq_qed_or_qex` | **QEX** — coord-pair `=` is not hen `=` | `SheetHenCook.v : coord_eq_not_hen_eq` |
+| 2 | Minimal `𝓘` obligations for the segment/chord lane | `Adr0007NodingEpic.v : ticket_0007_chord_chord_qed_or_qex` | **QED** — Hit on unit-square diagonals; Empty on disjoint horizontals; never Decline in scope | `SheetHenCook.v : crossing_witness`, `SheetHenCook.v : disjoint_witness`, `SheetHenCook.v : I_ok_chord_not_decline` |
+| 3 | Cross-link to accepted ADR-0006 | header of both modules + this addendum | comment / docs (no second seam) | — |
+| 4 | First cook scope = chord–chord only | `Adr0007NodingEpic.v : ticket_0007_qed_or_qex` | **QEX** — clothoid–clothoid missing (508 mirror) | `SheetHenCook.v : clothoid_clothoid_not_first_scope` |
+| 4b | Chord–chord inhabits the cook interface | `Adr0007NodingEpic.v : ticket_0007_chord_chord_qed_or_qex` | **QED** | `SheetHenCook.v : first_cook_scope_chord_chord` |
+| — | Empty ≠ Decline | `Adr0007NodingEpic.v : ticket_0007_empty_neq_decline_qed_or_qex` | **QED** | `SheetHenCook.v : IEmpty_neq_IDecline` |
+| — | “Noded on S” is cook evidence | `Adr0007NodingEpic.v : ticket_0007_noded_cook_qed_or_qex` | **QED** | `SheetHenCook.v : noded_crossing` |
+| — | Silent `pairwise_nodable` / `fully_intersected` does not discharge the constructor | `Adr0007NodingEpic.v : ticket_0007_silent_nodable_qed_or_qex` | **QEX** — a proper crossing is the noder's job and is excluded by the shadow | `SheetHenCook.v : crossing_not_nodable_shadow` |
+
+Snap-rounding is a different constructor (`SheetHenCook.v : snap_round_neq_I`).
+Display is a view (`DisplayView`), not a kernel store.
+
+WITNESS topic: overlay · claimId: 0007 · witness: 0007-qed-qex · board: ADR-0007
