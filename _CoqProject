@@ -86,3 +86,5 @@ theories/OverlayNGCurve.v
 # CIRCULARSTRING(A,B,C,A) is invalid. Does not reuse claimId V-CS.
 theories/CircularStringOddCount.v
 theories/ChordCook.v
+theories/SheetHenCook.v
+theories/Adr0007NodingEpic.v
