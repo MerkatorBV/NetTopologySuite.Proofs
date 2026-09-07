@@ -481,3 +481,7 @@ _Avoid_: empty (the disjoint 𝓘 outcome), unsupported matrix
 ## ADR-0007 Ready for BDFL
 
 See `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md` § Ready for BDFL; `ticket_0007_cook_term_qed_or_qex` in `Adr0007NodingEpic.v` (witness 0007-cook-term). Status stays Proposed.
+
+## ADR-0007 and CRV-TOUCH
+
+Accept of ADR-0007 is vocabulary law that CRV-TOUCH assumes; kiss/tangency, binary64 sheet vs kiss, arc cook termination, and any ADR-0006 cook-mode stay on the Notion CRV-TOUCH map (NTS RGR Board). Status stays Proposed until BDFL Accept.
