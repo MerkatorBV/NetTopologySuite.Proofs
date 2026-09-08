@@ -2683,6 +2683,9 @@ theories/ArcArcIsolatedQuartic.v
 # Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.
 theories/CircularCookZ.v
 theories/CircularCook.v
+# Full-circle γ : [0,1] → S + Hit (h*, p*, tᵢ, tⱼ). Locked fixture QED.
+# CircGamma on CircularArc stays QEX. 4-axiom atan2. Not first cook scope.
+theories/CircularCookHit.v
 # Slice 7 / formal soundness of oracle/driver.ml:circumcentre_q.  Raw-coordinate
 # counterpart of arc_center_equidistant (ArcChordApprox) and
 # inCircle_R_zero_of_equidistant (ArcArcCircles): proves the circumcenter formula
