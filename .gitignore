@@ -65,3 +65,5 @@ oracle/extracted.ml
 # coq_makefile / rocq makefile output from ad-hoc target builds (any suffix).
 Makefile.*.conf
 Makefile.5*
+oracle/circular_cook_extracted.ml
+oracle/circular_cook_extracted.mli

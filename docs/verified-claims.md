@@ -1991,3 +1991,6 @@ results sit on ADR-0006's Oracle line protocol; no second seam.
 | `Adr0007NodingEpic.v : ticket_0007_pairwise_split_qed_or_qex` (+ `SheetHenCook.v : interior_split_finite_holds`, `SheetHenCook.v : split_step_confluent`) | **QED:** pairwise interior split of chords is finite (leftover-width measure) and one Hit-split is confluent `[exact]` | 0 |
 | `Adr0007NodingEpic.v : ticket_0007_sheet_realiz_qed_or_qex` (+ `SheetHenCook.v : coord_realization_preserves_sheet`, `SheetHenCook.v : overlay_ng_robust_is_finite_snap_holds`, `SheetHenCook.v : overlay_ng_robust_is_snap_not_I`) | **QED:** binary64 realizes the same sheet; OverlayNGRobust is a finite snap-sequence, not `𝓘` `[exact]` | 0 |
 | `Adr0007NodingEpic.v : ticket_0007_chicken_dart_qed_or_qex` (+ `SheetHenCook.v : ddir_migration_one_equation`) | **QED:** `DdirDart` := `(Hen * Hen)` is the chicken projection; CoordDart stays the `Dart.v` coordinate-pair story; no third type `[exact]` | 0 |
+
+**Integer circle–circle seam** (own paragraph). `CircularCookZ.v : I_circles_z` is an extractable discriminant + hen mint (Hit / Empty / Touch / Decline), not glossary 𝓘. Locked Hit `CircularCookZ.v : locked_I_circles_z_hit`; locked kiss `CircularCookZ.v : locked_external_kiss_is_touch`. QEX γ/`t` `CircularCook.v : circular_gamma_is_qex`. Oracle `I_CIRCULAR`.
+
