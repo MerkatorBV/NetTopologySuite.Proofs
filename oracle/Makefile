@@ -288,3 +288,5 @@ jts1094-scout: scout-incircle-ffi $(TARGET)
 clean:
 	rm -f *.cmi *.cmo *.cmx *.o $(TARGET) $(FFI_LIB) $(FFI_PROBE) \
 	  $(SCOUT_IC_LIB) $(SCOUT_IC_PROBE) scout_incircle_ml.o scout_incircle_stubs.o
+# Extracted I_circles_z (I_CIRCULAR). Gates HIT / EMPTY / DECLINE / TOUCH / replay.
+	cd .. && python3 oracle/gen_i_circular_tests.py

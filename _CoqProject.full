@@ -2680,6 +2680,8 @@ theories/ArcArcQuartic.v
 # Landscaping: names coords a later cook would write; does not implement
 # 𝓘 or mint hens.  Locked-fixture witness x and both y.  No Admitted.
 theories/ArcArcIsolatedQuartic.v
+# Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.
+theories/CircularCookZ.v
 # Slice 7 / formal soundness of oracle/driver.ml:circumcentre_q.  Raw-coordinate
 # counterpart of arc_center_equidistant (ArcChordApprox) and
 # inCircle_R_zero_of_equidistant (ArcArcCircles): proves the circumcenter formula

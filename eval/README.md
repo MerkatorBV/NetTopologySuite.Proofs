@@ -180,3 +180,35 @@ rocq compile eval/Claim9004c.v
 rocq compile eval/Claim9004d.v
 rocq compile eval/Claim9005a.v
 ```
+Production home for 64-i-circular (integer circle–circle discriminant +
+hen mint; locked Hit 0 1; kiss is Touch): `theories/CircularCookZ.v`.
+R-side `p*` and γ QEX: `theories/CircularCook.v`. Oracle `I_CIRCULAR`.
+
+Production home for 9004-d (Green/Qed: the cell pruning bound behind
+Polycenter / JTS Cell.getMaxDistance — an empty radius achievable at any
+point of a square cell of centre c, half-side h is at most
+dist(c, X) + √2·h for every obstacle X; two triangle steps plus the cell
+circumradius dist_sq ≤ 2h²): `theories/CellRadiusBound.v` (same WITNESS
+tag; also carries the centre-shift Lipschitz lemmas, radius
+monotonicity, and per-cell corollaries on both the empty and inscribed
+duals). The unit here is fully self-contained (local Lagrange-identity
+triangle inequality) with the corner circumradius-equality pin, the
+3 ≤ 2 + √2 slack pin, and the mismatch probe refuting the slack-free
+misreading (empty radius 3 at (−1,0) beats centre clearance 2).
+Subdivision recursion and tolerance loop deferred.
+
+**9005-a has NO production home, by design** (Green/Qed, teaching-only):
+the board card's paper (Garcia-Castellanos & Lombardo 2007, poles of
+inaccessibility) is SPHERICAL, and plane MIC/LEC ≠ spherical PIA — a
+`theories/` cite would be false ancestry (see
+`docs/library-footnotes.md`). The unit teaches the paper's DEFINITIONAL
+signature planarly: the PIA of the three-point shoreline A=(0,0),
+B=(4,0), C=(0,4) over the closed triangle is the hypotenuse midpoint
+(2,2) with clearance √8, equidistant (squared distance exactly 8) from
+ALL THREE shoreline points — the exactly-three-closest-points signature.
+Maximality is the rational nearest-vertex case split. Pins: the three
+equidistance equalities; probes: the centroid cannot support the PIA
+radius (clearance² 32/9 at A — PIA ≠ mass centre), and the hypotenuse
+drift (3,1) drops clearance² to 2. Production twins named after
+`theories/LargestEmptyCircle.v`; the spherical gap stays open on the
+board.
