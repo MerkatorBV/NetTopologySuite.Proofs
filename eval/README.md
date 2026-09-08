@@ -24,6 +24,8 @@ matching can bind the formal lemma to the claim id without loading the full
 | `9004-c` | `construct` | [`Claim9004c.v`](Claim9004c.v) | `mic_unit_square` |
 | `9004-d` | `construct` | [`Claim9004d.v`](Claim9004d.v) | `cell_achievable_radius_bound` |
 | `9005-a` | `teaching` | [`Claim9005a.v`](Claim9005a.v) | `pia_triangle_three_touch` |
+| `64-i-circular` | `core` | [`Claim64iCircular.v`](Claim64iCircular.v) | `locked_I_circles_z_hit` |
+| `64-circ-z-partition` | `core` | [`Claim64circZPartition.v`](Claim64circZPartition.v) | `I_circles_z_hit_iff` |
 
 Production home for 65-a (Green/Qed: full biconditional — flat endcap =
 perpendicular diameter segment `p ± r·J(t)`, with the rational witness pins
@@ -128,6 +130,15 @@ and the two mismatch probes (same radius off-centre escapes the left
 wall; radius 3/5 has no admissible centre). Polycenter cell subdivision
 and the achievable-radius bound (9004-d) deferred.
 
+Production home for 64-i-circular (integer circle–circle discriminant +
+hen mint; locked Hit 0 1; kiss is Touch): `theories/CircularCookZ.v`.
+Oracle `I_CIRCULAR`.
+
+Production home for 64-circ-z-partition (Hit ↔ `|r1−r2|² < d² < (r1+r2)²`
+on positive radii; Empty / Touch / Decline against the same squared
+tests; locked internal kiss `(0,0)` r=5 vs `(3,0)` r=2 is Touch):
+`theories/CircularCookZ.v`. Oracle `I_CIRCULAR` takes integer tokens.
+
 Production home for 9004-d (Green/Qed: the cell pruning bound behind
 Polycenter / JTS Cell.getMaxDistance — an empty radius achievable at any
 point of a square cell of centre c, half-side h is at most
@@ -161,7 +172,7 @@ board.
 
 ```text
 # micro-kernel static match (Rocq optional):
-#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v | eval/Claim9004c.v | eval/Claim9004d.v | eval/Claim9005a.v
+#   source = eval/Claim65a.v | eval/Claim65b.v | eval/Claim65c.v | eval/Claim65d.v | eval/Claim65e.v | eval/Claim67a.v | eval/Claim67b.v | eval/Claim68a.v | eval/Claim69a.v | eval/Claim423a.v | eval/Claim423b.v | eval/Claim424a.v | eval/Claim425a.v | eval/Claim9004c.v | eval/Claim9004d.v | eval/Claim9005a.v | eval/Claim64iCircular.v | eval/Claim64circZPartition.v
 # full compile (needs Rocq / nts-eval switch):
 rocq compile eval/Claim65a.v
 rocq compile eval/Claim65b.v
@@ -179,36 +190,6 @@ rocq compile eval/Claim425a.v
 rocq compile eval/Claim9004c.v
 rocq compile eval/Claim9004d.v
 rocq compile eval/Claim9005a.v
+rocq compile eval/Claim64iCircular.v
+rocq compile eval/Claim64circZPartition.v
 ```
-Production home for 64-i-circular (integer circle–circle discriminant +
-hen mint; locked Hit 0 1; kiss is Touch): `theories/CircularCookZ.v`.
-R-side `p*` and γ QEX: `theories/CircularCook.v`. Oracle `I_CIRCULAR`.
-
-Production home for 9004-d (Green/Qed: the cell pruning bound behind
-Polycenter / JTS Cell.getMaxDistance — an empty radius achievable at any
-point of a square cell of centre c, half-side h is at most
-dist(c, X) + √2·h for every obstacle X; two triangle steps plus the cell
-circumradius dist_sq ≤ 2h²): `theories/CellRadiusBound.v` (same WITNESS
-tag; also carries the centre-shift Lipschitz lemmas, radius
-monotonicity, and per-cell corollaries on both the empty and inscribed
-duals). The unit here is fully self-contained (local Lagrange-identity
-triangle inequality) with the corner circumradius-equality pin, the
-3 ≤ 2 + √2 slack pin, and the mismatch probe refuting the slack-free
-misreading (empty radius 3 at (−1,0) beats centre clearance 2).
-Subdivision recursion and tolerance loop deferred.
-
-**9005-a has NO production home, by design** (Green/Qed, teaching-only):
-the board card's paper (Garcia-Castellanos & Lombardo 2007, poles of
-inaccessibility) is SPHERICAL, and plane MIC/LEC ≠ spherical PIA — a
-`theories/` cite would be false ancestry (see
-`docs/library-footnotes.md`). The unit teaches the paper's DEFINITIONAL
-signature planarly: the PIA of the three-point shoreline A=(0,0),
-B=(4,0), C=(0,4) over the closed triangle is the hypotenuse midpoint
-(2,2) with clearance √8, equidistant (squared distance exactly 8) from
-ALL THREE shoreline points — the exactly-three-closest-points signature.
-Maximality is the rational nearest-vertex case split. Pins: the three
-equidistance equalities; probes: the centroid cannot support the PIA
-radius (clearance² 32/9 at A — PIA ≠ mass centre), and the hypotenuse
-drift (3,1) drops clearance² to 2. Production twins named after
-`theories/LargestEmptyCircle.v`; the spherical gap stays open on the
-board.

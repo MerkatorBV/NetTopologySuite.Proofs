@@ -1552,6 +1552,7 @@ let run_arc_arc_xy () =
             print_newline ()
           end
         end
+
 (* ----- I_CIRCULAR (claimId 64-circ-z-partition).
    ---------------------------------------------------------------------------
    Extracted CircularCookZ.I_circles_z: integer circle–circle discriminant.
@@ -1617,7 +1618,6 @@ let run_i_circular () =
       | IZDecline -> print_endline "DECLINE"
       end
   | _ -> print_endline "NAN"
-
 
 (* ----- DISC_OVERLAY (OV-DISC / OverlayNGCurve two-disc closed form).
    ---------------------------------------------------------------------------
@@ -4771,8 +4771,8 @@ let () =
        | "ARC_CENTROID"             -> run_arc_centroid ()
        | "ARC_AREA_CENTROID"        -> run_arc_area_centroid ()
        | "ARC_DISTANCE"             -> run_arc_distance ()
-       | "I_CIRCULAR"               -> run_i_circular ()
        | "ARC_ARC_XY"               -> run_arc_arc_xy ()
+       | "I_CIRCULAR"               -> run_i_circular ()
        | "DISC_OVERLAY"             -> run_disc_overlay ()
        | "LEC_CIRCLE"               -> run_lec_circle ()
        | "OBSTACLE_DISTANCE"        -> run_obstacle_distance ()
