@@ -471,7 +471,35 @@ _Avoid_: dart (coordinate pair), edge (unqualified)
 The pairwise constructor: Hit `(p*, tᵢ, tⱼ)`, Empty (disjoint images),
 or 𝓘 Decline (no algorithm). Predicates never mint hens. On a Hit the
 cook may `split(t)` and mint one hen (letter after Accept; not the
-bag loop). Pairwise
+bag loop). On chord–chord, proper-cross signs license a constructed
+Hit via `Intersect.strict_intersection_point` (not a remint of that
+lemma; not a total `𝓘`; not `I_circles_z` / `I_CIRCULAR`; not
+glossary `𝓘` with γ / tᵢ,tⱼ). Host CircGamma stays QEX. A circular
+IHit does not feed host `try_cook_hit` (circular eggs stay
+`MkOutOfScope`); the 4-axiom sidecar cooks the locked circular Hit
+via `circ_gamma` `split(t)` without discharging CircGamma. On a
+two-root circular Hit the sidecar allocates `MintTwo` (`p+` and
+`p−` are both Hits). Empty / Decline / Touch mint nothing.
+Leftover shared endpoint is not a kiss. I.1 tickets the #666
+fence: `I_circles_z` ≠ `I_circles_gamma` ≠ sidecar cook ≠ host
+`I_gloss` (CircGamma QEX) by observation, not a type synonym.
+Touch ≠ IHit. Circular Empty ≠ Decline. Chord × circular Decline
+inhabits `I_ok`; a mixed Hit does not. I.2 drops the lock on
+`I_circles_gamma`: Hit iff proper discriminant and `on_full_circle`
+on both radical roots (γ_full, not arc membership). I.3: Empty iff
+proper pair and γ_full images disjoint on S; Decline iff not a
+proper pair (`d=0` or `r≤0`). Discriminant Empty and image-disjoint
+are different proofs. I.8: leftovers_ab = leftovers_ba on γ_full
+(circular analogue of `split_step_confluent`; not the bag loop).
+I.9: an `I_circles_z` / `I_CIRCULAR` Hit is tags 0/1, not
+glossary `(p*, tᵢ, tⱼ)`, and does not license host
+`try_cook_hit` / `circ_split` / first-cook expansion.
+I.10 closes Campaign I: sidecar cook exists on a constructed
+circular Hit (both roots); host CircGamma stays QEX;
+`first_cook_scope` stays chord–chord; `I_CIRCULAR` stays a
+classifier; the #666 fence holds; Campaign II and H⊥ are named
+parked; no new kernel; not SQL/MM done.
+Pairwise
 interior split of chords is finite (width measure); bag-level
 termination and confluence of the repeat-until-noded loop remain
 obligations of 𝓘 families. binary64 is a coordinate realization of
