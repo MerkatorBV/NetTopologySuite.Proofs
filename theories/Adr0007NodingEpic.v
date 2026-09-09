@@ -38,9 +38,47 @@
    projection (QED). One type equation, not three types.
    `ticket_0007_chicken_dart_qed_or_qex` discharges left.
 
-   QEX is not BDFL accept. ADR-0007 stays Proposed. Do not remint
-   CurveSegment / Exact* zoo types / Dart. Do not steal 508-* / 522-*
-   board mints. Do not claim a complete FP noder or close Hobby.
+   Letter after Accept (not a noder): chord split(t) + one Hit cook
+   step mints one hen and replaces each crossed chicken by two
+   incident on that hen. `ticket_0007_cook_step_qed_or_qex`
+   discharges left on the crossing pair. Out-of-scope pairs mint
+   nothing (`ticket_0007_cook_step_scope_qed_or_qex` discharges
+   right). Not a remint of leftover_width / pairwise_split.
+
+   Letter after Accept (not a noder): proper-cross signs license a constructed
+   Hit via Intersect.strict_intersection_point. That Hit recovers
+   the unit-square witness and cooks. `ticket_0007_constructed_I_qed_or_qex`
+   discharges left. Missing signs do not license the formula
+   (`ticket_0007_constructed_I_scope_qed_or_qex` discharges right).
+   Equal constructed p* (operand swap) licenses ShareOne
+   (`ticket_0007_share_constructed_qed_or_qex` discharges left).
+   Not a remint of Intersect. Not a total 𝓘.
+
+   Letter after Accept (not a noder): a circular IHit still cannot
+   feed the host cook step. Circular eggs stay MkOutOfScope;
+   try_cook_hit returns None. `ticket_0007_circ_host_cook_qed_or_qex`
+   discharges right. First cook scope stays chord–chord. Host
+   CircGamma stays QEX (CircularCook.v). The 4-axiom sidecar
+   CircularCookSplit.v feeds the locked circular Hit into a
+   same-shape split(t) cook; I.7 MintTwo / p- lives there too.
+   That is not this host module. Do not fake CircGamma Discharge.
+   I.1 Fence: chord × circular Decline inhabits I_ok (honest host
+   arm). A constructed mixed Hit does not. The four-object pairwise
+   fence lives in CircularCookSplit.v — not a type synonym.
+   I.9 classifier ≠ cook lives in CircularCookLicense.v — a
+   Z-classifier Hit is tags 0/1 and does not license host
+   try_cook_hit / circ_split / first_cook_scope expansion.
+   I.10 Campaign-I close lives in CircularCookClose.v — sidecar
+   cook on both roots; CircGamma stays QEX; first cook stays
+   chord–chord; I_CIRCULAR stays a classifier; #666 fence holds;
+   Campaign II and H⊥ are named parked. Not this host module.
+
+   QEX is not a new Accept cycle. ADR-0007 is Accepted (2026-09-07).
+   These letters do not reopen Status. Constructed chord-chord I is
+   not I_circles_z / I_CIRCULAR and not glossary I with gamma / t.
+   Host CircGamma stays QEX. Do not remint CurveSegment / Exact*
+   zoo types / Dart. Do not steal 508-* / 522-* board mints. Do
+   not claim a complete FP noder or close Hobby. Do not close 510.
 
    Testable 𝓘 / cook results sit on the accepted Oracle line protocol
    (ADR-0006). This module mints no keyword and no second external seam.
@@ -255,9 +293,159 @@ Qed.
 
 (* Core-slice circular tickets: ticket_64_circ_hit_params_qed_or_qex
    (QED, CircularCookHit.v, full/atan2), CircularCookSpan.v span γ
-   (QED, 4-axiom sidecar), and ticket_64_circ_gamma_qed_or_qex (QEX,
-   CircularCook.v host flag). Not Required here — host lane stays
-   atan2-free. Host CircGamma stays QEX; first cook stays chord–chord. *)
+   (QED, 4-axiom sidecar), ticket_64_circ_gamma_qed_or_qex (QEX,
+   CircularCook.v host flag), and CircularCookSplit.v (4-axiom
+   sidecar cook of a locked circular Hit). I.2 ∀ Hit soundness
+   lives in CircularCookHit.v (ticket_0007_i2_hit_sound_qed_or_qex);
+   I.3 ∀ Empty / Decline lives in CircularCookEmpty.v
+   (ticket_0007_i3_empty_qed_or_qex; 4-axiom γ_full; not Required
+   here); I.8 leftover confluence lives in CircularCookConfluence.v
+   (ticket_0007_i8_confluent_qed_or_qex; 4-axiom γ_full; not
+   Required here); I.9 classifier ≠ cook lives in
+   CircularCookLicense.v (ticket_0007_i9_tags_qed_or_qex; 4-axiom;
+   not Required here). Not Required here — host lane stays atan2-free.
+   Host CircGamma stays QEX; first cook stays chord–chord. The host
+   circular-Hit→cook bridge is the QEX stop
+   ticket_0007_circ_host_cook_qed_or_qex below. *)
+
+(* Letter after Accept: one Hit cook step on chord–chord (QED) or
+   the step fails to mint (QEX). Discharged QED — crossing chickens
+   share one minted hen after split(t). Not the bag noder loop. *)
+(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_cook_step_qed_or_qex","title":"ADR-0007 letter after Accept is one Hit cook step (QED) or no mint (QEX); discharged QED on chord-chord split sharing one hen","file":"theories/Adr0007NodingEpic.v","witness":"0007-cook-split","board":"ADR-0007"} *)
+Theorem ticket_0007_cook_step_qed_or_qex :
+  (exists cp : CookedPair,
+     try_cook_hit crossing_ck1 crossing_ck2
+       (cw_result crossing_witness) crossing_hen = Some cp /\
+     cooked_shares_hen cp /\
+     cp_hen cp = crossing_hen)
+  \/
+  try_cook_hit crossing_ck1 crossing_ck2
+    (cw_result crossing_witness) crossing_hen = None.
+Proof.
+  left.
+  exists cooked_crossing.
+  split; [exact cooked_crossing_try|].
+  split; [exact cooked_crossing_shares|].
+  reflexivity.
+Qed.
+
+(* Out-of-scope / Empty / Decline mint a hen (QED) or they do not
+   (QEX). Discharged QEX — clothoid Decline and chord Empty allocate
+   no hen. *)
+Theorem ticket_0007_cook_step_scope_qed_or_qex :
+  (forall c1 c2 o h, try_cook_hit c1 c2 o h <> None)
+  \/
+  (try_cook_hit clothoid_ck1 clothoid_ck2 IDecline crossing_hen = None /\
+   try_cook_hit crossing_ck1 crossing_ck2 IEmpty crossing_hen = None).
+Proof.
+  right.
+  split; [exact try_cook_hit_clothoid_none|].
+  apply try_cook_hit_empty_none.
+Qed.
+
+(* Next rung: constructed 𝓘 from proper-cross signs (QED) or the
+   formula is not licensed (QEX). Discharged QED — signs on the
+   unit-square diagonals produce the same Hit the cook already
+   splits, via Intersect.strict_intersection_point. Not a remint. *)
+(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_constructed_I_qed_or_qex","title":"ADR-0007 next rung is constructed I from proper-cross signs (QED) or the formula is unlicensed (QEX); discharged QED on Intersect.strict_intersection_point recovering the unit-square Hit","file":"theories/Adr0007NodingEpic.v","witness":"0007-constructed-I","board":"ADR-0007"} *)
+Theorem ticket_0007_constructed_I_qed_or_qex :
+  (proper_cross_signs diag_ab diag_cd /\
+   I_ok (MkChord diag_ab) (MkChord diag_cd)
+        (constructed_hit diag_ab diag_cd) /\
+   constructed_hit diag_ab diag_cd = IHit cross_pt (1 / 2) (1 / 2) /\
+   try_cook_hit crossing_ck1 crossing_ck2
+     (constructed_hit diag_ab diag_cd) crossing_hen = Some cooked_crossing /\
+   cooked_shares_hen cooked_crossing)
+  \/
+  ~ proper_cross_signs diag_ab diag_cd.
+Proof.
+  left.
+  split; [exact crossing_proper_cross_signs|].
+  split; [apply constructed_hit_I_ok; exact crossing_proper_cross_signs|].
+  split; [exact constructed_hit_crossing_eq|].
+  split; [exact cooked_constructed_crossing|].
+  exact cooked_crossing_shares.
+Qed.
+
+(* Constructed 𝓘 is total on chord–chord (QED) or missing signs do
+   not license the formula (QEX). Discharged QEX — disjoint
+   horizontals are Empty, not a constructed Hit. *)
+Theorem ticket_0007_constructed_I_scope_qed_or_qex :
+  (forall c1 c2,
+     I_ok (MkChord c1) (MkChord c2) (constructed_hit c1 c2))
+  \/
+  (~ proper_cross_signs hor_bot hor_top /\
+   I_ok (MkChord hor_bot) (MkChord hor_top) IEmpty).
+Proof.
+  right.
+  split; [exact disjoint_not_proper_cross|].
+  exact disjoint_I_ok.
+Qed.
+
+(* Equal constructed p* licenses ShareOne (QED) or operand swap
+   names two points (QEX). Discharged QED — Intersect.strict_
+   intersection_point_sym. The basis, not dart_eq_dec. *)
+Theorem ticket_0007_share_constructed_qed_or_qex :
+  (forall h : Hen,
+     hit_point (constructed_hit diag_ab diag_cd) =
+     hit_point (constructed_hit diag_cd diag_ab) /\
+     fst (apply_id_decision (ShareOne h)) =
+     snd (apply_id_decision (ShareOne h)))
+  \/
+  (exists h : Hen,
+     hit_point (constructed_hit diag_ab diag_cd) <>
+     hit_point (constructed_hit diag_cd diag_ab)).
+Proof.
+  left.
+  intros h.
+  apply (equal_constructed_p_share diag_ab diag_cd h
+           crossing_proper_cross_signs).
+Qed.
+
+(* Next rung: a circular IHit feeds the host cook step (QED) or the
+   host cook still declines circular eggs (QEX). Discharged QEX —
+   MkOutOfScope EggCircularArc is not first cook scope, so
+   try_cook_hit returns None even when the result is IHit.
+   CircGamma stays QEX in CircularCook.v; do not fake Discharge.
+   Not a remint of ArcSplitAtNode. Kiss/Touch is not this stop. *)
+(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_circ_host_cook_qed_or_qex","title":"ADR-0007 circular IHit feeds the host cook (QED) or try_cook_hit still declines circular eggs (QEX); discharged QEX; CircGamma stays QEX","file":"theories/Adr0007NodingEpic.v","witness":"0007-circ-cook","board":"ADR-0007"} *)
+Theorem ticket_0007_circ_host_cook_qed_or_qex :
+  (exists cp : CookedPair,
+     try_cook_hit circular_ck1 circular_ck2
+       (IHit cross_pt (1 / 2) (1 / 2)) crossing_hen = Some cp)
+  \/
+  (try_cook_hit circular_ck1 circular_ck2
+     (IHit cross_pt (1 / 2) (1 / 2)) crossing_hen = None
+   /\ ~ first_cook_scope EggCircularArc EggCircularArc).
+Proof.
+  right.
+  split; [apply try_cook_hit_circular_hit_none|].
+  exact circular_egg_not_first_cook_scope.
+Qed.
+
+(* I.1: chord × circular Decline inhabits I_ok (QED) or a mixed
+   constructed Hit is licensed (QEX). Discharged QED — first cook
+   scope stays chord–chord; mixed Empty / Hit are False. Not a
+   constructed mixed Hit. *)
+(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_chord_circ_decline_qed_or_qex","title":"Chord times circular Decline inhabits I_ok (QED) or a mixed Hit is licensed (QEX); discharged QED; I.1 honest host arm","file":"theories/Adr0007NodingEpic.v","witness":"0007-I.1-fence","board":"ADR-0007"} *)
+
+Theorem ticket_0007_chord_circ_decline_qed_or_qex :
+  (I_ok (MkChord hor_bot) (MkOutOfScope EggCircularArc) IDecline
+   /\ (forall p ti tj,
+         ~ I_ok (MkChord hor_bot) (MkOutOfScope EggCircularArc)
+              (IHit p ti tj))
+   /\ ~ I_ok (MkChord hor_bot) (MkOutOfScope EggCircularArc) IEmpty
+   /\ ~ first_cook_scope EggChord EggCircularArc)
+  \/
+  I_ok (MkChord hor_bot) (MkOutOfScope EggCircularArc)
+       (IHit cross_pt (1 / 2) (1 / 2)).
+Proof.
+  left.
+  split; [exact chord_circular_decline_I_ok|].
+  split; [exact chord_circular_hit_not_I_ok|].
+  split; [exact chord_circular_empty_not_I_ok|].
+  exact chord_circular_not_first_cook_scope.
+Qed.
 
 Print Assumptions ticket_0007_qed_or_qex.
 Print Assumptions ticket_0007_chord_chord_qed_or_qex.
@@ -270,3 +458,10 @@ Print Assumptions ticket_0007_pairwise_split_qed_or_qex.
 Print Assumptions ticket_0007_cook_term_qed_or_qex.
 Print Assumptions ticket_0007_sheet_realiz_qed_or_qex.
 Print Assumptions ticket_0007_chicken_dart_qed_or_qex.
+Print Assumptions ticket_0007_cook_step_qed_or_qex.
+Print Assumptions ticket_0007_cook_step_scope_qed_or_qex.
+Print Assumptions ticket_0007_constructed_I_qed_or_qex.
+Print Assumptions ticket_0007_constructed_I_scope_qed_or_qex.
+Print Assumptions ticket_0007_share_constructed_qed_or_qex.
+Print Assumptions ticket_0007_circ_host_cook_qed_or_qex.
+Print Assumptions ticket_0007_chord_circ_decline_qed_or_qex.

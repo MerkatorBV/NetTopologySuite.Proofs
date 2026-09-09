@@ -138,6 +138,8 @@ Production home for 64-circ-z-partition (Hit ↔ `|r1−r2|² < d² < (r1+r2)²`
 on positive radii; Empty / Touch / Decline against the same squared
 tests; locked internal kiss `(0,0)` r=5 vs `(3,0)` r=2 is Touch):
 `theories/CircularCookZ.v`. Oracle `I_CIRCULAR` takes integer tokens.
+I.9 (`0007-I.9-classifier-neq-cook`) tickets that a Z Hit is tags
+0/1 and is not a cook license: `theories/CircularCookLicense.v`.
 
 Production home for 64-circ-hit-params (full-circle γ : [0,1] → S;
 locked Hit carries constructed `(h*, p*, tᵢ, tⱼ)` with `γ(t)=p*`;
@@ -148,6 +150,60 @@ Production home for 64-circ-span-gamma (span-restricted γ on
 `valid_arc` CircularArc; locked proper arcs keep radical `p+` and
 reject `p−`; host CircGamma stays QEX): `theories/CircularCookSpan.v`.
 4-axiom atan2 sidecar; no micro-kernel twin (atan2 / `arc_center` cone).
+
+Production home for 0007-circ-cook (circular Hit feeds a same-shape
+`split(t)` cook on locked discs; host `try_cook_hit` still declines
+circular eggs; CircGamma stays QEX; Touch is a fenced QEX arm):
+`theories/CircularCookSplit.v` (sidecar) and
+`theories/Adr0007NodingEpic.v` (host QEX). 4-axiom atan2 sidecar;
+no micro-kernel twin (atan2 / radical `p*` cone).
+
+Production home for 0007-I.7-mint-two (`p−` is a second Hit;
+allocation across `p+` and `p−` is `MintTwo`; leftover shared
+endpoint ≠ kiss; Empty / Decline / Touch still mint nothing):
+`theories/CircularCookSplit.v`. 4-axiom atan2 sidecar; no
+micro-kernel twin (atan2 / radical `p*` cone).
+
+Production home for 0007-I.1-fence (four objects pairwise unequal
+by locked observation, not a type synonym; Touch ≠ IHit; circular
+Empty ≠ Decline; chord × circular Decline inhabits `I_ok`;
+`I_gloss` stays QEX): `theories/CircularCookSplit.v` (fence /
+Touch / Empty tickets), `theories/Adr0007NodingEpic.v` (mixed
+Decline), `theories/CircularCook.v` (`I_gloss` QEX). Sidecar
+4-axiom atan2; host tickets atan2-free.
+
+Production home for 0007-I.2-hit-sound (`I_circles_gamma` Hit iff
+proper discriminant ∧ `on_full_circle` on both radical roots;
+γ_full, not CircularArc span; R3 locked witness recovered;
+CircGamma stays QEX): `theories/CircularCookHit.v`. 4-axiom atan2
+lane; sidecar cook stays locked.
+
+Production home for 0007-I.3-empty-decline (`I_circles_gamma` Empty
+iff proper pair ∧ γ_full images disjoint on S; Decline iff not a
+proper pair (`d=0` or `r≤0`); discriminant Empty ≠ image-disjoint
+on concentric unequal radii; CircGamma stays QEX):
+`theories/CircularCookEmpty.v`. 4-axiom atan2 lane; sidecar cook
+stays locked.
+
+Production home for 0007-I.8-leftover-confluence (`circ_leftovers_ab`
+= `circ_leftovers_ba` on γ_full; circular analogue of
+`split_step_confluent`; cook leftovers inhabit that bag; one-step
+≠ bag loop; CircGamma stays QEX):
+`theories/CircularCookConfluence.v`. 4-axiom atan2 sidecar; not
+leftover-width. Campaign I close is I.10.
+
+Production home for 0007-I.9-classifier-neq-cook (`I_circles_z` /
+`I_CIRCULAR` Hit is tags 0/1, not glossary `(p*, tᵢ, tⱼ)`; Z Hit
+⇏ host `try_cook_hit` / `circ_split` / first-cook expansion;
+CircGamma stays QEX): `theories/CircularCookLicense.v`. 4-axiom
+atan2 sidecar. Campaign I close is I.10.
+
+Production home for 0007-I.10-campaign-i-close (sidecar cook on
+constructed circular Hit, both roots; host CircGamma stays QEX;
+`first_cook_scope` stays chord–chord; `I_CIRCULAR` stays a
+classifier; #666 fence holds; Campaign II and H⊥ named parked;
+no new kernel; not SQL/MM done):
+`theories/CircularCookClose.v`. 4-axiom atan2 sidecar.
 
 Production home for 64-naa-res (constructor ⇒ affine circle–circle
 resultant root under `circles_properly_intersect`; not the converse

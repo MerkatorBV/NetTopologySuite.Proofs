@@ -29,6 +29,8 @@
    License: BSD-3-Clause (see LICENSE)
    ========================================================================== *)
 
+(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
+
 From Stdlib Require Import ZArith Reals Lra.
 From NTS.Proofs Require Import Distance SheetHenCook CurveGeometry ArcOrient
   ArcIntersect ArcOffsetThreePoint ArcArcCircles Atan2 AngleBetween

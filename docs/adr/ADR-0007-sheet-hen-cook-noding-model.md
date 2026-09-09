@@ -263,6 +263,31 @@ cross-link are the coupling. Status of ADR-0006 stays Accepted.
 | — | Full-circle Hit carries constructed `(h*, p*, tᵢ, tⱼ)` | `CircularCookHit.v : ticket_64_circ_hit_params_qed_or_qex` | **QED** — locked `(0,0)/(7,0)` r=5; `γ(t)=p*` | `CircularCookHit.v : locked_I_circles_gamma_hit`, `CircularCookHit.v : locked_hit_plus_on_gamma` |
 | — | CircularArc γ / CircGamma | `CircularCook.v : ticket_64_circ_gamma_qed_or_qex` | **QEX** — 3-axiom host has no atan2-free interpolant; do not fake Discharge | `CircularCook.v : circular_gamma_is_qex` |
 | — | Span-restricted γ on CircularArc | `CircularCookSpan.v : circular_arc_gamma_constructed` | **QED** — principal-span interpolant; locked proper arcs keep `p+`, reject `p−` | `CircularCookSpan.v : locked_span_gamma_hit`, `CircularCookSpan.v : arc_gamma_retract` |
+| — | Host circular IHit → `try_cook_hit` | `Adr0007NodingEpic.v : ticket_0007_circ_host_cook_qed_or_qex` | **QEX** — circular eggs stay `MkOutOfScope`; host cook declines even on IHit | `SheetHenCook.v : try_cook_hit_circular_hit_none`, `SheetHenCook.v : circular_egg_not_first_cook_scope` |
+| — | Circular Hit feeds sidecar `split(t)` | `CircularCookSplit.v : ticket_0007_circ_cook_step_qed_or_qex` | **QED** — locked plus-root leftovers meet at `p+`; CircGamma stays QEX | `CircularCookSplit.v : cooked_circ_plus_try`, `CircularCookSplit.v : cooked_circ_plus_ok` |
+| — | Circular Touch / Empty / Decline cook | `CircularCookSplit.v : ticket_0007_circ_cook_scope_qed_or_qex` | **QEX** — kiss is a fenced scope arm, not a CRV-TOUCH procedure | `CircularCookSplit.v : locked_circ_touch_none` |
+| — | I.7 MintTwo / `p−` is a second Hit | `CircularCookSplit.v : ticket_0007_circ_mint_two_qed_or_qex` | **QED** — allocation across both radical roots is `MintTwo`; leftovers meet at `p−` | `CircularCookSplit.v : cooked_circ_mint_two_try`, `CircularCookSplit.v : cooked_circ_minus_ok` |
+| — | I.7 leftover shared endpoint ≠ kiss | `CircularCookSplit.v : ticket_0007_circ_shared_neq_kiss_qed_or_qex` | **QED** — leftover join is Hit incidence, not Touch | `CircularCookSplit.v : leftover_shared_endpoint_not_touch` |
+| — | I.7 MintTwo Empty / Decline / Touch | `CircularCookSplit.v : ticket_0007_circ_mint_two_scope_qed_or_qex` | **QEX** — still allocate no hen | `CircularCookSplit.v : locked_circ_mint_two_touch_none` |
+| — | I.1 four-object fence | `CircularCookSplit.v : ticket_0007_i1_fence_qed_or_qex` | **QED** — locked observations; not a type synonym | `CircularCookSplit.v : i1_z_neq_gamma_obs`, `CircularCookSplit.v : i1_sidecar_neq_gloss_obs` |
+| — | I.1 Touch ≠ IHit | `CircularCookSplit.v : ticket_0007_touch_neq_ihit_qed_or_qex` | **QED** — kiss Touch ≠ proper-cross Hit on Z and γ | `CircularCookZ.v : IZTouch_neq_IZHit`, `CircularCookHit.v : ICircGTouch_neq_ICircGHit` |
+| — | I.1 circular Empty ≠ Decline | `CircularCookSplit.v : ticket_0007_empty_neq_decline_circ_qed_or_qex` | **QED** — locked Empty / Decline fixtures differ | `CircularCookZ.v : IZEmpty_neq_IZDecline`, `CircularCookHit.v : ICircGEmpty_neq_ICircGDecline` |
+| — | I.1 chord × circular Decline | `Adr0007NodingEpic.v : ticket_0007_chord_circ_decline_qed_or_qex` | **QED** — mixed pair inhabits `I_ok` as Decline, not a constructed Hit | `SheetHenCook.v : chord_circular_decline_I_ok`, `SheetHenCook.v : chord_circular_hit_not_I_ok` |
+| — | I.1 I_gloss / host CircGamma | `CircularCook.v : ticket_0007_i1_gloss_qed_or_qex` | **QEX** — `I_gloss` undefined; host circular `I_ok` is Decline only | `CircularCook.v : circular_gamma_is_qex`, `SheetHenCook.v : circular_decline_I_ok` |
+| — | I.2 ∀ Hit soundness | `CircularCookHit.v : ticket_0007_i2_hit_sound_qed_or_qex` | **QED** — `I_circles_gamma` = Hit iff proper disc ∧ `on_full_circle` on both roots; R3 locked witness recovered | `CircularCookHit.v : I_circles_gamma_hit_iff`, `CircularCookHit.v : i2_recovers_locked_r3` |
+| — | I.2 not arc membership | `CircularCookHit.v : ticket_0007_i2_arc_scope_qed_or_qex` | **QEX** — γ_full only; CircGamma stays QEX; first cook stays chord–chord | `CircularCook.v : circular_gamma_is_qex`, `CircularCook.v : circular_not_first_cook_scope` |
+| — | I.3 ∀ Empty | `CircularCookEmpty.v : ticket_0007_i3_empty_qed_or_qex` | **QED** — `I_circles_gamma` = Empty iff proper pair ∧ γ_full images disjoint on S | `CircularCookEmpty.v : I_circles_gamma_empty_iff`, `CircularCookEmpty.v : i3_recovers_locked_empty` |
+| — | I.3 ∀ Decline | `CircularCookEmpty.v : ticket_0007_i3_decline_qed_or_qex` | **QED** — Decline iff not a proper pair (`d=0` or `r≤0`) | `CircularCookEmpty.v : I_circles_gamma_decline_iff` |
+| — | I.3 discriminant ≠ image-disjoint | `CircularCookEmpty.v : ticket_0007_i3_disc_neq_image_qed_or_qex` | **QED** — concentric unequal radii are image-disjoint and Decline, not Empty | `CircularCookEmpty.v : concentric_unequal_images_disjoint` |
+| — | I.3 not arc membership | `CircularCookEmpty.v : ticket_0007_i3_scope_qed_or_qex` | **QEX** — γ_full only; CircGamma stays QEX; sidecar cook stays locked | `CircularCook.v : circular_gamma_is_qex`, `CircularCook.v : circular_not_first_cook_scope` |
+| — | I.8 leftover confluence | `CircularCookConfluence.v : ticket_0007_i8_confluent_qed_or_qex` | **QED** — `leftovers_ab` = `leftovers_ba` on γ_full; circular analogue of `split_step_confluent` | `CircularCookConfluence.v : circ_split_step_confluent` |
+| — | I.8 cook bag inhabits leftovers | `CircularCookConfluence.v : ticket_0007_i8_cook_qed_or_qex` | **QED** — `cook_circ_root` leftovers are that bag; locked plus/minus recovered | `CircularCookConfluence.v : cook_circ_root_is_leftovers_ab`, `CircularCookConfluence.v : i8_recovers_locked_plus` |
+| — | I.8 one-step ≠ bag loop | `CircularCookConfluence.v : ticket_0007_i8_neq_bag_qed_or_qex` | **QED** — confluence is one Hit-split; `cook_loop` stays obligation | `CircularCookConfluence.v : i8_one_step_not_bag_loop`, `SheetHenCook.v : cook_loop_is_obligation` |
+| — | I.8 not arc / not bag discharge | `CircularCookConfluence.v : ticket_0007_i8_scope_qed_or_qex` | **QEX** — γ_full only; CircGamma stays QEX; bag loop stays QEX | `CircularCook.v : circular_gamma_is_qex`, `SheetHenCook.v : cook_loop_is_obligation` |
+| — | I.9 classifier hens are tags | `CircularCookLicense.v : ticket_0007_i9_tags_qed_or_qex` | **QED** — hens 0/1; ∀ IZHit is those tags; `I_CIRCULAR` HIT 0 1 | `CircularCookZ.v : classifier_hens_are_tags`, `CircularCookZ.v : iz_hit_only_tags` |
+| — | I.9 Z Hit ⇏ host cook | `CircularCookLicense.v : ticket_0007_i9_not_host_cook_qed_or_qex` | **QED** — I_circles_z Hit does not feed `try_cook_hit` and does not expand first cook scope | `CircularCookLicense.v : i9_z_hit_not_try_cook_hit`, `CircularCookLicense.v : i9_z_hit_not_first_cook_scope` |
+| — | I.9 Z Hit ⇏ circ_split | `CircularCookLicense.v : ticket_0007_i9_not_circ_split_qed_or_qex` | **QED** — same tags; plus/minus leftovers meet at distinct `p*`; t comes from γ | `CircularCookLicense.v : i9_z_hit_not_circ_split_license` |
+| — | I.9 not CircGamma / not scope expand | `CircularCookLicense.v : ticket_0007_i9_scope_qed_or_qex` | **QEX** — CircGamma stays QEX; first cook stays chord–chord | `CircularCook.v : circular_gamma_is_qex`, `CircularCook.v : circular_not_first_cook_scope` |
 
 Snap-rounding is a different constructor (`SheetHenCook.v : snap_round_neq_I`).
 Display is a view (`DisplayView`), not a kernel store.
@@ -384,7 +409,7 @@ Accept as vocabulary law does **not** settle kiss / tangency.
 - A binary64 / floating-point noder (`𝓘` realized in Flocq), including binary64 sheet vs kiss. Not a second sheet. Host-lane “sits on a sheet” is closed above.
 - Hobby 4.1 / 4.3. Snap-rounding stays a different constructor under already-noded `G`.
 - The repeat-until-noded **bag** loop (termination + confluence) on the chord lane — `ticket_0007_cook_term_qed_or_qex` QEX / CRV-TOUCH. Pairwise width decrease and one-step confluence are discharged QED, not this item. **Arc** cook termination is a sister card, not this Accept.
-- Later constructive rungs (one Hit `split(t)` step; constructed `𝓘` from proper-cross signs) are letters after Accept, not Accept blockers.
+- Later constructive rungs: one Hit `split(t)` step is `ticket_0007_cook_step_qed_or_qex` / `ticket_0007_cook_step_scope_qed_or_qex`; constructed `𝓘` from proper-cross signs is `ticket_0007_constructed_I_qed_or_qex` / `ticket_0007_constructed_I_scope_qed_or_qex` / `ticket_0007_share_constructed_qed_or_qex`. Letters after Accept, not Accept blockers.
 - ADR-0006 cook-mode for a kiss hen — CRV-TOUCH, after a prototype.
 
 ### Decision requested
@@ -426,4 +451,224 @@ Span-restricted γ on CircularArc is QED in the 4-axiom sidecar
 QEX (`CircularCook.v : ticket_64_circ_gamma_qed_or_qex`;
 `CircularCook.v : circular_gamma_is_qex`) — remaining obligation is
 an atan2-free interpolant on the 3-axiom host.
-Not first cook scope. Not a noder.
+The next letter feeds that circular Hit into a same-shape cook
+(`CircularCookSplit.v`); host `try_cook_hit` still declines circular
+eggs. Not first cook scope. Not a noder.
+
+### Letter after Accept — one Hit cook step (2026-09-07)
+
+The Decision's first constructive sentence after `𝓘`: on success the cook
+inserts a point-hen and replaces each crossed chicken by two via
+`split(t)`. That is this letter. It is not the bag-level
+repeat-until-noded loop and does not reopen Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `Adr0007NodingEpic.v : ticket_0007_cook_step_qed_or_qex` | **QED** — crossing chickens share one minted hen after `split(t)` | `SheetHenCook.v : cooked_crossing_try`, `SheetHenCook.v : cooked_crossing_shares`, `SheetHenCook.v : chord_split_left_reparam` |
+| `Adr0007NodingEpic.v : ticket_0007_cook_step_scope_qed_or_qex` | **QEX** — Decline / Empty / out-of-scope allocate no hen | `SheetHenCook.v : try_cook_hit_clothoid_none`, `SheetHenCook.v : try_cook_hit_empty_none` |
+
+Witness: `0007-cook-split`. Status stays **Accepted**. Not a remint of leftover-width / pairwise_split. Host CircGamma stays QEX.
+
+### Letter after Accept — constructed 𝓘 from proper-cross signs (2026-09-07)
+
+The Decision's `𝓘` is not a hardcoded midpoint. Proper-cross sign
+conditions license `Intersect.strict_intersection_point` as `p*` plus
+the two open-interval parameters. That constructed Hit recovers the
+unit-square witness and cooks. Missing signs do not license the
+formula (they are not Decline). Equal constructed `p*` under operand
+swap licenses `ShareOne` — the identity basis, not `dart_eq_dec`.
+Not a remint of `Intersect`. Not a total `𝓘`. Not the noder loop.
+Does not reopen Status. Host CircGamma stays QEX.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `Adr0007NodingEpic.v : ticket_0007_constructed_I_qed_or_qex` | **QED** — signs on the unit-square diagonals produce the same Hit the cook already splits | `SheetHenCook.v : constructed_hit_I_ok`, `SheetHenCook.v : constructed_hit_crossing_eq`, `SheetHenCook.v : cooked_constructed_crossing` |
+| `Adr0007NodingEpic.v : ticket_0007_constructed_I_scope_qed_or_qex` | **QEX** — disjoint horizontals have no proper-cross signs; Empty stays Empty | `SheetHenCook.v : disjoint_not_proper_cross`, `SheetHenCook.v : disjoint_I_ok` |
+| `Adr0007NodingEpic.v : ticket_0007_share_constructed_qed_or_qex` | **QED** — operand swap names the same `p*`; `ShareOne` follows | `SheetHenCook.v : constructed_hit_sym_same_p`, `SheetHenCook.v : equal_constructed_p_share` |
+
+Witness: `0007-constructed-I`. Status stays **Accepted**.
+
+### Letter after Accept — circular Hit → cook bridge (2026-09-08)
+
+#666 closed chord–chord constructed Hit → cook `split(t)`. The circular
+side already had `I_circles_z` / `I_CIRCULAR`, constructed
+`(h*, p*, tᵢ, tⱼ)` on locked discs, and principal-span γ. This letter
+feeds that circular Hit into a same-shape cook step — leftovers via
+`circ_gamma` `split(t)`, incidence on the Hit's hen — without faking
+atan2-free host γ and without expanding first cook scope.
+
+The *host* cook (`try_cook_hit`) still declines circular eggs: they
+remain `MkOutOfScope`. CircGamma stays QEX. Touch / kiss is a fenced
+QEX arm, not a CRV-TOUCH kiss decision. Not a remint of
+`ArcSplitAtNode`. Does not reopen Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `Adr0007NodingEpic.v : ticket_0007_circ_host_cook_qed_or_qex` | **QEX** — circular IHit does not feed host `try_cook_hit` | `SheetHenCook.v : try_cook_hit_circular_hit_none` |
+| `CircularCookSplit.v : ticket_0007_circ_split_qed_or_qex` | **QED** — locked plus-root leftovers meet at `p+` | `CircularCookSplit.v : circ_split_join`, `CircularCookHit.v : locked_hit_plus_on_gamma` |
+| `CircularCookSplit.v : ticket_0007_circ_cook_step_qed_or_qex` | **QED** — `I_circles_gamma` Hit cooks; CircGamma stays QEX | `CircularCookSplit.v : cooked_circ_plus_try`, `CircularCookSplit.v : cooked_circ_plus_ok` |
+| `CircularCookSplit.v : ticket_0007_circ_cook_scope_qed_or_qex` | **QEX** — Touch / Empty / Decline allocate no hen | `CircularCookSplit.v : locked_circ_touch_none` |
+
+Witness: `0007-circ-cook`. Status stays **Accepted**. Host CircGamma stays QEX.
+
+### Letter after Accept — I.7 MintTwo / p− (2026-09-08)
+
+#686 cooked the plus-root. Both radical roots are Hits: `p−` is a
+second Hit, not optional. Allocation across `p+` and `p−` is
+`MintTwo` (`hen_plus`, `hen_minus`). Leftover pieces that share the
+split endpoint are Hit incidence, not a kiss. Empty / Decline /
+Touch still mint nothing (same QEX fence as #686). Does not pick
+among the three CRV-TOUCH tangency procedures (exact-Q / identity /
+ulp). Four fences: `I_circles_z` ≠ `I_circles_gamma` ≠ sidecar cook
+≠ glossary `𝓘`. Host CircGamma stays QEX. Not first cook scope.
+Not a noder. Does not reopen Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `CircularCookSplit.v : ticket_0007_circ_minus_qed_or_qex` | **QED** — locked minus-root leftovers meet at `p−` | `CircularCookSplit.v : cooked_circ_minus_ok`, `CircularCookHit.v : locked_hit_minus_on_gamma` |
+| `CircularCookSplit.v : ticket_0007_circ_mint_two_qed_or_qex` | **QED** — Hit allocates `MintTwo`; both roots cook; CircGamma stays QEX | `CircularCookSplit.v : cooked_circ_mint_two_try`, `CircularCookSplit.v : cooked_circ_mint_two_ok` |
+| `CircularCookSplit.v : ticket_0007_circ_shared_neq_kiss_qed_or_qex` | **QED** — leftover shared endpoint is Hit incidence, not Touch | `CircularCookSplit.v : leftover_shared_endpoint_not_touch` |
+| `CircularCookSplit.v : ticket_0007_circ_mint_two_scope_qed_or_qex` | **QEX** — Empty / Decline / Touch still allocate no hen | `CircularCookSplit.v : locked_circ_mint_two_touch_none` |
+
+Witness: `0007-I.7-mint-two`. Status stays **Accepted**. Host CircGamma stays QEX.
+
+### Letter after Accept — I.1 Fence (2026-09-09)
+
+#666's honesty fence was prose. This letter closes it as tickets, not
+a type synonym. The four objects are pairwise unequal by observation
+on the locked `(0,0)/(7,0)` r=5 witness:
+
+1. `I_circles_z` / Oracle `I_CIRCULAR` — Z⁶ classifier; hens 0/1; no t.
+2. `I_circles_gamma` — locked full-circle witness with t on γ_full.
+3. Sidecar cook (`CircularCookSplit` after #686/#687) — leftovers / `MintTwo`.
+4. `I_gloss` — host `I_ok` + CircGamma; undefined while CircGamma is QEX.
+
+Touch ≠ IHit on the circular classifiers. Circular Empty ≠ Decline
+(host `IEmpty` ≠ `IDecline` already stands). Chord × circular Decline
+inhabits `I_ok` as the honest host arm — not a constructed mixed Hit.
+Does not remint `CurveSegment` / Exact* / `Dart` / Hobby /
+`ArcSplitAtNode` leftover-width. Does not start I.2–I.3 / I.8–I.10 /
+Campaign II / H⊥ / a CRV-TOUCH kiss procedure. Does not reopen Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `CircularCookSplit.v : ticket_0007_i1_fence_qed_or_qex` | **QED** — six locked pairwise observations | `CircularCookSplit.v : i1_z_neq_gamma_obs`, `CircularCookSplit.v : i1_sidecar_neq_gloss_obs` |
+| `CircularCookSplit.v : ticket_0007_touch_neq_ihit_qed_or_qex` | **QED** — kiss Touch ≠ proper-cross Hit | `CircularCookZ.v : IZTouch_neq_IZHit`, `CircularCookHit.v : ICircGTouch_neq_ICircGHit` |
+| `CircularCookSplit.v : ticket_0007_empty_neq_decline_circ_qed_or_qex` | **QED** — circular Empty ≠ Decline | `CircularCookZ.v : IZEmpty_neq_IZDecline` |
+| `Adr0007NodingEpic.v : ticket_0007_chord_circ_decline_qed_or_qex` | **QED** — mixed Decline inhabits `I_ok` | `SheetHenCook.v : chord_circular_decline_I_ok` |
+| `CircularCook.v : ticket_0007_i1_gloss_qed_or_qex` | **QEX** — `I_gloss` undefined while CircGamma is QEX | `CircularCook.v : circular_gamma_is_qex` |
+
+Witness: `0007-I.1-fence`. Status stays **Accepted**. Host CircGamma stays QEX.
+
+### Letter after Accept — I.2 ∀ Hit soundness (2026-09-09)
+
+#688 ticketed the four-object fence on the locked witness. This letter
+drops the lock on the γ classifier: `I_circles_gamma` is Hit iff the
+integer proper discriminant and `on_full_circle` on both radical roots
+(`p+` and `p−`, γ_full). R3 is the locked `(0,0)/(7,0)` r=5 witness
+(`ticket_64_circ_hit_params_qed_or_qex`); I.2 recovers it as an
+instance. Not CircularArc span membership. Sidecar cook stays locked
+(I.3). Host CircGamma stays QEX. Does not remint `CurveSegment` /
+Exact* / `Dart` / Hobby / `ArcSplitAtNode` leftover-width. Does not
+start I.3 / I.8–I.10 / Campaign II / H⊥ / a CRV-TOUCH kiss procedure.
+Does not reopen Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `CircularCookHit.v : ticket_0007_i2_hit_sound_qed_or_qex` | **QED** — ∀ Hit iff proper disc ∧ `on_full_circle` both roots | `CircularCookHit.v : I_circles_gamma_hit_iff`, `CircularCookHit.v : on_full_circle_both_of_proper` |
+| `CircularCookHit.v : ticket_0007_i2_arc_scope_qed_or_qex` | **QEX** — not arc membership; CircGamma stays QEX | `CircularCook.v : circular_gamma_is_qex` |
+
+Witness: `0007-I.2-hit-sound`. Status stays **Accepted**. Host CircGamma stays QEX.
+
+### Letter after Accept — I.3 ∀ Empty / Decline (2026-09-09)
+
+#689 dropped the lock on Hit. This letter drops it on Empty and Decline
+without folding them into I.2's discriminant Hit iff. `ICircGEmpty`
+iff the pair is proper and the γ_full images are disjoint on S
+(triangle inequality). `ICircGDecline` iff the pair is not proper
+(`d=0` or `r≤0`). Discriminant Empty and image-disjoint are different
+proofs: concentric unequal radii are image-disjoint and Decline.
+Not CircularArc span membership. Sidecar cook stays locked. Host
+CircGamma stays QEX. Does not remint `CurveSegment` / Exact* /
+`Dart` / Hobby / `ArcSplitAtNode` leftover-width. Does not start
+I.8–I.10 / Campaign II / H⊥ / a CRV-TOUCH kiss procedure. Does not
+reopen Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `CircularCookEmpty.v : ticket_0007_i3_empty_qed_or_qex` | **QED** — ∀ Empty iff proper ∧ γ_full images disjoint | `CircularCookEmpty.v : I_circles_gamma_empty_iff` |
+| `CircularCookEmpty.v : ticket_0007_i3_decline_qed_or_qex` | **QED** — ∀ Decline iff not a proper pair | `CircularCookEmpty.v : I_circles_gamma_decline_iff` |
+| `CircularCookEmpty.v : ticket_0007_i3_disc_neq_image_qed_or_qex` | **QED** — concentric unequal radii: disjoint images, Decline | `CircularCookEmpty.v : concentric_unequal_images_disjoint` |
+| `CircularCookEmpty.v : ticket_0007_i3_scope_qed_or_qex` | **QEX** — not arc membership; CircGamma stays QEX | `CircularCook.v : circular_gamma_is_qex` |
+
+Witness: `0007-I.3-empty-decline`. Status stays **Accepted**. Host CircGamma stays QEX.
+
+### Letter after Accept — I.8 one-step leftover confluence (2026-09-09)
+
+#690 dropped the lock on Empty / Decline. This letter drops the cook
+lock on leftover *order*: `circ_leftovers_ab` = `circ_leftovers_ba`
+on γ_full — the circular analogue of `SheetHenCook.v :
+split_step_confluent`. Splitting parent A then B, or B then A,
+yields the same leftover bag. Sidecar `cook_circ_root` leftovers
+inhabit that bag; the locked plus / minus cooks recover it.
+This is not the bag-level repeat-until-noded loop
+(`cook_loop_status` stays `LoopObligation`). Not leftover-width.
+Not CircularArc span membership. Host CircGamma stays QEX. Does
+not remint `CurveSegment` / Exact* / `Dart` / Hobby /
+`ArcSplitAtNode` leftover-width. Does not start I.9–I.10 /
+Campaign II / H⊥ / a CRV-TOUCH kiss procedure. Does not reopen
+Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `CircularCookConfluence.v : ticket_0007_i8_confluent_qed_or_qex` | **QED** — ∀ leftovers_ab = leftovers_ba on γ_full | `CircularCookConfluence.v : circ_split_step_confluent` |
+| `CircularCookConfluence.v : ticket_0007_i8_cook_qed_or_qex` | **QED** — cook leftovers inhabit the bag; locked plus/minus recovered | `CircularCookConfluence.v : cook_circ_root_is_leftovers_ab` |
+| `CircularCookConfluence.v : ticket_0007_i8_neq_bag_qed_or_qex` | **QED** — one-step ≠ bag loop | `CircularCookConfluence.v : i8_one_step_not_bag_loop` |
+| `CircularCookConfluence.v : ticket_0007_i8_scope_qed_or_qex` | **QEX** — CircGamma stays QEX; bag loop stays obligation | `CircularCook.v : circular_gamma_is_qex` |
+
+Witness: `0007-I.8-leftover-confluence`. Status stays **Accepted**. Host CircGamma stays QEX.
+
+### Letter after Accept — I.9 classifier ≠ cook (2026-09-09)
+
+#691 ticketed one-step leftover confluence. This letter tickets the
+honesty fence as a license denial: an `I_circles_z` / `I_CIRCULAR`
+Hit is tags 0/1, not glossary `(p*, tᵢ, tⱼ)`. That Hit does **not**
+license host `try_cook_hit`, sidecar `circ_split`, or
+`first_cook_scope` expansion. Plus / minus leftovers on the locked
+fixture meet at distinct `p*` — `t` comes from γ, not from the
+classifier tags. Host CircGamma stays QEX. First cook stays
+chord–chord. Does not remint `CurveSegment` / Exact* / `Dart` /
+Hobby / `ArcSplitAtNode` leftover-width. Does not start I.10 /
+Campaign II / H⊥ / a CRV-TOUCH kiss procedure. Does not reopen
+Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `CircularCookLicense.v : ticket_0007_i9_tags_qed_or_qex` | **QED** — hens are tags 0/1; ∀ IZHit is those tags | `CircularCookZ.v : classifier_hens_are_tags`, `CircularCookZ.v : iz_hit_only_tags` |
+| `CircularCookLicense.v : ticket_0007_i9_not_host_cook_qed_or_qex` | **QED** — Z Hit ⇏ `try_cook_hit`; ⇏ first-cook expansion | `CircularCookLicense.v : i9_z_hit_not_try_cook_hit` |
+| `CircularCookLicense.v : ticket_0007_i9_not_circ_split_qed_or_qex` | **QED** — same tags; plus/minus leftovers at distinct `p*` | `CircularCookLicense.v : i9_z_hit_not_circ_split_license` |
+| `CircularCookLicense.v : ticket_0007_i9_scope_qed_or_qex` | **QEX** — CircGamma stays QEX; first cook stays chord–chord | `CircularCook.v : circular_gamma_is_qex` |
+
+Witness: `0007-I.9-classifier-neq-cook`. Status stays **Accepted**. Host CircGamma stays QEX.
+
+### Letter after Accept — I.10 Campaign-I close (2026-09-09)
+
+#692 ticketed that a classifier Hit is not a cook license. This
+letter closes Campaign I. Sidecar cook exists on a constructed
+circular Hit (both radical roots / `MintTwo`). Host CircGamma stays
+QEX. `first_cook_scope` stays chord–chord. `I_CIRCULAR` stays a
+classifier (tags 0/1). The #666 four-object fence holds by
+observation. Campaign II and H⊥ are named parked — not silently
+done. No new kernel. Not SQL/MM done. Does not remint
+`CurveSegment` / Exact* / `Dart` / Hobby / `ArcSplitAtNode`
+leftover-width. Does not start Campaign II / H⊥ / a CRV-TOUCH
+kiss procedure. Does not reopen Status.
+
+| Stop | Arm | Lemma |
+|------|-----|-------|
+| `CircularCookClose.v : ticket_0007_i10_sidecar_qed_or_qex` | **QED** — sidecar cook on constructed circular Hit, both roots | `CircularCookClose.v : i10_sidecar_cook_both_roots`, `CircularCookSplit.v : cooked_circ_mint_two_ok` |
+| `CircularCookClose.v : ticket_0007_i10_classifier_qed_or_qex` | **QED** — `I_CIRCULAR` stays tags 0/1; #666 fence holds | `CircularCookClose.v : i10_classifier_stays_tags`, `CircularCookClose.v : i10_fence_holds` |
+| `CircularCookClose.v : ticket_0007_i10_host_qed_or_qex` | **QEX** — CircGamma stays QEX; first cook stays chord–chord | `CircularCook.v : circular_gamma_is_qex`, `SheetHenCook.v : first_cook_scope_chord_chord` |
+| `CircularCookClose.v : ticket_0007_i10_park_qed_or_qex` | **QEX** — Campaign II and H⊥ named parked; SQL/MM not done | `CircularCookClose.v : campaign_ii_is_parked`, `CircularCookClose.v : hperp_is_parked` |
+
+Witness: `0007-I.10-campaign-i-close`. Status stays **Accepted**. Host CircGamma stays QEX.
