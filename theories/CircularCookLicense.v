@@ -35,6 +35,8 @@
      Assisted-by: Cursor Grok 4.6
    ========================================================================== *)
 
+(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
+
 From Stdlib Require Import ZArith Reals.
 (* CircularCookHit is required for locked_O1 / locked_O2 / locked_r /
    locked_p_plus / locked_p_minus. CircularCookSplit Imports Hit and

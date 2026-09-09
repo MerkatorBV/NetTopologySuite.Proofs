@@ -36,6 +36,8 @@
      Assisted-by: Cursor Grok 4.6
    ========================================================================== *)
 
+(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
+
 From Stdlib Require Import Reals.
 (* CircularCookHit is required for locked_O1 / locked_O2 / locked_r.
    CircularCookSplit Imports Hit and does not Export those witnesses. *)

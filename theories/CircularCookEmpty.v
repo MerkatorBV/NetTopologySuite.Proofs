@@ -24,6 +24,8 @@
    Hobby / leftover-width.
    ============================================================================ *)
 
+(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
+
 From Stdlib Require Import ZArith Reals Lra Lia Bool.
 From NTS.Proofs Require Import Distance SheetHenCook CircularCookZ
   CircularCook CircularCookHit.
