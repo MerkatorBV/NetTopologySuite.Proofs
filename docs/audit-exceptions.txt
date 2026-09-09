@@ -13,13 +13,14 @@
 #     immediately above the file line explaining what makes the file
 #     Category C / transitional and the planned resolution).
 #
-# Current state: 94 files are listed below -- 74 in `theories-flocq/` (the
+# Current state: 99 files are listed below -- 74 in `theories-flocq/` (the
 # initial bulk block for binary ops Bplus/Bminus/Bmult pulling
 # `Classical_Prop.classic` via Flocq, plus additional Category C for
 # snap-rounding, overlay, expansion-arithmetic, and Stage D as documented
-# per-file) and 20 in `theories/` (R-side lineages: Stdlib `atan`/`Ratan`,
+# per-file), 24 in `theories/` (R-side lineages: Stdlib `atan`/`Ratan`,
 # plus #564 RiemannInt for the Fresnel inhabitant, documented per-file
-# below).  The five all-C2 arc files (`ArcLength` / `ArcArea` /
+# below), and 1 probe (`docs/h1-vacuity/HobbyHlemma43Check.v`).
+# The five all-C2 arc files (`ArcLength` / `ArcArea` /
 # `ArcCentroid` / `ArcAreaCentroid` / `CurveBufferArea`) left this list
 # after a 3-axiom Taylor-envelope proof of `sin x < x` replaced Stdlib
 # `sin_lt_x` (MVT → classic).  Per-theorem categorisation of every listed file:
@@ -403,6 +404,9 @@ theories/CircularCookHit.v
 # Classical_Prop.classic via circ_gamma / on_full_circle.
 # CircGamma stays QEX. No extra axioms beyond the atan2 lineage.
 # Headlines Qed-closed.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
 theories/CircularCookEmpty.v
 
 # Category C (R-side, same atan lineage as CircularCookHit.v / ArcSpanAtan2.v):
@@ -420,6 +424,9 @@ theories/CircularCookSpan.v
 # Classical_Prop.classic. Host CircGamma stays QEX; Touch is a
 # fenced QEX arm. No extra axioms beyond the atan2 lineage.
 # Headlines Qed-closed.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
 theories/CircularCookSplit.v
 
 # Category C (R-side, same atan lineage as CircularCookSplit.v):
@@ -429,6 +436,9 @@ theories/CircularCookSplit.v
 # Inherits Classical_Prop.classic via CircularCookSplit / circ_gamma.
 # CircGamma stays QEX. No extra axioms beyond the atan2 lineage.
 # Headlines Qed-closed.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
 theories/CircularCookConfluence.v
 
 # Category C (R-side, same atan lineage as CircularCookSplit.v):
@@ -438,6 +448,9 @@ theories/CircularCookConfluence.v
 # Inherits Classical_Prop.classic via CircularCookSplit / circ_gamma
 # (claimId 0007 / I.9). CircGamma stays QEX. No extra axioms beyond
 # the atan2 lineage. Headlines Qed-closed.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
 theories/CircularCookLicense.v
 
 # Category C (R-side, same atan lineage as CircularCookSplit.v):
@@ -448,6 +461,9 @@ theories/CircularCookLicense.v
 # Inherits Classical_Prop.classic via CircularCookSplit / circ_gamma
 # (claimId 0007 / I.10). No extra axioms beyond the atan2 lineage.
 # Headlines Qed-closed. No new kernel. Not SQL/MM done.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
 theories/CircularCookClose.v
 
 # Category C (R-side, same atan lineage as AngleBetween.v): issue #64 subtask
