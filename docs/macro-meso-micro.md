@@ -5,7 +5,7 @@
 
 The corpus is too large to maintain as a flat list of theorems. Work is organised
 on **three scales**. The observatory dashboard
-([GitHub Pages](https://grootstebozewolf.github.io/NetTopologySuite.Proofs/))
+([GitHub Pages](https://merkatorbv.github.io/NetTopologySuite.Proofs/))
 surfaces the same stack.
 
 ## Macro — domains & epics
