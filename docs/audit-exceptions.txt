@@ -116,6 +116,20 @@ theories-flocq/B64_nonoverlap_head.v
 # the headline's strong-nonoverlap postcondition).
 theories-flocq/B64_Shewchuk_Thm13_counterexample.v
 
+# Predicate-ordering module.  Ten of its fifteen results are LEM-free,
+# including the whole Priest link (priest_nonoverlapping_weaker,
+# normalised_exponent_unique, priest_nonoverlapping_b64_256_1_false,
+# priest_hierarchy_strict) and the purely arithmetic separations
+# (b256_not_scaled_above_8, the (256,256) witness).  The remaining five all
+# route through `strict_succ_b64`, the corpus's own half-ulp predicate, which
+# reaches `b64_format_B2R` / `b64_ulp_FLT_0` and inherits
+# `Classical_Prop.classic` through Flocq's real/ulp machinery -- same lineage
+# as the counterexample module above.
+# Footprint is emitted by Print Assumptions at the end of the file, so the
+# audit reads it from the build log rather than from a comment.  No
+# Admitteds; all Qed-closed; no dependence on the deferred headline.
+theories-flocq/B64_Overlap_Hierarchy.v
+
 # Category C: Shewchuk Theorem 13 §4.A vm_compute cascade traces.
 # B64_pathB_trace_4A.v exercises b64_TwoSum / cascade_step_state on concrete
 # binary64 witnesses; closure carries Classical_Prop.classic through the same
