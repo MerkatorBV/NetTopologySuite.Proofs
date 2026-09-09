@@ -10,7 +10,10 @@ oracle and pictures the cases under scrutiny.
 
 Per **ADR-0007**. Each term names one thing precisely; the short name is the
 one to use in issue titles and lemma names, the gloss is what it means. None
-of these exist as types in the corpus yet -- ADR-0007 is *Proposed*.
+ADR-0007 is *Accepted* (Joost, BDFL, 2026-09-07).  Four of the seven now
+exist as types in `theories/SheetHenCook.v`: `Sheet` (Record), `Hen`
+(Definition), `Egg` (Inductive), `Chicken` (Record).  `Cook` and `View` are
+not types; `Decline` is a constructor, `IDecline` of `IResult`, not a type.
 
 **Sheet**:
 An oriented affine plane `(O; e1, e2)` with an optional lattice (the snap
@@ -445,7 +448,7 @@ Self-overlap of a single input after linearization — e.g. a CIRCULARSTRING
 whose second arc retraces the first.
 _Avoid_: self-intersection (narrower), retrace (one kind of overshoot)
 
-### Noding constructor (ADR-0007, Proposed)
+### Noding constructor (ADR-0007, Accepted 2026-09-07)
 
 **Sheet**:
 An oriented affine plane `S = (O; e₁, e₂)` with optional lattice `Λ`.
@@ -518,11 +521,11 @@ _Avoid_: empty (the disjoint 𝓘 outcome), unsupported matrix
 
 ## ADR-0007 Ready for BDFL
 
-See `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md` § Ready for BDFL; `ticket_0007_cook_term_qed_or_qex` in `Adr0007NodingEpic.v` (witness 0007-cook-term). Status stays Proposed.
+See `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md` § Ready for BDFL; `ticket_0007_cook_term_qed_or_qex` in `Adr0007NodingEpic.v` (witness 0007-cook-term). ADR-0007 is Accepted (Joost, BDFL, 2026-09-07).
 
 ## ADR-0007 and CRV-TOUCH
 
-Accept of ADR-0007 is vocabulary law that CRV-TOUCH assumes; kiss/tangency, binary64 sheet vs kiss, arc cook termination, and any ADR-0006 cook-mode stay on the Notion CRV-TOUCH map (NTS RGR Board). Status stays Proposed until BDFL Accept.
+Accept of ADR-0007 is vocabulary law that CRV-TOUCH assumes; kiss/tangency, binary64 sheet vs kiss, arc cook termination, and any ADR-0006 cook-mode stay on the Notion CRV-TOUCH map (NTS RGR Board). BDFL Accept landed 2026-09-07.
 
 ## ADR-0007 Accepted
 

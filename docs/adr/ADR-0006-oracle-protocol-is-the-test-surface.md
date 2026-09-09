@@ -112,4 +112,5 @@ RocqRefRunner.
 
 See [`ADR-0007-sheet-hen-cook-noding-model.md`](ADR-0007-sheet-hen-cook-noding-model.md)
 (coupling paragraph in the supporting-shapes addendum). Status of this
-ADR stays **Accepted**. ADR-0007 stays Proposed.
+ADR stays **Accepted**. ADR-0007 is **Accepted** too (Joost, BDFL,
+2026-09-07).
