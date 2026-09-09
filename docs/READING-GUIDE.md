@@ -580,7 +580,8 @@ The repository has two source directories:
   directory split is about which CI runner builds the file (host vs
   container), not about which proof standard it meets.
 
-The host `_CoqProject` builds 54 modules in `_CoqProject`;
+The host lane builds the 54 modules in `_CoqProject`, the
+foundational `theories/` layer;
 the container `_CoqProject.full` builds the entire corpus (583
 registered modules — 494 registered under `theories/`, 89 registered under `theories-flocq/`).
 
@@ -770,7 +771,7 @@ for Scholar Sam / Tech-Lead Tess / Joost the BDFL paths.
 - This is **not** a substitute for unit tests. Tests cover behaviour the
   proofs don't reach: floating-point rounding, exceptions, performance,
   cross-platform consistency, interaction with the rest of the runtime.
-- This is **not** complete. Current coverage is over 5,100 Qed-closed
+- This is **not** complete. Current coverage is over 6,300 Qed-closed
   theorems across 583 registered modules — 494 registered under `theories/`,
   89 registered under `theories-flocq/` (54 of them modules in `_CoqProject`
   as the host foundational target). There are **no
@@ -803,7 +804,8 @@ rocq makefile -f _CoqProject -o Makefile.gen
 make -f Makefile.gen
 ```
 
-This builds the 54 modules in `_CoqProject`.
+This builds the 54 modules in `_CoqProject`, the foundational
+Stdlib-only layer.
 Modules with external dependencies (Flocq), plus the Stdlib-only Phase
 3/4 modules built alongside them, live in `_CoqProject.full` and are
 built inside the container only (see below).

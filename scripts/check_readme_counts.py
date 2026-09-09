@@ -18,6 +18,9 @@ Any run of whitespace matches, so a claim may wrap across lines:
     <N> registered modules            -> module lines in _CoqProject.full
     <N> registered under `theories/`       -> that lane in _CoqProject.full
     <N> registered under `theories-flocq/` -> that lane in _CoqProject.full
+    <N> files under `theories/`            -> that lane in audit-exceptions
+    <N> files under `theories-flocq/`      -> that lane in audit-exceptions
+    <N> `Defined.` in the tree             -> Defined. terminators
 
 Every occurrence must match, and README.md must carry at least one of each.
 
@@ -55,6 +58,37 @@ def module_lines(coqproject, lane_prefix=None):
             if lane_prefix and not m.group(1).startswith(lane_prefix):
                 continue
             n += 1
+    return n
+
+
+def audit_exceptions(lane_prefix):
+    """Count distinct .v files listed in docs/audit-exceptions.txt per lane."""
+    path = os.path.join(ROOT, "docs", "audit-exceptions.txt")
+    seen = set()
+    if not os.path.exists(path):
+        return 0
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        for raw in fh:
+            for m in re.finditer(r"([A-Za-z0-9_./-]+\.v)", raw.split("#", 1)[0]):
+                if m.group(1).startswith(lane_prefix):
+                    seen.add(m.group(1))
+    return len(seen)
+
+
+def terminator_count(word):
+    n = 0
+    for lane in ("theories", "theories-flocq"):
+        base = os.path.join(ROOT, lane)
+        if not os.path.isdir(base):
+            continue
+        for fn in sorted(os.listdir(base)):
+            if not fn.endswith(".v"):
+                continue
+            with open(os.path.join(base, fn), encoding="utf-8",
+                      errors="replace") as fh:
+                for line in fh:
+                    if line.strip() == word:
+                        n += 1
     return n
 
 
@@ -101,6 +135,18 @@ def main():
          re.compile(r"over\s+([0-9][0-9,]*)\s+Qed-closed\s+theorems"),
          qed_count(),
          "le"),
+        ("theories/ audit exceptions",
+         re.compile(r"([0-9][0-9,]*)\s+files\s+under\s+`theories/`"),
+         audit_exceptions("theories/"),
+         "eq"),
+        ("theories-flocq/ audit exceptions",
+         re.compile(r"([0-9][0-9,]*)\s+files\s+under\s+`theories-flocq/`"),
+         audit_exceptions("theories-flocq/"),
+         "eq"),
+        ("Defined. terminators",
+         re.compile(r"([0-9][0-9,]*)\s+`Defined\.`\s+in the tree"),
+         terminator_count("Defined."),
+         "eq"),
     ]
 
     text = {}
@@ -146,6 +192,10 @@ def main():
         print("  under theories-flocq/   = %d"
               % module_lines("_CoqProject.full", "theories-flocq/"))
         print("  Qed-closed theorems     = %d" % qed_count())
+        print("  theories/ exceptions    = %d" % audit_exceptions("theories/"))
+        print("  flocq exceptions        = %d"
+              % audit_exceptions("theories-flocq/"))
+        print("  Defined. terminators    = %d" % terminator_count("Defined."))
         return 1
 
     print("[readme-counts] OK: README and Reading Guide agree with "

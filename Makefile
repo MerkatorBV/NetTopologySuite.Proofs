@@ -198,6 +198,7 @@ ci-guards:
 	bash scripts/check_admitted.sh
 	bash scripts/check_readme_axioms.sh
 	python3 scripts/check_readme_counts.py
+	python3 scripts/check_readme_claims.py
 	bash scripts/check_deferred_registry_sync.sh
 	bash scripts/validate-claims.sh
 	bash scripts/check_oracle_handrolled.sh
