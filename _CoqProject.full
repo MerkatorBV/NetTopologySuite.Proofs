@@ -2880,6 +2880,44 @@ theories/CircularCookOkCirc.v
 # SQL/MM done. 4-axiom atan2 sidecar (classic via OkCirc /
 # Span). Not CS concat. Not first cook scope. No new kernel.
 theories/CircularCookCloseII.v
+# Phase B.1 CircularString concat joints (sidecar reuse).
+# CS is a sequence of CircEgg; joint is I_ok_circ Hit at
+# (end, t=1, t=0) via arc_gamma. Joint params not interior.
+# Locked 2-arc V-CS odd_closed fixture. Host CircGamma stays
+# QEX. first_cook_scope stays chord–chord. CompoundCurve /
+# CurvePolygon / H⊥ parked. Not SQL/MM done. 4-axiom atan2
+# sidecar (classic via OkCirc / Span). No new kernel. Not a
+# CircGamma remint. Not first cook scope. Not a noder.
+theories/CircularCookCsConcat.v
+# Phase B.2 CompoundCurve member joints (sidecar / host reuse).
+# CC is a sequence of LineString (chords) and CircularString
+# (CircEgg) members. LS–LS joint is host I_ok Hit at (end, t=1,
+# t=0). CS–CS member joint reuses I_ok_circ. Mixed LS–CS joint
+# is host I_ok Decline (I.1). Locked mixed fixture
+# COMPOUNDCURVE((-5 0, 5 0), CIRCULARSTRING(5 0, 0 -5, -5 0)).
+# Host CircGamma stays QEX. first_cook_scope stays chord–chord.
+# CurvePolygon / H⊥ parked. Not SQL/MM done. CC Landed.
+# 4-axiom atan2 sidecar (classic via CsConcat / OkCirc / Span).
+# No new kernel. Not a CircGamma remint. Not CurveSegment remint.
+# Not first cook scope. Not a noder. Not CurvePolygon.
+theories/CircularCookCcConcat.v
+# Phase B.3 CurvePolygon ring closure (sidecar / host reuse).
+# CP ring is a closed CircularString or closed CompoundCurve
+# (B.2 CompoundCurveMembers that is contiguous and closed;
+# last member joins first). Sequential joints stay B.2.
+# CS–CS closing reuses I_ok_circ; LS–LS closing is host I_ok;
+# mixed closing is host I_ok Decline (I.1). Locked CS-ring
+# CURVEPOLYGON((CIRCULARSTRING(-5 0, 0 5, 5 0, 0 -5, -5 0)))
+# and mixed-ring CURVEPOLYGON((COMPOUNDCURVE((-5 0, 5 0),
+# CIRCULARSTRING(5 0, 0 -5, -5 0)))). Host CircGamma stays
+# QEX. first_cook_scope stays chord–chord. H⊥ / CircGamma
+# remint / bag-noder parked. Not SQL/MM done. CP Landed.
+# Phase B done-when met (CS + CC + CP Landed). 4-axiom atan2
+# sidecar (classic via CcConcat / CsConcat / OkCirc / Span).
+# No new kernel. Not a CircGamma remint. Not CurveSegment
+# remint. Not CurveGeometry.CurvePolygon remint. Not first
+# cook scope. Not a noder.
+theories/CircularCookCpConcat.v
 # Lineal boundary-meet bridge: curve_segments_meet (chord-chord contact) =>
 # geom_boundary witness => im_bb cell non-empty / ~ im_disjoint_ogc.  Closes the
 # bridge flagged deferred in RingContactSound.v for the LINEAL (chord) case

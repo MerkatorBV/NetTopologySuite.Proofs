@@ -232,6 +232,35 @@ named — CircularString / CompoundCurve / CurvePolygon; not
 SQL/MM done): `theories/CircularCookCloseII.v`. 4-axiom
 atan2 sidecar.
 
+Production home for 0007-B.1-cs-concat-joints (Phase B.1
+CircularString concat joints; CS is a sequence of `CircEgg`;
+joint is `I_ok_circ` Hit at `(end, t=1, t=0)` via sidecar
+`arc_gamma`; joint params not interior; locked 2-arc V-CS
+odd_closed fixture; host CircGamma stays QEX; CompoundCurve /
+CurvePolygon / H⊥ parked; not SQL/MM done; no new kernel):
+`theories/CircularCookCsConcat.v`. 4-axiom atan2 sidecar.
+
+Production home for 0007-B.2-cc-member-joints (Phase B.2
+CompoundCurve member joints; CC is a sequence of LineString
+chords and CircularString `CircEgg` members; LS–LS joint is
+host `I_ok` Hit at `(end, t=1, t=0)`; CS–CS member joint
+reuses `I_ok_circ`; mixed LS–CS joint is host `I_ok` Decline
+(I.1); locked mixed fixture; host CircGamma stays QEX;
+CurvePolygon / H⊥ parked; not SQL/MM done; CC Gap (mixed Decline); no new
+kernel): `theories/CircularCookCcConcat.v`. 4-axiom atan2
+sidecar.
+
+Production home for 0007-B.3-cp-ring-closure (Phase B.3
+CurvePolygon ring closure; CP ring is a closed CircularString
+or closed CompoundCurve — B.2 members contiguous and closed,
+last joins first; CS–CS closing reuses `I_ok_circ`; mixed
+closing is host `I_ok` Decline (I.1); locked CS-ring and
+mixed-ring fixtures; host CircGamma stays QEX; H⊥ /
+CircGamma remint / bag-noder parked; not SQL/MM done; CP
+Gap (mixed Decline); Phase B stays Open (no done-when theater); no new
+kernel): `theories/CircularCookCpConcat.v`. 4-axiom atan2
+sidecar.
+
 Production home for 64-naa-res (constructor ⇒ affine circle–circle
 resultant root under `circles_properly_intersect`; not the converse
 and not a Bézout/degree proof): `theories/CircleCircleResultant.v`.

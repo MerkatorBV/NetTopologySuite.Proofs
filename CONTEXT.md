@@ -526,7 +526,37 @@ parked; not a bag noder. Phase B SQL/MM Part 3
 **required**-type gaps are named (CircularString /
 CompoundCurve / CurvePolygon) — not SQL/MM done. A
 CircularString theorem needs concatenation; this is one
-Arc.
+Arc. B.1 (Phase B, first required-type cut): CircularString
+is a sequence of CircEgg; a concat joint is `I_ok_circ` Hit
+at `(arc_end, t=1, t=0)` via `arc_gamma`. Joint params are
+not interior. Reuse `I_ok_circ` — no new kernel. Locked
+2-arc V-CS odd_closed fixture. Host CircGamma stays QEX;
+host circular `I_ok` stays Decline. CompoundCurve /
+CurvePolygon / H⊥ stay parked. Not SQL/MM done. Not a
+CircGamma remint. B.2 (Phase B, CompoundCurve member joints):
+CompoundCurve is a sequence of LineString (chords) and
+CircularString (`CircEgg`) members. LS–LS joint is host
+`I_ok` Hit at `(ce_p1, t=1, t=0)`. CS–CS member joint reuses
+`I_ok_circ` / B.1 `cs_joint`. Mixed LS–CS joint is host
+`I_ok` Decline (I.1); a constructed mixed Hit does not.
+Locked mixed fixture
+`COMPOUNDCURVE((-5 0, 5 0), CIRCULARSTRING(5 0, 0 -5, -5 0))`.
+`phase_b_compound_curve_status` stays Gap (mixed Decline).
+Host CircGamma stays QEX. CurvePolygon / H⊥ stay parked.
+Not SQL/MM done. Not a CircGamma remint. Not a remint of
+`CurveSegment`. B.3 (Phase B, CurvePolygon ring closure): a
+CP ring is a closed CircularString or closed CompoundCurve
+(B.2 members contiguous and closed; last joins first).
+Sequential joints stay B.2. CS–CS closing reuses `I_ok_circ`
+/ B.1 `cs_joint`. LS–LS closing is host `I_ok`. Mixed closing
+is host `I_ok` Decline (I.1); a constructed mixed Hit does
+not. Locked CS-ring and mixed-ring fixtures inhabit. CS / CC
+/ CP required-type statuses stay Gap; Phase B stays Open —
+same-kind endpoint joint Hits are the math; naming does not
+oversell Landed while mixed is host Decline. Host CircGamma
+stays QEX. H⊥ / CircGamma remint / bag-noder stay parked.
+Not SQL/MM done (cathedral / Multi / optional Part 3 types).
+Not a remint of `CurveSegment` / `CurveGeometry.CurvePolygon`.
 Pairwise
 interior split of chords is finite (width measure); bag-level
 termination and confluence of the repeat-until-noded loop remain
