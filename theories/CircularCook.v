@@ -14,15 +14,17 @@
    I.8 leftover confluence lives in CircularCookConfluence.v;
    I.9 classifier ≠ cook lives in CircularCookLicense.v;
    I.10 Campaign-I close lives in CircularCookClose.v;
-   this host flag stays QEX.
+   II.1 span filter as IResult lives in CircularCookSpanFilter.v;
+   II.2 span split at in-span t lives in CircularCookSpanSplit.v;
+   II.3 I_ok_circ lives in CircularCookOkCirc.v (4-axiom sidecar);
+   II.4 Campaign-II close lives in CircularCookCloseII.v
+   (4-axiom sidecar); this host flag stays QEX.
 
    WITNESS topic: core · claimId: 64-i-circular · witness: 64-i-circular-locked
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    ========================================================================== *)
-
-(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
 
 From Stdlib Require Import ZArith Reals Lra.
 From NTS.Proofs Require Import Distance SheetHenCook ArcArcCircles CircularCookZ.
