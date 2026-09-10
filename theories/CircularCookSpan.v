@@ -20,6 +20,20 @@
 
    first_cook_scope stays chord–chord.  Not glossary 𝓘.  Not a noder.
    Not OverlayNGCurve / fully_intersected / ticket 523.
+   II.1 expresses this interpolant as an IResult span filter
+   (CircularCookSpanFilter.v): Hit iff on_arc_gamma both.
+   II.2 splits this interpolant at in-span t
+   (CircularCookSpanSplit.v): leftovers meet at p*.
+   II.3 inhabits glossary I as I_ok_circ on this interpolant
+   (CircularCookOkCirc.v): locked Hit licenses the split.
+   Phase B.1 lifts I_ok_circ to CircularString concat joints
+   (CircularCookCsConcat.v): joint Hit at (end, t=1, t=0).
+   Phase B.2 lifts the same reuse to CompoundCurve member joints
+   (CircularCookCcConcat.v): LS–LS host I_ok; CS–CS I_ok_circ;
+   mixed host Decline.
+   Phase B.3 lifts the same reuse to CurvePolygon ring closure
+   (CircularCookCpConcat.v): last member joins first; CS–CS
+   closing I_ok_circ; mixed closing host Decline.
 
    WITNESS topic: core · claimId: 64-circ-span-gamma · witness: 64-circ-span-locked
    board: ADR-0007

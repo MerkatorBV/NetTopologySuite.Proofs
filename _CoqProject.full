@@ -6,8 +6,9 @@ theories/Distance.v
 # #508 M-LEN-ZOO curve-length spec lane (ADR-0004): the canonical metric-length
 # spec — is_curve_length as is_lub of inscribed polyline lengths — with the
 # chord lower bound, uniqueness, and waypoint additivity (the theorem behind
-# LENGTH_UNIFIED's sum-of-members aggregation).  Arc r·θ rectifiability is the
-# next rung.  3-axiom.
+# LENGTH_UNIFIED's sum-of-members aggregation).  Also the windowed
+# is_curve_length_ext_on (equality only on [a,b]).  Arc r·θ rectifiability
+# is the next rung.  3-axiom.
 theories/CurveLength.v
 # #508 arc rung: r·θ IS the metric length — the circle parameterization
 # satisfies is_curve_length with L = r·(b−a).  Upper half telescopes chord
@@ -98,10 +99,16 @@ theories/ClothoidFresnelInhab.v
 # and the weight-conditioned control-net Lipschitz bound
 # L <= 2*(wmax/wmin)^2 * max(net edge) * (b−a) on [a,b] ⊆ [0,1].  3-axiom.
 theories/NurbsQuadraticLength.v
+# Shared 2·atan / tan-on-[0,π/4] identities.  Lifted from the 508-a
+# golden quarter so later Weierstrass consumers do not copy them.
+# Category C (Stdlib atan / Ratan).  No golden content.
+theories/AtanDoubleAngle.v
 # #508-a / #559: golden rational quarter circle has metric length π/2.
 # Weierstrass φ(t) = 2·atan(t/(√2+(1-√2)·t)); reparam + ext onto the
-# golden nurbs2_param.  Category C (Stdlib atan / Ratan), same lineage
-# as ArcParamBridge.v.  Does not grow CurveSegment or remint ADR-0004.
+# golden nurbs2_param.  Generic 2·atan lives in AtanDoubleAngle.v;
+# windowed ext lives in CurveLength.v.  Category C (Stdlib atan /
+# Ratan), same lineage as ArcParamBridge.v.  Does not grow
+# CurveSegment or remint ADR-0004.
 theories/NurbsConicExact.v
 # #508 NURBS P1: general degree (equal-weight rational cubic ↔ polynomial
 # cubic), knot-span additivity (curve_length_additive), and the
@@ -2844,6 +2851,74 @@ theories/CircularCookLicense.v
 # Campaign II and H⊥ are named parked. No new kernel. Not SQL/MM done.
 # 4-axiom atan2 sidecar (classic via Split / circ_gamma).
 theories/CircularCookClose.v
+# II.1 span filter as IResult on CircularArc γ (not γ_full).
+# Radical root is arc Hit iff on_arc_gamma both. Locked p+ Hit,
+# p− Empty. Host CircGamma stays QEX. II.2–II.4 / H⊥ / SQL/MM
+# cathedral stay parked. 4-axiom atan2 sidecar (classic via Span).
+# Not CircularString concat. Not first cook scope. Not a noder.
+theories/CircularCookSpanFilter.v
+# II.2 split γ_span at in-span t (leftovers meet at p*).
+# Reuses arc_gamma / on_arc_gamma / I_span_root. Not circ_split /
+# γ_full. Locked p+ leftovers meet at p*; leftover stays on the
+# parent circle. Locked p− stays Empty — no invented span cook.
+# Host CircGamma stays QEX. II.3–II.4 / H⊥ / SQL/MM cathedral
+# stay parked. 4-axiom atan2 sidecar (classic via Span / Filter).
+# Not CircularString concat. Not first cook scope. Not a noder.
+theories/CircularCookSpanSplit.v
+# II.3 I_ok_circ on EggCircularArc × EggCircularArc (sidecar
+# arc_gamma). First glossary-type inhabitant. Locked p+ Hit
+# licenses span_split; locked far pair inhabits Empty.
+# Host CircGamma stays QEX. first_cook_scope stays chord–chord.
+# II.4 / H⊥ / SQL/MM cathedral stay parked. 4-axiom atan2
+# sidecar (classic via Span / Filter / Split). Not CS concat.
+# Not first cook scope. Not a noder. Not a computed classifier.
+theories/CircularCookOkCirc.v
+# II.4 Campaign-II close letter. I_ok_circ exists as sidecar
+# glossary inhabitant. Host CircGamma stays QEX.
+# first_cook_scope stays chord–chord. H⊥ parked. Not a bag
+# noder. Phase B SQL/MM Part 3 required-type gaps named
+# (CircularString / CompoundCurve / CurvePolygon). Not
+# SQL/MM done. 4-axiom atan2 sidecar (classic via OkCirc /
+# Span). Not CS concat. Not first cook scope. No new kernel.
+theories/CircularCookCloseII.v
+# Phase B.1 CircularString concat joints (sidecar reuse).
+# CS is a sequence of CircEgg; joint is I_ok_circ Hit at
+# (end, t=1, t=0) via arc_gamma. Joint params not interior.
+# Locked 2-arc V-CS odd_closed fixture. Host CircGamma stays
+# QEX. first_cook_scope stays chord–chord. CompoundCurve /
+# CurvePolygon / H⊥ parked. Not SQL/MM done. 4-axiom atan2
+# sidecar (classic via OkCirc / Span). No new kernel. Not a
+# CircGamma remint. Not first cook scope. Not a noder.
+theories/CircularCookCsConcat.v
+# Phase B.2 CompoundCurve member joints (sidecar / host reuse).
+# CC is a sequence of LineString (chords) and CircularString
+# (CircEgg) members. LS–LS joint is host I_ok Hit at (end, t=1,
+# t=0). CS–CS member joint reuses I_ok_circ. Mixed LS–CS joint
+# is host I_ok Decline (I.1). Locked mixed fixture
+# COMPOUNDCURVE((-5 0, 5 0), CIRCULARSTRING(5 0, 0 -5, -5 0)).
+# Host CircGamma stays QEX. first_cook_scope stays chord–chord.
+# CurvePolygon / H⊥ parked. Not SQL/MM done. CC Landed.
+# 4-axiom atan2 sidecar (classic via CsConcat / OkCirc / Span).
+# No new kernel. Not a CircGamma remint. Not CurveSegment remint.
+# Not first cook scope. Not a noder. Not CurvePolygon.
+theories/CircularCookCcConcat.v
+# Phase B.3 CurvePolygon ring closure (sidecar / host reuse).
+# CP ring is a closed CircularString or closed CompoundCurve
+# (B.2 CompoundCurveMembers that is contiguous and closed;
+# last member joins first). Sequential joints stay B.2.
+# CS–CS closing reuses I_ok_circ; LS–LS closing is host I_ok;
+# mixed closing is host I_ok Decline (I.1). Locked CS-ring
+# CURVEPOLYGON((CIRCULARSTRING(-5 0, 0 5, 5 0, 0 -5, -5 0)))
+# and mixed-ring CURVEPOLYGON((COMPOUNDCURVE((-5 0, 5 0),
+# CIRCULARSTRING(5 0, 0 -5, -5 0)))). Host CircGamma stays
+# QEX. first_cook_scope stays chord–chord. H⊥ / CircGamma
+# remint / bag-noder parked. Not SQL/MM done. CP Landed.
+# Phase B done-when met (CS + CC + CP Landed). 4-axiom atan2
+# sidecar (classic via CcConcat / CsConcat / OkCirc / Span).
+# No new kernel. Not a CircGamma remint. Not CurveSegment
+# remint. Not CurveGeometry.CurvePolygon remint. Not first
+# cook scope. Not a noder.
+theories/CircularCookCpConcat.v
 # Lineal boundary-meet bridge: curve_segments_meet (chord-chord contact) =>
 # geom_boundary witness => im_bb cell non-empty / ~ im_disjoint_ogc.  Closes the
 # bridge flagged deferred in RingContactSound.v for the LINEAL (chord) case

@@ -205,6 +205,62 @@ classifier; #666 fence holds; Campaign II and H⊥ named parked;
 no new kernel; not SQL/MM done):
 `theories/CircularCookClose.v`. 4-axiom atan2 sidecar.
 
+Production home for 0007-II.1-span-filter (radical root is an arc
+Hit iff `on_arc_gamma` both; IResult filter on span γ, not γ_full;
+locked `p+` Hit, `p−` Empty; host CircGamma stays QEX; II.2–II.4 /
+H⊥ / SQL/MM cathedral stay parked):
+`theories/CircularCookSpanFilter.v`. 4-axiom atan2 sidecar.
+
+Production home for 0007-II.2-span-split (split `arc_gamma` at
+in-span `t`; leftovers meet at locked `p+`; leftover on parent
+circle; locked `p−` stays Empty / no invented span cook; host
+CircGamma stays QEX; II.3–II.4 / H⊥ / SQL/MM cathedral stay
+parked): `theories/CircularCookSpanSplit.v`. 4-axiom atan2 sidecar.
+
+Production home for 0007-II.3-I-ok-circ (first glossary-type
+inhabitant `I_ok_circ` on EggCircularArc × EggCircularArc via
+sidecar `arc_gamma`; locked `p+` Hit licenses `span_split`;
+locked far pair inhabits Empty; host CircGamma stays QEX;
+II.4 / H⊥ / SQL/MM cathedral stay parked):
+`theories/CircularCookOkCirc.v`. 4-axiom atan2 sidecar.
+
+Production home for 0007-II.4-campaign-ii-close (Campaign II
+close letter; sidecar `I_ok_circ` inhabitant; host CircGamma
+stays QEX; `first_cook_scope` stays chord–chord; H⊥ parked;
+not a bag noder; Phase B SQL/MM Part 3 required-type gaps
+named — CircularString / CompoundCurve / CurvePolygon; not
+SQL/MM done): `theories/CircularCookCloseII.v`. 4-axiom
+atan2 sidecar.
+
+Production home for 0007-B.1-cs-concat-joints (Phase B.1
+CircularString concat joints; CS is a sequence of `CircEgg`;
+joint is `I_ok_circ` Hit at `(end, t=1, t=0)` via sidecar
+`arc_gamma`; joint params not interior; locked 2-arc V-CS
+odd_closed fixture; host CircGamma stays QEX; CompoundCurve /
+CurvePolygon / H⊥ parked; not SQL/MM done; no new kernel):
+`theories/CircularCookCsConcat.v`. 4-axiom atan2 sidecar.
+
+Production home for 0007-B.2-cc-member-joints (Phase B.2
+CompoundCurve member joints; CC is a sequence of LineString
+chords and CircularString `CircEgg` members; LS–LS joint is
+host `I_ok` Hit at `(end, t=1, t=0)`; CS–CS member joint
+reuses `I_ok_circ`; mixed LS–CS joint is host `I_ok` Decline
+(I.1); locked mixed fixture; host CircGamma stays QEX;
+CurvePolygon / H⊥ parked; not SQL/MM done; CC Landed; no new
+kernel): `theories/CircularCookCcConcat.v`. 4-axiom atan2
+sidecar.
+
+Production home for 0007-B.3-cp-ring-closure (Phase B.3
+CurvePolygon ring closure; CP ring is a closed CircularString
+or closed CompoundCurve — B.2 members contiguous and closed,
+last joins first; CS–CS closing reuses `I_ok_circ`; mixed
+closing is host `I_ok` Decline (I.1); locked CS-ring and
+mixed-ring fixtures; host CircGamma stays QEX; H⊥ /
+CircGamma remint / bag-noder parked; not SQL/MM done; CP
+Landed; Phase B done-when met (CS + CC + CP Landed); no new
+kernel): `theories/CircularCookCpConcat.v`. 4-axiom atan2
+sidecar.
+
 Production home for 64-naa-res (constructor ⇒ affine circle–circle
 resultant root under `circles_properly_intersect`; not the converse
 and not a Bézout/degree proof): `theories/CircleCircleResultant.v`.

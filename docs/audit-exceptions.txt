@@ -13,13 +13,14 @@
 #     immediately above the file line explaining what makes the file
 #     Category C / transitional and the planned resolution).
 #
-# Current state: 99 files are listed below -- 74 in `theories-flocq/` (the
+# Current state: 108 files are listed below -- 75 in `theories-flocq/` (the
 # initial bulk block for binary ops Bplus/Bminus/Bmult pulling
 # `Classical_Prop.classic` via Flocq, plus additional Category C for
-# snap-rounding, overlay, expansion-arithmetic, and Stage D as documented
-# per-file), 24 in `theories/` (R-side lineages: Stdlib `atan`/`Ratan`,
-# plus #564 RiemannInt for the Fresnel inhabitant, documented per-file
-# below), and 1 probe (`docs/h1-vacuity/HobbyHlemma43Check.v`).
+# snap-rounding, overlay, expansion-arithmetic, Stage D, and the Priest
+# overlap-hierarchy module as documented per-file), 32 in `theories/`
+# (R-side lineages: Stdlib `atan`/`Ratan`, plus #564 RiemannInt for the
+# Fresnel inhabitant, documented per-file below), and 1 probe
+# (`docs/h1-vacuity/HobbyHlemma43Check.v`).
 # The five all-C2 arc files (`ArcLength` / `ArcArea` /
 # `ArcCentroid` / `ArcAreaCentroid` / `CurveBufferArea`) left this list
 # after a 3-axiom Taylor-envelope proof of `sin x < x` replaced Stdlib
@@ -480,6 +481,112 @@ theories/CircularCookLicense.v
 # atan2/`classic` cleanup (same lineage).
 theories/CircularCookClose.v
 
+# Category C (R-side, same atan lineage as CircularCookSpan.v):
+# ADR-0007 II.1 span filter as IResult. Radical root is arc Hit
+# iff on_arc_gamma both (span γ, not γ_full). Locked p+ Hit, p−
+# Empty. Host CircGamma stays QEX. II.2–II.4 / H⊥ / SQL/MM
+# cathedral stay parked. Inherits Classical_Prop.classic via
+# CircularCookSpan / atan2 (claimId 0007 / II.1). No extra axioms
+# beyond the atan2 lineage. Headlines Qed-closed. Not CS concat.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
+theories/CircularCookSpanFilter.v
+
+# Category C (R-side, same atan lineage as CircularCookSpan.v):
+# ADR-0007 II.2 split γ_span at in-span t. Leftovers of arc_gamma
+# meet at locked p*. Leftover stays on the parent circle.
+# Locked p− stays Empty — no invented span cook. Host CircGamma
+# stays QEX. II.3–II.4 / H⊥ / SQL/MM cathedral stay parked.
+# Inherits Classical_Prop.classic via CircularCookSpan / atan2
+# (claimId 0007 / II.2). No extra axioms beyond the atan2 lineage.
+# Headlines Qed-closed. Not circ_split. Not CS concat.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
+theories/CircularCookSpanSplit.v
+
+# Category C (R-side, same atan lineage as CircularCookSpan.v):
+# ADR-0007 II.3 I_ok_circ on EggCircularArc × EggCircularArc.
+# First glossary-type inhabitant using sidecar arc_gamma /
+# span filter / span split. Host CircGamma stays QEX.
+# II.4 / H⊥ / SQL/MM cathedral stay parked. Inherits
+# Classical_Prop.classic via CircularCookSpan / atan2
+# (claimId 0007 / II.3). No extra axioms beyond the atan2
+# lineage. Headlines Qed-closed. Not CS concat. Not host I_ok.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
+theories/CircularCookOkCirc.v
+
+# Category C (R-side, same atan lineage as CircularCookOkCirc.v):
+# ADR-0007 II.4 Campaign-II close letter. I_ok_circ exists as
+# sidecar glossary inhabitant. Host CircGamma stays QEX.
+# first_cook_scope stays chord–chord. H⊥ parked. Not a bag
+# noder. Phase B SQL/MM Part 3 required-type gaps named
+# (CircularString / CompoundCurve / CurvePolygon). Not
+# SQL/MM done. Inherits Classical_Prop.classic via
+# CircularCookOkCirc / Span / atan2 (claimId 0007 / II.4).
+# No extra axioms beyond the atan2 lineage. Headlines
+# Qed-closed. Not CS concat. No new kernel.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
+theories/CircularCookCloseII.v
+
+# Category C (R-side, same atan lineage as CircularCookOkCirc.v):
+# ADR-0007 Phase B.1 CircularString concat joints. CS is a
+# sequence of CircEgg; joint is I_ok_circ Hit at (end, t=1,
+# t=0) via sidecar arc_gamma / I_ok_circ. Joint params not
+# interior. Locked 2-arc V-CS odd_closed fixture. Host
+# CircGamma stays QEX. CompoundCurve / CurvePolygon / H⊥
+# parked. Not SQL/MM done. Inherits Classical_Prop.classic
+# via CircularCookOkCirc / Span / atan2 (claimId 0007 / B.1).
+# No extra axioms beyond the atan2 lineage. Headlines
+# Qed-closed. No new kernel. Not a CircGamma remint.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
+theories/CircularCookCsConcat.v
+
+# Category C (R-side, same atan lineage as CircularCookCsConcat.v):
+# ADR-0007 Phase B.2 CompoundCurve member joints. CC is a
+# sequence of LineString (chords) and CircularString (CircEgg)
+# members. LS–LS joint is host I_ok Hit at (end, t=1, t=0).
+# CS–CS member joint reuses I_ok_circ / B.1 cs_joint. Mixed
+# LS–CS joint is host I_ok Decline (I.1 fence); not a
+# constructed mixed Hit. Locked mixed LS+CS fixture. Host
+# CircGamma stays QEX. CurvePolygon / H⊥ parked. Not SQL/MM
+# done. CC Landed. Inherits Classical_Prop.classic via
+# CircularCookCsConcat / OkCirc / Span / atan2 (claimId 0007 /
+# B.2). No extra axioms beyond the atan2 lineage. Headlines
+# Qed-closed. No new kernel. Not a CircGamma remint. Not a
+# CurveSegment remint.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
+theories/CircularCookCcConcat.v
+
+# Category C (R-side, same atan lineage as CircularCookCcConcat.v):
+# ADR-0007 Phase B.3 CurvePolygon ring closure. CP ring is a
+# closed CircularString or closed CompoundCurve (B.2 members
+# contiguous and closed; last joins first). Sequential joints
+# stay B.2. CS–CS closing reuses I_ok_circ / B.1 cs_joint.
+# LS–LS closing is host I_ok. Mixed closing is host I_ok
+# Decline (I.1 fence); not a constructed mixed Hit. Locked
+# CS-ring and mixed-ring fixtures. Host CircGamma stays QEX.
+# H⊥ / CircGamma remint / bag-noder parked. Not SQL/MM done.
+# CP Landed. Phase B done-when met (CS + CC + CP Landed).
+# Inherits Classical_Prop.classic via CircularCookCcConcat /
+# CsConcat / OkCirc / Span / atan2 (claimId 0007 / B.3). No
+# extra axioms beyond the atan2 lineage. Headlines Qed-closed.
+# No new kernel. Not a CircGamma remint. Not a CurveSegment
+# remint. Not a CurveGeometry.CurvePolygon remint.
+# Planned resolution: Category C until host CircGamma / three-axiom floor absorbs
+# circ_gamma or stays exempt. Removal tracks CircularCookHit / AngleBetween
+# atan2/`classic` cleanup (same lineage).
+theories/CircularCookCpConcat.v
+
 # Category C (R-side, same atan lineage as AngleBetween.v): issue #64 subtask
 # 64-c InArc minor-arc membership.  InArc / central_angle use angle_between,
 # so inherit Classical_Prop.classic.  Headlines in_arc_point_on_minor_arc and
@@ -558,15 +665,25 @@ theories/ArcTraversalBridge.v
 # No Admitteds; headlines Qed-closed.
 theories/ArcMidSweep.v
 
-# Category C (R-side, same atan lineage as ArcParamBridge.v): issue #559
-# / claimId 508-a.  nurbs2_golden_quarter_length pulls
+# Category C (R-side, same atan lineage as ArcParamBridge.v): generic
+# 2·atan / tan-on-[0, π/4] identities extracted from claimId 508-a.
+# cos_2_atan / sin_2_atan pull Classical_Prop.classic through Stdlib
+# Ratan.atan.  No golden weights.  Removal tracks AngleBetween's
+# cleanup — do not lift C1 elsewhere.  No Admitteds; headlines
+# Qed-closed.
+theories/AtanDoubleAngle.v
+
+# Category C (R-side, same atan lineage as AtanDoubleAngle.v): issue
+# #559 / claimId 508-a.  nurbs2_golden_quarter_length pulls
 # Classical_Prop.classic through Stdlib Ratan.atan (Weierstrass φ and
-# the explicit tan preimage).  The 3-axiom route is closed: the reparam
-# contract demands an explicit preimage and forbids IVT, so atan is the
-# named inverse.  CurveLength / ArcRectifiable stay 3-axiom in their
-# own files.  Removal tracks AngleBetween's cleanup — do not lift C1
-# elsewhere.  No CurveSegment growth, no ADR-0004 remint, no new 64-a
-# r·θ.  No Admitteds; headline Qed-closed.
+# the explicit tan preimage) and through AtanDoubleAngle.  The 3-axiom
+# route is closed: the reparam contract demands an explicit preimage
+# and forbids IVT, so atan is the named inverse.  Windowed
+# is_curve_length_ext_on now lives in CurveLength.v (3-axiom).
+# CurveLength / ArcRectifiable stay 3-axiom in their own files.
+# Removal tracks AngleBetween's cleanup — do not lift C1 elsewhere.
+# No CurveSegment growth, no ADR-0004 remint, no new 64-a r·θ.  No
+# Admitteds; headline Qed-closed.
 theories/NurbsConicExact.v
 
 # Category C (R-side, same atan lineage as NurbsConicExact.v): issue #565

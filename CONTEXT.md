@@ -500,8 +500,65 @@ glossary `(p*, tᵢ, tⱼ)`, and does not license host
 I.10 closes Campaign I: sidecar cook exists on a constructed
 circular Hit (both roots); host CircGamma stays QEX;
 `first_cook_scope` stays chord–chord; `I_CIRCULAR` stays a
-classifier; the #666 fence holds; Campaign II and H⊥ are named
-parked; no new kernel; not SQL/MM done.
+classifier; the #666 fence holds; Campaign II and H⊥ were named
+parked at that close; no new kernel; not SQL/MM done.
+II.1 (Campaign II, first rung): a radical root is an **arc**
+Hit iff `on_arc_gamma` both — IResult / Hit|Empty|Decline-style
+filter on span γ, not γ_full. Locked (p+) in-span Hit; (p−)
+out-of-span Empty (still on γ_full). Host CircGamma stays QEX;
+host circular `I_ok` stays Decline.
+II.2: split each span interpolant `arc_gamma` at the Hit’s
+in-span `tᵢ` / `tⱼ`; leftovers meet at `p*` (Hit incidence, not
+a kiss); leftover γ stays on the parent circle. Locked `p−`
+stays Empty — no invented span cook. Not `circ_split` / γ_full.
+II.3: first glossary-type inhabitant `I_ok_circ` on
+EggCircularArc × EggCircularArc using sidecar `arc_gamma`
+(span filter + span split). Locked `p+` Hit licenses
+`span_split`; a far quarter of the I.3 disjoint circles
+inhabits Empty. Host CircGamma stays QEX; host circular
+`I_ok` stays Decline; `I_ok_circ` Hit ≠ host `I_ok`.
+`first_cook_scope` stays chord–chord. ∀ Hit / Empty /
+Decline as a Prop are definitional; not a computed
+classifier. II.4 closes Campaign II: `I_ok_circ` exists
+as the sidecar glossary inhabitant; host CircGamma stays
+QEX; `first_cook_scope` stays chord–chord; H⊥ stays
+parked; not a bag noder. Phase B SQL/MM Part 3
+**required**-type gaps are named (CircularString /
+CompoundCurve / CurvePolygon) — not SQL/MM done. A
+CircularString theorem needs concatenation; this is one
+Arc. B.1 (Phase B, first required-type cut): CircularString
+is a sequence of CircEgg; a concat joint is `I_ok_circ` Hit
+at `(arc_end, t=1, t=0)` via `arc_gamma`. Joint params are
+not interior. Reuse `I_ok_circ` — no new kernel. Locked
+2-arc V-CS odd_closed fixture. Host CircGamma stays QEX;
+host circular `I_ok` stays Decline. CompoundCurve /
+CurvePolygon / H⊥ stay parked. Not SQL/MM done. Not a
+CircGamma remint. B.2 (Phase B, CompoundCurve required-type
+cut): CompoundCurve is a sequence of LineString (chords) and
+CircularString (`CircEgg`) members. LS–LS joint is host
+`I_ok` Hit at `(ce_p1, t=1, t=0)`. CS–CS member joint reuses
+`I_ok_circ` / B.1 `cs_joint`. Mixed LS–CS joint is host
+`I_ok` Decline (I.1); a constructed mixed Hit does not.
+Locked mixed fixture
+`COMPOUNDCURVE((-5 0, 5 0), CIRCULARSTRING(5 0, 0 -5, -5 0))`.
+`phase_b_compound_curve_status` Landed. Host CircGamma stays
+QEX. CurvePolygon / H⊥ stay parked. Not SQL/MM done. Not a
+CircGamma remint. Not a remint of `CurveSegment`.
+B.3 (Phase B, CurvePolygon required-type cut): a CP ring is
+a closed CircularString or closed CompoundCurve (B.2 members
+contiguous and closed; last joins first). Sequential joints
+stay B.2. CS–CS closing reuses `I_ok_circ` / B.1 `cs_joint`.
+LS–LS closing is host `I_ok`. Mixed closing is host `I_ok`
+Decline (I.1); a constructed mixed Hit does not. Locked
+CS-ring
+`CURVEPOLYGON((CIRCULARSTRING(-5 0, 0 5, 5 0, 0 -5, -5 0)))`
+and mixed-ring
+`CURVEPOLYGON((COMPOUNDCURVE((-5 0, 5 0), CIRCULARSTRING(5 0, 0 -5, -5 0))))`.
+`phase_b_curve_polygon_status` Landed. Phase B done-when
+met (CS + CC + CP Landed). Host CircGamma stays QEX. H⊥ /
+CircGamma remint / bag-noder stay parked. Not SQL/MM done
+(cathedral / Multi / optional Part 3 types). Not a remint
+of `CurveSegment` / `CurveGeometry.CurvePolygon`.
 Pairwise
 interior split of chords is finite (width measure); bag-level
 termination and confluence of the repeat-until-noded loop remain
