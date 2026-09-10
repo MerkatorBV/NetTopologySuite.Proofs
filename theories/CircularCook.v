@@ -18,13 +18,21 @@
    II.2 span split at in-span t lives in CircularCookSpanSplit.v;
    II.3 I_ok_circ lives in CircularCookOkCirc.v (4-axiom sidecar);
    II.4 Campaign-II close lives in CircularCookCloseII.v
-   (4-axiom sidecar); this host flag stays QEX.
+   (4-axiom sidecar); Phase B.1 CS concat joints live in
+   CircularCookCsConcat.v (4-axiom sidecar reuse of I_ok_circ);
+   Phase B.2 CompoundCurve member joints live in
+   CircularCookCcConcat.v (4-axiom sidecar / host reuse);
+   Phase B.3 CurvePolygon ring closure lives in
+   CircularCookCpConcat.v (4-axiom sidecar / host reuse);
+   this host flag stays QEX.
 
    WITNESS topic: core · claimId: 64-i-circular · witness: 64-i-circular-locked
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    ========================================================================== *)
+
+(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
 
 From Stdlib Require Import ZArith Reals Lra.
 From NTS.Proofs Require Import Distance SheetHenCook ArcArcCircles CircularCookZ.
