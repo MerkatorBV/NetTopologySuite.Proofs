@@ -857,7 +857,7 @@ Locked mixed fixture (type-distinct inhabitant):
 `COMPOUNDCURVE((-5 0, 5 0), CIRCULARSTRING(5 0, 0 -5, -5 0))`.
 Host CircGamma stays QEX. `first_cook_scope` stays
 chord–chord. Host circular `I_ok` stays Decline.
-`phase_b_compound_curve_status` is **Landed**. CurvePolygon /
+`phase_b_compound_curve_status` stays **Gap** (mixed LS–CS host Decline). CurvePolygon /
 H⊥ stay parked. Not a CircGamma remint. Not “SQL/MM done”.
 Does not remint `CurveSegment` / Exact* / `Dart` / Hobby /
 `ArcSplitAtNode` leftover-width / `CompoundCurveKoc*`.

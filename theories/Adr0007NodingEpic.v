@@ -87,8 +87,8 @@
    (4-axiom sidecar / host reuse of B.1 I_ok_circ / B.2 host
    I_ok / mixed Decline; not Required here). Host CircGamma
    stays QEX. first cook stays chord–chord. H⊥ stays parked.
-   Not a bag noder. Phase B required types (CS / CC / CP) are
-   named Landed in the B.3 sidecar — not SQL/MM done. Not this
+   Not a bag noder. Phase B required types (CS / CC / CP) stay
+   Gap / Open in the B.3 sidecar (mixed Decline) — not SQL/MM done. Not this
    host module.
 
    QEX is not a new Accept cycle. ADR-0007 is Accepted (2026-09-07).
