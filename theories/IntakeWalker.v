@@ -23,8 +23,20 @@
    Reuses MkChord / MkCirc. Clothoid is the MkClothoid letter
    in this module (same mapper table). No Fresnel host γ.
 
-   Fail closed: GEODESICSTRING, SPIRALCURVE, MkOutOfScope
-   leftovers. CircUnknown well-formed CS/Circle now maps
+   GeodesicString (claimId 0007-intake-geodesic): a well-formed
+   point run (n≥2, same empty / bad-count rules as map_ls)
+   bags IntakeBag (map_ls S pts) — same hens, same
+   chords_of_pts, same MkChord chickens as LineString.
+   Sheet geodesic = chord. Production stays geodesic; τ of
+   the egg is LINESTRING; cst_prod_tag stays None. No
+   MkGeodesic. No EggGeodesicString on a successful bag.
+   MkOutOfScope EggGeodesicString stays sidecar packaging.
+   ID_GeodesicString is not the well-formed answer.
+   SPIRALCURVE / TOutOfSlice stay fail-closed. Not first-cook
+   expand. Not ellipsoid γ. Not WKB 13. Not emit.
+
+   Fail closed: SPIRALCURVE, MkOutOfScope leftovers.
+   CircUnknown well-formed CS/Circle now maps
    through IntakeAngles (claimId 0007-intake-angles): unique
    circumcircle + inhabited angle fields, MkCirc chickens.
    Collinear / duplicate / bad count / empty / zero-radius
@@ -77,7 +89,7 @@
 
    WITNESS topic: overlay / core · claimId: 0007-intake-walker
    witness: 0007-intake-walker
-   also: 0007-intake-mkclothoid
+   also: 0007-intake-mkclothoid, 0007-intake-geodesic
    also: 0007-B.2-cc-member-joints, 0007-B-mixed-ls-cs-joints
    board: ADR-0007
    3-axiom host. No Admitted / Axiom / Parameter.
@@ -112,7 +124,7 @@ Inductive TaggedCst : Type :=
 | TCompoundCurve : list TaggedCst -> TaggedCst
 | TClothoidJts : TaggedCst
 | TClothoidIso : TaggedCst
-| TGeodesicString : TaggedCst
+| TGeodesicString : list Point -> TaggedCst
 | TSpiralCurve : TaggedCst
 | TOutOfSlice : TaggedCst.
 
@@ -183,6 +195,7 @@ Definition p_m50 : Point := mkPoint (-5) 0.
 
 Definition locked_point_cst : TaggedCst := TPoint p00.
 Definition locked_ls_cst : TaggedCst := TLineString [p00; p20].
+Definition locked_geodesic_cst : TaggedCst := TGeodesicString [p00; p20].
 Definition locked_cs_quarter_cst : TaggedCst :=
   TCircularString CircQuarter [p50; circ_eval locked_circ_A (1 / 2); p05].
 Definition locked_circle_cst : TaggedCst :=
@@ -298,7 +311,7 @@ Definition map_cc_example5 (s : Sheet) : ShcBag :=
 Definition intake_map_atom (s : Sheet) (t : TaggedCst) : IntakeResult :=
   match t with
   | TPoint p => IntakeBag (map_point s p)
-  | TLineString pts =>
+  | TLineString pts | TGeodesicString pts =>
       match pts with
       | [] => IntakeDecline ID_Empty
       | [_] => IntakeDecline ID_BadPointCount
@@ -313,7 +326,6 @@ Definition intake_map_atom (s : Sheet) (t : TaggedCst) : IntakeResult :=
   | TCompoundCurve _ => IntakeDecline ID_NotFirstSlice
   | TClothoidJts => IntakeBag (map_clothoid s)
   | TClothoidIso => IntakeBag (map_clothoid s)
-  | TGeodesicString => IntakeDecline ID_GeodesicString
   | TSpiralCurve => IntakeDecline ID_SpiralCurve
   | TOutOfSlice => IntakeDecline ID_NotFirstSlice
   end.
@@ -542,9 +554,56 @@ Qed.
 (* Fail-closed Declines. Named tickets. No silent chord demote.               *)
 (* -------------------------------------------------------------------------- *)
 
-Lemma geodesic_declines :
-  intake_map default_sheet TGeodesicString =
+Lemma locked_geodesic_maps :
+  intake_map default_sheet locked_geodesic_cst =
+    IntakeBag (map_ls default_sheet [p00; p20]).
+Proof.
+  reflexivity.
+Qed.
+
+Lemma locked_geodesic_same_bag_as_ls :
+  intake_map default_sheet locked_geodesic_cst =
+    intake_map default_sheet locked_ls_cst.
+Proof.
+  reflexivity.
+Qed.
+
+Lemma locked_geodesic_is_chord :
+  bag_chickens (map_ls default_sheet [p00; p20]) =
+    [mkChicken 0%nat 1%nat (MkChord (mkChordEgg p00 p20))] /\
+  egg_class (MkChord (mkChordEgg p00 p20)) = EggChord.
+Proof.
+  split; reflexivity.
+Qed.
+
+Lemma locked_geodesic_not_geodesic_egg :
+  forall c,
+    In c (bag_chickens (map_ls default_sheet [p00; p20])) ->
+    ck_egg c <> MkOutOfScope EggGeodesicString /\
+    egg_class (ck_egg c) = EggChord.
+Proof.
+  intros c Hin.
+  rewrite (proj1 locked_geodesic_is_chord) in Hin.
+  destruct Hin as [Heq|[]].
+  rewrite <- Heq. split; [discriminate|reflexivity].
+Qed.
+
+Lemma geodesic_wellformed_not_id_geodesic :
+  intake_map default_sheet locked_geodesic_cst <>
     IntakeDecline ID_GeodesicString.
+Proof.
+  rewrite locked_geodesic_maps. discriminate.
+Qed.
+
+Lemma geodesic_empty_declines :
+  intake_map default_sheet (TGeodesicString []) = IntakeDecline ID_Empty.
+Proof.
+  reflexivity.
+Qed.
+
+Lemma geodesic_badcount_declines :
+  intake_map default_sheet (TGeodesicString [p00]) =
+    IntakeDecline ID_BadPointCount.
 Proof.
   reflexivity.
 Qed.
@@ -872,12 +931,14 @@ Qed.
 Inductive IntakeCtor : Type :=
 | IntakeAnglesFromPoints
 | IntakeMkClothoid
+| IntakeGeodesicMkChord
 | IntakeWkbOrder.
 
 Definition intake_ctor_inhabits (c : IntakeCtor) : Prop :=
   match c with
   | IntakeAnglesFromPoints => True
   | IntakeMkClothoid => True
+  | IntakeGeodesicMkChord => True
   | IntakeWkbOrder => False
   end.
 
@@ -889,6 +950,12 @@ Qed.
 
 Lemma intake_mkclothoid_inhabits :
   intake_ctor_inhabits IntakeMkClothoid.
+Proof.
+  exact I.
+Qed.
+
+Lemma intake_geodesic_mkchord_inhabits :
+  intake_ctor_inhabits IntakeGeodesicMkChord.
 Proof.
   exact I.
 Qed.
@@ -916,8 +983,6 @@ Lemma first_slice_inhabits :
   ck_egg (hd (mkChicken 0%nat 0%nat (MkChord (mkChordEgg p00 p00)))
              (bag_chickens (map_circle default_sheet)))
     = MkCirc locked_full_circle_egg /\
-  intake_map default_sheet TGeodesicString =
-    IntakeDecline ID_GeodesicString /\
   intake_map default_sheet TSpiralCurve =
     IntakeDecline ID_SpiralCurve /\
   intake_walker_kind = IW_FirstSlice.
@@ -929,7 +994,7 @@ Qed.
 (* Ticket-named QED ∨ QEX stops.                                              *)
 (* -------------------------------------------------------------------------- *)
 
-(* WITNESS {"claimId":"0007-intake-walker","topic":"overlay","lemma":"ticket_0007_intake_walker_qed_or_qex","title":"First-slice intake maps Point/LineString/locked CircularString/Circle/CompoundCurve to SHC bag and fail-closes GEODESICSTRING/SPIRALCURVE (QED) or silently demotes out-of-scope WKT to MkChord (QEX); discharged QED; grammar accept is CST only; Intake Decline is not cook IDecline; clothoid bagging is the MkClothoid letter","file":"theories/IntakeWalker.v","witness":"0007-intake-walker","board":"ADR-0007"} *)
+(* WITNESS {"claimId":"0007-intake-walker","topic":"overlay","lemma":"ticket_0007_intake_walker_qed_or_qex","title":"First-slice intake maps Point/LineString/locked CircularString/Circle/CompoundCurve to SHC bag and fail-closes SPIRALCURVE (QED) or silently demotes remaining out-of-scope WKT to MkChord (QEX); discharged QED; well-formed GEODESICSTRING bagging is the 0007-intake-geodesic letter; grammar accept is CST only; Intake Decline is not cook IDecline; clothoid bagging is the MkClothoid letter","file":"theories/IntakeWalker.v","witness":"0007-intake-walker","board":"ADR-0007"} *)
 Theorem ticket_0007_intake_walker_qed_or_qex :
   (intake_map default_sheet locked_point_cst =
      IntakeBag (map_point default_sheet p00) /\
@@ -948,8 +1013,6 @@ Theorem ticket_0007_intake_walker_qed_or_qex :
               (bag_chickens (map_cs_full default_sheet)))
      = ck_egg (hd (mkChicken 0%nat 0%nat (MkChord (mkChordEgg p00 p00)))
                   (bag_chickens (map_circle default_sheet))) /\
-   intake_map default_sheet TGeodesicString =
-     IntakeDecline ID_GeodesicString /\
    intake_map default_sheet TSpiralCurve =
      IntakeDecline ID_SpiralCurve /\
    grammar_accept_not_valid /\ grammar_accept_not_cooked /\
@@ -959,7 +1022,7 @@ Theorem ticket_0007_intake_walker_qed_or_qex :
   \/
   (exists t b c,
      intake_map default_sheet t = IntakeBag b /\
-     (t = TGeodesicString \/ t = TSpiralCurve) /\
+     t = TSpiralCurve /\
      In c (bag_chickens b) /\ egg_class (ck_egg c) = EggChord).
 Proof.
   left.
@@ -1061,6 +1124,77 @@ Proof.
   exact example5_cc_not_iso_decline.
 Qed.
 
+(* Named QEX for the geodesic intake letter: ellipsoid γ, WKB 13
+   as signed I/O, emit of GEODESICSTRING bytes, τ=π on the
+   geodesic production. *)
+Inductive IntakeGeodesicQex : Type :=
+| IG_EllipsoidGamma
+| IG_Wkb13SignedIo
+| IG_EmitGeodesicBytes
+| IG_TauEqPiOnGeodesicProd.
+
+Definition intake_geodesic_qex_inhabits (_ : IntakeGeodesicQex) : Prop := False.
+
+Lemma intake_geodesic_ellipsoid_missing :
+  ~ intake_geodesic_qex_inhabits IG_EllipsoidGamma.
+Proof.
+  intro H. exact H.
+Qed.
+
+Lemma intake_geodesic_wkb13_missing :
+  ~ intake_geodesic_qex_inhabits IG_Wkb13SignedIo.
+Proof.
+  intro H. exact H.
+Qed.
+
+Lemma intake_geodesic_emit_missing :
+  ~ intake_geodesic_qex_inhabits IG_EmitGeodesicBytes.
+Proof.
+  intro H. exact H.
+Qed.
+
+Lemma intake_geodesic_tau_eq_pi_missing :
+  ~ intake_geodesic_qex_inhabits IG_TauEqPiOnGeodesicProd.
+Proof.
+  intro H. exact H.
+Qed.
+
+(* WITNESS {"claimId":"0007-intake-geodesic","topic":"overlay","lemma":"ticket_0007_intake_geodesic_qed_or_qex","title":"Well-formed GeodesicString CST bags the same MkChord SHC bag as LineString on sheet S (QED) or ellipsoid geodesic gamma / WKB 13 signed I/O / GEODESICSTRING emit / tau=pi on the geodesic production inhabit (QEX); discharged QED; sheet geodesic = chord; no MkGeodesic; SPIRALCURVE still Declines; not first-cook expand; not silent drop of the CST name","file":"theories/IntakeWalker.v","witness":"0007-intake-geodesic","board":"ADR-0007"} *)
+Theorem ticket_0007_intake_geodesic_qed_or_qex :
+  (intake_ctor_inhabits IntakeGeodesicMkChord /\
+   intake_map default_sheet locked_geodesic_cst =
+     IntakeBag (map_ls default_sheet [p00; p20]) /\
+   intake_map default_sheet locked_geodesic_cst =
+     intake_map default_sheet locked_ls_cst /\
+   bag_chickens (map_ls default_sheet [p00; p20]) =
+     [mkChicken 0%nat 1%nat (MkChord (mkChordEgg p00 p20))] /\
+   egg_class (MkChord (mkChordEgg p00 p20)) = EggChord /\
+   intake_map default_sheet locked_geodesic_cst <>
+     IntakeDecline ID_GeodesicString /\
+   intake_map default_sheet TSpiralCurve =
+     IntakeDecline ID_SpiralCurve /\
+   intake_map default_sheet (TGeodesicString []) =
+     IntakeDecline ID_Empty /\
+   intake_map default_sheet (TGeodesicString [p00]) =
+     IntakeDecline ID_BadPointCount)
+  \/
+  (intake_geodesic_qex_inhabits IG_EllipsoidGamma /\
+   intake_geodesic_qex_inhabits IG_Wkb13SignedIo /\
+   intake_geodesic_qex_inhabits IG_EmitGeodesicBytes /\
+   intake_geodesic_qex_inhabits IG_TauEqPiOnGeodesicProd).
+Proof.
+  left.
+  split; [exact intake_geodesic_mkchord_inhabits|].
+  split; [exact locked_geodesic_maps|].
+  split; [exact locked_geodesic_same_bag_as_ls|].
+  split; [exact (proj1 locked_geodesic_is_chord)|].
+  split; [exact (proj2 locked_geodesic_is_chord)|].
+  split; [exact geodesic_wellformed_not_id_geodesic|].
+  split; [exact spiral_declines|].
+  split; [exact geodesic_empty_declines|].
+  exact geodesic_badcount_declines.
+Qed.
+
 Print Assumptions locked_point_maps.
 Print Assumptions locked_ls_maps.
 Print Assumptions locked_cs_quarter_maps.
@@ -1077,7 +1211,11 @@ Print Assumptions locked_full_circle_egg_at_half.
 Print Assumptions locked_circle_intake_midpoints.
 Print Assumptions locked_cs_full_ogc_maps.
 Print Assumptions ogc_iso_circle_same_egg.
-Print Assumptions geodesic_declines.
+Print Assumptions locked_geodesic_maps.
+Print Assumptions locked_geodesic_same_bag_as_ls.
+Print Assumptions locked_geodesic_is_chord.
+Print Assumptions geodesic_wellformed_not_id_geodesic.
+Print Assumptions geodesic_empty_declines.
 Print Assumptions spiral_declines.
 Print Assumptions locked_cloth_intake_endpoints.
 Print Assumptions iso_clothoid_maps.
@@ -1103,3 +1241,5 @@ Print Assumptions ticket_0007_intake_walker_qed_or_qex.
 Print Assumptions ticket_0007_intake_angles_qed_or_qex.
 Print Assumptions ticket_0007_intake_parks_qed_or_qex.
 Print Assumptions ticket_0007_intake_mkclothoid_qed_or_qex.
+Print Assumptions intake_geodesic_mkchord_inhabits.
+Print Assumptions ticket_0007_intake_geodesic_qed_or_qex.
