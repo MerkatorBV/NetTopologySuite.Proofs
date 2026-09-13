@@ -478,6 +478,48 @@ Proof.
   reflexivity.
 Qed.
 
+(* π: CST production name, not T_signed. GEODESICSTRING ∉ T_signed. *)
+Inductive CstProdName : Type :=
+| PiLineString
+| PiCircularString
+| PiCircle
+| PiClothoid
+| PiGeodesicString
+| PiUnsigned.
+
+Definition cst_prod_name (c : TaggedCst) : CstProdName :=
+  match c with
+  | TLineString _ => PiLineString
+  | TCircularString _ _ => PiCircularString
+  | TCircle _ _ => PiCircle
+  | TClothoidJts => PiClothoid
+  | TClothoidIso => PiClothoid
+  | TGeodesicString _ => PiGeodesicString
+  | TPoint _ | TCompoundCurve _ | TSpiralCurve | TOutOfSlice => PiUnsigned
+  end.
+
+Definition t_signed_of_prod (n : CstProdName) : option SqlMmSignedTag :=
+  match n with
+  | PiLineString => Some TagLineString
+  | PiCircularString => Some TagCircularString
+  | PiCircle => Some TagCircle
+  | PiClothoid => Some TagClothoid
+  | PiGeodesicString | PiUnsigned => None
+  end.
+
+Lemma pi_linestring :
+  forall pts, cst_prod_name (TLineString pts) = PiLineString.
+Proof. intros pts. reflexivity. Qed.
+
+Lemma pi_geodesicstring :
+  forall pts, cst_prod_name (TGeodesicString pts) = PiGeodesicString.
+Proof. intros pts. reflexivity. Qed.
+
+Lemma geodesic_not_in_t_signed :
+  t_signed_of_prod PiGeodesicString = None /\
+  (forall pts, cst_prod_tag (TGeodesicString pts) = None).
+Proof. split; [reflexivity|intros pts; reflexivity]. Qed.
+
 (* TCircle ρ ignores the egg. A hypothetical non-full MkCirc under
    TCircle would give ρ=CIRCLE and τ=CIRCULARSTRING; first slice
    does not inhabit that bag; the function still allows it. *)
@@ -665,6 +707,8 @@ Lemma tau_mu_locked_geodesic :
     e = MkChord (mkChordEgg p00 p20) /\
     first_slice_tag e = Some TagLineString /\
     cst_prod_tag locked_geodesic_cst = None /\
+    cst_prod_name locked_geodesic_cst = PiGeodesicString /\
+    cst_prod_name locked_ls_cst = PiLineString /\
     intake_rho locked_geodesic_cst e = None.
 Proof.
   exists (map_ls default_sheet [p00; p20]).
@@ -673,7 +717,10 @@ Proof.
   split; [unfold bag_eggs; rewrite (proj1 locked_geodesic_is_chord); reflexivity|].
   split; [reflexivity|].
   split; [reflexivity|].
-  split; reflexivity.
+  split; [reflexivity|].
+  split; [reflexivity|].
+  split; [reflexivity|].
+  reflexivity.
 Qed.
 
 Lemma tau_mu_geodesic_prod_none :
@@ -956,6 +1003,8 @@ Print Assumptions ang_egg_sweep_is_two_pi.
 Print Assumptions tau_mu_locked_geodesic.
 Print Assumptions tau_mu_geodesic_prod_none.
 Print Assumptions kappa_not_13.
+Print Assumptions pi_geodesicstring.
+Print Assumptions geodesic_not_in_t_signed.
 Print Assumptions tau_mu_spiral_decline.
 Print Assumptions first_slice_tag_geodesic_none.
 Print Assumptions first_slice_tag_spiral_none.

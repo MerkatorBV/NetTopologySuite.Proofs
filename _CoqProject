@@ -179,6 +179,10 @@ theories/IntakeWalker.v
 # HOLD is nats. Emit / WKT parse QEX. Does not grow
 # SheetHenCook. No new oracle keyword. No Admitted.
 theories/SqlMmSignedTag.v
+# ADR-0007 GeodesicString as sheet geodesic (IntakeGeodesic).
+# μ in IntakeWalker; joints / π / first-cook reuse here.
+# claimId 0007-intake-geodesic. No Admitted.
+theories/IntakeGeodesic.v
 # RelateNG product face lives in _CoqProject.full (RelateNGFace.v):
 # it packages the DE-9IM / RelateNG zoo, which is not host-lane.
 # Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.

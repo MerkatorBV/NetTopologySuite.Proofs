@@ -78,13 +78,16 @@ _Avoid_: WKT zoo, example3.txt as oracle source, silent chord demote,
 new oracle keyword
 
 **Intake geodesic** (ADR-0007, claimId `0007-intake-geodesic`):
-GeodesicString on sheet \(S\) is the sheet geodesic = chord. The
-mapper bags `MkChord` via `map_ls` (same hens / chickens as
-LineString). \(\tau\) of that egg is LINESTRING. Production stays
-geodesic (`cst_prod_tag` is None). Not ellipsoid \(\gamma\). Not
-first-cook expand. Not Circle-as-18. Not a silent drop of the CST
-name. `MkOutOfScope EggGeodesicString` stays sidecar packaging.
-`SPIRALCURVE` still Declines.
+GeodesicString on sheet \(S=(O;e_1,e_2)\) is the sheet geodesic
+= chord interpolant \(\gamma_{\mathrm{ch}}\). \(\mu(S,c_G)=\mu(S,c_{LS})\)
+on the same controls; eggs are `MkChord` only. Joints:
+\(\gamma_{\mathrm{ch}}(c_i)(1)=p_{i+1}=\gamma_{\mathrm{ch}}(c_{i+1})(0)\).
+\(\tau(e)=\texttt{LINESTRING}\). \(\pi(c_{LS})=\texttt{LINESTRING}\),
+\(\pi(c_G)=\texttt{GEODESICSTRING}\notin T_{\mathrm{signed}}\).
+\(\kappa\) unchanged (not 13). Consecutive eggs are already
+chord×chord first cook. Not an ambient \(\gamma\) (sphere / torus /
+cone / saddle). Not a plane section (ellipse / conic). Not
+`MkClothoid` / `MkCirc`. Not first-cook expand. Not WKB 13 / emit.
 _Avoid_: MkGeodesic, EggGeodesicString on a successful bag, WKB 13,
 emit of GEODESICSTRING, first-cook expand, new oracle keyword
 

@@ -190,6 +190,8 @@ Definition p_m50 : Point := mkPoint (-5) 0.
 Definition locked_point_cst : TaggedCst := TPoint p00.
 Definition locked_ls_cst : TaggedCst := TLineString [p00; p20].
 Definition locked_geodesic_cst : TaggedCst := TGeodesicString [p00; p20].
+Definition locked_ls3_cst : TaggedCst := TLineString [p00; p20; p50].
+Definition locked_geodesic3_cst : TaggedCst := TGeodesicString [p00; p20; p50].
 Definition locked_cs_quarter_cst : TaggedCst :=
   TCircularString CircQuarter [p50; circ_eval locked_circ_A (1 / 2); p05].
 Definition locked_circle_cst : TaggedCst :=
@@ -1102,67 +1104,6 @@ Proof.
   exact example5_cc_not_iso_decline.
 Qed.
 
-(* QEX: ellipsoid γ, WKB 13, GEODESICSTRING emit, τ=π on production. *)
-Inductive IntakeGeodesicQex : Type :=
-| IG_EllipsoidGamma
-| IG_Wkb13SignedIo
-| IG_EmitGeodesicBytes
-| IG_TauEqPiOnGeodesicProd.
-
-Definition intake_geodesic_qex_inhabits (_ : IntakeGeodesicQex) : Prop := False.
-
-Lemma intake_geodesic_ellipsoid_missing :
-  ~ intake_geodesic_qex_inhabits IG_EllipsoidGamma.
-Proof. intro H. exact H. Qed.
-
-Lemma intake_geodesic_wkb13_missing :
-  ~ intake_geodesic_qex_inhabits IG_Wkb13SignedIo.
-Proof. intro H. exact H. Qed.
-
-Lemma intake_geodesic_emit_missing :
-  ~ intake_geodesic_qex_inhabits IG_EmitGeodesicBytes.
-Proof. intro H. exact H. Qed.
-
-Lemma intake_geodesic_tau_eq_pi_missing :
-  ~ intake_geodesic_qex_inhabits IG_TauEqPiOnGeodesicProd.
-Proof. intro H. exact H. Qed.
-
-(* WITNESS {"claimId":"0007-intake-geodesic","topic":"overlay","lemma":"ticket_0007_intake_geodesic_qed_or_qex","title":"Well-formed GeodesicString CST bags the same MkChord SHC bag as LineString on sheet S (QED) or ellipsoid geodesic gamma / WKB 13 signed I/O / GEODESICSTRING emit / tau=pi on the geodesic production inhabit (QEX); discharged QED; sheet geodesic = chord; no MkGeodesic; SPIRALCURVE still Declines; not first-cook expand; not silent drop of the CST name","file":"theories/IntakeWalker.v","witness":"0007-intake-geodesic","board":"ADR-0007"} *)
-Theorem ticket_0007_intake_geodesic_qed_or_qex :
-  (intake_ctor_inhabits IntakeGeodesicMkChord /\
-   intake_map default_sheet locked_geodesic_cst =
-     IntakeBag (map_ls default_sheet [p00; p20]) /\
-   intake_map default_sheet locked_geodesic_cst =
-     intake_map default_sheet locked_ls_cst /\
-   bag_chickens (map_ls default_sheet [p00; p20]) =
-     [mkChicken 0%nat 1%nat (MkChord (mkChordEgg p00 p20))] /\
-   egg_class (MkChord (mkChordEgg p00 p20)) = EggChord /\
-   intake_map default_sheet locked_geodesic_cst <>
-     IntakeDecline ID_GeodesicString /\
-   intake_map default_sheet TSpiralCurve =
-     IntakeDecline ID_SpiralCurve /\
-   intake_map default_sheet (TGeodesicString []) =
-     IntakeDecline ID_Empty /\
-   intake_map default_sheet (TGeodesicString [p00]) =
-     IntakeDecline ID_BadPointCount)
-  \/
-  (intake_geodesic_qex_inhabits IG_EllipsoidGamma /\
-   intake_geodesic_qex_inhabits IG_Wkb13SignedIo /\
-   intake_geodesic_qex_inhabits IG_EmitGeodesicBytes /\
-   intake_geodesic_qex_inhabits IG_TauEqPiOnGeodesicProd).
-Proof.
-  left.
-  split; [exact intake_geodesic_mkchord_inhabits|].
-  split; [exact locked_geodesic_maps|].
-  split; [exact locked_geodesic_same_bag_as_ls|].
-  split; [exact (proj1 locked_geodesic_is_chord)|].
-  split; [exact (proj2 locked_geodesic_is_chord)|].
-  split; [exact geodesic_wellformed_not_id_geodesic|].
-  split; [exact spiral_declines|].
-  split; [exact geodesic_empty_declines|].
-  exact geodesic_badcount_declines.
-Qed.
-
 Print Assumptions locked_point_maps.
 Print Assumptions locked_ls_maps.
 Print Assumptions locked_cs_quarter_maps.
@@ -1210,4 +1151,3 @@ Print Assumptions ticket_0007_intake_angles_qed_or_qex.
 Print Assumptions ticket_0007_intake_parks_qed_or_qex.
 Print Assumptions ticket_0007_intake_mkclothoid_qed_or_qex.
 Print Assumptions intake_geodesic_mkchord_inhabits.
-Print Assumptions ticket_0007_intake_geodesic_qed_or_qex.
