@@ -245,7 +245,9 @@ public final class Example {
         }
 
         public Example build() {
-            if (!empty && controls.isEmpty() && !compound && !clothoid) {
+            if (!empty && controls.isEmpty()
+                    && !"COMPOUNDCURVE".equals(keyword)
+                    && !"CLOTHOID".equals(keyword)) {
                 controls.addAll(pts);
             }
             return new Example(this);

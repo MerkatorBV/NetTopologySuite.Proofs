@@ -111,14 +111,14 @@ a signed geodesic I/O lane.
 ```
 bash tools/SqlMmExampleFactory/smoke.sh
 bash tools/SqlMmExampleFactory/generate.sh
-java -cp tools/SqlMmExampleFactory/.build:tools/SqlMmExampleFactory/.lib/ST4-4.3.4.jar:tools/SqlMmExampleFactory/.lib/antlr4-runtime-4.13.2.jar \
+java -cp tools/SqlMmExampleFactory/.build:tools/SqlMmExampleFactory/.lib/ST4-4.3.4.jar:tools/SqlMmExampleFactory/.lib/antlr-runtime-3.5.3.jar \
   org.nts.proofs.factory.Main --list
 java -cp … org.nts.proofs.factory.Main linestring-02
 ```
 
-`generate.sh` downloads `org.antlr:ST4:4.3.4` and
-`org.antlr:antlr4-runtime:4.13.2` into `.lib/` (gitignored). There is
-no Maven reactor for the monorepo.
+`generate.sh` downloads `org.antlr:ST4:4.3.4` and its compile
+dependency `org.antlr:antlr-runtime:3.5.3` (ANTLR 3 — ST4's own POM)
+into `.lib/` (gitignored). There is no Maven reactor for the monorepo.
 
 Smoke asserts:
 
