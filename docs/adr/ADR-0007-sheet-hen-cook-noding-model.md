@@ -1576,7 +1576,7 @@ Status stays **Accepted**. ADR-0006 Status stays **Accepted**.
 
 | Stop | Arm | Lemma |
 |------|-----|-------|
-| `IntakeWalker.v : ticket_0007_intake_walker_qed_or_qex` | **QED** — first-slice bag; fail-closed named Declines; OGC≡ISO same full-span egg; grammar accept is CST only | `IntakeWalker.v : first_slice_inhabits`, `IntakeWalker.v : ogc_iso_circle_same_egg`, `IntakeWalker.v : geodesic_declines` |
+| `IntakeWalker.v : ticket_0007_intake_walker_qed_or_qex` | **QED** — first-slice bag; fail-closed SPIRALCURVE; OGC≡ISO same full-span egg; grammar accept is CST only; well-formed GEODESICSTRING is `0007-intake-geodesic` | `IntakeWalker.v : first_slice_inhabits`, `IntakeWalker.v : ogc_iso_circle_same_egg`, `IntakeWalker.v : spiral_declines` |
 | `IntakeWalker.v : ticket_0007_intake_angles_qed_or_qex` | **QED** — see the angles letter below | `IntakeWalker.v : intake_angles_from_points_inhabits`, `IntakeWalker.v : unknown_cs_chickens_mkcirc` |
 | `IntakeWalker.v : ticket_0007_intake_parks_qed_or_qex` | **QEX** — WKB-order Γ walk / WKT zoo / Lesson-1 remints / host cook / new keyword parked; bag loop stays obligation; clothoid split out | `IntakeWalker.v : intake_walker_letter_is_landed`, `IntakeWalker.v : intake_wkb_order_missing`, `SheetHenCook.v : cook_loop_is_obligation` |
 

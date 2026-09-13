@@ -64,7 +64,9 @@
 
    QED: ticket_sqlmm_signed_tag_qed_or_qex — τ and κ.
         ticket_sqlmm_tau_mu_qed_or_qex — locked exists-b-e
-        ring (geodesic + spiral Decline).
+        ring (well-formed geodesic bags MkChord / τ=LINESTRING;
+        spiral Decline). One agreement row; no TagGeodesic;
+        κ does not gain 13. Production cst_prod_tag stays None.
    QEX: ticket_sqlmm_tau_mu_qed_or_qex right arm — production
         τ=π on full-span CIRCULARSTRING text (cst_prod_tag).
         ticket_sqlmm_factory_emit_qed_or_qex — WKT/WKB bytes.
@@ -442,7 +444,7 @@ Definition intake_rho (c : TaggedCst) (e : Egg) : option SqlMmSignedTag :=
       | MkCirc γ => Some (tau_circ γ)
       | _ => None
       end
-  | TPoint _ | TCompoundCurve _ | TGeodesicString
+  | TPoint _ | TCompoundCurve _ | TGeodesicString _
   | TSpiralCurve | TOutOfSlice => None
   end.
 
@@ -454,7 +456,7 @@ Definition cst_prod_tag (c : TaggedCst) : option SqlMmSignedTag :=
   | TCircle _ _ => Some TagCircle
   | TClothoidJts => Some TagClothoid
   | TClothoidIso => Some TagClothoid
-  | TPoint _ | TCompoundCurve _ | TGeodesicString
+  | TPoint _ | TCompoundCurve _ | TGeodesicString _
   | TSpiralCurve | TOutOfSlice => None
   end.
 
@@ -475,6 +477,48 @@ Lemma cst_prod_tag_fullspan_cs :
 Proof.
   reflexivity.
 Qed.
+
+(* π: CST production name, not T_signed. GEODESICSTRING ∉ T_signed. *)
+Inductive CstProdName : Type :=
+| PiLineString
+| PiCircularString
+| PiCircle
+| PiClothoid
+| PiGeodesicString
+| PiUnsigned.
+
+Definition cst_prod_name (c : TaggedCst) : CstProdName :=
+  match c with
+  | TLineString _ => PiLineString
+  | TCircularString _ _ => PiCircularString
+  | TCircle _ _ => PiCircle
+  | TClothoidJts => PiClothoid
+  | TClothoidIso => PiClothoid
+  | TGeodesicString _ => PiGeodesicString
+  | TPoint _ | TCompoundCurve _ | TSpiralCurve | TOutOfSlice => PiUnsigned
+  end.
+
+Definition t_signed_of_prod (n : CstProdName) : option SqlMmSignedTag :=
+  match n with
+  | PiLineString => Some TagLineString
+  | PiCircularString => Some TagCircularString
+  | PiCircle => Some TagCircle
+  | PiClothoid => Some TagClothoid
+  | PiGeodesicString | PiUnsigned => None
+  end.
+
+Lemma pi_linestring :
+  forall pts, cst_prod_name (TLineString pts) = PiLineString.
+Proof. intros pts. reflexivity. Qed.
+
+Lemma pi_geodesicstring :
+  forall pts, cst_prod_name (TGeodesicString pts) = PiGeodesicString.
+Proof. intros pts. reflexivity. Qed.
+
+Lemma geodesic_not_in_t_signed :
+  t_signed_of_prod PiGeodesicString = None /\
+  (forall pts, cst_prod_tag (TGeodesicString pts) = None).
+Proof. split; [reflexivity|intros pts; reflexivity]. Qed.
 
 (* TCircle ρ ignores the egg. A hypothetical non-full MkCirc under
    TCircle would give ρ=CIRCLE and τ=CIRCULARSTRING; first slice
@@ -652,11 +696,45 @@ Proof.
     apply f_equal. apply tau_circ_full. exact ang_egg_sweep_is_two_pi.
 Qed.
 
-Lemma tau_mu_geodesic_decline :
-  intake_map default_sheet TGeodesicString = IntakeDecline ID_GeodesicString /\
-  (forall e, intake_rho TGeodesicString e = None).
+(* Two productions (LineString vs GeodesicString), one egg class
+   (MkChord). τ of the egg is LINESTRING. cst_prod_tag of the
+   geodesic CST stays None — production is not signed I/O.
+   No TagGeodesic; κ does not gain 13. *)
+Lemma tau_mu_locked_geodesic :
+  exists b e,
+    intake_map default_sheet locked_geodesic_cst = IntakeBag b /\
+    bag_eggs b = [e] /\
+    e = MkChord (mkChordEgg p00 p20) /\
+    first_slice_tag e = Some TagLineString /\
+    cst_prod_tag locked_geodesic_cst = None /\
+    cst_prod_name locked_geodesic_cst = PiGeodesicString /\
+    cst_prod_name locked_ls_cst = PiLineString /\
+    intake_rho locked_geodesic_cst e = None.
 Proof.
-  split; [exact geodesic_declines|intros e; reflexivity].
+  exists (map_ls default_sheet [p00; p20]).
+  exists (MkChord (mkChordEgg p00 p20)).
+  split; [exact locked_geodesic_maps|].
+  split; [unfold bag_eggs; rewrite (proj1 locked_geodesic_is_chord); reflexivity|].
+  split; [reflexivity|].
+  split; [reflexivity|].
+  split; [reflexivity|].
+  split; [reflexivity|].
+  split; [reflexivity|].
+  reflexivity.
+Qed.
+
+Lemma tau_mu_geodesic_prod_none :
+  forall pts e,
+    intake_rho (TGeodesicString pts) e = None /\
+    cst_prod_tag (TGeodesicString pts) = None.
+Proof.
+  intros pts e. split; reflexivity.
+Qed.
+
+Lemma kappa_not_13 :
+  forall t, sqlmm_kappa t <> Some 13%nat.
+Proof.
+  intros t. destruct t; discriminate.
 Qed.
 
 Lemma tau_mu_spiral_decline :
@@ -805,7 +883,7 @@ Proof.
   exact hold_has_no_signed_tag.
 Qed.
 
-(* WITNESS {"claimId":"0007-sqlmm-signed-tag","topic":"overlay","lemma":"ticket_sqlmm_tau_mu_qed_or_qex","title":"Locked exists-b-e tau=mu (not forall CSTs): first_slice_tag e equals intake_rho on locked LS, quarter CS, CIRCLE, full-span CS (same MkCirc, tag CIRCLE), both clothoid spellings, unknown-CS ang_egg definitional full-span; geodesic+spiral Decline and rho=None and first_slice_tag MkOutOfScope none (QED) or production-level tau=pi on full-span CIRCULARSTRING text via cst_prod_tag (QEX, already missing); discharged QED; compound is not a singleton; intake_rho is egg-aware on CS and is not cst_prod_tag; not park rho; not WKT parse","file":"theories/SqlMmSignedTag.v","witness":"0007-sqlmm-signed-tag","board":"ADR-0007"} *)
+(* WITNESS {"claimId":"0007-sqlmm-signed-tag","topic":"overlay","lemma":"ticket_sqlmm_tau_mu_qed_or_qex","title":"Locked exists-b-e tau=mu (not forall CSTs): first_slice_tag e equals intake_rho on locked LS, quarter CS, CIRCLE, full-span CS (same MkCirc, tag CIRCLE), both clothoid spellings, unknown-CS ang_egg definitional full-span; well-formed geodesic bags MkChord tau=LINESTRING cst_prod_tag None; spiral Decline and rho=None and first_slice_tag MkOutOfScope none (QED) or production-level tau=pi on full-span CIRCULARSTRING text via cst_prod_tag (QEX, already missing); discharged QED; compound is not a singleton; intake_rho is egg-aware on CS and is not cst_prod_tag; not park rho; not WKT parse","file":"theories/SqlMmSignedTag.v","witness":"0007-sqlmm-signed-tag","board":"ADR-0007"} *)
 Theorem ticket_sqlmm_tau_mu_qed_or_qex :
   ((exists b e,
       intake_map default_sheet locked_ls_cst = IntakeBag b /\
@@ -838,8 +916,12 @@ Theorem ticket_sqlmm_tau_mu_qed_or_qex :
       intake_map default_sheet unknown_cs_cst = IntakeBag b /\
       bag_eggs b = [e] /\
       first_slice_tag e = Some TagCircle) /\
-   intake_map default_sheet TGeodesicString = IntakeDecline ID_GeodesicString /\
-   (forall e, intake_rho TGeodesicString e = None) /\
+   (exists b e,
+      intake_map default_sheet locked_geodesic_cst = IntakeBag b /\
+      bag_eggs b = [e] /\
+      e = MkChord (mkChordEgg p00 p20) /\
+      first_slice_tag e = Some TagLineString /\
+      cst_prod_tag locked_geodesic_cst = None) /\
    first_slice_tag (MkOutOfScope EggGeodesicString) = None /\
    intake_map default_sheet TSpiralCurve = IntakeDecline ID_SpiralCurve /\
    (forall e, intake_rho TSpiralCurve e = None) /\
@@ -857,7 +939,7 @@ Proof.
   destruct tau_mu_locked_clothoid_iso as [bi [ei [Hi [Hegi [Htagi _]]]]].
   destruct tau_mu_locked_clothoid_jts as [bj [ej [Hj [Hegj [_ [Htagj _]]]]]].
   destruct tau_mu_unknown_cs as [bu [eu [Hu [Hegu [_ [Htagu _]]]]]].
-  destruct tau_mu_geodesic_decline as [Hgeo HgeoRho].
+  destruct tau_mu_locked_geodesic as [bg [eg [Hg [Hegg [Heg [Htagg [Hprod _]]]]]]].
   destruct tau_mu_spiral_decline as [Hspi HspiRho].
   destruct tau_mu_compound_not_singleton as [_ Hcc].
   split; [exists bLS, eLS; repeat split; assumption|].
@@ -868,8 +950,7 @@ Proof.
   split; [exists bi, ei; repeat split; assumption|].
   split; [exists bj, ej; repeat split; assumption|].
   split; [exists bu, eu; repeat split; assumption|].
-  split; [exact Hgeo|].
-  split; [exact HgeoRho|].
+  split; [exists bg, eg; repeat split; assumption|].
   split; [exact first_slice_tag_geodesic_none|].
   split; [exact Hspi|].
   split; [exact HspiRho|].
@@ -919,7 +1000,11 @@ Print Assumptions tau_mu_full_span_shared_egg.
 Print Assumptions tau_mu_locked_clothoid_iso.
 Print Assumptions tau_mu_unknown_cs.
 Print Assumptions ang_egg_sweep_is_two_pi.
-Print Assumptions tau_mu_geodesic_decline.
+Print Assumptions tau_mu_locked_geodesic.
+Print Assumptions tau_mu_geodesic_prod_none.
+Print Assumptions kappa_not_13.
+Print Assumptions pi_geodesicstring.
+Print Assumptions geodesic_not_in_t_signed.
 Print Assumptions tau_mu_spiral_decline.
 Print Assumptions first_slice_tag_geodesic_none.
 Print Assumptions first_slice_tag_spiral_none.

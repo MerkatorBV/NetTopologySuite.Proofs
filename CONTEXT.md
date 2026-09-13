@@ -71,11 +71,25 @@ cooked graph. Intake Decline ≠ cook `IDecline`. First slice: Point,
 LineString, CircularString, CompoundCurve of those two, Circle-as-full-
 span-arc (`MkCirc` sweep `2π`). Grammar pin: antlr/grammars-v4 PR #4997
 (ISO/IEC 13249-3 §5.1.67). Engines test the bag, not the string. Fail
-closed on `GEODESICSTRING` / `SPIRALCURVE`. Unknown well-formed CS
-is the angles letter, not leftover Decline. Both CLOTHOID forms
-are the MkClothoid letter. No silent chord demote at intake.
+closed on `SPIRALCURVE`. Well-formed `GEODESICSTRING` is the intake-
+geodesic letter. Unknown well-formed CS is the angles letter, not
+leftover Decline. Both CLOTHOID forms are the MkClothoid letter.
 _Avoid_: WKT zoo, example3.txt as oracle source, silent chord demote,
 new oracle keyword
+
+**Intake geodesic** (ADR-0007, claimId `0007-intake-geodesic`):
+GeodesicString on sheet \(S=(O;e_1,e_2)\) is the sheet geodesic
+= chord interpolant \(\gamma_{\mathrm{ch}}\). \(\mu(S,c_G)=\mu(S,c_{LS})\)
+on the same controls; eggs are `MkChord` only. Joints:
+\(\gamma_{\mathrm{ch}}(c_i)(1)=p_{i+1}=\gamma_{\mathrm{ch}}(c_{i+1})(0)\).
+\(\tau(e)=\texttt{LINESTRING}\). \(\pi(c_{LS})=\texttt{LINESTRING}\),
+\(\pi(c_G)=\texttt{GEODESICSTRING}\notin T_{\mathrm{signed}}\).
+\(\kappa\) unchanged (not 13). Consecutive eggs are already
+chord×chord first cook. Not an ambient \(\gamma\) (sphere / torus /
+cone / saddle). Not a plane section (ellipse / conic). Not
+`MkClothoid` / `MkCirc`. Not first-cook expand. Not WKB 13 / emit.
+_Avoid_: MkGeodesic, EggGeodesicString on a successful bag, WKB 13,
+emit of GEODESICSTRING, first-cook expand, new oracle keyword
 
 **Intake angles** (ADR-0007, claimId `0007-intake-angles`):
 Intake construction of `CircularEgg` `(O,r,θ₀,Δθ)` from well-formed
@@ -123,8 +137,10 @@ mints a singleton bag, `τ(e)=ρ(π(c))`. `intake_rho` /
 — not ADR-0007 park ρ (`EmitRhoBagLoop` / bag-loop). Full-span
 CS and CIRCLE share one MkCirc; τ of that egg is CIRCLE.
 `intake_rho` is egg-aware on CIRCULARSTRING and is not
-`cst_prod_tag`. GeodesicString / SpiralCurve Decline (τ unused).
-`κ` is 2/8 or none. Emit / WKT parse stay QEX. Production-level
+`cst_prod_tag`. Well-formed GeodesicString bags `MkChord`;
+τ is LINESTRING; `cst_prod_tag` stays None (production is not
+signed I/O). SpiralCurve still Declines (τ unused). `κ` is 2/8
+or none (not 13). Emit / WKT parse stay QEX. Production-level
 τ=π on full-span CIRCULARSTRING text stays QEX.
 _Avoid_: ∀-mapper on all CSTs, Circle-as-18, compound-as-τ,
 park-ρ remint, new oracle keyword
