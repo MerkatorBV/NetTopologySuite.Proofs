@@ -23,17 +23,11 @@
    Reuses MkChord / MkCirc. Clothoid is the MkClothoid letter
    in this module (same mapper table). No Fresnel host γ.
 
-   GeodesicString (claimId 0007-intake-geodesic): a well-formed
-   point run (n≥2, same empty / bad-count rules as map_ls)
-   bags IntakeBag (map_ls S pts) — same hens, same
-   chords_of_pts, same MkChord chickens as LineString.
-   Sheet geodesic = chord. Production stays geodesic; τ of
-   the egg is LINESTRING; cst_prod_tag stays None. No
-   MkGeodesic. No EggGeodesicString on a successful bag.
-   MkOutOfScope EggGeodesicString stays sidecar packaging.
-   ID_GeodesicString is not the well-formed answer.
-   SPIRALCURVE / TOutOfSlice stay fail-closed. Not first-cook
-   expand. Not ellipsoid γ. Not WKB 13. Not emit.
+   GeodesicString (claimId 0007-intake-geodesic): well-formed
+   pts (n≥2, same empty/bad-count as map_ls) bag map_ls S pts
+   (MkChord). Sheet geodesic = chord. No MkGeodesic. SPIRAL
+   stays Decline. ID_GeodesicString is not the well-formed
+   answer. Not ellipsoid / WKB 13 / emit / first-cook expand.
 
    Fail closed: SPIRALCURVE, MkOutOfScope leftovers.
    CircUnknown well-formed CS/Circle now maps
@@ -557,24 +551,18 @@ Qed.
 Lemma locked_geodesic_maps :
   intake_map default_sheet locked_geodesic_cst =
     IntakeBag (map_ls default_sheet [p00; p20]).
-Proof.
-  reflexivity.
-Qed.
+Proof. reflexivity. Qed.
 
 Lemma locked_geodesic_same_bag_as_ls :
   intake_map default_sheet locked_geodesic_cst =
     intake_map default_sheet locked_ls_cst.
-Proof.
-  reflexivity.
-Qed.
+Proof. reflexivity. Qed.
 
 Lemma locked_geodesic_is_chord :
   bag_chickens (map_ls default_sheet [p00; p20]) =
     [mkChicken 0%nat 1%nat (MkChord (mkChordEgg p00 p20))] /\
   egg_class (MkChord (mkChordEgg p00 p20)) = EggChord.
-Proof.
-  split; reflexivity.
-Qed.
+Proof. split; reflexivity. Qed.
 
 Lemma locked_geodesic_not_geodesic_egg :
   forall c,
@@ -582,31 +570,23 @@ Lemma locked_geodesic_not_geodesic_egg :
     ck_egg c <> MkOutOfScope EggGeodesicString /\
     egg_class (ck_egg c) = EggChord.
 Proof.
-  intros c Hin.
-  rewrite (proj1 locked_geodesic_is_chord) in Hin.
-  destruct Hin as [Heq|[]].
-  rewrite <- Heq. split; [discriminate|reflexivity].
+  intros c Hin; rewrite (proj1 locked_geodesic_is_chord) in Hin;
+    destruct Hin as [Heq|[]]; rewrite <- Heq; split; [discriminate|reflexivity].
 Qed.
 
 Lemma geodesic_wellformed_not_id_geodesic :
   intake_map default_sheet locked_geodesic_cst <>
     IntakeDecline ID_GeodesicString.
-Proof.
-  rewrite locked_geodesic_maps. discriminate.
-Qed.
+Proof. rewrite locked_geodesic_maps. discriminate. Qed.
 
 Lemma geodesic_empty_declines :
   intake_map default_sheet (TGeodesicString []) = IntakeDecline ID_Empty.
-Proof.
-  reflexivity.
-Qed.
+Proof. reflexivity. Qed.
 
 Lemma geodesic_badcount_declines :
   intake_map default_sheet (TGeodesicString [p00]) =
     IntakeDecline ID_BadPointCount.
-Proof.
-  reflexivity.
-Qed.
+Proof. reflexivity. Qed.
 
 Lemma spiral_declines :
   intake_map default_sheet TSpiralCurve =
@@ -956,9 +936,7 @@ Qed.
 
 Lemma intake_geodesic_mkchord_inhabits :
   intake_ctor_inhabits IntakeGeodesicMkChord.
-Proof.
-  exact I.
-Qed.
+Proof. exact I. Qed.
 
 Lemma intake_wkb_order_missing :
   ~ intake_ctor_inhabits IntakeWkbOrder.
@@ -1124,9 +1102,7 @@ Proof.
   exact example5_cc_not_iso_decline.
 Qed.
 
-(* Named QEX for the geodesic intake letter: ellipsoid γ, WKB 13
-   as signed I/O, emit of GEODESICSTRING bytes, τ=π on the
-   geodesic production. *)
+(* QEX: ellipsoid γ, WKB 13, GEODESICSTRING emit, τ=π on production. *)
 Inductive IntakeGeodesicQex : Type :=
 | IG_EllipsoidGamma
 | IG_Wkb13SignedIo
@@ -1137,27 +1113,19 @@ Definition intake_geodesic_qex_inhabits (_ : IntakeGeodesicQex) : Prop := False.
 
 Lemma intake_geodesic_ellipsoid_missing :
   ~ intake_geodesic_qex_inhabits IG_EllipsoidGamma.
-Proof.
-  intro H. exact H.
-Qed.
+Proof. intro H. exact H. Qed.
 
 Lemma intake_geodesic_wkb13_missing :
   ~ intake_geodesic_qex_inhabits IG_Wkb13SignedIo.
-Proof.
-  intro H. exact H.
-Qed.
+Proof. intro H. exact H. Qed.
 
 Lemma intake_geodesic_emit_missing :
   ~ intake_geodesic_qex_inhabits IG_EmitGeodesicBytes.
-Proof.
-  intro H. exact H.
-Qed.
+Proof. intro H. exact H. Qed.
 
 Lemma intake_geodesic_tau_eq_pi_missing :
   ~ intake_geodesic_qex_inhabits IG_TauEqPiOnGeodesicProd.
-Proof.
-  intro H. exact H.
-Qed.
+Proof. intro H. exact H. Qed.
 
 (* WITNESS {"claimId":"0007-intake-geodesic","topic":"overlay","lemma":"ticket_0007_intake_geodesic_qed_or_qex","title":"Well-formed GeodesicString CST bags the same MkChord SHC bag as LineString on sheet S (QED) or ellipsoid geodesic gamma / WKB 13 signed I/O / GEODESICSTRING emit / tau=pi on the geodesic production inhabit (QEX); discharged QED; sheet geodesic = chord; no MkGeodesic; SPIRALCURVE still Declines; not first-cook expand; not silent drop of the CST name","file":"theories/IntakeWalker.v","witness":"0007-intake-geodesic","board":"ADR-0007"} *)
 Theorem ticket_0007_intake_geodesic_qed_or_qex :
