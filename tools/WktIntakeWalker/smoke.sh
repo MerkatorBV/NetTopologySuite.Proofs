@@ -50,7 +50,11 @@ check "DECLINE ID_Collinear" "CIRCULARSTRING (0 0, 1 0, 2 0)"
 check "DECLINE ID_DuplicateControl" "CIRCULARSTRING (0 0, 0 0, 1 1)"
 check "DECLINE ID_BadPointCount" "CIRCULARSTRING (0 0, 1 0)"
 check "DECLINE ID_Empty" "CIRCULARSTRING EMPTY"
-check "DECLINE ID_GeodesicString" "GEODESICSTRING (0 0, 1 0)"
+check "BAG hens=0,1 pts=0 0;2 0 chickens=0-1:MkChord" "GEODESICSTRING (0 0, 2 0)"
+check "DECLINE ID_Empty" "GEODESICSTRING EMPTY"
+check "DECLINE ID_BadPointCount" "GEODESICSTRING (0 0)"
+check "BAG hens=0,1,2,3 pts=0 0;5 0;5 0;7 0 chickens=0-1:MkChord,2-3:MkChord" \
+  "COMPOUNDCURVE ((0 0, 5 0), GEODESICSTRING (5 0, 7 0))"
 check "DECLINE ID_SpiralCurve" "SPIRALCURVE EMPTY"
 check "BAG hens=0,1 pts=0 0;80 5.333333333333333 chickens=0-1:MkClothoid" "CLOTHOID (0, 0.005, 80)"
 check "BAG hens=0,1 pts=0 0;80 5.333333333333333 chickens=0-1:MkClothoid" \

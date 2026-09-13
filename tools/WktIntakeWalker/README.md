@@ -23,8 +23,10 @@ First slice: Point, LineString, CircularString, CompoundCurve of those,
 Circle-as-full-span-arc. Unknown well-formed CS/Circle maps to `MkCirc`
 via the unique circumcircle (angles letter). Both CLOTHOID surface
 forms (ISO REFERENCELOCATION, JTS `(k0,k1,L)`) map to the same
-`MkClothoid` bag (OGC≡ISO). Fail-closed Declines: `GEODESICSTRING`,
-`SPIRALCURVE`, collinear (`ID_Collinear`), duplicate control
+`MkClothoid` bag (OGC≡ISO). Well-formed `GEODESICSTRING` (`n≥2`) maps
+to the same `MkChord` bag as `LINESTRING` (Rocq μ in #744
+`0007-intake-geodesic`). Fail-closed Declines: empty / singleton
+geodesic, `SPIRALCURVE`, collinear (`ID_Collinear`), duplicate control
 (`ID_DuplicateControl`), bad count / empty. No silent chord demote.
 `ID_CircGammaLeftover` / `ID_IsoClothoid` / `ID_MkOutOfScope` stay
 on the Decline type; they are not the well-formed clothoid answer.
