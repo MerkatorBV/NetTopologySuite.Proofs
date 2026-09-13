@@ -115,13 +115,19 @@ _Avoid_: Fresnel noding, Halley noding, mixed first cook, NURBS
 first cook, Campaign I, new oracle keyword
 
 **SQL/MM signed tag** (ADR-0007, claimId `0007-sqlmm-signed-tag`):
-Rungs 3–6 of τ=μ. `τ = first_slice_tag` on eggs; `μ = intake_map`
-on CSTs. They do not share a domain. After μ mints a singleton
-bag, `τ(e)=ρ(π(c))`. Full-span CS and CIRCLE share one MkCirc;
-τ of that egg is CIRCLE. `κ` is 2/8 or none. Emit / WKT parse
-stay QEX.
-_Avoid_: τ=π on full-span CIRCULARSTRING text, Circle-as-18,
-compound-as-τ, new oracle keyword
+Rungs 3–6 of τ=μ. Achievable ring is locked `exists b e`
+agreement (not ∀ on all CSTs). `τ = first_slice_tag` on eggs;
+`μ = intake_map` on CSTs. They do not share a domain. After μ
+mints a singleton bag, `τ(e)=ρ(π(c))`. `intake_rho` /
+`cst_prod_tag` here are the CST production tag in that equation
+— not ADR-0007 park ρ (`EmitRhoBagLoop` / bag-loop). Full-span
+CS and CIRCLE share one MkCirc; τ of that egg is CIRCLE.
+`intake_rho` is egg-aware on CIRCULARSTRING and is not
+`cst_prod_tag`. GeodesicString / SpiralCurve Decline (τ unused).
+`κ` is 2/8 or none. Emit / WKT parse stay QEX. Production-level
+τ=π on full-span CIRCULARSTRING text stays QEX.
+_Avoid_: ∀-mapper on all CSTs, Circle-as-18, compound-as-τ,
+park-ρ remint, new oracle keyword
 
 **ISO validity**:
 Every spec "shall" beyond representability, owned by arc-aware `ST_IsValid`:
