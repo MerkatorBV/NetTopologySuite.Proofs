@@ -173,6 +173,12 @@ theories/IntakeAngles.v
 # Host/pure-R. Grammar pin: grammars-v4 #4997. No new oracle
 # keyword. No Admitted.
 theories/IntakeWalker.v
+# ADR-0007 SQL/MM signed tag maps (SqlMmSignedTag).
+# τ on eggs; ρ on IntakeWalker productions; τ=μ after
+# singleton bags. CIRCLE iff |sweep|=2π. κ: 2/8 or none.
+# HOLD is nats. Emit / WKT parse QEX. Does not grow
+# SheetHenCook. No new oracle keyword. No Admitted.
+theories/SqlMmSignedTag.v
 # RelateNG product face lives in _CoqProject.full (RelateNGFace.v):
 # it packages the DE-9IM / RelateNG zoo, which is not host-lane.
 # Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.
