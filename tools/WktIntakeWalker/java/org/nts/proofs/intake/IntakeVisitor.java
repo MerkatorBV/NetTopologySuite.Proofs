@@ -108,7 +108,7 @@ public final class IntakeVisitor extends wktParserBaseVisitor<IntakeResult> {
             return visit(ctx.circleGeometry());
         }
         if (ctx.geodesicStringGeometry() != null) {
-            return IntakeResult.decline(Reason.ID_GeodesicString);
+            return visit(ctx.geodesicStringGeometry());
         }
         if (ctx.clothoidGeometry() != null) {
             return visit(ctx.clothoidGeometry());
@@ -133,7 +133,10 @@ public final class IntakeVisitor extends wktParserBaseVisitor<IntakeResult> {
 
     @Override
     public IntakeResult visitGeodesicStringGeometry(wktParser.GeodesicStringGeometryContext ctx) {
-        return IntakeResult.decline(Reason.ID_GeodesicString);
+        if (ctx.dim() != null) {
+            return IntakeResult.decline(Reason.ID_NotFirstSlice);
+        }
+        return mapLineString(pointsOf(ctx.lineStringText()));
     }
 
     @Override
