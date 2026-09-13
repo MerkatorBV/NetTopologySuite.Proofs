@@ -1,0 +1,50 @@
+/*
+ * SqlMmWkb.stg — ISO/IEC 13249-3:2016 §5.1.68 Table 15 WKB hex emit
+ *
+ * Layout: <byte order> <uint32 type> <payload>
+ *   orderHex  00 = XDR (big-endian), 01 = NDR (little-endian)  items fz–ga
+ *   typeHex   signed I/O this slice: 1 Point, 2 LineString, 8 CircularString,
+ *             9 CompoundCurve (children keep their own type + own order).
+ *
+ * HOLD (named; not signed I/O — do not advertise):
+ *   13–17 and 18–21. Not Circle-as-18. Not Clothoid-as-22. Not WKB 13
+ *   (GEODESICSTRING). CIRCLE / CLOTHOID have κ=none (SqlMmSignedTag.v).
+ *
+ * Hex fragments (orderHex, typeHex, countHex, pointsHex) are filled by
+ * the Java driver (IEEE-754 binary64 + endian). Templates only assemble.
+ *
+ * claimId: none (tools). No new ADR-0006 keyword.
+ *
+ * Rules:
+ *   wkb            — signed path vs HOLD
+ *   wkbSigned      — order + type + payload
+ *   countedPoints  — LineString / CircularString: count + xy payload
+ *   compoundPayload— count + nested wkb(child)
+ *   wkbHold        — CIRCLE / CLOTHOID / empty Point / unsigned codes
+ */
+
+group SqlMmWkb;
+
+wkb(g) ::= <<
+<if(g.signedWkb)><wkbSigned(g)><else><wkbHold(g)><endif>
+>>
+
+wkbSigned(g) ::= <%
+<g.orderHex><g.typeHex><wkbPayload(g)>
+%>
+
+wkbPayload(g) ::= <%
+<if(g.point)><g.pointsHex><elseif(g.lineString)><countedPoints(g)><elseif(g.circularString)><countedPoints(g)><elseif(g.compound)><compoundPayload(g)><endif>
+%>
+
+countedPoints(g) ::= <%
+<g.countHex><g.pointsHex>
+%>
+
+compoundPayload(g) ::= <%
+<g.countHex><g.children:{c | <wkb(c)>}>
+%>
+
+wkbHold(g) ::= <<
+HOLD <g.holdName>
+>>
