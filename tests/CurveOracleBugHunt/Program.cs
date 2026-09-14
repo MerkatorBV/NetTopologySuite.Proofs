@@ -659,7 +659,9 @@ static class Cases
             "Leftover Ⅱ obtuse-at-v. Classified; fill not named."),
         ("TOUCH_MIXED", "triangle_pair_fill TPR_MixedCone", "token", "UNSUPPORTED",
             "Leftover Ⅴ mixed-cone. Classified; fill not named."),
+        ("TOUCH_SAME", "triangle_pair_fill TPR_SameCone", "token", "UNSUPPORTED",
+            "Leftover Ⅵ same-sign spill. Inhabits; fill not named."),
         ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
-            "Unnamed CCW pair. Leftover Ⅴ classifies mixed-cone."),
+            "Unnamed lens. Leftover Ⅵ names the same-sign spill."),
     };
 }
