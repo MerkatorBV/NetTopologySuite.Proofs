@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Download StringTemplate 4 + ANTLR runtime (local jars, no Maven reactor).
-# Pattern matches tools/WktIntakeWalker/generate.sh.
+# Pattern matches the retired Java WktIntakeWalker generate (now archive/).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 LIB="$ROOT/.lib"

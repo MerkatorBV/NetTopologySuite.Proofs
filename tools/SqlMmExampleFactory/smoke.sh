@@ -11,18 +11,41 @@ ST4_VER="${ST4_VER:-4.3.4}"
 A3_VER="${ANTLR3_RUNTIME_VER:-3.5.3}"
 CP="$LIB/ST4-${ST4_VER}.jar:$LIB/antlr-runtime-${A3_VER}.jar"
 
+find_pwsh() {
+  if command -v pwsh >/dev/null 2>&1; then command -v pwsh; return; fi
+  for c in "$HOME/.local/pwsh/pwsh" /usr/bin/pwsh; do
+    if [ -x "$c" ]; then echo "$c"; return; fi
+  done
+  echo "pwsh not found (needed for tools/WktIntakeWalker/generate.ps1)" >&2
+  exit 1
+}
+
+find_dotnet() {
+  if command -v dotnet >/dev/null 2>&1; then command -v dotnet; return; fi
+  for c in "$HOME/.dotnet/dotnet" /usr/share/dotnet/dotnet; do
+    if [ -x "$c" ]; then
+      export DOTNET_ROOT="$(dirname "$c")"
+      export PATH="$DOTNET_ROOT:$PATH"
+      echo "$c"
+      return
+    fi
+  done
+  echo "dotnet not found (needed for C# WktIntakeWalker)" >&2
+  exit 1
+}
+
+PWSH="$(find_pwsh)"
+DOTNET="$(find_dotnet)"
+
 bash "$ROOT/generate.sh"
 mkdir -p "$OUT"
 find "$ROOT/java" -name '*.java' > "$OUT/sources.list"
 javac -cp "$CP" -d "$OUT" @"$OUT/sources.list"
 
-# Intake walker for μ parse-back (pinned grammar).
-bash "$INTAKE/generate.sh"
-INTAKE_JAR="${ANTLR_JAR:-$INTAKE/.antlr/antlr-4.13.2-complete.jar}"
-INTAKE_OUT="$INTAKE/.build"
-mkdir -p "$INTAKE_OUT"
-find "$INTAKE/java" -name '*.java' > "$INTAKE_OUT/sources.list"
-javac -cp "$INTAKE_JAR" -d "$INTAKE_OUT" @"$INTAKE_OUT/sources.list"
+# Intake walker for μ parse-back (C# house style; pinned grammar unchanged).
+"$PWSH" -NoProfile -File "$INTAKE/generate.ps1"
+"$DOTNET" build "$INTAKE/WktIntakeWalker.csproj" --nologo
+INTAKE_DLL="$INTAKE/bin/Debug/net10.0/WktIntakeWalker.dll"
 
 export SQLMM_FACTORY_TEMPLATES="$ROOT/templates"
 
@@ -36,7 +59,7 @@ field() {
 }
 
 intake() {
-  java -cp "$INTAKE_OUT:$INTAKE_JAR" org.nts.proofs.intake.Main "$1"
+  "$DOTNET" "$INTAKE_DLL" "$1"
 }
 
 fail=0

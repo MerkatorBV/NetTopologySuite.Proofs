@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Thin smoke: ANTLR visitor → bag | named Decline. Mirrors IntakeWalker.v.
+# Archived Java smoke. Primary is ../smoke.ps1 (C# house style).
 # Not an oracle keyword (ADR-0006). Engines later test the bag, not the string.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-JAR="${ANTLR_JAR:-$ROOT/.antlr/antlr-4.13.2-complete.jar}"
+PARENT="$(cd "$ROOT/.." && pwd)"
+JAR="${ANTLR_JAR:-$PARENT/.antlr/antlr-4.13.2-complete.jar}"
 OUT="$ROOT/.build"
 bash "$ROOT/generate.sh"
 mkdir -p "$OUT"

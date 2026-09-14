@@ -6,7 +6,7 @@ Optional locked rows for `tools/SqlMmExampleFactory` smoke. North-star
 path contract (copied; does not require PR #741 to land):
 
 ```
-tools/WktIntakeWalker/          # ANTLR pin + visitor
+tools/WktIntakeWalker/          # ANTLR pin + C# visitor (house style)
 tools/SqlMmExampleFactory/      # bag → WKT + WKB
 oracle/fixtures/sqlmm/          # optional locked rows
   shelf-a/*.wkt + *.wkb-*.hex
