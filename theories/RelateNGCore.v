@@ -643,6 +643,35 @@ Definition inside_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
   if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint cx cy)) then true
   else false else false else false else false.
 
+(* Leftover Ⅸ: same-side shared-edge nest. Some A-edge coincides
+   with some B-edge (`shares_edge_b`) and some B vertex is strictly
+   interior to A. Both CCW. Not a remint of `touch_edge_b`
+   (that detector also requires opposite sides), `contains_b`
+   (all three B verts interior), `overlap_b` (needs a B vertex
+   strictly exterior), or `inside_b` (B-frame, all three A verts).
+   Pure `Rlt_dec` / `Req_dec_T`. Classifier order already
+   protects leftover Ⅰ–Ⅷ. `nest_b` is B-in-A only. *)
+Definition some_edges_share_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  shares_edge_b a1 a2 b1 b2
+  || shares_edge_b a1 a2 b2 b3
+  || shares_edge_b a1 a2 b3 b1
+  || shares_edge_b a2 a3 b1 b2
+  || shares_edge_b a2 a3 b2 b3
+  || shares_edge_b a2 a3 b3 b1
+  || shares_edge_b a3 a1 b1 b2
+  || shares_edge_b a3 a1 b2 b3
+  || shares_edge_b a3 a1 b3 b1.
+
+Definition nest_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_edges_share_b
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && some_vertex_strict_pos ax ay bx by_ cx cy
+         (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+  else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
    certificate, a vertex-touch certificate, leftover Ⅰ's collinear
@@ -654,9 +683,12 @@ Definition inside_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    wins), leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
    so opposite-sign still wins), leftover Ⅶ
    (`lens_edges_cross_b`, after leftover Ⅵ — order, not an
-   exclusive lens predicate), and leftover Ⅷ
+   exclusive lens predicate), leftover Ⅷ
    (`inside_b`, after leftover Ⅶ — B-frame, not a remint
-   of `contains_b`).  DECLINES on
+   of `contains_b`), and leftover Ⅸ
+   (`nest_b`, after leftover Ⅷ — B-in-A shared-edge nest,
+   not a remint of `touch_edge_b` / `contains_b` /
+   `overlap_b` / `inside_b`).  DECLINES on
    everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
@@ -674,10 +706,13 @@ Definition inside_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
    reachable when `lens_edges_cross_b` fires after every prior
    arm misses (inhabitance, not a lens denotation). Leftover Ⅷ
    is reachable when `inside_b` fires after every prior arm
-   misses (inhabitance, not a contains denotation). Completeness
-   stays false on a same-side shared-edge nest (not leftover
-   `Ⅸ`). Do not reorder the four wired certificates. Do not
-   remint `cone_separates_b`. Do not remint `contains_b`. *)
+   misses (inhabitance, not a contains denotation). Leftover Ⅸ
+   is reachable when `nest_b` fires after every prior arm
+   misses (inhabitance, not a touch_edge / contains denotation).
+   Completeness stays false on the unnamed swap nest (not
+   leftover `Ⅹ`). Do not reorder the four wired certificates.
+   Do not remint `cone_separates_b`. Do not remint `contains_b`.
+   Do not remint `touch_edge_b`. Do not remint `inside_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -708,6 +743,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_Lens
   else if inside_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Inside
+  else if nest_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Nest
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

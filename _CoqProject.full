@@ -3110,17 +3110,18 @@ theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v
 theories/RelateNGRect.v
 # Leftover Ⅵ inhabitance + leftover Ⅶ inhabitance + leftover
-# Ⅷ inhabitance + unnamed same-side shared-edge cex after
-# leftover Ⅷ (not leftover Ⅸ). Split so TouchVertexRegime
-# stays under the 1234-line gate. Complete stays at the
-# monolith floor.
+# Ⅷ inhabitance. Leftover Ⅸ nest inhabitance + unnamed swap
+# cex after leftover Ⅸ (not leftover Ⅹ) live in NestCex so
+# UnnamedCex stays under the 1234-line gate. Complete stays
+# at the monolith floor.
+theories/RelateNGNestCex.v
 theories/RelateNGUnnamedCex.v
 # #577 / 522-j: leftover-decline finding.  Completeness is still
 # false (unnamed CCW pair after leftover Ⅴ). The compiled
 # T-junction pair is leftover Ⅰ (classified TPR_TouchPartialEdge).
 # Mixed-cone is leftover Ⅴ. Same-sign spill is leftover Ⅵ.
 # Edge-cross residue is leftover Ⅶ. Nested containment is
-# leftover Ⅷ.
+# leftover Ⅷ. Same-side shared-edge nest is leftover Ⅸ.
 theories/RelateNGComplete.v
 # Leftover Ⅰ: mutual vertex-in-open-edge sliver at bar 1.
 # touch_partial_edge_b; constructor TPR_TouchPartialEdge stays on
@@ -3143,16 +3144,15 @@ theories/RelateNGTouchObtuse.v
 # Leftover Ⅴ: opposite-sign cone at a shared vertex. Detector
 # mixed_cone_vertex_b; constructor TPR_MixedCone stays on
 # im_unsupported. After leftover Ⅱ. Completeness is an unnamed
-# same-side shared-edge nest after leftover Ⅷ. Not CONTEXT
-# Bar 1. Does not remint cone_separates_b / touch_obtuse_vertex_b
-# / aa_matrix_*.
+# swap nest after leftover Ⅸ. Not CONTEXT Bar 1. Does not
+# remint cone_separates_b / touch_obtuse_vertex_b / aa_matrix_*.
 theories/RelateNGTouchMixedCone.v
 # Leftover Ⅵ: same-sign cone spill at a shared vertex. Detector
 # same_cone_vertex_b; constructor TPR_SameCone stays on
 # im_unsupported. After leftover Ⅴ. Completeness is an unnamed
-# same-side shared-edge nest after leftover Ⅷ. Not CONTEXT
-# Bar 1. Does not remint cone_separates_b / mixed_cone_vertex_b
-# / overlap_b / aa_matrix_*.
+# swap nest after leftover Ⅸ. Not CONTEXT Bar 1. Does not
+# remint cone_separates_b / mixed_cone_vertex_b / overlap_b /
+# aa_matrix_*.
 theories/RelateNGTouchSameCone.v
 # Leftover Ⅶ: name the leftover-Ⅵ edge-cross residue.
 # Detector lens_edges_cross_b is a transversal edge pair after
@@ -3160,21 +3160,29 @@ theories/RelateNGTouchSameCone.v
 # on im_unsupported (missing overlap_b clause parked, not fixed).
 # segments_proper_cross_b is a _b remint; the noding Prop is
 # identifier-untouched only. After leftover Ⅵ. Completeness is
-# a same-side shared-edge nest (not leftover Ⅸ). Not CONTEXT
-# Bar 1. Does not remint overlap_b / aa_matrix_*.
+# a swap nest (not leftover Ⅹ). Not CONTEXT Bar 1. Does not
+# remint overlap_b / aa_matrix_*.
 theories/RelateNGTouchLens.v
 # Leftover Ⅷ: name the leftover-Ⅶ nested-containment residue.
 # Detector inside_b is B-frame A-verts after prior arms, not a
 # remint of contains_b. Constructor TPR_Inside stays on
-# im_unsupported. After leftover Ⅶ. Completeness is a same-side
-# shared-edge nest (not leftover Ⅸ). Not CONTEXT Bar 1.
-# Does not remint contains_b / overlap_b / aa_matrix_*.
+# im_unsupported. After leftover Ⅶ. Completeness is a swap
+# nest (not leftover Ⅹ). Not CONTEXT Bar 1. Does not remint
+# contains_b / overlap_b / aa_matrix_*.
 theories/RelateNGTouchInside.v
+# Leftover Ⅸ: name the leftover-Ⅷ same-side shared-edge nest.
+# Detector nest_b is both CCW plus some shared edge plus some
+# B vertex strictly interior to A, not a remint of
+# touch_edge_b / contains_b / overlap_b / inside_b. Constructor
+# TPR_Nest stays on im_unsupported. After leftover Ⅷ.
+# Completeness is a swap nest (not leftover Ⅹ). Not CONTEXT
+# Bar 1. Does not remint touch_edge_b / contains_b / overlap_b /
+# aa_matrix_*.
+theories/RelateNGTouchNest.v
 # Epic #522 ticket-named QED ∨ QEX stop. Wraps
-# triangle_pair_regime_ccw_stop (QEX on the unnamed same-side
-# shared-edge nest after leftover Ⅷ) and leftover Ⅰ–Ⅷ classify
-# (QED). Does not remint detectors / aa_matrix_* / 522-j. No
-# Admitted.
+# triangle_pair_regime_ccw_stop (QEX on the unnamed swap nest
+# after leftover Ⅸ) and leftover Ⅰ–Ⅸ classify (QED). Does
+# not remint detectors / aa_matrix_* / 522-j. No Admitted.
 theories/RelateNGEpic522.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +

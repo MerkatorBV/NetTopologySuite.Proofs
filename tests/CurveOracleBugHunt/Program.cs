@@ -665,7 +665,9 @@ static class Cases
             "Leftover Ⅶ edge-cross residue. Inhabits; fill not named."),
         ("INSIDE", "triangle_pair_fill TPR_Inside", "token", "UNSUPPORTED",
             "Leftover Ⅷ nested containment. Inhabits; fill not named."),
+        ("NEST", "triangle_pair_fill TPR_Nest", "token", "UNSUPPORTED",
+            "Leftover Ⅸ same-side shared-edge nest. Inhabits; fill not named."),
         ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
-            "Unnamed same-side shared-edge nest. Leftover Ⅷ names the nest."),
+            "Unnamed swap nest. Leftover Ⅸ names the nest."),
     };
 }
