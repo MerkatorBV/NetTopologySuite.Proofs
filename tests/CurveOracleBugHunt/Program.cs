@@ -661,7 +661,9 @@ static class Cases
             "Leftover Ⅴ mixed-cone. Classified; fill not named."),
         ("TOUCH_SAME", "triangle_pair_fill TPR_SameCone", "token", "UNSUPPORTED",
             "Leftover Ⅵ same-sign spill. Inhabits; fill not named."),
+        ("LENS", "triangle_pair_fill TPR_Lens", "token", "UNSUPPORTED",
+            "Leftover Ⅶ edge-cross residue. Inhabits; fill not named."),
         ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
-            "Unnamed lens. Leftover Ⅵ names the same-sign spill."),
+            "Unnamed inside pair. Leftover Ⅶ names the edge-cross residue."),
     };
 }
