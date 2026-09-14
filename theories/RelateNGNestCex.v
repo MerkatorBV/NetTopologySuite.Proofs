@@ -563,11 +563,10 @@ Proof.
     unfold gsA; cbn [px py]; lra. }
   destruct (Rlt_dec 0 (gtri 0 0 4 0 1 1 (mkPoint 4 0))) as [H2 | _];
     [ exfalso; lra | ].
-  assert (H1n : gtri 0 0 4 0 1 1 (mkPoint 0 4) < 0).
-  { eapply Rle_lt_trans; [ apply (gtri_le_gsA 0 0 4 0 1 1 (mkPoint 0 4)) | ].
-    unfold gsA; cbn [px py]; lra. }
+  (* Host [lra] sees through [Rmin] on gsA of (0,4); flocq needs the
+     [Rle_dec] split (leftover Ⅷ honesty). *)
   destruct (Rlt_dec 0 (gtri 0 0 4 0 1 1 (mkPoint 0 4))) as [H3 | _];
-    [ exfalso; lra | ].
+    [ exfalso; leftover_ix_gtri_contra H3 | ].
   rewrite !orb_false_r, andb_false_r.
   unfold separated_b.
   destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
