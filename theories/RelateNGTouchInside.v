@@ -49,6 +49,11 @@ From NTS.Proofs Require Import DE9IM Distance Orientation RelateMatrixTriangle
   RelateNGComplete.
 Local Open Scope R_scope.
 
+(* Host [lra] sees through [Rmin]; flocq needs the [Rle_dec] split. *)
+Ltac leftover_viii_gtri_contra H :=
+  unfold gtri, gsA, gsB, gsC in H; cbn [px py] in H;
+  unfold Rmin in H; repeat (destruct (Rle_dec _ _) as [? | ?]); lra.
+
 Lemma leftover_I_no_inside :
   inside_b 0 0 2 0 0 1 1 0 3 0 2 1 = false.
 Proof.
@@ -56,7 +61,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 1 0 3 0 2 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 1 0 3 0 2 1 (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -67,7 +72,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 0 0 (-2) 0 1 (-1))) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 0 0 (-2) 0 1 (-1) (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -78,7 +83,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 1 0 (1/2) (-1) (3/2) (-1))) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 1 0 (1/2) (-1) (3/2) (-1) (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -89,7 +94,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 1 0 (5/4) (1/4) (3/4) (1/4))) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 1 0 (5/4) (1/4) (3/4) (1/4) (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -100,7 +105,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 0 0 (-1) (-1) 3 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 0 0 (-1) (-1) 3 1 (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -111,7 +116,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 0 0 3 1 1 3)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 0 0 3 1 1 3 (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -122,7 +127,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 2 (-1) 2 2 (-1) 2)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 2 (-1) 2 2 (-1) 2 (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -133,7 +138,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 2 0 3 0 2 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 2 0 3 0 2 1 (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -144,7 +149,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 0 0 (-2) 0 0 (-2))) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 0 0 (-2) 0 0 (-2) (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -155,7 +160,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 1 0 1 1 0 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 1 0 1 1 0 1 (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -168,7 +173,7 @@ Proof.
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri (1/4) (1/4) (1/2) (1/4) (1/4) (1/2) (mkPoint 0 0)))
     as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 

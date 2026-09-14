@@ -450,6 +450,15 @@ Ltac leftover_vi_sep_false :=
             | reflexivity ]
         | reflexivity ] ].
 
+(* Host [lra] sees through [Rmin]; flocq needs the [Rle_dec] split. *)
+Ltac leftover_viii_gtri_pos :=
+  unfold gtri, gsA, gsB, gsC; cbn [px py];
+  unfold Rmin; repeat (destruct (Rle_dec _ _) as [? | ?]); lra.
+
+Ltac leftover_viii_gtri_contra H :=
+  unfold gtri, gsA, gsB, gsC in H; cbn [px py] in H;
+  unfold Rmin in H; repeat (destruct (Rle_dec _ _) as [? | ?]); lra.
+
 Lemma unnamed_ccw_no_separator :
   some_edge_separates_b
     (mkPoint 0 0) (mkPoint 3 0) (mkPoint 0 3)
@@ -811,11 +820,11 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 1 1))) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+    [ | exfalso; apply Hn; leftover_viii_gtri_pos ].
   destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 2 1))) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+    [ | exfalso; apply Hn; leftover_viii_gtri_pos ].
   destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 1 2))) as [_ | Hn];
-    [ | exfalso; apply Hn; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+    [ | exfalso; apply Hn; leftover_viii_gtri_pos ].
   reflexivity.
 Qed.
 
@@ -1070,7 +1079,7 @@ Proof.
   destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
   destruct (Rlt_dec 0 (gtri 0 0 4 0 1 1 (mkPoint 0 0))) as [Hlt | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hlt; cbn [px py] in Hlt; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hlt | ].
   reflexivity.
 Qed.
 
@@ -1101,14 +1110,14 @@ Proof.
   destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 4 0))) as [H2 | _];
     [ exfalso; lra | ].
   destruct (Rlt_dec 0 (gtri 0 0 4 0 0 4 (mkPoint 1 1))) as [_ | H3];
-    [ | exfalso; apply H3; unfold gtri, gsA, gsB, gsC; cbn [px py]; lra ].
+    [ | exfalso; apply H3; leftover_viii_gtri_pos ].
   unfold some_vertex_strict_neg, gtri_strict_neg_b.
   destruct (Rlt_dec (gtri 0 0 4 0 0 4 (mkPoint 0 0)) 0) as [Hn0 | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hn0; cbn [px py] in Hn0; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hn0 | ].
   destruct (Rlt_dec (gtri 0 0 4 0 0 4 (mkPoint 4 0)) 0) as [Hn4 | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hn4; cbn [px py] in Hn4; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hn4 | ].
   destruct (Rlt_dec (gtri 0 0 4 0 0 4 (mkPoint 1 1)) 0) as [Hn1 | _];
-    [ exfalso; unfold gtri, gsA, gsB, gsC in Hn1; cbn [px py] in Hn1; lra | ].
+    [ exfalso; leftover_viii_gtri_contra Hn1 | ].
   rewrite !orb_false_r, andb_false_r.
   unfold separated_b.
   destruct (Rlt_dec 0 (gdbl 0 0 4 0 0 4)) as [_ | Hn];
