@@ -27,8 +27,8 @@ AI assistance disclosure: this tool was drafted with AI assistance
 ## Path contract
 
 ```
-tools/WktIntakeWalker/          # ANTLR pin + visitor (exists)
-tools/SqlMmExampleFactory/      # bag → WKT + WKB  (this directory)
+tools/WktIntakeWalker/          # ANTLR pin + C# visitor (house style)
+tools/SqlMmExampleFactory/      # bag → WKT + WKB  (this directory; Java ST4)
 oracle/fixtures/sqlmm/          # optional locked rows (shelf-a smoke hex)
 ```
 
@@ -115,6 +115,11 @@ java -cp tools/SqlMmExampleFactory/.build:tools/SqlMmExampleFactory/.lib/ST4-4.3
   org.nts.proofs.factory.Main --list
 java -cp … org.nts.proofs.factory.Main linestring-02
 ```
+
+μ parse-back uses the **C#** intake (`pwsh tools/WktIntakeWalker/generate.ps1`
++ `dotnet run --project tools/WktIntakeWalker`). Factory emit stays Java
+ST4. After #748 lands, retarget `tests/SqlMmFactoryHunt` intake `Process`
+to the same C# CLI.
 
 `generate.sh` downloads `org.antlr:ST4:4.3.4` and its compile
 dependency `org.antlr:antlr-runtime:3.5.3` (ANTLR 3 — ST4's own POM)

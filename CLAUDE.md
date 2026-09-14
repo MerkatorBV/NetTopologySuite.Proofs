@@ -37,8 +37,12 @@ lines-only builds).
 ## Oracle harnesses
 
 - `tests/CurveOracleBugHunt` — C# console, NTS-vs-oracle differential
-  (`dotnet run --project tests/CurveOracleBugHunt`, oracle via `ORACLE` env
-  var, default `.ci-artifacts/oracle-bin-linux/oracle_bin` under WSL).
+ (`dotnet run --project tests/CurveOracleBugHunt`, oracle via `ORACLE` env
+ var, default `.ci-artifacts/oracle-bin-linux/oracle_bin` under WSL).
+- `tools/WktIntakeWalker` — C# ANTLR intake (house style: .NET / PowerShell /
+  Cake). `pwsh tools/WktIntakeWalker/smoke.ps1` or
+  `dotnet cake --target=WktIntakeWalker`. Grammar pin unchanged (`grammar/`,
+  `PIN.md`). Java visitor is under `archive/` only.
 - `tests/GeosOracleBugHunt` — Python, geosop-vs-oracle
   (`python3 tests/GeosOracleBugHunt/hunt.py`, env `GEOSOP` and `ORACLE`).
 - Local GEOS lives in WSL at `/home/user/geos-src` (build:
