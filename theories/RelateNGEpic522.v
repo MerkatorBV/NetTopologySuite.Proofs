@@ -7,7 +7,7 @@
    QEX: completeness of CCW `triangle_pair_regime` or a documented
    unsupported pair. `ticket_522_qed_or_qex` discharges right on the
    unnamed swap nest after leftover `Ⅸ`
-   (`RelateNGNestCex.v : unnamed_ccw_pair_unsupported`). Not a
+   (`RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported`). Not a
    remint of leftover `Ⅴ`'s `triangle_pair_regime_ccw_stop` and not
    a remint of `522-j`.
 

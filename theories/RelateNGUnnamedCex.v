@@ -885,3 +885,12 @@ Qed.
 
 (* WITNESS {"claimId":"Ⅷ","topic":"relate","lemma":"inside_pair_inside","title":"Leftover Ⅷ nested-containment pair inhabits TPR_Inside (not a contains denotation)","file":"theories/RelateNGUnnamedCex.v","witness":"Ⅷ-inside-cex","board":"leftover-Ⅷ"} *)
 
+(* Live completeness cex after leftover Ⅸ. Defined here so gated
+   cites of RelateNGUnnamedCex.v : unnamed_ccw_pair_unsupported
+   stay honest. Proof lives in NestCex (swap pair). *)
+Lemma unnamed_ccw_pair_unsupported :
+  triangle_pair_regime 0 0 4 0 1 1 0 0 4 0 0 4 = TPR_Unsupported.
+Proof.
+  exact swap_ccw_pair_unsupported.
+Qed.
+
