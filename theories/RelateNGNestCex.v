@@ -563,11 +563,16 @@ Proof.
     unfold gsA; cbn [px py]; lra. }
   destruct (Rlt_dec 0 (gtri 0 0 4 0 1 1 (mkPoint 4 0))) as [H2 | _];
     [ exfalso; lra | ].
-  (* Host [lra] sees through [Rmin] on gsA of (0,4); flocq needs the
-     [Rle_dec] split (leftover Ⅷ honesty). *)
+  (* (0,4) sits outside A on BC (gsB < 0). gsA is positive, so
+     gtri_le_gsA cannot witness. Do not rewrite andb_false_r:
+     after the pos splits, [||]/[&&] parse as
+     false || false || (false && _), which has no [? && false]
+     unless some_neg computes (host only). *)
+  assert (H21 : gtri 0 0 4 0 1 1 (mkPoint 0 4) < 0).
+  { eapply Rle_lt_trans; [ apply (gtri_le_gsB 0 0 4 0 1 1 (mkPoint 0 4)) | ].
+    unfold gsB; cbn [px py]; lra. }
   destruct (Rlt_dec 0 (gtri 0 0 4 0 1 1 (mkPoint 0 4))) as [H3 | _];
-    [ exfalso; leftover_ix_gtri_contra H3 | ].
-  rewrite !orb_false_r, andb_false_r.
+    [ exfalso; lra | ].
   unfold separated_b.
   destruct (Rlt_dec 0 (gdbl 0 0 4 0 1 1)) as [_ | Hn];
     [ | exfalso; apply Hn; unfold gdbl; lra ].
