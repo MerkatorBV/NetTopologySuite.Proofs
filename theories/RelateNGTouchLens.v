@@ -27,9 +27,8 @@
    honesty clause allowed under a `_b` suffix; the noding-lane
    Prop `segments_proper_cross` is identifier-untouched only.
 
-   After leftover Ⅵ. Completeness stays false on a nested
-   containment pair (A strictly inside B; contains_b is one-sided).
-   Not leftover `Ⅷ` in this letter. Relocating
+   After leftover Ⅵ. Completeness stays false on an unnamed
+   same-side shared-edge nest after leftover `Ⅷ`. Relocating
    `triangle_pair_regime_ccw_stop` here does not move #522 closer
    to QED — one more named bucket. `leftover_vii_qed_or_qex` is
    classified ∨ declined on the pair just classified.
@@ -38,8 +37,9 @@
    `classify_triangle_pair` arm is `True` — leftover Ⅰ honesty,
    not CONTEXT Bar 1. Do not steal 522-j / 522-m / 522-f /
    522-i / leftover Ⅰ–Ⅵ. Do not remint `cone_separates_b` /
-   `overlap_b`. Do not mint 522-n / `Ⅷ`. Do not remint
-   aa_matrix_*. Do not remint leftover `Ⅵ`.
+   `overlap_b`. Do not mint 522-n / `Ⅸ`. Do not remint
+   leftover `Ⅷ`. Do not remint leftover `Ⅵ`. Do not remint
+   aa_matrix_*.
 
    WITNESS topic: relate · claimId: Ⅶ · witness: Ⅶ-lens-cex
    No `Admitted`, no `Axiom`, no `Parameter`.
@@ -266,16 +266,16 @@ Proof.
 Qed.
 
 Theorem unnamed_ccw_still_unsupported :
-  triangle_pair_regime 1 1 2 1 1 2 0 0 4 0 0 4 = TPR_Unsupported.
+  triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 1 1 = TPR_Unsupported.
 Proof.
   exact unnamed_ccw_pair_unsupported.
 Qed.
 
 (* Epic #522 / #577 stop: completeness (QED) or a documented CCW
-   unsupported pair (QEX). Discharged QEX — unnamed inside pair, not
-   leftover `Ⅷ`. Leftover-Ⅶ classify does not take the left. Not a
-   522-j remint. *)
-(* WITNESS {"claimId":"Ⅶ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed inside pair","file":"theories/RelateNGTouchLens.v","witness":"Ⅶ-lens-cex","board":"leftover-Ⅶ"} *)
+   unsupported pair (QEX). Discharged QEX — unnamed same-side
+   shared-edge nest, not leftover `Ⅸ`. Leftover-Ⅶ classify does
+   not take the left. Not a 522-j remint. *)
+(* WITNESS {"claimId":"Ⅶ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed same-side shared-edge nest","file":"theories/RelateNGTouchLens.v","witness":"Ⅶ-lens-cex","board":"leftover-Ⅶ"} *)
 Theorem triangle_pair_regime_ccw_stop :
   (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
      0 < gdbl ax ay bx by_ cx cy ->

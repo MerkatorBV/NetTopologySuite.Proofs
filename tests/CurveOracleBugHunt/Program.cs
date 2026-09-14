@@ -663,7 +663,9 @@ static class Cases
             "Leftover Ⅵ same-sign spill. Inhabits; fill not named."),
         ("LENS", "triangle_pair_fill TPR_Lens", "token", "UNSUPPORTED",
             "Leftover Ⅶ edge-cross residue. Inhabits; fill not named."),
+        ("INSIDE", "triangle_pair_fill TPR_Inside", "token", "UNSUPPORTED",
+            "Leftover Ⅷ nested containment. Inhabits; fill not named."),
         ("DECLINE", "triangle_pair_fill TPR_Unsupported", "token", "UNSUPPORTED",
-            "Unnamed inside pair. Leftover Ⅶ names the edge-cross residue."),
+            "Unnamed same-side shared-edge nest. Leftover Ⅷ names the nest."),
     };
 }
