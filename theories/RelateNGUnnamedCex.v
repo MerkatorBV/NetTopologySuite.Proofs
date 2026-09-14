@@ -1083,12 +1083,25 @@ Proof.
   reflexivity.
 Qed.
 
+(* Shared base (0,0)-(4,0); thirds same side, so opposite_sides_b
+   misses. Host [Rlt_dec] can compute; flocq needs the split. *)
+Lemma nest_ccw_no_touch_edge :
+  touch_edge_b
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 0 4)
+    (mkPoint 0 0) (mkPoint 4 0) (mkPoint 1 1) = false.
+Proof.
+  unfold touch_edge_b, shares_edge_b, point_eqb, opposite_sides_b, cross.
+  cbn [px py].
+  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  repeat (destruct (Rlt_dec _ _) as [?lt | ?nge]; try (exfalso; lra)).
+  reflexivity.
+Qed.
+
 Lemma unnamed_ccw_pair_unsupported :
   triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 1 1 = TPR_Unsupported.
 Proof.
-  unfold triangle_pair_regime, touch_edge_b, shares_edge_b, point_eqb.
-  cbn [px py].
-  repeat (destruct (Req_dec_T _ _) as [?e | ?n]; try (exfalso; lra)).
+  unfold triangle_pair_regime.
+  rewrite nest_ccw_no_touch_edge.
   unfold contains_b.
   assert (Hcb : gtri 0 0 4 0 0 4 (mkPoint 0 0) <= 0).
   { eapply Rle_trans; [ apply (gtri_le_gsA 0 0 4 0 0 4 (mkPoint 0 0)) | ].
