@@ -1,11 +1,10 @@
 # For AI Agents (and deep contributors using agent workflows)
 
 Root baseline (disclosure, smallest change, guards): [`AGENTS.md`](../AGENTS.md).
-This document extracts the session workflow, invariants, and practical guidance relevant to AI coding agents (Claude, Grok, etc.) working on this corpus. It is informed by the paths for Scholar Sam, Scrum-Master Sara, Tech-Lead Tess, and Joost the BDFL in the [Reading Guide](READING-GUIDE.md) and [Help cards](HELP.md).
-
-**Always start here for context:**
-- Read the current state via `make help` (or cat docs/HELP.md).
-- The consolidated actor roles (lightly collapsed from original ~17 for overlap; see HELP.md / READING-GUIDE.md) are defined there. Your "user" or reviewer will often be role-playing one or more (e.g., Joost the BDFL for final decisions, or a specific contributor type).
+Session workflow and invariants for agents on this corpus, informed by Scholar
+Sam, Scrum-Master Sara, Tech-Lead Tess, and Joost the BDFL in the
+[Reading Guide](READING-GUIDE.md) and [Help cards](HELP.md). Start from
+`make help` / `docs/HELP.md` (actor roles; the reviewer often role-plays one).
 
 ## Hard Invariants (non-negotiable, CI-enforced)
 - Every theorem ends with `Qed.` (or `Defined.` for computable terms).
@@ -14,7 +13,7 @@ This document extracts the session workflow, invariants, and practical guidance 
 - `Admitted` theorems must be registered in exactly one of:
   - `docs/admitted-counterexamples.txt` (theorem-as-stated is false; permanent; verified counterexample on file).
   - `docs/admitted-deferred-proofs.txt` (theorem is true; proof structure documented; temporary; comes off when proved).
-- Run the gauntlet on changes: `scripts/check_admitted.sh`, `scripts/audit_axioms.sh` (needs an output-synced or -j1 build log; see the script header), `scripts/check_readme_axioms.sh`, `scripts/validate-claims.sh`.
+- Run the gauntlet on changes: `make ci-guards` (plus `scripts/audit_axioms.sh` after an output-synced or -j1 build log; see the script header).
 - `Print Assumptions` must pass the allowlist (with documented exceptions in `audit-exceptions.txt`).
 
 Unregistered `Admitted` = build failure. No quiet stubs.
@@ -30,23 +29,9 @@ Successful sessions follow a consistent shape (see retros like `slice-a-retro.md
 
 4. **Refactor phase**: Run the full CI gauntlet scripts. Clean up. Update registries if a new deferred Admitted or counterexample is needed (with discharge plan + consumer chain).
 
-5. **Outcome document**: Produce a clear outcome (prompt + outcome pair). Include:
-   - What was attempted.
-   - Deliverables landed (with Coq snippets or theorem names).
-   - Remaining gaps (precise, with hypotheses if conditional headline).
-   - Branch info.
-   - Relation to the plan (e.g., "closes piece X of deferred proof Y").
+5. **Outcome**: attempted, landed (names), remaining gaps, branch, plan relation.
 
-**Template elements** (from Sara path):
-- Grep first.
-- Red: simplest target + tangents.
-- Green: deliverables, stop at tangent.
-- Refactor: gauntlet.
-- Explicit stopping conditions.
-
-**Collapse rate**: ~10% of sessions collapse outright; always document them (they provide useful negative results).
-
-**Stacked PRs / cascades**: Common. Review bottom PR first.
+~10% of sessions collapse; document them. Stacked PRs: review bottom first.
 
 ## Using the Archive (history/sessions/)
 Most actors are told to **skip** `docs/history/sessions/` except for deep work.
@@ -68,7 +53,7 @@ Never move or delete without following the process (inventory against the define
 - Use the root `Makefile`: `make help`, `make host` (for theories/), `make check` (guardrails), `make env-info`.
 - For extraction/oracle work: see `oracle/` + `docs/oracle-handroll-migration.md` etc. Consumer Connie path.
 - Cross-reference JTS/NTS: every file header should name the corresponding module/algorithm. Use the sibling `jts/` checkout for mapping.
-- When a human (or you) says "I've never used Coq before", point them at `docs/pythagoras-for-beginners.v` first. It is a self-contained, heavily commented step-by-step example whose main purpose is to let absolute beginners experience what formal proof feels like *and* to pre-bunk "why so much compute on obvious geometry?" critiques.
+- Zero Coq prior: `docs/pythagoras-for-beginners.v`.
 - When proposing new sessions: follow the Red/Green template. Budget 1-3 deliverables per session; multiply estimates by 1.5x for unknowns. One registry entry at a time for thesis-scale work.
 - AI disclosure: always include in headers/outcomes per CONTRIBUTING.md.
 
@@ -80,6 +65,4 @@ Never move or delete without following the process (inventory against the define
 - Soundness strategy: `soundness-strategy.md`, `stage-d-*.md` cluster.
 - Current status by phase: the `phase*-completion.md`, `audit-*.md`, `*-hotpixel-progress.md` (but prefer the actor-specific ones in your path).
 
-If your task is scoped to a slice (e.g., "close the deferred proof for X"), first reproduce the current state by following the relevant retro + any outcome docs. Then apply the Red/Green process.
-
-Welcome to the corpus. Pick (or be assigned) a role card, follow the documented path, and produce clean, Qed-closed, registry-respecting work. Joost mag het weten.
+For a scoped slice, reproduce state from the relevant retro + outcome docs, then Red/Green.
