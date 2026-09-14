@@ -26,8 +26,9 @@
    `TPR_MixedCone` (same fill honesty). Leftover `Ⅵ` adds
    `TPR_SameCone` (same fill honesty). Leftover `Ⅶ` adds
    `TPR_Lens` (same fill honesty). Leftover `Ⅷ` adds
-   `TPR_Inside` (same fill honesty). Completeness is an unnamed
-   same-side shared-edge nest (not leftover `Ⅸ`).
+   `TPR_Inside` (same fill honesty). Leftover `Ⅸ` adds
+   `TPR_Nest` (same fill honesty). Completeness is an unnamed
+   swap nest (not leftover `Ⅹ`).
 
    Honest scoping: triangles only (convex, no holes). Full pointset
    satisfaction and noding bridge in RelateNG.
@@ -63,6 +64,7 @@ Inductive TrianglePairRegime : Type :=
 | TPR_SameCone      (* leftover Ⅵ: same-sign cone spill at a shared vertex; fill is the token *)
 | TPR_Lens          (* leftover Ⅶ: proper edge-cross residue; fill is the token *)
 | TPR_Inside        (* leftover Ⅷ: A verts interior to B; fill is the token *)
+| TPR_Nest          (* leftover Ⅸ: same-side shared-edge nest; fill is the token *)
 | TPR_Unsupported.  (* the classifier declined -- NOT a geometric verdict *)
 
 Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
@@ -79,6 +81,7 @@ Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
   | TPR_SameCone => im_unsupported               (* leftover Ⅵ: inhabitance, fill not named *)
   | TPR_Lens => im_unsupported                   (* leftover Ⅶ: inhabitance, fill not named *)
   | TPR_Inside => im_unsupported                 (* leftover Ⅷ: inhabitance, fill not named *)
+  | TPR_Nest => im_unsupported                   (* leftover Ⅸ: inhabitance, fill not named *)
   | TPR_Unsupported => im_unsupported            (* decline; see DE9IM.im_unsupported *)
   end.
 
@@ -128,6 +131,10 @@ Proof. reflexivity. Qed.
 
 Lemma triangle_pair_fill_touch_inside_eq :
   triangle_pair_fill TPR_Inside = im_unsupported.
+Proof. reflexivity. Qed.
+
+Lemma triangle_pair_fill_touch_nest_eq :
+  triangle_pair_fill TPR_Nest = im_unsupported.
 Proof. reflexivity. Qed.
 
 Lemma triangle_pair_fill_unsupported_eq :
@@ -391,6 +398,15 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
      of [contains_b]. Do not emit [2FFFFFFF2]. There is no
      TPR_Inside ⇒ interiors meet. *)
   | TPR_Inside => True
+  (* Leftover Ⅸ: same honesty as leftover Ⅰ. [True] is not a
+     denotation. Do not prove [classify_triangle_pair] facts about
+     this constructor. Fill stays [im_unsupported]. Not CONTEXT
+     Bar 1. Detector is both-CCW plus a shared edge plus a B
+     vertex strictly interior to A (`nest_b`), not a remint of
+     [touch_edge_b] / [contains_b] / [overlap_b] / [inside_b].
+     Do not emit [2FFFFFFF2] or [FF2F11212]. There is no
+     TPR_Nest ⇒ interiors meet. *)
+  | TPR_Nest => True
   (* `TPR_Unsupported` names no configuration -- it records that the
      classifier made no claim.  `True` is the correct denotation of "no
      claim"; unlike the five arms above it is not a geometric predicate. *)
