@@ -1,8 +1,6 @@
 # Agent Instructions
 
-These are baseline rules for any AI agent (Copilot, ChatGPT, Cursor, etc.)
-working in this repository, whether run interactively by a contributor or
-autonomously (e.g. as a coding agent on a PR).
+Baseline rules for AI agents working in this repository.
 
 This is **NetTopologySuite.Proofs** — a Rocq/Flocq proof corpus plus the
 extracted oracle and differential harnesses. It is not the NTS C# library.
@@ -43,6 +41,13 @@ Adapted from [NetTopologySuite#875](https://github.com/NetTopologySuite/NetTopol
 - ADR-0007 is Accepted. First cook scope is chord–chord and
   circular–circular (`MkCirc`). Do not expand it to other egg classes
   unless a letter explicitly does.
+- Markdown ratchet: PRs may only **delete** `.md` prose, or **amend** so
+  net prose shrinks while content **diverges to MMF** (gate / ticket /
+  claim / fixture). Net-positive `.md` line/byte growth is forbidden
+  unless the added path is an MMF ticket/bar artifact that simultaneously
+  retires prose elsewhere in the same PR. No new essay docs; no expanding
+  CONTEXT/ADR/README for narrative filler. MMF shape:
+  [`docs/scout/map-opam-mmf-release-bar.md`](docs/scout/map-opam-mmf-release-bar.md).
 
 ## Before finishing
 

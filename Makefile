@@ -200,6 +200,7 @@ ci-guards:
 	bash scripts/check_deferred_registry_sync.sh
 	bash scripts/validate-claims.sh
 	bash scripts/check_oracle_handrolled.sh
+	bash scripts/check_md_prose_ratchet.sh
 	python3 oracle/rocqref/check_jts_nts_equiv.py
 	python3 scripts/check_module_split.py
 	python3 tests/GeosOracleBugHunt/hunt.py --selfcheck
