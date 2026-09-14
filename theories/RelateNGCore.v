@@ -631,6 +631,18 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
       (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
   else false else false.
 
+(* Leftover Ⅷ: B CCW and all three A vertices strictly
+   interior to B (`0 < gtri B p` for each A vertex). B-frame,
+   A verts — not a remint of `contains_b` (A-frame, B verts).
+   Nested A-in-B misses `contains_b`. Not a contains theorem
+   and not TPR_Inside ⇒ interiors meet. *)
+Definition inside_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint ax ay)) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint bx by_)) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint cx cy)) then true
+  else false else false else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
    certificate, a vertex-touch certificate, leftover Ⅰ's collinear
@@ -640,9 +652,11 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    the strict cone still wins), leftover Ⅴ
    (`mixed_cone_vertex_b`, after leftover Ⅱ so a closed cone still
    wins), leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
-   so opposite-sign still wins), and leftover Ⅶ
+   so opposite-sign still wins), leftover Ⅶ
    (`lens_edges_cross_b`, after leftover Ⅵ — order, not an
-   exclusive lens predicate).  DECLINES on
+   exclusive lens predicate), and leftover Ⅷ
+   (`inside_b`, after leftover Ⅶ — B-frame, not a remint
+   of `contains_b`).  DECLINES on
    everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
@@ -658,10 +672,12 @@ Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool 
    reachable when `mixed_cone_vertex_b` fires. Leftover Ⅵ is
    reachable when `same_cone_vertex_b` fires. Leftover Ⅶ is
    reachable when `lens_edges_cross_b` fires after every prior
-   arm misses (inhabitance, not a lens denotation). Completeness
-   stays false on a nested containment pair (not leftover `Ⅷ`).
-   Do not reorder the four wired certificates. Do not remint
-   `cone_separates_b`. *)
+   arm misses (inhabitance, not a lens denotation). Leftover Ⅷ
+   is reachable when `inside_b` fires after every prior arm
+   misses (inhabitance, not a contains denotation). Completeness
+   stays false on a same-side shared-edge nest (not leftover
+   `Ⅸ`). Do not reorder the four wired certificates. Do not
+   remint `cone_separates_b`. Do not remint `contains_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -690,6 +706,8 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_SameCone
   else if lens_edges_cross_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_Lens
+  else if inside_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Inside
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

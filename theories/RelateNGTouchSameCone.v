@@ -19,8 +19,9 @@
    `TPR_SameCone` stays on `im_unsupported` (do not emit
    `2FFF1FFF2`; that pin is #570). After leftover Ⅴ.
    `leftover_vi_qed_or_qex` is classified ∨ declined on the pair
-   just classified.    Completeness stays false on an unnamed inside pair
-   after leftover `Ⅶ`. Do not remint leftover `Ⅶ`.
+   just classified. Completeness stays false on an unnamed
+   same-side shared-edge nest after leftover `Ⅷ`. Do not remint
+   leftover `Ⅶ` / leftover `Ⅷ`.
    Do not steal 522-j / 522-m / 522-f.
    Do not remint `cone_separates_b` / `overlap_b` / aa_matrix_*.
 
@@ -311,14 +312,15 @@ Proof.
 Qed.
 
 Theorem unnamed_ccw_still_unsupported :
-  triangle_pair_regime 1 1 2 1 1 2 0 0 4 0 0 4 = TPR_Unsupported.
+  triangle_pair_regime 0 0 4 0 0 4 0 0 4 0 1 1 = TPR_Unsupported.
 Proof.
   exact unnamed_ccw_pair_unsupported.
 Qed.
 
-(* Epic #522 / #577 stop copied here: QEX on the unnamed inside pair.
-   Does not move #522 closer to QED. Not a 522-j remint. *)
-(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed inside pair","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
+(* Epic #522 / #577 stop copied here: QEX on the unnamed same-side
+   shared-edge nest. Does not move #522 closer to QED. Not a
+   522-j remint. *)
+(* WITNESS {"claimId":"Ⅵ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed same-side shared-edge nest","file":"theories/RelateNGTouchSameCone.v","witness":"Ⅵ-same-cone-cex","board":"leftover-Ⅵ"} *)
 Theorem triangle_pair_regime_ccw_stop :
   (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,
      0 < gdbl ax ay bx by_ cx cy ->
