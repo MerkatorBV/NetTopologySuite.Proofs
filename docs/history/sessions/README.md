@@ -1,9 +1,14 @@
-# Per-Session Forensic Archive
+# Session archive (git history)
 
-This subdirectory holds the raw session-by-session artifacts (prompts, outcomes, collapses, design sessions) from completed multi-session proof routes.
+claimId: 0007-prose-chip-sessions
+witness: none
 
-These are **not** the recommended starting point for any of the consolidated actor roles (lightly collapsed from original 17, original 15 + Joost + Ray) defined in the main reading guide, except for deep historical reconstruction by Scholar Sam or Tech-Lead Tess, or when auditing the exact lineage of a deferred-proof registry entry.
+Session prompt/outcome/collapse files that used to live in this
+directory were deleted as stale ungated narrative (honesty/prose
+chip). Recover them from git history at the former paths under
+`docs/history/sessions/` (and top-level `plan.md`) on prior SHAs.
 
-See the parent [`docs/history/README.md`](../README.md) and the top-level [`docs/READING-GUIDE.md`](../../READING-GUIDE.md) for guidance on when (and when not) to descend into this material.
-
-The synthesis and high-value takeaways from these sessions live in the `*-retro.md` files and the various audit / completion / proof-structure documents that remain at the `docs/` root.
+Do not restate those essays here. Living actor paths stay in
+[`docs/READING-GUIDE.md`](../../READING-GUIDE.md) and
+[`docs/HELP.md`](../../HELP.md). Parent index:
+[`docs/history/README.md`](../README.md).

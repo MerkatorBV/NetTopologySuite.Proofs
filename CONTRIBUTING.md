@@ -18,9 +18,9 @@ See your role in [docs/HELP.md](docs/HELP.md) (or the full [docs/READING-GUIDE.m
 
 - **Tech-Lead Tess / Product-Owner Pat** (designing engagements, scoping): Work from the retros (`slice-a-retro.md`, `slice-a-piece-5b-retro.md`, `phase*-retro.md`, `stage-d-retro.md`), seam maps (`point-in-ring-seams-3-5-7-red.md` or `point-in-ring-jct-path.md`), and proof-structure docs (`hobby-theorem-proof-structure.md`, `shewchuk-theorem-13-proof-structure.md`). Use the "Red / Green / Refactor / Stopping conditions" template when proposing sessions. Two-route design and explicit "named hypotheses" for conditional headlines are the current methodology.
 
-- **Scholar Sam** (researcher / methodology auditor): The retros + proof-structure + audit-*.md files + the full `docs/history/sessions/` tree when you need chronology. Pay special attention to the "conditional headline" pattern (Qed-closed under explicitly named thesis-shaped hypotheses) and the deferred-proof registry discipline.
+- **Scholar Sam** (researcher / methodology auditor): The retros + proof-structure + audit-*.md files. Pay special attention to the "conditional headline" pattern (Qed-closed under explicitly named thesis-shaped hypotheses) and the deferred-proof registry discipline.
 
-- **Scrum-Master Sara** (cadence, retros): Top-level retros + `docs/history/sessions/README.md`. Look for the prompt/outcome cadence and the ~10% collapse rate that is always documented.
+- **Scrum-Master Sara** (cadence, retros): Top-level retros. Look for the prompt/outcome cadence and the ~10% collapse rate that is always documented.
 
 - **Reviewer Ruby / Maintainer Max / Auditor Avery / Risk-Officer Rico / CI Cara**: The four CI-enforced registries first (`admitted-deferred-proofs.txt`, `admitted-counterexamples.txt`, `axiom-allowlist.txt`, `audit-exceptions.txt`). Run `scripts/check_admitted.sh`, `scripts/audit_axioms.sh`, and `scripts/check_readme_axioms.sh` on every PR. Also inspect `.github/workflows/ci.yml` + `build-oracle.yml`, the `Dockerfile`, `docs/development-environment.md`. Reject bare `Admitted`, hand-rolled OCaml when an extracted version exists, or wrappers with no new content. Stacked PR cascades are reviewed bottom-up.
 
@@ -47,7 +47,7 @@ See your role in [docs/HELP.md](docs/HELP.md) (or the full [docs/READING-GUIDE.m
   - Explicit stopping conditions.
   - Outcome documents record what landed / collapsed / remains, with branch info.
 
-- **Pruning and "less dumb" maintenance** is ongoing. The actor filter ("is this useful for at least one of the defined actor roles per their documented path?") plus the stop condition ("after a full git log scan, do we have to put back >10% of the batch?") govern moves to `docs/history/`. Joost the BDFL has final authority on borderline cases. See the pruning log in `docs/history/README.md` and the detailed plan in the repo's session plan.md for the exact process.
+- **Pruning and "less dumb" maintenance** is ongoing. The actor filter ("is this useful for at least one of the defined actor roles per their documented path?") plus the stop condition ("after a full git log scan, do we have to put back >10% of the batch?") govern moves to `docs/history/`. Joost the BDFL has final authority on borderline cases. See `docs/history/README.md`.
 
 - **Stacked PRs / cascades**: Common for multi-session engagements. Review the bottom PR first; the rest inherit its content.
 

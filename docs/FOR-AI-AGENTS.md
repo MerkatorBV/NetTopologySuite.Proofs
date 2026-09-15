@@ -33,14 +33,12 @@ Successful sessions follow a consistent shape (see retros like `slice-a-retro.md
 
 ~10% of sessions collapse; document them. Stacked PRs: review bottom first.
 
-## Using the Archive (history/sessions/)
-Most actors are told to **skip** `docs/history/sessions/` except for deep work.
-- Use it when you need the full chronology of a closed engagement (e.g., why Route 2 collapsed, exact tangents hit in Slice A Piece 5b).
-- Start from the relevant `*-retro.md` at top level, then descend.
-- The `docs/history/README.md` and `docs/history/sessions/README.md` explain the layout and recent pruning batches.
-- Pruning follows the actor filter + stop condition (see pruning log in history/README). Joost the BDFL has final say on borderline archive decisions.
-
-Never move or delete without following the process (inventory against the defined actor roles, git log + grep audit for each candidate, <10% restoration threshold on the batch).
+## Using the Archive
+Session essays under `docs/history/sessions/` were deleted
+(claimId `0007-prose-chip-sessions`). Recover them from git history
+at those paths on prior SHAs. Do not restate them. Start from the
+relevant `*-retro.md`. Joost the BDFL has final say on archive
+decisions.
 
 ## Joost the BDFL (Joost mag het weten)
 - You (or the human directing you) may be acting in this role.
@@ -60,7 +58,7 @@ Never move or delete without following the process (inventory against the define
 ## Key Files for Agents (quick reference)
 - Invariants & registries: the four .txt files in docs/.
 - Hunt tickets: `docs/attacks/`. Qed-claiming probes: `docs/h1-vacuity/` (compiled by the flocq job via `scripts/hunt_probe_smoke.sh`; not product modules in `_CoqProject.full`).
-- Session examples: the `*-retro.md` + specific session prompt/outcome pairs in history/sessions/ (when needed).
+- Session examples: the `*-retro.md` files.
 - Proof structures: `hobby-theorem-proof-structure.md`, `shewchuk-theorem-13-proof-structure.md`, seam maps.
 - Soundness strategy: `soundness-strategy.md`, `stage-d-*.md` cluster.
 - Current status by phase: the `phase*-completion.md`, `audit-*.md`, `*-hotpixel-progress.md` (but prefer the actor-specific ones in your path).

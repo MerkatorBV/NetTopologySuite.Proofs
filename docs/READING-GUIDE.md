@@ -164,12 +164,9 @@ engagement-level syntheses.
   4. [`soundness-strategy.md`](soundness-strategy.md), [`stage-d-feasibility.md`](stage-d-feasibility.md),
      [`stage-d-retro.md`](stage-d-retro.md), [`stage-d-chain-composition-approach.md`](stage-d-chain-composition-approach.md) —
      soundness-strategy retrospectives.
-  5. [`docs/history/sessions/`](history/sessions/) — per-session forensic record (only
-     when you need to verify the chronology or read precise stuck
-     goals).
-  6. The four registries + run `scripts/audit_axioms.sh /tmp/full-build.log`
+  5. The four registries + run `scripts/audit_axioms.sh /tmp/full-build.log`
      (for trust-chain / axiom footprint audits).
-  7. [`library-footnotes.md`](library-footnotes.md) — the operator paper
+  6. [`library-footnotes.md`](library-footnotes.md) — the operator paper
      library mapped against the corpus: which papers have an honest
      descendant (header cite + DOI + paper-CLAIMS vs file-PROVES), which
      have no module to sit under yet and their suggested future home, and
@@ -211,9 +208,7 @@ sessions, plans cadence, and retrospects on how the work actually went.
   3. [`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt) — every registered Admitted has
      a discharge plan + consumer chain; this is the next-work
      backlog.
-  4. [`docs/history/sessions/README.md`](history/sessions/README.md) — index of per-session
-     prompts + outcomes (chronological).
-  5. [`../TRIAGE_NTS_JTS_ISSUES.md`](../TRIAGE_NTS_JTS_ISSUES.md) — the curve-awareness proof
+  4. [`../TRIAGE_NTS_JTS_ISSUES.md`](../TRIAGE_NTS_JTS_ISSUES.md) — the curve-awareness proof
      batch (#64–#69) triage + order of attack; per-area detail in
      [`issue-64-arc-primitives-triage.md`](issue-64-arc-primitives-triage.md),
      [`relate-ng-status.md`](relate-ng-status.md) (living; archive:
@@ -302,11 +297,9 @@ proof-structure docs (Scholar Sam's path).
      Stage D (a complex multi-route engagement):
      [`stage-d-feasibility.md`](stage-d-feasibility.md), [`stage-d-retro.md`](stage-d-retro.md),
      [`stage-d-chain-composition-approach.md`](stage-d-chain-composition-approach.md).
-  2. [`docs/history/sessions/slice-a-piece-5b-route1-design-session.md`](history/sessions/slice-a-piece-5b-route1-design-session.md)
-     — what a design-session artifact looks like.
-  3. [`point-in-ring-seams-3-5-7-red.md`](point-in-ring-seams-3-5-7-red.md) (or [`point-in-ring-jct-path.md`](point-in-ring-jct-path.md)) — exemplar seam-map / JCT path work
+  2. [`point-in-ring-seams-3-5-7-red.md`](point-in-ring-seams-3-5-7-red.md) (or [`point-in-ring-jct-path.md`](point-in-ring-jct-path.md)) — exemplar seam-map / JCT path work
      workflow for breaking down a thesis-scale problem.
-  4. [`audit-phase3-milestone5.md`](audit-phase3-milestone5.md) § 6 (Conditional strategy) — how
+  3. [`audit-phase3-milestone5.md`](audit-phase3-milestone5.md) § 6 (Conditional strategy) — how
      the conditional-headline decision was made.
 
 **Take away.** Design sessions produce mermaid diagrams + named-
@@ -438,7 +431,7 @@ doubles).
 
 **Role.** The benevolent dictator for life of the corpus — not the product owner. "Joost mag het weten" is the Dutch proverb ("only Joost knows" / "Joost may know it all"). He is assumed to have (or be able to quickly form) the complete picture of the corpus, its history, its gaps, and its long-term shape. Jeroen is the product owner of scope and priority.
 
-**Start at.** The [`README.md`](../README.md) first screen, the complete [`READING-GUIDE.md`](READING-GUIDE.md) (including the [long-form corpus notes](#long-form-corpus-notes-off-the-readme-first-screen)), every major retro and proof-structure document, the entire [`docs/history/`](history/) tree (especially [`sessions/`](history/sessions/)), the strategy and seam-map documents, and the CI/oracle credibility material. You are the one actor whose path legitimately exercises the archive.
+**Start at.** The [`README.md`](../README.md) first screen, the complete [`READING-GUIDE.md`](READING-GUIDE.md) (including the [long-form corpus notes](#long-form-corpus-notes-off-the-readme-first-screen)), every major retro and proof-structure document, the entire [`docs/history/`](history/) tree, the strategy and seam-map documents, and the CI/oracle credibility material. You are the one actor whose path legitimately exercises the archive.
 
 **Special power.** BDFL final say on:
 - Whether a marginal file stays at top level or moves to history/.
@@ -462,7 +455,7 @@ In pruning work, Joost is the explicit exception to the actor filter and the per
 | BIM Bea             | BIM user                    | [`audit-phase4-curves.md`](audit-phase4-curves.md)               | 1 h |
 | Quality Gatekeeper (Max/Ruby) | Corpus maintainer + PR reviewer + CI/Risk | [`axiom-allowlist.txt`](axiom-allowlist.txt) + registries + [`ci.yml`](../.github/workflows/ci.yml) | 20 min |
 | Scholar Sam (incl. Auditor) | Formal-methods researcher + independent audit | [`slice-a-retro.md`](slice-a-retro.md) + registries + audit script | half day |
-| Project Meta (Pat/Sara) | Roadmap / scope + session cadence | [`phase*-completion.md`](phase0-completion.md) + top-level retros + [`history/sessions/`](history/sessions/) | 1-2 h |
+| Project Meta (Pat/Sara) | Roadmap / scope + session cadence | [`phase*-completion.md`](phase0-completion.md) + top-level retros | 1-2 h |
 | Tech-Lead Tess      | Engagement design           | retros + proof-structure docs / seam maps | half day |
 | Consumer Connie / NTS-Upstream Norm | Oracle binary user or NTS upstream contributor | [`oracle/driver.ml`](../oracle/driver.ml) header + phase completions | 15-60 min |
 | Joost the BDFL      | Benevolent dictator for life (Joost mag het weten) | Full README + READING-GUIDE + entire history/ tree | as needed |
@@ -643,13 +636,13 @@ condensed to keep the README scannable.
 
 ## In-flight work
 
-**Modules atop the core primitives in active development.** Detailed histories live in `plan.md` (per-rung records) and the linked docs; this section only names the active threads and where each stands.
+**Modules atop the core primitives in active development.** This section only names the active threads and where each stands.
 
 - **Curve-linearisation stack** — Linearise → Simplify → Tin → Validate (+ binary64 instance in `theories-flocq`), tracking the SQL/MM Spatial (ISO/IEC 13249-3) curve prototype.
 - **Phase 0–7 chokepoint** — robust orientation (Shewchuk), intersection, snap-rounding/Hobby, OverlayNG, native curves (chord-approx Option B). Current Phase 0 frontier: Stage D expansion arithmetic. See the Roadmap table below.
 - **Phase 5 FFI lane** (`libntsrocq`) — the Coq-extracted kernel is now callable **in-process** over a plain C ABI ([`oracle/nts_ffi.h`](../oracle/nts_ffi.h)), not only as the `oracle_bin` subprocess: 19 entry points (orientation — including the exact full-plane escalation for `UNCERTAIN`, `nts_rocq_orient_sign_exact` — intersection + point, hot-pixel filters, snap rounding, overlay labelling, in-circle, arc predicates, TwoSum / grow-expansion, simplifier), reference bindings for C# / C++ / Java ([`oracle/CONSUMERS.md`](../oracle/CONSUMERS.md)), and a parity gate that compares the FFI against the oracle protocol as raw IEEE 754 bit patterns. Soundness ledger per entry point (including what is sufficient-only or deferred) in [`docs/phase5-ffi-abi.md`](phase5-ffi-abi.md). Java lands on fork PR #7 (`feature/sfa-curve-rgr`); locationtech/jts is not a gate.
 - **JCT seam** (`point_in_ring` / OverlayNG H1) — the interior predicate was refuted vacuous and restated over continuous paths; counterexamples hardened the guards (`ring_simple` + vertex-distinctness, `ray_avoids_vertices`, `no_horizontal_edge_at` shown necessary); the residual is the single named hypothesis `parity_characterises_interior_cont`. It is fully **discharged (unconditionally) for a family ladder** — rectangle, right triangle, general CCW triangle, diamond, convex hexagon — via a reusable IVT separation engine (`SeparationField` → `ConvexField`) and the monotone-chain parity machinery; the general convex case is CLOSED at the algebraic level: the bare `convex_no_interior_ymin` was refuted in degenerate position (`collinear_spike_not_convex_no_interior_ymin`, an honest negative), and `ConvexYUnimodal.v` §10 discharges the real content unconditionally under the honest strict-convexity guard (`convex_strict_start_y_unimodal` → `ConvexRayCrossing` → `ConvexJCT`, allowlist trio only); the algebraic `conv_min` form now lifts to the named two-component Prop `JCT_two_components_cont_simple` for every nonempty half-plane-presented convex ring (`JCTTwoComponentsConvex.convex_hp_jct_two_components_cont_simple`, first instance `diamond_jct_two_components_cont_simple`); the remaining gap is the same Prop on a general simple / taut non-convex ring. Entry points: [`docs/jct-proof-structure.md`](jct-proof-structure.md) and the counterexample docs beside it.
-- **H-bridge / Euler campaign** (the `extract_rings_valid` lane) — **CLOSED (PRs #334–#363)**, now maintained by five parallel work tracks (#64–#68) coordinated by a sync thread. `euler_core_reduction` (the degree-≥2-core induction) is banked, and the transport premise is now **fully discharged**: `WalkResidualDischarge.v` proves `face_transport_premise_holds` and `H_bridge_premise_holds` outright under the five standing guards (per-vertex `fan_ok`, `no_spurs`, twin-aware no-crossing, no horizontal darts, twin-aware no-foreign-vertex) — the whole C-3 connector ladder (corridors on both sides, general fan corners, the corner/corridor bridge and rides, the orbit chain with end ties and parity close, the E-series per-step wiring) composes into one theorem with the standard axiom footprint. The Euler assembly is closed too: `EulerUnconditional.euler_characteristic_holds` proves the planar Euler identity V + F = E + 2C outright under the same guards (core peeling alternated with the same-face dispatch step, whose bridge branch consumes the Euler-free premise). The downstream threading is done too: `extract_rings_valid_of_guards` and `extract_rings_valid_holes_of_guards` (`theories-flocq/OverlayBridgeUnconditional.v`) restate ring extraction over the guard set alone — no Euler hypotheses anywhere in the lane. Full rung-by-rung record: `plan.md` § "Discharge campaign for `face_transport_premise`".
+- **H-bridge / Euler campaign** (the `extract_rings_valid` lane) — **CLOSED (PRs #334–#363)**, now maintained by five parallel work tracks (#64–#68) coordinated by a sync thread. `euler_core_reduction` (the degree-≥2-core induction) is banked, and the transport premise is now **fully discharged**: `WalkResidualDischarge.v` proves `face_transport_premise_holds` and `H_bridge_premise_holds` outright under the five standing guards (per-vertex `fan_ok`, `no_spurs`, twin-aware no-crossing, no horizontal darts, twin-aware no-foreign-vertex) — the whole C-3 connector ladder (corridors on both sides, general fan corners, the corner/corridor bridge and rides, the orbit chain with end ties and parity close, the E-series per-step wiring) composes into one theorem with the standard axiom footprint. The Euler assembly is closed too: `EulerUnconditional.euler_characteristic_holds` proves the planar Euler identity V + F = E + 2C outright under the same guards (core peeling alternated with the same-face dispatch step, whose bridge branch consumes the Euler-free premise). The downstream threading is done too: `extract_rings_valid_of_guards` and `extract_rings_valid_holes_of_guards` (`theories-flocq/OverlayBridgeUnconditional.v`) restate ring extraction over the guard set alone — no Euler hypotheses anywhere in the lane.
 - **Showcases** — the **hat** and **Spectre** aperiodic monotiles (first fully-mechanized concave point-in-polygon classifications), the **hot-pixel ring** bridge back to Phase-2 snap-rounding, and the finite-stage **Besicovitch–Kakeya** Perron tree (`PerronStage`/`KakeyaOverlay`/`KakeyaExample`/`KakeyaSlide`; measure theory explicitly deferred).
 - Companion modules (Real, Lattice, LineEq, etc.) ship alongside.
 
@@ -744,7 +737,7 @@ to keep this README scannable for all the defined actor roles
 Shewchuk Stage A decoder-consistency and cross_R-soundness narrative
 specifically, and the actor Reading Guide for the rest. Key
 high-level outcomes remain in the Roadmap table above; the complete
-session-by-session record is in the retros and `history/sessions/`
+session-by-session record is in the retros
 for Scholar Sam / Tech-Lead Tess / Joost the BDFL paths.
 
 - **registry framework (in force since the Stage D / Phase 2-3
