@@ -51,7 +51,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** Decide what ships next, budget sessions, plan cadence, and retrospect on how the work actually went.
 
-**OPEN** Top-level retros + `phase*-completion.md` / `phase2-hotpixel-progress.md` + [`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt) as backlog + [`history/sessions/README.md`](history/sessions/README.md).
+**OPEN** Top-level retros + `phase*-completion.md` / `phase2-hotpixel-progress.md` + [`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt) as backlog.
 
 **RULE / TEMPLATE** Budget per registry entry (Pat). Use "Grep first → Red → Green → Refactor → explicit stopping conditions" (Sara). Sessions average 1-3 deliverables; ~10% collapse (always documented).
 
