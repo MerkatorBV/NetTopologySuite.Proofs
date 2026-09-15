@@ -47,8 +47,8 @@ on the Decline type; they are not the well-formed clothoid answer.
 Not `example3.txt`.
 
 The retired Java visitor lives under `archive/` (not a second primary).
-After #748 (`tests/SqlMmFactoryHunt`) lands, retarget that hunter's
-`JavaHost` intake `Process` to this C# CLI.
+`tests/SqlMmFactoryHunt` drives this C# CLI (`dotnet run` / built exe)
+via `HuntHost` — not the archived Java visitor.
 
 AI assistance disclosure: this port was drafted with AI assistance
 (Cursor Grok 4.6); human review remains required.

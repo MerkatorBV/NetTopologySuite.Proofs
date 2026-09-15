@@ -118,8 +118,7 @@ java -cp … org.nts.proofs.factory.Main linestring-02
 
 μ parse-back uses the **C#** intake (`pwsh tools/WktIntakeWalker/generate.ps1`
 + `dotnet run --project tools/WktIntakeWalker`). Factory emit stays Java
-ST4. After #748 lands, retarget `tests/SqlMmFactoryHunt` intake `Process`
-to the same C# CLI.
+ST4. `tests/SqlMmFactoryHunt` drives the same C# CLI via `HuntHost`.
 
 `generate.sh` downloads `org.antlr:ST4:4.3.4` and its compile
 dependency `org.antlr:antlr-runtime:3.5.3` (ANTLR 3 — ST4's own POM)
