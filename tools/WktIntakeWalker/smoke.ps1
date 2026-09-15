@@ -97,6 +97,43 @@ Check 'DECLINE ID_Empty' @('GEODESICSTRING EMPTY')
 Check 'DECLINE ID_BadPointCount' @('GEODESICSTRING (0 0)')
 Check 'BAG hens=0,1,2,3 pts=0 0;5 0;5 0;7 0 chickens=0-1:MkChord,2-3:MkChord' `
     @('COMPOUNDCURVE ((0 0, 5 0), GEODESICSTRING (5 0, 7 0))')
+
+# Famous Science/arXiv 1804.07389 fixtures (claimId 0007-famous-geodesicstring).
+# Bag-string of GEODESICSTRING equals LINESTRING on the same two points.
+# Not an Earth-length / ETOPO1 / ellipsoid / WKB-13 claim.
+function Check-SameLsBag {
+    param([string]$Label, [string]$WktG, [string]$WktLs)
+    $gotG = Invoke-Intake -Wkt @($WktG)
+    $gotLs = Invoke-Intake -Wkt @($WktLs)
+    $linesG = @($gotG -split '[\r\n]+' | Where-Object { $_.Length -gt 0 })
+    $linesLs = @($gotLs -split '[\r\n]+' | Where-Object { $_.Length -gt 0 })
+    if ($linesG.Count -gt 0) { $gotG = $linesG[-1] }
+    if ($linesLs.Count -gt 0) { $gotLs = $linesLs[-1] }
+    if ($gotG -ne $gotLs) {
+        Write-Host "FAIL $Label bags differ"
+        Write-Host "  GEODESICSTRING: $gotG"
+        Write-Host "  LINESTRING:     $gotLs"
+        $script:fail = 1
+    }
+    elseif ($gotG -notlike 'BAG*chickens=0-1:MkChord') {
+        Write-Host "FAIL $Label expected BAG ... chickens=0-1:MkChord"
+        Write-Host "         got: $gotG"
+        $script:fail = 1
+    }
+    else {
+        Write-Host "OK $Label $gotG"
+    }
+}
+Check 'BAG hens=0,1 pts=66.6666666667 25.2833333333;162.2333333333 58.6166666667 chickens=0-1:MkChord' `
+    @('GEODESICSTRING (66.6666666667 25.2833333333, 162.2333333333 58.6166666667)')
+Check 'BAG hens=0,1 pts=118.6333333333 24.55;-8.9166666667 37.0333333333 chickens=0-1:MkChord' `
+    @('GEODESICSTRING (118.6333333333 24.55, -8.9166666667 37.0333333333)')
+Check-SameLsBag 'famous-water' `
+    'GEODESICSTRING (66.6666666667 25.2833333333, 162.2333333333 58.6166666667)' `
+    'LINESTRING (66.6666666667 25.2833333333, 162.2333333333 58.6166666667)'
+Check-SameLsBag 'famous-land' `
+    'GEODESICSTRING (118.6333333333 24.55, -8.9166666667 37.0333333333)' `
+    'LINESTRING (118.6333333333 24.55, -8.9166666667 37.0333333333)'
 Check 'DECLINE ID_SpiralCurve' @('SPIRALCURVE EMPTY')
 Check 'BAG hens=0,1 pts=0 0;80 5.333333333333333 chickens=0-1:MkClothoid' @('CLOTHOID (0, 0.005, 80)')
 Check 'BAG hens=0,1 pts=0 0;80 5.333333333333333 chickens=0-1:MkClothoid' `
