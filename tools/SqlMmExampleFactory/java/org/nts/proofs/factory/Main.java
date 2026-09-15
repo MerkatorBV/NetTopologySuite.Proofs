@@ -27,8 +27,22 @@ public final class Main {
             }
             return;
         }
-        String id = args[0];
-        Example g = Catalog.get(id);
+        Example g;
+        if ("--stdin".equals(args[0]) || "-".equals(args[0])) {
+            try {
+                g = ModelReader.read(new java.io.InputStreamReader(System.in, java.nio.charset.StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                System.err.println("stdin model: " + e.getMessage());
+                System.exit(2);
+                return;
+            }
+        } else {
+            g = Catalog.get(args[0]);
+        }
+        emit(g);
+    }
+
+    static void emit(Example g) {
         Path templates = templatesDir();
         System.out.println("ID=" + g.id);
         System.out.println("WKT=" + renderWkt(templates, g));
@@ -78,7 +92,8 @@ public final class Main {
     }
 
     private static void usage() {
-        System.err.println("usage: org.nts.proofs.factory.Main --list | <example-id>");
+        System.err.println("usage: org.nts.proofs.factory.Main --list | <example-id> | --stdin | -");
+        System.err.println("  --stdin / -  read a line-oriented Example model from stdin");
         System.err.println("env: SQLMM_FACTORY_TEMPLATES  directory with SqlMmWkt.stg / SqlMmWkb.stg");
         System.err.println("inhabits tools bytes only; Rocq emit QEX (ticket_sqlmm_factory_emit_qed_or_qex)");
     }
