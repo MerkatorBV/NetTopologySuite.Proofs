@@ -524,10 +524,12 @@ is discharged by host `MkCirc` (claimId `0007-gamma-mkcirc`):
   `InteriorMixedHitArm` = `I_ok_mixed` Hit ∧ `interior_span_params`
   (`SidecarCircInterior.v : ticket_0007_iota_gap_qed_or_qex`,
   `SidecarCircInterior.v : interior_mixed_hit_arm_missing`).
-  `I_ok_interior` does not discharge (`SidecarCircInteriorHit.v :
-  iota_park_not_discharged_by_I_ok_interior`; locked Hit sibling
-  `locked_interior_I_ok_interior`). Gate stays `mixed_joint_params`.
-  Do not drop the joint gate. ι is not μ, not host `I_ok`, not Γ.
+  Gated successor `I_ok_mixed_gate` keeps Joint and adds Interior
+  (`SidecarCircMixedGate.v : ticket_0007_iota_mixed_gate_qed_or_qex`)
+  but does not discharge Parks ι. `I_ok_interior` does not discharge
+  (`SidecarCircInteriorHit.v : iota_park_not_discharged_by_I_ok_interior`).
+  Gate stays `mixed_joint_params`. Do not drop the joint gate.
+  ι is not μ, not host `I_ok`, not Γ.
 - **ρ bag-loop** — `CookLoopBagTerm` missing; leftover_quad width
   conserved (`Adr0007NodingEpic.v : ticket_0007_cook_term_qed_or_qex`,
   `SheetHenCookLoop.v : leftover_quad_width_conserved`). Pairwise
