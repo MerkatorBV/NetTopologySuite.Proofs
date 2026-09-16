@@ -18,7 +18,7 @@
    pin is #572). After leftover Ⅱ. False on
    `classified_hard_pairs`, leftover Ⅰ, leftover Ⅱ, leftover Ⅲ,
    leftover Ⅳ, and the #567 contains pair. Completeness stays
-   false on an unnamed CCW pair (not leftover `Ⅵ`).
+   false on an unnamed swap nest after leftover `Ⅸ`.
    #577 Green is completeness (QED) or a documented cex (QEX).
    `triangle_pair_regime_ccw_stop` is that disjunction, discharged
    QEX. Leftover `Ⅴ` itself is QED (`leftover_v_qed_or_qex`).
@@ -26,8 +26,9 @@
    not CONTEXT Bar 1. Nothing that mentions `TPR_MixedCone` may
    be proved through `classify_triangle_pair`. Do not steal 522-j /
    522-m / 522-f / 522-i / leftover Ⅰ / leftover Ⅱ. Do not remint
-   `cone_separates_b`. Do not mint 522-n / `Ⅵ`. Do not remint
-   aa_matrix_*.
+   `cone_separates_b`. Do not mint 522-n / leftover `Ⅹ`. Do not
+   remint leftover `Ⅵ` / leftover `Ⅶ` / leftover `Ⅷ` /
+   leftover `Ⅸ`. Do not remint aa_matrix_*.
 
    WITNESS topic: relate · claimId: Ⅴ · witness: Ⅴ-mixed-cone-cex
    macro: relate
@@ -288,15 +289,15 @@ Proof.
 Qed.
 
 Theorem unnamed_ccw_still_unsupported :
-  triangle_pair_regime 0 0 2 0 0 2 0 0 3 1 1 3 = TPR_Unsupported.
+  triangle_pair_regime 0 0 4 0 1 1 0 0 4 0 0 4 = TPR_Unsupported.
 Proof.
   exact unnamed_ccw_pair_unsupported.
 Qed.
 
 (* Epic #522 / #577 stop: completeness (QED) or a documented CCW
-   unsupported pair (QEX). Discharged QEX — unnamed, not leftover
-   `Ⅵ`. Leftover-Ⅴ classify does not take the left. Not a 522-j
-   remint. *)
+   unsupported pair (QEX). Discharged QEX — unnamed swap nest
+   after leftover `Ⅸ`. Leftover-Ⅴ classify does not take the
+   left. Not a 522-j remint. *)
 (* WITNESS {"claimId":"Ⅴ","topic":"relate","lemma":"triangle_pair_regime_ccw_stop","title":"Epic #522 stop is completeness (QED) or a documented CCW unsupported pair (QEX); discharged QEX on an unnamed pair","file":"theories/RelateNGTouchMixedCone.v","witness":"Ⅴ-mixed-cone-cex","board":"leftover-Ⅴ"} *)
 Theorem triangle_pair_regime_ccw_stop :
   (forall ax ay bx by_ cx cy dx dy ex ey fx fy : R,

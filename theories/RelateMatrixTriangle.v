@@ -23,8 +23,12 @@
    `im_unsupported` until a fill is named). Leftover `Ⅲ` adds
    `TPR_TouchOnesided` (same fill honesty). Leftover `Ⅱ` adds
    `TPR_TouchObtuse` (same fill honesty). Leftover `Ⅴ` adds
-   `TPR_MixedCone` (same fill honesty). Completeness is an unnamed
-   CCW pair (not leftover `Ⅵ`).
+   `TPR_MixedCone` (same fill honesty). Leftover `Ⅵ` adds
+   `TPR_SameCone` (same fill honesty). Leftover `Ⅶ` adds
+   `TPR_Lens` (same fill honesty). Leftover `Ⅷ` adds
+   `TPR_Inside` (same fill honesty). Leftover `Ⅸ` adds
+   `TPR_Nest` (same fill honesty). Completeness is an unnamed
+   swap nest (not leftover `Ⅹ`).
 
    Honest scoping: triangles only (convex, no holes). Full pointset
    satisfaction and noding bridge in RelateNG.
@@ -57,6 +61,10 @@ Inductive TrianglePairRegime : Type :=
 | TPR_TouchOnesided (* leftover Ⅲ∨Ⅳ: one-sided vertex-in-open-edge; fill is the token *)
 | TPR_TouchObtuse   (* leftover Ⅱ: closed-cone vertex kiss; fill is the token *)
 | TPR_MixedCone     (* leftover Ⅴ: opposite-sign cone at a shared vertex; fill is the token *)
+| TPR_SameCone      (* leftover Ⅵ: same-sign cone spill at a shared vertex; fill is the token *)
+| TPR_Lens          (* leftover Ⅶ: proper edge-cross residue; fill is the token *)
+| TPR_Inside        (* leftover Ⅷ: A verts interior to B; fill is the token *)
+| TPR_Nest          (* leftover Ⅸ: same-side shared-edge nest; fill is the token *)
 | TPR_Unsupported.  (* the classifier declined -- NOT a geometric verdict *)
 
 Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
@@ -70,6 +78,10 @@ Definition triangle_pair_fill (r : TrianglePairRegime) : IntersectionMatrix :=
   | TPR_TouchOnesided => im_unsupported          (* leftover Ⅲ∨Ⅳ: classified, fill not named *)
   | TPR_TouchObtuse => im_unsupported            (* leftover Ⅱ: classified, fill not named *)
   | TPR_MixedCone => im_unsupported              (* leftover Ⅴ: classified, fill not named *)
+  | TPR_SameCone => im_unsupported               (* leftover Ⅵ: inhabitance, fill not named *)
+  | TPR_Lens => im_unsupported                   (* leftover Ⅶ: inhabitance, fill not named *)
+  | TPR_Inside => im_unsupported                 (* leftover Ⅷ: inhabitance, fill not named *)
+  | TPR_Nest => im_unsupported                   (* leftover Ⅸ: inhabitance, fill not named *)
   | TPR_Unsupported => im_unsupported            (* decline; see DE9IM.im_unsupported *)
   end.
 
@@ -107,6 +119,22 @@ Proof. reflexivity. Qed.
 
 Lemma triangle_pair_fill_touch_mixed_eq :
   triangle_pair_fill TPR_MixedCone = im_unsupported.
+Proof. reflexivity. Qed.
+
+Lemma triangle_pair_fill_touch_samecone_eq :
+  triangle_pair_fill TPR_SameCone = im_unsupported.
+Proof. reflexivity. Qed.
+
+Lemma triangle_pair_fill_touch_lens_eq :
+  triangle_pair_fill TPR_Lens = im_unsupported.
+Proof. reflexivity. Qed.
+
+Lemma triangle_pair_fill_touch_inside_eq :
+  triangle_pair_fill TPR_Inside = im_unsupported.
+Proof. reflexivity. Qed.
+
+Lemma triangle_pair_fill_touch_nest_eq :
+  triangle_pair_fill TPR_Nest = im_unsupported.
 Proof. reflexivity. Qed.
 
 Lemma triangle_pair_fill_unsupported_eq :
@@ -348,6 +376,37 @@ Definition classify_triangle_pair (a1 a2 a3 b1 b2 b3 : Point)
      Bar 1. Opposite-sign cone at a shared vertex; do not remint
      [cone_separates_b] / [touch_obtuse_vertex_b]. *)
   | TPR_MixedCone => True
+  (* Leftover Ⅵ: same honesty as leftover Ⅰ. [True] is not a
+     denotation. Do not prove [classify_triangle_pair] facts about
+     this constructor. Fill stays [im_unsupported]. Not CONTEXT
+     Bar 1. Same-sign spill at a shared vertex; do not remint
+     [overlap_b] / [cone_separates_b] / [mixed_cone_vertex_b].
+     There is no TPR_SameCone ⇒ interiors meet. *)
+  | TPR_SameCone => True
+  (* Leftover Ⅶ: same honesty as leftover Ⅰ. [True] is not a
+     denotation. Do not prove [classify_triangle_pair] facts about
+     this constructor. Fill stays [im_unsupported]. Not CONTEXT
+     Bar 1. Constructor means “escaped every prior arm, then some
+     edges cross,” not “this is a lens / interiors meet.” Do not
+     remint [segments_proper_cross] / [overlap_b]. Do not emit
+     [2FFF1FFF2]. There is no TPR_Lens ⇒ interiors meet. *)
+  | TPR_Lens => True
+  (* Leftover Ⅷ: same honesty as leftover Ⅰ. [True] is not a
+     denotation. Do not prove [classify_triangle_pair] facts about
+     this constructor. Fill stays [im_unsupported]. Not CONTEXT
+     Bar 1. Detector is B-frame A-verts (`inside_b`), not a remint
+     of [contains_b]. Do not emit [2FFFFFFF2]. There is no
+     TPR_Inside ⇒ interiors meet. *)
+  | TPR_Inside => True
+  (* Leftover Ⅸ: same honesty as leftover Ⅰ. [True] is not a
+     denotation. Do not prove [classify_triangle_pair] facts about
+     this constructor. Fill stays [im_unsupported]. Not CONTEXT
+     Bar 1. Detector is both-CCW plus a shared edge plus a B
+     vertex strictly interior to A (`nest_b`), not a remint of
+     [touch_edge_b] / [contains_b] / [overlap_b] / [inside_b].
+     Do not emit [2FFFFFFF2] or [FF2F11212]. There is no
+     TPR_Nest ⇒ interiors meet. *)
+  | TPR_Nest => True
   (* `TPR_Unsupported` names no configuration -- it records that the
      classifier made no claim.  `True` is the correct denotation of "no
      claim"; unlike the five arms above it is not a geometric predicate. *)

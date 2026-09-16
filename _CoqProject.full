@@ -6,8 +6,9 @@ theories/Distance.v
 # #508 M-LEN-ZOO curve-length spec lane (ADR-0004): the canonical metric-length
 # spec — is_curve_length as is_lub of inscribed polyline lengths — with the
 # chord lower bound, uniqueness, and waypoint additivity (the theorem behind
-# LENGTH_UNIFIED's sum-of-members aggregation).  Arc r·θ rectifiability is the
-# next rung.  3-axiom.
+# LENGTH_UNIFIED's sum-of-members aggregation).  Also the windowed
+# is_curve_length_ext_on (equality only on [a,b]).  Arc r·θ rectifiability
+# is the next rung.  3-axiom.
 theories/CurveLength.v
 # #508 arc rung: r·θ IS the metric length — the circle parameterization
 # satisfies is_curve_length with L = r·(b−a).  Upper half telescopes chord
@@ -98,21 +99,28 @@ theories/ClothoidFresnelInhab.v
 # and the weight-conditioned control-net Lipschitz bound
 # L <= 2*(wmax/wmin)^2 * max(net edge) * (b−a) on [a,b] ⊆ [0,1].  3-axiom.
 theories/NurbsQuadraticLength.v
+# Shared 2·atan / tan-on-[0,π/4] identities.  Lifted from the 508-a
+# golden quarter so later Weierstrass consumers do not copy them.
+# Category C (Stdlib atan / Ratan).  No golden content.
+theories/AtanDoubleAngle.v
+# #508-g / #565: knot-vector carrier + induction over spans.  3-axiom
+# (curve_length_additive).  Golden half-circle instance lives in
+# NurbsConicExact.v (Category C via 508-a atan).  Not a remint of
+# NurbsGeneralLength.nurbs_knot_span_additive.  Not Cox-de Boor.
+theories/NurbsKnotSpans.v
 # #508-a / #559: golden rational quarter circle has metric length π/2.
 # Weierstrass φ(t) = 2·atan(t/(√2+(1-√2)·t)); reparam + ext onto the
-# golden nurbs2_param.  Category C (Stdlib atan / Ratan), same lineage
-# as ArcParamBridge.v.  Does not grow CurveSegment or remint ADR-0004.
+# golden nurbs2_param.  Generic 2·atan lives in AtanDoubleAngle.v;
+# windowed ext lives in CurveLength.v.  Two-golden-quarter half-circle
+# instance (π/2 + π/2 = π) is here so KnotSpans stays 3-axiom.
+# Category C (Stdlib atan / Ratan), same lineage as ArcParamBridge.v.
+# Does not grow CurveSegment or remint ADR-0004.
 theories/NurbsConicExact.v
 # #508 NURBS P1: general degree (equal-weight rational cubic ↔ polynomial
 # cubic), knot-span additivity (curve_length_additive), and the
 # conditional exact primitive through curve_length_of_primitive.
 # Single-span oracle N.  No ExactNurbsSegment.  3-axiom.
 theories/NurbsGeneralLength.v
-# #508-g / #565: knot-vector carrier + induction over spans, and the
-# two-golden-quarter half-circle instance (π/2 + π/2 = π).  Not a remint
-# of NurbsGeneralLength.nurbs_knot_span_additive.  Not Cox-de Boor.
-# Oracle N stays single-span.  Instance is Category C via 508-a atan.
-theories/NurbsKnotSpans.v
 # #508 arc P2 leftovers from #552: valid_arc ⇒ arc_sweep ≠ 0, and
 # arc_mid is a parameterized circumcircle point.  atan2 lane, 4-axiom
 # (docs/audit-exceptions.txt).  Does not start a new 64-a r·θ.
@@ -2691,17 +2699,9 @@ theories/ArcArcCirclesSpan.v
 # plus a same-sign combinator (no iff fed to nra).  4-axiom (atan2 lineage,
 # see docs/audit-exceptions.txt).  No Admitted.
 theories/ArcSpanAtan2.v
-# Issue #64 round-2 items ② and ④ (N-AA quartic certificate + atan2 discharge).
-# §1 Vieta coordinate identities for radical_point_plus/minus: x/y sum and
-# product formulas (ring proofs, no hypotheses) — the degree-2 polynomial
-# certificate certifying the radical-axis intersection is quadratic, not quartic.
-# §2 Four inCircle_R = 0 helpers (radical_points_on_circles +
-# inCircle_R_zero_of_equidistant) place each named point on each circumcircle.
-# §3 arc_arc_intersects_of_atan2_radical_span: headline promotion — atan2 span
-# membership for one radical point w.r.t. both arcs → arc_arc_intersects, via
-# arc_span_contains_atan2_iff_chord_sign + arc_arc_intersects_of_circles_and_radical_signs.
-# 4-axiom (atan2/Classic lineage via ArcSpanAtan2, docs/audit-exceptions.txt).
-# No Admitted.
+# Issue #64 round-2 item ④ — N-AA Vieta coordinate identities
+# (radical_point plus/minus x/y sum and product).  Pure ring, 3-axiom.
+# Item ② atan2 discharge lives in ArcSpanAtan2.v.
 theories/ArcArcQuartic.v
 # Issue #64 ask #5b / N-AA: coordinate certificate (3-axiom).
 # Affine circle–circle resultant (`circle_circle_res_x` / `_y`); constructor
@@ -2803,11 +2803,106 @@ theories/RelateCurveMatrix.v
 # encodes as F, never '?'. Discharged QEX on CRR_Unknown. Stdlib + DE9IM
 # only. Does not remint WireCell / 522-f. No Admitted.
 theories/RelateCurveAlphabet.v
+# ADR-0007 CircularEgg payload for host MkCirc (claimId 0007-gamma-mkcirc).
+# Host/pure-R. atan2-free angle interpolant. Required by SheetHenCook.
+theories/ChordCook.v
+theories/SheetHenCircEgg.v
+# ADR-0007 ClothoidEgg payload for host MkClothoid
+# (claimId 0007-intake-mkclothoid / 0007-clothoid-first-cook).
+# Locked inhabitance record + Fresnel-free cloth_eval. Required by
+# SheetHenCook. No Admitted.
+theories/SheetHenClothoidEgg.v
 # ADR-0007 sheet/hen/cook noding constructor vocabulary + QED∨QEX stops.
-# Host/pure-R. First cook scope is chord–chord. Does not remint
-# CurveSegment / Dart / Hobby. No Admitted. Status stays Proposed.
+# Host/pure-R. First cook scope is chord–chord, circular–circular
+# (MkCirc), and clothoid–clothoid (MkClothoid). Does not remint
+# CurveSegment / Dart / Hobby. No Admitted. Status stays Accepted.
 theories/SheetHenCook.v
+# ADR-0007 Γ host MkCirc / CircGamma locked fixture (claimId 0007-gamma-mkcirc).
+# Host/pure-R. atan2-free CircularEgg interpolant; I_ok Hit + try_cook_hit
+# mint on two MkCirc chickens. Tags / mixed stay Decline. 3-axiom.
+theories/CircularCookMkCirc.v
+# ADR-0007 clothoid×clothoid first-cook Hit (claimId 0007-clothoid-first-cook).
+# Host/pure-R. Locked MkClothoid pair; I_ok Hit + try_cook_hit mint.
+# Tags / mixed stay Decline. Not Fresnel-as-noding. 3-axiom.
+theories/ClothoidCookMkClothoid.v
+# ρ bag-loop named QEX gap (508-style missing CookLoopBagTerm).
+# Host/pure-R. leftover_quad width conserved; kiss/share/mint not
+# covered. Pairwise leftover-width stays a sibling QED. Not Multi
+# bags. Arc cook termination is a sister card. No Admitted.
+theories/SheetHenCookLoop.v
 theories/Adr0007NodingEpic.v
+# NodingNG chord-lane product face: 𝓘 + one cook step on one sheet.
+# Host/pure-R. Reuses SheetHenCook. Parks ρ stays QEX. Not OverlayNG /
+# RelateNG / a bag noder. No Admitted.
+theories/NodingNG.v
+# OverlayNG sheet-lane product face: finite snap-sequence on one sheet.
+# Host/pure-R. Reuses SheetHenCook + NodingNG. Hobby 4.1 stays QEX.
+# Not 𝓘 / cook / OverlayNGCurve / RelateNG. No Admitted.
+theories/OverlayNG.v
+# ADR-0007 clothoid egg sidecar (SidecarClothoidEgg). Packages
+# EggClothoid tag-Decline + RelateClothoid chord-seed.
+# Host/pure-R. Host first cook includes clothoid×clothoid
+# (ClothoidCookMkClothoid). Not Fresnel noding. Not Campaign I–II.
+# Not a noder. No Admitted.
+theories/SidecarClothoidEgg.v
+# ADR-0007 NURBS egg sidecar (SidecarNurbsEgg). Packages EggNurbs
+# Decline-on-host + demoted unit-square chord-seed. Host/pure-R.
+# First cook stays chord–chord. Not #508 length-as-noding.
+# Not Campaign I–II. Not a noder. No Admitted.
+theories/SidecarNurbsEgg.v
+# ADR-0007 SIN / sinusoid egg sidecar (SidecarSinEgg). Packages
+# EggSinusoid Decline-on-host + demoted unit-square chord-seed.
+# Host/pure-R. First cook stays chord–chord. Not Spectre profile
+# as noding. Not Campaign I–II. Not a noder. No Admitted.
+theories/SidecarSinEgg.v
+# ADR-0007 circle / circular egg sidecar (SidecarCircEgg). Packages
+# host EggCircularArc Decline fence + demoted unit-square chord-seed.
+# Host/pure-R. First cook stays chord–chord. Does not remint
+# CircularCook* / CircGamma / MkCirc. Not Campaign I–II. No Admitted.
+theories/SidecarCircEgg.v
+# ADR-0007 Elliptical Curve / EllipticArc egg sidecar
+# (SidecarEllipticEgg). Packages EggEllipse Decline-on-host +
+# RelateEllipticArc chord-seed. Host/pure-R. First cook stays
+# chord–chord. Not #508 ellipse-length-as-noding. Not Campaign I–II.
+# Does not grow SheetHenCook. Not a noder. No Admitted.
+theories/SidecarEllipticEgg.v
+# ADR-0007 SQL/MM GeodesicString egg sidecar (SidecarGeodesicEgg).
+# Packages EggGeodesicString Decline-on-host + demoted unit-square
+# chord-seed. Host/pure-R. First cook stays chord–chord. Not a
+# geodetic interpolant / noder. Not Campaign I–II. Not a noder.
+# No Admitted.
+theories/SidecarGeodesicEgg.v
+# ADR-0007 SQL/MM ST_SpiralCurve egg sidecar (SidecarSpiralEgg).
+# Packages EggSpiralCurve Decline-on-host + demoted unit-square
+# chord-seed. Five ISO 13249-3 names + Unknown on one egg.
+# EggClothoid stays. Host/pure-R. First cook stays chord–chord.
+# Not a spiral interpolant / noder. Not Campaign I–II. Not a noder.
+# No Admitted.
+theories/SidecarSpiralEgg.v
+# ADR-0007 intake angles-from-points (IntakeAngles). Circumcircle
+# + inhabited CircularEgg angle fields from control points.
+# Host/pure-R. 3-axiom. No Atan2.v. Not a CircGamma remint.
+# Required by IntakeWalker CircUnknown. No Admitted.
+theories/IntakeAngles.v
+# ADR-0007 first-slice intake walker (IntakeWalker). Tagged CST →
+# SHC bag | Intake Decline. Reuses MkChord / MkCirc / MkClothoid.
+# Host/pure-R. Grammar pin: grammars-v4 #4997. No new oracle
+# keyword. No Admitted.
+theories/IntakeWalker.v
+# ADR-0007 SQL/MM signed tag maps (SqlMmSignedTag).
+# τ on eggs; ρ on IntakeWalker productions; τ=μ after
+# singleton bags. CIRCLE iff |sweep|=2π. κ: 2/8 or none.
+# HOLD is nats. Emit / WKT parse QEX. Does not grow
+# SheetHenCook. No new oracle keyword. No Admitted.
+theories/SqlMmSignedTag.v
+# ADR-0007 GeodesicString as sheet geodesic (IntakeGeodesic).
+# μ in IntakeWalker; joints / π / first-cook reuse here.
+# claimId 0007-intake-geodesic. No Admitted.
+theories/IntakeGeodesic.v
+# ADR-0007 famous GEODESICSTRING fixtures (IntakeFamousGeodesic).
+# Science/arXiv 1804.07389 locked endpoints on existing μ.
+# claimId 0007-famous-geodesicstring. No Admitted.
+theories/IntakeFamousGeodesic.v
 # Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.
 theories/CircularCookZ.v
 # R-side p* attach. QEX: no γ:[0,1]. Classical reals.
@@ -2844,6 +2939,127 @@ theories/CircularCookLicense.v
 # Campaign II and H⊥ are named parked. No new kernel. Not SQL/MM done.
 # 4-axiom atan2 sidecar (classic via Split / circ_gamma).
 theories/CircularCookClose.v
+# II.1 span filter as IResult on CircularArc γ (not γ_full).
+# Radical root is arc Hit iff on_arc_gamma both. Locked p+ Hit,
+# p− Empty. Host CircGamma stays QEX. II.2–II.4 / H⊥ / SQL/MM
+# cathedral stay parked. 4-axiom atan2 sidecar (classic via Span).
+# Not CircularString concat. Not first cook scope. Not a noder.
+theories/CircularCookSpanFilter.v
+# II.2 split γ_span at in-span t (leftovers meet at p*).
+# Reuses arc_gamma / on_arc_gamma / I_span_root. Not circ_split /
+# γ_full. Locked p+ leftovers meet at p*; leftover stays on the
+# parent circle. Locked p− stays Empty — no invented span cook.
+# Host CircGamma stays QEX. II.3–II.4 / H⊥ / SQL/MM cathedral
+# stay parked. 4-axiom atan2 sidecar (classic via Span / Filter).
+# Not CircularString concat. Not first cook scope. Not a noder.
+theories/CircularCookSpanSplit.v
+# II.3 I_ok_circ on EggCircularArc × EggCircularArc (sidecar
+# arc_gamma). First glossary-type inhabitant. Locked p+ Hit
+# licenses span_split; locked far pair inhabits Empty.
+# Host CircGamma stays QEX. first_cook_scope stays chord–chord.
+# II.4 / H⊥ / SQL/MM cathedral stay parked. 4-axiom atan2
+# sidecar (classic via Span / Filter / Split). Not CS concat.
+# Not first cook scope. Not a noder. Not a computed classifier.
+theories/CircularCookOkCirc.v
+# II.4 Campaign-II close letter. I_ok_circ exists as sidecar
+# glossary inhabitant. Host CircGamma stays QEX.
+# first_cook_scope stays chord–chord. H⊥ parked. Not a bag
+# noder. Phase B SQL/MM Part 3 required-type gaps named
+# (CircularString / CompoundCurve / CurvePolygon). Not
+# SQL/MM done. 4-axiom atan2 sidecar (classic via OkCirc /
+# Span). Not CS concat. Not first cook scope. No new kernel.
+theories/CircularCookCloseII.v
+# Phase B.1 CircularString concat joints (sidecar reuse).
+# CS is a sequence of CircEgg; joint is I_ok_circ Hit at
+# (end, t=1, t=0) via arc_gamma. Joint params not interior.
+# Locked 2-arc V-CS odd_closed fixture. Host CircGamma stays
+# QEX. first_cook_scope stays chord–chord. CompoundCurve /
+# CurvePolygon / H⊥ parked. Not SQL/MM done. 4-axiom atan2
+# sidecar (classic via OkCirc / Span). No new kernel. Not a
+# CircGamma remint. Not first cook scope. Not a noder.
+theories/CircularCookCsConcat.v
+# Phase B mixed LS–CS joints (SidecarCircMixed). Contiguous
+# LS×CS / CS×LS joints inhabit I_ok_mixed Hit at (end, t=1, t=0)
+# via host chord_eval + sidecar arc_gamma. Host I_ok mixed stays
+# Decline (I.1). Host CircGamma stays QEX. first_cook_scope stays
+# chord–chord. Interior mixed cook parked. Not a CircGamma remint.
+# 4-axiom atan2 sidecar (classic via CsConcat / OkCirc / Span).
+# No new kernel. Not first cook scope. Not a noder.
+theories/SidecarCircMixed.v
+# Phase B.2 CompoundCurve member joints (sidecar / host reuse).
+# CC is a sequence of LineString (chords) and CircularString
+# (CircEgg) members. LS–LS joint is host I_ok Hit at (end, t=1,
+# t=0). CS–CS member joint reuses I_ok_circ. Mixed LS–CS joint
+# is I_ok_mixed Hit at (end, t=1, t=0); host I_ok mixed stays
+# Decline (I.1). Locked mixed fixture
+# COMPOUNDCURVE((-5 0, 5 0), CIRCULARSTRING(5 0, 0 -5, -5 0)).
+# Host CircGamma stays QEX. first_cook_scope stays chord–chord.
+# CurvePolygon / H⊥ / interior mixed cook parked. Not SQL/MM
+# done. CC required-type Landed (mixed I_ok_mixed Hit, not host
+# I_ok; letter B.2 landed ≠ SQL/MM done / Phase B done-when).
+# 4-axiom atan2 sidecar (classic via CsConcat / OkCirc / Span).
+# No new kernel. Not a CircGamma remint. Not CurveSegment remint.
+# Not first cook scope. Not a noder. Not CurvePolygon.
+theories/CircularCookCcConcat.v
+# Phase B.3 CurvePolygon ring closure (sidecar / host reuse).
+# CP ring is a closed CircularString or closed CompoundCurve
+# (B.2 CompoundCurveMembers that is contiguous and closed;
+# last member joins first). Sequential joints stay B.2.
+# CS–CS closing reuses I_ok_circ; LS–LS closing is host I_ok;
+# mixed closing is I_ok_mixed Hit at (end, t=1, t=0); host I_ok
+# mixed stays Decline (I.1). Locked CS-ring
+# CURVEPOLYGON((CIRCULARSTRING(-5 0, 0 5, 5 0, 0 -5, -5 0)))
+# and mixed-ring CURVEPOLYGON((COMPOUNDCURVE((-5 0, 5 0),
+# CIRCULARSTRING(5 0, 0 -5, -5 0)))). Host CircGamma stays
+# QEX. first_cook_scope stays chord–chord. H⊥ / CircGamma
+# remint / bag-noder / interior mixed cook parked. Not SQL/MM
+# done. CP / CC required-type Landed (mixed I_ok_mixed Hit, not
+# host I_ok). Phase B Open (letter B.3 landed ≠ SQL/MM done /
+# Phase B done-when).
+# 4-axiom atan2
+# sidecar (classic via CcConcat / CsConcat / OkCirc / Span).
+# No new kernel. Not a CircGamma remint. Not CurveSegment
+# remint. Not CurveGeometry.CurvePolygon remint. Not first
+# cook scope. Not a noder.
+theories/CircularCookCpConcat.v
+# Phase B MultiCurve / MultiSurface as bags of already-Qed members
+# (SidecarCircBags). MultiCurve is a bag of CS / CC; MultiSurface is
+# a bag of CP. Members need not be contiguous (bag ≠ concat).
+# Membership / pairwise joints reuse I_ok / I_ok_circ / I_ok_mixed.
+# Host I_ok mixed stays Decline (I.1). Host CircGamma stays QEX.
+# first_cook_scope stays chord–chord. Interior mixed cook parked.
+# Bag noder / H⊥ / CircGamma remint / SQL/MM cathedral parked.
+# Multi required-type Gap. Phase B Open. Letter landed ≠ cathedral
+# Landed / Phase B done-when. 4-axiom atan2 sidecar (classic via
+# CpConcat / CcConcat / CsConcat / OkCirc / Span). No new kernel.
+# Not first cook scope. Not a noder.
+theories/SidecarCircBags.v
+# Phase B ι interior circular×chord cook (SidecarCircInterior).
+# Honest QEX: I_ok_mixed Hit is gated by mixed_joint_params
+# (μ joint at (end, 1, 0) already Qed). An interior_span_params
+# Hit does not inhabit I_ok_mixed. Named missing constructor:
+# no interior-params Hit arm on MixLsCs / MixCsLs. Host I_ok
+# mixed stays Decline (I.1). Host CircGamma is CircGammaDischarged.
+# first_cook_scope stays chord–chord. Do not remint I_ok_mixed
+# / CircGamma / host I_ok. Interior cook stays parked. Letter
+# landed ≠ cook Landed / cathedral Landed / Phase B done-when /
+# Multi Landed. H⊥ / bag-loop / SQL/MM cathedral parked.
+# 4-axiom atan2 sidecar (classic via SidecarCircMixed / CsConcat
+# / OkCirc / Span). No new kernel. Not first cook scope. Not a
+# noder. Not a CRV-TOUCH kiss.
+theories/SidecarCircInterior.v
+# ADR-0007 ι interior Hit discharge (SidecarCircInteriorHit).
+# Distinct I_ok_interior arm packages I_ok_mixed_interior_arm.
+# Locked MixLsCs / MixCsLs inhabit Hit at interior_span_params via
+# Campaign II span_arc_A / p+ (reuse, not remint). I_ok_mixed stays
+# joint-gated (Parks ι #707). Do not drop mixed_joint_params.
+# Host I_ok mixed stays Decline. Host CircGamma stays QEX.
+# first_cook_scope stays chord–chord. Host interior cook stays
+# parked. Letter landed ≠ host cook Landed / cathedral Landed /
+# Phase B done-when. 4-axiom atan2 sidecar (classic via
+# SidecarCircInterior / Span). No new kernel. Not first cook
+# scope. Not a noder. Not a CRV-TOUCH kiss.
+theories/SidecarCircInteriorHit.v
 # Lineal boundary-meet bridge: curve_segments_meet (chord-chord contact) =>
 # geom_boundary witness => im_bb cell non-empty / ~ im_disjoint_ogc.  Closes the
 # bridge flagged deferred in RingContactSound.v for the LINEAL (chord) case
@@ -2891,14 +3107,19 @@ theories/RelateNGTouch.v
 theories/RelateNGTouchRED.v
 theories/RelateNGTouchCells.v
 theories/RelateNGRect.v
-# Unnamed CCW completeness cex after leftover Ⅴ (not leftover Ⅵ).
-# Split out of RelateNGTouchVertexRegime.v so that file stays under
-# the 1234-line gate. Complete stays at the monolith floor.
+# Leftover Ⅵ inhabitance + leftover Ⅶ inhabitance + leftover
+# Ⅷ inhabitance. Leftover Ⅸ nest inhabitance + unnamed swap
+# cex after leftover Ⅸ (not leftover Ⅹ) live in NestCex so
+# UnnamedCex stays under the 1234-line gate. Complete stays
+# at the monolith floor.
+theories/RelateNGNestCex.v
 theories/RelateNGUnnamedCex.v
 # #577 / 522-j: leftover-decline finding.  Completeness is still
 # false (unnamed CCW pair after leftover Ⅴ). The compiled
 # T-junction pair is leftover Ⅰ (classified TPR_TouchPartialEdge).
-# Mixed-cone is leftover Ⅴ (classified TPR_MixedCone).
+# Mixed-cone is leftover Ⅴ. Same-sign spill is leftover Ⅵ.
+# Edge-cross residue is leftover Ⅶ. Nested containment is
+# leftover Ⅷ. Same-side shared-edge nest is leftover Ⅸ.
 theories/RelateNGComplete.v
 # Leftover Ⅰ: mutual vertex-in-open-edge sliver at bar 1.
 # touch_partial_edge_b; constructor TPR_TouchPartialEdge stays on
@@ -2921,12 +3142,45 @@ theories/RelateNGTouchObtuse.v
 # Leftover Ⅴ: opposite-sign cone at a shared vertex. Detector
 # mixed_cone_vertex_b; constructor TPR_MixedCone stays on
 # im_unsupported. After leftover Ⅱ. Completeness is an unnamed
-# CCW pair (not leftover Ⅵ). Not CONTEXT Bar 1. Does not remint
-# cone_separates_b / touch_obtuse_vertex_b / aa_matrix_*.
+# swap nest after leftover Ⅸ. Not CONTEXT Bar 1. Does not
+# remint cone_separates_b / touch_obtuse_vertex_b / aa_matrix_*.
 theories/RelateNGTouchMixedCone.v
+# Leftover Ⅵ: same-sign cone spill at a shared vertex. Detector
+# same_cone_vertex_b; constructor TPR_SameCone stays on
+# im_unsupported. After leftover Ⅴ. Completeness is an unnamed
+# swap nest after leftover Ⅸ. Not CONTEXT Bar 1. Does not
+# remint cone_separates_b / mixed_cone_vertex_b / overlap_b /
+# aa_matrix_*.
+theories/RelateNGTouchSameCone.v
+# Leftover Ⅶ: name the leftover-Ⅵ edge-cross residue.
+# Detector lens_edges_cross_b is a transversal edge pair after
+# prior arms, not a lens denotation. Constructor TPR_Lens stays
+# on im_unsupported (missing overlap_b clause parked, not fixed).
+# segments_proper_cross_b is a _b remint; the noding Prop is
+# identifier-untouched only. After leftover Ⅵ. Completeness is
+# a swap nest (not leftover Ⅹ). Not CONTEXT Bar 1. Does not
+# remint overlap_b / aa_matrix_*.
+theories/RelateNGTouchLens.v
+# Leftover Ⅷ: name the leftover-Ⅶ nested-containment residue.
+# Detector inside_b is B-frame A-verts after prior arms, not a
+# remint of contains_b. Constructor TPR_Inside stays on
+# im_unsupported. After leftover Ⅶ. Completeness is a swap
+# nest (not leftover Ⅹ). Not CONTEXT Bar 1. Does not remint
+# contains_b / overlap_b / aa_matrix_*.
+theories/RelateNGTouchInside.v
+# Leftover Ⅸ: name the leftover-Ⅷ same-side shared-edge nest.
+# Detector nest_b is both CCW plus some shared edge plus some
+# B vertex strictly interior to A, not a remint of
+# touch_edge_b / contains_b / overlap_b / inside_b. Constructor
+# TPR_Nest stays on im_unsupported. After leftover Ⅷ.
+# Completeness is a swap nest (not leftover Ⅹ). Not CONTEXT
+# Bar 1. Does not remint touch_edge_b / contains_b / overlap_b /
+# aa_matrix_*.
+theories/RelateNGTouchNest.v
 # Epic #522 ticket-named QED ∨ QEX stop. Wraps
-# triangle_pair_regime_ccw_stop (QEX) and leftover Ⅰ–Ⅴ classify
-# (QED). Does not remint detectors / aa_matrix_* / 522-j. No Admitted.
+# triangle_pair_regime_ccw_stop (QEX on the unnamed swap nest
+# after leftover Ⅸ) and leftover Ⅰ–Ⅸ classify (QED). Does
+# not remint detectors / aa_matrix_* / 522-j. No Admitted.
 theories/RelateNGEpic522.v
 # #568 / 522-g: half-open ring-inclusion groundwork.  Strict-gtri
 # neighbourhood (explicit Lipschitz radius) + dim-1 on a segment +
@@ -2962,6 +3216,11 @@ theories/RelateNGOracleSurface.v
 theories/RelateNG.v
 # S13: Prepared cache refinement (evaluate B == relate A)
 theories/RelatePrepared.v
+# RelateNG product-face letter: DE-9IM matrix/witness + honesty
+# decline + 67-c pin. Consumes NodingNG / NodedOnSheet. Parks
+# completeness / Jordan / S15l+ / 523 ?. Not a remint of the
+# RelateNG* zoo, not NodingNG, not OverlayNG. No Admitted.
+theories/RelateNGFace.v
 
 # Issue #224 W1 / N-AL: arc-SEGMENT (line) intersection, circle-line existence
 # core.  line_circle_radical_point: foot +- h*u on the circle (foot condition
@@ -3381,6 +3640,13 @@ theories-flocq/Intersect_b64_exact.v
 # the structural file (Validate_binary64.v) so the four Stdlib classical-
 # reals axioms are only paid when the soundness surface is consumed.
 theories-flocq/Validate_binary64_bridge.v
+# ADR-0007 letter: two-way IEEE binary64 ↔ ℝ bridge (claimId
+# 0007-ieee-oracle-bridge). Packages CoordRealization / B2R_bp /
+# B64_bridge / B64_lib / coord_int_safe. Same sheet as ℝ; ≠ 𝓘 /
+# cook / OverlayNG snap. QEX: FP noder / unrestricted / kiss on b64.
+# Flocq C1 (audit-exceptions). Oracle adapters on existing keywords.
+# Not a remint. No Admitted.
+theories-flocq/IeeeRBridge.v
 # Stage D bridge module: discharges Pff2Flocq's section parameters for
 # binary64 (specifically: choice_sym for round_mode mode_NE = ZnearestE).
 # One-time work that unblocks every subsequent Pff2Flocq lift.  Ships

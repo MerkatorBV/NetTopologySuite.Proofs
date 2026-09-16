@@ -175,6 +175,87 @@ Everything accepted is representable; everything rejected carries a clause
 citation. A value can pass intake and still be invalid.
 _Avoid_: validation, well formed (as a constructor claim)
 
+**Intake walker** (ADR-0007, claimId `0007-intake-walker`):
+Successful WKT parse → tagged CST only → mapper total (`CST × Sheet S`)
+→ SHC bag | Intake Decline(reason). Grammar accept ≠ valid geometry ≠
+cooked graph. Intake Decline ≠ cook `IDecline`. First slice: Point,
+LineString, CircularString, CompoundCurve of those two, Circle-as-full-
+span-arc (`MkCirc` sweep `2π`). Grammar pin: antlr/grammars-v4 PR #4997
+(ISO/IEC 13249-3 §5.1.67). Engines test the bag, not the string. Fail
+closed on `SPIRALCURVE`. Well-formed `GEODESICSTRING` is the intake-
+geodesic letter. Unknown well-formed CS is the angles letter, not
+leftover Decline. Both CLOTHOID forms are the MkClothoid letter.
+_Avoid_: WKT zoo, example3.txt as oracle source, silent chord demote,
+new oracle keyword
+
+**Intake geodesic** (ADR-0007, claimId `0007-intake-geodesic`):
+GeodesicString on sheet \(S=(O;e_1,e_2)\) is the sheet geodesic
+= chord interpolant \(\gamma_{\mathrm{ch}}\). \(\mu(S,c_G)=\mu(S,c_{LS})\)
+on the same controls; eggs are `MkChord` only. Joints:
+\(\gamma_{\mathrm{ch}}(c_i)(1)=p_{i+1}=\gamma_{\mathrm{ch}}(c_{i+1})(0)\).
+\(\tau(e)=\texttt{LINESTRING}\). \(\pi(c_{LS})=\texttt{LINESTRING}\),
+\(\pi(c_G)=\texttt{GEODESICSTRING}\notin T_{\mathrm{signed}}\).
+\(\kappa\) unchanged (not 13). Consecutive eggs are already
+chord×chord first cook. Not an ambient \(\gamma\) (sphere / torus /
+cone / saddle). Not a plane section (ellipse / conic). Not
+`MkClothoid` / `MkCirc`. Not first-cook expand. Not WKB 13 / emit.
+_Avoid_: MkGeodesic, EggGeodesicString on a successful bag, WKB 13,
+emit of GEODESICSTRING, first-cook expand, new oracle keyword
+
+**Intake angles** (ADR-0007, claimId `0007-intake-angles`):
+Intake construction of `CircularEgg` `(O,r,θ₀,Δθ)` from well-formed
+WKT circular control points. Three distinct non-collinear points
+determine a unique circumcircle; chickens are `MkCirc`. Angle fields
+are inhabited from that geometry (θ₀ = sheet e₁ ray, Δθ = oriented
+full span ±2π). Host interpolant stays atan2-free egg data — not a
+CircGamma remint, not Stdlib atan2 / Ratan classic. Collinear /
+duplicate / bad count Decline by name. Clothoid is the MkClothoid
+letter, not this one.
+_Avoid_: CircGamma remint, silent chord demote, host cook expand,
+new oracle keyword
+
+**Intake MkClothoid** (ADR-0007, claimId `0007-intake-mkclothoid`):
+One host `MkClothoid` on `Egg` (parallel to `MkCirc`). Grammar has
+two clothoid surface forms (ISO REFERENCELOCATION, JTS `(k0,k1,L)`);
+both map onto the same locked `ClothoidEgg` bag (OGC≡ISO), whose
+vertices are `γ(0)`, `γ(1)` of the small-angle interpolant. Chickens
+use `MkClothoid` (`EggClothoid`), not silent `MkChord`. `example5`
+bags both forms in one COMPOUNDCURVE. Clothoid×clothoid first cook
+already landed (claimId `0007-clothoid-first-cook`, #730 Mode A on
+main). Intake stays bag/`MkClothoid` mapping; host Hit is the
+Clothoid first-cook paragraph. `EggClothoid` is not folded away.
+_Avoid_: two constructors, Fresnel-as-noding, CircGamma remint,
+silent chord demote, new oracle keyword
+
+**Clothoid first-cook** (ADR-0007, claimId `0007-clothoid-first-cook`):
+Host `EggClothoid × EggClothoid` is in `first_cook_scope`. Locked
+`MkClothoid` pair inhabits host `IHit` via `on_cloth` (closed-form
+small-angle clothoid: `cos θ≈1`, `sin θ≈θ`; not Fresnel, not
+chord-parameter). Small-angle clothoid `γ` is not Halley and
+not Fresnel; those stay metric, not the noding/cook engine.
+`p1 := γ(1)`. `try_cook_hit` mints `MkClothoid`
+hens. Tags stay Decline. Mixed clothoid×chord stays Decline.
+Not Fresnel-as-noding. Not a silent `I_ok` demote to `on_chord`.
+_Avoid_: Fresnel noding, Halley noding, mixed first cook, NURBS
+first cook, Campaign I, new oracle keyword
+
+**SQL/MM signed tag** (ADR-0007, claimId `0007-sqlmm-signed-tag`):
+Rungs 3–6 of τ=μ. Achievable ring is locked `exists b e`
+agreement (not ∀ on all CSTs). `τ = first_slice_tag` on eggs;
+`μ = intake_map` on CSTs. They do not share a domain. After μ
+mints a singleton bag, `τ(e)=ρ(π(c))`. `intake_rho` /
+`cst_prod_tag` here are the CST production tag in that equation
+— not ADR-0007 park ρ (`EmitRhoBagLoop` / bag-loop). Full-span
+CS and CIRCLE share one MkCirc; τ of that egg is CIRCLE.
+`intake_rho` is egg-aware on CIRCULARSTRING and is not
+`cst_prod_tag`. Well-formed GeodesicString bags `MkChord`;
+τ is LINESTRING; `cst_prod_tag` stays None (production is not
+signed I/O). SpiralCurve still Declines (τ unused). `κ` is 2/8
+or none (not 13). Emit / WKT parse stay QEX. Production-level
+τ=π on full-span CIRCULARSTRING text stays QEX.
+_Avoid_: ∀-mapper on all CSTs, Circle-as-18, compound-as-τ,
+park-ρ remint, new oracle keyword
+
 **ISO validity**:
 Every spec "shall" beyond representability, owned by arc-aware `ST_IsValid`:
 implemented rules answer definite-false naming their clause; unimplemented
@@ -323,6 +404,8 @@ _Avoid_: MVP, milestone, marketable (alone — the constraint is *minimum*)
 **Oracle**:
 The Rocq-extracted reference binary that answers geometric queries over a text
 line protocol; the source of truth every engine is compared against.
+Together with the IEEE↔R bridge it is the test surface for NodingNG /
+OverlayNG / RelateNG (ADR-0006 line protocol only).
 _Avoid_: reference implementation, ground truth binary
 
 **Harness**:
@@ -382,6 +465,218 @@ designated witness matrix. Bar 2: every one of the nine DE-9IM cells is
 individually proven true. Spell the bar out in prose; "RBL" is WIP shorthand
 only.
 _Avoid_: level (unqualified), RBL (in prose)
+
+### Noding constructor (ADR-0007, Accepted)
+
+**Sheet**:
+An oriented affine plane `S = (O; e₁, e₂)` with optional lattice `Λ`.
+A constructor runs on one sheet; changing `S` or `Λ` is a different instance.
+_Avoid_: plane (unqualified), snap grid (that is `Λ` alone)
+
+**Hen**:
+A vertex identifier the cook mints. Identity is structural (the cook's
+decision), not coordinate-pair equality.
+_Avoid_: vertex (the owned point), dart (a coordinate pair)
+
+**Egg**:
+An interpolant `γ : [0,1] → S` of a named class (chord, circular arc,
+clothoid, …). First cook scope is chord–chord, circular–circular
+(MkCirc), and clothoid–clothoid (MkClothoid).
+_Avoid_: CurveSegment (year-1 `CSChord | CSArc`, not reminted here)
+
+**Chicken**:
+A directed use of an egg between two hens `(h_src, h_dst, e)`. Twin
+reverses orientation. A later remint reseats `Dart` as a hen-id pair —
+one view of a chicken, not a third type — so `DartAngularOrder.ddir`
+reads `γ'` from the egg. Orbit proofs keep `dart_eq_dec` as *a*
+decidable equality.
+_Avoid_: dart (coordinate pair), edge (unqualified)
+
+**Cook / 𝓘**:
+The pairwise constructor: Hit `(p*, tᵢ, tⱼ)`, Empty (disjoint images),
+or 𝓘 Decline (no algorithm). Predicates never mint hens. On a Hit the
+cook may `split(t)` and mint hens (`ShareOne` / `MintTwo`). Empty /
+Decline / Touch mint nothing. Leftover shared endpoint is not a kiss.
+First cook scope is chord–chord, circular–circular (MkCirc), and
+clothoid–clothoid (MkClothoid). Host mixed `I_ok` and other
+out-of-scope eggs stay Decline. Sidecar `I_ok_circ` / `I_ok_mixed`
+Hit is not host `I_ok`. Four-object fence: `I_circles_z` ≠
+`I_circles_gamma` ≠ sidecar cook ≠ host `I_gloss`. Snap-rounding is
+a different constructor under already-noded `G`. Display is a view.
+binary64 realizes the same sheet. OverlayNGRobust is a snap-sequence
+`S → Λ`, not 𝓘. A **kiss** (tangent eggs, discriminant zero) is not
+a shared endpoint; CRV-TOUCH owns the certificate. Arc cook
+termination is a sister card. Accepting ADR-0007 is out of scope of
+that map. Campaign I / II / Phase B ticket evidence lives on the
+ADR-0007 checklist and in `docs/verified-claims.md`.
+_Avoid_: noder (the full loop), snap-rounding (not 𝓘), kiss (for a shared endpoint)
+
+**Parks ι / ρ** (named QEX, landed — ADR-0007 Parks). **Γ CircGamma**
+is discharged by host `MkCirc` (claimId `0007-gamma-mkcirc`):
+- **Γ CircGamma** — `circular_gamma_status = CircGammaDischarged`
+  (`CircularCook.v : circular_gamma_is_discharged`,
+  `CircularCook.v : circ_gamma_mkcirc_inhabits`,
+  `CircularCook.v : ticket_64_circ_gamma_qed_or_qex`). Host γ is
+  atan2-free `θ₀ + t·Δθ` on `CircularEgg`. nlerp still misses the
+  reflex principal span (`CircularCook.v : reflex_nlerp_misses_principal`)
+  — that is not the remaining Γ hole. Sidecar `arc_gamma` is not host Γ.
+- **ι interior circular×chord** — **QEX**
+  (`SidecarCircInterior.v : ticket_0007_iota_gap_qed_or_qex`).
+  Missing ctor: `InteriorMixedHitArm` = `I_ok_mixed` Hit ∧
+  `interior_span_params` (`SidecarCircInterior.v : interior_mixed_hit_arm_missing`).
+  `I_ok_interior` is a sibling, not this ctor
+  (`SidecarCircInteriorHit.v : iota_park_not_discharged_by_I_ok_interior`).
+  Gate stays `mixed_joint_params`. Not host `I_ok` / Γ remint.
+- **ρ bag-loop** — `CookLoopBagTerm` missing; leftover_quad width
+  conserved (`Adr0007NodingEpic.v : ticket_0007_cook_term_qed_or_qex`,
+  `SheetHenCookLoop.v : leftover_quad_width_conserved`). Pairwise
+  leftover-width is QED, not this item. ρ leftover_quad ≠ η Multi bags.
+_Avoid_: reminting sidecar `I_ok_circ` as host Γ, soft bool
+for interior / bag loop, noder (the full loop)
+
+**NodingNG (chord)**:
+The product face of ADR-0007 first-cook on one sheet: pairwise 𝓘 +
+one cook step (or a finite locked bag of one-steps) yielding
+`NodedOnSheet`. Chord–chord only (`NodingNG.v : nodingng_chord_inhabits`,
+`NodingNG.v : ticket_0007_nodingng_chord_qed_or_qex`). Empty ≠ Decline.
+Snap ≠ 𝓘. Identity is structural (`ShareOne` / `MintTwo`). Not OverlayNG.
+Not RelateNG. Not the bag-level repeat-until-noded loop (Parks ρ;
+`NodingNG.v : ticket_0007_nodingng_rho_qed_or_qex`).
+_Avoid_: noder (the full loop), OverlayNG, RelateNG, DCEL
+
+**OverlayNG (sheet)**:
+The product face of Accepted ADR-0007 OverlayNGRobust: a finite
+sequence of snap maps `S → Λ` attempted until validate or give up,
+on the same sheet as ℝ realization, assuming already-noded `G`
+(`OverlayNG.v : overlayng_sheet_inhabits`,
+`OverlayNG.v : ticket_0007_overlayng_sheet_qed_or_qex`). Hobby-shaped:
+`G` was already noded (`NodingNG.v : nodingng_crossing_noded`;
+`SheetHenCook.v : noded_crossing`). Not `𝓘` / cook / NodingNG. Not
+OverlayNGCurve Phase-0 point-set algebra (G1–G5). Not Shewchuk A–D.
+Not Hobby 4.1 Discharge (`OverlayNG.v : ticket_0007_overlayng_hobby41_qed_or_qex`).
+Not Jordan / RelateNG. Not DCEL / Geometry subclass.
+_Avoid_: NodingNG, OverlayNGCurve, RelateNG, Hobby 4.1 Discharge, 𝓘
+
+**RelateNG (face)**:
+The product face of Accepted DE-9IM / RelateNG chord-lane facts:
+matrix algebra + witnesses, honesty decline, and the locked 67-c
+line×line exterior-row pin (`RelateNGFace.v : relateng_face_inhabits`,
+`RelateNGFace.v : ticket_0007_relateng_face_qed_or_qex`). Consumes
+NodingNG / `NodedOnSheet`; does not cook. Not OverlayNG snap. Not
+Shewchuk A–D / Hobby / Priest. Not full unconditional Jordan. Not
+#522 leftover remint / T-junction complete / nine-cell
+`geom_de9im_pointset`. Not SQL/MM cathedral / DCEL / Geometry subclass.
+Completeness stays false (`RelateNGFace.v : ticket_0007_relateng_complete_qed_or_qex`).
+_Avoid_: NodingNG, OverlayNG, RelateNG.v (the umbrella), 522-n
+
+**IEEE↔R bridge**:
+The two-way binary64 ↔ ℝ coordinate realization the Oracle uses to
+generate tests against NodingNG / OverlayNG / RelateNG
+(`IeeeRBridge.v : ticket_0007_ieee_bridge_qed_or_qex`). IEEE→ℝ is
+`B2R` / `B2R_bp`; ℝ→IEEE is `round` / `ieee_of_Z` under the finite /
+no-overflow / int-safe window. Same sheet as ℝ realization. Bridge
+≠ `𝓘` / ≠ cook / ≠ OverlayNG snap. Not a full FP noder. Unrestricted
+round-trip and kiss-on-binary64 stay named QEX
+(`IeeeRBridge.v : ticket_0007_ieee_bridge_fp_noder_qed_or_qex`,
+`IeeeRBridge.v : ticket_0007_ieee_bridge_unrestricted_qed_or_qex`).
+_Avoid_: cook, OverlayNG snap, FP noder, unrestricted bit-exact
+
+**Clothoid egg (sidecar)**:
+The product / sidecar face of clothoid as an EggClass on the
+ADR-0007 vocabulary (`SidecarClothoidEgg.v : sidecar_clothoid_egg_inhabits`,
+`SidecarClothoidEgg.v : ticket_0007_clothoid_egg_qed_or_qex`). Host
+Tag `I_ok` is Decline; tag `try_cook_hit` is None. Locked chord-seed
+reuses `RelateClothoid.v : clothoid_chord_proper_cross_share`.
+Demote-to-chord is NodingNG / host first cook, not a clothoid Hit.
+Host `MkClothoid` inhabits (intake letter). Clothoid×clothoid is
+first cook (`SidecarClothoidEgg.v : ticket_0007_clothoid_not_first_cook_qed_or_qex`,
+`ClothoidCookMkClothoid.v : ticket_0007_clothoid_first_cook_qed_or_qex`).
+The `not_first_cook` ticket name is historical QEX wording; host
+first-cook is landed (claimId `0007-clothoid-first-cook`).
+Fresnel / Halley stay metric. Not Campaign I–II.
+_Avoid_: Fresnel noding, clothoid noder, Campaign I
+
+**NURBS egg (sidecar)**:
+The product / sidecar face of NURBS as an EggClass on the
+ADR-0007 vocabulary (`SidecarNurbsEgg.v : sidecar_nurbs_egg_inhabits`,
+`SidecarNurbsEgg.v : ticket_0007_nurbs_egg_qed_or_qex`). Host
+`I_ok` is Decline; `try_cook_hit` is None. Locked unit-square
+chords demote to NodingNG / host first cook, not a NURBS Hit.
+NURBS×NURBS is not first cook
+(`SidecarNurbsEgg.v : ticket_0007_nurbs_not_first_cook_qed_or_qex`).
+#508 length / golden quarter stay metric. Not Campaign I–II.
+_Avoid_: host cook, length-as-noding, Cox-de-Boor, NURBS noder, Campaign I
+
+**Sinusoid egg (sidecar)**:
+The product / sidecar face of sinusoid as an EggClass on the
+ADR-0007 vocabulary (`SidecarSinEgg.v : sidecar_sin_egg_inhabits`,
+`SidecarSinEgg.v : ticket_0007_sin_egg_qed_or_qex`). Host
+`I_ok` is Decline; `try_cook_hit` is None. Locked unit-square
+chords demote to NodingNG / host first cook, not a sinusoid Hit.
+Sinusoid×sinusoid is not first cook
+(`SidecarSinEgg.v : ticket_0007_sin_not_first_cook_qed_or_qex`).
+Thin Spectre `sine_profile` corpus stays profile research, not cook.
+Not Campaign I–II.
+_Avoid_: host cook, profile-as-noding, sinusoid noder, Campaign I
+
+**Circle egg (sidecar)**:
+The product / sidecar face of `EggCircularArc` on the ADR-0007
+vocabulary (`SidecarCircEgg.v : sidecar_circ_egg_inhabits`,
+`SidecarCircEgg.v : ticket_0007_circle_egg_qed_or_qex`). Packages
+the already-Qed host Decline fence (`circular_decline_I_ok`,
+`try_cook_hit_circular_hit_none`). Locked unit-square chords
+demote to NodingNG / host first cook, not a circular Hit.
+Sidecar CircEgg stays packaging: host Decline-on-tag plus demoted
+chord seed (`SidecarCircEgg.v : ticket_0007_circle_not_first_cook_qed_or_qex`).
+Host circular cook is MkCirc (claimId `0007-gamma-mkcirc`), not this
+sidecar. Does not remint CircularCook* Campaign I/II as host.
+_Avoid_: reminting sidecar CircEgg as host MkCirc, Campaign I, I_ok_circ remint
+
+**Elliptic egg (sidecar)**:
+The product / sidecar face of `EggEllipse` on the ADR-0007
+vocabulary (`SidecarEllipticEgg.v : sidecar_elliptic_egg_inhabits`,
+`SidecarEllipticEgg.v : ticket_0007_elliptic_egg_qed_or_qex`). Host
+`I_ok` is Decline; `try_cook_hit` is None. Locked chord-seed reuses
+`RelateEllipticArc.v : elliptic_arc_chord_proper_cross_share`.
+Demote-to-chord is NodingNG / host first cook, not an elliptic Hit.
+Ellipse×ellipse is not first cook
+(`SidecarEllipticEgg.v : ticket_0007_elliptic_not_first_cook_qed_or_qex`).
+#508 ellipse length / elliptic-E stay metric. Not Campaign I–II.
+_Avoid_: host cook, EllipseLength noding, elliptic noder, CircGamma remint, Campaign I
+
+**GeodesicString egg (sidecar)**:
+The product / sidecar face of `EggGeodesicString` on the ADR-0007
+vocabulary (`SidecarGeodesicEgg.v : sidecar_geodesic_egg_inhabits`,
+`SidecarGeodesicEgg.v : ticket_0007_geodesic_egg_qed_or_qex`). Host
+`I_ok` is Decline; `try_cook_hit` is None. Locked unit-square
+chords demote to NodingNG / host first cook, not a geodesic Hit.
+Geodesic×geodesic is not first cook
+(`SidecarGeodesicEgg.v : ticket_0007_geodesic_not_first_cook_qed_or_qex`).
+SQL/MM ST_GeodesicString type-zoo packaging (MkOutOfScope); geodetic
+interpolant stays research, not cook. Not Zoo membership. Not
+Campaign I–II. Not Spiral egg.
+_Avoid_: host cook, geodesic noder, geodetic interpolant, CircGamma remint, Campaign I, Spiral egg
+
+**Spiral egg (sidecar)**:
+The product / sidecar face of `EggSpiralCurve` on the ADR-0007
+vocabulary (`SidecarSpiralEgg.v : sidecar_spiral_egg_inhabits`,
+`SidecarSpiralEgg.v : ticket_0007_spiral_egg_qed_or_qex`). Host
+`I_ok` is Decline; `try_cook_hit` is None. Locked unit-square
+chords demote to NodingNG / host first cook, not a spiral Hit.
+Spiral×spiral is not first cook
+(`SidecarSpiralEgg.v : ticket_0007_spiral_not_first_cook_qed_or_qex`).
+SQL/MM ST_SpiralCurve (ISO 13249-3 §4.2.12) type-zoo packaging
+(MkOutOfScope); five required names (clothoid, bloss, biquadratic,
+sine, cosine) plus Unknown inhabit one sidecar egg. `EggClothoid`
+stays its own host tag — the clothoid arm is a nameplate, not a
+remint. Not Zoo membership. Not interpolant math. Not Γ. Last
+Lesson-1 packaging extra.
+_Avoid_: host cook, spiral noder, spiral interpolant, five host spiral eggs, EggClothoid fold-away, CircGamma remint, Campaign I, Γ
+
+**𝓘 Decline** (ADR-0007 cook):
+The pairwise intersection oracle has no algorithm for this egg pair on
+this sheet. Distinct from relate Decline and from Empty (disjoint images).
+_Avoid_: empty (the disjoint 𝓘 outcome), unsupported matrix
 
 ### Roadmap
 
@@ -462,7 +757,7 @@ _Avoid_: vertex (the owned point), dart (a coordinate pair)
 
 **Egg**:
 An interpolant `γ : [0,1] → S` of a named class (chord, circular arc,
-clothoid, …). First cook scope is chord–chord only.
+clothoid, …). First cook scope is chord–chord, circular–circular (MkCirc), and clothoid–clothoid (MkClothoid).
 _Avoid_: CurveSegment (year-1 `CSChord | CSArc`, not reminted here)
 
 **Chicken**:
@@ -477,15 +772,12 @@ cook may `split(t)` and mint one hen (letter after Accept; not the
 bag loop). On chord–chord, proper-cross signs license a constructed
 Hit via `Intersect.strict_intersection_point` (not a remint of that
 lemma; not a total `𝓘`; not `I_circles_z` / `I_CIRCULAR`; not
-glossary `𝓘` with γ / tᵢ,tⱼ). Host CircGamma stays QEX. A circular
-IHit does not feed host `try_cook_hit` (circular eggs stay
-`MkOutOfScope`); the 4-axiom sidecar cooks the locked circular Hit
-via `circ_gamma` `split(t)` without discharging CircGamma. On a
+glossary `𝓘` with γ / tᵢ,tⱼ). Host CircGamma is **CircGammaDischarged** via `MkCirc` (claimId `0007-gamma-mkcirc`; `CircularCook.v : circular_gamma_is_discharged`). Circular×circular first cook is in scope on `MkCirc`. The 4-axiom sidecar still cooks locked circular Hits via `circ_gamma` `split(t)`; sidecar ≠ host. On a
 two-root circular Hit the sidecar allocates `MintTwo` (`p+` and
 `p−` are both Hits). Empty / Decline / Touch mint nothing.
 Leftover shared endpoint is not a kiss. I.1 tickets the #666
 fence: `I_circles_z` ≠ `I_circles_gamma` ≠ sidecar cook ≠ host
-`I_gloss` (CircGamma QEX) by observation, not a type synonym.
+`I_gloss` (host `I_ok` + CircGammaDischarged on MkCirc) by observation, not a type synonym.
 Touch ≠ IHit. Circular Empty ≠ Decline. Chord × circular Decline
 inhabits `I_ok`; a mixed Hit does not. I.2 drops the lock on
 `I_circles_gamma`: Hit iff proper discriminant and `on_full_circle`
@@ -498,10 +790,11 @@ I.9: an `I_circles_z` / `I_CIRCULAR` Hit is tags 0/1, not
 glossary `(p*, tᵢ, tⱼ)`, and does not license host
 `try_cook_hit` / `circ_split` / first-cook expansion.
 I.10 closes Campaign I: sidecar cook exists on a constructed
-circular Hit (both roots); host CircGamma stays QEX;
-`first_cook_scope` stays chord–chord; `I_CIRCULAR` stays a
-classifier; the #666 fence holds; Campaign II and H⊥ are named
-parked; no new kernel; not SQL/MM done.
+circular Hit (both roots); host CircGamma is discharged via MkCirc;
+`first_cook_scope` includes chord–chord / circular–circular (MkCirc) /
+clothoid–clothoid (MkClothoid); `I_CIRCULAR` stays a
+classifier; the #666 fence holds; Campaign II / Phase B / Parks ι ρ
+are named on the ADR; sidecar ≠ host; no invented CookLoopBagTerm discharge.
 Pairwise
 interior split of chords is finite (width measure); bag-level
 termination and confluence of the repeat-until-noded loop remain
@@ -519,14 +812,6 @@ The pairwise intersection oracle has no algorithm for this egg pair on
 this sheet. Distinct from relate Decline and from Empty (disjoint images).
 _Avoid_: empty (the disjoint 𝓘 outcome), unsupported matrix
 
-## ADR-0007 Ready for BDFL
-
-See `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md` § Ready for BDFL; `ticket_0007_cook_term_qed_or_qex` in `Adr0007NodingEpic.v` (witness 0007-cook-term). ADR-0007 is Accepted (Joost, BDFL, 2026-09-07).
-
-## ADR-0007 and CRV-TOUCH
-
-Accept of ADR-0007 is vocabulary law that CRV-TOUCH assumes; kiss/tangency, binary64 sheet vs kiss, arc cook termination, and any ADR-0006 cook-mode stay on the Notion CRV-TOUCH map (NTS RGR Board). BDFL Accept landed 2026-09-07.
-
 ## ADR-0007 Accepted
 
-ADR-0007 (sheet/hen/cook) **Accepted** 2026-09-07 by Joost (BDFL). Soft gaps closed; see `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md`. CRV-TOUCH assumes this vocabulary; kiss/FP noder remain on that map.
+ADR-0007 (sheet/hen/cook) **Accepted** 2026-09-07 by Joost (BDFL). Soft gaps closed. Parks ι / ρ remain landed named QEX. Γ CircGamma is discharged by host MkCirc (claimId `0007-gamma-mkcirc`; `CircularCook.v : circular_gamma_is_discharged`). NodingNG chord is the cook product face (`theories/NodingNG.v`): 𝓘 + one cook step on one sheet; ρ stays obligation. OverlayNG sheet is the snap product face (`theories/OverlayNG.v`): finite snap-sequence ≠ `𝓘` on one sheet; Hobby 4.1 stays Honest remaining. RelateNG face is the DE-9IM product face (`theories/RelateNGFace.v`): matrix/witness + honesty decline + 67-c pin; completeness / Jordan / S15l+ / 523 `?` stay named QEX. IEEE↔R bridge is the Oracle test-surface face (`theories-flocq/IeeeRBridge.v`): two-way binary64 ↔ ℝ under the int-safe regime; FP noder / unrestricted / kiss stay Honest remaining. Clothoid egg sidecar is the cook-axis EggClass face (`theories/SidecarClothoidEgg.v`): tag-Decline + RelateClothoid chord-seed; clothoid×clothoid first cook is QED (`theories/ClothoidCookMkClothoid.v`, claimId `0007-clothoid-first-cook`). NURBS egg sidecar is the next cook-axis EggClass face (`theories/SidecarNurbsEgg.v`): Decline-on-host + demoted unit-square chord-seed; NURBS×NURBS stays QEX; #508 length stays metric. Sinusoid (SIN) egg sidecar is the next cook-axis EggClass face (`theories/SidecarSinEgg.v`): Decline-on-host + demoted unit-square chord-seed; sinusoid×sinusoid stays QEX; thin Spectre profile corpus stays research, not cook. Circle / circular egg sidecar is the next cook-axis EggClass face (`theories/SidecarCircEgg.v`): packages host EggCircularArc tag-Decline + demoted unit-square chord-seed; host circular cook is MkCirc (`theories/CircularCookMkCirc.v`), not this sidecar. Elliptical Curve / EllipticArc egg sidecar is the next cook-axis EggClass face (`theories/SidecarEllipticEgg.v`): Decline-on-host + RelateEllipticArc chord-seed; ellipse×ellipse stays QEX; #508 ellipse length / elliptic-E stay metric. SQL/MM GeodesicString egg sidecar is the next cook-axis EggClass face (`theories/SidecarGeodesicEgg.v`): Decline-on-host + demoted unit-square chord-seed; geodesic×geodesic stays QEX; type-zoo packaging (MkOutOfScope), not Γ progress. SQL/MM ST_SpiralCurve egg sidecar is the last Lesson-1 cook-axis EggClass face (`theories/SidecarSpiralEgg.v`): Decline-on-host + demoted unit-square chord-seed; five ISO names + Unknown on one egg; `EggClothoid` stays; spiral×spiral stays QEX; type-zoo packaging (MkOutOfScope), not Γ / not 𝓘 progress. ι interior Hit discharge is the sidecar circular×chord face (`theories/SidecarCircInteriorHit.v`): distinct `I_ok_interior` Hit; `I_ok_mixed` joint gate stands. Intake walker is the first-slice WKT → CST → SHC bag seam (`theories/IntakeWalker.v`, claimId `0007-intake-walker`): grammar pin grammars-v4 #4997; Intake Decline ≠ cook Decline; no silent chord demote. Intake angles is the CircUnknown construction (`theories/IntakeAngles.v`, claimId `0007-intake-angles`): unique circumcircle + inhabited angle fields → `MkCirc`; collinear / duplicate / bad count Decline by name; not a CircGamma remint. Intake MkClothoid is the host clothoid constructor (`theories/SheetHenClothoidEgg.v`, claimId `0007-intake-mkclothoid`): one `MkClothoid` on `Egg`; ISO and JTS clothoid bag the same locked egg. Clothoid first-cook is the Hit letter (`theories/ClothoidCookMkClothoid.v`, claimId `0007-clothoid-first-cook`). SQL/MM signed tag is the rung-3 pair of maps (`theories/SqlMmSignedTag.v`, claimId `0007-sqlmm-signed-tag`): τ sends MkChord/MkCirc/MkClothoid to LINESTRING / (CIRCLE iff |sweep|=2π else CIRCULARSTRING) / CLOTHOID and is undefined on MkOutOfScope; κ is 2/8 or none (not 18); HOLD is nats; emit stays QEX. See `docs/adr/ADR-0007-sheet-hen-cook-noding-model.md`. CRV-TOUCH assumes this vocabulary; kiss/FP noder remain on that map.

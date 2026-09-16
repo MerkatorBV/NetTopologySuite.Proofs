@@ -555,15 +555,141 @@ Definition mixed_cone_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool
           (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
   else false else false.
 
+(* Leftover Ⅵ: remaining vertices of both triangles sit on the
+   *same* (strictly positive) side of the other's cone normal at a
+   shared vertex. Not a remint of `cone_separates_b` / `touch_vertex_b`
+   (#572; that pin is same-sign *opposite* cone — both-neg vs nA),
+   leftover Ⅱ (product 0), or leftover Ⅴ (opposite signs).
+   `negb` of both cones and of `mixed_cone_from_v` keeps those
+   families false (belt-and-suspenders: leftover Ⅴ `opp` is
+   already exclusive of `both_strict_pos`). Pure `Rlt_dec`. *)
+Definition same_cone_from_v (v a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  is_vertex_b v a1 a2 a3
+  && is_vertex_b v b1 b2 b3
+  && both_strict_pos_b v
+       (vec_sum_from v (others_fst v a1 a2 a3) (others_snd v a1 a2 a3))
+       (others_fst v b1 b2 b3) (others_snd v b1 b2 b3)
+  && both_strict_pos_b v
+       (vec_sum_from v (others_fst v b1 b2 b3) (others_snd v b1 b2 b3))
+       (others_fst v a1 a2 a3) (others_snd v a1 a2 a3)
+  && negb (cone_separates_b v
+       (others_fst v a1 a2 a3) (others_snd v a1 a2 a3)
+       (others_fst v b1 b2 b3) (others_snd v b1 b2 b3))
+  && negb (closed_cone_separates_b v
+       (others_fst v a1 a2 a3) (others_snd v a1 a2 a3)
+       (others_fst v b1 b2 b3) (others_snd v b1 b2 b3))
+  && negb (mixed_cone_from_v v a1 a2 a3 b1 b2 b3).
+
+Definition same_cone_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    exactly_one_shared_from_a
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && (same_cone_from_v (mkPoint ax ay)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || same_cone_from_v (mkPoint bx by_)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+        || same_cone_from_v (mkPoint cx cy)
+          (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+          (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy))
+  else false else false.
+
+(* Leftover Ⅶ: a transversal edge pair exists. Boolean
+   `segments_proper_cross_b` is the remint the honesty clause
+   allowed under a `_b` suffix; the noding-lane Prop
+   `segments_proper_cross` is identifier-untouched only.
+   Endpoints of each segment sit strictly on opposite sides of
+   the other (`opposite_sides_b` / `Rlt_dec`). Shared-edge /
+   T-junction / one-sided T contacts are collinear or T-meets
+   (product 0), so they miss. The predicate is not exclusive to
+   leftover Ⅶ: leftover Ⅰ / Ⅴ / Ⅵ and the hard overlap pair
+   also cross. Classifier order, not the boolean, keeps them
+   off TPR_Lens. Not a lens denotation and not an overlap_b
+   widening. *)
+Definition segments_proper_cross_b (a1 a2 b1 b2 : Point) : bool :=
+  opposite_sides_b a1 a2 b1 b2 && opposite_sides_b b1 b2 a1 a2.
+
+Definition some_edges_proper_cross_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  segments_proper_cross_b a1 a2 b1 b2
+  || segments_proper_cross_b a1 a2 b2 b3
+  || segments_proper_cross_b a1 a2 b3 b1
+  || segments_proper_cross_b a2 a3 b1 b2
+  || segments_proper_cross_b a2 a3 b2 b3
+  || segments_proper_cross_b a2 a3 b3 b1
+  || segments_proper_cross_b a3 a1 b1 b2
+  || segments_proper_cross_b a3 a1 b2 b3
+  || segments_proper_cross_b a3 a1 b3 b1.
+
+Definition lens_edges_cross_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_edges_proper_cross_b
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+  else false else false.
+
+(* Leftover Ⅷ: B CCW and all three A vertices strictly
+   interior to B (`0 < gtri B p` for each A vertex). B-frame,
+   A verts — not a remint of `contains_b` (A-frame, B verts).
+   Nested A-in-B misses `contains_b`. Not a contains theorem
+   and not TPR_Inside ⇒ interiors meet. *)
+Definition inside_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint ax ay)) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint bx by_)) then
+  if Rlt_dec 0 (gtri dx dy ex ey fx fy (mkPoint cx cy)) then true
+  else false else false else false else false.
+
+(* Leftover Ⅸ: same-side shared-edge nest. Some A-edge coincides
+   with some B-edge (`shares_edge_b`) and some B vertex is strictly
+   interior to A. Both CCW. Not a remint of `touch_edge_b`
+   (that detector also requires opposite sides), `contains_b`
+   (all three B verts interior), `overlap_b` (needs a B vertex
+   strictly exterior), or `inside_b` (B-frame, all three A verts).
+   Pure `Rlt_dec` / `Req_dec_T`. Classifier order already
+   protects leftover Ⅰ–Ⅷ. `nest_b` is B-in-A only. *)
+Definition some_edges_share_b (a1 a2 a3 b1 b2 b3 : Point) : bool :=
+  shares_edge_b a1 a2 b1 b2
+  || shares_edge_b a1 a2 b2 b3
+  || shares_edge_b a1 a2 b3 b1
+  || shares_edge_b a2 a3 b1 b2
+  || shares_edge_b a2 a3 b2 b3
+  || shares_edge_b a2 a3 b3 b1
+  || shares_edge_b a3 a1 b1 b2
+  || shares_edge_b a3 a1 b2 b3
+  || shares_edge_b a3 a1 b3 b1.
+
+Definition nest_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool :=
+  if Rlt_dec 0 (gdbl ax ay bx by_ cx cy) then
+  if Rlt_dec 0 (gdbl dx dy ex ey fx fy) then
+    some_edges_share_b
+      (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
+      (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+    && some_vertex_strict_pos ax ay bx by_ cx cy
+         (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
+  else false else false.
+
 (* Triangle regime classifier.  DETECTS shared-edge touch, containment,
    the vertex-stab overlap certificate, a separating-edge disjoint
    certificate, a vertex-touch certificate, leftover Ⅰ's collinear
    partial-edge kiss (`touch_partial_edge_b`, after `touch_edge_b` so a
    full shared edge still wins), leftover Ⅲ∨Ⅳ (`touch_onesided_t_b`),
    leftover Ⅱ (`touch_obtuse_vertex_b`, after `touch_vertex_b` so
-   the strict cone still wins), and leftover Ⅴ
+   the strict cone still wins), leftover Ⅴ
    (`mixed_cone_vertex_b`, after leftover Ⅱ so a closed cone still
-   wins).  DECLINES on everything else.
+   wins), leftover Ⅵ (`same_cone_vertex_b`, after leftover Ⅴ
+   so opposite-sign still wins), leftover Ⅶ
+   (`lens_edges_cross_b`, after leftover Ⅵ — order, not an
+   exclusive lens predicate), leftover Ⅷ
+   (`inside_b`, after leftover Ⅶ — B-frame, not a remint
+   of `contains_b`), and leftover Ⅸ
+   (`nest_b`, after leftover Ⅷ — B-in-A shared-edge nest,
+   not a remint of `touch_edge_b` / `contains_b` /
+   `overlap_b` / `inside_b`).  DECLINES on
+   everything else.
 
    The default used to be TPR_Disjoint, which was unsound: failing the
    shared-edge and containment tests does not establish disjointness, so
@@ -575,10 +701,18 @@ Definition mixed_cone_vertex_b (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : bool
    when `touch_partial_edge_b` fires.  Leftover Ⅲ∨Ⅳ is reachable
    when `touch_onesided_t_b` fires (after leftover Ⅰ). Leftover Ⅱ
    is reachable when `touch_obtuse_vertex_b` fires. Leftover Ⅴ is
-   reachable when `mixed_cone_vertex_b` fires. Completeness stays
-   false on an unnamed CCW pair (not leftover `Ⅵ`).
-   Do not reorder the four wired certificates. Do not remint
-   `cone_separates_b`. *)
+   reachable when `mixed_cone_vertex_b` fires. Leftover Ⅵ is
+   reachable when `same_cone_vertex_b` fires. Leftover Ⅶ is
+   reachable when `lens_edges_cross_b` fires after every prior
+   arm misses (inhabitance, not a lens denotation). Leftover Ⅷ
+   is reachable when `inside_b` fires after every prior arm
+   misses (inhabitance, not a contains denotation). Leftover Ⅸ
+   is reachable when `nest_b` fires after every prior arm
+   misses (inhabitance, not a touch_edge / contains denotation).
+   Completeness stays false on the unnamed swap nest (not
+   leftover `Ⅹ`). Do not reorder the four wired certificates.
+   Do not remint `cone_separates_b`. Do not remint `contains_b`.
+   Do not remint `touch_edge_b`. Do not remint `inside_b`. *)
 Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : TrianglePairRegime :=
   if touch_edge_b (mkPoint ax ay) (mkPoint bx by_) (mkPoint cx cy)
                   (mkPoint dx dy) (mkPoint ex ey) (mkPoint fx fy)
@@ -603,6 +737,14 @@ Definition triangle_pair_regime (ax ay bx by_ cx cy dx dy ex ey fx fy : R) : Tri
   then TPR_TouchObtuse
   else if mixed_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy
   then TPR_MixedCone
+  else if same_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_SameCone
+  else if lens_edges_cross_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Lens
+  else if inside_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Inside
+  else if nest_b ax ay bx by_ cx cy dx dy ex ey fx fy
+  then TPR_Nest
   else TPR_Unsupported.
 
 (* Decidable equality on the classifier's result type -- consistent with the

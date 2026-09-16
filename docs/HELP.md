@@ -51,7 +51,7 @@ Who are you? Find your card; the OPEN action is enough for the first
 
 **YOU** Decide what ships next, budget sessions, plan cadence, and retrospect on how the work actually went.
 
-**OPEN** Top-level retros + `phase*-completion.md` / `phase2-hotpixel-progress.md` + [`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt) as backlog + [`history/sessions/README.md`](history/sessions/README.md).
+**OPEN** Top-level retros + `phase*-completion.md` / `phase2-hotpixel-progress.md` + [`admitted-deferred-proofs.txt`](admitted-deferred-proofs.txt) as backlog.
 
 **RULE / TEMPLATE** Budget per registry entry (Pat). Use "Grep first → Red → Green → Refactor → explicit stopping conditions" (Sara). Sessions average 1-3 deliverables; ~10% collapse (always documented).
 
@@ -123,7 +123,8 @@ help+dispatch only.
 - **I want the complete map** → [`READING-GUIDE.md`](READING-GUIDE.md)
 - **I have literally never seen a proof assistant before** → [`pythagoras-for-beginners.v`](pythagoras-for-beginners.v) (step through it in an IDE; linked from the Newbie Nate / Rocq Rookie card)
 - **I want to build something** → [`development-environment.md`](development-environment.md) + the root `Makefile`
-- **I contribute (or an AI agent does)** → `CONTRIBUTING.md` + [`FOR-AI-AGENTS.md`](FOR-AI-AGENTS.md) + the session workflow sections of the Reading Guide
+- **I contribute (or an AI agent does)** → [`AGENTS.md`](../AGENTS.md) + `CONTRIBUTING.md` + [`FOR-AI-AGENTS.md`](FOR-AI-AGENTS.md) + the session workflow sections of the Reading Guide
+- **I am hunting claims** → tickets in [`attacks/`](attacks/); Qed-claiming probes in [`h1-vacuity/`](h1-vacuity/) (flocq job smoke, not `_CoqProject.full`)
 - **I am Joost the BDFL** → full README + entire READING-GUIDE + `docs/history/` tree + pruning log in history/README.md
 
 (Note: the card list above has been lightly collapsed for overlap — e.g. Project Meta combines Pat/Sara, Quality Gatekeeper combines Max/Ruby/CI/Risk, Scholar now covers Auditor, Pete folded into Newbie Nate/Rocq Rookie Ray. The detailed guide below reflects the same grouping.)

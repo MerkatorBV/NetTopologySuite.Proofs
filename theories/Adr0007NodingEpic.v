@@ -5,7 +5,9 @@
    ticket 522).
 
    The noding constructor is part of the specification: sheet, hen,
-   egg, chicken, cook / 𝓘. First cook scope is chord–chord only.
+   egg, chicken, cook / 𝓘. First cook scope is chord–chord,
+   circular–circular (MkCirc), and clothoid–clothoid (MkClothoid).
+   Mixed and tags stay Decline.
 
    QED: chord–chord inhabits the cook interface; Empty ≠ Decline;
    ShareOne mints one hen; noded-on-S is cook evidence.
@@ -14,12 +16,12 @@
    `ticket_0007_identity_qed_or_qex` discharges left.
    `ticket_0007_noded_cook_qed_or_qex` discharges left.
 
-   QEX: a documented out-of-scope pair (clothoid–clothoid) is missing
+   QEX: a documented out-of-scope pair (NURBS–NURBS) is missing
    from first cook scope; numeric coord-pair equality does not decide
    hen identity; silent pairwise_nodable excludes the proper-crossing
    case a noder exists for.
-   `ticket_0007_qed_or_qex` discharges right on clothoid–clothoid
-   (`clothoid_clothoid_not_first_scope`), 508-style.
+   `ticket_0007_qed_or_qex` discharges right on NURBS–NURBS
+   (`nurbs_nurbs_not_first_scope`), 508-style.
    `ticket_0007_dart_eq_qed_or_qex` discharges right.
    `ticket_0007_silent_nodable_qed_or_qex` discharges right.
 
@@ -27,8 +29,11 @@
    finite and one Hit-split is confluent (leftover bag independent
    of parent order).
    `ticket_0007_pairwise_split_qed_or_qex` discharges left.
-   The bag-level repeat-until-noded loop stays an 𝓘-family /
-   CRV-TOUCH obligation (not a named soft gap).
+   The bag-level repeat-until-noded loop is a named 508-style
+   QEX gap (missing CookLoopBagTerm; leftover_quad width
+   conserved; kiss / share / mint not covered). Not a soft gap.
+   ρ letter lives in SheetHenCookLoop.v
+   (`ticket_0007_rho_gap_qed_or_qex` and friends).
    `ticket_0007_cook_term_qed_or_qex` discharges right.
 
    binary64 / OverlayNGRobust sit on one sheet (QED).
@@ -54,14 +59,14 @@
    (`ticket_0007_share_constructed_qed_or_qex` discharges left).
    Not a remint of Intersect. Not a total 𝓘.
 
-   Letter after Accept (not a noder): a circular IHit still cannot
-   feed the host cook step. Circular eggs stay MkOutOfScope;
-   try_cook_hit returns None. `ticket_0007_circ_host_cook_qed_or_qex`
-   discharges right. First cook scope stays chord–chord. Host
-   CircGamma stays QEX (CircularCook.v). The 4-axiom sidecar
+   Letter after Accept (not a noder): MkCirc IHit feeds the host
+   cook step. `ticket_0007_circ_host_cook_qed_or_qex` discharges
+   left on the locked quarter-circle pair (CircularCookMkCirc.v).
+   MkOutOfScope EggCircularArc tags still return None. Host
+   CircGamma is discharged (CircularCook.v). The 4-axiom sidecar
    CircularCookSplit.v feeds the locked circular Hit into a
    same-shape split(t) cook; I.7 MintTwo / p- lives there too.
-   That is not this host module. Do not fake CircGamma Discharge.
+   That is not this host module. Host CircGamma Discharge is MkCirc.
    I.1 Fence: chord × circular Decline inhabits I_ok (honest host
    arm). A constructed mixed Hit does not. The four-object pairwise
    fence lives in CircularCookSplit.v — not a type synonym.
@@ -69,14 +74,61 @@
    Z-classifier Hit is tags 0/1 and does not license host
    try_cook_hit / circ_split / first_cook_scope expansion.
    I.10 Campaign-I close lives in CircularCookClose.v — sidecar
-   cook on both roots; CircGamma stays QEX; first cook stays
-   chord–chord; I_CIRCULAR stays a classifier; #666 fence holds;
-   Campaign II and H⊥ are named parked. Not this host module.
+   cook on both roots; CircGamma is discharged by MkCirc; first
+   cook includes circular–circular; I_CIRCULAR stays a classifier;
+   #666 fence holds;
+   Campaign II and H⊥ were named parked at that close.
+   II.1 span filter as IResult lives in CircularCookSpanFilter.v
+   (4-axiom sidecar; not Required here). II.2 span split at
+   in-span t lives in CircularCookSpanSplit.v (4-axiom sidecar;
+   not Required here). II.3 I_ok_circ lives in
+   CircularCookOkCirc.v (4-axiom sidecar; not Required here).
+   II.4 Campaign-II close lives in CircularCookCloseII.v
+   (4-axiom sidecar; not Required here). Phase B.1 CircularString
+   concat joints live in CircularCookCsConcat.v (4-axiom sidecar
+   reuse of I_ok_circ / arc_gamma; not Required here). Phase B.2
+   CompoundCurve member joints live in CircularCookCcConcat.v
+   (4-axiom sidecar / host reuse; not Required here). Phase B
+   mixed LS–CS joints live in SidecarCircMixed.v (4-axiom
+   sidecar I_ok_mixed Hit at concat endpoints; not Required
+   here). Phase B.3 CurvePolygon ring closure lives in
+   CircularCookCpConcat.v (4-axiom sidecar / host reuse of B.1
+   I_ok_circ / B.2 host I_ok / I_ok_mixed; not Required here).
+   Phase B MultiCurve / MultiSurface bags live in
+   SidecarCircBags.v (4-axiom sidecar reuse of B.1–B.3 /
+   I_ok_mixed; bag ≠ concat; not Required here). Phase B ι
+   interior circular×chord cook lives in SidecarCircInterior.v
+   (4-axiom sidecar QEX: I_ok_mixed Hit is joint-only; not
+   Required here). Host CircGamma is discharged (MkCirc). first
+   cook includes circular–circular. Mixed stays sidecar. H⊥ stays
+   parked. Not a bag noder.
+   Phase B.1–B.3 letters landed. Mixed LS–CS inhabits sidecar
+   I_ok_mixed; host I_ok mixed stays Decline (I.1). Interior
+   mixed cook stays parked (named mixed_joint_params gate).
+   Required-type CC / CP Landed (mixed I_ok_mixed Hit, not
+   host I_ok); CS stays Gap; Multi stays Gap (optional Part 3
+   bag inhabitant, not required-type). Phase B stays Open —
+   letter landed ≠ SQL/MM done / Phase B done-when /
+   cathedral Landed. Not this host module.
+   Clothoid egg sidecar lives in SidecarClothoidEgg.v
+   (3-axiom; Decline-on-host + RelateClothoid chord-seed;
+   not Required here). NURBS egg sidecar lives in
+   SidecarNurbsEgg.v (3-axiom; Decline-on-host + demoted
+   unit-square chord-seed; metric length stays #508; not
+   Required here). SIN / sinusoid egg sidecar lives in
+   SidecarSinEgg.v (3-axiom; Decline-on-host + demoted
+   unit-square chord-seed; thin profile corpus stays
+   Spectre research, not cook; not Required here).
+   ι interior Hit discharge lives in
+   SidecarCircInteriorHit.v (4-axiom sidecar; I_ok_interior
+   ≠ I_ok_mixed; joint gate stands; not Required here).
+   First cook is chord–chord, circular–circular (MkCirc), and
+   clothoid–clothoid (MkClothoid).
 
    QEX is not a new Accept cycle. ADR-0007 is Accepted (2026-09-07).
    These letters do not reopen Status. Constructed chord-chord I is
    not I_circles_z / I_CIRCULAR and not glossary I with gamma / t.
-   Host CircGamma stays QEX. Do not remint CurveSegment / Exact*
+   Host CircGamma is discharged by MkCirc. Do not remint CurveSegment / Exact*
    zoo types / Dart. Do not steal 508-* / 522-* board mints. Do
    not claim a complete FP noder or close Hobby. Do not close 510.
 
@@ -98,13 +150,15 @@
    ========================================================================== *)
 
 From Stdlib Require Import Reals.
-From NTS.Proofs Require Import Distance Segment SheetHenCook.
+From NTS.Proofs Require Import Distance Segment SheetHenCook SheetHenCookLoop
+  CircularCookMkCirc ClothoidCookMkClothoid.
 Local Open Scope R_scope.
 
 (* ADR-0007 stop: every egg-class pair is in first cook scope (QED)
    or a documented out-of-scope pair is missing (QEX). Discharged QEX
-   on clothoid–clothoid — the 508-style carrier miss. *)
-(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_qed_or_qex","title":"ADR-0007 stop is first-cook-scope completeness (QED) or a documented out-of-scope pair (QEX); discharged QEX on clothoid-clothoid","file":"theories/Adr0007NodingEpic.v","witness":"0007-qed-qex","board":"ADR-0007"} *)
+   on NURBS–NURBS — the 508-style carrier miss. Clothoid×clothoid
+   is first cook (claimId 0007-clothoid-first-cook). *)
+(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_qed_or_qex","title":"ADR-0007 stop is first-cook-scope completeness (QED) or a documented out-of-scope pair (QEX); discharged QEX on NURBS-NURBS","file":"theories/Adr0007NodingEpic.v","witness":"0007-qed-qex","board":"ADR-0007"} *)
 
 Theorem ticket_0007_qed_or_qex :
   (forall a b : EggClass, first_cook_scope a b)
@@ -112,8 +166,8 @@ Theorem ticket_0007_qed_or_qex :
   (exists a b : EggClass, ~ first_cook_scope a b).
 Proof.
   right.
-  exists EggClothoid, EggClothoid.
-  exact clothoid_clothoid_not_first_scope.
+  exists EggNurbs, EggNurbs.
+  exact nurbs_nurbs_not_first_scope.
 Qed.
 
 (* Chord–chord inhabits the cook interface (QED) or a documented
@@ -235,19 +289,36 @@ Proof.
   exact split_step_confluent_holds_proof.
 Qed.
 
-(* Bag-level cook loop on the chord lane (QED: discharged) or the
-   loop remains an 𝓘-family / CRV-TOUCH obligation (QEX). Discharged
-   QEX — pairwise width decrease is not that discharge. Not a named
-   soft gap; Honest remaining open. *)
-(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_cook_term_qed_or_qex","title":"ADR-0007 bag cook loop is discharged (QED) or an I-family CRV-TOUCH obligation (QEX); discharged QEX; pairwise split is a sibling QED stop","file":"theories/Adr0007NodingEpic.v","witness":"0007-cook-term","board":"ADR-0007"} *)
+(* Bag-level cook loop on the chord lane (QED: discharged with a
+   bag-term measure) or the named 508-style gap (QEX). Discharged
+   QEX — CookLoopBagTerm is missing; leftover_quad width is
+   conserved; pairwise width decrease is a sibling QED stop, not
+   this discharge. Honest remaining / CRV-TOUCH. Not a soft gap.
+   ρ letter: SheetHenCookLoop.v / witness 0007-rho-bag-loop. *)
+(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_cook_term_qed_or_qex","title":"ADR-0007 bag cook loop is discharged with a bag-term measure (QED) or named QEX: CookLoopBagTerm missing, leftover_quad width conserved; pairwise split is a sibling QED stop","file":"theories/Adr0007NodingEpic.v","witness":"0007-cook-term","board":"ADR-0007"} *)
 Theorem ticket_0007_cook_term_qed_or_qex :
-  (cook_loop_status = LoopDischarged /\ interior_split_finite)
+  (cook_loop_status = LoopDischarged
+   /\ cook_loop_ctor_inhabits CookLoopBagTerm
+   /\ interior_split_finite)
   \/
-  (cook_loop_status = LoopObligation /\ interior_split_finite).
+  (cook_loop_status = LoopObligation
+   /\ ~ cook_loop_ctor_inhabits CookLoopBagTerm
+   /\ interior_split_finite
+   /\ split_step_confluent_holds
+   /\ (forall ti tj,
+         0 < ti < 1 ->
+         0 < tj < 1 ->
+         leftover_quad_width ti tj =
+         leftover_width 0 1 + leftover_width 0 1)
+   /\ arc_cook_term_status = ArcTermSister).
 Proof.
   right.
   split; [exact cook_loop_is_obligation|].
-  exact interior_split_finite_holds.
+  split; [exact cook_loop_bag_term_missing|].
+  split; [exact interior_split_finite_holds|].
+  split; [exact split_step_confluent_holds_proof|].
+  split; [exact leftover_quad_width_conserved|].
+  reflexivity.
 Qed.
 
 (* binary64 / OverlayNGRobust sit on one sheet (QED) or changing the
@@ -294,7 +365,8 @@ Qed.
 (* Core-slice circular tickets: ticket_64_circ_hit_params_qed_or_qex
    (QED, CircularCookHit.v, full/atan2), CircularCookSpan.v span γ
    (QED, 4-axiom sidecar), ticket_64_circ_gamma_qed_or_qex (QEX,
-   CircularCook.v host flag), and CircularCookSplit.v (4-axiom
+   CircularCook.v named gap: no MkCirc / nlerp miss / no first-cook
+   expand; sidecar arc_gamma is not host Γ), and CircularCookSplit.v (4-axiom
    sidecar cook of a locked circular Hit). I.2 ∀ Hit soundness
    lives in CircularCookHit.v (ticket_0007_i2_hit_sound_qed_or_qex);
    I.3 ∀ Empty / Decline lives in CircularCookEmpty.v
@@ -402,25 +474,24 @@ Proof.
            crossing_proper_cross_signs).
 Qed.
 
-(* Next rung: a circular IHit feeds the host cook step (QED) or the
-   host cook still declines circular eggs (QEX). Discharged QEX —
-   MkOutOfScope EggCircularArc is not first cook scope, so
-   try_cook_hit returns None even when the result is IHit.
-   CircGamma stays QEX in CircularCook.v; do not fake Discharge.
+(* Next rung: MkCirc IHit feeds the host cook step (QED) or the
+   host cook still declines circular tags (QEX). Discharged QED —
+   locked MkCirc chickens mint via try_cook_hit. Tags stay None.
+   CircGamma is discharged in CircularCook.v. Mixed stays sidecar.
    Not a remint of ArcSplitAtNode. Kiss/Touch is not this stop. *)
-(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_circ_host_cook_qed_or_qex","title":"ADR-0007 circular IHit feeds the host cook (QED) or try_cook_hit still declines circular eggs (QEX); discharged QEX; CircGamma stays QEX","file":"theories/Adr0007NodingEpic.v","witness":"0007-circ-cook","board":"ADR-0007"} *)
+(* WITNESS {"claimId":"0007","topic":"overlay","lemma":"ticket_0007_circ_host_cook_qed_or_qex","title":"ADR-0007 MkCirc IHit feeds the host cook (QED) or try_cook_hit still declines circular tags (QEX); discharged QED; CircGamma MkCirc mint; tags stay None","file":"theories/Adr0007NodingEpic.v","witness":"0007-circ-cook","board":"ADR-0007"} *)
 Theorem ticket_0007_circ_host_cook_qed_or_qex :
   (exists cp : CookedPair,
-     try_cook_hit circular_ck1 circular_ck2
-       (IHit cross_pt (1 / 2) (1 / 2)) crossing_hen = Some cp)
+     try_cook_hit locked_mkcirc_ck1 locked_mkcirc_ck2
+       locked_mkcirc_hit crossing_hen = Some cp)
   \/
   (try_cook_hit circular_ck1 circular_ck2
      (IHit cross_pt (1 / 2) (1 / 2)) crossing_hen = None
-   /\ ~ first_cook_scope EggCircularArc EggCircularArc).
+   /\ first_cook_scope EggCircularArc EggCircularArc).
 Proof.
-  right.
-  split; [apply try_cook_hit_circular_hit_none|].
-  exact circular_egg_not_first_cook_scope.
+  left.
+  exists cooked_mkcirc.
+  exact cooked_mkcirc_try.
 Qed.
 
 (* I.1: chord × circular Decline inhabits I_ok (QED) or a mixed

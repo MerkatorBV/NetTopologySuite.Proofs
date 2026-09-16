@@ -1,0 +1,6 @@
+.antlr/
+.build/
+gen/
+bin/
+obj/
+archive/java/org/nts/proofs/intake/gen/

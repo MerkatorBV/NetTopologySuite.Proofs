@@ -2,38 +2,14 @@
    NetTopologySuite.Proofs.SheetHenCook
    ----------------------------------------------------------------------------
    ADR-0007 vocabulary: sheet, hen, egg, chicken, cook / 𝓘.
-
-   Thin host-lane types for the ticket stops in Adr0007NodingEpic.v.
-   Not a noder. Not a Geometry subclass. Not a remint of CurveSegment,
-   Exact* zoo types, Dart, or Hobby / NodingSeparation_b64.
-
-   First cook scope is chord–chord only. Predicates never mint hens.
-   Empty ≠ Decline. Snap-rounding ≠ 𝓘. Display is a view.
-   Pairwise interior split is finite and one Hit-split is confluent
-   (leftover bag independent of parent order). The bag cook loop stays
-   an 𝓘-family / CRV-TOUCH obligation, not a named soft gap.
-   binary64 realizes points of S; OverlayNGRobust is a finite
-   snap-sequence. DdirDart := (Hen * Hen) is the chicken projection
-   — one type equation, not a third directed-edge type.
-
-   ADR-0007 is Accepted (2026-09-07). Letters here do not reopen
-   Status. Constructed chord-chord I is not I_circles_z / I_CIRCULAR
-   and not glossary I with gamma / t. Host CircGamma stays QEX.
-   Circular chickens (MkOutOfScope EggCircularArc) still get None
-   from try_cook_hit, even on an IHit — the host cook step does not
-   expand first cook scope. I.1: chord × circular Decline inhabits
-   I_ok (honest host arm); a constructed mixed Hit does not.
-
-   Testable 𝓘 / cook results sit on the accepted Oracle line protocol
-   (ADR-0006). This module mints no keyword and no second external seam.
-
+   Thin host-lane types for Adr0007NodingEpic.v. Not a noder / Geometry
+   subclass / remint of CurveSegment, Exact* zoo, Dart, or Hobby.
+   First cook: chord–chord, circular–circular (MkCirc), clothoid–clothoid
+   (MkClothoid). Tags / mixed Decline. Empty ≠ Decline. Snap ≠ 𝓘.
+   Bag cook loop is named QEX (CookLoopBagTerm). CircGamma discharged
+   by MkCirc. No new oracle keyword (ADR-0006). Accepted 2026-09-07.
    WITNESS topic: overlay · claimId: 0007 · witness: 0007-qed-qex
-   lane: proofs
-   board: ADR-0007
-   ADR-0004: not a leftover numeral and not a 508-* / 522-* board mint.
-
    No `Admitted`, no `Axiom`, no `Parameter`.
-
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    AI assistance disclosure: AI-drafted, human-reviewed.
@@ -42,6 +18,7 @@
 
 From Stdlib Require Import Reals Lra.
 From NTS.Proofs Require Import Distance Orientation Segment Intersect.
+From NTS.Proofs Require Export SheetHenCircEgg SheetHenClothoidEgg.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
@@ -70,7 +47,9 @@ Inductive EggClass : Type :=
 | EggSinusoid
 | EggEllipse
 | EggBezier
-| EggNurbs.
+| EggNurbs
+| EggGeodesicString
+| EggSpiralCurve.
 
 (* Chord interpolant γ(t) = (1-t)·P + t·Q. Out-of-scope classes are tags. *)
 Record ChordEgg : Type := mkChordEgg {
@@ -84,12 +63,22 @@ Definition chord_eval (c : ChordEgg) (t : R) : Point :=
 
 Inductive Egg : Type :=
 | MkChord : ChordEgg -> Egg
+| MkCirc : CircularEgg -> Egg
+| MkClothoid : ClothoidEgg -> Egg
 | MkOutOfScope : EggClass -> Egg.
 
 Definition egg_class (e : Egg) : EggClass :=
   match e with
   | MkChord _ => EggChord
+  | MkCirc _ => EggCircularArc
+  | MkClothoid _ => EggClothoid
   | MkOutOfScope c => c
+  end.
+
+Definition interpolant_pair (e1 e2 : Egg) : Prop :=
+  match e1, e2 with
+  | MkChord _, MkChord _ | MkCirc _, MkCirc _ | MkClothoid _, MkClothoid _ => True
+  | _, _ => False
   end.
 
 (* Chicken: directed use of an egg between two hens. Twin reverses. *)
@@ -109,7 +98,7 @@ Proof.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Pairwise oracle 𝓘. Empty ≠ Decline. First scope = chord–chord.            *)
+(* Pairwise oracle 𝓘. Empty ≠ Decline. Scope: chord / circ / clothoid pairs. *)
 (* -------------------------------------------------------------------------- *)
 
 Inductive IResult : Type :=
@@ -120,14 +109,15 @@ Inductive IResult : Type :=
 Definition first_cook_scope (a b : EggClass) : Prop :=
   match a, b with
   | EggChord, EggChord => True
+  | EggCircularArc, EggCircularArc => True
+  | EggClothoid, EggClothoid => True
   | _, _ => False
   end.
 
 Definition on_chord (c : ChordEgg) (t : R) (p : Point) : Prop :=
   0 <= t <= 1 /\ p = chord_eval c t.
 
-(* Minimal 𝓘 obligations: Hit lies on both chords; Empty is disjoint;
-   Decline is only for pairs outside first cook scope. *)
+(* Hit on both interpolants; Empty is disjoint; Decline is tags/mixed. *)
 Definition I_ok (e1 e2 : Egg) (o : IResult) : Prop :=
   match e1, e2, o with
   | MkChord c1, MkChord c2, IHit p ti tj =>
@@ -136,7 +126,16 @@ Definition I_ok (e1 e2 : Egg) (o : IResult) : Prop :=
       ~ exists X, between (ce_p0 c1) (ce_p1 c1) X /\
                   between (ce_p0 c2) (ce_p1 c2) X
   | MkChord _, MkChord _, IDecline => False
-  | _, _, IDecline => ~ first_cook_scope (egg_class e1) (egg_class e2)
+  | MkCirc c1, MkCirc c2, IHit p ti tj =>
+      on_circ c1 ti p /\ on_circ c2 tj p
+  | MkCirc c1, MkCirc c2, IEmpty =>
+      ~ exists X t1 t2, on_circ c1 t1 X /\ on_circ c2 t2 X
+  | MkCirc _, MkCirc _, IDecline => False
+  | MkClothoid c1, MkClothoid c2, IHit p ti tj => on_cloth c1 ti p /\ on_cloth c2 tj p
+  | MkClothoid c1, MkClothoid c2, IEmpty =>
+      ~ exists X t1 t2, on_cloth c1 t1 X /\ on_cloth c2 t2 X
+  | MkClothoid _, MkClothoid _, IDecline => False
+  | _, _, IDecline => ~ interpolant_pair e1 e2
   | _, _, IHit _ _ _ => False
   | _, _, IEmpty => False
   end.
@@ -154,14 +153,20 @@ Proof.
   exact I.
 Qed.
 
-Lemma clothoid_clothoid_not_first_scope :
-  ~ first_cook_scope EggClothoid EggClothoid.
+Lemma clothoid_egg_first_cook_scope :
+  first_cook_scope EggClothoid EggClothoid.
 Proof.
-  intro H. exact H.
+  exact I.
 Qed.
 
 Lemma ellipse_ellipse_not_first_scope :
   ~ first_cook_scope EggEllipse EggEllipse.
+Proof.
+  intro H. exact H.
+Qed.
+
+Lemma nurbs_nurbs_not_first_scope :
+  ~ first_cook_scope EggNurbs EggNurbs.
 Proof.
   intro H. exact H.
 Qed.
@@ -208,8 +213,7 @@ Inductive DisplayView : Type :=
 | ViewSFA.
 
 (* -------------------------------------------------------------------------- *)
-(* Chord–chord inhabitance. Crossing diagonals Hit; disjoint horizontals      *)
-(* Empty; clothoid–clothoid Decline. Not a total noder.                       *)
+(* Chord–chord inhabitance. Crossing Hit; disjoint Empty; tags Decline.     *)
 (* -------------------------------------------------------------------------- *)
 
 Definition diag_ab : ChordEgg := mkChordEgg (mkPoint 0 0) (mkPoint 2 2).
@@ -292,12 +296,22 @@ Definition clothoid_decline_witness : CookWitness :=
   mkCookWitness (MkOutOfScope EggClothoid) (MkOutOfScope EggClothoid)
     IDecline clothoid_decline_I_ok.
 
-(* I.1 host arm: circular eggs are out of first cook scope. I_ok
-   admits only Decline — not a constructed Hit, not Empty. *)
+Lemma nurbs_decline_I_ok :
+  I_ok (MkOutOfScope EggNurbs) (MkOutOfScope EggNurbs) IDecline.
+Proof.
+  unfold I_ok, first_cook_scope, egg_class.
+  intro H. exact H.
+Qed.
+
+Definition nurbs_decline_witness : CookWitness :=
+  mkCookWitness (MkOutOfScope EggNurbs) (MkOutOfScope EggNurbs)
+    IDecline nurbs_decline_I_ok.
+
+(* I.1: tags have no interpolant — Decline only. MkCirc×MkCirc Hits. *)
 Lemma circular_decline_I_ok :
   I_ok (MkOutOfScope EggCircularArc) (MkOutOfScope EggCircularArc) IDecline.
 Proof.
-  unfold I_ok, first_cook_scope, egg_class.
+  unfold I_ok, interpolant_pair.
   intro H. exact H.
 Qed.
 
@@ -325,7 +339,7 @@ Qed.
 Lemma chord_circular_decline_I_ok :
   I_ok (MkChord hor_bot) (MkOutOfScope EggCircularArc) IDecline.
 Proof.
-  unfold I_ok, first_cook_scope, egg_class.
+  unfold I_ok, interpolant_pair.
   intro H. exact H.
 Qed.
 
@@ -459,8 +473,9 @@ Qed.
 (* parent, and the leftover bag after splitting both parents does not         *)
 (* depend on which parent is split first. That closes the host-lane           *)
 (* cook-termination soft gap. The bag-level repeat-until-noded loop           *)
-(* (termination + confluence on a leftover bag) remains an 𝓘-family /         *)
-(* CRV-TOUCH obligation — not a named soft gap. Leftover-width names are      *)
+(* (termination + confluence on a leftover bag) is a named 508-style          *)
+(* QEX gap — SheetHenCookLoop.v / CookLoopBagTerm missing. Not a soft         *)
+(* gap. Leftover-width names are                                              *)
 (* not a remint of the sibling cook-split identifiers (chord_split /          *)
 (* try_cook_hit), which mint hens on a Hit.                                   *)
 (* -------------------------------------------------------------------------- *)
@@ -591,7 +606,8 @@ Proof.
 Qed.
 
 (* Bag-level cook loop: termination and confluence on a finite leftover
-   bag. Documented CRV-TOUCH / 𝓘-family deferral, not a named soft gap. *)
+   bag. Named 508-style QEX gap in SheetHenCookLoop.v (missing
+   CookLoopBagTerm). CRV-TOUCH / 𝓘-family; not a soft gap. *)
 Inductive CookLoopStatus : Type :=
 | LoopDischarged
 | LoopObligation.
@@ -831,11 +847,35 @@ Definition cook_hit_chords
     (mkChicken (ck_src c2) h_new (MkChord (fst s2)))
     (mkChicken h_new (ck_dst c2) (MkChord (snd s2))).
 
+Definition cook_hit_circs
+  (c1 c2 : Chicken) (e1 e2 : CircularEgg) (ti tj : R) (h_new : Hen)
+  : CookedPair :=
+  let s1 := circ_split e1 ti in
+  let s2 := circ_split e2 tj in
+  mkCookedPair h_new
+    (mkChicken (ck_src c1) h_new (MkCirc (fst s1)))
+    (mkChicken h_new (ck_dst c1) (MkCirc (snd s1)))
+    (mkChicken (ck_src c2) h_new (MkCirc (fst s2)))
+    (mkChicken h_new (ck_dst c2) (MkCirc (snd s2))).
+
+Definition cook_hit_clothoids
+  (c1 c2 : Chicken) (e1 e2 : ClothoidEgg) (ti tj : R) (h_new : Hen)
+  : CookedPair :=
+  let s1 := cloth_split e1 ti in let s2 := cloth_split e2 tj in
+  mkCookedPair h_new
+    (mkChicken (ck_src c1) h_new (MkClothoid (fst s1)))
+    (mkChicken h_new (ck_dst c1) (MkClothoid (snd s1)))
+    (mkChicken (ck_src c2) h_new (MkClothoid (fst s2)))
+    (mkChicken h_new (ck_dst c2) (MkClothoid (snd s2))).
+
 Definition try_cook_hit (c1 c2 : Chicken) (o : IResult) (h_new : Hen)
   : option CookedPair :=
   match ck_egg c1, ck_egg c2, o with
   | MkChord e1, MkChord e2, IHit _ ti tj =>
       Some (cook_hit_chords c1 c2 e1 e2 ti tj h_new)
+  | MkCirc e1, MkCirc e2, IHit _ ti tj =>
+      Some (cook_hit_circs c1 c2 e1 e2 ti tj h_new)
+  | MkClothoid e1, MkClothoid e2, IHit _ ti tj => Some (cook_hit_clothoids c1 c2 e1 e2 ti tj h_new)
   | _, _, _ => None
   end.
 
@@ -868,13 +908,12 @@ Qed.
 
 Lemma try_cook_hit_out_of_scope_none :
   forall c1 c2 p ti tj h,
-    egg_class (ck_egg c1) <> EggChord \/
-    egg_class (ck_egg c2) <> EggChord ->
+    ~ interpolant_pair (ck_egg c1) (ck_egg c2) ->
     try_cook_hit c1 c2 (IHit p ti tj) h = None.
 Proof.
   intros [s1 d1 e1] [s2 d2 e2] p ti tj h H.
-  destruct e1, e2; simpl in *; try reflexivity.
-  destruct H as [H | H]; exfalso; apply H; reflexivity.
+  destruct e1, e2; simpl in *; try reflexivity;
+    exfalso; apply H; exact I.
 Qed.
 
 Lemma try_cook_hit_chord_hit_some :
@@ -942,17 +981,27 @@ Proof.
   reflexivity.
 Qed.
 
-(* Circular eggs stay MkOutOfScope. A constructed circular Hit
-   (parameters or not) does not feed this host cook step. *)
+Definition nurbs_ck1 : Chicken :=
+  mkChicken 0%nat 1%nat (MkOutOfScope EggNurbs).
+Definition nurbs_ck2 : Chicken :=
+  mkChicken 2%nat 3%nat (MkOutOfScope EggNurbs).
+
+Lemma try_cook_hit_nurbs_none :
+  try_cook_hit nurbs_ck1 nurbs_ck2 IDecline crossing_hen = None.
+Proof.
+  reflexivity.
+Qed.
+
+(* Tags still get None from try_cook_hit. MkCirc mints in CircularCookMkCirc. *)
 Definition circular_ck1 : Chicken :=
   mkChicken 0%nat 1%nat (MkOutOfScope EggCircularArc).
 Definition circular_ck2 : Chicken :=
   mkChicken 2%nat 3%nat (MkOutOfScope EggCircularArc).
 
-Lemma circular_egg_not_first_cook_scope :
-  ~ first_cook_scope EggCircularArc EggCircularArc.
+Lemma circular_egg_first_cook_scope :
+  first_cook_scope EggCircularArc EggCircularArc.
 Proof.
-  intro H. exact H.
+  exact I.
 Qed.
 
 Lemma try_cook_hit_circular_hit_none :
@@ -960,8 +1009,7 @@ Lemma try_cook_hit_circular_hit_none :
     try_cook_hit circular_ck1 circular_ck2 (IHit p ti tj) h = None.
 Proof.
   intros p ti tj h.
-  apply try_cook_hit_out_of_scope_none.
-  left. discriminate.
+  reflexivity.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -1137,7 +1185,7 @@ Proof.
 Qed.
 
 Print Assumptions first_cook_scope_chord_chord.
-Print Assumptions clothoid_clothoid_not_first_scope.
+Print Assumptions clothoid_egg_first_cook_scope.
 Print Assumptions IEmpty_neq_IDecline.
 Print Assumptions crossing_witness.
 Print Assumptions disjoint_witness.
@@ -1162,8 +1210,11 @@ Print Assumptions cook_hit_chords_shares_hen.
 Print Assumptions cooked_crossing_try.
 Print Assumptions cooked_crossing_join.
 Print Assumptions try_cook_hit_clothoid_none.
+Print Assumptions nurbs_nurbs_not_first_scope.
+Print Assumptions nurbs_decline_I_ok.
+Print Assumptions try_cook_hit_nurbs_none.
 Print Assumptions try_cook_hit_circular_hit_none.
-Print Assumptions circular_egg_not_first_cook_scope.
+Print Assumptions circular_egg_first_cook_scope.
 Print Assumptions circular_decline_I_ok.
 Print Assumptions circular_hit_not_I_ok.
 Print Assumptions chord_circular_decline_I_ok.

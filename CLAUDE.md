@@ -37,8 +37,12 @@ lines-only builds).
 ## Oracle harnesses
 
 - `tests/CurveOracleBugHunt` — C# console, NTS-vs-oracle differential
-  (`dotnet run --project tests/CurveOracleBugHunt`, oracle via `ORACLE` env
-  var, default `.ci-artifacts/oracle-bin-linux/oracle_bin` under WSL).
+ (`dotnet run --project tests/CurveOracleBugHunt`, oracle via `ORACLE` env
+ var, default `.ci-artifacts/oracle-bin-linux/oracle_bin` under WSL).
+- `tools/WktIntakeWalker` — C# ANTLR intake (house style: .NET / PowerShell /
+  Cake). `pwsh tools/WktIntakeWalker/smoke.ps1` or
+  `dotnet cake --target=WktIntakeWalker`. Grammar pin unchanged (`grammar/`,
+  `PIN.md`). Java visitor is under `archive/` only.
 - `tests/GeosOracleBugHunt` — Python, geosop-vs-oracle
   (`python3 tests/GeosOracleBugHunt/hunt.py`, env `GEOSOP` and `ORACLE`).
 - Local GEOS lives in WSL at `/home/user/geos-src` (build:
@@ -50,6 +54,10 @@ lines-only builds).
 
 - Bug-hunt writeups: `docs/<topic>-<yyyy-mm>.md`, pin oracle/tool provenance
   (run id, commit) and record a `SUMMARY ok/warn/bug` line.
+- Hunt tickets (claim-attacker): `docs/attacks/YYYY-MM-DD-<slug>.md` with an
+  `OUTCOME` line. Qed-claiming probes live in `docs/h1-vacuity/` and are
+  smoke-compiled by the flocq job (`scripts/hunt_probe_smoke.sh`), not
+  product modules in `_CoqProject.full`.
 - There is no solution file; build/test per-project by path.
 
 ## Agent skills

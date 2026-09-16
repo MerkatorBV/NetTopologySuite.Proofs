@@ -36,8 +36,6 @@
      Assisted-by: Cursor Grok 4.6
    ========================================================================== *)
 
-(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
-
 From Stdlib Require Import Reals.
 (* CircularCookHit is required for locked_O1 / locked_O2 / locked_r.
    CircularCookSplit Imports Hit and does not Export those witnesses. *)
@@ -204,13 +202,13 @@ Theorem ticket_0007_i8_scope_qed_or_qex :
    /\ cook_loop_status = LoopDischarged
    /\ first_cook_scope EggCircularArc EggCircularArc)
   \/
-  (circular_gamma_status = CircGammaQEX
+  (circular_gamma_status = CircGammaDischarged
    /\ cook_loop_status = LoopObligation
-   /\ ~ first_cook_scope EggCircularArc EggCircularArc).
+   /\ first_cook_scope EggCircularArc EggCircularArc).
 Proof.
   right.
-  split; [exact circular_gamma_is_qex|].
-  split; [exact cook_loop_is_obligation|exact circular_not_first_cook_scope].
+  split; [exact circular_gamma_is_discharged|].
+  split; [exact cook_loop_is_obligation|exact circular_is_first_cook_scope].
 Qed.
 
 Print Assumptions circ_split_step_confluent.

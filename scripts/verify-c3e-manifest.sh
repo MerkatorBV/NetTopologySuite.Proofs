@@ -30,8 +30,11 @@ capture_git_sequence() {
 }
 
 # VP2: plan narrative captured separately (grep pollutes git-c3e.log).
+# plan.md was deleted (claimId 0007-prose-chip-sessions); recover from git history.
 capture_plan_c3e_grep() {
-  cat plan.md | grep -A 30 "C-3e\|face_transport_premise"
+  if [[ -f plan.md ]]; then
+    cat plan.md | grep -A 30 "C-3e\|face_transport_premise"
+  fi
   echo ""
 }
 
@@ -82,10 +85,16 @@ cat "$SCRATCH/objective-full-run1.log" "$SCRATCH/objective-full-run2.log" \
   head -5 "$SCRATCH/plan-c3e-grep.log"
   echo "PLAN_C3E_GREP_LINES=$(wc -l < "$SCRATCH/plan-c3e-grep.log")"
   echo "=== VP2b: C-3e-4 plan + corridor_safe_for_ef + face_transport wiring ==="
-  grep -n "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md
-  grep -n "connect to exact (edge_x_at … ±ef, my) targets" plan.md
-  grep -n "corridor_safe_for_ef\|face_transport_premise_ring_dart_west_straddle_connected" \
-    plan.md theories/BaseToTipHeadline.v
+  if [[ -f plan.md ]]; then
+    grep -n "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md
+    grep -n "connect to exact (edge_x_at … ±ef, my) targets" plan.md
+    grep -n "corridor_safe_for_ef\|face_transport_premise_ring_dart_west_straddle_connected" \
+      plan.md theories/BaseToTipHeadline.v
+  else
+    echo "PLAN_MD_ABSENT (git history)"
+    grep -n "corridor_safe_for_ef\|face_transport_premise_ring_dart_west_straddle_connected" \
+      theories/BaseToTipHeadline.v
+  fi
   grep -n -m 25 "face_transport_straddle_pair_eq\|face_transport_premise" \
     theories/BaseToTipHeadline.v theories/HBridgeCoreSlice.v
   grep -n "Theorem corridor_safe_for_ef\|Lemma descending_sample_corridor_safe_for_ef\|Lemma face_transport_premise_ring_dart" \
@@ -97,7 +106,7 @@ cat "$SCRATCH/objective-full-run1.log" "$SCRATCH/objective-full-run2.log" \
   echo "C3E_EF_LINES=$(wc -l < theories/C3eEfCorridorAssumption.v)"
 } | tee "$SCRATCH/verification-plan.log"
 
-if ! grep -q "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md; then
+if [[ -f plan.md ]] && ! grep -q "## C-3e-4 (along-dart headline) – IN PROGRESS" plan.md; then
   echo "VP2_FAIL: C-3e-4 section missing in plan.md" | tee -a "$SCRATCH/verification-plan.log"
   exit 1
 fi

@@ -12,6 +12,10 @@
 #   TPR_TouchPartialEdge  UNSUPPORTED  (leftover Ⅰ; fill not named)
 #   TPR_TouchObtuse       UNSUPPORTED  (leftover Ⅱ; fill not named)
 #   TPR_MixedCone         UNSUPPORTED  (leftover Ⅴ; fill not named)
+#   TPR_SameCone          UNSUPPORTED  (leftover Ⅵ; fill not named)
+#   TPR_Lens              UNSUPPORTED  (leftover Ⅶ; fill not named)
+#   TPR_Inside            UNSUPPORTED  (leftover Ⅷ; fill not named)
+#   TPR_Nest              UNSUPPORTED  (leftover Ⅸ; fill not named)
 #
 # Provenance (classifier witness pairs, not geometry computation):
 #   DISJOINT      #571 / 522-c sentinel (the #530 pair, now classified)
@@ -22,7 +26,11 @@
 #   TOUCH_PARTIAL leftover Ⅰ kiss — classified, fill still UNSUPPORTED
 #   TOUCH_OBTUSE  leftover Ⅱ obtuse-at-v — classified, fill still UNSUPPORTED
 #   TOUCH_MIXED   leftover Ⅴ mixed-cone — classified, fill still UNSUPPORTED
-#   DECLINE       unnamed CCW pair — NOT leftover Ⅴ (now classified)
+#   TOUCH_SAME    leftover Ⅵ same-sign spill — classified, fill still UNSUPPORTED
+#   LENS          leftover Ⅶ lens — classified, fill still UNSUPPORTED
+#   INSIDE        leftover Ⅷ inside — classified, fill still UNSUPPORTED
+#   NEST          leftover Ⅸ nest — classified, fill still UNSUPPORTED
+#   DECLINE       unnamed swap nest — NOT leftover Ⅸ (now classified)
 #
 # Oracle mode: RELATE_MATRIX now prints UNSUPPORTED for decline keys.
 
@@ -87,9 +95,37 @@ TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_MixedCone
 NOTES Leftover Ⅴ mixed-cone. Classified TPR_MixedCone; fill not named. Not a matrix.
 
-REGIME DECLINE
+REGIME TOUCH_SAME
 TRI_A 0 0  2 0  0 2
 TRI_B 0 0  3 1  1 3
 TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_SameCone
+NOTES Leftover Ⅵ same-sign spill. Inhabits TPR_SameCone; fill not named. Not a matrix.
+
+REGIME LENS
+TRI_A 0 0  3 0  0 3
+TRI_B 2 -1  2 2  -1 2
+TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_Lens
+NOTES Leftover Ⅶ lens. Inhabits TPR_Lens; fill not named. Not a matrix.
+
+REGIME INSIDE
+TRI_A 1 1  2 1  1 2
+TRI_B 0 0  4 0  0 4
+TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_Inside
+NOTES Leftover Ⅷ inside. Inhabits TPR_Inside; fill not named. Not a matrix.
+
+REGIME NEST
+TRI_A 0 0  4 0  0 4
+TRI_B 0 0  4 0  1 1
+TOKEN UNSUPPORTED
+FILL triangle_pair_fill TPR_Nest
+NOTES Leftover Ⅸ nest. Inhabits TPR_Nest; fill not named. Not a matrix.
+
+REGIME DECLINE
+TRI_A 0 0  4 0  1 1
+TRI_B 0 0  4 0  0 4
+TOKEN UNSUPPORTED
 FILL triangle_pair_fill TPR_Unsupported
-NOTES Unnamed CCW pair after leftover Ⅴ (not leftover Ⅵ). Not a matrix. Leftover Ⅴ classifies mixed-cone.
+NOTES Unnamed swap nest after leftover Ⅸ (not leftover Ⅹ). Not a matrix. Leftover Ⅸ names the same-side shared-edge nest.
