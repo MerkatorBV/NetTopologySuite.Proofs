@@ -462,6 +462,63 @@ Proof.
   exfalso. destruct H as [Hn | Hn]; apply Hn; assumption.
 Qed.
 
+Lemma same_cone_vertex_b_false_of_non_ccw :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy,
+    ~ (0 < gdbl ax ay bx by_ cx cy)
+    \/ ~ (0 < gdbl dx dy ex ey fx fy) ->
+    same_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy = false.
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy H.
+  unfold same_cone_vertex_b.
+  destruct (Rlt_dec 0 (gdbl ax ay bx by_ cx cy)) as [HA | _];
+    [| reflexivity ].
+  destruct (Rlt_dec 0 (gdbl dx dy ex ey fx fy)) as [HB | _];
+    [| reflexivity ].
+  exfalso. destruct H as [Hn | Hn]; apply Hn; assumption.
+Qed.
+
+Lemma lens_edges_cross_b_false_of_non_ccw :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy,
+    ~ (0 < gdbl ax ay bx by_ cx cy)
+    \/ ~ (0 < gdbl dx dy ex ey fx fy) ->
+    lens_edges_cross_b ax ay bx by_ cx cy dx dy ex ey fx fy = false.
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy H.
+  unfold lens_edges_cross_b.
+  destruct (Rlt_dec 0 (gdbl ax ay bx by_ cx cy)) as [HA | _];
+    [| reflexivity ].
+  destruct (Rlt_dec 0 (gdbl dx dy ex ey fx fy)) as [HB | _];
+    [| reflexivity ].
+  exfalso. destruct H as [Hn | Hn]; apply Hn; assumption.
+Qed.
+
+Lemma inside_b_false_of_non_ccw_B :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy,
+    ~ (0 < gdbl dx dy ex ey fx fy) ->
+    inside_b ax ay bx by_ cx cy dx dy ex ey fx fy = false.
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy H.
+  unfold inside_b.
+  destruct (Rlt_dec 0 (gdbl dx dy ex ey fx fy)) as [HB | _];
+    [| reflexivity ].
+  exfalso. apply H; assumption.
+Qed.
+
+Lemma nest_b_false_of_non_ccw :
+  forall ax ay bx by_ cx cy dx dy ex ey fx fy,
+    ~ (0 < gdbl ax ay bx by_ cx cy)
+    \/ ~ (0 < gdbl dx dy ex ey fx fy) ->
+    nest_b ax ay bx by_ cx cy dx dy ex ey fx fy = false.
+Proof.
+  intros ax ay bx by_ cx cy dx dy ex ey fx fy H.
+  unfold nest_b.
+  destruct (Rlt_dec 0 (gdbl ax ay bx by_ cx cy)) as [HA | _];
+    [| reflexivity ].
+  destruct (Rlt_dec 0 (gdbl dx dy ex ey fx fy)) as [HB | _];
+    [| reflexivity ].
+  exfalso. destruct H as [Hn | Hn]; apply Hn; assumption.
+Qed.
+
 Lemma cw_pair_regime_unsupported :
   triangle_pair_regime 0 0 1 0 0 1 2 0 2 1 3 0 = TPR_Unsupported.
 Proof.
@@ -479,6 +536,14 @@ Proof.
   rewrite (touch_obtuse_vertex_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
              (or_intror cw_B_gdbl_nlt)).
   rewrite (mixed_cone_vertex_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
+             (or_intror cw_B_gdbl_nlt)).
+  rewrite (same_cone_vertex_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
+             (or_intror cw_B_gdbl_nlt)).
+  rewrite (lens_edges_cross_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
+             (or_intror cw_B_gdbl_nlt)).
+  rewrite (inside_b_false_of_non_ccw_B 0 0 1 0 0 1 2 0 2 1 3 0
+             cw_B_gdbl_nlt).
+  rewrite (nest_b_false_of_non_ccw 0 0 1 0 0 1 2 0 2 1 3 0
              (or_intror cw_B_gdbl_nlt)).
   reflexivity.
 Qed.

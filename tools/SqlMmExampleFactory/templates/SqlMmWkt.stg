@@ -1,0 +1,58 @@
+/*
+ * SqlMmWkt.stg — ISO/IEC 13249-3:2016 §5.1.67 WKT emit
+ *
+ * Inverse of tools/WktIntakeWalker (grammars-v4 #4997 pin).
+ * Attribute names match the intake bag: hens / pts / chickens / egg,
+ * plus surface keyword and controls (WKT point list; richer than bag
+ * pts for MkCirc, which stores endpoints only).
+ *
+ * claimId: none (tools). No new ADR-0006 keyword.
+ * GEODESICSTRING is not a surface keyword here: τ(MkChord)=TagLineString,
+ * so an honest chord bag emits LINESTRING text. Do not invent TagGeodesic.
+ *
+ * Rules:
+ *   wkt            — dispatch
+ *   emptyWkt       — POINT / LINESTRING / CIRCULARSTRING EMPTY
+ *   simpleWkt      — POINT, LINESTRING, CIRCULARSTRING, CIRCLE
+ *   compoundWkt    — COMPOUNDCURVE; LS children stay bare (...), others keep type
+ *   clothoidWkt    — JTS (k0,k1,L) or ISO REFERENCELOCATION
+ *   xy             — one "x y" pair (trimmed strings from the bag model)
+ */
+
+group SqlMmWkt;
+
+wkt(g) ::= <<
+<if(g.empty)><emptyWkt(g)><elseif(g.compound)><compoundWkt(g)><elseif(g.clothoid)><clothoidWkt(g)><else><simpleWkt(g)><endif>
+>>
+
+emptyWkt(g) ::= <<
+<g.keyword> EMPTY
+>>
+
+simpleWkt(g) ::= <<
+<g.keyword> (<g.controls:xy(); separator=", ">)
+>>
+
+xy(p) ::= <<
+<p.x> <p.y>
+>>
+
+compoundWkt(g) ::= <<
+COMPOUNDCURVE (<g.children:compoundMember(); separator=", ">)
+>>
+
+compoundMember(c) ::= <<
+<if(c.empty)><c.keyword> EMPTY<elseif(c.lineString)>(<c.controls:xy(); separator=", ">)<else><wkt(c)><endif>
+>>
+
+clothoidWkt(g) ::= <<
+<if(g.jtsClothoid)><clothoidJts(g)><else><clothoidIso(g)><endif>
+>>
+
+clothoidJts(g) ::= <<
+CLOTHOID (<g.k0>, <g.k1>, <g.L>)
+>>
+
+clothoidIso(g) ::= <<
+<if(g.affineEmpty)>CLOTHOID (REFERENCELOCATION AFFINEPLACEMENT EMPTY, SCALEFACTOR <g.scaleFactor>, STARTDISTANCE <g.startDistance>, ENDDISTANCE <g.endDistance>)<else>CLOTHOID (REFERENCELOCATION AFFINEPLACEMENT (LOCATION (<g.location.x> <g.location.y>), REFERENCEDIRECTIONS (VECTOR (<g.e1.x> <g.e1.y>), VECTOR (<g.e2.x> <g.e2.y>))), SCALEFACTOR <g.scaleFactor>, STARTDISTANCE <g.startDistance>, ENDDISTANCE <g.endDistance>)<endif>
+>>

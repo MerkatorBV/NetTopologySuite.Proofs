@@ -20,12 +20,19 @@
      is_curve_length_reparam      →  transport along φ
      is_curve_length_ext_on       →  land on the golden nurbs2_param
 
+   Maintainability split (claim still Qed here):
+     CurveLength.v        windowed `is_curve_length_ext_on`
+     AtanDoubleAngle.v    generic 2·atan / tan-on-[0, π/4] identities
+     this file            golden_* Weierstrass algebra + headline
+
    Stdlib `atan` is unavoidable for the explicit preimage (the reparam
    contract forbids IVT).  That pulls Classical_Prop.classic; this file
    is Category C in docs/audit-exceptions.txt, same atan lineage as
-   ArcParamBridge.v.  The CurveLength / ArcRectifiable engines stay
-   3-axiom in their own files.  No CurveSegment growth, no ADR-0004
-   remint, no new 64-a r·θ.
+   ArcParamBridge.v.  The CurveLength / ArcRectifiable / NurbsKnotSpans
+   engines stay 3-axiom in their own files.  The two-golden-quarter
+   half-circle instance (508-g) is here so NurbsKnotSpans can leave the
+   exceptions list.  No CurveSegment growth, no ADR-0004 remint, no new
+   64-a r·θ.
 
    WITNESS topic: metric · claimId: 508-a · witness: 508-a-golden-quarter
    macro: metric
@@ -42,7 +49,8 @@
 
 From Stdlib Require Import Reals Lra Ratan List.
 From NTS.Proofs Require Import
-  Distance CurveLength ArcRectifiable NurbsQuadraticLength.
+  Distance CurveLength ArcRectifiable NurbsQuadraticLength AtanDoubleAngle
+  NurbsKnotSpans.
 Import ListNotations.
 Local Open Scope R_scope.
 
@@ -93,64 +101,6 @@ Qed.
 Lemma sqrt2_neq_0 : sqrt 2 <> 0.
 Proof. apply Rgt_not_eq, sqrt2_pos. Qed.
 
-Lemma atan_le : forall x y, x <= y -> atan x <= atan y.
-Proof.
-  intros x y [Hlt | Heq].
-  - apply Rlt_le, atan_increasing. exact Hlt.
-  - subst. apply Rle_refl.
-Qed.
-
-Lemma tan_PI4 : tan (PI / 4) = 1.
-Proof. rewrite <- atan_1. apply tan_atan. Qed.
-
-Lemma cos_atan_pos : forall x, 0 < cos (atan x).
-Proof.
-  intro x. rewrite cos_atan.
-  apply Rdiv_lt_0_compat; [lra |].
-  apply sqrt_lt_R0.
-  apply Rplus_lt_le_0_compat; [lra | apply Rle_0_sqr].
-Qed.
-
-(* -------------------------------------------------------------------------- *)
-(* Windowed extensionality: the spec only samples [a,b].                      *)
-(* -------------------------------------------------------------------------- *)
-
-Lemma polyline_len_ext_on :
-  forall (g1 g2 : Curve) a b ts t,
-    (forall u, a <= u -> u <= b -> g1 u = g2 u) ->
-    a <= t -> chain t ts b ->
-    polyline_len g1 t (ts ++ [b]) = polyline_len g2 t (ts ++ [b]).
-Proof.
-  intros g1 g2 a b ts; induction ts as [|u tl IH];
-    intros t Hg Hat Hch; simpl.
-  - assert (Htb : t <= b) by exact Hch.
-    assert (Hab : a <= b) by lra.
-    rewrite (Hg t Hat Htb), (Hg b Hab (Rle_refl b)).
-    reflexivity.
-  - destruct Hch as [Htu Hch].
-    pose proof (chain_le tl u b Hch) as Hub.
-    assert (Hau : a <= u) by lra.
-    rewrite (Hg t Hat ltac:(lra)), (Hg u Hau Hub).
-    rewrite (IH u Hg Hau Hch).
-    reflexivity.
-Qed.
-
-Lemma is_curve_length_ext_on : forall (g1 g2 : Curve) a b L,
-  (forall t, a <= t -> t <= b -> g1 t = g2 t) ->
-  is_curve_length g1 a b L -> is_curve_length g2 a b L.
-Proof.
-  intros g1 g2 a b L Hg [Hub Hlst].
-  split.
-  - intros l (ts & Hch & Hl). subst l.
-    apply Hub. exists ts. split; [exact Hch |].
-    rewrite <- (polyline_len_ext_on g1 g2 a b ts a Hg (Rle_refl a) Hch).
-    reflexivity.
-  - intros M HM. apply Hlst. intros l (ts & Hch & Hl). subst l.
-    apply HM. exists ts. split; [exact Hch |].
-    rewrite (polyline_len_ext_on g1 g2 a b ts a Hg (Rle_refl a) Hch).
-    reflexivity.
-Qed.
-
 (* -------------------------------------------------------------------------- *)
 (* Denominator floors on [0,1].                                               *)
 (* -------------------------------------------------------------------------- *)
@@ -194,82 +144,6 @@ Qed.
 Lemma golden_uden_neq_0 : forall t,
   0 <= t -> t <= 1 -> golden_uden t <> 0.
 Proof. intros t Ht0 Ht1. apply Rgt_not_eq, golden_uden_pos; assumption. Qed.
-
-(* -------------------------------------------------------------------------- *)
-(* Double-angle identities for atan.                                          *)
-(* -------------------------------------------------------------------------- *)
-
-Lemma one_plus_sq_pos : forall x, 0 < 1 + x * x.
-Proof.
-  intro x. apply Rplus_lt_le_0_compat; [lra | apply Rle_0_sqr].
-Qed.
-
-Lemma one_plus_sq_neq : forall x, 1 + x * x <> 0.
-Proof. intro x. apply Rgt_not_eq, one_plus_sq_pos. Qed.
-
-Lemma one_plus_tan2 : forall a,
-  cos a <> 0 ->
-  1 + tan a * tan a = / (cos a * cos a).
-Proof.
-  intros a Hc.
-  unfold tan, Rdiv.
-  assert (Hc2 : cos a * cos a <> 0)
-    by (apply Rmult_integral_contrapositive_currified; exact Hc).
-  replace ((sin a * / cos a) * (sin a * / cos a))
-    with (sin a * sin a * / (cos a * cos a))
-    by (field; exact Hc).
-  rewrite <- (Rinv_r (cos a * cos a) Hc2) at 1.
-  rewrite <- Rmult_plus_distr_r.
-  replace (cos a * cos a + sin a * sin a) with 1.
-  2: { pose proof (sin2_cos2 a) as Hsc. unfold Rsqr in Hsc. lra. }
-  rewrite Rmult_1_l. reflexivity.
-Qed.
-
-Lemma cos2_of_atan : forall x,
-  cos (atan x) * cos (atan x) = / (1 + x * x).
-Proof.
-  intro x.
-  assert (Hc : cos (atan x) <> 0) by (apply Rgt_not_eq, cos_atan_pos).
-  pose proof (one_plus_tan2 (atan x) Hc) as Hsec.
-  rewrite tan_atan in Hsec.
-  apply (f_equal Rinv) in Hsec.
-  rewrite Rinv_inv in Hsec.
-  symmetry. exact Hsec.
-Qed.
-
-Lemma cos_2_atan : forall x,
-  cos (2 * atan x) = (1 - x * x) / (1 + x * x).
-Proof.
-  intro x.
-  set (a := atan x).
-  assert (Htan : tan a = x) by (unfold a; apply tan_atan).
-  assert (Hcos : 0 < cos a) by (unfold a; apply cos_atan_pos).
-  assert (Hcos0 : cos a <> 0) by lra.
-  rewrite cos_2a.
-  replace (cos a * cos a - sin a * sin a)
-    with (cos a * cos a * (1 - tan a * tan a))
-    by (unfold tan; field; exact Hcos0).
-  rewrite Htan.
-  unfold a. rewrite cos2_of_atan.
-  unfold Rdiv. ring.
-Qed.
-
-Lemma sin_2_atan : forall x,
-  sin (2 * atan x) = (2 * x) / (1 + x * x).
-Proof.
-  intro x.
-  set (a := atan x).
-  assert (Htan : tan a = x) by (unfold a; apply tan_atan).
-  assert (Hcos : 0 < cos a) by (unfold a; apply cos_atan_pos).
-  assert (Hcos0 : cos a <> 0) by lra.
-  rewrite sin_2a.
-  replace (2 * sin a * cos a)
-    with (2 * tan a * (cos a * cos a))
-    by (unfold tan; field; exact Hcos0).
-  rewrite Htan.
-  unfold a. rewrite cos2_of_atan.
-  unfold Rdiv. ring.
-Qed.
 
 (* -------------------------------------------------------------------------- *)
 (* Algebraic Weierstrass identities.                                          *)
@@ -492,29 +366,6 @@ Proof.
   apply atan_le, golden_u_mono; assumption.
 Qed.
 
-Lemma tan_ge_0_on_0_PI4 : forall x,
-  0 <= x -> x <= PI / 4 -> 0 <= tan x.
-Proof.
-  intros x Hx0 Hx1.
-  destruct Hx0 as [Hlt | Heq].
-  - rewrite <- tan_0. apply Rlt_le.
-    pose proof PI_RGT_0.
-    apply tan_increasing_1; lra.
-  - subst. rewrite tan_0. lra.
-Qed.
-
-Lemma tan_le_1_on_0_PI4 : forall x,
-  0 <= x -> x <= PI / 4 -> tan x <= 1.
-Proof.
-  intros x Hx0 Hx1.
-  rewrite <- tan_PI4.
-  destruct Hx1 as [Hlt | Heq].
-  - apply Rlt_le.
-    pose proof PI_RGT_0.
-    apply tan_increasing_1; lra.
-  - subst. apply Rle_refl.
-Qed.
-
 Lemma golden_pre_u_range : forall w,
   0 <= w -> w <= 1 ->
   0 <= golden_pre_u w <= 1.
@@ -597,3 +448,174 @@ Proof.
 Qed.
 
 Print Assumptions nurbs2_golden_quarter_length.
+
+(* -------------------------------------------------------------------------- *)
+(* 508-g instance: rotate-90 second quadrant + two-span half-circle.          *)
+(* Knot-vector induction stays 3-axiom in NurbsKnotSpans.v.                   *)
+(* -------------------------------------------------------------------------- *)
+
+Definition rot90 (p : Point) : Point := mkPoint (- py p) (px p).
+
+Lemma rot90_dist_sq : forall p q, dist_sq (rot90 p) (rot90 q) = dist_sq p q.
+Proof.
+  intros p q. unfold dist_sq, rot90. simpl. ring.
+Qed.
+
+Lemma rot90_dist : forall p q, dist (rot90 p) (rot90 q) = dist p q.
+Proof.
+  intros p q. unfold dist. f_equal. apply rot90_dist_sq.
+Qed.
+
+Lemma polyline_len_isometry :
+  forall (f : Point -> Point) (g : Curve) ts t,
+    (forall p q, dist (f p) (f q) = dist p q) ->
+    polyline_len (fun u => f (g u)) t ts = polyline_len g t ts.
+Proof.
+  intros f g ts; induction ts as [|u tl IH]; intros t Hf; simpl.
+  - reflexivity.
+  - rewrite Hf, (IH u Hf). reflexivity.
+Qed.
+
+Lemma is_curve_length_isometry :
+  forall (f : Point -> Point) (g : Curve) a b L,
+    (forall p q, dist (f p) (f q) = dist p q) ->
+    is_curve_length g a b L ->
+    is_curve_length (fun t => f (g t)) a b L.
+Proof.
+  intros f g a b L Hf [Hub Hlst].
+  split.
+  - intros l (ts & Hch & Hl). subst l.
+    apply Hub. exists ts. split; [exact Hch |].
+    rewrite <- (polyline_len_isometry f g (ts ++ [b]) a Hf).
+    reflexivity.
+  - intros M HM. apply Hlst. intros l (ts & Hch & Hl). subst l.
+    apply HM. exists ts. split; [exact Hch |].
+    rewrite (polyline_len_isometry f g (ts ++ [b]) a Hf).
+    reflexivity.
+Qed.
+
+Lemma rot90_nurbs2_pt : forall p0 p1 p2 w0 w1 w2 t,
+  nurbs2_pt (rot90 p0) (rot90 p1) (rot90 p2) w0 w1 w2 t
+  = rot90 (nurbs2_pt p0 p1 p2 w0 w1 w2 t).
+Proof.
+  intros p0 p1 p2 w0 w1 w2 t.
+  unfold nurbs2_pt, rot90, nurbs2_den. simpl.
+  apply point_ext; simpl.
+  - rewrite <- Ropp_div. f_equal. ring.
+  - reflexivity.
+Qed.
+
+Definition golden_q2_p0 : Point := rot90 golden_p0.
+Definition golden_q2_p1 : Point := rot90 golden_p1.
+Definition golden_q2_p2 : Point := rot90 golden_p2.
+
+Definition golden_q2_param : Curve :=
+  nurbs2_param golden_q2_p0 golden_q2_p1 golden_q2_p2
+               golden_w0 golden_w1 golden_w2.
+
+Lemma golden_q2_rot : forall t,
+  golden_q2_param t = rot90 (golden_param t).
+Proof.
+  intro t.
+  unfold golden_q2_param, golden_param, nurbs2_param.
+  unfold golden_q2_p0, golden_q2_p1, golden_q2_p2.
+  apply rot90_nurbs2_pt.
+Qed.
+
+Theorem golden_q2_length :
+  is_curve_length golden_q2_param 0 1 (PI / 2).
+Proof.
+  apply (is_curve_length_ext (fun t => rot90 (golden_param t))
+                             golden_q2_param).
+  - intro t. symmetry. apply golden_q2_rot.
+  - apply (is_curve_length_isometry rot90 golden_param).
+    + apply rot90_dist.
+    + exact nurbs2_golden_quarter_length.
+Qed.
+
+Definition golden_half (t : R) : Point :=
+  match Rle_dec t 1 with
+  | left _ => golden_param t
+  | right _ => golden_q2_param (t - 1)
+  end.
+
+Lemma golden_param_at_1 : golden_param 1 = mkPoint 0 1.
+Proof.
+  unfold golden_param, nurbs2_param, nurbs2_pt, nurbs2_den.
+  unfold golden_p0, golden_p1, golden_p2, golden_w0, golden_w1, golden_w2.
+  unfold bern2_0, bern2_1, bern2_2. simpl.
+  apply point_ext; simpl; field.
+Qed.
+
+Lemma golden_q2_param_at_0 : golden_q2_param 0 = mkPoint 0 1.
+Proof.
+  unfold golden_q2_param, nurbs2_param, nurbs2_pt, nurbs2_den.
+  unfold golden_q2_p0, golden_q2_p1, golden_q2_p2, rot90.
+  unfold golden_p0, golden_p1, golden_p2, golden_w0, golden_w1, golden_w2.
+  unfold bern2_0, bern2_1, bern2_2. simpl.
+  apply point_ext; simpl; field.
+Qed.
+
+Lemma golden_half_glue : golden_param 1 = golden_q2_param 0.
+Proof.
+  rewrite golden_param_at_1, golden_q2_param_at_0. reflexivity.
+Qed.
+
+Lemma golden_half_on_span0 : forall t, t <= 1 -> golden_half t = golden_param t.
+Proof.
+  intros t Ht. unfold golden_half.
+  destruct (Rle_dec t 1) as [Hle | Hgt]; [reflexivity | lra].
+Qed.
+
+Lemma golden_half_on_span1 :
+  forall t, 1 <= t -> golden_half t = golden_q2_param (t - 1).
+Proof.
+  intros t Ht. unfold golden_half.
+  destruct (Rle_dec t 1) as [Hle | Hgt].
+  - assert (Heq : t = 1) by lra. rewrite Heq.
+    replace (1 - 1) with 0 by ring.
+    exact golden_half_glue.
+  - reflexivity.
+Qed.
+
+Lemma golden_half_span0 : is_curve_length golden_half 0 1 (PI / 2).
+Proof.
+  apply (is_curve_length_ext_on golden_param golden_half).
+  - intros t _ Ht1. symmetry. apply golden_half_on_span0. exact Ht1.
+  - exact nurbs2_golden_quarter_length.
+Qed.
+
+Lemma golden_half_span1 : is_curve_length golden_half 1 2 (PI / 2).
+Proof.
+  apply (is_curve_length_ext_on
+           (fun t => golden_q2_param (t - 1)) golden_half).
+  - intros t Ht1 _. symmetry. apply golden_half_on_span1. exact Ht1.
+  - apply (is_curve_length_ext
+             (fun t => golden_q2_param (-1 + t))
+             (fun t => golden_q2_param (t - 1))).
+    + intro t. f_equal. ring.
+    + pose proof (is_curve_length_shift golden_q2_param (-1) 1 2 (PI / 2))
+        as Hshift.
+      replace (-1 + 1) with 0 in Hshift by ring.
+      replace (-1 + 2) with 1 in Hshift by ring.
+      apply Hshift. exact golden_q2_length.
+Qed.
+
+(* WITNESS {"claimId":"508-g","witness":"508-g-nurbs-spans","topic":"metric","lemma":"golden_half_circle_length","title":"Two golden quarter NURBS spans glue to a half-circle of length π","file":"theories/NurbsConicExact.v","board":"#565"} *)
+
+Theorem golden_half_circle_length :
+  is_curve_length golden_half 0 2 PI.
+Proof.
+  pose (Ls := [PI / 2; PI / 2]).
+  assert (H : is_curve_length golden_half 0 2 (list_sum Ls)).
+  { apply (nurbs_spans_additive golden_half 0 [1] 2 Ls).
+    - unfold knot_vector. simpl. split; lra.
+    - unfold Ls. simpl. split.
+      + exact golden_half_span0.
+      + exact golden_half_span1. }
+  unfold Ls, list_sum in H. simpl in H.
+  replace (PI / 2 + (PI / 2 + 0)) with PI in H by lra.
+  exact H.
+Qed.
+
+Print Assumptions golden_half_circle_length.

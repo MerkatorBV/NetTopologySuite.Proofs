@@ -36,7 +36,7 @@ SHELL := /bin/bash
 ROCQ := $(shell command -v rocq 2>/dev/null || command -v coqc 2>/dev/null || echo "")
 
 # Phony targets only — this file never produces real build artefacts.
-.PHONY: help status host full check ci-guards ci-pr ci-full theories-changed oracle oracle-ffi clean-env env-info
+.PHONY: help status host full check ci-guards ci-pr ci-full theories-changed oracle oracle-ffi clean-env env-info hunt-probes
 
 # Base ref for `make theories-changed` (override: make theories-changed BASE=main).
 BASE ?= origin/main
@@ -70,8 +70,8 @@ help: status
 	@echo "      →  Inspect the four registries in docs/ + run the check scripts"
 	@echo ""
 	@echo "  AI agents / Tech-Lead Tess / Scrum-Master Sara"
-	@echo "      →  docs/FOR-AI-AGENTS.md (or the session workflow sections"
-	@echo "         of the Reading Guide) + .claude/startup-rocq.sh"
+	@echo "      →  AGENTS.md (baseline) + docs/FOR-AI-AGENTS.md"
+	@echo "         (session workflow) + .claude/startup-rocq.sh"
 	@echo ""
 	@echo "------------------------------------------------------------"
 	@echo "Build targets (require Rocq on your PATH)"
@@ -202,6 +202,7 @@ ci-guards:
 	bash scripts/check_deferred_registry_sync.sh
 	bash scripts/validate-claims.sh
 	bash scripts/check_oracle_handrolled.sh
+	bash scripts/check_md_prose_ratchet.sh
 	python3 oracle/rocqref/check_jts_nts_equiv.py
 	python3 scripts/check_module_split.py
 	python3 scripts/check_constructor_gate.py
@@ -222,6 +223,14 @@ ci-pr: ci-guards host
 ci-full: ci-guards full oracle oracle-ffi
 	@echo ""
 	@echo "Full local gate complete."
+
+# hunt-probes — compile Qed-claiming hunt probes under docs/h1-vacuity/
+# that are off the product _CoqProject.full graph.  Run after `make
+# full` (needs HobbyCounterexample_b64.vo).  CI's flocq job runs the
+# same script after the corpus compile; this target is not on ci-full
+# (no dependency edge; `make -j ci-full` would race).
+hunt-probes:
+	bash scripts/hunt_probe_smoke.sh
 
 # theories-changed — incremental local rebuild: only the theories/ files
 # changed vs BASE (default origin/main) plus their transitive reverse-

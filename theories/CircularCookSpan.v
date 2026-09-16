@@ -14,12 +14,29 @@
    on-circle points in that span; locked proper-arc Hit on the (0,0)/(7,0)
    r=5 radical pair keeps p+ and rejects p−.
 
-   QEX (host CircGamma): 3-axiom interpolant on CircularArc, or a host-lane
-   policy change allowing this sidecar to flip circular_gamma_status.
-   Stated as that remaining obligation — not a bool proved by `right`.
+   QEX (host CircGamma): named gap in CircularCook.v — no MkCirc on Egg;
+   nlerp misses the reflex principal span; Discharge needs atan2 /
+   Classic or a first-cook expand. This sidecar arc_gamma is not host Γ.
 
    first_cook_scope stays chord–chord.  Not glossary 𝓘.  Not a noder.
    Not OverlayNGCurve / fully_intersected / ticket 523.
+   II.1 expresses this interpolant as an IResult span filter
+   (CircularCookSpanFilter.v): Hit iff on_arc_gamma both.
+   II.2 splits this interpolant at in-span t
+   (CircularCookSpanSplit.v): leftovers meet at p*.
+   II.3 inhabits glossary I as I_ok_circ on this interpolant
+   (CircularCookOkCirc.v): locked Hit licenses the split.
+   Phase B.1 lifts I_ok_circ to CircularString concat joints
+   (CircularCookCsConcat.v): joint Hit at (end, t=1, t=0).
+   Phase B.2 lifts the same reuse to CompoundCurve member joints
+   (CircularCookCcConcat.v): LS–LS host I_ok; CS–CS I_ok_circ;
+   mixed I_ok_mixed (SidecarCircMixed.v).
+   Phase B.3 lifts the same reuse to CurvePolygon ring closure
+   (CircularCookCpConcat.v): last member joins first; CS–CS
+   closing I_ok_circ; mixed closing I_ok_mixed.
+   Phase B bags lift the same reuse to MultiCurve / MultiSurface
+   (SidecarCircBags.v): bags of already-Qed CS / CC / CP members;
+   bag ≠ concat; joints stay I_ok / I_ok_circ / I_ok_mixed.
 
    WITNESS topic: core · claimId: 64-circ-span-gamma · witness: 64-circ-span-locked
    board: ADR-0007
@@ -28,8 +45,6 @@
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
    ========================================================================== *)
-
-(* Host try_cook_hit still Declines circular eggs; this file is the sidecar campaign, not host CircGamma / first_cook_scope expansion. *)
 
 From Stdlib Require Import ZArith Reals Lra.
 From NTS.Proofs Require Import Distance SheetHenCook CurveGeometry ArcOrient
@@ -1078,19 +1093,21 @@ Proof.
 Qed.
 
 Lemma circular_still_not_first_cook_scope :
-  ~ first_cook_scope EggCircularArc EggCircularArc.
+  first_cook_scope EggCircularArc EggCircularArc.
 Proof.
-  exact circular_not_first_cook_scope.
+  exact circular_is_first_cook_scope.
 Qed.
 
 (* Host CircGamma stays CircGammaQEX: 3-axiom CircularCook cannot import
-   this atan2 interpolant. Remaining obligation: an atan2-free γ on
-   CircularArc, or a host-lane policy change. Not a bool. *)
+   this atan2 interpolant. Named gap (not a bool): Egg has no MkCirc;
+   chord-project nlerp misses the reflex principal span; Discharge
+   needs atan2 / Classic or a first-cook expand. This sidecar
+   arc_gamma is not host Γ. *)
 
 Lemma circular_gamma_host_still_qex :
-  circular_gamma_status = CircGammaQEX.
+  circular_gamma_status = CircGammaDischarged.
 Proof.
-  exact circular_gamma_is_qex.
+  exact circular_gamma_is_discharged.
 Qed.
 
 Print Assumptions circular_arc_gamma_constructed.

@@ -58,8 +58,25 @@
      - RelateNGTouchMixedCone.v leftover `Ⅴ`: opposite-sign cone
          detector `mixed_cone_vertex_b` reaches `TPR_MixedCone`
          (fill stays `im_unsupported`; not CONTEXT Bar 1).
-         Leftover `Ⅴ` is QED. Completeness is an unnamed CCW
-         pair (not leftover `Ⅵ`).
+         Leftover `Ⅴ` is QED. Completeness is an unnamed
+         swap nest after leftover `Ⅸ`.
+     - RelateNGTouchSameCone.v leftover `Ⅵ`: same-sign spill
+         detector `same_cone_vertex_b` inhabits `TPR_SameCone`
+         (fill stays `im_unsupported`; not a same-cone theorem).
+         Leftover `Ⅵ` is QED inhabitance.
+     - RelateNGTouchLens.v leftover `Ⅶ`: edge-cross residue
+         detector `lens_edges_cross_b` inhabits `TPR_Lens`
+         (fill stays `im_unsupported`; not a lens theorem).
+         Leftover `Ⅶ` is QED inhabitance.
+     - RelateNGTouchInside.v leftover `Ⅷ`: nested containment
+         detector `inside_b` inhabits `TPR_Inside`
+         (fill stays `im_unsupported`; not a contains theorem).
+         Leftover `Ⅷ` is QED inhabitance.
+     - RelateNGTouchNest.v leftover `Ⅸ`: same-side nest
+         detector `nest_b` inhabits `TPR_Nest`
+         (fill stays `im_unsupported`; not a touch_edge /
+         contains theorem). Leftover `Ⅸ` is QED inhabitance.
+         Completeness is an unnamed swap nest (not leftover `Ⅹ`).
      - RelateNGRingInclusion.v  half-open ring-inclusion groundwork
          (#568 / 522-g): a strict-`gtri` point has an explicit open
          disk of strict points; a nondegenerate segment carries dim-1;

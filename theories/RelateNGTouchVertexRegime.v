@@ -623,6 +623,14 @@ Proof.
     destruct (touch_obtuse_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
       [ discriminate | ].
     destruct (mixed_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+      [ discriminate | ].
+    destruct (same_cone_vertex_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+      [ discriminate | ].
+    destruct (lens_edges_cross_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+      [ discriminate | ].
+    destruct (inside_b ax ay bx by_ cx cy dx dy ex ey fx fy);
+      [ discriminate | ].
+    destruct (nest_b ax ay bx by_ cx cy dx dy ex ey fx fy);
       discriminate.
 Qed.
 

@@ -62,6 +62,11 @@ theories/DE9IM.v
 theories/RelateCurveAlphabet.v
 # Issue #67 S2: line-line DE-9IM soundness (host lane; pulls Intersect.v).
 theories/RelateLineLine.v
+# Issue #67 S10b: clothoid×line chord-seed (host lane; pulls RelateLineLine).
+theories/RelateClothoid.v
+# Esri 300 EllipticArc chord-seed (host lane; pulls RelateLineLine).
+# Consumed by SidecarEllipticEgg; not a cook Hit.
+theories/RelateEllipticArc.v
 # --- Discrete -> Sh(R^2) bridge (spatial-topos lane) ----------------------
 # Frame of metric opens of the plane as Omega of Sh(R^2): Heyting adjunction,
 # frame law, EM/double-negation counterexamples (punctured plane), infinitary
@@ -85,8 +90,106 @@ theories/OverlayNGCurve.v
 # EX-CS-4 / JTS 81c2e996: PostGIS odd control count. Four-item
 # CIRCULARSTRING(A,B,C,A) is invalid. Does not reuse claimId V-CS.
 theories/CircularStringOddCount.v
+# Chord cook (MerkatorBV host).
 theories/ChordCook.v
+# ADR-0007 CircularEgg payload for host MkCirc (claimId 0007-gamma-mkcirc).
+# Host/pure-R. atan2-free angle interpolant. Required by SheetHenCook.
+theories/SheetHenCircEgg.v
+# ADR-0007 ClothoidEgg payload for host MkClothoid
+# (claimId 0007-intake-mkclothoid / 0007-clothoid-first-cook).
+# Locked inhabitance record + Fresnel-free cloth_eval. Required by
+# SheetHenCook. No Admitted.
+theories/SheetHenClothoidEgg.v
+# ADR-0007 sheet/hen/cook noding constructor vocabulary + QED∨QEX stops.
+# Host/pure-R. First cook scope is chord–chord, circular–circular
+# (MkCirc), and clothoid–clothoid (MkClothoid). Does not remint
+# CurveSegment / Dart / Hobby. No Admitted.
 theories/SheetHenCook.v
+# ADR-0007 Γ host MkCirc / CircGamma locked fixture (claimId 0007-gamma-mkcirc).
+# Host/pure-R. atan2-free CircularEgg interpolant; I_ok Hit + try_cook_hit
+# mint on two MkCirc chickens. Tags / mixed stay Decline. 3-axiom.
+theories/CircularCookMkCirc.v
+# ADR-0007 clothoid×clothoid first-cook Hit (claimId 0007-clothoid-first-cook).
+# Host/pure-R. Locked MkClothoid pair; I_ok Hit + try_cook_hit mint.
+# Tags / mixed stay Decline. Not Fresnel-as-noding. 3-axiom.
+theories/ClothoidCookMkClothoid.v
+# ρ bag-loop named QEX gap (508-style missing CookLoopBagTerm).
+# Host/pure-R. leftover_quad width conserved; kiss/share/mint not
+# covered. Pairwise leftover-width stays a sibling QED. Not Multi
+# bags. Arc cook termination is a sister card. No Admitted.
+theories/SheetHenCookLoop.v
 theories/Adr0007NodingEpic.v
+# NodingNG chord-lane product face: 𝓘 + one cook step on one sheet.
+# Host/pure-R. Reuses SheetHenCook. Parks ρ stays QEX. Not OverlayNG /
+# RelateNG / a bag noder. No Admitted.
+theories/NodingNG.v
+# OverlayNG sheet-lane product face: finite snap-sequence on one sheet.
+# Host/pure-R. Reuses SheetHenCook + NodingNG. Hobby 4.1 stays QEX.
+# Not 𝓘 / cook / OverlayNGCurve / RelateNG. No Admitted.
+theories/OverlayNG.v
+# ADR-0007 clothoid egg sidecar (SidecarClothoidEgg). Packages
+# EggClothoid tag-Decline + RelateClothoid chord-seed.
+# Host/pure-R. Host first cook includes clothoid×clothoid
+# (ClothoidCookMkClothoid). Not Fresnel noding. Not Campaign I–II.
+# No Admitted.
+theories/SidecarClothoidEgg.v
+# ADR-0007 NURBS egg sidecar (SidecarNurbsEgg). Packages EggNurbs
+# Decline-on-host + demoted unit-square chord-seed. Host/pure-R.
+# First cook stays chord–chord. Not #508 length-as-noding.
+# Not Campaign I–II. No Admitted.
+theories/SidecarNurbsEgg.v
+# ADR-0007 SIN / sinusoid egg sidecar (SidecarSinEgg). Packages
+# EggSinusoid Decline-on-host + demoted unit-square chord-seed.
+# Host/pure-R. First cook stays chord–chord. Not Spectre profile
+# as noding. Not Campaign I–II. No Admitted.
+theories/SidecarSinEgg.v
+# ADR-0007 circle / circular egg sidecar (SidecarCircEgg). Packages
+# host EggCircularArc Decline fence + demoted unit-square chord-seed.
+# Host/pure-R. First cook stays chord–chord. Does not remint
+# CircularCook* / CircGamma / MkCirc. Not Campaign I–II. No Admitted.
+theories/SidecarCircEgg.v
+# ADR-0007 Elliptical Curve / EllipticArc egg sidecar
+# (SidecarEllipticEgg). Packages EggEllipse Decline-on-host +
+# RelateEllipticArc chord-seed. Host/pure-R. First cook stays
+# chord–chord. Not #508 ellipse-length-as-noding. Not Campaign I–II.
+# Does not grow SheetHenCook. No Admitted.
+theories/SidecarEllipticEgg.v
+# ADR-0007 SQL/MM GeodesicString egg sidecar (SidecarGeodesicEgg).
+# Packages EggGeodesicString Decline-on-host + demoted unit-square
+# chord-seed. Host/pure-R. First cook stays chord–chord. Not a
+# geodetic interpolant / noder. Not Campaign I–II. No Admitted.
+theories/SidecarGeodesicEgg.v
+# ADR-0007 SQL/MM ST_SpiralCurve egg sidecar (SidecarSpiralEgg).
+# Packages EggSpiralCurve Decline-on-host + demoted unit-square
+# chord-seed. Five ISO 13249-3 names + Unknown on one egg.
+# EggClothoid stays. Host/pure-R. First cook stays chord–chord.
+# Not a spiral interpolant / noder. Not Campaign I–II. No Admitted.
+theories/SidecarSpiralEgg.v
+# ADR-0007 intake angles-from-points (IntakeAngles). Circumcircle
+# + inhabited CircularEgg angle fields from control points.
+# Host/pure-R. 3-axiom. No Atan2.v. Not a CircGamma remint.
+# Required by IntakeWalker CircUnknown. No Admitted.
+theories/IntakeAngles.v
+# ADR-0007 first-slice intake walker (IntakeWalker). Tagged CST →
+# SHC bag | Intake Decline. Reuses MkChord / MkCirc / MkClothoid.
+# Host/pure-R. Grammar pin: grammars-v4 #4997. No new oracle
+# keyword. No Admitted.
+theories/IntakeWalker.v
+# ADR-0007 SQL/MM signed tag maps (SqlMmSignedTag).
+# τ on eggs; ρ on IntakeWalker productions; τ=μ after
+# singleton bags. CIRCLE iff |sweep|=2π. κ: 2/8 or none.
+# HOLD is nats. Emit / WKT parse QEX. Does not grow
+# SheetHenCook. No new oracle keyword. No Admitted.
+theories/SqlMmSignedTag.v
+# ADR-0007 GeodesicString as sheet geodesic (IntakeGeodesic).
+# μ in IntakeWalker; joints / π / first-cook reuse here.
+# claimId 0007-intake-geodesic. No Admitted.
+theories/IntakeGeodesic.v
+# ADR-0007 famous GEODESICSTRING fixtures (IntakeFamousGeodesic).
+# Science/arXiv 1804.07389 locked endpoints on existing μ.
+# claimId 0007-famous-geodesicstring. No Admitted.
+theories/IntakeFamousGeodesic.v
+# RelateNG product face lives in _CoqProject.full (RelateNGFace.v):
+# it packages the DE-9IM / RelateNG zoo, which is not host-lane.
 # Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.
 theories/CircularCookZ.v

@@ -1,0 +1,57 @@
+# Agent Instructions
+
+Baseline rules for AI agents working in this repository.
+
+This is **NetTopologySuite.Proofs** — a Rocq/Flocq proof corpus plus the
+extracted oracle and differential harnesses. It is not the NTS C# library.
+Session workflow lives in [docs/FOR-AI-AGENTS.md](docs/FOR-AI-AGENTS.md).
+
+Adapted from [NetTopologySuite#875](https://github.com/NetTopologySuite/NetTopologySuite/pull/875)
+(`e064b57`). Same shape; Proofs-specific fences below.
+
+## Disclosure
+
+- **Any AI-assisted contribution must be disclosed.** Say so explicitly in
+  the PR description and/or commit message (e.g. "This PR was drafted with
+  AI assistance"). This file is the disclosure rule; there is no separate
+  `AI_POLICY.md`.
+- Disclosure does not replace review: the human submitting the PR remains
+  fully responsible for correctness, licensing, and quality.
+
+## Project rules
+
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) before making changes; it defines
+  the Qed / registry invariants and actor paths.
+- Make the smallest change that accomplishes the task. No unrelated
+  refactors, renames, or reformatting.
+- Do not silently break the public surface. Prefer additive changes; flag
+  any breaking change (oracle wire, extracted API, cited theorem names)
+  instead of making it silently.
+- Honour `claimId` / `witness` fences. Do not remint an existing claimId.
+  Do not steal a witness. `claimId: none` is valid for docs and packaging.
+- A QED∨QEX stop is honest: QED is a constructed inhabitant; QEX is a
+  documented missing constructor or out-of-scope pair. QEX is not owner
+  accept and is not "done."
+- Host CircGamma is discharged by `MkCirc` (claimId `0007-gamma-mkcirc`).
+  Do not remint sidecar cook as host cook (`I_ok_circ` / `I_ok_mixed` /
+  `I_ok_interior` Hit is not host `I_ok`).
+- Rocq host lane is Stdlib (`theories/`); Flocq lane is `theories-flocq/`.
+  The oracle (`oracle_bin`) is the differential test surface (ADR-0006).
+  Do not invent a second protocol.
+- ADR-0007 is Accepted. First cook scope is chord–chord and
+  circular–circular (`MkCirc`). Do not expand it to other egg classes
+  unless a letter explicitly does.
+- Markdown ratchet: PRs may only **delete** `.md` prose, or **amend** so
+  net prose shrinks while content **diverges to MMF** (gate / ticket /
+  claim / fixture). Net-positive `.md` line/byte growth is forbidden
+  unless the added path is an MMF ticket/bar artifact that simultaneously
+  retires prose elsewhere in the same PR. No new essay docs; no expanding
+  CONTEXT/ADR/README for narrative filler. MMF shape:
+  [`docs/scout/map-opam-mmf-release-bar.md`](docs/scout/map-opam-mmf-release-bar.md).
+
+## Before finishing
+
+- Run `make ci-guards` for anything you touched; don't leave CI or guards
+  broken.
+- Summarize what changed and why, and call out any AI involvement per the
+  disclosure rule above.

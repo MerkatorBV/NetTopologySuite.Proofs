@@ -79,18 +79,14 @@ jobs:
     permissions:
       contents: read
       packages: read
+    env:
+      TOOLCHAIN_IMAGE: ghcr.io/${{ github.repository_owner }}/nts-proofs-toolchain
     steps:
       - uses: actions/checkout@v6
 
       - name: Compute toolchain tag (content-addressed by Dockerfile)
         id: toolchain
-        # GHCR follows the OCI spec: repository names must be lowercase.
-        # `github.repository_owner` preserves the account's casing
-        # (MerkatorBV), and Actions expressions have no lowercasing
-        # function, so fold the case here with bash parameter expansion.
-        run: |
-          echo "tag=df-$(sha256sum Dockerfile | cut -c1-16)" >> "$GITHUB_OUTPUT"
-          echo "TOOLCHAIN_IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/nts-proofs-toolchain" >> "$GITHUB_ENV"
+        run: echo "tag=df-$(sha256sum Dockerfile | cut -c1-16)" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
         continue-on-error: true
@@ -240,6 +236,8 @@ jobs:
             > oracle/arc_distance_tests.txt
           ORACLE_BIN=oracle/oracle_bin python3 oracle/gen_i_circular_tests.py \
             > oracle/i_circular_tests.txt
+          ORACLE_BIN=oracle/oracle_bin python3 oracle/gen_ieee_oracle_bridge_tests.py \
+            > oracle/ieee_oracle_bridge_run.txt
 
       - name: Upload oracle_bin artifact (90-day retention)
         uses: actions/upload-artifact@v4
