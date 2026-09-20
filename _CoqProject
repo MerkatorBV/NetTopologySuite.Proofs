@@ -60,6 +60,9 @@ theories/BufferBridgeRound.v
 theories/DE9IM.v
 # Ticket 523 QED ∨ QEX stop (Stdlib + DE9IM only; host-lane smoke).
 theories/RelateCurveAlphabet.v
+# Ticket 509 F-CP/F-MC/F-MS struct vs true-region QED ∨ QEX stop
+# (prelude only; host-lane smoke). Named QEX CurvePolygonTrueRegionSound.
+theories/RelateNGFstarStructTrueRegion.v
 # Issue #67 S2: line-line DE-9IM soundness (host lane; pulls Intersect.v).
 theories/RelateLineLine.v
 # Issue #67 S10b: clothoid×line chord-seed (host lane; pulls RelateLineLine).
@@ -113,12 +116,42 @@ theories/CircularCookMkCirc.v
 # Host/pure-R. Locked MkClothoid pair; I_ok Hit + try_cook_hit mint.
 # Tags / mixed stay Decline. Not Fresnel-as-noding. 3-axiom.
 theories/ClothoidCookMkClothoid.v
+# ADR-0007 host first-cook park (claimId 0007-host-first-cook-circ-chord).
+# Host/pure-R. Mixed circ×chord stays out of first_cook_scope. Named
+# QEX HostMixedHitTi / HostMixedHitSpan. Sidecar I_ok_mixed cited.
+# ADR-0007 stays Accepted. 3-axiom.
+theories/HostFirstCookCircChord.v
 # ρ bag-loop named QEX gap (508-style missing CookLoopBagTerm).
 # Host/pure-R. leftover_quad width conserved; kiss/share/mint not
 # covered. Pairwise leftover-width stays a sibling QED. Not Multi
 # bags. Arc cook termination is a sister card. No Admitted.
 theories/SheetHenCookLoop.v
+# ρ bag-loop cook modulo the named LeftoverBagTermArm QEX
+# (claimId 0007-rho-modulo-qex). Host/pure-R. Inductive leftover
+# Hit-split + fuel iterator; pairwise leftover_width, not bag-sum
+# measure. Park stays LoopObligation. No Axiom / Parameter / stub.
+theories/SheetHenCookLoopModulo.v
+# ρ leftover-bag term measure (claimId 0007-rho-bag-term-measure).
+# Host/pure-R. leftover_hit_pair count; LStepHit decreases; LStepDecline
+# idle. leftover_quad_width stays conserved. Park stays LoopObligation.
+# NURBS belayed. No Axiom / Parameter / stub.
+theories/SheetHenCookLoopTerm.v
+# Circ leftover bag for |H|=2 + noded G on the locked vesica
+# (claimId 0007-circ-leftover-two-hit). Host/pure-R. Reuses leftover-bag
+# shape (interior 𝓘 Hit / Decline idle). Locked measure 2→1→0. Parks ρ
+# stays LoopObligation. Not leftover_quad_width. No Axiom / Parameter / stub.
+theories/CircularCookLeftoverTwoHit.v
 theories/Adr0007NodingEpic.v
+# Parks ρ leftover-bag term (claimId 0007-rho-leftover-bag-term).
+# Host/pure-R. Named missing ctors LeftoverWidthDecreases /
+# LeftoverKissArm / LeftoverShareMintArm. LoopObligation stands.
+# Sibling QED stays sibling. No Axiom / Parameter / stub.
+theories/HostRhoLeftoverBagTerm.v
+# Parks ρ modulo kiss / share-mint (claimId 0007-rho-modulo-kiss-share).
+# Host/pure-R. Named missing ctors ModuloKissStep / ModuloShareMintStep.
+# leftover_bag_step stays Hit-or-Decline. LoopObligation stands.
+# Sibling modulo-iter / LeftoverKissArm stay sibling. No Axiom / Parameter / stub.
+theories/HostRhoModuloKissShare.v
 # NodingNG chord-lane product face: 𝓘 + one cook step on one sheet.
 # Host/pure-R. Reuses SheetHenCook. Parks ρ stays QEX. Not OverlayNG /
 # RelateNG / a bag noder. No Admitted.
@@ -193,3 +226,13 @@ theories/IntakeFamousGeodesic.v
 # it packages the DE-9IM / RelateNG zoo, which is not host-lane.
 # Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.
 theories/CircularCookZ.v
+# #66 C2 / width 2^25 / arc-Hobby park (claimId 66-c2-width-split).
+# Host/pure-R. Named missing ctors PassesThroughWidth25 /
+# RoundedFilterC2 / ArcHobbyAnalog. C1 2^22 stays Qed. Do not remint
+# #518 / Hobby 4.1 / #805. 0-axiom. No Admitted.
+theories/PassesThroughC2WidthPark.v
+# #423 ticket-10 densify line 2 (claimId 423-t10-densify-line2).
+# Host/pure-R. Named missing ctor LocusHausdorffSymEngine.
+# Line 1 + HotPixel form-(b) stay the ceiling. #423 stays open.
+# Chainsaw ≠ Laser. No Axiom / Parameter / stub.
+theories/HausdorffDensifyLine2.v
