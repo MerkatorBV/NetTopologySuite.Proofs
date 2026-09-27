@@ -65,8 +65,8 @@ Fixpoint rounds_alpha0 (m : nat) (row : list R) : list R :=
   | S m' => round_alpha0 (S m') (rounds_alpha0 m' row)
   end.
 
-Lemma nth_seq_start : forall start n i d,
-  i < n -> nth i (seq start n) d = start + i.
+Lemma nth_seq_start : forall (start n i d : nat),
+  (i < n)%nat -> nth i (seq start n) d = (start + i)%nat.
 Proof.
   intros start n. revert start.
   induction n as [|n IH]; intros start i d Hi; [lia|].
@@ -74,8 +74,8 @@ Proof.
   rewrite IH by lia. lia.
 Qed.
 
-Lemma map_nth_seq : forall (f : nat -> R) n i,
-  i < n -> nth i (map f (seq 0 n)) 0 = f i.
+Lemma map_nth_seq : forall (f : nat -> R) (n i : nat),
+  (i < n)%nat -> nth i (map f (seq 0 n)) 0 = f i.
 Proof.
   intros f n i Hi.
   rewrite nth_map with (d:=0).
@@ -97,7 +97,7 @@ Proof.
 Qed.
 
 Lemma round_alpha0_nth : forall k row j,
-  j < length row ->
+  (j < length row)%nat ->
   nth j (round_alpha0 k row) 0 =
     if Nat.ltb j k then nthR row j else nthR row (j - 1).
 Proof.
@@ -106,8 +106,8 @@ Proof.
 Qed.
 
 Lemma rounds_alpha0_nth : forall m row j,
-  m <= j ->
-  j < length row ->
+  (m <= j)%nat ->
+  (j < length row)%nat ->
   nth j (rounds_alpha0 m row) 0 = nth (j - m) row 0.
 Proof.
   induction m as [|m IH]; intros row j Hmj Hj.
@@ -126,19 +126,19 @@ Lemma blend_one : forall prev cur, blend 1 prev cur = cur.
 Proof. intros. unfold blend. ring. Qed.
 
 Definition clamped_lo (U : list R) (p : nat) : Prop :=
-  forall i, i <= p -> nthR U i = nthR U 0.
+  forall i, (i <= p)%nat -> nthR U i = nthR U 0.
 
 Definition clamped_hi (U : list R) (n p : nat) : Prop :=
-  forall i, n <= i <= n + p -> nthR U i = nthR U n.
+  forall i, (n <= i <= n + p)%nat -> nthR U i = nthR U n.
 
 (* Every consecutive pair. Clamps do not imply this. *)
 Definition knots_nondecreasing (U : list R) : Prop :=
-  forall i, S i < length U -> nthR U i <= nthR U (S i).
+  forall i, (S i < length U)%nat -> nthR U i <= nthR U (S i).
 
 Lemma nthR_le_idx : forall U a b,
   knots_nondecreasing U ->
-  b < length U ->
-  a <= b ->
+  (b < length U)%nat ->
+  (a <= b)%nat ->
   nthR U a <= nthR U b.
 Proof.
   intros U a b H Hb Hab.
@@ -146,7 +146,7 @@ Proof.
   - assert (a = 0) by lia. subst. lra.
   - destruct (Nat.eq_dec a (S b)) as [->|Hne].
     + lra.
-    + assert (Ha : a <= b) by lia.
+    + assert (Ha : (a <= b)%nat) by lia.
       assert (nthR U b <= nthR U (S b)).
       { apply H. lia. }
       assert (nthR U a <= nthR U b).
@@ -177,7 +177,7 @@ Lemma alpha_in_01_of_span : forall U span p k j u,
   knots_nondecreasing U ->
   (k <= j <= p)%nat ->
   (p <= span)%nat ->
-  S (knot_idx span p j + (p - k)) < length U ->
+  (S (knot_idx span p j + (p - k)) < length U)%nat ->
   nthR U span <= u ->
   u < nthR U (S span) ->
   nthR U (knot_idx span p j) <
@@ -188,7 +188,7 @@ Proof.
   apply alpha_in_01; [ | | exact Hlt].
   - unfold knot_idx. apply nthR_le_idx; try assumption; try lia.
     unfold knot_idx in Hlen. lia.
-  - assert (Hidx : span + 1 <= knot_idx span p j + (p - k) + 1).
+  - assert (Hidx : (span + 1 <= knot_idx span p j + (p - k) + 1)%nat).
     { unfold knot_idx. lia. }
     assert (nthR U (S span) <=
             nthR U (knot_idx span p j + (p - k) + 1)).
@@ -237,7 +237,7 @@ Qed.
 
 Lemma alpha_zero_on_prefix : forall U span p k j u,
   span = p ->
-  j <= p ->
+  (j <= p)%nat ->
   u = nthR U 0 ->
   clamped_lo U p ->
   alpha_at U span p k j u = 0.
@@ -264,7 +264,7 @@ Proof.
 Qed.
 
 Lemma round_deboor_is_alpha0 : forall k p U u row,
-  k <= p ->
+  (k <= p)%nat ->
   length row = S p ->
   clamped_lo U p ->
   u = nthR U 0 ->
@@ -273,7 +273,7 @@ Proof.
   intros k p U u row Hk Hlen Hc Hu.
   unfold round_deboor, round_alpha0.
   apply map_ext_in. intros j Hj.
-  assert (Hj' : j < S p) by (apply in_seq in Hj; lia).
+  assert (Hj' : (j < S p)%nat) by (apply in_seq in Hj; lia).
   destruct (Nat.ltb j k) eqn:Hlt.
   - reflexivity.
   - assert (Ha : alpha_at U p p k j u = 0).
@@ -282,7 +282,7 @@ Proof.
 Qed.
 
 Lemma deboor_rounds_is_alpha0 : forall m p U u row,
-  m <= p ->
+  (m <= p)%nat ->
   length row = S p ->
   clamped_lo U p ->
   u = nthR U 0 ->
@@ -322,13 +322,13 @@ Proof.
 Qed.
 
 Lemma round_top_when_alpha_one : forall k span p U u row,
-  k <= p ->
+  (k <= p)%nat ->
   length row = S p ->
   alpha_at U span p k p u = 1 ->
   nth p (round_deboor k span p U u row) 0 = nth p row 0.
 Proof.
   intros k span p U u row Hk Hlen Ha.
-  assert (Hp : p < length (round_deboor k span p U u row)).
+  assert (Hp : (p < length (round_deboor k span p U u row))%nat).
   { rewrite round_deboor_length, Hlen. lia. }
   unfold round_deboor.
   rewrite map_nth_seq by (rewrite Hlen; lia).
@@ -338,12 +338,12 @@ Qed.
 
 Lemma deboor_end_slot : forall p span U u row,
   length row = S p ->
-  (forall k, 1 <= k <= p -> alpha_at U span p k p u = 1) ->
+  (forall k, (1 <= k <= p)%nat -> alpha_at U span p k p u = 1) ->
   nth p (deboor_rounds p span p U u row) 0 = nth p row 0.
 Proof.
   intros p span U u row Hlen Ha.
   assert (Hgen : forall m,
-    m <= p ->
+    (m <= p)%nat ->
     nth p (deboor_rounds m span p U u row) 0 = nth p row 0).
   { induction m as [|m IH]; intros Hm.
     - simpl. reflexivity.
@@ -356,7 +356,7 @@ Proof.
 Qed.
 
 Lemma alpha_one_at_end : forall U n p k u,
-  1 <= k <= p ->
+  (1 <= k <= p)%nat ->
   (p < n)%nat ->
   clamped_hi U n p ->
   nthR U (n - 1) <> nthR U n ->
@@ -382,7 +382,7 @@ Proof.
 Qed.
 
 Lemma init_row_nth : forall slot p j,
-  j <= p -> nth j (init_row slot p) 0 = slot j.
+  (j <= p)%nat -> nth j (init_row slot p) 0 = slot j.
 Proof.
   intros slot p j Hj. unfold init_row.
   rewrite map_nth_seq by lia. reflexivity.
@@ -442,7 +442,7 @@ Proof.
   intros ctrl W U n p Hp Hn HW Hc Hne Hwp u span rowX rowW x w.
   assert (Hspan21 : a21_span n p span U u).
   { unfold span, u. apply a21_at_right_end. lia. }
-  assert (Ha : forall k, 1 <= k <= p -> alpha_at U span p k p u = 1).
+  assert (Ha : forall k, (1 <= k <= p)%nat -> alpha_at U span p k p u = 1).
   { intros k Hk. unfold u, span.
     apply alpha_one_at_end.
     - exact Hk.
@@ -541,7 +541,7 @@ Definition nb_weight_or_one (b : NurbsBlocks) : list R :=
 
 Lemma nb_weight_default_one : forall b i,
   nb_weight b = None ->
-  i < length (nb_ctrl b) ->
+  (i < length (nb_ctrl b))%nat ->
   nthR (nb_weight_or_one b) i = 1.
 Proof.
   intros b i Hw Hi. unfold nb_weight_or_one, nthR. rewrite Hw.
@@ -558,7 +558,7 @@ Definition nurbs_wf (c : NurbsNet) : Prop :=
   clamped_lo (nn_knot c) p /\
   clamped_hi (nn_knot c) n p /\
   nthR (nn_knot c) (n - 1) < nthR (nn_knot c) n /\
-  forall i, i < n -> 0 < nthR (nn_weight c) i.
+  forall i, (i < n)%nat -> 0 < nthR (nn_weight c) i.
 
 Theorem nurbs_wf_start : forall c,
   nurbs_wf c ->

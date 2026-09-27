@@ -78,8 +78,8 @@ Qed.
 
 Lemma half_open_unique : forall U i j u,
   knots_nondecreasing U ->
-  S i < length U ->
-  S j < length U ->
+  (S i < length U)%nat ->
+  (S j < length U)%nat ->
   nthR U i <= u ->
   u < nthR U (S i) ->
   nthR U j <= u ->
@@ -100,7 +100,7 @@ Qed.
 Definition sumR (l : list R) : R := fold_right Rplus 0 l.
 
 Lemma sum_zero_from : forall (f : nat -> R) start n,
-  (forall i, start <= i < start + n -> f i = 0) ->
+  (forall i, (start <= i < start + n)%nat -> f i = 0) ->
   sumR (map f (seq start n)) = 0.
 Proof.
   intros f start n. revert start.
@@ -112,8 +112,8 @@ Proof.
 Qed.
 
 Lemma sum_one_hot_from : forall (f : nat -> R) start n k,
-  start <= k < start + n ->
-  (forall i, start <= i < start + n -> i <> k -> f i = 0) ->
+  (start <= k < start + n)%nat ->
+  (forall i, (start <= i < start + n)%nat -> i <> k -> f i = 0) ->
   f k = 1 ->
   sumR (map f (seq start n)) = 1.
 Proof.
@@ -267,8 +267,8 @@ Qed.
 
 Lemma N_zero_below : forall U end p i u,
   knots_nondecreasing U ->
-  end < length U ->
-  i + p + 1 < length U ->
+  (end < length U)%nat ->
+  (i + p + 1 < length U)%nat ->
   u <> nthR U end ->
   u < nthR U i ->
   N U end i p u = 0.
@@ -276,8 +276,8 @@ Proof.
   induction p as [|p IH]; intros U end i u Hmono Hend Hidx Hne Hlt.
   - apply basis0_below; assumption.
   - rewrite N_step.
-    assert (Hi : i < length U) by lia.
-    assert (Hsi : S i < length U) by lia.
+    assert (Hi : (i < length U)%nat) by lia.
+    assert (Hsi : (S i < length U)%nat) by lia.
     assert (Hu2 : u < nthR U (S i)).
     { assert (nthR U i <= nthR U (S i)) by (apply nthR_le_idx; try assumption; lia).
       lra. }
@@ -288,8 +288,8 @@ Qed.
 
 Lemma N_zero_above : forall U end p i u,
   knots_nondecreasing U ->
-  end < length U ->
-  i + p + 1 < length U ->
+  (end < length U)%nat ->
+  (i + p + 1 < length U)%nat ->
   u <> nthR U end ->
   nthR U (i + p + 1) < u ->
   N U end i p u = 0.
@@ -311,8 +311,8 @@ Qed.
 
 Lemma N_zero_at_right : forall U end p i u,
   knots_nondecreasing U ->
-  end < length U ->
-  i + p + 1 < length U ->
+  (end < length U)%nat ->
+  (i + p + 1 < length U)%nat ->
   u <> nthR U end ->
   u = nthR U (i + p + 1) ->
   N U end i p u = 0.
@@ -340,8 +340,8 @@ Qed.
 
 Lemma N_zero_flat : forall U end p i u,
   knots_nondecreasing U ->
-  end < length U ->
-  i + p + 1 < length U ->
+  (end < length U)%nat ->
+  (i + p + 1 < length U)%nat ->
   u <> nthR U end ->
   nthR U i = nthR U (i + p + 1) ->
   N U end i p u = 0.
@@ -366,8 +366,8 @@ Qed.
 
 Lemma N_nonneg : forall U end p i u,
   knots_nondecreasing U ->
-  end < length U ->
-  i + p + 1 < length U ->
+  (end < length U)%nat ->
+  (i + p + 1 < length U)%nat ->
   u <> nthR U end ->
   0 <= N U end i p u.
 Proof.
@@ -412,22 +412,22 @@ Fixpoint sum_first (f : nat -> R) (n : nat) : R :=
   end.
 
 Lemma sum_first_zero : forall f n,
-  (forall i, i < n -> f i = 0) -> sum_first f n = 0.
+  (forall i, (i < n)%nat -> f i = 0) -> sum_first f n = 0.
 Proof.
   induction n as [|n IH]; intros Hz; simpl; [reflexivity|].
   rewrite IH by (intros i Hi; apply Hz; lia). rewrite Hz by lia. ring.
 Qed.
 
 Lemma sum_first_ext : forall f g n,
-  (forall i, i < n -> f i = g i) -> sum_first f n = sum_first g n.
+  (forall i, (i < n)%nat -> f i = g i) -> sum_first f n = sum_first g n.
 Proof.
   induction n as [|n IH]; intros Heq; simpl; [reflexivity|].
   rewrite IH by (intros i Hi; apply Heq; lia). rewrite Heq by lia. reflexivity.
 Qed.
 
 Lemma sum_first_hot : forall f n k,
-  k < n ->
-  (forall i, i < n -> i <> k -> f i = 0) ->
+  (k < n)%nat ->
+  (forall i, (i < n)%nat -> i <> k -> f i = 0) ->
   f k = 1 ->
   sum_first f n = 1.
 Proof.
@@ -455,10 +455,10 @@ Fixpoint span_from (U : list R) (u : R) (i fuel : nat) : nat :=
 
 Lemma span_from_ok : forall U u i fuel,
   knots_nondecreasing U ->
-  i + fuel < length U ->
+  (i + fuel < length U)%nat ->
   nthR U i <= u ->
   u < nthR U (i + fuel) ->
-  i <= span_from U u i fuel < i + fuel /\
+  (i <= span_from U u i fuel < i + fuel)%nat /\
   nthR U (span_from U u i fuel) <= u < nthR U (S (span_from U u i fuel)).
 Proof.
   intros U u i fuel. revert i.
@@ -478,14 +478,14 @@ Qed.
 
 Lemma basis0_partition_open : forall U u,
   knots_nondecreasing U ->
-  2 <= length U ->
+  (2 <= length U)%nat ->
   nthR U 0 <= u < nthR U (length U - 1) ->
   sum_first (fun i => N U (length U - 1) i O u) (length U - 1) = 1.
 Proof.
   intros U u Hmono Hlen [Hlo Hhi].
   set (n := length U - 1).
   assert (Hn : n = length U - 1) by reflexivity.
-  assert (Hfuel : 0 + n < length U) by lia.
+  assert (Hfuel : (0 + n < length U)%nat) by lia.
   assert (Hhi' : u < nthR U (0 + n)).
   { replace (0 + n) with n by lia. unfold n. exact Hhi. }
   destruct (span_from_ok U u 0 n Hmono Hfuel Hlo Hhi') as [Hk [Hks Hku]].
@@ -528,7 +528,7 @@ Lemma partition_step : forall a L R m,
   sum_first a (S (S m)) = 1 ->
   a 0 = 0 ->
   a (S m) = 0 ->
-  (forall i, i <= m -> (L (S i) + R i) * a (S i) = a (S i)) ->
+  (forall i, (i <= m)%nat -> (L (S i) + R i) * a (S i) = a (S i)) ->
   sum_first (fun i => L i * a i + R i * a (S i)) (S m) = 1.
 Proof.
   intros a L R m Hsum Ha0 Han Hcov.
@@ -549,7 +549,7 @@ Qed.
 Lemma left_right_sum : forall U i p u,
   (1 <= i)%nat ->
   knots_nondecreasing U ->
-  i + p < length U ->
+  (i + p < length U)%nat ->
   nthR U (i + p) <> nthR U i ->
   left_c U i p u + right_c U (i - 1) p u = 1.
 Proof.
@@ -581,7 +581,7 @@ Qed.
 
 Theorem basis_partition : forall U p u,
   knots_nondecreasing U ->
-  p + 2 <= length U ->
+  (p + 2 <= length U)%nat ->
   nthR U p <= u ->
   u < nthR U (length U - S p) ->
   sum_first (fun i => N U (length U - S p) i p u) (length U - S p) = 1.
@@ -592,7 +592,7 @@ Proof.
     split; [exact Hlo |].
     replace (length U - 1) with (length U - S 0) by lia. exact Hhi.
   - set (n := length U - S (S p)).
-    assert (Hend : n < length U) by (unfold n; lia).
+    assert (Hend : (n < length U)%nat) by (unfold n; lia).
     assert (Hne : u <> nthR U n) by (unfold n; lra).
     assert (HeqS : length U - S p = S n) by (unfold n; lia).
     assert (Hlo' : nthR U p <= u).
@@ -630,7 +630,7 @@ Proof.
       - unfold n; lia.
       - exact Hne.
       - unfold n. exact Hhi. }
-    assert (Hcov : forall i, i <= n - 1 ->
+    assert (Hcov : forall i, (i <= n - 1)%nat ->
         (Lc (S i) + Rc i) * a (S i) = a (S i)).
     { intros i Hi. unfold Lc, Rc, a.
       destruct (Nat.eq_dec (S i) n) as [->|Hneq].
@@ -684,13 +684,13 @@ Qed.
 
 Lemma active_outside : forall U end p i s u,
   knots_nondecreasing U ->
-  end < length U ->
-  i + p + 1 < length U ->
-  S s < length U ->
+  (end < length U)%nat ->
+  (i + p + 1 < length U)%nat ->
+  (S s < length U)%nat ->
   u <> nthR U end ->
   nthR U s <= u ->
   u < nthR U (S s) ->
-  (i + p < s \/ s < i) ->
+  ((i + p < s)%nat \/ (s < i)%nat) ->
   N U end i p u = 0.
 Proof.
   intros U end p i s u Hmono Hend Hidx Hs Hne Hlo Hhi Hor.
@@ -708,7 +708,7 @@ Proof.
 Qed.
 
 Lemma sum_first_nonneg : forall f n,
-  (forall i, i < n -> 0 <= f i) -> 0 <= sum_first f n.
+  (forall i, (i < n)%nat -> 0 <= f i) -> 0 <= sum_first f n.
 Proof.
   induction n as [|n IH]; intros Hf; simpl; [lra|].
   assert (0 <= sum_first f n).
@@ -717,9 +717,9 @@ Proof.
 Qed.
 
 Lemma sum_first_zero_term : forall f n i,
-  (forall j, j < n -> 0 <= f j) ->
+  (forall j, (j < n)%nat -> 0 <= f j) ->
   sum_first f n = 0 ->
-  i < n ->
+  (i < n)%nat ->
   f i = 0.
 Proof.
   induction n as [|n IH]; intros i Hf Hz Hi; [lia|].
@@ -745,10 +745,10 @@ Qed.
 
 Theorem nurbs_convex : forall U p u (w : nat -> R),
   knots_nondecreasing U ->
-  p + 2 <= length U ->
+  (p + 2 <= length U)%nat ->
   nthR U p <= u ->
   u < nthR U (length U - S p) ->
-  (forall i, i < length U - S p -> 0 < w i) ->
+  (forall i, (i < length U - S p)%nat -> 0 < w i) ->
   let n := length U - S p in
   let den := sum_first (fun i => N U n i p u * w i) n in
   0 < den /\
@@ -756,7 +756,7 @@ Theorem nurbs_convex : forall U p u (w : nat -> R),
 Proof.
   intros U p u w Hmono Hlen Hlo Hhi Hw n den.
   assert (Hpart := basis_partition U p u Hmono Hlen Hlo Hhi).
-  assert (HN : forall i, i < n -> 0 <= N U n i p u).
+  assert (HN : forall i, (i < n)%nat -> 0 <= N U n i p u).
   { intros i Hi. apply N_nonneg; try assumption; try (unfold n; lia).
     unfold n. lra. }
   assert (Hden0 : 0 <= den).
@@ -764,7 +764,7 @@ Proof.
     apply Rmult_le_pos; [apply HN; exact Hi | apply Rlt_le; apply Hw; unfold n in Hi; exact Hi]. }
   assert (Hnz : den <> 0).
   { intro Hz. unfold den in Hz.
-    assert (Hterm : forall i, i < n -> N U n i p u * w i = 0).
+    assert (Hterm : forall i, (i < n)%nat -> N U n i p u * w i = 0).
     { intros i Hi.
       apply (sum_first_zero_term (fun j => N U n j p u * w j) n i).
       - intros j Hj. apply Rmult_le_pos.
@@ -814,8 +814,8 @@ Qed.
 
 Theorem convex_cross_bound : forall ax ay bx by_ (M : R) n lam qx qy,
   sum_first lam n = 1 ->
-  (forall i, i < n -> 0 <= lam i) ->
-  (forall i, i < n ->
+  (forall i, (i < n)%nat -> 0 <= lam i) ->
+  (forall i, (i < n)%nat ->
      Rabs (cross2 ax ay bx by_ (qx i) (qy i)) <= M) ->
   let px := sum_first (fun i => lam i * qx i) n in
   let py := sum_first (fun i => lam i * qy i) n in
@@ -851,7 +851,7 @@ Proof.
       Rabs (lam i * cross2 ax ay bx by_ (qx i) (qy i))) n
     <= M).
   { (* each |lam * c| = lam * |c| <= lam * M, and sum lam = 1 *)
-    assert (Hterm : forall i, i < n ->
+    assert (Hterm : forall i, (i < n)%nat ->
       Rabs (lam i * cross2 ax ay bx by_ (qx i) (qy i)) <= lam i * M).
     { intros i Hi.
       rewrite Rabs_mult.
