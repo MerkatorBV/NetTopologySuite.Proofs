@@ -2543,6 +2543,11 @@ theories/AtanIvt.v
 # Oracle lane. Imports CircleChart. Not an IResult remint.
 # No C1.4-C1.14. No Admitted.
 theories/ChartLineQuadratic.v
+# C2 (#770): zeta chart built from the host CircularEgg (pole = antipode
+# of the egg mid). t_of_zeta monotone (signed by sweep) and circ_eval
+# (t_of_zeta z) = zeta_pt z. No atan2. Oracle lane, not an egg reparam.
+# 3-axiom. No Admitted.
+theories/ZetaEggBridge.v
 
 # Companion counterexample for ArcOrient.arc_minor (in the style of
 # SpectreChordArcWitness.v): a concrete valid arc where arc_mid sits on the
