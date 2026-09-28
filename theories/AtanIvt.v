@@ -1,9 +1,8 @@
 (* AtanIvt.v — 3-axiom atan via IVT (no Ratan / Classical_Prop.classic).
    atan3 u := IVT root of  sin t - u cos t  on [-PI/2, PI/2]; canonical by atan3_unique.
-   R1 (#559) drop-in for NurbsConicExact 508-a / 508-g:
-     atan_0, atan_1, atan_le, atan_tan, cos_2_atan, sin_2_atan  ->  atan3_*.
-   Verified on Coq 8.18 with From Coq; re-run Print Assumptions on the corpus
-   toolchain before peeling docs/audit-exceptions.txt. *)
+   R1 (#559): NurbsConicExact 508-a / 508-g golden_phi := 2 * atan3 u uses
+     atan3_0, atan3_1, atan3_le, atan3_tan, cos_2_atan3, sin_2_atan3 and the
+     tan-on-[0, PI/4] lemmas below; both files are 3-axiom (not excepted). *)
 From Stdlib Require Import Reals Lra.
 Local Open Scope R_scope.
 
@@ -62,7 +61,7 @@ Proof.
   apply atan3_sin_zero_unique; [lra | exact H].
 Qed.
 
-(* ---------- drop-in kit for AtanDoubleAngle / NurbsConicExact ---------- *)
+(* ---------- atan3 kit for NurbsConicExact ---------- *)
 
 Lemma atan3_0 : atan3 0 = 0.
 Proof.
@@ -127,7 +126,7 @@ Proof.
   rewrite C. field. lra.
 Qed.
 
-(* ---------- tan range on [0, PI/4] (split from AtanDoubleAngle; cites Stdlib Rtrigo_calc.tan_PI4) ---------- *)
+(* ---------- tan range on [0, PI/4] (cites Stdlib Rtrigo_calc.tan_PI4) ---------- *)
 
 Lemma tan_ge_0_on_0_PI4 : forall x, 0 <= x -> x <= PI / 4 -> 0 <= tan x.
 Proof.

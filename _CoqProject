@@ -272,7 +272,7 @@ theories/ArcIntersect.v
 theories/CircleChart.v
 # R1 / #559 gate. 3-axiom atan3 (IVT). Stdlib only. Deliberately NOT in
 # docs/audit-exceptions.txt: audit_axioms.sh must enforce the footprint.
-# No NurbsConicExact rewrite on this commit.
+# Consumed by NurbsConicExact golden_phi (2 * atan3).
 theories/AtanIvt.v
 # C1 kernel: chord line vs chart circle as a zeta-quadratic.
 # Oracle lane. Imports CircleChart. Not an IResult remint.

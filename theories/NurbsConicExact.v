@@ -9,12 +9,12 @@
    Weierstrass substitution with the closed form (not 2·atan(t)):
 
      u(t) = t / (√2 + (1-√2)·t)
-     φ(t) = 2 · atan(u(t))
+     φ(t) = 2 · atan3(u(t))
 
    so φ : [0,1] → [0, π/2], with explicit preimages
      t = tan(θ/2)·√2 / (1 + tan(θ/2)·(√2-1)).
    Pointwise `circle_pt origin 1 (φ t) = nurbs2_pt golden t` on [0,1]
-   is a field identity plus cos/sin of 2·atan.  Then:
+   is a field identity plus cos/sin of 2·atan3.  Then:
 
      arc_r_theta_is_curve_length  →  length of the unit circle on [0, π/2]
      is_curve_length_reparam      →  transport along φ
@@ -22,17 +22,16 @@
 
    Maintainability split (claim still Qed here):
      CurveLength.v        windowed `is_curve_length_ext_on`
-     AtanDoubleAngle.v    generic 2·atan / tan-on-[0, π/4] identities
+     AtanIvt.v            classic-free atan3, 2·atan3, tan on [0, π/4]
      this file            golden_* Weierstrass algebra + headline
 
-   Stdlib `atan` is unavoidable for the explicit preimage (the reparam
-   contract forbids IVT).  That pulls Classical_Prop.classic; this file
-   is Category C in docs/audit-exceptions.txt, same atan lineage as
-   ArcParamBridge.v.  The CurveLength / ArcRectifiable / NurbsKnotSpans
-   engines stay 3-axiom in their own files.  The two-golden-quarter
-   half-circle instance (508-g) is here so NurbsKnotSpans can leave the
-   exceptions list.  No CurveSegment growth, no ADR-0004 remint, no new
-   64-a r·θ.
+   φ uses AtanIvt's `atan3` (IVT root, canonical by `atan3_unique`), not
+   Stdlib `atan`, so no Ratan / Classical_Prop.classic; the preimage is
+   still explicit via `atan3_tan` (no IVT inside the reparam contract).
+   3-axiom, not in docs/audit-exceptions.txt.  CurveLength /
+   ArcRectifiable / NurbsKnotSpans stay 3-axiom in their own files; the
+   two-golden-quarter half-circle instance (508-g) lives here.  No
+   CurveSegment growth, no ADR-0004 remint, no new 64-a r·θ.
 
    WITNESS topic: metric · claimId: 508-a · witness: 508-a-golden-quarter
    macro: metric
@@ -47,9 +46,9 @@
      Assisted-by: Cursor Grok 4.6
    ========================================================================== *)
 
-From Stdlib Require Import Reals Lra Ratan List.
+From Stdlib Require Import Reals Lra List.
 From NTS.Proofs Require Import
-  Distance CurveLength ArcRectifiable NurbsQuadraticLength AtanDoubleAngle
+  Distance CurveLength ArcRectifiable NurbsQuadraticLength AtanIvt
   NurbsKnotSpans.
 Import ListNotations.
 Local Open Scope R_scope.
@@ -72,7 +71,7 @@ Definition golden_param : Curve :=
 (* Weierstrass half-angle coordinate and the angular reparameterization. *)
 Definition golden_uden (t : R) : R := sqrt 2 + (1 - sqrt 2) * t.
 Definition golden_u (t : R) : R := t / golden_uden t.
-Definition golden_phi (t : R) : R := 2 * atan (golden_u t).
+Definition golden_phi (t : R) : R := 2 * atan3 (golden_u t).
 
 (* Inverse of golden_u, used as the explicit preimage of φ. *)
 Definition golden_pre_u (w : R) : R :=
@@ -299,13 +298,13 @@ Proof.
   - (* Do not rewrite Rmult_1_l on the whole goal: the first 1* is
        golden_w0 · px, not the circle's r=1. Pin it to the cosine. *)
     rewrite Rplus_0_l.
-    rewrite (Rmult_1_l (cos (2 * atan (golden_u t)))).
-    rewrite cos_2_atan.
+    rewrite (Rmult_1_l (cos (2 * atan3 (golden_u t)))).
+    rewrite cos_2_atan3.
     fold (golden_numx t).
     apply golden_weierstrass_x; assumption.
   - rewrite Rplus_0_l.
-    rewrite (Rmult_1_l (sin (2 * atan (golden_u t)))).
-    rewrite sin_2_atan.
+    rewrite (Rmult_1_l (sin (2 * atan3 (golden_u t)))).
+    rewrite sin_2_atan3.
     fold (golden_numy t).
     apply golden_weierstrass_y; assumption.
 Qed.
@@ -327,10 +326,10 @@ Proof.
 Qed.
 
 Lemma golden_phi_0 : golden_phi 0 = 0.
-Proof. unfold golden_phi. rewrite golden_u_0, atan_0. lra. Qed.
+Proof. unfold golden_phi. rewrite golden_u_0, atan3_0. lra. Qed.
 
 Lemma golden_phi_1 : golden_phi 1 = PI / 2.
-Proof. unfold golden_phi. rewrite golden_u_1, atan_1. lra. Qed.
+Proof. unfold golden_phi. rewrite golden_u_1, atan3_1. lra. Qed.
 
 Lemma golden_u_mono : forall s t,
   0 <= s -> s <= t -> t <= 1 -> golden_u s <= golden_u t.
@@ -363,7 +362,7 @@ Proof.
   intros s t Hs Hst Ht.
   unfold golden_phi.
   apply Rmult_le_compat_l; [lra |].
-  apply atan_le, golden_u_mono; assumption.
+  apply atan3_le, golden_u_mono; assumption.
 Qed.
 
 Lemma golden_pre_u_range : forall w,
@@ -419,7 +418,7 @@ Proof.
   unfold golden_phi, u.
   rewrite golden_u_pre by assumption.
   unfold w.
-  rewrite atan_tan; lra.
+  rewrite atan3_tan; lra.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
