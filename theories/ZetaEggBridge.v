@@ -21,6 +21,7 @@
      t_of_zeta_of_circ_eval   r ≠ 0, |(t − 1/2)·Δθ| < π  ⇒
                           t_of_zeta c (zeta_of_pt O Q (circ_eval c t)) = t
      t_of_zeta_window     (ζ − a)(ζ − b) ≤ 0  ⇔  (t(ζ) − t(a))(t(ζ) − t(b)) ≤ 0
+     zeta_to_egg_chart    another pole Q on the circle: ζ_egg = (ζ_Q + b)/(1 − b·ζ_Q)
 
    No atan2.  No branch cut.  No mod 2π: θ₀ + t·Δθ = m + 2·atan3 ζ is exact
    by definition, for any stored θ₀.  The monotone lemma is signed by Δθ,
@@ -33,7 +34,7 @@
    No Admitted. No Axiom. No Parameter.
    ========================================================================== *)
 
-From Stdlib Require Import Reals Lra.
+From Stdlib Require Import Reals Lra RNsatz.
 From NTS.Proofs Require Import Distance SheetHenCircEgg CircleChart AtanIvt.
 Local Open Scope R_scope.
 
@@ -207,9 +208,96 @@ Proof.
   split; intro H; nra.
 Qed.
 
+(* -------------------------------------------------------------------------- *)
+(* Chart change.  Two poles on one circle give two ζ charts; they differ by a  *)
+(* rational Möbius map (tangent addition).  b is the ζ₂ coordinate of chart    *)
+(* 1's origin.  No trig.  This is how an oracle ζ taken at the C0 pole (from  *)
+(* the points) becomes the host ζ at egg_pole.                                *)
+(*   s₂ + u₂·u₁ ≠ 0   Q₂ is not chart 1's origin 2O − Q₁                      *)
+(*   1 − b·ζ ≠ 0      the chart-1 point at ζ is not Q₂                        *)
+(* -------------------------------------------------------------------------- *)
+
+Theorem zeta_chart_change : forall ux1 uy1 ux2 uy2 z,
+  ux1 * ux1 + uy1 * uy1 = ux2 * ux2 + uy2 * uy2 ->
+  dot ux2 uy2 ux2 uy2 + dot ux2 uy2 ux1 uy1 <> 0 ->
+  1 - zeta_of ux2 uy2 ux1 uy1 * z <> 0 ->
+  zeta_of ux2 uy2 (zeta_ptx ux1 uy1 z) (zeta_pty ux1 uy1 z)
+  = (z + zeta_of ux2 uy2 ux1 uy1) / (1 - zeta_of ux2 uy2 ux1 uy1 * z).
+Proof.
+  intros ux1 uy1 ux2 uy2 z Hs Hd Hb.
+  set (C := crs ux2 uy2 ux1 uy1).
+  set (D := dot ux2 uy2 ux1 uy1) in *.
+  set (s := dot ux2 uy2 ux2 uy2) in *.
+  assert (Hz : 0 < 1 + z * z) by nra.
+  assert (Hb' : s + D - z * C <> 0).
+  { intro E. apply Hb. unfold zeta_of. fold C. fold s. fold D.
+    field_simplify_eq; [lra | exact Hd]. }
+  assert (HL : C * C + D * D = s * s).
+  { unfold C, D, s, crs, dot.
+    replace ((ux2 * uy1 - uy2 * ux1) * (ux2 * uy1 - uy2 * ux1)
+             + (ux2 * ux1 + uy2 * uy1) * (ux2 * ux1 + uy2 * uy1))
+      with ((ux2 * ux2 + uy2 * uy2) * (ux1 * ux1 + uy1 * uy1)) by ring.
+    rewrite Hs. ring. }
+  assert (Hden : s + dot ux2 uy2 (zeta_ptx ux1 uy1 z) (zeta_pty ux1 uy1 z)
+                 = (s + D - z * C) * (s + D - z * C) / ((s + D) * (1 + z * z))).
+  { unfold zeta_ptx, zeta_pty. unfold D, C, s, dot, crs in *.
+    field_simplify_eq; [| split; lra].
+    clear HL Hd Hb Hb'. cbn [pow]. nsatz. }
+  unfold zeta_of at 1. fold s. rewrite Hden.
+  unfold zeta_of. fold C. fold D. fold s.
+  unfold zeta_ptx, zeta_pty. unfold crs at 1.
+  field_simplify_eq.
+  - unfold C, D, s, crs, dot in *. cbn [pow]. nsatz.
+  - repeat split; try lra.
+Qed.
+
+Theorem zeta_chart_change_pt : forall O Q1 Q2 z,
+  dist_sq O Q1 = dist_sq O Q2 ->
+  dot (px O - px Q2) (py O - py Q2) (px O - px Q2) (py O - py Q2)
+    + dot (px O - px Q2) (py O - py Q2) (px O - px Q1) (py O - py Q1) <> 0 ->
+  1 - zeta_of_pt O Q2 (zeta_pt O Q1 0) * z <> 0 ->
+  zeta_of_pt O Q2 (zeta_pt O Q1 z)
+  = (z + zeta_of_pt O Q2 (zeta_pt O Q1 0))
+    / (1 - zeta_of_pt O Q2 (zeta_pt O Q1 0) * z).
+Proof.
+  intros O Q1 Q2 z Hr Hd Hb.
+  assert (E0 : zeta_of_pt O Q2 (zeta_pt O Q1 0)
+               = zeta_of (px O - px Q2) (py O - py Q2)
+                         (px O - px Q1) (py O - py Q1)).
+  { unfold zeta_of_pt, zeta_pt, zeta_ptx, zeta_pty. simpl. f_equal; field. }
+  rewrite E0 in Hb |- *.
+  unfold zeta_of_pt, zeta_pt. simpl.
+  replace (px O + zeta_ptx (px O - px Q1) (py O - py Q1) z - px O)
+    with (zeta_ptx (px O - px Q1) (py O - py Q1) z) by ring.
+  replace (py O + zeta_pty (px O - px Q1) (py O - py Q1) z - py O)
+    with (zeta_pty (px O - px Q1) (py O - py Q1) z) by ring.
+  apply zeta_chart_change; [| exact Hd | exact Hb].
+  unfold dist_sq in Hr. exact Hr.
+Qed.
+
+(* Any pole Q on the egg's circle (for example the C0 pole from A, M, B):
+   the ζ at Q maps to the host ζ at egg_pole by the same Möbius map. *)
+Theorem zeta_to_egg_chart : forall c Q z,
+  dist_sq (circ_o c) Q = circ_r c * circ_r c ->
+  let b := zeta_of_pt (circ_o c) (egg_pole c) (zeta_pt (circ_o c) Q 0) in
+  dot (px (circ_o c) - px (egg_pole c)) (py (circ_o c) - py (egg_pole c))
+      (px (circ_o c) - px (egg_pole c)) (py (circ_o c) - py (egg_pole c))
+    + dot (px (circ_o c) - px (egg_pole c)) (py (circ_o c) - py (egg_pole c))
+          (px (circ_o c) - px Q) (py (circ_o c) - py Q) <> 0 ->
+  1 - b * z <> 0 ->
+  zeta_of_pt (circ_o c) (egg_pole c) (zeta_pt (circ_o c) Q z) = (z + b) / (1 - b * z).
+Proof.
+  intros c Q z HQ b Hd Hb.
+  apply zeta_chart_change_pt; [| exact Hd | exact Hb].
+  rewrite HQ, egg_pole_on_circle. reflexivity.
+Qed.
+
 Print Assumptions egg_pole_on_circle.
 Print Assumptions t_of_zeta_monotone.
 Print Assumptions circ_eval_t_of_zeta.
 Print Assumptions t_of_zeta_of_circ_eval.
 Print Assumptions t_of_zeta_window.
 Print Assumptions t_of_zeta_mid.
+Print Assumptions zeta_chart_change.
+Print Assumptions zeta_chart_change_pt.
+Print Assumptions zeta_to_egg_chart.
