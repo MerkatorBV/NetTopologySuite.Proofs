@@ -10,7 +10,7 @@
 #     `docs/axiom-allowlist.txt` (verified, not hoped).
 #   - Adding a file requires a comment above it (Category C reason + plan).
 #
-# LIVE: 114 files (76 theories-flocq/ + 37 theories/ + 1 hunt probe).
+# LIVE: 112 files (76 theories-flocq/ + 35 theories/ + 1 hunt probe).
 # Chip 2 peeled NurbsKnotSpans.v + ArcArcQuartic.v (atan/atan2 instances
 # moved into already-excepted siblings).  Remaining R-side files carry
 # classic via atan2/Ratan or RiemannInt.  Flocq C1 (`classic` via
@@ -162,8 +162,6 @@ theories/ArcChordLength.v
 theories/ArcParamBridge.v
 theories/ArcTraversalBridge.v
 theories/ArcMidSweep.v
-theories/AtanDoubleAngle.v
-theories/NurbsConicExact.v
 theories/ArcSpanAtan2.v
 
 # R-side C1 — RiemannInt (#564 Fresnel inhabitant; pack stays 3-axiom)

@@ -1319,11 +1319,11 @@ golden `nurbs2_param`.  Category C (Stdlib `atan`); the 3-axiom engines
 stay 3-axiom in their own files.  This letter does not retire epic 508
 (that is #566).
 
-**NTS RGR Board catalog (#508 children).** `508-a` = #559 / golden rational quarter circle (witness `508-a-golden-quarter`). Headline `NurbsConicExact.v : nurbs2_golden_quarter_length`. Category C (`atan`), same lineage as `ArcParamBridge.v`. Differential pin: `oracle/red_length_unified_zoo_tests.py` nurbs_arc. `508-b` = #560 is already on `main`. Does not retire epic 508. Remaining children `508-c`…`508-h` are not this letter.
+**NTS RGR Board catalog (#508 children).** `508-a` = #559 / golden rational quarter circle (witness `508-a-golden-quarter`). Headline `NurbsConicExact.v : nurbs2_golden_quarter_length`. 3-axiom via classic-free `atan3` (`AtanIvt.v`). Differential pin: `oracle/red_length_unified_zoo_tests.py` nurbs_arc. `508-b` = #560 is already on `main`. Does not retire epic 508. Remaining children `508-c`…`508-h` are not this letter.
 
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
-| `NurbsConicExact.v : nurbs2_golden_quarter_length` (+ `golden_pt_on_circle`, `golden_phi_mono`, `golden_phi_surj`; helpers `AtanDoubleAngle.v : cos_2_atan`, `AtanDoubleAngle.v : sin_2_atan`, `CurveLength.v : is_curve_length_ext_on`) | **Golden rational quarter circle (#508/#559, claimId: 508-a, witness: 508-a-golden-quarter):** `is_curve_length` of the oracle `N` vector on `[0,1]` equals `π/2` — Weierstrass `φ` is weakly monotone with explicit `tan` preimages (no IVT); the unit circle on `[0, π/2]` transfers by `is_curve_length_reparam` and windowed ext. Category C (`atan`). Maintainability split: generic 2·atan in `AtanDoubleAngle.v`, windowed ext in `CurveLength.v`. Does not retire epic 508 `[exact]` | 4 |
+| `NurbsConicExact.v : nurbs2_golden_quarter_length` (+ `golden_pt_on_circle`, `golden_phi_mono`, `golden_phi_surj`; helpers `AtanIvt.v : cos_2_atan3`, `AtanIvt.v : sin_2_atan3`, `CurveLength.v : is_curve_length_ext_on`) | **Golden rational quarter circle (#508/#559, claimId: 508-a, witness: 508-a-golden-quarter):** `is_curve_length` of the oracle `N` vector on `[0,1]` equals `π/2` — Weierstrass `φ` is weakly monotone with explicit `tan` preimages (no IVT); the unit circle on `[0, π/2]` transfers by `is_curve_length_reparam` and windowed ext. 3-axiom (`atan3`, no Ratan). Maintainability split: 2·atan3 in `AtanIvt.v`, windowed ext in `CurveLength.v`. Does not retire epic 508 `[exact]` | 4 |
 
 ## Issue #508 — integral machinery: speed-integral premises (`SpeedIntegral.v`) <!-- feat:arc-len geom:arc -->
 
@@ -1469,7 +1469,7 @@ Does not flip TRIAGE M-LEN-ZOO.
 | `file : theorem` | Meaning | Ax |
 |---|---|---|
 | `NurbsKnotSpans.v : nurbs_spans_additive` (+ `knot_vector`, `span_lengths`, `list_sum`) | **Knot-vector span additivity (#508/#565, claimId: 508-g, witness: 508-g-nurbs-spans):** a weakly increasing knot chain with one `is_curve_length` per consecutive window has total metric length the sum of the span lengths — induction on interior knots over `curve_length_additive`. Not a remint of `nurbs_knot_span_additive`. Not Cox-de Boor. Oracle `N` stays single-span. Does not retire epic 508 `[exact]` | 3 |
-| `NurbsConicExact.v : golden_half_circle_length` (+ `golden_q2_length`, `golden_half_span0`, `golden_half_span1`, `golden_half_glue`) | **Two golden quarters:** first-quadrant + rotate-90 second-quadrant NURBS on `[0,2]` have metric length `π`. Glue at `(0,1)`. Category C through 508-a `atan`. Not a new `π` theorem `[exact]` | 4 |
+| `NurbsConicExact.v : golden_half_circle_length` (+ `golden_q2_length`, `golden_half_span0`, `golden_half_span1`, `golden_half_glue`) | **Two golden quarters:** first-quadrant + rotate-90 second-quadrant NURBS on `[0,2]` have metric length `π`. Glue at `(0,1)`. 3-axiom through 508-a `atan3`. Not a new `π` theorem `[exact]` | 4 |
 
 ## Issue #508 — wrap-up: M-LEN-ZOO + Bible §4.2 satisfaction (`508-h`) <!-- feat:arc-len geom:arc,cs -->
 
