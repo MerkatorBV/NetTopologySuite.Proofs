@@ -23,7 +23,7 @@
    No Admitted. No Axiom. No Parameter.
    ========================================================================== *)
 
-From Stdlib Require Import Reals Lra.
+From Stdlib Require Import Reals Lra RNsatz.
 From NTS.Proofs Require Import
   Distance SheetHenCircEgg SheetHenCookCore CircleChart ChartLineQuadratic
   ZetaEggBridge.
@@ -95,5 +95,98 @@ Qed.
 
 End EggChord.
 
+(* -------------------------------------------------------------------------- *)
+(* Fixtures.  Each is P applied once; the obligations are the fixture's own    *)
+(* data (its egg's cos/sin constants, √2), not transport.                      *)
+(* -------------------------------------------------------------------------- *)
+
+(* F1: locked quarter.  O = (0,0), r = 5, θ₀ = 0, Δθ = π/2, chord (5,5)→(0,0).
+   Hit at the arc mid: ζ = 0, t = 1/2, tj = 1 − 1/√2. *)
+Definition F1_egg : CircularEgg := mkCircularEgg (mkPoint 0 0) 5 0 (PI / 2).
+Definition F1_chord : ChordEgg := mkChordEgg (mkPoint 5 5) (mkPoint 0 0).
+
+Theorem F1_hit :
+  on_circ F1_egg (t_of_zeta F1_egg 0) (zeta_pt (circ_o F1_egg) (egg_pole F1_egg) 0) /\
+  on_chord F1_chord (egg_tj F1_egg F1_chord 0)
+    (zeta_pt (circ_o F1_egg) (egg_pole F1_egg) 0).
+Proof.
+  pose proof PI_RGT_0 as HPI.
+  assert (Hq : 0 < sqrt 2) by (apply sqrt_lt_R0; lra).
+  assert (H2 : sqrt 2 * sqrt 2 = 2) by (apply sqrt_sqrt; lra).
+  assert (Hm : egg_mid_angle F1_egg = PI / 4)
+    by (unfold egg_mid_angle, F1_egg; simpl; field).
+  apply host_circ_chord_hit_ok; try (unfold F1_egg; simpl; lra).
+  - unfold F1_chord. simpl. intro H. injection H. lra.
+  - split; [| split].
+    + unfold egg_qf, zeta_qf, zeta_qa, zeta_qb, zeta_qc, crs, dot, egg_pole.
+      rewrite Hm, cos_PI4, sin_PI4. unfold F1_egg, F1_chord. simpl. ring.
+    + apply zeta_mid_in_window; unfold F1_egg; simpl; lra.
+    + assert (E : egg_tj F1_egg F1_chord 0 = 1 - 1 / sqrt 2).
+      { unfold egg_tj, tj_of, zeta_abs_x, zeta_abs_y, zeta_ptx, zeta_pty,
+          dot, egg_pole.
+        rewrite Hm, cos_PI4, sin_PI4. unfold F1_egg, F1_chord. simpl.
+        field. lra. }
+      rewrite E. set (k := 1 / sqrt 2).
+      assert (Hk : k * sqrt 2 = 1) by (unfold k; field; lra).
+      assert (0 < k) by (unfold k; apply Rdiv_lt_0_compat; lra).
+      split; nra.
+Qed.
+
+(* F2: straddles the cut at θ = π.  O = (0,0), r = 5, θ₀ = π/2, Δθ = π, so the
+   arc is θ ∈ [π/2, 3π/2] and its pole is at θ = 0.  Chord (0,0)→(−5,5) hits
+   at θ = 3π/4, not the mid: ζ = 1 − √2, tj = 1/√2. *)
+Definition F2_egg : CircularEgg := mkCircularEgg (mkPoint 0 0) 5 (PI / 2) PI.
+Definition F2_chord : ChordEgg := mkChordEgg (mkPoint 0 0) (mkPoint (-5) 5).
+Definition F2_z : R := 1 - sqrt 2.
+
+Theorem F2_hit :
+  on_circ F2_egg (t_of_zeta F2_egg F2_z)
+    (zeta_pt (circ_o F2_egg) (egg_pole F2_egg) F2_z) /\
+  on_chord F2_chord (egg_tj F2_egg F2_chord F2_z)
+    (zeta_pt (circ_o F2_egg) (egg_pole F2_egg) F2_z).
+Proof.
+  pose proof PI_RGT_0 as HPI.
+  assert (Hq : 0 < sqrt 2) by (apply sqrt_lt_R0; lra).
+  assert (H2 : sqrt 2 * sqrt 2 = 2) by (apply sqrt_sqrt; lra).
+  assert (Hq1 : 1 < sqrt 2) by nra.
+  assert (Hm : egg_mid_angle F2_egg = PI)
+    by (unfold egg_mid_angle, F2_egg; simpl; field).
+  apply host_circ_chord_hit_ok; try (unfold F2_egg; simpl; lra).
+  - unfold F2_chord. simpl. intro H. injection H. lra.
+  - split; [| split].
+    + unfold egg_qf, zeta_qf, zeta_qa, zeta_qb, zeta_qc, crs, dot, egg_pole.
+      rewrite Hm, cos_PI, sin_PI. unfold F2_egg, F2_chord, F2_z. simpl.
+      set (q := sqrt 2) in *. nsatz.
+    + assert (EA : egg_zA F2_egg = -1).
+      { unfold egg_zA, zeta_of_pt, zeta_of, crs, dot, egg_pole, circ_start,
+          circ_eval.
+        rewrite Hm, cos_PI, sin_PI. unfold F2_egg. simpl.
+        replace (PI / 2 + 0 * PI) with (PI / 2) by ring.
+        rewrite cos_PI2, sin_PI2. field. }
+      assert (EB : egg_zB F2_egg = 1).
+      { unfold egg_zB, zeta_of_pt, zeta_of, crs, dot, egg_pole, circ_end,
+          circ_eval.
+        rewrite Hm, cos_PI, sin_PI. unfold F2_egg. simpl.
+        replace (PI / 2 + 1 * PI) with (3 * (PI / 2)) by field.
+        rewrite cos_3PI2, sin_3PI2. field. }
+      unfold in_zeta_interval. rewrite EA, EB. unfold F2_z. nra.
+    + assert (E : egg_tj F2_egg F2_chord F2_z = 1 / sqrt 2).
+      { unfold egg_tj, tj_of, zeta_abs_x, zeta_abs_y, zeta_ptx, zeta_pty,
+          dot, egg_pole.
+        rewrite Hm, cos_PI, sin_PI. unfold F2_egg, F2_chord, F2_z. simpl.
+        set (q := sqrt 2) in *.
+        assert (Hd : 1 + (1 - q) * (1 - q) <> 0) by nra.
+        field_simplify_eq; [| split; lra].
+        replace (q ^ 3) with (q * (q * q)) by ring.
+        replace (q ^ 2) with (q * q) by ring.
+        rewrite H2. ring. }
+      rewrite E. set (k := 1 / sqrt 2).
+      assert (Hk : k * sqrt 2 = 1) by (unfold k; field; lra).
+      assert (0 < k) by (unfold k; apply Rdiv_lt_0_compat; lra).
+      split; nra.
+Qed.
+
 Print Assumptions zeta_mid_in_window.
 Print Assumptions host_circ_chord_hit_ok.
+Print Assumptions F1_hit.
+Print Assumptions F2_hit.
