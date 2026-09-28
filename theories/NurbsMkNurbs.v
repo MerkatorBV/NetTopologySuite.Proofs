@@ -4,33 +4,28 @@
    ADR-0007 letter: host MkNurbs (claimId 0007-mk-nurbs).
 
    Year-1 exact NURBS×NURBS is not this letter. NTS linearizes, so
-   exact NURBS×NURBS is year 2. This draft adds the fail-closed
-   MkNurbs arm only. OnNurbs and NurbsGammaOnSheet stay missing.
-   first_cook_scope EggNurbs EggNurbs remains a class-pair flag.
-   The cook of a MkNurbs egg is IDecline. Not a freeze lift by itself:
-   merge waits on the dated ruling.
-   MkNurbs is the host Egg constructor: control net + knots + weights
-   give an interpolant γ on sheet S. Sidecar MkOutOfScope EggNurbs
-   (SidecarNurbsEgg) is packaging, not this ctor.
+   exact NURBS×NURBS is year 2. The host Egg has the fail-closed
+   MkNurbs arm (MkNurbs : NurbsNet -> Egg). NurbsNet is a record of
+   degree, control points, weights and knots; well-formedness and A4.1
+   live in NurbsDeBoor. The cook of a MkNurbs egg is IDecline.
+   first_cook_scope EggNurbs EggNurbs is a class-pair flag only.
+   The 15 December 2026 ruling (#873) ratifies the landed arm. It is
+   not a merge gate.
+   Sidecar MkOutOfScope EggNurbs (SidecarNurbsEgg) is packaging, not
+   this ctor.
 
-   Searched the corpus. Host Egg is MkChord | MkCirc | MkClothoid |
-   MkOutOfScope. No MkNurbs arm. No OnNurbs. No NurbsGammaOnSheet.
    nurbs2_pt / nurbs3_pt (NurbsQuadraticLength / NurbsGeneralLength)
    are #508 single-span rational Curves for length. They are not an
    Egg constructor, they do not carry a knot vector, and Cox-de Boor
    multi-span evaluation is out of scope there. Promoting them would
    demote host γ to a quadratic metric curve. Not done.
 
-   QED would be one inhabitant: a non-tag Egg whose class is EggNurbs
-   (the MkCirc shape: exists ne, egg_class (MkNurbs ne) = EggNurbs).
-   That term does not typecheck. This letter does not add it.
-
    QEX (this letter): named missing constructors
-     MkNurbs
      OnNurbs
      NurbsGammaOnSheet
-   Host class EggNurbs is only MkOutOfScope EggNurbs. That tag is not
-   an interpolant pair. Not a silent MkCirc / MkChord / MkClothoid.
+   Host class EggNurbs is the tag MkOutOfScope EggNurbs or the arm.
+   The tag is not an interpolant pair. Not a silent MkCirc / MkChord /
+   MkClothoid.
    Ellipse / sinusoid / geodesic / spiral stay tags. No IEEE evaluator.
 
    Honesty fences:
@@ -59,7 +54,7 @@ Local Open Scope R_scope.
 (* WITNESS: campaign=nurbs rung=mk-nurbs claim=0007-mk-nurbs
    file=theories/NurbsMkNurbs.v
    kind=QEX-named-missing-ctors
-   missing=MkNurbs,OnNurbs,NurbsGammaOnSheet
+   missing=OnNurbs,NurbsGammaOnSheet
    not=MkCirc-demote,MkChord-demote,MkClothoid-demote
    not=ellipse,sinusoid,geodesic,spiral,ExactNurbsSegment
    not=CircGamma-remint,LoopDischarged,I_ok_mixed-as-host

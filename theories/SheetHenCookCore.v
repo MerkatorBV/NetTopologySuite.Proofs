@@ -183,7 +183,10 @@ Proof.
   intro H. exact H.
 Qed.
 
-(* Old pin nurbs_nurbs_not_first_scope discharged (#838 Yes flip). *)
+(* Class-pair flag only. Not a year-1 exact-cook claim: NTS
+   linearizes then overlays. Two MkOutOfScope EggNurbs decline
+   (nurbs_decline_I_ok); a MkNurbs pair declines too
+   (NurbsMkNurbs.mk_nurbs_failclosed). Exact NURBS×NURBS is year 2. *)
 Lemma nurbs_nurbs_first_cook_scope :
   first_cook_scope EggNurbs EggNurbs.
 Proof.
