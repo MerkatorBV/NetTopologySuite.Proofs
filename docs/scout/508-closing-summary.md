@@ -43,7 +43,7 @@ board #564). Year-1 `CurveSegment` is `CSChord` or `CSArc`. QEX
 | Ellipse general | pack at `E b − E a` | `EllipseSpeedIntegral.v : ellipse_speed_integral_is_curve_length` | engine-conditional (`increment_squeezed`) |
 | Clothoid (unit line) | unit-speed straight on `[sd,ed]` | `ClothoidLength_unit.v : unit_line_discharges_window` | unconditional as a straight line |
 | Clothoid (Fresnel) | pack at `b − a`; inhabitant length `1` on `[0,1]` | `ClothoidFresnel.v : fresnel_is_curve_length`; `ClothoidFresnelInhab.v : fresnel_unit_window_length_inhab` | pack engine-conditional; inhabitant Category C (#564) |
-| Single-span NURBS (golden) | unit quarter = `π/2` | `NurbsConicExact.v : nurbs2_golden_quarter_length` | Category C (`atan`) |
+| Single-span NURBS (golden) | unit quarter = `π/2` | `NurbsConicExact.v : nurbs2_golden_quarter_length` | 3-axiom (`atan3`) |
 | NURBS ⊃ Bézier | equal weights collapse the denominator | `NurbsQuadraticLength.v : nurbs2_equal_weights_cubic`, `NurbsGeneralLength.v : nurbs3_equal_weights_length` | unconditional inclusion |
 | NURBS knot list | span lengths sum | `NurbsKnotSpans.v : nurbs_spans_additive` | unconditional additivity; not Cox-de Boor |
 | NURBS two-quarter instance | `π/2 + π/2 = π` | `NurbsConicExact.v : golden_half_circle_length` | two glued 508-a quarters; not a new `π` theorem |

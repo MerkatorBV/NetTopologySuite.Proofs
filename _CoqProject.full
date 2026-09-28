@@ -103,21 +103,16 @@ theories/ClothoidFresnelInhab.v
 # and the weight-conditioned control-net Lipschitz bound
 # L <= 2*(wmax/wmin)^2 * max(net edge) * (b−a) on [a,b] ⊆ [0,1].  3-axiom.
 theories/NurbsQuadraticLength.v
-# Shared 2·atan / tan-on-[0,π/4] identities.  Lifted from the 508-a
-# golden quarter so later Weierstrass consumers do not copy them.
-# Category C (Stdlib atan / Ratan).  No golden content.
-theories/AtanDoubleAngle.v
 # #508-g / #565: knot-vector carrier + induction over spans.  3-axiom
 # (curve_length_additive).  Golden half-circle instance lives in
-# NurbsConicExact.v (Category C via 508-a atan).  Not a remint of
+# NurbsConicExact.v (3-axiom via atan3).  Not a remint of
 # NurbsGeneralLength.nurbs_knot_span_additive.  Not Cox-de Boor.
 theories/NurbsKnotSpans.v
 # #508-a / #559: golden rational quarter circle has metric length π/2.
-# Weierstrass φ(t) = 2·atan(t/(√2+(1-√2)·t)); reparam + ext onto the
-# golden nurbs2_param.  Generic 2·atan lives in AtanDoubleAngle.v;
+# Weierstrass φ(t) = 2·atan3(t/(√2+(1-√2)·t)); reparam + ext onto the
+# golden nurbs2_param.  φ uses classic-free atan3 (AtanIvt.v);
 # windowed ext lives in CurveLength.v.  Two-golden-quarter half-circle
-# instance (π/2 + π/2 = π) is here so KnotSpans stays 3-axiom.
-# Category C (Stdlib atan / Ratan), same lineage as ArcParamBridge.v.
+# instance (π/2 + π/2 = π) is here.  3-axiom (no Ratan).
 # Does not grow CurveSegment or remint ADR-0004.
 theories/NurbsConicExact.v
 # #508 NURBS P1: general degree (equal-weight rational cubic ↔ polynomial
@@ -2531,6 +2526,27 @@ theories/ArcHotPixel.v
 # (depends on arc_radius_sq_ge_chord_half_length_sq + perpendicular-
 # bisector geometry + S4's IVT-blocked soundness).  No Admitteds.
 theories/ArcChordApprox.v
+# C0 stereographic / half-angle chart (ζ = tan(φ/2); not tag τ). Pole opposite M,
+# monotone off the pole, arc membership iff the bounded ζ interval,
+# and that interval iff ArcIntersect.arc_span_contains. Host/pure-R.
+# Allowlist subset. No Atan2. Not an egg remint. claimId: none. No Admitted.
+theories/CircleChart.v
+# R1 / #559 gate. 3-axiom atan3 (IVT). Stdlib only. Not in
+# audit-exceptions.txt. Consumed by NurbsConicExact golden_phi.
+theories/AtanIvt.v
+# C1 kernel: chord line vs chart circle as a zeta-quadratic.
+# Oracle lane. Imports CircleChart. Not an IResult remint.
+# No C1.4-C1.14. No Admitted.
+theories/ChartLineQuadratic.v
+# C2 (#770): zeta chart built from the host CircularEgg (pole = antipode
+# of the egg mid). t_of_zeta monotone (signed by sweep) and circ_eval
+# (t_of_zeta z) = zeta_pt z. No atan2. Oracle lane, not an egg reparam.
+# 3-axiom. No Admitted.
+theories/ZetaEggBridge.v
+# #770 P: a C1 zeta segment hit carries the host on_circ / on_chord check
+# at t_of_zeta / tj_of, then the F-series fixtures. Oracle lane; host
+# I_ok unchanged. 3-axiom. No Admitted.
+theories/ZetaHostHit.v
 
 # Companion counterexample for ArcOrient.arc_minor (in the style of
 # SpectreChordArcWitness.v): a concrete valid arc where arc_mid sits on the
@@ -2822,10 +2838,19 @@ theories/SheetHenCircEgg.v
 # Locked inhabitance record + Fresnel-free cloth_eval. Required by
 # SheetHenCook. No Admitted.
 theories/SheetHenClothoidEgg.v
+# ADR-0007 sheet/hen/cook vocabulary, split (module-split gate): core
+# types/oracle/identity/noded/leftover-confluence/overlay/ddir. Required
+# by SheetHenCook. No Admitted.
+theories/SheetHenCookCore.v
+# ADR-0007 chord_split / try_cook_hit + constructive 𝓘, split from
+# SheetHenCook (module-split gate). Required by SheetHenCook. No Admitted.
+theories/SheetHenCookConstructed.v
 # ADR-0007 sheet/hen/cook noding constructor vocabulary + QED∨QEX stops.
 # Host/pure-R. First cook scope is chord–chord, circular–circular
-# (MkCirc), and clothoid–clothoid (MkClothoid). Does not remint
+# (MkCirc), clothoid–clothoid (MkClothoid), NURBS–NURBS (scope).
+# Does not remint
 # CurveSegment / Dart / Hobby. No Admitted. Status stays Accepted.
+# Umbrella re-export of SheetHenCookCore + SheetHenCookConstructed.
 theories/SheetHenCook.v
 # ADR-0007 Γ host MkCirc / CircGamma locked fixture (claimId 0007-gamma-mkcirc).
 # Host/pure-R. atan2-free CircularEgg interpolant; I_ok Hit + try_cook_hit
@@ -2835,6 +2860,11 @@ theories/CircularCookMkCirc.v
 # Host/pure-R. Locked MkClothoid pair; I_ok Hit + try_cook_hit mint.
 # Tags / mixed stay Decline. Not Fresnel-as-noding. 3-axiom.
 theories/ClothoidCookMkClothoid.v
+# ADR-0007 NURBS×NURBS first-cook scope (claimId 0007-nurbs-nurbs-first-cook).
+# Host/pure-R. first_cook_scope EggNurbs EggNurbs; old
+# nurbs_nurbs_not_first_scope ceiling retired. Tags Decline.
+# No MkNurbs / on_nurbs / silent MkCirc / MkChord. 3-axiom.
+theories/NurbsNurbsFirstCook.v
 # ADR-0007 host first-cook park (claimId 0007-host-first-cook-circ-chord).
 # Host/pure-R. Mixed circ×chord stays out of first_cook_scope. Named
 # QEX HostMixedHitTi / HostMixedHitSpan. Sidecar I_ok_mixed cited.
@@ -2888,9 +2918,16 @@ theories/OverlayNG.v
 theories/SidecarClothoidEgg.v
 # ADR-0007 NURBS egg sidecar (SidecarNurbsEgg). Packages EggNurbs
 # Decline-on-host + demoted unit-square chord-seed. Host/pure-R.
-# First cook stays chord–chord. Not #508 length-as-noding.
+# First cook includes EggNurbs×EggNurbs. Not #508 length-as-noding.
 # Not Campaign I–II. Not a noder. No Admitted.
 theories/SidecarNurbsEgg.v
+# ADR-0007 host MkNurbs (NurbsMkNurbs). QEX: MkNurbs / OnNurbs /
+# NurbsGammaOnSheet missing. Tag MkOutOfScope is not the ctor.
+# Host/pure-R. Not #508 length. Not a silent MkCirc. No Admitted.
+theories/NurbsMkNurbs.v
+# Clean-room A4.1. Clamped endpoints and the degree-1 chord.
+theories/NurbsDeBoor.v
+theories/NurbsBasis.v
 # ADR-0007 SIN / sinusoid egg sidecar (SidecarSinEgg). Packages
 # EggSinusoid Decline-on-host + demoted unit-square chord-seed.
 # Host/pure-R. First cook stays chord–chord. Not Spectre profile
@@ -3283,6 +3320,10 @@ theories/RelateNGContainsCells.v
 # not remint aa_matrix_touch_vertical (shared FFFF1FFF2 pin).  Qex:
 # classifier IE is empty while IE is dim-2.  Pointer remint is later.
 theories/RelateNGTouchEdgeCells.v
+# #842 / ADR-0003: forall CCW shared-edge touch, the six gtri cells
+# IB/BI/IE/EI/BE/EB.  Witness pair stays in RelateNGTouchEdgeCells.
+# No ring_complement / ray_avoids_vertices guard.
+theories/RelateNGTouchEdgeCellsGeneral.v
 # #576 / 522-h (overlap split): nine gtri cells of OGC 212101212 on
 # the #567 / #570 overlap pair.  Names aa_matrix_overlap_ogc; does
 # not remint aa_matrix_partial_overlap (shared 2FFF1FFF2 pin).  Qex:

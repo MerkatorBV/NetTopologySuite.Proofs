@@ -289,11 +289,12 @@ Lemma clothoid_egg_mkclothoid_or_tag :
     (exists c, e = MkClothoid c) \/ e = MkOutOfScope EggClothoid.
 Proof.
   intros e He.
-  destruct e as [ch | circ | clth | cl].
+  destruct e as [ch | circ | clth | cl | nu].
   - unfold egg_class in He. discriminate.
   - unfold egg_class in He. discriminate.
   - left. exists clth. reflexivity.
   - unfold egg_class in He. subst cl. right. reflexivity.
+  - unfold egg_class in He. discriminate.
 Qed.
 
 Lemma mkclothoid_class :
@@ -575,7 +576,7 @@ Theorem ticket_0007_clothoid_parks_qed_or_qex :
    cook_loop_status <> LoopDischarged /\
    first_cook_scope EggChord EggChord /\
    first_cook_scope EggClothoid EggClothoid /\
-   ~ first_cook_scope EggNurbs EggNurbs).
+   first_cook_scope EggNurbs EggNurbs).
 Proof.
   right.
   split; [exact sidecar_clothoid_letter_is_first_cook_expanded|].
@@ -588,7 +589,7 @@ Proof.
   split; [exact cook_loop_not_discharged|].
   split; [exact first_cook_scope_chord_chord|].
   split; [exact clothoid_egg_first_cook_scope|].
-  exact nurbs_nurbs_not_first_scope.
+  exact nurbs_nurbs_first_cook_scope.
 Qed.
 
 Print Assumptions sidecar_clothoid_class.

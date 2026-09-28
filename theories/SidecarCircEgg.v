@@ -120,11 +120,12 @@ Lemma sidecar_circ_egg_host_only_out_of_scope :
     (exists ce, e = MkCirc ce) \/ e = MkOutOfScope EggCircularArc.
 Proof.
   intros e He.
-  destruct e as [c | ce | clth | cl].
+  destruct e as [c | ce | clth | cl | nu].
   - unfold egg_class in He. discriminate.
   - left. exists ce. reflexivity.
   - unfold egg_class in He. discriminate.
   - unfold egg_class in He. subst cl. right. reflexivity.
+  - unfold egg_class in He. discriminate.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -383,13 +384,13 @@ Lemma sidecar_circ_egg_first_cook_stays_chord_chord :
   first_cook_scope EggCircularArc EggCircularArc /\
   ~ first_cook_scope EggChord EggCircularArc /\
   first_cook_scope EggClothoid EggClothoid /\
-  ~ first_cook_scope EggNurbs EggNurbs.
+  first_cook_scope EggNurbs EggNurbs.
 Proof.
   split; [exact first_cook_scope_chord_chord|].
   split; [exact circular_egg_first_cook_scope|].
   split; [exact chord_circular_not_first_cook_scope|].
   split; [exact clothoid_egg_first_cook_scope|].
-  exact nurbs_nurbs_not_first_scope.
+  exact nurbs_nurbs_first_cook_scope.
 Qed.
 
 (* -------------------------------------------------------------------------- *)

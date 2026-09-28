@@ -13,7 +13,7 @@
         (curve_length_additive at each cons; no new analysis)
 
    The two-golden-quarter half-circle instance (π/2 + π/2 = π) lives in
-   NurbsConicExact.v — Category C through 508-a atan.  This file stays
+   NurbsConicExact.v — 3-axiom through 508-a atan3.  This file stays
    3-axiom.
 
    Not Cox-de Boor multi-span evaluation.  Oracle N stays single-span.

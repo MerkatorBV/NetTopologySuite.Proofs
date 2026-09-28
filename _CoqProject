@@ -103,10 +103,18 @@ theories/SheetHenCircEgg.v
 # Locked inhabitance record + Fresnel-free cloth_eval. Required by
 # SheetHenCook. No Admitted.
 theories/SheetHenClothoidEgg.v
+# ADR-0007 sheet/hen/cook vocabulary, split (module-split gate): core
+# types/oracle/identity/noded/leftover-confluence/overlay/ddir. Required
+# by SheetHenCook. No Admitted.
+theories/SheetHenCookCore.v
+# ADR-0007 chord_split / try_cook_hit + constructive 𝓘, split from
+# SheetHenCook (module-split gate). Required by SheetHenCook. No Admitted.
+theories/SheetHenCookConstructed.v
 # ADR-0007 sheet/hen/cook noding constructor vocabulary + QED∨QEX stops.
 # Host/pure-R. First cook scope is chord–chord, circular–circular
-# (MkCirc), and clothoid–clothoid (MkClothoid). Does not remint
-# CurveSegment / Dart / Hobby. No Admitted.
+# (MkCirc), clothoid–clothoid (MkClothoid), NURBS–NURBS (scope).
+# Does not remint CurveSegment / Dart / Hobby. No Admitted.
+# Umbrella re-export of SheetHenCookCore + SheetHenCookConstructed.
 theories/SheetHenCook.v
 # ADR-0007 Γ host MkCirc / CircGamma locked fixture (claimId 0007-gamma-mkcirc).
 # Host/pure-R. atan2-free CircularEgg interpolant; I_ok Hit + try_cook_hit
@@ -116,6 +124,11 @@ theories/CircularCookMkCirc.v
 # Host/pure-R. Locked MkClothoid pair; I_ok Hit + try_cook_hit mint.
 # Tags / mixed stay Decline. Not Fresnel-as-noding. 3-axiom.
 theories/ClothoidCookMkClothoid.v
+# ADR-0007 NURBS×NURBS first-cook scope (claimId 0007-nurbs-nurbs-first-cook).
+# Host/pure-R. first_cook_scope EggNurbs EggNurbs; old
+# nurbs_nurbs_not_first_scope ceiling retired. Tags Decline.
+# No MkNurbs / on_nurbs / silent MkCirc / MkChord. 3-axiom.
+theories/NurbsNurbsFirstCook.v
 # ADR-0007 host first-cook park (claimId 0007-host-first-cook-circ-chord).
 # Host/pure-R. Mixed circ×chord stays out of first_cook_scope. Named
 # QEX HostMixedHitTi / HostMixedHitSpan. Sidecar I_ok_mixed cited.
@@ -168,9 +181,19 @@ theories/OverlayNG.v
 theories/SidecarClothoidEgg.v
 # ADR-0007 NURBS egg sidecar (SidecarNurbsEgg). Packages EggNurbs
 # Decline-on-host + demoted unit-square chord-seed. Host/pure-R.
-# First cook stays chord–chord. Not #508 length-as-noding.
+# First cook includes EggNurbs×EggNurbs. Not #508 length-as-noding.
 # Not Campaign I–II. No Admitted.
 theories/SidecarNurbsEgg.v
+# ADR-0007 host MkNurbs (NurbsMkNurbs). QEX: MkNurbs / OnNurbs /
+# NurbsGammaOnSheet missing. Tag MkOutOfScope is not the ctor.
+# Host/pure-R. Not #508 length. Not a silent MkCirc. No Admitted.
+theories/NurbsMkNurbs.v
+# Clean-room A4.1. Clamped endpoints and the degree-1 chord.
+# Cook stays IDecline. Not a QGIS copy. No Admitted.
+theories/NurbsDeBoor.v
+# Cox–de Boor basis. Degree-0 partition at the right end.
+# General p > 0 partition and the A4.1 equality are not in this file.
+theories/NurbsBasis.v
 # ADR-0007 SIN / sinusoid egg sidecar (SidecarSinEgg). Packages
 # EggSinusoid Decline-on-host + demoted unit-square chord-seed.
 # Host/pure-R. First cook stays chord–chord. Not Spectre profile
@@ -236,3 +259,31 @@ theories/PassesThroughC2WidthPark.v
 # Line 1 + HotPixel form-(b) stay the ceiling. #423 stays open.
 # Chainsaw ≠ Laser. No Axiom / Parameter / stub.
 theories/HausdorffDensifyLine2.v
+# C0 stereographic chart (CircleChart). Stdlib arc stack was full-only;
+# host lists it so arc_span_contains_iff_zeta can cite ArcIntersect.
+# Pure-R. Not an egg remint. No Atan2. No Admitted.
+theories/Overlay.v
+theories/CurveGeometry.v
+theories/ArcOrient.v
+theories/ArcChordApprox.v
+theories/ArcIntersect.v
+# Half-angle chart ζ = tan(φ/2), pole opposite the arc mid. ζ is not tag τ. Refs #771.
+# claimId: none. Freeze held. No Admitted.
+theories/CircleChart.v
+# R1 / #559 gate. 3-axiom atan3 (IVT). Stdlib only. Deliberately NOT in
+# docs/audit-exceptions.txt: audit_axioms.sh must enforce the footprint.
+# Consumed by NurbsConicExact golden_phi (2 * atan3).
+theories/AtanIvt.v
+# C1 kernel: chord line vs chart circle as a zeta-quadratic.
+# Oracle lane. Imports CircleChart. Not an IResult remint.
+# No C1.4-C1.14. No Admitted.
+theories/ChartLineQuadratic.v
+# C2 (#770): zeta chart built from the host CircularEgg (pole = antipode
+# of the egg mid). t_of_zeta monotone (signed by sweep) and circ_eval
+# (t_of_zeta z) = zeta_pt z. No atan2. Oracle lane, not an egg reparam.
+# 3-axiom. No Admitted.
+theories/ZetaEggBridge.v
+# #770 P: a C1 zeta segment hit carries the host on_circ / on_chord check
+# at t_of_zeta / tj_of, then the F-series fixtures. Oracle lane; host
+# I_ok unchanged. 3-axiom. No Admitted.
+theories/ZetaHostHit.v
