@@ -12,9 +12,10 @@
 
    dot, crs, zeta_ptx, zeta_pty come from CircleChart.  Do not shadow them.
 
-   Verified shape on Coq 8.18 (classic-free).  Re-run Print Assumptions
-   on the corpus Rocq before any consumer.  C1.4–C1.14 are not in this
-   file.  No Admitted.
+   Print Assumptions on Rocq 9.2.0: sig_forall_dec and
+   functional_extensionality_dep only, both on docs/axiom-allowlist.txt.
+   Not in docs/audit-exceptions.txt.  C1.4–C1.14 are not in this file.
+   No Admitted.
 
    TCross2 decision (not proved here): pre-split the chord at the foot
      tF = dot(d, O − S0) / |d|²

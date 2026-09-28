@@ -2531,8 +2531,8 @@ theories/ArcHotPixel.v
 # (depends on arc_radius_sq_ge_chord_half_length_sq + perpendicular-
 # bisector geometry + S4's IVT-blocked soundness).  No Admitteds.
 theories/ArcChordApprox.v
-# C0 stereographic / half-angle chart (τ = tan(φ/2)). Pole opposite M,
-# monotone off the pole, arc membership iff the bounded τ interval,
+# C0 stereographic / half-angle chart (ζ = tan(φ/2); not tag τ). Pole opposite M,
+# monotone off the pole, arc membership iff the bounded ζ interval,
 # and that interval iff ArcIntersect.arc_span_contains. Host/pure-R.
 # Allowlist subset. No Atan2. Not an egg remint. claimId: none. No Admitted.
 theories/CircleChart.v

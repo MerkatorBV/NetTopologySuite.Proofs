@@ -260,14 +260,14 @@ theories/PassesThroughC2WidthPark.v
 # Chainsaw ≠ Laser. No Axiom / Parameter / stub.
 theories/HausdorffDensifyLine2.v
 # C0 stereographic chart (CircleChart). Stdlib arc stack was full-only;
-# host lists it so arc_span_contains_iff_tau can cite ArcIntersect.
+# host lists it so arc_span_contains_iff_zeta can cite ArcIntersect.
 # Pure-R. Not an egg remint. No Atan2. No Admitted.
 theories/Overlay.v
 theories/CurveGeometry.v
 theories/ArcOrient.v
 theories/ArcChordApprox.v
 theories/ArcIntersect.v
-# Half-angle chart τ = tan(φ/2), pole opposite the arc mid. Refs #771.
+# Half-angle chart ζ = tan(φ/2), pole opposite the arc mid. ζ is not tag τ. Refs #771.
 # claimId: none. Freeze held. No Admitted.
 theories/CircleChart.v
 # R1 / #559 gate. 3-axiom atan3 (IVT). Stdlib only. Deliberately NOT in
