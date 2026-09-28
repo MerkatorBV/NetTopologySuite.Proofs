@@ -15,6 +15,7 @@
      t_of_zeta c ζ := 1/2 + 2·atan3 ζ / Δθ.
 
      egg_pole_on_circle   |O − egg_pole c|² = r²
+     t_of_zeta_mid        t_of_zeta c 0 = 1/2   (ζ = 0 is the egg mid)
      t_of_zeta_monotone   a < b  ⇒  0 < (t(b) − t(a)) · Δθ
      circ_eval_t_of_zeta  Δθ ≠ 0  ⇒  circ_eval c (t_of_zeta c ζ) = zeta_pt O Q ζ
      t_of_zeta_of_circ_eval   r ≠ 0, |(t − 1/2)·Δθ| < π  ⇒
@@ -61,6 +62,13 @@ Proof.
              + cos (egg_mid_angle c) * cos (egg_mid_angle c)))
     by (rewrite E; ring).
   ring.
+Qed.
+
+(* ζ = 0 is the egg mid. *)
+Lemma t_of_zeta_mid : forall c, t_of_zeta c 0 = / 2.
+Proof.
+  intro c. unfold t_of_zeta, Rdiv.
+  rewrite atan3_0, Rmult_0_r, Rmult_0_l, Rplus_0_r. reflexivity.
 Qed.
 
 Lemma atan3_strict : forall a b, a < b -> atan3 a < atan3 b.
@@ -204,3 +212,4 @@ Print Assumptions t_of_zeta_monotone.
 Print Assumptions circ_eval_t_of_zeta.
 Print Assumptions t_of_zeta_of_circ_eval.
 Print Assumptions t_of_zeta_window.
+Print Assumptions t_of_zeta_mid.
