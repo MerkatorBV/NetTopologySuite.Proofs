@@ -283,3 +283,7 @@ theories/ChartLineQuadratic.v
 # (t_of_zeta z) = zeta_pt z. No atan2. Oracle lane, not an egg reparam.
 # 3-axiom. No Admitted.
 theories/ZetaEggBridge.v
+# #770 P: a C1 zeta segment hit carries the host on_circ / on_chord check
+# at t_of_zeta / tj_of, then the F-series fixtures. Oracle lane; host
+# I_ok unchanged. 3-axiom. No Admitted.
+theories/ZetaHostHit.v
