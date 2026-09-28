@@ -251,13 +251,15 @@ Qed.
 Lemma egg_no_mkgeodesic :
   forall e : Egg,
     (exists c, e = MkChord c) \/ (exists g, e = MkCirc g) \/
-    (exists k, e = MkClothoid k) \/ (exists cls, e = MkOutOfScope cls).
+    (exists k, e = MkClothoid k) \/ (exists cls, e = MkOutOfScope cls) \/
+    (exists ne, e = MkNurbs ne).
 Proof.
-  intros [c | g | k | cls].
+  intros [c | g | k | cls | ne].
   - left. exists c. reflexivity.
   - right. left. exists g. reflexivity.
   - right. right. left. exists k. reflexivity.
-  - right. right. right. exists cls. reflexivity.
+  - right. right. right. left. exists cls. reflexivity.
+  - right. right. right. right. exists ne. reflexivity.
 Qed.
 
 Lemma geodesic_bag_not_outofscope :
@@ -280,7 +282,8 @@ Theorem ticket_0007_geodesic_famous_chords_qed_or_qex :
          In ck (bag_chickens (map_ls s pts)) -> ck_egg ck <> MkOutOfScope cls)
    /\ (forall e : Egg,
          (exists c, e = MkChord c) \/ (exists g, e = MkCirc g) \/
-         (exists k, e = MkClothoid k) \/ (exists cls, e = MkOutOfScope cls)))
+         (exists k, e = MkClothoid k) \/ (exists cls, e = MkOutOfScope cls) \/
+         (exists ne, e = MkNurbs ne)))
   \/
   famous_geodesic_qex_inhabits FG_SphereVsWgs84.
 Proof.

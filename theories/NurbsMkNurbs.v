@@ -72,7 +72,7 @@ Local Open Scope R_scope.
 (* -------------------------------------------------------------------------- *)
 
 Inductive NurbsHostCtor : Type :=
-| MkNurbs
+| CtorMkNurbs
 | OnNurbs
 | NurbsGammaOnSheet.
 
@@ -83,7 +83,7 @@ Inductive NurbsHostCtor : Type :=
    defined in this letter. *)
 Definition nurbs_host_ctor_inhabits (c : NurbsHostCtor) : Prop :=
   match c with
-  | MkNurbs => True
+  | CtorMkNurbs => True
   | OnNurbs => False
   | NurbsGammaOnSheet => False
   end.
@@ -109,7 +109,7 @@ Proof.
   - intro H. exact H.
 Qed.
 
-Lemma mk_nurbs_arm_present : nurbs_host_ctor_inhabits MkNurbs.
+Lemma mk_nurbs_arm_present : nurbs_host_ctor_inhabits CtorMkNurbs.
 Proof. exact I. Qed.
 
 Lemma on_nurbs_missing : ~ nurbs_host_ctor_inhabits OnNurbs.
@@ -166,7 +166,7 @@ Theorem ticket_0007_mk_nurbs_qed_or_qex :
   \/
   (~ nurbs_host_ctor_inhabits OnNurbs /\
    ~ nurbs_host_ctor_inhabits NurbsGammaOnSheet /\
-   nurbs_host_ctor_inhabits MkNurbs /\
+   nurbs_host_ctor_inhabits CtorMkNurbs /\
    (forall ne, I_ok (MkNurbs ne) (MkNurbs ne) IDecline) /\
    (forall e, egg_class e = EggNurbs ->
       e = MkOutOfScope EggNurbs \/ exists ne, e = MkNurbs ne) /\

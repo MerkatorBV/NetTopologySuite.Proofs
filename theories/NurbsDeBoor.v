@@ -78,9 +78,10 @@ Lemma map_nth_seq : forall (f : nat -> R) (n i : nat),
   (i < n)%nat -> nth i (map f (seq 0 n)) 0 = f i.
 Proof.
   intros f n i Hi.
-  rewrite nth_map with (d:=0).
-  - rewrite nth_seq_start by assumption. reflexivity.
-  - rewrite length_seq. exact Hi.
+  rewrite (@nth_indep R (map f (seq 0 n)) i 0 (f i))
+    by (rewrite length_map, length_seq; exact Hi).
+  rewrite (map_nth f (seq 0 n) i i), (nth_seq_start 0 n i i Hi).
+  f_equal.
 Qed.
 
 Lemma round_alpha0_length : forall k row,
@@ -114,8 +115,8 @@ Proof.
   - simpl. rewrite Nat.sub_0_r. reflexivity.
   - simpl. rewrite round_alpha0_nth.
     + assert (Hlt : Nat.ltb j (S m) = false) by (apply Nat.ltb_ge; lia).
-      rewrite Hlt. rewrite IH by lia.
-      replace (j - 1 - m) with (j - S m) by lia. reflexivity.
+      rewrite Hlt. unfold nthR. rewrite IH by lia.
+      replace (j - 1 - m)%nat with (j - S m)%nat by lia. reflexivity.
     + rewrite rounds_alpha0_length. exact Hj.
 Qed.
 
@@ -143,7 +144,7 @@ Lemma nthR_le_idx : forall U a b,
 Proof.
   intros U a b H Hb Hab.
   revert a Hab. induction b as [|b IH]; intros a Hab.
-  - assert (a = 0) by lia. subst. lra.
+  - assert (a = 0)%nat by lia. subst. lra.
   - destruct (Nat.eq_dec a (S b)) as [->|Hne].
     + lra.
     + assert (Ha : (a <= b)%nat) by lia.
@@ -186,14 +187,17 @@ Lemma alpha_in_01_of_span : forall U span p k j u,
 Proof.
   intros U span p k j u Hmono Hkj Hs Hlen Hu0 Hu1 Hlt.
   apply alpha_in_01; [ | | exact Hlt].
-  - unfold knot_idx. apply nthR_le_idx; try assumption; try lia.
-    unfold knot_idx in Hlen. lia.
-  - assert (Hidx : (span + 1 <= knot_idx span p j + (p - k) + 1)%nat).
-    { unfold knot_idx. lia. }
-    assert (nthR U (S span) <=
-            nthR U (knot_idx span p j + (p - k) + 1)).
-    { apply nthR_le_idx; try assumption; try lia.
-      unfold knot_idx in Hlen. lia. }
+  - unfold knot_idx.
+    assert (Hidx : (span - p + j <= span)%nat) by lia.
+    assert (Hb : (span < length U)%nat) by (unfold knot_idx in Hlen; lia).
+    pose proof (nthR_le_idx U (span - p + j) span Hmono Hb Hidx) as Hchain.
+    lra.
+  - unfold knot_idx.
+    assert (Hidx : (S span <= span - p + j + (p - k) + 1)%nat) by lia.
+    assert (Hb : (span - p + j + (p - k) + 1 < length U)%nat)
+      by (unfold knot_idx in Hlen; lia).
+    pose proof (nthR_le_idx U (S span) (span - p + j + (p - k) + 1)
+      Hmono Hb Hidx) as Hchain.
     lra.
 Qed.
 
@@ -222,7 +226,7 @@ Definition a21_end_span (n : nat) : nat := n - 1.
 
 Definition a21_span (n p s : nat) (U : list R) (u : R) : Prop :=
   (p <= s <= n - 1)%nat /\
-  (u = nthR U n -> s = n - 1) /\
+  (u = nthR U n -> s = (n - 1)%nat) /\
   (u <> nthR U n -> nthR U s <= u /\ u < nthR U (S s)).
 
 Lemma a21_at_right_end : forall n p U,
@@ -244,8 +248,8 @@ Lemma alpha_zero_on_prefix : forall U span p k j u,
 Proof.
   intros U span p k j u Hspan Hj Hu Hc.
   unfold alpha_at, knot_idx. rewrite Hspan.
-  replace (p - p + j) with j by lia.
-  assert (nthR U j = u) by (rewrite Hc by lia; exact Hu).
+  replace (p - p + j)%nat with j by lia.
+  assert (nthR U j = u) by (rewrite Hc by lia; symmetry; exact Hu).
   rewrite H. unfold Rdiv. rewrite Rminus_diag_eq by reflexivity.
   apply Rmult_0_l.
 Qed.
@@ -290,14 +294,10 @@ Lemma deboor_rounds_is_alpha0 : forall m p U u row,
 Proof.
   induction m as [|m IH]; intros p U u row Hm Hlen Hc Hu; simpl.
   - reflexivity.
-  - rewrite IH.
-    + lia.
-    + exact Hlen.
-    + exact Hc.
-    + exact Hu.
-    rewrite round_deboor_is_alpha0.
-    + reflexivity.
-    + lia.
+  - assert (Hm' : (m <= p)%nat) by lia.
+    rewrite (IH p U u row Hm' Hlen Hc Hu).
+    apply round_deboor_is_alpha0.
+    + exact Hm.
     + rewrite rounds_alpha0_length. exact Hlen.
     + exact Hc.
     + exact Hu.
@@ -310,14 +310,9 @@ Lemma deboor_start_slot : forall p U u row,
   nth p (deboor_rounds p p p U u row) 0 = nth 0 row 0.
 Proof.
   intros p U u row Hlen Hc Hu.
-  rewrite deboor_rounds_is_alpha0.
-  - lia.
-  - exact Hlen.
-  - exact Hc.
-  - exact Hu.
-  rewrite rounds_alpha0_nth.
-  - lia.
-  - rewrite Hlen. lia.
+  assert (Hpp : (p <= p)%nat) by lia.
+  rewrite (deboor_rounds_is_alpha0 p p U u row Hpp Hlen Hc Hu).
+  rewrite (rounds_alpha0_nth p row p Hpp ltac:(rewrite Hlen; lia)).
   rewrite Nat.sub_diag. reflexivity.
 Qed.
 
@@ -347,11 +342,13 @@ Proof.
     nth p (deboor_rounds m span p U u row) 0 = nth p row 0).
   { induction m as [|m IH]; intros Hm.
     - simpl. reflexivity.
-    - simpl. rewrite round_top_when_alpha_one.
-      + lia.
-      + rewrite deboor_rounds_length. exact Hlen.
-      + apply Ha. lia.
-      + apply IH. lia. }
+    - simpl.
+      assert (Hlen' : length (deboor_rounds m span p U u row) = S p).
+      { rewrite deboor_rounds_length. exact Hlen. }
+      assert (Ha' : alpha_at U span p (S m) p u = 1) by (apply Ha; lia).
+      rewrite (round_top_when_alpha_one (S m) span p U u
+        (deboor_rounds m span p U u row) Hm Hlen' Ha').
+      apply IH. lia. }
   apply Hgen. lia.
 Qed.
 
@@ -365,10 +362,10 @@ Lemma alpha_one_at_end : forall U n p k u,
 Proof.
   intros U n p k u Hk Hpn Hc Hne Hu.
   unfold alpha_at, knot_idx.
-  replace (n - 1 - p + p) with (n - 1) by lia.
-  replace (n - 1 + (p - k) + 1) with (n + (p - k)) by lia.
+  replace (n - 1 - p + p)%nat with (n - 1)%nat by lia.
+  replace (n - 1 + (p - k) + 1)%nat with (n + (p - k))%nat by lia.
   assert (Hhi : nthR U (n + (p - k)) = u).
-  { rewrite Hc; [exact Hu | split; lia]. }
+  { rewrite Hc; [symmetry; exact Hu | split; lia]. }
   rewrite Hhi, Hu.
   field. lra.
 Qed.
@@ -407,16 +404,16 @@ Proof.
   intros ctrl W U p Hp Hpn Hlen Hc Hw u rowX rowW x w.
   assert (Hx0 : nth p (deboor_rounds p p p U u rowX) 0 = hom_x ctrl W 0).
   { rewrite deboor_start_slot.
-    - apply init_row_length.
+    - unfold rowX. rewrite init_row_nth by lia. reflexivity.
+    - unfold rowX. apply init_row_length.
     - exact Hc.
-    - reflexivity.
-    - rewrite init_row_nth by lia. reflexivity. }
+    - reflexivity. }
   assert (Hw0 : nth p (deboor_rounds p p p U u rowW) 0 = nthR W 0).
   { rewrite deboor_start_slot.
-    - apply init_row_length.
+    - unfold rowW. rewrite init_row_nth by lia. reflexivity.
+    - unfold rowW. apply init_row_length.
     - exact Hc.
-    - reflexivity.
-    - rewrite init_row_nth by lia. reflexivity. }
+    - reflexivity. }
   split.
   - unfold w. exact Hw0.
   - unfold x, w. rewrite Hx0, Hw0. unfold hom_x.
@@ -453,16 +450,16 @@ Proof.
   assert (Hx : nth p (deboor_rounds p span p U u rowX) 0 =
                hom_x ctrl W (n - 1)).
   { rewrite deboor_end_slot.
-    - apply init_row_length.
-    - exact Ha.
-    - unfold rowX. rewrite init_row_nth by lia.
-      replace (span - p + p) with span by lia. reflexivity. }
+    - unfold rowX, span, a21_end_span. rewrite init_row_nth by lia.
+      replace (n - 1 - p + p)%nat with (n - 1)%nat by lia. reflexivity.
+    - unfold rowX. apply init_row_length.
+    - exact Ha. }
   assert (Hw : nth p (deboor_rounds p span p U u rowW) 0 = nthR W (n - 1)).
   { rewrite deboor_end_slot.
-    - apply init_row_length.
-    - exact Ha.
-    - unfold rowW. rewrite init_row_nth by lia.
-      replace (span - p + p) with span by lia. reflexivity. }
+    - unfold rowW, span, a21_end_span. rewrite init_row_nth by lia.
+      replace (n - 1 - p + p)%nat with (n - 1)%nat by lia. reflexivity.
+    - unfold rowW. apply init_row_length.
+    - exact Ha. }
   split.
   - unfold w. exact Hw.
   - unfold x, w. rewrite Hx, Hw. unfold hom_x. apply hom_div. lra.
@@ -500,7 +497,7 @@ Proof.
       apply Rmult_integral in Hz0. destruct Hz0 as [Ha0|Hw].
       - assert (Ha1 : a = 1) by lra.
         rewrite Ha1 in Hz1. apply Rmult_integral in Hz1.
-        destruct Hz1 as [Hw1|Hw1]; lra.
+        destruct Hz1 as [Hw1'|Hw1']; lra.
       - lra. }
     lra. }
   split; [lra|].
@@ -513,8 +510,8 @@ Proof.
       unfold Rdiv. rewrite Rmult_assoc. rewrite Rinv_l by lra.
       rewrite Rmult_1_r, Rmult_1_l. unfold den. lra.
   - split.
-    + unfold x, t, den. field. lra.
-    + unfold y, t, den. field. lra.
+    + unfold x, t, den in *. field. lra.
+    + unfold y, t, den in *. field. lra.
 Qed.
 
 (* QGIS block shape, not a string parser. Weights default to 1.
@@ -545,14 +542,17 @@ Lemma nb_weight_default_one : forall b i,
   nthR (nb_weight_or_one b) i = 1.
 Proof.
   intros b i Hw Hi. unfold nb_weight_or_one, nthR. rewrite Hw.
-  rewrite nth_map with (d:=mkPoint 0 0) by exact Hi. reflexivity.
+  rewrite (@nth_indep R (map (fun _ => 1) (nb_ctrl b)) i 0 1)
+    by (rewrite length_map; exact Hi).
+  rewrite (map_nth (fun _ : Point => 1) (nb_ctrl b) (mkPoint 0 0) i).
+  reflexivity.
 Qed.
 
 Definition nurbs_wf (c : NurbsNet) : Prop :=
   let p := nn_degree c in
   let n := length (nn_ctrl c) in
   (1 <= p < n)%nat /\
-  length (nn_knot c) = n + p + 1 /\
+  length (nn_knot c) = (n + p + 1)%nat /\
   length (nn_weight c) = n /\
   knots_nondecreasing (nn_knot c) /\
   clamped_lo (nn_knot c) p /\
@@ -572,16 +572,14 @@ Theorem nurbs_wf_start : forall c,
   = px (nth 0 (nn_ctrl c) (mkPoint 0 0)).
 Proof.
   intros c [Hp [Hlenk [Hlenw [Hmono [Hlo [Hhi [Hspan Hpos]]]]]]] p u rowX rowW.
-  destruct (nurbs_nl2_start (nn_ctrl c) (nn_weight c) (nn_knot c) p)
-    as [Hw Hx].
-  - lia.
-  - lia.
-  - exact Hlenw.
-  - exact Hlo.
-  - apply Hpos. lia.
-  - split.
-    + rewrite Hw. apply Hpos. lia.
-    + exact Hx.
+  destruct Hp as [Hp1 Hp2].
+  pose proof (nurbs_nl2_start (nn_ctrl c) (nn_weight c) (nn_knot c) p
+    Hp1 Hp2 Hlenw Hlo (Hpos 0%nat ltac:(lia))) as [Hw Hx].
+  split.
+  - unfold u, rowW. rewrite Hw.
+    assert (H0 : 0 < nthR (nn_weight c) 0) by (apply Hpos; lia).
+    lra.
+  - unfold u, rowX, rowW. exact Hx.
 Qed.
 
 Print Assumptions alpha_in_01.

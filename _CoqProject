@@ -103,10 +103,18 @@ theories/SheetHenCircEgg.v
 # Locked inhabitance record + Fresnel-free cloth_eval. Required by
 # SheetHenCook. No Admitted.
 theories/SheetHenClothoidEgg.v
+# ADR-0007 sheet/hen/cook vocabulary, split (module-split gate): core
+# types/oracle/identity/noded/leftover-confluence/overlay/ddir. Required
+# by SheetHenCook. No Admitted.
+theories/SheetHenCookCore.v
+# ADR-0007 chord_split / try_cook_hit + constructive 𝓘, split from
+# SheetHenCook (module-split gate). Required by SheetHenCook. No Admitted.
+theories/SheetHenCookConstructed.v
 # ADR-0007 sheet/hen/cook noding constructor vocabulary + QED∨QEX stops.
 # Host/pure-R. First cook scope is chord–chord, circular–circular
 # (MkCirc), clothoid–clothoid (MkClothoid), NURBS–NURBS (scope).
 # Does not remint CurveSegment / Dart / Hobby. No Admitted.
+# Umbrella re-export of SheetHenCookCore + SheetHenCookConstructed.
 theories/SheetHenCook.v
 # ADR-0007 Γ host MkCirc / CircGamma locked fixture (claimId 0007-gamma-mkcirc).
 # Host/pure-R. atan2-free CircularEgg interpolant; I_ok Hit + try_cook_hit
