@@ -4387,3 +4387,8 @@ theories/TinSurfaceVertex.v
 # lane B
 theories/NurbsSumBridge.v
 theories/NurbsBezierSpan.v
+# lane arc-sim (claimId arc-sim-image): statement/proof split pilot.
+# ArcSimilarityStmt.v = statements only (pinned by check_claim_statements.py);
+# ArcSimilarityImage.v proves exactly its claim/supporting/witness. 3-axiom.
+theories/ArcSimilarityStmt.v
+theories/ArcSimilarityImage.v
