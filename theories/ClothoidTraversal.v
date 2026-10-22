@@ -15,11 +15,13 @@
    Fresnel form (cloth_eval_fresnel_form, A <> 0):
      gamma(t) = gamma(0) + R(phi0) * int_0^{t d} (cos th(u), sin th(u)) du
      th(u)    = psi(sd) + kappa(sd) u + (kappa(ed) - kappa(sd)) u^2 / (2 d)
-   with R(phi0) the rotation by the unit first reference vector
-   (cloth_cos0, cloth_sin0). The heading is therefore phi0 + th(u);
-   phi0 is carried as a unit vector, not as an angle (Stdlib acos
-   prints Classical_Prop.classic). For d = 0 the window is a point
-   and both integrals are over [0, 0].
+   with R(phi0) the rotation by (cloth_cos0, cloth_sin0), the first
+   reference vector over its length: a unit vector when h2 <> 0 (for
+   h2 = 0 both entries are 0). The heading is therefore phi0 + th(u);
+   phi0 is carried as that vector, not as an angle (Stdlib acos prints
+   Classical_Prop.classic). Non-axis fixture: locked_cloth_tilted_heading
+   ((cos0, sin0) = (3/5, 4/5), start tangent (3/5, 4/5)).
+   For d = 0 the window is a point and both integrals are over [0, 0].
    Endpoints stay derived: cloth_p0 / cloth_p1 are gamma(0) / gamma(1),
    and cloth_arc_ends reads them back from the traversal.
 
@@ -30,8 +32,9 @@
 
    Reverse: cloth_rev of ClothoidLinearize (sd and ed swapped on the
    same placement and A; measures kept). Law (-k1, -k0, L), same image
-   (cloth_rev_same_image), arc of the reverse is the arc read from the
-   other end (cloth_rev_arc).
+   read as t -> 1 - t (cloth_rev_reparam), arc of the reverse is the arc
+   read from the other end (cloth_rev_arc). Placed reverse under any
+   linear map: ClothoidPlacement.cloth_placed_rev_law.
    Split: cloth_split of the core. The split rule lemmas already live
    there (cloth_split_eval_left / _right / _join / _left_start /
    _right_end). Here: the children carry the parent law, cut at
@@ -626,7 +629,7 @@ Proof.
   split; [ring|]. split; [ring|]. apply Rabs_Ropp.
 Qed.
 
-Theorem cloth_rev_same_image : forall c t p,
+Theorem cloth_rev_reparam : forall c t p,
   on_cloth (cloth_rev c) t p <-> on_cloth c (1 - t) p.
 Proof.
   intros c t p. unfold on_cloth. rewrite cloth_eval_rev.
@@ -745,6 +748,59 @@ Proof.
   repeat split; field.
 Qed.
 
+(* Non-axis heading: ref1 = (3, 4), ref2 = (-4, 3), so (cos0, sin0) =
+   (3/5, 4/5) with sin0 <> 0. The Fresnel form rotates by that vector,
+   the start tangent of the traversal is (3/5, 4/5), and the law is
+   (0, 1, 1). *)
+Definition tilted_cloth : ClothoidEgg :=
+  mk_cloth (mkAffPlace (mkPoint 0 0) (mkPoint 3 4) (mkPoint (-4) 3)) 1 0 1 None None.
+
+Lemma locked_cloth_tilted_heading :
+  cloth_cos0 tilted_cloth = 3 / 5 /\ cloth_sin0 tilted_cloth = 4 / 5 /\
+  cloth_arc_v tilted_cloth 0 = mkPoint (3 / 5) (4 / 5) /\
+  (forall t, cloth_eval tilted_cloth t =
+     mkPoint (px (cloth_eval tilted_cloth 0)
+                + 3 / 5 * cloth_fresnel_C tilted_cloth t
+                - 4 / 5 * cloth_fresnel_S tilted_cloth t)
+             (py (cloth_eval tilted_cloth 0)
+                + 4 / 5 * cloth_fresnel_C tilted_cloth t
+                + 3 / 5 * cloth_fresnel_S tilted_cloth t)) /\
+  cloth_tk0 tilted_cloth = 0 /\ cloth_tk1 tilted_cloth = 1 /\
+  cloth_tlen tilted_cloth = 1.
+Proof.
+  assert (Hy : cloth_hypot tilted_cloth = 5).
+  { unfold cloth_hypot, cloth_h2, aff_h2, tilted_cloth, mk_cloth. cbn.
+    replace (3 * 3 + 4 * 4) with (5 * 5) by ring. apply sqrt_square. lra. }
+  assert (Hc : cloth_cos0 tilted_cloth = 3 / 5).
+  { unfold cloth_cos0. rewrite Hy. unfold tilted_cloth, mk_cloth. cbn. reflexivity. }
+  assert (Hs : cloth_sin0 tilted_cloth = 4 / 5).
+  { unfold cloth_sin0. rewrite Hy. unfold tilted_cloth, mk_cloth. cbn. reflexivity. }
+  assert (Sg : cloth_sigma tilted_cloth = 1).
+  { unfold cloth_sigma, cloth_cross, aff_cross, tilted_cloth, mk_cloth. cbn.
+    destruct (Rle_dec 0 (3 * 3 - 4 * -4)); [reflexivity | lra]. }
+  assert (D : cloth_d tilted_cloth = 1)
+    by (unfold cloth_d, tilted_cloth, mk_cloth; cbn; ring).
+  assert (Dir : cloth_dir tilted_cloth = 1).
+  { unfold cloth_dir. rewrite D. destruct (Rle_dec 0 1); [reflexivity | lra]. }
+  assert (HA : cloth_A tilted_cloth <> 0)
+    by (unfold tilted_cloth, mk_cloth; cbn; lra).
+  split; [exact Hc|]. split; [exact Hs|].
+  split.
+  - assert (St : cloth_station tilted_cloth 0 = 0).
+    { unfold cloth_station. rewrite Dir. unfold tilted_cloth, mk_cloth. cbn. ring. }
+    assert (Ps : cloth_psi tilted_cloth 0 = 0)
+      by (unfold cloth_psi; rewrite Sg; unfold tilted_cloth, mk_cloth; cbn; field).
+    unfold cloth_arc_v, cloth_vx, cloth_vy. rewrite Dir, St, Ps, Hc, Hs, cos_0, sin_0.
+    f_equal; field.
+  - split.
+    + intro t. rewrite (cloth_eval_fresnel_form tilted_cloth t HA).
+      rewrite D, Rmult_1_r, Hc, Hs. reflexivity.
+    + unfold cloth_tk0, cloth_tk1, cloth_tlen, cloth_kappa.
+      rewrite Dir, D, Sg. unfold tilted_cloth, mk_cloth. cbn [cloth_sd cloth_ed cloth_A].
+      replace (Rabs 1) with 1 by (symmetry; apply Rabs_R1).
+      repeat split; field.
+Qed.
+
 Print Assumptions cloth_sq_deriv.
 Print Assumptions cloth_lin2_deriv.
 Print Assumptions cloth_psi_deriv.
@@ -785,10 +841,11 @@ Print Assumptions cloth_rev_d.
 Print Assumptions cloth_rev_kappa.
 Print Assumptions cloth_rev_dir.
 Print Assumptions cloth_rev_traversal_law.
-Print Assumptions cloth_rev_same_image.
+Print Assumptions cloth_rev_reparam.
 Print Assumptions cloth_rev_arc.
 Print Assumptions cloth_rev_wf.
 Print Assumptions cloth_rev_curvature_law.
 Print Assumptions cloth_split_kappa.
 Print Assumptions cloth_split_traversal_law.
 Print Assumptions locked_cloth_traversal_laws.
+Print Assumptions locked_cloth_tilted_heading.
