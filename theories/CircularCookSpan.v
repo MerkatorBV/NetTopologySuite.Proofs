@@ -40,7 +40,7 @@
 
    WITNESS topic: core · claimId: 64-circ-span-gamma · witness: 64-circ-span-locked
    board: ADR-0007
-   4-axiom (atan2 / Classical_Prop.classic). No Admitted / Axiom / Parameter.
+   3-axiom (IVT atan2 / atan3). No Admitted / Axiom / Parameter.
 
    Author: NetTopologySuite.Proofs contributors
    License: BSD-3-Clause (see LICENSE)
@@ -48,7 +48,7 @@
 
 From Stdlib Require Import ZArith Reals Lra.
 From NTS.Proofs Require Import Distance SheetHenCook CurveGeometry ArcOrient
-  ArcIntersect ArcOffsetThreePoint ArcArcCircles Atan2 AngleBetween
+  ArcIntersect ArcOffsetThreePoint ArcArcCircles Atan2 AtanIvt AngleBetween
   ArcSpanAtan2 CircularCook CircularCookHit.
 Local Open Scope R_scope.
 
@@ -323,10 +323,7 @@ Proof.
   unfold angle_between.
   replace (ux * uy - uy * ux) with 0 by ring.
   assert (Hpos : 0 < ux * ux + uy * uy) by (apply sum_sq_pos; exact Hne).
-  unfold atan2.
-  destruct (Rlt_dec 0 (ux * ux + uy * uy)) as [_|Hx]; [|lra].
-  replace (0 / (ux * ux + uy * uy)) with 0 by (field; lra).
-  apply atan_0.
+  apply atan2_pos_x_axis. exact Hpos.
 Qed.
 
 Lemma arc_angle_from_start_self : forall a,
@@ -977,15 +974,11 @@ Proof.
   cbn [px py arc_start arc_end].
   replace ((5 - 0) * (5 - 0) - (0 - 0) * (0 - 0)) with 25 by ring.
   replace ((5 - 0) * (0 - 0) + (0 - 0) * (5 - 0)) with 0 by ring.
-  unfold atan2.
-  destruct (Rlt_dec 0 0); [lra|].
-  destruct (Rlt_dec 0 0); [lra|].
-  destruct (Rlt_dec 0 25) as [Hy|Hy]; [|lra].
-  reflexivity.
+  apply atan2_pos_y_axis. lra.
 Qed.
 
 Lemma span_arc_A_angle_mid :
-  arc_angle_from_start span_arc_A (arc_mid span_arc_A) = atan (4 / 3).
+  arc_angle_from_start span_arc_A (arc_mid span_arc_A) = atan3 (4 / 3).
 Proof.
   unfold arc_angle_from_start, signed_angle_from, angle_between.
   rewrite span_arc_A_center.
@@ -993,18 +986,18 @@ Proof.
   cbn [px py arc_start arc_mid].
   replace ((5 - 0) * (4 - 0) - (0 - 0) * (3 - 0)) with 20 by ring.
   replace ((5 - 0) * (3 - 0) + (0 - 0) * (4 - 0)) with 15 by ring.
-  unfold atan2.
-  destruct (Rlt_dec 0 15) as [Hx|Hx]; [|lra].
-  replace (20 / 15) with (4 / 3) by field.
-  reflexivity.
+  rewrite atan2_pos_x_eq_atan3 by lra.
+  f_equal. field.
 Qed.
 
 Lemma span_arc_A_mid_principal : arc_mid_on_principal_span span_arc_A.
 Proof.
   unfold arc_mid_on_principal_span, arc_span.
   rewrite span_arc_A_angle_end, span_arc_A_angle_mid.
-  pose proof (atan_bound (4 / 3)) as Hb.
-  pose proof (atan_gt_0 (4 / 3) ltac:(lra)) as Hpos.
+  assert (Hpos : 0 < atan3 (4 / 3) < PI / 2).
+  { replace (atan3 (4 / 3)) with (atan2 (4 / 3) 1).
+    2: { rewrite (atan2_pos_x_eq_atan3 (4 / 3) 1) by lra. f_equal. field. }
+    apply atan2_open_first_quadrant; lra. }
   pose proof PI_RGT_0 as HPI.
   nra.
 Qed.
@@ -1018,15 +1011,11 @@ Proof.
   cbn [px py arc_start arc_end].
   replace ((2 - 7) * (5 - 0) - (0 - 0) * (7 - 7)) with (-25) by ring.
   replace ((2 - 7) * (7 - 7) + (0 - 0) * (5 - 0)) with 0 by ring.
-  unfold atan2.
-  destruct (Rlt_dec 0 0); [lra|].
-  destruct (Rlt_dec 0 0); [lra|].
-  destruct (Rlt_dec 0 (-25)); [lra|].
-  destruct (Rlt_dec (-25) 0) as [Hy|Hy]; [reflexivity | lra].
+  apply atan2_neg_y_axis. lra.
 Qed.
 
 Lemma span_arc_B_angle_mid :
-  arc_angle_from_start span_arc_B (arc_mid span_arc_B) = atan (-4 / 3).
+  arc_angle_from_start span_arc_B (arc_mid span_arc_B) = atan3 (-4 / 3).
 Proof.
   unfold arc_angle_from_start, signed_angle_from, angle_between.
   rewrite span_arc_B_center.
@@ -1034,20 +1023,20 @@ Proof.
   cbn [px py arc_start arc_mid].
   replace ((2 - 7) * (4 - 0) - (0 - 0) * (4 - 7)) with (-20) by ring.
   replace ((2 - 7) * (4 - 7) + (0 - 0) * (4 - 0)) with 15 by ring.
-  unfold atan2.
-  destruct (Rlt_dec 0 15) as [Hx|Hx]; [|lra].
-  replace ((-20) / 15) with (-4 / 3) by field.
-  reflexivity.
+  rewrite atan2_pos_x_eq_atan3 by lra.
+  f_equal. field.
 Qed.
 
 Lemma span_arc_B_mid_principal : arc_mid_on_principal_span span_arc_B.
 Proof.
   unfold arc_mid_on_principal_span, arc_span.
   rewrite span_arc_B_angle_end, span_arc_B_angle_mid.
-  replace (atan (-4 / 3)) with (- atan (4 / 3)).
-  2: { replace (-4 / 3) with (- (4 / 3)) by field. symmetry. apply atan_opp. }
-  pose proof (atan_bound (4 / 3)) as Hb.
-  pose proof (atan_gt_0 (4 / 3) ltac:(lra)) as Hpos.
+  replace (atan3 (-4 / 3)) with (- atan3 (4 / 3)).
+  2: { replace (-4 / 3) with (- (4 / 3)) by field. symmetry. apply atan3_opp. }
+  assert (Hpos : 0 < atan3 (4 / 3) < PI / 2).
+  { replace (atan3 (4 / 3)) with (atan2 (4 / 3) 1).
+    2: { rewrite (atan2_pos_x_eq_atan3 (4 / 3) 1) by lra. f_equal. field. }
+    apply atan2_open_first_quadrant; lra. }
   pose proof PI_RGT_0 as HPI.
   nra.
 Qed.

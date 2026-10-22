@@ -3,6 +3,10 @@
 theories/Real.v
 theories/Lattice.v
 theories/Distance.v
+theories/CurveLength.v
+theories/ArcLength.v
+theories/ArcRectifiable.v
+theories/ArcArea.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
 theories/WktGeoJsonRoundtrip.v
@@ -34,6 +38,10 @@ theories/Validate.v
 theories/Validate_decidable.v
 theories/HotPixel.v
 theories/Azimuth.v
+# Positive derivative => strict increase, from completeness (sup of the
+# good set).  No MVT / Rolle / classic.  Discharges ClothoidResidual's
+# former H_mvt premise.  claimId: none.
+theories/RealMonotone.v
 theories/ClothoidResidual.v
 theories/ClothoidDegenerate.v
 theories/ClothoidHalley.v
@@ -100,8 +108,21 @@ theories/ChordCook.v
 theories/SheetHenCircEgg.v
 # ADR-0007 ClothoidEgg payload for host MkClothoid
 # (claimId 0007-intake-mkclothoid / 0007-clothoid-first-cook).
-# Locked inhabitance record + Fresnel-free cloth_eval. Required by
-# SheetHenCook. No Admitted.
+# Fresnel cloth_eval, split for the module gate: core, bounds, frames.
+# Umbrella keeps the old name. Required by SheetHenCook. No Admitted.
+theories/LipInt.v
+theories/LipIntFTC.v
+# Leibniz rule for lint (claimId: none). Uniform modulus, no MVT.
+theories/LipIntLeibniz.v
+theories/MetricSpeed.v
+theories/MetricEnvelope.v
+theories/MetricArea.v
+theories/MetricGreen.v
+theories/MetricCircleSmoke.v
+theories/SheetHenClothoidCore.v
+theories/ClothoidTangent.v
+theories/SheetHenClothoidBounds.v
+theories/SheetHenClothoidFrames.v
 theories/SheetHenClothoidEgg.v
 # ADR-0007 sheet/hen/cook vocabulary, split (module-split gate): core
 # types/oracle/identity/noded/leftover-confluence/overlay/ddir. Required
@@ -149,6 +170,10 @@ theories/SheetHenCookLoopModulo.v
 # idle. leftover_quad_width stays conserved. Park stays LoopObligation.
 # NURBS belayed. No Axiom / Parameter / stub.
 theories/SheetHenCookLoopTerm.v
+# forall-bag letter 1 (claimId 0007-forall-bag, #816). Host/pure-R.
+# Support, window, bag, progress hit, step, noded. Invariant only.
+# Not LeftoverBagTermArm / LoopDischarged. No Axiom / Parameter / stub.
+theories/SheetHenBag.v
 # Circ leftover bag for |H|=2 + noded G on the locked vesica
 # (claimId 0007-circ-leftover-two-hit). Host/pure-R. Reuses leftover-bag
 # shape (interior 𝓘 Hit / Decline idle). Locked measure 2→1→0. Parks ρ
@@ -221,16 +246,64 @@ theories/SidecarGeodesicEgg.v
 # EggClothoid stays. Host/pure-R. First cook stays chord–chord.
 # Not a spiral interpolant / noder. Not Campaign I–II. No Admitted.
 theories/SidecarSpiralEgg.v
-# ADR-0007 intake angles-from-points (IntakeAngles). Circumcircle
-# + inhabited CircularEgg angle fields from control points.
-# Host/pure-R. 3-axiom. No Atan2.v. Not a CircGamma remint.
+# ADR-0007 intake angles-from-points. Core + chart slices, letter
+# in IntakeAngles. Circumcircle and chart theta0 / sweep.
+# Host/pure-R. 3-axiom atan2. Not a CircGamma remint.
 # Required by IntakeWalker CircUnknown. No Admitted.
+theories/IntakeAnglesCore.v
+theories/IntakeAnglesChart.v
 theories/IntakeAngles.v
+# ISO CIRCLE full turn (IntakeCircle). θ₀ is the chart angle of A;
+# sweep is ±2π from orient(A,B,C). CIRCULARSTRING(A,B,A) Declines.
+# claimId 0007-intake-angles, not reminted. No Admitted.
+theories/IntakeCircle.v
+# ISO CLOTHOID normalizer 1 (IsoClothoidIntake). Direct field
+# copy into ClothoidEgg; similarity frame or named Decline.
+# claimId 0007-intake-mkclothoid, not reminted. No Admitted.
+theories/IsoClothoidIntake.v
+# SPIRALCURVE intake and JTS clothoid decline taxonomy
+# (IntakeSpiralJts). Clothoid kind reuses try_iso_clothoid.
+# Other kinds are SpiralOther. claimId 0007-intake-spiral.
+# No Admitted.
+theories/IntakeSpiralJts.v
+# Normalizer 2 (ClothoidNorm2). Start state + (k0, k1, L)
+# builds a ClothoidEgg. claimId 0007-norm2-state. No Admitted.
+theories/ClothoidNorm2.v
+# Arc row of the compound fold (ArcMemberState). arc_exit / arc_entry
+# store MemberState from IntakeSpiralJts. claimId none. No Admitted.
+theories/ArcMemberState.v
+# SPIRALCURVE front (IntakeSpiralFront). Start state onto norm2.
+# claimId none. No Admitted.
+theories/IntakeSpiralFront.v
+# Signed curvature and the JTS clothoid MemberState fold
+# (SignedCurvature). claimId none. No Admitted.
+theories/SignedCurvature.v
+# Compound MemberState fold (IntakeCompoundFold). claimId none.
+# No Admitted.
+theories/IntakeCompoundFold.v
 # ADR-0007 first-slice intake walker (IntakeWalker). Tagged CST →
 # SHC bag | Intake Decline. Reuses MkChord / MkCirc / MkClothoid.
 # Host/pure-R. Grammar pin: grammars-v4 #4997. No new oracle
 # keyword. No Admitted.
 theories/IntakeWalker.v
+# Circle bag (IntakeWalkerCircle). Two half-span MkCirc,
+# hens at A and the antipode. claimId 0007-intake-angles.
+# Not a self-loop. F5 chart side stays open. No Admitted.
+theories/IntakeWalkerCircle.v
+# Clothoid lemmas split out of IntakeWalker
+# (IntakeWalkerClothoid). claimId 0007-intake-mkclothoid.
+# No Admitted.
+theories/IntakeWalkerClothoid.v
+# Carried θ₀/Δθ face (IntakeCarried). try_carried only.
+# Not the WKT path. Not a CST carrier. No new witness.
+theories/IntakeCarried.v
+# Walker face of ISO CLOTHOID normalizer 1. Hit implies cloth_wf;
+# red declines and the non-locked sample. No new witness.
+theories/IsoClothoidIntakeMap.v
+# Walker face of SPIRALCURVE / JTS declines
+# (IntakeSpiralJtsMap). claimId 0007-intake-spiral.
+# No Admitted.
+theories/IntakeSpiralJtsMap.v
 # ADR-0007 SQL/MM signed tag maps (SqlMmSignedTag).
 # τ on eggs; ρ on IntakeWalker productions; τ=μ after
 # singleton bags. CIRCLE iff |sweep|=2π. κ: 2/8 or none.
@@ -245,6 +318,11 @@ theories/IntakeGeodesic.v
 # Science/arXiv 1804.07389 locked endpoints on existing μ.
 # claimId 0007-famous-geodesicstring. No Admitted.
 theories/IntakeFamousGeodesic.v
+# ADR-0007 planar geodesic cook (IntakeGeodesicCook) + Karney park
+# (IntakeKarneyPark). Cook supplies the G3 closed terms K2 pins;
+# park is not a first-cook expand. 3-axiom. No Admitted.
+theories/IntakeGeodesicCook.v
+theories/IntakeKarneyPark.v
 # RelateNG product face lives in _CoqProject.full (RelateNGFace.v):
 # it packages the DE-9IM / RelateNG zoo, which is not host-lane.
 # Integer circle–circle discriminant + hen mint (I_circles_z). 0-axiom.
@@ -266,6 +344,13 @@ theories/Overlay.v
 theories/CurveGeometry.v
 theories/ArcOrient.v
 theories/ArcChordApprox.v
+# GEOS-aligned uniform chord walk on a certified egg.
+# claimId: 0007-arc-linearize. 3-axiom. n = subdiv_n step Δθ
+# inhabits subdiv_ok (ceil via archimed / up). No Admitted.
+theories/ArcLinearize.v
+theories/LinearizeContract.v
+theories/ArcLinearizeBound.v
+theories/ArcLinearizeContract.v
 theories/ArcIntersect.v
 # Half-angle chart ζ = tan(φ/2), pole opposite the arc mid. ζ is not tag τ. Refs #771.
 # claimId: none. Freeze held. No Admitted.
@@ -274,6 +359,31 @@ theories/CircleChart.v
 # docs/audit-exceptions.txt: audit_axioms.sh must enforce the footprint.
 # Consumed by NurbsConicExact golden_phi (2 * atan3).
 theories/AtanIvt.v
+# JTS Math.atan2 / NTS Angle. claimId: none.
+# 3-axiom IVT atan2. Not audit-excepted.
+theories/Atan2.v
+# Host clothoid length |ed-sd|. claimId 0007-clothoid-length.
+theories/ClothoidLengthAbs.v
+# Heading multiples of pi/2. claimId none. Envelope letter is next.
+theories/ClothoidAxis.v
+# Strict knot list of those stations. claimId none.
+theories/ClothoidKnots.v
+# AABB via envelope_aabb. claimId 0007-clothoid-envelope.
+theories/ClothoidEnvelope.v
+# Clothoid × chord signed distance. No FTC. claimId 0007-clothoid-chord-rho.
+# Does not wire bag_run_arm. No new Egg arm.
+theories/ClothoidChordRho.v
+# Clothoid uniform linearizer. claimId 0007-clothoid-linearize.
+theories/ClothoidFresnelInc.v
+theories/ClothoidLinearize.v
+theories/ClothoidLinearizeContract.v
+# W1 curve-ring winding (signed visual-angle sum). claimId 0007-curve-ring-wind.
+# Headline wind_integer. Not the ray-crossing count in WindingNumber.v.
+# Does not flip RNG_JordanUncond.
+theories/CurveRingWinding.v
+# Category C: Ratan quadrant body equals Atan2.atan2. claimId: none.
+# Audit-excepted (Classical_Prop.classic via Ratan).
+theories/Atan2RatanBridge.v
 # C1 kernel: chord line vs chart circle as a zeta-quadratic.
 # Oracle lane. Imports CircleChart. Not an IResult remint.
 # No C1.4-C1.14. No Admitted.
@@ -284,6 +394,97 @@ theories/ChartLineQuadratic.v
 # 3-axiom. No Admitted.
 theories/ZetaEggBridge.v
 # #770 P: a C1 zeta segment hit carries the host on_circ / on_chord check
-# at t_of_zeta / tj_of, then the F-series fixtures. Oracle lane; host
-# I_ok unchanged. 3-axiom. No Admitted.
+# at t_of_zeta / tj_of, then the F-series fixtures. Oracle lane.
+# 3-axiom. No Admitted.
 theories/ZetaHostHit.v
+# Host 𝓘 on in-scope MkCirc × MkChord (claimId 0007-host-circ-chord-oracle).
+# Soundness, completeness, named full-span / degenerate declines.
+# Locked CC LS+CS does not decline the ∀-bag; interior quarter progresses.
+# 3-axiom. No Admitted.
+theories/HostCircChordOracle.v
+# T1a. Half-plane clip and the triangle-pair I∩I entry.
+# claimId: tri-de9im-a. Witness ii_nonempty_iff.
+# Secondary witness: clip_correct. 3-axiom. No Admitted.
+theories/ConvexClip.v
+theories/ConvexClipPoly.v
+theories/ConvexClipComplete.v
+theories/TrianglePairCommon.v
+theories/TrianglePairClip.v
+theories/TrianglePairEdge.v
+theories/TrianglePairBound.v
+theories/TrianglePairExterior.v
+# Family witness tri_de9im_correct. claimId tri-de9im-a. 3-axiom. No Admitted.
+theories/TrianglePairMatrix.v
+# TIN validity. claimId tri-de9im-t3. 3-axiom. No Admitted.
+theories/TrianglePairTin.v
+# TIN surface. claimId tri-de9im-tin-surface. 3-axiom. No Admitted.
+theories/TrianglePairTinSurface.v
+# TIN × triangle. claimId tri-de9im-t5. 3-axiom. No Admitted.
+theories/TrianglePairTinRelate.v
+# Pinned tri_de9im fixture table. claimId tri-de9im-q. Not a Q clip.
+# 3-axiom. No Admitted.
+theories/TrianglePairDe9imQ.v
+# ∀-bag letter 2 slices. SheetHenRho.v re-exports them.
+# claimId none. 3-axiom. No Admitted.
+theories/SheetHenRhoCarrier.v
+theories/SheetHenRhoCount.v
+theories/SheetHenRhoEnds.v
+theories/SheetHenRhoWitness.v
+# ∀-bag letter 2. ρ and finiteness. claimId none.
+# 3-axiom. No Admitted.
+theories/SheetHenRho.v
+# ∀-bag letter 3. Admissible step, strict ρ, structural bag_run.
+# claimId 0007-loop-letter3-strict. 3-axiom. No Admitted.
+theories/SheetHenBagRun.v
+# Letter 5: concrete pick and per-class hit parameters. Stacked on letter 3.
+# 3-axiom. No Admitted.
+theories/SheetHenLoop3.v
+# Headline: pick_bag_spec. claimId 0007-loop-letter5-pick. witness pick_bag_spec. Consumer: letter5_obligation.
+# 3-axiom. No Admitted.
+theories/SheetHenPickSpec.v
+# Headline: noded_ov_rho_zero. claimId 0007-loop-letter6. witness noded_ov_rho_zero.
+# Consumer: col_fixture_ov_not_noded. 3-axiom. No Admitted.
+# Converse is SheetHenRhoLoop. This file does not claim the iff.
+theories/SheetHenNodedOv.v
+# Headline: gap_not_ov. claimId none. Consumer: SheetHenNodedOv.
+# Regression gap_counted, gap_bag_counted, gap_rho_pos. 3-axiom. No Admitted.
+theories/SheetHenNodedOvGap.v
+# Letter 6a-ii. claimId none. Headline: bag_run_arm_noded.
+# CookLoopRho := rho_loop_discharged. Confluence conjunct is 6a-iii.
+# cook_loop_status stays LoopObligation. 3-axiom. No Admitted.
+theories/SheetHenRhoLoop.v
+# Letter 6a-iii. claimId none. Headline: run_vset_determined.
+# cook_loop_rho_holds discharges CookLoopRho. cook_loop_status stays LoopObligation.
+# 3-axiom. No Admitted.
+theories/SheetHenRhoConf.v
+# Letter 6a-iii fixture. claimId none. pick_bag and pick_rev on three chords.
+# 3-axiom. No Admitted.
+theories/SheetHenRhoConfFix.v
+# Letter 3 fixtures: locked quarter, #892 halves, collinear overlap,
+# tangency, partial co-circular arcs. 3-axiom. No Admitted.
+theories/SheetHenBagRunFix.v
+# lane C
+# TIN topology. claimId tri-de9im-t4. 3-axiom. No Admitted.
+theories/TinSurfaceTopo.v
+theories/TinSurfaceVertex.v
+# TIN x triangle remaining DE-9IM cells. claimId tri-de9im-t6. 3-axiom. No Admitted.
+theories/TrianglePairTinRelate2.v
+# lane B
+# bern is the host name in bz_basis_bern. BernsteinBasis was full-only.
+theories/BernsteinBasis.v
+theories/NurbsSumBridge.v
+theories/NurbsBezierSpan.v
+# lane A
+# CS/CC IsSimple: no interior vertex added and no coincident pieces.
+# claimId 0007-cscc-issimple. Reads the loop. 3-axiom. No Admitted.
+theories/SheetHenSimple.v
+# CurvePolygon rings from that fixpoint. claimId 0007-cp-loop-rings.
+# Does not replace CurvePolygonValid.v. 3-axiom. No Admitted.
+theories/CurvePolygonLoopValid.v
+# lane clothoid-harden
+# Mode A on the host Fresnel clothoid (#883): window-start Fresnel form,
+# unit speed, curvature linear in arc length, reverse and split laws,
+# placed curvature (similarity kappa/lam; GEOS #1566 shear enclosure).
+# claimId none new. 3-axiom. No Admitted.
+theories/ClothoidTraversal.v
+theories/ClothoidPlacement.v

@@ -53,7 +53,7 @@ Do **not** mint `69-b`. Packaging facades (`JordanRingKit.v`,
 | Surface | Pin | Honesty |
 |---|---|---|
 | Oracle-mode checklist W1–W5 | `OracleCurveChecklist.v : w1_w5_coverage_table_complete` | Green by table repair. W5 as tabled is refuted (`w1_w5_table_as_tabled_refuted`). Do not remint `69-a`. |
-| Child #64 circular-arc scope | retired; residue #508 #509 #510 #511 | Owner already retired #508 after [`508-closing-summary.md`](508-closing-summary.md). #564 stays OPEN. |
+| Child #64 circular-arc scope | retired; residue #508 #509 #510 #511 | #508 QEX (`ExactCurveEpic508.v : ticket_508_qed_or_qex` RIGHT). QEX ≠ owner accept. #564 stays OPEN. |
 | Child #65 linear+arc buffer | retired; residue #515 #513 #514 | #515 is the hero shot. |
 | Child #66 precision / OverlayNG | retired; residue #517 #518 #519 #520 | C2 and arc Hobby stay parks. |
 | Child #67 RelateNG | retired by owner 2026-08-23 | Ticket 11 is overtaken, not a second-pass accept. Head is #523 (open, not accepted). Leftover `Ⅰ`–`Ⅸ` stay on [`map-522-leftovers.md`](map-522-leftovers.md). |
@@ -99,7 +99,7 @@ GitHub issue comment as the source of record.
 
 - Remint `69-a`. Do not mint `69-b`.
 - Remint `508-a`…`508-h` or mint `508-i`.
-- Remint leftover `Ⅰ`–`Ⅹ` or mint leftover `Ⅺ`. Do not mint `522-n`.
+- Remint leftover `Ⅰ`–`Ⅹ` or mint leftover `Ⅺ`. Do not mint `522-n`. Ⅹ stays unminted by owner ruling (Jeroen, 2026-09-28) even though #880 lifted it.
 - Treat `M-LEN-ZOO` ✅ as "the zoo is exact."
 - Treat ticket 523 QEX, or leftover `Ⅰ`–`Ⅸ` QED, as owner accept of #523.
 - Reopen #67 or #522 from this letter.
