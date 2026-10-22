@@ -8,29 +8,57 @@
      curvature = det M * cross(v, a) / |M v|^3      (signed_curv_lin)
 
    For a similarity M = lam * R (lam > 0, R a rotation) this is
-   kappa / lam (signed_curv_similarity, cloth_similarity_curvature).
-   For a reflection-similarity it is - kappa / lam
-   (signed_curv_reflection). For a general linear M it is not kappa / lam
-   and not the constructive t / A^2 (cloth_placed_curvature).
+   kappa / lam (signed_curv_similarity, cloth_similarity_curvature), and
+   the placed curve keeps a linear law (k0 / lam, k1 / lam, lam * L) in
+   placed arc length (cloth_similarity_scaled_law). For a
+   reflection-similarity it is - kappa / lam (signed_curv_reflection).
+   For a general linear M it need not be kappa / lam nor the
+   constructive t / A^2 (cloth_placed_curvature); counterexample
+   geos_shear_curvature_ne_naive.
 
-   GEOS #1566 (libgeos/geos PR, head 6eb13d1): Clothoid::curvatureOf
-   returns direction * t / A^2 when the frame is not a similarity. The
-   oracle case "sheared placement" (u = (2, 0), v = (1/2, 1), A = 5,
-   t0 = 1, t1 = 12) gives 1/25 = 0.04 at the start. Here the placed
-   start curvature lies in (0.00985, 0.00986)
-   (geos_shear_curvature_enclosure), so it is not 1/25
-   (geos_shear_curvature_ne_naive). The GEOS test table lists
-   0.009855916895262518 for that case; that value is inside the
-   enclosure, and it is not proved here beyond the enclosure.
-   The rational side of the enclosure is the Q twin geos_shear_q_check:
-   Taylor bounds of cos and sin at 1/50, the squared speed, and four
-   comparisons, decided by vm_compute and transported to R with Qreals.
+   The host AffPlace is rigid or reflected only: it reads the direction
+   of ref1 and the sign of cross(ref1, ref2) (SheetHenClothoidCore
+   cloth_sigma / cloth_cos0 / cloth_sin0). A sheared or other
+   non-similarity placement exists only as the external placed o M of
+   this file. GEOS's frame u = (2, 0), v = (1/2, 1) given to the host
+   directly gives the naive 1/25 (host_affplace_curvature_ignores_shear).
+
+   Reverse under any linear M: the signed curvature flips sign and the
+   ends swap (cloth_placed_rev_law; no similarity assumption). The
+   split / linear-curvature law of ClothoidTraversal carries over to
+   placed curves only for similarity placements: the sheared curvature
+   is not monotone along the window (geos_shear_curvature_not_affine).
+
+   GEOS #1566 (libgeos/geos PR, pinned at 6eb13d1; fixed later on
+   libgeos/geos#1566 by 78df3cf "Return the placed curvature of a
+   sheared clothoid", in the PR head f93c059): at 6eb13d1
+   Clothoid::curvatureOf returns direction * t / A^2 when the frame is
+   not a similarity. Oracle case "sheared placement" (u = (2, 0),
+   v = (1/2, 1), A = 5, t0 = 1, t1 = 12; geos_shear_columns), oracle
+   values from the GEOS test table:
+     start 0.009855916895262518 in (0.0098559168952, 0.0098559168953)
+           (geos_shear_curvature_enclosure); 6eb13d1 gave 1/25;
+     end   0.15895182898207377 in (0.158948, 0.158953)
+           (geos_shear_end_curvature_enclosure); 6eb13d1 gave 12/25;
+     reversed ends: the negated, swapped enclosures
+           (geos_shear_rev_curvature_ends).
+   Each enclosure also states that V and Acc are the placed derivatives
+   (geos_shear_placed_derivs_at). Enclosures come from Stdlib
+   cos_bound / sin_bound at n = 1, double-angle steps and rounded
+   rational bounds, all discharged by lra. The Q twin
+   geos_shear_q_check recomputes the start comparisons in Q by
+   vm_compute as a cross-check; no proof uses it.
 
    Parked: an error bound for far-field Fresnel quadrature (GEOS uses
    fixed 0.5-wide 16-point Gauss-Legendre panels past the series
    window). LipInt is a dyadic Riemann integral; there is no
    Gauss-Legendre remainder theorem in the corpus, so no bound is
-   stated.
+   stated. Parked: placed length (the length of placed o M, which GEOS
+   getLength has to integrate across the inflection for a sheared
+   frame; no placed length is stated here). Parked: the CompoundCurve junction snap (GEOS 458f82e snaps
+   clothoid endpoints to their neighbours; not modelled). Parked: Z / M
+   (the placement here is planar; GEOS frames with uz, vz <> 0 and
+   measures are out of scope).
 
    claimId: none new. No claim row. No WITNESS.
    3-axiom host. No Admitted / Axiom / Parameter.
@@ -39,9 +67,10 @@
    AI assistance disclosure: AI-drafted; human review pending.
    ========================================================================== *)
 
-From Stdlib Require Import Reals Lra QArith Qreals Ranalysis1.
+From Stdlib Require Import Reals Lra QArith Ranalysis1.
 From NTS.Proofs Require Import Distance SheetHenClothoidCore ClothoidNorm2
-  SignedCurvature SheetHenClothoidFrames SheetHenClothoidBounds ClothoidTraversal.
+  SignedCurvature SheetHenClothoidFrames SheetHenClothoidBounds ClothoidLinearize
+  ClothoidTraversal.
 Local Open Scope R_scope.
 
 Record Lin2 : Type := mkLin2 { l11 : R; l12 : R; l21 : R; l22 : R }.
@@ -228,12 +257,92 @@ Proof.
   rewrite cloth_kappa_traversal_linear by exact Hd. reflexivity.
 Qed.
 
+(* Similarity placement, read as a traversal law of the placed curve:
+   speed lam, placed arc length lam * s, curvature linear in placed arc
+   length with law (k0 / lam, k1 / lam, lam * L). Only for a
+   similarity: a sheared placement is not linear in arc length
+   (geos_shear_curvature_not_affine). *)
+Theorem cloth_similarity_scaled_law : forall c lam co si s,
+  cloth_A c <> 0 -> cloth_h2 c <> 0 -> cloth_d c <> 0 ->
+  0 < lam -> co * co + si * si = 1 ->
+  sqrt (curv_speed2 (lin_ap (lin_sim lam co si) (cloth_arc_v c s))) = lam /\
+  signed_curv (lin_ap (lin_sim lam co si) (cloth_arc_v c s))
+              (lin_ap (lin_sim lam co si) (cloth_arc_a c s))
+    = cloth_tk0 c / lam
+      + (cloth_tk1 c / lam - cloth_tk0 c / lam) * (lam * s) / (lam * cloth_tlen c).
+Proof.
+  intros c lam co si s HA Hh Hd Hl Hu.
+  pose proof (cloth_tlen_pos c Hd) as HL.
+  split.
+  - rewrite lin_sim_speed2, cloth_arc_speed2 by assumption.
+    rewrite Rmult_1_r. apply sqrt_square. lra.
+  - destruct (cloth_similarity_curvature c (mkPoint 0 0) lam co si s HA Hh Hd Hl Hu)
+      as (K & _ & _).
+    rewrite K. field. split; lra.
+Qed.
+
+(* Reverse under any linear placement: the placed reverse at s is the
+   placed forward at L - s with the tangent negated, so the signed
+   curvature flips sign. No similarity assumption. *)
+Lemma cloth_rev_station : forall c s, cloth_d c <> 0 ->
+  cloth_station (cloth_rev c) s = cloth_station c (cloth_tlen c - s).
+Proof.
+  intros c s Hd. unfold cloth_station. rewrite cloth_rev_dir by exact Hd.
+  rewrite <- (cloth_dir_abs c).
+  pose proof (cloth_dir_sq c) as HD.
+  unfold cloth_rev, mk_cloth, cloth_d. cbn [cloth_sd cloth_ed].
+  replace (cloth_sd c + cloth_dir c * (cloth_dir c * (cloth_ed c - cloth_sd c) - s))
+    with (cloth_sd c + (cloth_dir c * cloth_dir c) * (cloth_ed c - cloth_sd c)
+          - cloth_dir c * s) by ring.
+  rewrite HD. ring.
+Qed.
+
+Lemma cloth_rev_vx : forall c u, cloth_vx (cloth_rev c) u = cloth_vx c u.
+Proof. intros [pl A sd ed m0 m1] u. reflexivity. Qed.
+
+Lemma cloth_rev_vy : forall c u, cloth_vy (cloth_rev c) u = cloth_vy c u.
+Proof. intros [pl A sd ed m0 m1] u. reflexivity. Qed.
+
+Lemma signed_curv_neg_tangent : forall v a,
+  signed_curv (mkPoint (- px v) (- py v)) a = - signed_curv v a.
+Proof.
+  intros v a. unfold signed_curv.
+  replace (curv_speed2 (mkPoint (- px v) (- py v))) with (curv_speed2 v)
+    by (unfold curv_speed2; cbn; ring).
+  unfold curv_cross. cbn. unfold Rdiv. ring.
+Qed.
+
+Theorem cloth_placed_rev_law : forall c M s, cloth_d c <> 0 ->
+  signed_curv (lin_ap M (cloth_arc_v (cloth_rev c) s))
+              (lin_ap M (cloth_arc_a (cloth_rev c) s))
+    = - signed_curv (lin_ap M (cloth_arc_v c (cloth_tlen c - s)))
+                    (lin_ap M (cloth_arc_a c (cloth_tlen c - s))).
+Proof.
+  intros c M s Hd.
+  assert (Ev : lin_ap M (cloth_arc_v (cloth_rev c) s)
+               = mkPoint (- px (lin_ap M (cloth_arc_v c (cloth_tlen c - s))))
+                         (- py (lin_ap M (cloth_arc_v c (cloth_tlen c - s))))).
+  { unfold cloth_arc_v. rewrite cloth_rev_dir, cloth_rev_station by exact Hd.
+    rewrite !cloth_rev_vx, !cloth_rev_vy. unfold lin_ap. cbn. f_equal; ring. }
+  assert (Ea : cloth_arc_a (cloth_rev c) s = cloth_arc_a c (cloth_tlen c - s)).
+  { unfold cloth_arc_a. rewrite cloth_rev_station by exact Hd.
+    rewrite !cloth_rev_kappa, !cloth_rev_vx, !cloth_rev_vy. reflexivity. }
+  rewrite Ev, Ea. apply signed_curv_neg_tangent.
+Qed.
+
 (* GEOS #1566 oracle case "sheared placement": u = (2, 0), v = (1/2, 1),
    A = 5, t0 = 1, t1 = 12. *)
 Definition geos_shear : Lin2 := mkLin2 2 (1 / 2) 0 1.
 
 Definition geos_shear_egg : ClothoidEgg :=
   mk_cloth (place_east (mkPoint 3 4)) 5 1 12 None None.
+
+(* GEOS places P(t) = origin + A C2(t/A) u + A S2(t/A) v: the columns of
+   geos_shear are u and v, and geos_shear_egg is the unit-frame egg. *)
+Lemma geos_shear_columns :
+  lin_ap geos_shear (mkPoint 1 0) = mkPoint 2 0 /\
+  lin_ap geos_shear (mkPoint 0 1) = mkPoint (1 / 2) 1.
+Proof. unfold lin_ap, geos_shear. cbn. split; f_equal; ring. Qed.
 
 Lemma geos_shear_det : lin_det geos_shear = 2.
 Proof. unfold lin_det, geos_shear. cbn. ring. Qed.
@@ -260,101 +369,173 @@ Proof.
   unfold cloth_dir. rewrite geos_shear_d. destruct (Rle_dec 0 11); [reflexivity | lra].
 Qed.
 
-(* GEOS curvatureOf returns direction * t / A^2 for a non-similarity
-   frame: 1 / 25 at the start. That is cloth_tk0 of the constructive egg. *)
+Lemma geos_shear_tlen : cloth_tlen geos_shear_egg = 11.
+Proof. unfold cloth_tlen. rewrite geos_shear_d. apply Rabs_right. lra. Qed.
+
+(* GEOS curvatureOf at 6eb13d1 returns direction * t / A^2 for a
+   non-similarity frame: 1 / 25 at the start and 12 / 25 at the end.
+   Those are cloth_tk0 / cloth_tk1 of the constructive egg. *)
 Lemma geos_shear_naive_value : cloth_tk0 geos_shear_egg = 1 / 25.
 Proof.
   unfold cloth_tk0, cloth_kappa. rewrite geos_shear_dir, geos_shear_sigma.
   unfold geos_shear_egg, mk_cloth. cbn [cloth_sd cloth_A]. field.
 Qed.
 
-Lemma geos_shear_tangent0 :
-  cloth_vx geos_shear_egg (cloth_station geos_shear_egg 0) = cos (1 / 50) /\
-  cloth_vy geos_shear_egg (cloth_station geos_shear_egg 0) = sin (1 / 50) /\
-  cloth_kappa geos_shear_egg (cloth_station geos_shear_egg 0) = 1 / 25.
+Lemma geos_shear_end_naive_value : cloth_tk1 geos_shear_egg = 12 / 25.
 Proof.
-  destruct geos_shear_frame as [Hc Hs].
-  assert (Est : cloth_station geos_shear_egg 0 = 1).
-  { unfold cloth_station. rewrite geos_shear_dir.
-    unfold geos_shear_egg, mk_cloth. cbn. ring. }
-  assert (Ep : cloth_psi geos_shear_egg 1 = 1 / 50).
-  { unfold cloth_psi. rewrite geos_shear_sigma.
-    unfold geos_shear_egg, mk_cloth. cbn [cloth_A]. field. }
-  rewrite Est. unfold cloth_vx, cloth_vy. rewrite Hc, Hs, Ep.
-  split; [ring|]. split; [ring|].
-  unfold cloth_kappa. rewrite geos_shear_sigma.
-  unfold geos_shear_egg, mk_cloth. cbn [cloth_A]. field.
+  unfold cloth_tk1, cloth_kappa. rewrite geos_shear_dir, geos_shear_sigma.
+  unfold geos_shear_egg, mk_cloth. cbn [cloth_ed cloth_A]. field.
 Qed.
 
-(* The Q twin: Taylor enclosures of cos and sin at 1/50, the squared speed
-   N of the sheared tangent, and the four rational comparisons the real
-   proof needs. Computed by vm_compute below, not written down. *)
-Definition q_z : Q := 1 # 50.
-Definition q_clo : Q := 1 - q_z * q_z * (1 # 2).
-Definition q_chi : Q := 1 - q_z * q_z * (1 # 2) + q_z * q_z * q_z * q_z * (1 # 24).
-Definition q_slo : Q := q_z - q_z * q_z * q_z * (1 # 6).
-Definition q_shi : Q := q_z.
-Definition q_N (a b : Q) : Q := (2 * a + b * (1 # 2)) * (2 * a + b * (1 # 2)) + b * b.
-Definition q_rl : Q := 20096 # 10000.
-Definition q_rh : Q := 20098 # 10000.
-Definition q_kl : Q := 985 # 100000.
-Definition q_kh : Q := 986 # 100000.
-Definition q_cr : Q := 2 # 25.
-
-Definition geos_shear_q_check : bool :=
-  Qle_bool (q_rl * q_rl) (q_N q_clo q_slo) &&
-  Qle_bool (q_N q_chi q_shi) (q_rh * q_rh) &&
-  negb (Qle_bool (q_kh * (q_N q_clo q_slo * q_rl)) q_cr) &&
-  negb (Qle_bool q_cr (q_kl * (q_N q_chi q_shi * q_rh))).
-
-Lemma geos_shear_q_check_true : geos_shear_q_check = true.
-Proof. vm_compute. reflexivity. Qed.
-
-Lemma geos_q2r_lit : forall n d, Q2R (n # d) = IZR n / IZR (Zpos d).
-Proof. intros. reflexivity. Qed.
-
-Lemma geos_q2r_qN : forall a b,
-  Q2R (q_N a b) = (2 * Q2R a + Q2R b * (1 / 2)) * (2 * Q2R a + Q2R b * (1 / 2))
-                  + Q2R b * Q2R b.
+Lemma geos_shear_nondeg :
+  cloth_A geos_shear_egg <> 0 /\ cloth_h2 geos_shear_egg <> 0 /\
+  cloth_d geos_shear_egg <> 0.
 Proof.
-  intros a b. unfold q_N.
-  rewrite !Q2R_plus, !Q2R_mult, Q2R_plus, !Q2R_mult.
-  replace (Q2R 2) with 2 by (unfold Q2R; cbn; field).
-  replace (Q2R (1 # 2)) with (1 / 2) by (unfold Q2R; cbn; field).
+  split; [unfold geos_shear_egg, mk_cloth; cbn; lra|].
+  split; [|rewrite geos_shear_d; lra].
+  unfold cloth_h2, geos_shear_egg, mk_cloth. cbn [cloth_place].
+  rewrite east_h2. lra.
+Qed.
+
+Lemma geos_shear_station : forall s, cloth_station geos_shear_egg s = 1 + s.
+Proof.
+  intro s. unfold cloth_station. rewrite geos_shear_dir.
+  unfold geos_shear_egg, mk_cloth. cbn. ring.
+Qed.
+
+Lemma geos_shear_arc_v : forall s,
+  cloth_arc_v geos_shear_egg s
+    = mkPoint (cos ((1 + s) * (1 + s) / 50)) (sin ((1 + s) * (1 + s) / 50)).
+Proof.
+  intro s. destruct geos_shear_frame as [Hc Hs].
+  assert (Ep : cloth_psi geos_shear_egg (1 + s) = (1 + s) * (1 + s) / 50).
+  { unfold cloth_psi. rewrite geos_shear_sigma.
+    unfold geos_shear_egg, mk_cloth. cbn [cloth_A]. field. }
+  unfold cloth_arc_v. rewrite geos_shear_dir, geos_shear_station.
+  unfold cloth_vx, cloth_vy. rewrite Hc, Hs, Ep. f_equal; ring.
+Qed.
+
+(* Squared speed of the sheared tangent at heading p. *)
+Definition geos_shear_N (p : R) : R :=
+  (2 * cos p + sin p * (1 / 2)) * (2 * cos p + sin p * (1 / 2)) + sin p * sin p.
+
+(* V and Acc are the placed derivatives: V of the placed curve, Acc of
+   s |-> M v(s), for every origin o. *)
+Definition geos_shear_placed_derivs_at (s : R) (V Acc : Point) : Prop :=
+  forall o : Point,
+  derivable_pt_lim (fun u => px (placed o geos_shear (cloth_arc geos_shear_egg u))) s (px V) /\
+  derivable_pt_lim (fun u => py (placed o geos_shear (cloth_arc geos_shear_egg u))) s (py V) /\
+  derivable_pt_lim (fun u => px (lin_ap geos_shear (cloth_arc_v geos_shear_egg u))) s (px Acc) /\
+  derivable_pt_lim (fun u => py (lin_ap geos_shear (cloth_arc_v geos_shear_egg u))) s (py Acc).
+
+Lemma geos_shear_placed_derivs : forall s,
+  geos_shear_placed_derivs_at s
+    (lin_ap geos_shear (cloth_arc_v geos_shear_egg s))
+    (lin_ap geos_shear (cloth_arc_a geos_shear_egg s)).
+Proof.
+  intros s o. destruct geos_shear_nondeg as (HA & Hh & Hd).
+  destruct (cloth_placed_curvature geos_shear_egg o geos_shear s HA Hh Hd)
+    as (P1 & P2 & P3 & P4 & _).
+  repeat split; assumption.
+Qed.
+
+Lemma geos_shear_placed_curv : forall s,
+  signed_curv (lin_ap geos_shear (cloth_arc_v geos_shear_egg s))
+              (lin_ap geos_shear (cloth_arc_a geos_shear_egg s))
+    = 2 * ((1 + s) / 25) /
+      (sqrt (geos_shear_N ((1 + s) * (1 + s) / 50)) *
+       sqrt (geos_shear_N ((1 + s) * (1 + s) / 50)) *
+       sqrt (geos_shear_N ((1 + s) * (1 + s) / 50))).
+Proof.
+  intro s. destruct geos_shear_nondeg as (HA & Hh & Hd).
+  rewrite signed_curv_lin, geos_shear_det, cloth_arc_cross by assumption.
+  rewrite geos_shear_naive_value, geos_shear_end_naive_value, geos_shear_tlen.
+  assert (EN : curv_speed2 (lin_ap geos_shear (cloth_arc_v geos_shear_egg s))
+               = geos_shear_N ((1 + s) * (1 + s) / 50)).
+  { rewrite geos_shear_arc_v. unfold curv_speed2, lin_ap, geos_shear, geos_shear_N.
+    cbn. ring. }
+  rewrite EN.
+  replace (1 / 25 + (12 / 25 - 1 / 25) * s / 11) with ((1 + s) / 25) by field.
   reflexivity.
 Qed.
 
-Lemma geos_q2r_bounds :
-  Q2R q_clo = 1 - (1 / 50) * (1 / 50) / 2 /\
-  Q2R q_chi = 1 - (1 / 50) * (1 / 50) / 2
-              + (1 / 50) * (1 / 50) * (1 / 50) * (1 / 50) / 24 /\
-  Q2R q_slo = 1 / 50 - (1 / 50) * (1 / 50) * (1 / 50) / 6 /\
-  Q2R q_shi = 1 / 50.
+(* Interval tools. Stdlib cos_bound / sin_bound at n = 1 on [0, 7/8]
+   (7/8 <= PI/2 by PI2_bounds; Stdlib PI2_3_2 would print
+   Classical_Prop.classic), the double-angle step, the squared speed, and the
+   enclosure of k / sqrt(N)^3 from bounds on N. *)
+Lemma cos_approx_3_poly : forall a,
+  cos_approx a 3 = 1 - a ^ 2 / 2 + a ^ 4 / 24 - a ^ 6 / 720.
 Proof.
-  unfold q_clo, q_chi, q_slo, q_shi, q_z.
-  rewrite !Q2R_minus, !Q2R_plus, !Q2R_minus, !Q2R_mult.
-  unfold Q2R; cbn [Qnum Qden]. repeat split; field.
+  intro a. unfold cos_approx. cbn [sum_f_R0]. unfold cos_term.
+  change (Factorial.fact (2 * 3)) with (6 * (5 * (4 * (3 * (2 * (1 * 1))))))%nat.
+  change (Factorial.fact (2 * 2)) with (4 * (3 * (2 * (1 * 1))))%nat.
+  change (Factorial.fact (2 * 1)) with (2 * (1 * 1))%nat.
+  change (Factorial.fact (2 * 0)) with 1%nat.
+  rewrite !mult_INR.
+  change (2 * 3)%nat with 6%nat. change (2 * 2)%nat with 4%nat.
+  change (2 * 1)%nat with 2%nat. change (2 * 0)%nat with 0%nat.
+  simpl INR. field.
 Qed.
 
-Lemma geos_q_facts :
-  Q2R q_rl * Q2R q_rl <= Q2R (q_N q_clo q_slo) /\
-  Q2R (q_N q_chi q_shi) <= Q2R q_rh * Q2R q_rh /\
-  Q2R q_cr < Q2R q_kh * (Q2R (q_N q_clo q_slo) * Q2R q_rl) /\
-  Q2R q_kl * (Q2R (q_N q_chi q_shi) * Q2R q_rh) < Q2R q_cr.
+Lemma cos_approx_4_poly : forall a,
+  cos_approx a 4 = 1 - a ^ 2 / 2 + a ^ 4 / 24 - a ^ 6 / 720 + a ^ 8 / 40320.
 Proof.
-  pose proof geos_shear_q_check_true as H. unfold geos_shear_q_check in H.
-  apply andb_prop in H as [H H4]. apply andb_prop in H as [H H3].
-  apply andb_prop in H as [H1 H2].
-  apply Qle_bool_imp_le in H1. apply Qle_bool_imp_le in H2.
-  apply negb_true_iff in H3. apply negb_true_iff in H4.
-  assert (H3' : (q_cr < q_kh * (q_N q_clo q_slo * q_rl))%Q).
-  { apply Qnot_le_lt. intro Hc. apply Qle_bool_iff in Hc. congruence. }
-  assert (H4' : (q_kl * (q_N q_chi q_shi * q_rh) < q_cr)%Q).
-  { apply Qnot_le_lt. intro Hc. apply Qle_bool_iff in Hc. congruence. }
-  rewrite <- !Q2R_mult.
-  split; [apply Qle_Rle; exact H1|].
-  split; [apply Qle_Rle; exact H2|].
-  split; apply Qlt_Rlt; assumption.
+  intro a. change (cos_approx a 4) with (cos_approx a 3 + cos_term a 4).
+  rewrite cos_approx_3_poly. unfold cos_term.
+  change (Factorial.fact (2 * 4))
+    with (8 * (7 * (6 * (5 * (4 * (3 * (2 * (1 * 1))))))))%nat.
+  rewrite !mult_INR. change (2 * 4)%nat with 8%nat. simpl INR. field.
+Qed.
+
+Lemma sin_approx_3_poly : forall a,
+  sin_approx a 3 = a - a ^ 3 / 6 + a ^ 5 / 120 - a ^ 7 / 5040.
+Proof.
+  intro a. unfold sin_approx. cbn [sum_f_R0]. unfold sin_term.
+  change (Factorial.fact (2 * 3 + 1))
+    with (7 * (6 * (5 * (4 * (3 * (2 * (1 * 1)))))))%nat.
+  change (Factorial.fact (2 * 2 + 1)) with (5 * (4 * (3 * (2 * (1 * 1)))))%nat.
+  change (Factorial.fact (2 * 1 + 1)) with (3 * (2 * (1 * 1)))%nat.
+  change (Factorial.fact (2 * 0 + 1)) with (1 * 1)%nat.
+  rewrite !mult_INR.
+  change (2 * 3 + 1)%nat with 7%nat. change (2 * 2 + 1)%nat with 5%nat.
+  change (2 * 1 + 1)%nat with 3%nat. change (2 * 0 + 1)%nat with 1%nat.
+  simpl INR. field.
+Qed.
+
+Lemma sin_approx_4_poly : forall a,
+  sin_approx a 4
+    = a - a ^ 3 / 6 + a ^ 5 / 120 - a ^ 7 / 5040 + a ^ 9 / 362880.
+Proof.
+  intro a. change (sin_approx a 4) with (sin_approx a 3 + sin_term a 4).
+  rewrite sin_approx_3_poly. unfold sin_term.
+  change (Factorial.fact (2 * 4 + 1))
+    with (9 * (8 * (7 * (6 * (5 * (4 * (3 * (2 * (1 * 1)))))))))%nat.
+  rewrite !mult_INR. change (2 * 4 + 1)%nat with 9%nat. simpl INR. field.
+Qed.
+
+Lemma cos_sin_taylor9 : forall x, 0 <= x <= 7 / 8 ->
+  (1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720 <= cos x <=
+   1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720 + x ^ 8 / 40320) /\
+  (x - x ^ 3 / 6 + x ^ 5 / 120 - x ^ 7 / 5040 <= sin x <=
+   x - x ^ 3 / 6 + x ^ 5 / 120 - x ^ 7 / 5040 + x ^ 9 / 362880).
+Proof.
+  intros x Hx. pose proof PI2_bounds as Hpi.
+  pose proof (cos_bound x 1 ltac:(lra) ltac:(lra)) as Hc.
+  pose proof (sin_bound x 1 ltac:(lra) ltac:(lra)) as Hs.
+  change (2 * 1 + 1)%nat with 3%nat in Hc, Hs.
+  change (2 * (1 + 1))%nat with 4%nat in Hc, Hs.
+  rewrite cos_approx_3_poly, cos_approx_4_poly in Hc.
+  rewrite sin_approx_3_poly, sin_approx_4_poly in Hs.
+  split; assumption.
+Qed.
+
+Lemma cos_sin_double_bounds : forall x cl ch sl sh,
+  0 <= cl -> cl <= cos x <= ch -> 0 <= sl -> sl <= sin x <= sh ->
+  2 * cl * cl - 1 <= cos (2 * x) <= 2 * ch * ch - 1 /\
+  2 * sl * cl <= sin (2 * x) <= 2 * sh * ch.
+Proof.
+  intros x cl ch sl sh H0 [H1 H2] H3 [H4 H5].
+  rewrite cos_2a_cos, sin_2a. split; split; nra.
 Qed.
 
 Lemma geos_N_mono : forall a b c s,
@@ -368,98 +549,132 @@ Proof.
   apply Rplus_le_compat; apply Rmult_le_compat; lra.
 Qed.
 
+Lemma geos_N_bounds_pos : forall c s cl ch sl sh,
+  0 <= cl -> cl <= c <= ch -> 0 <= sl -> sl <= s <= sh ->
+  (2 * cl + sl * (1 / 2)) * (2 * cl + sl * (1 / 2)) + sl * sl
+    <= (2 * c + s * (1 / 2)) * (2 * c + s * (1 / 2)) + s * s <=
+  (2 * ch + sh * (1 / 2)) * (2 * ch + sh * (1 / 2)) + sh * sh.
+Proof.
+  intros c s cl ch sl sh H0 [H1 H2] H3 [H4 H5].
+  split; apply geos_N_mono; lra.
+Qed.
+
+Lemma geos_N_bounds_neg : forall c s cl ch sl sh,
+  cl <= c <= ch -> 0 <= sl -> sl <= s <= sh -> 2 * ch + sh * (1 / 2) <= 0 ->
+  (2 * ch + sh * (1 / 2)) * (2 * ch + sh * (1 / 2)) + sl * sl
+    <= (2 * c + s * (1 / 2)) * (2 * c + s * (1 / 2)) + s * s <=
+  (2 * cl + sl * (1 / 2)) * (2 * cl + sl * (1 / 2)) + sh * sh.
+Proof.
+  intros c s cl ch sl sh [H1 H2] H3 [H4 H5] H6.
+  split; nra.
+Qed.
+
+Lemma curv_enclosure_of_bounds : forall k N Nlo Nhi rl rh klo khi,
+  0 < rl -> 0 < rh -> rl * rl <= Nlo -> Nlo <= N -> N <= Nhi -> Nhi <= rh * rh ->
+  0 <= klo -> k < khi * (Nlo * rl) -> klo * (Nhi * rh) < k ->
+  klo < k / (sqrt N * sqrt N * sqrt N) < khi.
+Proof.
+  intros k N Nlo Nhi rl rh klo khi Hrl0 Hrh0 G1 HNlo HNhi G2 Hklo G3 G4.
+  assert (HN0 : 0 <= N) by nra.
+  set (r := sqrt N).
+  assert (Hrl : rl <= r).
+  { unfold r. rewrite <- (sqrt_square rl) by lra.
+    apply sqrt_le_1; nra. }
+  assert (Hrh : r <= rh).
+  { unfold r. rewrite <- (sqrt_square rh) by lra.
+    apply sqrt_le_1; nra. }
+  assert (Er : r * r = N) by (apply sqrt_sqrt; exact HN0).
+  assert (EX : r * r * r = N * r) by (rewrite Er; reflexivity).
+  assert (HX1 : Nlo * rl <= r * r * r).
+  { rewrite EX. apply Rmult_le_compat; nra. }
+  assert (HX2 : r * r * r <= Nhi * rh).
+  { rewrite EX. apply Rmult_le_compat; nra. }
+  assert (Hr : 0 < r) by lra.
+  assert (HXp : 0 < r * r * r)
+    by (apply Rmult_lt_0_compat; [apply Rmult_lt_0_compat|]; lra).
+  assert (HNl : 0 < Nlo * rl)
+    by (apply Rmult_lt_0_compat; [|lra];
+        apply Rlt_le_trans with (rl * rl); [apply Rmult_lt_0_compat|]; lra).
+  assert (HNh : 0 <= Nhi * rh) by (apply Rmult_le_pos; lra).
+  assert (Hk : 0 <= k).
+  { apply Rle_trans with (klo * (Nhi * rh)); [apply Rmult_le_pos|]; lra. }
+  assert (EXX : k / (r * r * r) * (r * r * r) = k) by (field; lra).
+  split.
+  - apply (Rmult_lt_reg_r (r * r * r)); [exact HXp|]. rewrite EXX.
+    apply Rle_lt_trans with (klo * (Nhi * rh)); [|exact G4].
+    apply Rmult_le_compat_l; [lra | exact HX2].
+  - apply (Rmult_lt_reg_r (r * r * r)); [exact HXp|]. rewrite EXX.
+    assert (Hkhi : 0 < khi).
+    { destruct (Rle_dec khi 0) as [Hn|Hn]; [|lra].
+      assert (0 <= (- khi) * (Nlo * rl)) by (apply Rmult_le_pos; lra). lra. }
+    apply Rlt_le_trans with (khi * (Nlo * rl)); [exact G3|].
+    apply Rmult_le_compat_l; [lra | exact HX1].
+Qed.
+
+(* Start (s = 0, station 1, heading 1/50). GEOS oracle 0.009855916895262518. *)
 Theorem geos_shear_curvature_enclosure :
   let V := lin_ap geos_shear (cloth_arc_v geos_shear_egg 0) in
   let Acc := lin_ap geos_shear (cloth_arc_a geos_shear_egg 0) in
-  985 / 100000 < signed_curv V Acc < 986 / 100000.
+  geos_shear_placed_derivs_at 0 V Acc /\
+  (12319896119 / 1250000000000) < signed_curv V Acc < (98559168953 / 10000000000000).
 Proof.
-  intros V Acc.
-  assert (HA : cloth_A geos_shear_egg <> 0)
-    by (unfold geos_shear_egg, mk_cloth; cbn; lra).
-  assert (Hh : cloth_h2 geos_shear_egg <> 0).
-  { unfold cloth_h2, geos_shear_egg, mk_cloth. cbn [cloth_place].
-    rewrite east_h2. lra. }
-  assert (Hd : cloth_d geos_shear_egg <> 0) by (rewrite geos_shear_d; lra).
-  destruct geos_shear_tangent0 as (Ex & Ey & _).
-  set (c := cos (1 / 50)). set (s := sin (1 / 50)).
-  assert (Hz : - PI / 2 <= 1 / 50 <= PI / 2) by (pose proof PI2_bounds; lra).
-  assert (Hc1 : 1 - (1 / 50) * (1 / 50) / 2 <= c)
-    by (apply cos_ge_quad; lra).
-  assert (Hc2 : c <= 1 - (1 / 50) * (1 / 50) / 2
-                     + (1 / 50) * (1 / 50) * (1 / 50) * (1 / 50) / 24)
-    by (apply cos_le_quart; lra).
-  assert (Hs1 : 1 / 50 - (1 / 50) * (1 / 50) * (1 / 50) / 6 <= s)
-    by (apply sin_ge_cubic; pose proof PI2_bounds; lra).
-  assert (Hs2 : s <= 1 / 50) by (apply sin_le_arg; lra).
-  destruct geos_q2r_bounds as (Qc1 & Qc2 & Qs1 & Qs2).
-  destruct geos_q_facts as (F1 & F2 & F3 & F4).
-  rewrite !geos_q2r_qN in F1, F2, F3, F4.
-  rewrite Qc1, Qs1 in F1, F3. rewrite Qc2, Qs2 in F2, F4.
-  set (N := curv_speed2 V).
-  assert (EN : N = (2 * c + s * (1 / 2)) * (2 * c + s * (1 / 2)) + s * s).
-  { unfold N, V, curv_speed2, lin_ap, cloth_arc_v, geos_shear.
-    rewrite geos_shear_dir, Ex, Ey. cbn. fold c s. ring. }
-  set (Nlo := (2 * (1 - 1 / 50 * (1 / 50) / 2) +
-               (1 / 50 - 1 / 50 * (1 / 50) * (1 / 50) / 6) * (1 / 2)) *
-              (2 * (1 - 1 / 50 * (1 / 50) / 2) +
-               (1 / 50 - 1 / 50 * (1 / 50) * (1 / 50) / 6) * (1 / 2)) +
-              (1 / 50 - 1 / 50 * (1 / 50) * (1 / 50) / 6) *
-              (1 / 50 - 1 / 50 * (1 / 50) * (1 / 50) / 6)) in *.
-  set (Nhi := (2 * (1 - 1 / 50 * (1 / 50) / 2 +
-                    1 / 50 * (1 / 50) * (1 / 50) * (1 / 50) / 24) + 1 / 50 * (1 / 2)) *
-              (2 * (1 - 1 / 50 * (1 / 50) / 2 +
-                    1 / 50 * (1 / 50) * (1 / 50) * (1 / 50) / 24) + 1 / 50 * (1 / 2)) +
-              1 / 50 * (1 / 50)) in *.
-  assert (HNlo : Nlo <= N).
-  { rewrite EN. unfold Nlo. apply geos_N_mono; lra. }
-  assert (HNhi : N <= Nhi).
-  { rewrite EN. unfold Nhi. apply geos_N_mono; lra. }
-  set (rl := Q2R q_rl) in *. set (rh := Q2R q_rh) in *.
-  assert (G1 : rl * rl <= Nlo) by (unfold Nlo in *; lra).
-  assert (G2 : Nhi <= rh * rh) by (unfold Nhi in *; lra).
-  assert (Erl : rl = 20096 / 10000) by reflexivity.
-  assert (Erh : rh = 20098 / 10000) by reflexivity.
-  set (r := sqrt N).
-  assert (HN0 : 0 <= N) by apply curv_speed2_nonneg.
-  assert (Hrl0 : 0 <= rl * rl) by (rewrite Erl; lra).
-  assert (Hrl : rl <= r).
-  { rewrite <- (sqrt_square rl) by (rewrite Erl; lra).
-    apply sqrt_le_1; [exact Hrl0 | exact HN0 | lra]. }
-  assert (Hrh : r <= rh).
-  { rewrite <- (sqrt_square rh) by (rewrite Erh; lra).
-    apply sqrt_le_1; [exact HN0 | rewrite Erh; lra | lra]. }
-  assert (Er : r * r = N) by (apply sqrt_sqrt; exact HN0).
-  set (X := r * r * r).
-  assert (EX : X = N * r) by (unfold X; rewrite Er; reflexivity).
-  assert (HX1 : Nlo * rl <= X).
-  { rewrite EX. apply Rmult_le_compat; [lra | rewrite Erl; lra | lra | lra]. }
-  assert (HX2 : X <= Nhi * rh).
-  { assert (0 <= rl) by (rewrite Erl; lra).
-    rewrite EX. apply Rmult_le_compat; lra. }
-  assert (Hcr : Q2R q_cr = 2 / 25) by reflexivity.
-  assert (Hkl : Q2R q_kl = 985 / 100000) by reflexivity.
-  assert (Hkh : Q2R q_kh = 986 / 100000) by reflexivity.
-  rewrite Hcr, Hkl, Hkh in *.
-  assert (G3 : 2 / 25 < 986 / 100000 * (Nlo * rl)) by (unfold Nlo in *; lra).
-  assert (G4 : 985 / 100000 * (Nhi * rh) < 2 / 25) by (unfold Nhi in *; lra).
-  assert (Ek : signed_curv V Acc = 2 / 25 / X).
-  { unfold V, Acc. rewrite signed_curv_lin, geos_shear_det.
-    rewrite cloth_arc_cross by assumption.
-    rewrite geos_shear_naive_value. fold V N r X.
-    unfold Rdiv. ring. }
-  rewrite Ek.
-  assert (HXp : 0 < X).
-  { apply Rlt_le_trans with (Nlo * rl); [|exact HX1].
-    apply Rmult_lt_0_compat; [|rewrite Erl; lra].
-    apply Rlt_le_trans with (rl * rl); [rewrite Erl; lra | exact G1]. }
-  assert (EXX : 2 / 25 / X * X = 2 / 25) by (field; lra).
-  split.
-  - apply (Rmult_lt_reg_r X); [exact HXp|]. rewrite EXX.
-    apply Rle_lt_trans with (985 / 100000 * (Nhi * rh)); [|exact G4].
-    apply Rmult_le_compat_l; [lra | exact HX2].
-  - apply (Rmult_lt_reg_r X); [exact HXp|]. rewrite EXX.
-    apply Rlt_le_trans with (986 / 100000 * (Nlo * rl)); [exact G3|].
-    apply Rmult_le_compat_l; [lra | exact HX1].
+  intros V Acc. split; [apply geos_shear_placed_derivs|].
+  unfold V, Acc. rewrite geos_shear_placed_curv.
+  replace ((1 + 0) * (1 + 0) / 50) with ((1 / 50)) by field.
+  replace (2 * ((1 + 0) / 25)) with (2 / 25) by field.
+  destruct (cos_sin_taylor9 (1 / 50)) as [[T1 T2] [T3 T4]]; [lra|].
+  assert (B0 : (999800006666577 / 1000000000000000) <= cos (1 / 50) <= (499900003333289 / 500000000000000) /\ (19998666693333 / 1000000000000000) <= sin (1 / 50) <= (9999333346667 / 500000000000000)) by (cbn [pow] in *; lra).
+  destruct B0 as [[C1 C2] [S1 S2]].
+  destruct (geos_N_bounds_pos (cos (1 / 50)) (sin (1 / 50)) (999800006666577 / 1000000000000000) (499900003333289 / 500000000000000) (19998666693333 / 1000000000000000) (9999333346667 / 500000000000000)) as [N1 N2]; try lra.
+  unfold geos_shear_N. apply (curv_enclosure_of_bounds _ _ (126215296276421 / 31250000000000) (4038889480845483 / 1000000000000000) (1004849426636333 / 500000000000000) (200969885327267 / 100000000000000)); lra.
+Qed.
+
+(* End (s = 11, station 12, heading 72/25 = 4 * 18/25). GEOS oracle 0.15895182898207377; the 6eb13d1 curvatureOf gave 12/25 = 0.48. *)
+Theorem geos_shear_end_curvature_enclosure :
+  let V := lin_ap geos_shear (cloth_arc_v geos_shear_egg 11) in
+  let Acc := lin_ap geos_shear (cloth_arc_a geos_shear_egg 11) in
+  geos_shear_placed_derivs_at 11 V Acc /\
+  (39737 / 250000) < signed_curv V Acc < (158953 / 1000000).
+Proof.
+  intros V Acc. split; [apply geos_shear_placed_derivs|].
+  unfold V, Acc. rewrite geos_shear_placed_curv.
+  replace ((1 + 11) * (1 + 11) / 50) with (2 * (2 * ((18 / 25)))) by field.
+  replace (2 * ((1 + 11) / 25)) with (24 / 25) by field.
+  destruct (cos_sin_taylor9 (18 / 25)) as [[T1 T2] [T3 T4]]; [lra|].
+  assert (B0 : (917729429 / 1220703125) <= cos (18 / 25) <= (375902869708847 / 500000000000000) /\ (65938452935007 / 100000000000000) <= sin (18 / 25) <= (659384672644543 / 1000000000000000)) by (cbn [pow] in *; lra).
+  destruct (cos_sin_double_bounds (18 / 25) (917729429 / 1220703125) (375902869708847 / 500000000000000) (65938452935007 / 100000000000000) (659384672644543 / 1000000000000000)) as [D1 D2]; [lra|lra|lra|lra|].
+  assert (B1 : (65209176584441 / 500000000000000) <= cos (2 * (18 / 25)) <= (32605934910693 / 250000000000000) /\ (991455785143293 / 1000000000000000) <= sin (2 * (18 / 25)) <= (19829167255129 / 20000000000000)) by lra.
+  clear D1 D2.
+  destruct (cos_sin_double_bounds (2 * (18 / 25)) (65209176584441 / 500000000000000) (32605934910693 / 250000000000000) (991455785143293 / 1000000000000000) (19829167255129 / 20000000000000)) as [D1 D2]; [lra|lra|lra|lra|].
+  assert (B2 : (- (482991053156717 / 500000000000000)) <= cos (2 * (2 * (18 / 25))) <= (- (241494824068797 / 250000000000000)) /\ (129304030738149 / 500000000000000) <= sin (2 * (2 * (18 / 25))) <= (258619414741593 / 1000000000000000)) by lra.
+  clear D1 D2.
+  destruct B2 as [[C1 C2] [S1 S2]].
+  destruct (geos_N_bounds_neg (cos (2 * (2 * (18 / 25)))) (sin (2 * (2 * (18 / 25)))) (- (482991053156717 / 500000000000000)) (- (241494824068797 / 250000000000000)) (129304030738149 / 500000000000000) (258619414741593 / 1000000000000000)) as [N1 N2]; try lra.
+  unfold geos_shear_N. apply (curv_enclosure_of_bounds _ _ (3316421132699709 / 1000000000000000) (1658233866524177 / 500000000000000) (227638046465069 / 125000000000000) (1821117166205501 / 1000000000000000)); lra.
+Qed.
+
+(* Interior (s = 9, station 10, heading 2 = 4 * 1/2). *)
+Theorem geos_shear_mid_curvature_enclosure :
+  let V := lin_ap geos_shear (cloth_arc_v geos_shear_egg 9) in
+  let Acc := lin_ap geos_shear (cloth_arc_a geos_shear_egg 9) in
+  geos_shear_placed_derivs_at 9 V Acc /\
+  (419 / 500) < signed_curv V Acc < (8383 / 10000).
+Proof.
+  intros V Acc. split; [apply geos_shear_placed_derivs|].
+  unfold V, Acc. rewrite geos_shear_placed_curv.
+  replace ((1 + 9) * (1 + 9) / 50) with (2 * (2 * ((1 / 2)))) by field.
+  replace (2 * ((1 + 9) / 25)) with (4 / 5) by field.
+  destruct (cos_sin_taylor9 (1 / 2)) as [[T1 T2] [T3 T4]]; [lra|].
+  assert (B0 : (877582465277777 / 1000000000000000) <= cos (1 / 2) <= (877582562158979 / 1000000000000000) /\ (239712766617063 / 500000000000000) <= sin (1 / 2) <= (14982048081763 / 31250000000000)) by (cbn [pow] in *; lra).
+  destruct (cos_sin_double_bounds (1 / 2) (877582465277777 / 1000000000000000) (877582562158979 / 1000000000000000) (239712766617063 / 500000000000000) (14982048081763 / 31250000000000)) as [D1 D2]; [lra|lra|lra|lra|].
+  assert (B1 : (540301966726041 / 1000000000000000) <= cos (2 * (1 / 2)) <= (540302306811037 / 1000000000000000) /\ (420735441372717 / 500000000000000) <= sin (2 * (1 / 2)) <= (420735492543443 / 500000000000000)) by lra.
+  clear D1 D2.
+  destruct (cos_sin_double_bounds (2 * (1 / 2)) (540301966726041 / 1000000000000000) (540302306811037 / 1000000000000000) (420735441372717 / 500000000000000) (420735492543443 / 500000000000000)) as [D1 D2]; [lra|lra|lra|lra|].
+  assert (B2 : (- (83229513900789 / 200000000000000)) <= cos (2 * (2 * (1 / 2))) <= (- (13004588578417 / 31250000000000)) /\ (909296745780111 / 1000000000000000) <= sin (2 * (2 * (1 / 2))) <= (909297428714001 / 1000000000000000)) by lra.
+  clear D1 D2.
+  destruct B2 as [[C1 C2] [S1 S2]].
+  destruct (geos_N_bounds_neg (cos (2 * (2 * (1 / 2)))) (sin (2 * (2 * (1 / 2)))) (- (83229513900789 / 200000000000000)) (- (13004588578417 / 31250000000000)) (909296745780111 / 1000000000000000) (909297428714001 / 1000000000000000)) as [N1 N2]; try lra.
+  unfold geos_shear_N. apply (curv_enclosure_of_bounds _ _ (969436283667727 / 1000000000000000) (969438893825153 / 1000000000000000) (984599554980463 / 1000000000000000) (19692017609429 / 20000000000000)); lra.
 Qed.
 
 Theorem geos_shear_curvature_ne_naive :
@@ -468,8 +683,134 @@ Theorem geos_shear_curvature_ne_naive :
     <> cloth_tk0 geos_shear_egg.
 Proof.
   rewrite geos_shear_naive_value.
-  pose proof geos_shear_curvature_enclosure as H. cbv zeta in H. lra.
+  destruct geos_shear_curvature_enclosure as [_ H]. lra.
 Qed.
+
+Theorem geos_shear_end_curvature_ne_naive :
+  signed_curv (lin_ap geos_shear (cloth_arc_v geos_shear_egg 11))
+              (lin_ap geos_shear (cloth_arc_a geos_shear_egg 11))
+    <> cloth_tk1 geos_shear_egg.
+Proof.
+  rewrite geos_shear_end_naive_value.
+  destruct geos_shear_end_curvature_enclosure as [_ H]. lra.
+Qed.
+
+(* The sheared curvature is not monotone along the window (start < end
+   < interior s = 9), so it is not affine in arc length s, nor in the
+   placed arc length (an increasing reparametrization). *)
+Theorem geos_shear_curvature_not_affine :
+  let k := fun s => signed_curv (lin_ap geos_shear (cloth_arc_v geos_shear_egg s))
+                                (lin_ap geos_shear (cloth_arc_a geos_shear_egg s)) in
+  k 0 < k 11 < k 9 /\
+  ~ (exists a b, forall s, 0 <= s <= 11 -> k s = a + b * s).
+Proof.
+  intro k.
+  destruct geos_shear_curvature_enclosure as [_ H0].
+  destruct geos_shear_end_curvature_enclosure as [_ H11].
+  destruct geos_shear_mid_curvature_enclosure as [_ H9].
+  assert (Ord : k 0 < k 11 < k 9) by (unfold k; lra).
+  split; [exact Ord|].
+  intros (a & b & Hab).
+  rewrite (Hab 0), (Hab 11), (Hab 9) in Ord by lra.
+  destruct (Rle_dec 0 b); lra.
+Qed.
+
+(* Reversed sheared clothoid: start -k(end), end -k(start)
+   (cloth_placed_rev_law; GEOS reversed start -0.15895182898207377). *)
+Theorem geos_shear_rev_curvature_ends :
+  let kr := fun s =>
+    signed_curv (lin_ap geos_shear (cloth_arc_v (cloth_rev geos_shear_egg) s))
+                (lin_ap geos_shear (cloth_arc_a (cloth_rev geos_shear_egg) s)) in
+  - (158953 / 1000000) < kr 0 < - (158948 / 1000000) /\
+  - (98559168953 / 10000000000000) < kr 11 < - (98559168952 / 10000000000000).
+Proof.
+  intro kr. destruct geos_shear_nondeg as (_ & _ & Hd).
+  unfold kr. rewrite !cloth_placed_rev_law by exact Hd.
+  rewrite geos_shear_tlen.
+  replace (11 - 0) with 11 by ring. replace (11 - 11) with 0 by ring.
+  destruct geos_shear_curvature_enclosure as [_ H0].
+  destruct geos_shear_end_curvature_enclosure as [_ H11].
+  lra.
+Qed.
+
+(* The host AffPlace reads only the direction of ref1 and the sign of
+   cross(ref1, ref2). GEOS's frame u = (2, 0), v = (1/2, 1) given to the
+   host directly is the east unit frame: the host curvature is the naive
+   1/25, not the placed 0.009855.... A sheared placement exists only as
+   the external placed o M. *)
+Definition geos_frame_egg : ClothoidEgg :=
+  mk_cloth (mkAffPlace (mkPoint 3 4) (mkPoint 2 0) (mkPoint (1 / 2) 1)) 5 1 12 None None.
+
+Theorem host_affplace_curvature_ignores_shear :
+  cloth_cos0 geos_frame_egg = 1 /\ cloth_sin0 geos_frame_egg = 0 /\
+  cloth_sigma geos_frame_egg = 1 /\
+  signed_curv (cloth_arc_v geos_frame_egg 0) (cloth_arc_a geos_frame_egg 0) = 1 / 25 /\
+  signed_curv (cloth_arc_v geos_frame_egg 0) (cloth_arc_a geos_frame_egg 0)
+    <> signed_curv (lin_ap geos_shear (cloth_arc_v geos_shear_egg 0))
+                   (lin_ap geos_shear (cloth_arc_a geos_shear_egg 0)).
+Proof.
+  assert (Hh2 : cloth_h2 geos_frame_egg = 4)
+    by (unfold cloth_h2, aff_h2, geos_frame_egg, mk_cloth; cbn; ring).
+  assert (Hy : cloth_hypot geos_frame_egg = 2).
+  { unfold cloth_hypot. rewrite Hh2. replace 4 with (2 * 2) by ring.
+    apply sqrt_square. lra. }
+  assert (Hs : cloth_sigma geos_frame_egg = 1).
+  { unfold cloth_sigma, cloth_cross, aff_cross, geos_frame_egg, mk_cloth. cbn.
+    destruct (Rle_dec 0 (2 * 1 - 0 * (1 / 2))); [reflexivity | lra]. }
+  assert (HA : cloth_A geos_frame_egg <> 0)
+    by (unfold geos_frame_egg, mk_cloth; cbn; lra).
+  assert (Hh : cloth_h2 geos_frame_egg <> 0) by (rewrite Hh2; lra).
+  assert (Hd : cloth_d geos_frame_egg <> 0)
+    by (unfold cloth_d, geos_frame_egg, mk_cloth; cbn; lra).
+  assert (Hdir : cloth_dir geos_frame_egg = 1).
+  { unfold cloth_dir, cloth_d, geos_frame_egg, mk_cloth. cbn.
+    destruct (Rle_dec 0 (12 - 1)); [reflexivity | lra]. }
+  assert (K0 : cloth_tk0 geos_frame_egg = 1 / 25).
+  { unfold cloth_tk0, cloth_kappa. rewrite Hdir, Hs.
+    unfold geos_frame_egg, mk_cloth. cbn [cloth_sd cloth_A]. field. }
+  destruct (cloth_arc_unit_speed_linear_curvature geos_frame_egg 0 HA Hh Hd)
+    as (_ & _ & _ & _ & _ & K).
+  assert (Hk : signed_curv (cloth_arc_v geos_frame_egg 0)
+                           (cloth_arc_a geos_frame_egg 0) = 1 / 25).
+  { rewrite K, K0. unfold Rdiv. ring. }
+  split; [unfold cloth_cos0; rewrite Hy; unfold geos_frame_egg, mk_cloth; cbn; field|].
+  split; [unfold cloth_sin0; rewrite Hy; unfold geos_frame_egg, mk_cloth; cbn; field|].
+  split; [exact Hs|]. split; [exact Hk|].
+  rewrite Hk. destruct geos_shear_curvature_enclosure as [_ H]. lra.
+Qed.
+
+(* Q twin of the start enclosure: the same Taylor polynomials at 1/50,
+   the same rounded bounds and the same comparisons, recomputed in Q by
+   vm_compute. A cross-check only: the R proof above discharges every
+   comparison with lra and does not use it. *)
+Definition q_z : Q := 1 # 50.
+Definition q_cos_lo (x : Q) : Q := 1 - x*x/2 + x*x*x*x/24 - x*x*x*x*x*x/720.
+Definition q_cos_hi (x : Q) : Q := q_cos_lo x + x*x*x*x*x*x*x*x/40320.
+Definition q_sin_lo (x : Q) : Q := x - x*x*x/6 + x*x*x*x*x/120 - x*x*x*x*x*x*x/5040.
+Definition q_sin_hi (x : Q) : Q := q_sin_lo x + x*x*x*x*x*x*x*x*x/362880.
+Definition q_N (a b : Q) : Q := (2 * a + b * (1 # 2)) * (2 * a + b * (1 # 2)) + b * b.
+Definition q_cl : Q := (999800006666577 # 1000000000000000).
+Definition q_ch : Q := (499900003333289 # 500000000000000).
+Definition q_sl : Q := (19998666693333 # 1000000000000000).
+Definition q_sh : Q := (9999333346667 # 500000000000000).
+Definition q_Nlo : Q := (126215296276421 # 31250000000000).
+Definition q_Nhi : Q := (4038889480845483 # 1000000000000000).
+Definition q_rl : Q := (1004849426636333 # 500000000000000).
+Definition q_rh : Q := (200969885327267 # 100000000000000).
+Definition q_kl : Q := (12319896119 # 1250000000000).
+Definition q_kh : Q := (98559168953 # 10000000000000).
+Definition q_cr : Q := (2 # 25).
+
+Definition geos_shear_q_check : bool :=
+  Qle_bool q_cl (q_cos_lo q_z) && Qle_bool (q_cos_hi q_z) q_ch &&
+  Qle_bool q_sl (q_sin_lo q_z) && Qle_bool (q_sin_hi q_z) q_sh &&
+  Qle_bool q_Nlo (q_N q_cl q_sl) && Qle_bool (q_N q_ch q_sh) q_Nhi &&
+  Qle_bool (q_rl * q_rl) q_Nlo && Qle_bool q_Nhi (q_rh * q_rh) &&
+  negb (Qle_bool (q_kh * (q_Nlo * q_rl)) q_cr) &&
+  negb (Qle_bool q_cr (q_kl * (q_Nhi * q_rh))).
+
+Lemma geos_shear_q_check_true : geos_shear_q_check = true.
+Proof. vm_compute. reflexivity. Qed.
 
 Print Assumptions curv_cross_lin.
 Print Assumptions signed_curv_lin.
@@ -485,18 +826,42 @@ Print Assumptions placed_deriv.
 Print Assumptions cloth_arc_cross.
 Print Assumptions cloth_placed_curvature.
 Print Assumptions cloth_similarity_curvature.
+Print Assumptions cloth_similarity_scaled_law.
+Print Assumptions cloth_rev_station.
+Print Assumptions cloth_rev_vx.
+Print Assumptions cloth_rev_vy.
+Print Assumptions signed_curv_neg_tangent.
+Print Assumptions cloth_placed_rev_law.
+Print Assumptions geos_shear_columns.
 Print Assumptions geos_shear_det.
 Print Assumptions geos_shear_sigma.
 Print Assumptions geos_shear_frame.
 Print Assumptions geos_shear_d.
 Print Assumptions geos_shear_dir.
+Print Assumptions geos_shear_tlen.
 Print Assumptions geos_shear_naive_value.
-Print Assumptions geos_shear_tangent0.
-Print Assumptions geos_shear_q_check_true.
-Print Assumptions geos_q2r_lit.
-Print Assumptions geos_q2r_qN.
-Print Assumptions geos_q2r_bounds.
-Print Assumptions geos_q_facts.
+Print Assumptions geos_shear_end_naive_value.
+Print Assumptions geos_shear_nondeg.
+Print Assumptions geos_shear_station.
+Print Assumptions geos_shear_arc_v.
+Print Assumptions geos_shear_placed_derivs.
+Print Assumptions geos_shear_placed_curv.
+Print Assumptions cos_approx_3_poly.
+Print Assumptions cos_approx_4_poly.
+Print Assumptions sin_approx_3_poly.
+Print Assumptions sin_approx_4_poly.
+Print Assumptions cos_sin_taylor9.
+Print Assumptions cos_sin_double_bounds.
 Print Assumptions geos_N_mono.
+Print Assumptions geos_N_bounds_pos.
+Print Assumptions geos_N_bounds_neg.
+Print Assumptions curv_enclosure_of_bounds.
 Print Assumptions geos_shear_curvature_enclosure.
+Print Assumptions geos_shear_end_curvature_enclosure.
+Print Assumptions geos_shear_mid_curvature_enclosure.
 Print Assumptions geos_shear_curvature_ne_naive.
+Print Assumptions geos_shear_end_curvature_ne_naive.
+Print Assumptions geos_shear_curvature_not_affine.
+Print Assumptions geos_shear_rev_curvature_ends.
+Print Assumptions host_affplace_curvature_ignores_shear.
+Print Assumptions geos_shear_q_check_true.
