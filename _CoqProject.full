@@ -25,14 +25,14 @@ theories/SpeedIntegral.v
 # #508 "Also owed" bridge: the 3-point CircularArc model meets the
 # parameterized circle — the principal sweep is realized by a parameter
 # interval whose circle points are arc_start/arc_end and whose metric length
-# (is_curve_length) is arc_length r |arc_sweep_angle|.  atan2 lane, 4-axiom
-# (docs/audit-exceptions.txt); the mid-disambiguated major traversal is the
+# (is_curve_length) is arc_length r |arc_sweep_angle|.  atan2 lane, 3-axiom
+# (IVT); the mid-disambiguated major traversal is the
 # next rung.
 theories/ArcParamBridge.v
 # #508 arc-lane final rung: the mid-disambiguated traversal (arc_sweep,
 # possibly reflex) realized on the circumscribed circle — arc_sweep's four
 # outcomes enumerated, anchors shifted by 2π-periodicity, assembled with
-# realize_sweep.  atan2 lane, 4-axiom (docs/audit-exceptions.txt).
+# realize_sweep.  atan2 lane, 3-axiom (IVT).
 theories/ArcTraversalBridge.v
 # #508 ellipse rung 1: the ELLIPTICALCURVE parameterization (oracle E token)
 # against the CurveLength spec.  Tier 0 unconditional: chord/upper sandwich
@@ -121,8 +121,8 @@ theories/NurbsConicExact.v
 # Single-span oracle N.  No ExactNurbsSegment.  3-axiom.
 theories/NurbsGeneralLength.v
 # #508 arc P2 leftovers from #552: valid_arc ⇒ arc_sweep ≠ 0, and
-# arc_mid is a parameterized circumcircle point.  atan2 lane, 4-axiom
-# (docs/audit-exceptions.txt).  Does not start a new 64-a r·θ.
+# arc_mid is a parameterized circumcircle point.  atan2 lane, 3-axiom
+# (IVT).  Does not start a new 64-a r·θ.
 theories/ArcMidSweep.v
 # WKT ↔ GeoJSON structural roundtrips on the shared OGC 2-D geometry tree
 # (AST identity, not string formatting).  No Admitted.
@@ -261,15 +261,20 @@ theories/Validate.v
 theories/Validate_decidable.v
 theories/HotPixel.v
 theories/Azimuth.v
+# Positive derivative => strict increase, from completeness (sup of the
+# good set).  No MVT / Rolle / classic.  Discharges ClothoidResidual's
+# former H_mvt premise.  claimId: none.
+theories/RealMonotone.v
 # Clothoid chord-length residual monotonicity, Qed-closed conditional theorem
 # (Stdlib lane).  Realises the "next concrete Azimuth.v target" named in
 # Azimuth.v's cross-corpus bridge block: |kappa*L| <= pi connected to
 # f'(L) > 0.  The derivative identities enter as Section hypotheses (H_deriv,
 # H_fprime_pos), witnessed Qed in the proprietary companion
 # clothoid-halley-coq/coq/Clothoid_L.v; only the statement crosses the licence
-# boundary and is BSD-3-Clause from birth.  Listed here too so the per-theorem
-# Print Assumptions audit (scripts/audit_axioms.sh) checks it against the
-# three-axiom allowlist.  No Admitted, no Axiom, no Parameter.
+# boundary and is BSD-3-Clause from birth.  Strict increase is
+# RealMonotone.deriv_pos_strict_incr (no equality-form MVT).  Listed here too
+# so the per-theorem Print Assumptions audit (scripts/audit_axioms.sh) checks
+# it against the three-axiom allowlist.  No Admitted, no Axiom, no Parameter.
 theories/ClothoidResidual.v
 # Koc (2015) compound-curve railway alignment core: system-2000<->local frame
 # round-trips + isometry, clothoid end conditions (theta' = k, theta(L)=L/2R),
@@ -309,10 +314,10 @@ theories/CompoundCurveAssembly.v
 # No Admitted.
 theories/CompoundCurveCurvature.v
 # Degenerate straight-chord regime (k0 = k1 = 0): the residual collapses to
-# L^2 - d^2 with exact unique positive root L = d, and all three Section
-# hypotheses of ClothoidResidual.v are discharged concretely (MVT witness
-# exhibited at the midpoint -- no Classical_Prop.classic), proving the
-# conditional interface non-vacuous.  Route (A) of
+# L^2 - d^2 with exact unique positive root L = d, and both Section
+# hypotheses of ClothoidResidual.v are discharged concretely (strict increase
+# from RealMonotone; midpoint identity is not an interface premise), proving
+# the conditional interface non-vacuous.  Route (A) of
 # docs/clothoid-open-questions-triage.md.
 theories/ClothoidDegenerate.v
 # Route (C') conditional Halley <=4-iteration interface + fuel-bounded skeleton.
@@ -453,38 +458,38 @@ theories/BufferEndcapSquare.v
 # multi-edge generalisation of BufferEndcap.flat_cap_ring's single-edge
 # case.  Three-axiom.  No Admitted.
 theories/BufferAssembly.v
-# Issue #64 / Option-A arc primitives, foundation 1: two-argument atan2 built
-# on Stdlib Ratan (JTS Math.atan2 convention, range (-PI, PI]).  Headlines
-# cos_atan2 / sin_atan2 characterise it as the polar angle of (x, y).  Pure
-# Stdlib (no new deps) but pulls Classical_Prop.classic via Stdlib `atan`
-# (cos/sin/sqrt stay clean) -- see docs/audit-exceptions.txt.  No Admitted.
+# Issue #64 / Option-A arc primitives, foundation 1: two-argument atan2
+# (JTS Math.atan2, range (-PI, PI], origin 0).  3-axiom: AtanIvt.atan3
+# (IVT) and the half-angle formula.  Headlines cos_atan2 / sin_atan2 /
+# atan2_unique.  No Ratan.  No Admitted.
 theories/Atan2.v
+# Category C: historical Ratan quadrant body equals Atan2.atan2.
+# claimId: none.  Stays on docs/audit-exceptions.txt.
+theories/Atan2RatanBridge.v
 # Issue #64 / Option-A foundation 2: signed angle between two planar vectors,
 # angle_between u v = atan2 (cross u v) (dot u v) -- the robust atan2-based
 # central-angle/sweep primitive (sign = orientation).  Headlines
 # cos_angle_between / sin_angle_between = dot|cross / (|u||v|) via the Lagrange
-# identity; plus atan2_range (-PI, PI].  Pulls classic via atan (see
-# audit-exceptions).  No Admitted.
+# identity; plus atan2_range (-PI, PI].  3-axiom (IVT atan2).  No Admitted.
 theories/AngleBetween.v
 # Issue #64 subtask 64-c — GREEN: InArc minor-arc membership via central-angle
 # order, plus rational unit-circle witness
 # (A=(1,0), P=(3/5,4/5), B=(0,1); major counter Q=(-1,0)).  Headlines
 # in_arc_point_on_minor_arc and in_arc_point_on_major_arc_rejected are Qed.
-# 4-axiom (atan2 lineage via AngleBetween; see audit-exceptions).
+# 3-axiom (IVT atan2). in_arc_theta_P_eq states atan3 (4/3).
 theories/InArc.v
 # Issue #64 subtask 64-b — GREEN: circular-arc sweep is CCW iff signed central
 # angle is strictly positive.  sweep_ccw is the orientation/cross-sign reading
 # of atan2(cross,dot) (incl. antipodal +π cut); reuses InArc.central_angle.
 # Headline sweep_ccw_iff_signed_central_angle_pos Qed (sqrt-free case analysis).
-# 4-axiom (atan2 lineage via AngleBetween / InArc; see audit-exceptions).
+# 3-axiom (IVT atan2 via AngleBetween / InArc).
 theories/ArcSweepCcw.v
 # Buffer/noder pipeline, Stage 2b seam (docs/buffer-noder-pipeline.md S3):
 # round-join corner-arc relation (Roadmap target 6).  The sweep between the
 # two offset normals equals the turn between the edges
 # (corner_arc_sweep_eq_turn), since vperp preserves cross+dot; plus
 # atan2 positive-scaling invariance to read it off the unit normals
-# (corner_arc_sweep_eq_turn_unit).  Pulls classic via atan2 (see
-# audit-exceptions).  No Admitted.
+# (corner_arc_sweep_eq_turn_unit).  3-axiom (IVT atan2).  No Admitted.
 theories/BufferJoin.v
 # Issue #64 / Option-A foundation 3 (ask #1): exact arc length s = r*theta with
 # the chord/arc soundness relations.  Headlines chord_le_arc_length (chord <=
@@ -669,6 +674,10 @@ theories/PointInRingCorrect.v
 # simple-polygon characterisation stays deferred. Depends on Overlay +
 # PointInRingCorrect. Three-axiom.
 theories/WindingNumber.v
+# W1 curve-ring winding: signed visual-angle sum on chords and CircularEgg
+# arcs (wind_integer). Not the ray-crossing count above.
+# claimId 0007-curve-ring-wind. Does not flip RNG_JordanUncond.
+theories/CurveRingWinding.v
 # Issue #67 curve->matrix transport foundation: a zero-length edge (v,v) is
 # parity-neutral for the crossing-number point-in-ring test (it never
 # satisfies edge_crosses_ray's strict y-straddle).  Unblocks transporting
@@ -1263,7 +1272,7 @@ theories/RelateMatrixBezier3.v
 # arc_sweep_angle (the analytic gap RelateArcAnalytic/RelateClothoid defer).
 # Squared form: dist_sq(start,end) = 2*dist_sq(center,start)*(1-cos sweep),
 # via a provider-agnostic equal-norm law of cosines over cos_angle_between.
-# 4-axiom (cos.angle_between.atan2 -> classic); exempted in audit-exceptions.
+# 3-axiom (IVT atan2 via cos_angle_between).
 # No Admitteds.
 theories/ArcChordLength.v
 # Issue #67 session 12 (S12): curve-polygon × point relate + fill — chord rect
@@ -2375,8 +2384,8 @@ theories/InDisk.v
 # (pie-slice) membership.  Angular order as InArc + closed disk as InDisk;
 # centre included as sector vertex.  Bridges in_arc_implies_in_sector /
 # in_sector_implies_in_disk.  Unit-quarter witnesses (interior, ray, arc,
-# centre; wrong-angle + exterior rejected).  4-axiom (atan2 lineage via
-# InArc / AngleBetween; see audit-exceptions).  No Admitted.
+# centre; wrong-angle + exterior rejected).  3-axiom (IVT atan2 via
+# InArc / AngleBetween).  No Admitted.
 theories/InSector.v
 # Board #9004 — GREEN: the maximum-inscribed-circle home for epic #813's MIC
 # lane, hosting the Polycenter cite (Zhai et al. 2026,
@@ -2522,10 +2531,20 @@ theories/ArcHotPixel.v
 # `field` after unfolding the explicit circumcenter formula).
 # Fifteen Qed-closed lemmas covering sagitta non-negativity,
 # sagitta_le_arc_radius, and the bridge arc_radius = sqrt arc_radius_sq.
-# The full chord_approx_error_bound headline is deferred to a follow-up
-# (depends on arc_radius_sq_ge_chord_half_length_sq + perpendicular-
-# bisector geometry + S4's IVT-blocked soundness).  No Admitteds.
+# The n-chord deviation chord_approx_error_bound is ArcLinearizeBound.
+# Hot-pixel transport of that bound stays a separate composition.
+# No Admitteds.
 theories/ArcChordApprox.v
+# GEOS-aligned uniform chord walk on a certified egg (θ0, Δθ).
+# claimId: 0007-arc-linearize. 3-axiom. subdiv_n inhabits subdiv_ok
+# (ceil via archimed / up, which print only the allowlist trio).
+# Linearizes is LinearizeContract (any sample sequence ts).
+# The arc instance arc_linearizes is ArcLinearizeContract.
+# No Admitted.
+theories/ArcLinearize.v
+theories/LinearizeContract.v
+theories/ArcLinearizeBound.v
+theories/ArcLinearizeContract.v
 # C0 stereographic / half-angle chart (ζ = tan(φ/2); not tag τ). Pole opposite M,
 # monotone off the pole, arc membership iff the bounded ζ interval,
 # and that interval iff ArcIntersect.arc_span_contains. Host/pure-R.
@@ -2544,9 +2563,77 @@ theories/ChartLineQuadratic.v
 # 3-axiom. No Admitted.
 theories/ZetaEggBridge.v
 # #770 P: a C1 zeta segment hit carries the host on_circ / on_chord check
-# at t_of_zeta / tj_of, then the F-series fixtures. Oracle lane; host
-# I_ok unchanged. 3-axiom. No Admitted.
+# at t_of_zeta / tj_of, then the F-series fixtures. Oracle lane.
+# 3-axiom. No Admitted.
 theories/ZetaHostHit.v
+# Host 𝓘 on in-scope MkCirc × MkChord (claimId 0007-host-circ-chord-oracle).
+# Soundness, completeness, named full-span / degenerate declines.
+# Locked CC LS+CS does not decline the ∀-bag; interior quarter progresses.
+# 3-axiom. No Admitted.
+theories/HostCircChordOracle.v
+# T1a. Half-plane clip and the triangle-pair I∩I entry.
+# claimId: tri-de9im-a. Witness ii_nonempty_iff.
+# Secondary witness: clip_correct. 3-axiom. No Admitted.
+theories/ConvexClip.v
+theories/ConvexClipPoly.v
+theories/ConvexClipComplete.v
+theories/TrianglePairCommon.v
+theories/TrianglePairClip.v
+theories/TrianglePairEdge.v
+theories/TrianglePairBound.v
+theories/TrianglePairExterior.v
+# Family witness tri_de9im_correct. claimId tri-de9im-a. 3-axiom. No Admitted.
+theories/TrianglePairMatrix.v
+# Five-arm fill fixtures. claimId none. 3-axiom. No Admitted.
+theories/TrianglePairAgree.v
+# TIN validity. claimId tri-de9im-t3. 3-axiom. No Admitted.
+theories/TrianglePairTin.v
+# TIN surface. claimId tri-de9im-tin-surface. 3-axiom. No Admitted.
+theories/TrianglePairTinSurface.v
+# TIN × triangle. claimId tri-de9im-t5. 3-axiom. No Admitted.
+theories/TrianglePairTinRelate.v
+# Pinned tri_de9im fixture table. claimId tri-de9im-q. Not a Q clip.
+# 3-axiom. No Admitted.
+theories/TrianglePairDe9imQ.v
+# ∀-bag letter 2 slices. SheetHenRho.v re-exports them.
+# claimId none. 3-axiom. No Admitted.
+theories/SheetHenRhoCarrier.v
+theories/SheetHenRhoCount.v
+theories/SheetHenRhoEnds.v
+theories/SheetHenRhoWitness.v
+# ∀-bag letter 2. ρ and finiteness. claimId none.
+# 3-axiom. No Admitted.
+theories/SheetHenRho.v
+# ∀-bag letter 3. Admissible step, strict ρ, structural bag_run.
+# claimId 0007-loop-letter3-strict. 3-axiom. No Admitted.
+theories/SheetHenBagRun.v
+# Letter 5: concrete pick and per-class hit parameters. Stacked on letter 3.
+# 3-axiom. No Admitted.
+theories/SheetHenLoop3.v
+# Headline: pick_bag_spec. claimId 0007-loop-letter5-pick. witness pick_bag_spec. Consumer: letter5_obligation.
+# 3-axiom. No Admitted.
+theories/SheetHenPickSpec.v
+# Headline: noded_ov_rho_zero. claimId 0007-loop-letter6. witness noded_ov_rho_zero.
+# Consumer: col_fixture_ov_not_noded. 3-axiom. No Admitted.
+# Converse is SheetHenRhoLoop. This file does not claim the iff.
+theories/SheetHenNodedOv.v
+# Headline: gap_not_ov. claimId none. Consumer: SheetHenNodedOv.
+# Regression gap_counted, gap_bag_counted, gap_rho_pos. 3-axiom. No Admitted.
+theories/SheetHenNodedOvGap.v
+# Letter 6a-ii. claimId none. Headline: bag_run_arm_noded.
+# CookLoopRho := rho_loop_discharged. Confluence conjunct is 6a-iii.
+# cook_loop_status stays LoopObligation. 3-axiom. No Admitted.
+theories/SheetHenRhoLoop.v
+# Letter 6a-iii. claimId none. Headline: run_vset_determined.
+# cook_loop_rho_holds discharges CookLoopRho. cook_loop_status stays LoopObligation.
+# 3-axiom. No Admitted.
+theories/SheetHenRhoConf.v
+# Letter 6a-iii fixture. claimId none. pick_bag and pick_rev on three chords.
+# 3-axiom. No Admitted.
+theories/SheetHenRhoConfFix.v
+# Letter 3 fixtures: locked quarter, #892 halves, collinear overlap,
+# tangency, partial co-circular arcs. 3-axiom. No Admitted.
+theories/SheetHenBagRunFix.v
 
 # Companion counterexample for ArcOrient.arc_minor (in the style of
 # SpectreChordArcWitness.v): a concrete valid arc where arc_mid sits on the
@@ -2599,8 +2686,8 @@ theories/ArcChordDensity.v
 # subtends <= theta/n) into ArcChordDensity.v's chord budget, via the law
 # of cosines against the record's dist_sq, cos_angle_between, the
 # half-angle identity, and sin^2 x <= x^2.  Headline
-# equal_angle_chords_achieve_eps.  Category-C atan/sin lineage (4-axiom,
-# see docs/audit-exceptions.txt).  Closes the trigonometric half of
+# equal_angle_chords_achieve_eps.  3-axiom (local PI >= 2; no PI2_1).
+# Closes the trigonometric half of
 # ArcChordApprox.v section 6c's deferral.  No Admitteds.
 theories/ArcChordSubdivision.v
 
@@ -2722,8 +2809,8 @@ theories/ArcArcCirclesSpan.v
 # reflex-arc (sweep >= pi) case the corpus's own comments previously
 # believed open.  Closed-form on-circle cross product identity
 # (cross_R_pt_cyclic_sum + Lagrange 2D identity + sin sum-to-product, nsatz)
-# plus a same-sign combinator (no iff fed to nra).  4-axiom (atan2 lineage,
-# see docs/audit-exceptions.txt).  No Admitted.
+# plus a same-sign combinator (no iff fed to nra).  3-axiom (IVT atan2).
+# No Admitted.
 theories/ArcSpanAtan2.v
 # Issue #64 round-2 item ④ — N-AA Vieta coordinate identities
 # (radical_point plus/minus x/y sum and product).  Pure ring, 3-axiom.
@@ -2835,13 +2922,29 @@ theories/ChordCook.v
 theories/SheetHenCircEgg.v
 # ADR-0007 ClothoidEgg payload for host MkClothoid
 # (claimId 0007-intake-mkclothoid / 0007-clothoid-first-cook).
-# Locked inhabitance record + Fresnel-free cloth_eval. Required by
-# SheetHenCook. No Admitted.
+# Fresnel cloth_eval, split for the module gate: core, bounds, frames.
+# Umbrella keeps the old name. Required by SheetHenCook. No Admitted.
+theories/LipInt.v
+theories/LipIntFTC.v
+# Leibniz rule for lint (claimId: none). Uniform modulus, no MVT.
+theories/LipIntLeibniz.v
+theories/MetricSpeed.v
+theories/MetricEnvelope.v
+theories/MetricArea.v
+theories/MetricGreen.v
+theories/MetricCircleSmoke.v
+theories/SheetHenClothoidCore.v
+theories/ClothoidTangent.v
+theories/SheetHenClothoidBounds.v
+theories/SheetHenClothoidFrames.v
 theories/SheetHenClothoidEgg.v
 # ADR-0007 sheet/hen/cook vocabulary, split (module-split gate): core
 # types/oracle/identity/noded/leftover-confluence/overlay/ddir. Required
 # by SheetHenCook. No Admitted.
 theories/SheetHenCookCore.v
+# Clothoid × chord signed distance. No FTC. claimId 0007-clothoid-chord-rho.
+# Does not wire bag_run_arm. No new Egg arm.
+theories/ClothoidChordRho.v
 # ADR-0007 chord_split / try_cook_hit + constructive 𝓘, split from
 # SheetHenCook (module-split gate). Required by SheetHenCook. No Admitted.
 theories/SheetHenCookConstructed.v
@@ -2886,6 +2989,10 @@ theories/SheetHenCookLoopModulo.v
 # idle. leftover_quad_width stays conserved. Park stays LoopObligation.
 # NURBS belayed. No Axiom / Parameter / stub.
 theories/SheetHenCookLoopTerm.v
+# forall-bag letter 1 (claimId 0007-forall-bag, #816). Host/pure-R.
+# Support, window, bag, progress hit, step, noded. Invariant only.
+# Not LeftoverBagTermArm / LoopDischarged. No Axiom / Parameter / stub.
+theories/SheetHenBag.v
 # Circ leftover bag for |H|=2 + noded G on the locked vesica
 # (claimId 0007-circ-leftover-two-hit). Host/pure-R. Reuses leftover-bag
 # shape (interior 𝓘 Hit / Decline idle). Locked measure 2→1→0. Parks ρ
@@ -2957,16 +3064,76 @@ theories/SidecarGeodesicEgg.v
 # Not a spiral interpolant / noder. Not Campaign I–II. Not a noder.
 # No Admitted.
 theories/SidecarSpiralEgg.v
-# ADR-0007 intake angles-from-points (IntakeAngles). Circumcircle
-# + inhabited CircularEgg angle fields from control points.
-# Host/pure-R. 3-axiom. No Atan2.v. Not a CircGamma remint.
+# ADR-0007 intake angles-from-points. Core + chart slices, letter
+# in IntakeAngles. Circumcircle and chart theta0 / sweep.
+# Host/pure-R. 3-axiom atan2. Not a CircGamma remint.
 # Required by IntakeWalker CircUnknown. No Admitted.
+theories/IntakeAnglesCore.v
+theories/IntakeAnglesChart.v
 theories/IntakeAngles.v
+# ISO CIRCLE full turn (IntakeCircle). θ₀ is the chart angle of A;
+# sweep is ±2π from orient(A,B,C). CIRCULARSTRING(A,B,A) Declines.
+# claimId 0007-intake-angles, not reminted. No Admitted.
+theories/IntakeCircle.v
+# ISO CLOTHOID normalizer 1 (IsoClothoidIntake). Direct field
+# copy into ClothoidEgg; similarity frame or named Decline.
+# claimId 0007-intake-mkclothoid, not reminted. No Admitted.
+theories/IsoClothoidIntake.v
+# SPIRALCURVE intake and JTS clothoid decline taxonomy
+# (IntakeSpiralJts). Clothoid kind reuses try_iso_clothoid.
+# Other kinds are SpiralOther. claimId 0007-intake-spiral.
+# No Admitted.
+theories/IntakeSpiralJts.v
+# Normalizer 2 (ClothoidNorm2). Start state + (k0, k1, L)
+# builds a ClothoidEgg. claimId 0007-norm2-state. No Admitted.
+theories/ClothoidNorm2.v
+# Host clothoid length |ed-sd|. claimId 0007-clothoid-length.
+theories/ClothoidLengthAbs.v
+# Heading multiples of pi/2. claimId none.
+theories/ClothoidAxis.v
+# Strict knot list of those stations. claimId none.
+theories/ClothoidKnots.v
+# AABB via envelope_aabb. claimId 0007-clothoid-envelope.
+theories/ClothoidEnvelope.v
+# Arc row of the compound fold (ArcMemberState). arc_exit / arc_entry
+# store MemberState from IntakeSpiralJts. claimId none. No Admitted.
+theories/ArcMemberState.v
+# SPIRALCURVE front (IntakeSpiralFront). Start state onto norm2.
+# claimId none. No Admitted.
+theories/IntakeSpiralFront.v
+# Signed curvature and the JTS clothoid MemberState fold
+# (SignedCurvature). claimId none. No Admitted.
+theories/SignedCurvature.v
+# Compound MemberState fold (IntakeCompoundFold). claimId none.
+# No Admitted.
+theories/IntakeCompoundFold.v
+# Clothoid uniform linearizer. claimId 0007-clothoid-linearize.
+theories/ClothoidFresnelInc.v
+theories/ClothoidLinearize.v
+theories/ClothoidLinearizeContract.v
 # ADR-0007 first-slice intake walker (IntakeWalker). Tagged CST →
 # SHC bag | Intake Decline. Reuses MkChord / MkCirc / MkClothoid.
 # Host/pure-R. Grammar pin: grammars-v4 #4997. No new oracle
 # keyword. No Admitted.
 theories/IntakeWalker.v
+# Circle bag (IntakeWalkerCircle). Two half-span MkCirc,
+# hens at A and the antipode. claimId 0007-intake-angles.
+# Not a self-loop. F5 chart side stays open. No Admitted.
+theories/IntakeWalkerCircle.v
+# Clothoid lemmas split out of IntakeWalker
+# (IntakeWalkerClothoid). claimId 0007-intake-mkclothoid.
+# No Admitted.
+theories/IntakeWalkerClothoid.v
+# Carried θ₀/Δθ face (IntakeCarried). try_carried only.
+# Not the WKT path. Not a CST carrier. No new witness.
+theories/IntakeCarried.v
+# Walker face of ISO CLOTHOID normalizer 1. Hit implies cloth_wf;
+# red declines and the non-locked sample. No new witness.
+theories/IsoClothoidIntakeMap.v
+# Walker face of SPIRALCURVE / JTS declines
+# (IntakeSpiralJtsMap). claimId 0007-intake-spiral.
+# No Admitted.
+theories/IntakeSpiralJtsMap.v
 # ADR-0007 SQL/MM signed tag maps (SqlMmSignedTag).
 # τ on eggs; ρ on IntakeWalker productions; τ=μ after
 # singleton bags. CIRCLE iff |sweep|=2π. κ: 2/8 or none.
@@ -3001,40 +3168,40 @@ theories/CircularCookLineArcR.v
 theories/CircularCook.v
 # Full-circle γ : [0,1] → S + Hit (h*, p*, tᵢ, tⱼ). Locked fixture QED.
 # I.2 ∀ Hit soundness off the lock (proper disc ∧ on_full_circle both
-# roots). CircGamma on CircularArc stays QEX. 4-axiom atan2. Not first
+# roots). CircGamma on CircularArc stays QEX. 3-axiom atan2. Not first
 # cook scope. Not arc membership.
 theories/CircularCookHit.v
 theories/CircularCookEmpty.v
 # Span-restricted γ on CircularArc (principal signed span). QED interpolant
 # + locked proper-arc Hit. Host CircGamma stays QEX (3-axiom / atan2 split).
-# 4-axiom atan2 sidecar. Not first cook scope.
+# 3-axiom atan2 sidecar. Not first cook scope.
 theories/CircularCookSpan.v
 # ADR-0007 letter: circular Hit (h*, p*, tᵢ, tⱼ) feeds a same-shape
 # split(t) cook on the locked discs. QED plus-root leftovers meet at p+.
 # QEX Touch/Empty/Decline allocate no hen. Host CircGamma stays QEX;
-# try_cook_hit still declines circular eggs. 4-axiom atan2 sidecar.
+# try_cook_hit still declines circular eggs. 3-axiom atan2 sidecar.
 # Not first cook scope. Not ArcSplitAtNode. Not a noder.
 theories/CircularCookSplit.v
 # I.8 one-step leftover confluence on γ_full. Circular analogue of
 # SheetHenCook.split_step_confluent (leftovers_ab = leftovers_ba).
 # Not the bag loop. Not leftover_width. CircGamma stays QEX.
-# 4-axiom atan2 sidecar. Campaign I close is I.10.
+# 3-axiom atan2 sidecar. Campaign I close is I.10.
 theories/CircularCookConfluence.v
 # I.9 classifier ≠ cook. I_circles_z / I_CIRCULAR Hit is tags 0/1,
 # not (p*, tᵢ, tⱼ). Does not license host try_cook_hit / circ_split
 # / first_cook_scope expansion. CircGamma stays QEX.
-# 4-axiom atan2 sidecar. Campaign I close is I.10.
+# 3-axiom atan2 sidecar. Campaign I close is I.10.
 theories/CircularCookLicense.v
 # I.10 Campaign-I close letter. Sidecar cook on constructed circular
 # Hit (both roots). Host CircGamma stays QEX. first_cook_scope stays
 # chord–chord. I_CIRCULAR stays a classifier. #666 fence holds.
 # Campaign II and H⊥ are named parked. No new kernel. Not SQL/MM done.
-# 4-axiom atan2 sidecar (classic via Split / circ_gamma).
+# 3-axiom atan2 sidecar (allowlist).
 theories/CircularCookClose.v
 # II.1 span filter as IResult on CircularArc γ (not γ_full).
 # Radical root is arc Hit iff on_arc_gamma both. Locked p+ Hit,
 # p− Empty. Host CircGamma stays QEX. II.2–II.4 / H⊥ / SQL/MM
-# cathedral stay parked. 4-axiom atan2 sidecar (classic via Span).
+# cathedral stay parked. 3-axiom atan2 sidecar (allowlist).
 # Not CircularString concat. Not first cook scope. Not a noder.
 theories/CircularCookSpanFilter.v
 # II.2 split γ_span at in-span t (leftovers meet at p*).
@@ -3042,15 +3209,15 @@ theories/CircularCookSpanFilter.v
 # γ_full. Locked p+ leftovers meet at p*; leftover stays on the
 # parent circle. Locked p− stays Empty — no invented span cook.
 # Host CircGamma stays QEX. II.3–II.4 / H⊥ / SQL/MM cathedral
-# stay parked. 4-axiom atan2 sidecar (classic via Span / Filter).
+# stay parked. 3-axiom atan2 sidecar (allowlist).
 # Not CircularString concat. Not first cook scope. Not a noder.
 theories/CircularCookSpanSplit.v
 # II.3 I_ok_circ on EggCircularArc × EggCircularArc (sidecar
 # arc_gamma). First glossary-type inhabitant. Locked p+ Hit
 # licenses span_split; locked far pair inhabits Empty.
 # Host CircGamma stays QEX. first_cook_scope stays chord–chord.
-# II.4 / H⊥ / SQL/MM cathedral stay parked. 4-axiom atan2
-# sidecar (classic via Span / Filter / Split). Not CS concat.
+# II.4 / H⊥ / SQL/MM cathedral stay parked. 3-axiom atan2
+# sidecar (allowlist). Not CS concat.
 # Not first cook scope. Not a noder. Not a computed classifier.
 theories/CircularCookOkCirc.v
 # II.4 Campaign-II close letter. I_ok_circ exists as sidecar
@@ -3058,16 +3225,16 @@ theories/CircularCookOkCirc.v
 # first_cook_scope stays chord–chord. H⊥ parked. Not a bag
 # noder. Phase B SQL/MM Part 3 required-type gaps named
 # (CircularString / CompoundCurve / CurvePolygon). Not
-# SQL/MM done. 4-axiom atan2 sidecar (classic via OkCirc /
-# Span). Not CS concat. Not first cook scope. No new kernel.
+# SQL/MM done. 3-axiom atan2 sidecar (allowlist).
+# Not CS concat. Not first cook scope. No new kernel.
 theories/CircularCookCloseII.v
 # Phase B.1 CircularString concat joints (sidecar reuse).
 # CS is a sequence of CircEgg; joint is I_ok_circ Hit at
 # (end, t=1, t=0) via arc_gamma. Joint params not interior.
 # Locked 2-arc V-CS odd_closed fixture. Host CircGamma stays
 # QEX. first_cook_scope stays chord–chord. CompoundCurve /
-# CurvePolygon / H⊥ parked. Not SQL/MM done. 4-axiom atan2
-# sidecar (classic via OkCirc / Span). No new kernel. Not a
+# CurvePolygon / H⊥ parked. Not SQL/MM done. 3-axiom atan2
+# sidecar (allowlist). No new kernel. Not a
 # CircGamma remint. Not first cook scope. Not a noder.
 theories/CircularCookCsConcat.v
 # Phase B mixed LS–CS joints (SidecarCircMixed). Contiguous
@@ -3075,7 +3242,7 @@ theories/CircularCookCsConcat.v
 # via host chord_eval + sidecar arc_gamma. Host I_ok mixed stays
 # Decline (I.1). Host CircGamma stays QEX. first_cook_scope stays
 # chord–chord. Interior mixed cook parked. Not a CircGamma remint.
-# 4-axiom atan2 sidecar (classic via CsConcat / OkCirc / Span).
+# 3-axiom atan2 sidecar (allowlist).
 # No new kernel. Not first cook scope. Not a noder.
 theories/SidecarCircMixed.v
 # Phase B.2 CompoundCurve member joints (sidecar / host reuse).
@@ -3089,7 +3256,7 @@ theories/SidecarCircMixed.v
 # CurvePolygon / H⊥ / interior mixed cook parked. Not SQL/MM
 # done. CC required-type Landed (mixed I_ok_mixed Hit, not host
 # I_ok; letter B.2 landed ≠ SQL/MM done / Phase B done-when).
-# 4-axiom atan2 sidecar (classic via CsConcat / OkCirc / Span).
+# 3-axiom atan2 sidecar (allowlist).
 # No new kernel. Not a CircGamma remint. Not CurveSegment remint.
 # Not first cook scope. Not a noder. Not CurvePolygon.
 theories/CircularCookCcConcat.v
@@ -3108,8 +3275,8 @@ theories/CircularCookCcConcat.v
 # done. CP / CC required-type Landed (mixed I_ok_mixed Hit, not
 # host I_ok). Phase B Open (letter B.3 landed ≠ SQL/MM done /
 # Phase B done-when).
-# 4-axiom atan2
-# sidecar (classic via CcConcat / CsConcat / OkCirc / Span).
+# 3-axiom atan2
+# sidecar (allowlist).
 # No new kernel. Not a CircGamma remint. Not CurveSegment
 # remint. Not CurveGeometry.CurvePolygon remint. Not first
 # cook scope. Not a noder.
@@ -3122,8 +3289,8 @@ theories/CircularCookCpConcat.v
 # first_cook_scope stays chord–chord. Interior mixed cook parked.
 # Bag noder / H⊥ / CircGamma remint / SQL/MM cathedral parked.
 # Multi required-type Gap. Phase B Open. Letter landed ≠ cathedral
-# Landed / Phase B done-when. 4-axiom atan2 sidecar (classic via
-# CpConcat / CcConcat / CsConcat / OkCirc / Span). No new kernel.
+# Landed / Phase B done-when. 3-axiom atan2 sidecar (allowlist).
+# No new kernel.
 # Not first cook scope. Not a noder.
 theories/SidecarCircBags.v
 # Phase B ι interior circular×chord cook (SidecarCircInterior).
@@ -3136,8 +3303,7 @@ theories/SidecarCircBags.v
 # / CircGamma / host I_ok. Interior cook stays parked. Letter
 # landed ≠ cook Landed / cathedral Landed / Phase B done-when /
 # Multi Landed. H⊥ / bag-loop / SQL/MM cathedral parked.
-# 4-axiom atan2 sidecar (classic via SidecarCircMixed / CsConcat
-# / OkCirc / Span). No new kernel. Not first cook scope. Not a
+# 3-axiom atan2 sidecar (allowlist). No new kernel. Not first cook scope. Not a
 # noder. Not a CRV-TOUCH kiss.
 theories/SidecarCircInterior.v
 # ADR-0007 ι interior Hit discharge (SidecarCircInteriorHit).
@@ -3148,8 +3314,8 @@ theories/SidecarCircInterior.v
 # Host I_ok mixed stays Decline. Host CircGamma stays QEX.
 # first_cook_scope stays chord–chord. Host interior cook stays
 # parked. Letter landed ≠ host cook Landed / cathedral Landed /
-# Phase B done-when. 4-axiom atan2 sidecar (classic via
-# SidecarCircInterior / Span). No new kernel. Not first cook
+# Phase B done-when. 3-axiom atan2 sidecar (allowlist).
+# No new kernel. Not first cook
 # scope. Not a noder. Not a CRV-TOUCH kiss.
 theories/SidecarCircInteriorHit.v
 # ADR-0007 ι complete gate (SidecarCircIotaGate). Six exclusive complete
@@ -3157,7 +3323,7 @@ theories/SidecarCircInteriorHit.v
 # CircularString-as-chord is cell 1, never cell 4. Cook reuse: host I_ok
 # / CircularCook / I_ok_mixed. InteriorMixedHitArm stays missing (QEX);
 # do not drop mixed_joint_params; do not remint CircGamma / LoopDischarged.
-# 4-axiom atan2 sidecar (classic via Interior / Mixed / Span). No new
+# 3-axiom atan2 sidecar (allowlist). No new
 # kernel. Not first cook expand. Not a noder. Not Overlay / GEOS.
 theories/SidecarCircIotaGate.v
 # ADR-0007 ι cell-4 arm stop (SidecarCircIotaArm). claimId 0007-iota-arm.
@@ -3167,8 +3333,8 @@ theories/SidecarCircIotaGate.v
 # ctor is existing I_ok_interior, not host I_ok / first-cook remint.
 # Geometric chord_split + span_split meet at p+ and do not inhabit
 # the arm. Gate letter stays QED; cook stays this named QEX.
-# 4-axiom atan2 sidecar (classic via IotaGate / Interior / Mixed /
-# SpanSplit). No new kernel. Not first cook expand. Not a noder.
+# 3-axiom atan2 sidecar (allowlist). No new kernel. Not first cook
+# expand. Not a noder.
 theories/SidecarCircIotaArm.v
 theories/SidecarCircIotaTags.v
 # Lineal boundary-meet bridge: curve_segments_meet (chord-chord contact) =>
@@ -3324,6 +3490,12 @@ theories/RelateNGTouchEdgeCells.v
 # IB/BI/IE/EI/BE/EB.  Witness pair stays in RelateNGTouchEdgeCells.
 # No ring_complement / ray_avoids_vertices guard.
 theories/RelateNGTouchEdgeCellsGeneral.v
+# relate
+# #847 / ADR-0003: forall vertical/horizontal rect touch, the six
+# spec-tier cells IB/BI/IE/EI/BE/EB.  IB and BI use rect_interior.
+# Coded-tier IB is a separate conjunct.  Not host-lane.
+# No ring_complement / ray_avoids_vertices guard.
+theories/RelateNGTouchRectCellsGeneral.v
 # #576 / 522-h (overlap split): nine gtri cells of OGC 212101212 on
 # the #567 / #570 overlap pair.  Names aa_matrix_overlap_ogc; does
 # not remint aa_matrix_partial_overlap (shared 2FFF1FFF2 pin).  Qex:
@@ -3346,6 +3518,8 @@ theories/RelateNGFace.v
 # Bible / CONTEXT prose ratchet (claimId 508-context-prose-ratchet).
 # Citation-only QED∨QEX stop. No new geometry. No Admitted.
 theories/ContextProseRatchet.v
+# Pass 2 (claimId 508-context-prose-ratchet-2). Same shape.
+theories/ContextProseRatchet2.v
 # Ticket 509 F-CP/F-MC/F-MS struct vs true-region QED ∨ QEX stop
 # (prelude only). Named QEX CurvePolygonTrueRegionSound. Cites
 # F-CP structural chord-floor Qed and #791 polygonal taut ceiling.
@@ -4206,3 +4380,34 @@ theories-flocq/SpectrePassesThroughWitness.v
 # straight chord clips but the arc misses (companion to theories/SpectreExample.v
 # and the chord-overfitting theme, docs/audit-phase4-chord-overfitting.md).
 theories/SpectreChordArcWitness.v
+# lane C
+# TIN topology. claimId tri-de9im-t4. 3-axiom. No Admitted.
+theories/TinSurfaceTopo.v
+theories/TinSurfaceVertex.v
+# TIN x triangle remaining DE-9IM cells. claimId tri-de9im-t6. 3-axiom. No Admitted.
+theories/TrianglePairTinRelate2.v
+# lane B
+theories/NurbsSumBridge.v
+theories/NurbsBezierSpan.v
+# lane arc-sim (claimId arc-sim-image): statement/proof split pilot.
+# ArcSimilarityStmt.v = statements only (pinned by check_claim_statements.py);
+# ArcSimilarityImage.v proves exactly its claim/supporting/witness. 3-axiom.
+theories/ArcSimilarityStmt.v
+theories/ArcSimilarityImage.v
+# lane arc-sim, optional item: planar pole-triangle product (claimId
+# pole-tri-27-4; the polar body is not proved). 3-axiom. No Admitted.
+theories/PoleTriangleProduct.v
+# lane A
+# CS/CC IsSimple: no interior vertex added and no coincident pieces.
+# claimId 0007-cscc-issimple. Reads the loop. 3-axiom. No Admitted.
+theories/SheetHenSimple.v
+# CurvePolygon rings from that fixpoint. claimId 0007-cp-loop-rings.
+# Does not replace CurvePolygonValid.v. 3-axiom. No Admitted.
+theories/CurvePolygonLoopValid.v
+# lane clothoid-harden
+# Mode A on the host Fresnel clothoid (#883): window-start Fresnel form,
+# unit speed, curvature linear in arc length, reverse and split laws,
+# placed curvature (similarity kappa/lam; GEOS #1566 shear enclosure).
+# claimId none new. 3-axiom. No Admitted.
+theories/ClothoidTraversal.v
+theories/ClothoidPlacement.v

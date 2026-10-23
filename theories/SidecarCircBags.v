@@ -14,7 +14,7 @@
    / membership joints reuse existing I_ok / I_ok_circ /
    I_ok_mixed. No new intersection kernel.
 
-   Not a bag-level cook loop (cook_loop stays LoopObligation).
+   Not a bag-level cook loop (cook_loop_status is LoopDischarged via letter 6b; this letter is not that discharge).
    Not a remint of CurveSegment / CurveGeometry.CurvePolygon.
    Not SQL/MM cathedral / Phase B done-when.
 
@@ -66,10 +66,7 @@
    WITNESS topic: overlay · claimId: 0007
    witness: 0007-B-bags
    board: ADR-0007
-   4-axiom (atan2 / Classical_Prop.classic via CircularCookCpConcat /
-     CircularCookCcConcat / CircularCookCsConcat / CircularCookOkCirc).
-   Category C audit-exception: same atan2 lineage as B.1–B.3; no
-   extra axioms.
+   3-axiom (IVT atan2; allowlist).
    No Admitted / Axiom / Parameter.
 
    Author: NetTopologySuite.Proofs contributors
@@ -639,11 +636,11 @@ Proof.
 Qed.
 
 Lemma bags_not_bag_noder :
-  cook_loop_status = LoopObligation
-  /\ cook_loop_status <> LoopDischarged.
+  cook_loop_status = LoopDischarged
+  /\ cook_loop_status <> LoopObligation.
 Proof.
-  split; [exact cook_loop_is_obligation|].
-  exact cook_loop_not_discharged.
+  split; [exact cook_loop_is_discharged|].
+  exact cook_loop_not_obligation.
 Qed.
 
 Lemma bags_rest_parked :
@@ -654,7 +651,7 @@ Lemma bags_rest_parked :
   /\ bags_circgamma_remint_status = BagsCircGammaRemintParked
   /\ bags_sql_mm_status = BagsSqlMmNotDone
   /\ bags_cathedral_status = BagsCathedralNotLanded
-  /\ cook_loop_status = LoopObligation
+  /\ cook_loop_status = LoopDischarged
   /\ CircularCookCpConcat.phase_b_status = CircularCookCpConcat.PhaseBOpen.
 Proof.
   repeat split; reflexivity.
@@ -774,7 +771,7 @@ Theorem ticket_0007_b_bags_park_qed_or_qex :
    /\ bags_circgamma_remint_status = BagsCircGammaRemintParked
    /\ bags_sql_mm_status = BagsSqlMmNotDone
    /\ bags_cathedral_status = BagsCathedralNotLanded
-   /\ cook_loop_status = LoopObligation
+   /\ cook_loop_status = LoopDischarged
    /\ CircularCookCpConcat.phase_b_status = CircularCookCpConcat.PhaseBOpen).
 Proof.
   right.
@@ -799,3 +796,33 @@ Print Assumptions ticket_0007_b_bags_inhabit_qed_or_qex.
 Print Assumptions ticket_0007_b_bags_reuse_qed_or_qex.
 Print Assumptions ticket_0007_b_bags_host_qed_or_qex.
 Print Assumptions ticket_0007_b_bags_park_qed_or_qex.
+Print Assumptions bags_host_not_first_cook.
+Print Assumptions bags_first_cook_stays_chord_chord.
+Print Assumptions bags_not_first_cook_mixed.
+Print Assumptions bags_host_circular_decline.
+Print Assumptions bags_host_circular_hit_false.
+Print Assumptions bags_host_ls_cs_decline.
+Print Assumptions bags_host_ls_cs_hit_false.
+Print Assumptions locked_cs_far_1_valid.
+Print Assumptions locked_cs_far_2_valid.
+Print Assumptions locked_cs_far_joint.
+Print Assumptions locked_cs_far_contiguous.
+Print Assumptions locked_cs_far_I_ok_circ.
+Print Assumptions locked_cs_member_ok.
+Print Assumptions locked_cc_member_ok.
+Print Assumptions locked_cs_far_member_ok.
+Print Assumptions locked_cp_cs_member_ok.
+Print Assumptions locked_cp_mixed_member_ok.
+Print Assumptions locked_mc_apart_ok.
+Print Assumptions locked_cs_end_pt.
+Print Assumptions locked_cs_far_start_pt.
+Print Assumptions locked_mc_apart_not_contiguous.
+Print Assumptions bags_cc_ls_ls_joint_I_ok.
+Print Assumptions bags_cp_cs_closing_I_ok_circ.
+Print Assumptions bags_cp_mixed_closing_I_ok_mixed.
+Print Assumptions bags_host_stays_qex.
+Print Assumptions bags_hperp_is_parked.
+Print Assumptions bags_sql_mm_is_not_done.
+Print Assumptions bags_circgamma_remint_is_parked.
+Print Assumptions bags_interior_cook_is_parked.
+Print Assumptions bags_rest_parked.

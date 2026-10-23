@@ -10,7 +10,7 @@
 #     `docs/axiom-allowlist.txt` (verified, not hoped).
 #   - Adding a file requires a comment above it (Category C reason + plan).
 #
-# LIVE: 112 files (76 theories-flocq/ + 35 theories/ + 1 hunt probe).
+# LIVE: 79 files (76 theories-flocq/ + 2 theories/ + 1 hunt probe).
 # Chip 2 peeled NurbsKnotSpans.v + ArcArcQuartic.v (atan/atan2 instances
 # moved into already-excepted siblings).  Remaining R-side files carry
 # classic via atan2/Ratan or RiemannInt.  Flocq C1 (`classic` via
@@ -121,48 +121,12 @@ theories-flocq/RingCurvatureModels.v
 theories-flocq/ExtractFacesBridge.v
 theories-flocq/OverlayCorrectness.v
 
-# R-side C1 — atan2 / Ratan (Stdlib atan pulls classic)
-theories/Atan2.v
-theories/AngleBetween.v
-theories/CircularCookHit.v
-theories/CircularCookEmpty.v
-theories/CircularCookSpan.v
-theories/CircularCookSplit.v
-theories/CircularCookConfluence.v
-theories/CircularCookLicense.v
-theories/CircularCookClose.v
-theories/CircularCookSpanFilter.v
-theories/CircularCookSpanSplit.v
-theories/CircularCookOkCirc.v
-theories/CircularCookCloseII.v
-theories/CircularCookCsConcat.v
-theories/SidecarCircMixed.v
-theories/CircularCookCcConcat.v
-theories/CircularCookCpConcat.v
-theories/SidecarCircBags.v
-theories/SidecarCircInterior.v
-theories/SidecarCircInteriorHit.v
-# Same atan2 / classic lineage as Parks ι (SidecarCircInterior*).
-# Gate completeness is 3-axiom-shaped; cook reuse pulls the sidecar.
-theories/SidecarCircIotaGate.v
-# Same atan2 / classic lineage as ι-gate (SidecarCircIotaGate).
-# Cell-4 arm stop; no extra axioms.
-theories/SidecarCircIotaArm.v
-# Same atan2 / classic lineage as ι-gate (SidecarCircIotaGate) and
-# SidecarCircInterior*: RootTag consumer reuses I_ok_mixed / I_ok_interior.
-# CircularCookLineArcZ.v itself stays 0-axiom; the sidecar is not imported there.
-theories/SidecarCircIotaTags.v
-theories/InArc.v
-theories/ArcSweepCcw.v
-theories/InSector.v
-theories/BufferJoin.v
-theories/ArcChordSubdivision.v
-theories/RelateArcAnalytic.v
-theories/ArcChordLength.v
-theories/ArcParamBridge.v
-theories/ArcTraversalBridge.v
-theories/ArcMidSweep.v
-theories/ArcSpanAtan2.v
+# R-side C1 — still off the allowlist after the S1b atan3 restatement.
+# Atan2.v is 3-axiom (IVT). The circular-cook cone, InArc, and
+# ArcChordSubdivision are 3-axiom and left this list. The Ratan bridge
+# stays: atan3_eq_atan / atan2_eq_ratan pull classic via Ratan.atan.
+theories/Atan2RatanBridge.v
 
-# R-side C1 — RiemannInt (#564 Fresnel inhabitant; pack stays 3-axiom)
+# R-side C1 — RiemannInt (#564 Fresnel inhabitant; pack stays 3-axiom).
+# Culprit: RInt_cont_le (continuity_implies_RiemannInt).
 theories/ClothoidFresnelInhab.v

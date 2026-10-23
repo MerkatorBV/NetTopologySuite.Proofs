@@ -257,6 +257,14 @@
                       HAND-ROLLED catalog in oracle/relate_matrix.ml (not
                       geometry computation — full RelateNG noding is S13+).
 
+     TRI_DE9IM_FIXTURE_PINS_Q -- pinned table, not a computed matrix.
+        line 2:       strip | overlap | tjunction | fan_opposite
+        output:       9-char row-major matrix.  `?` is an uncomputed cell.
+                      Proved cells only (II, BB where proved, EE = 2).
+                      No float arithmetic.  No clip.
+        Coq mirror:   TrianglePairDe9imQ.v tri_de9im_fixture_pins_Q.
+                      HAND-ROLLED string table in relate_matrix.ml.
+
      RELATE_PREDICATE -- DE-9IM predicate test on a pinned matrix (S11).
         line 2:       <matrix_key>  (same key vocabulary as RELATE_MATRIX)
         line 3:       <predicate>   Disjoint | Intersects | Contains | Within |
@@ -4748,6 +4756,11 @@ let run_relate_matrix () =
   | Relate_matrix.Unsupported -> print_endline "UNSUPPORTED"
   | Relate_matrix.Matrix m -> print_endline m
 
+(* String lookup of the proved tri_de9im fixture cells.  No float kernel. *)
+let run_tri_de9im_q () =
+  let key = String.trim (input_line stdin) in
+  print_endline (Relate_matrix.lookup_tri_de9im_q key)
+
 let run_relate_predicate () =
   let matrix_key = String.trim (input_line stdin) in
   let predicate  = String.trim (input_line stdin) in
@@ -4849,6 +4862,15 @@ let run_cp_boundary_simplify () =
       (if triple_int_safe a b c then "INTSAFE" else "APPROX")
   done
 
+(* ----- SQLMM_WKT (structural I/O identity; no binary64).
+   ISO/IEC 13249-3 §4.2.1 instantiable ST_Curve subtypes, plus the
+   SPIRALTYPE open-set lexer deviation.  Does not discharge ADR-0007
+   intake or emit.  Implementation lives in sqlmm_wkt.ml so this mode
+   cannot grow a hand-rolled float kernel.  See oracle/red_sqlmm_wkt_tests.py. *)
+let run_sqlmm_wkt () =
+  let line = input_line stdin in
+  print_endline (Sqlmm_wkt.parse_line line)
+
 (* ----- Mode dispatch. ----------------------------------------------------- *)
 
 (* Persistent loop: SIMPLIFY exits after one call (it reads its input
@@ -4927,11 +4949,13 @@ let () =
        | "CURVE_SNAP_INVARIANTS_EXACT"  -> run_curve_snap_invariants_exact ()
        | "SNAP_SCALED"                  -> run_snap_scaled ()
        | "RELATE_MATRIX"                -> run_relate_matrix ()
+       | "TRI_DE9IM_FIXTURE_PINS_Q"     -> run_tri_de9im_q ()
        | "RELATE_PREDICATE"             -> run_relate_predicate ()
        | "CP_BOUNDARY_SIMPLIFY"     -> run_cp_boundary_simplify ()
        | "ARC_BUFFER_SIMPLE"        -> run_arc_buffer_simple ()
        | "ARC_SIMPLIFY_DECISION"    -> run_arc_simplify_decision ()
        | "ARC_OFFSET_FILTERED"      -> run_arc_offset_filtered ()
+       | "SQLMM_WKT"                -> run_sqlmm_wkt ()
        | other -> failwith (Printf.sprintf "oracle: unknown mode: %s" other));
       flush stdout;
       loop ()

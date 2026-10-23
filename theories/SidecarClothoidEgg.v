@@ -65,7 +65,7 @@
 
 From Stdlib Require Import Reals Ranalysis1.
 From NTS.Proofs Require Import Distance SheetHenCook NodingNG RelateClothoid
-  ClothoidCookMkClothoid.
+  ClothoidResidual ClothoidCookMkClothoid.
 Local Open Scope R_scope.
 
 (* -------------------------------------------------------------------------- *)
@@ -240,24 +240,32 @@ Proof.
   - apply sidecar_clothoid_host_hit_false.
 Qed.
 
-(* Residual uniqueness is already Qed on the monotone branch
-   (RelateClothoid re-export of ClothoidResidual). Metric /
-   solver well-posedness — not a cook Hit, not Fresnel noding. *)
+(* Residual uniqueness stays metric, not a cook Hit.
+   Full branch |κL| ≤ π keeps this name and takes ClothoidFPrimePos.
+   The half-branch |κL| ≤ 1/2 is unconditional. *)
 Lemma sidecar_clothoid_residual_is_metric :
-  forall (f f' : R -> R) (kappa : R),
-    (forall L : R, derivable_pt_lim f L (f' L)) ->
-    (forall L : R, 0 < L -> Rabs (kappa * L) <= PI -> 0 < f' L) ->
-    (forall a b : R,
-       a < b ->
-       (forall c : R, a <= c <= b -> derivable_pt_lim f c (f' c)) ->
-       exists c : R, f b - f a = f' c * (b - a) /\ a < c < b) ->
-    forall L1 L2 : R,
-      0 < L1 -> 0 < L2 ->
-      Rabs (kappa * L1) <= PI -> Rabs (kappa * L2) <= PI ->
-      f L1 = 0 -> f L2 = 0 ->
-      L1 = L2.
+  forall (k0 k1 d L1 L2 : R),
+    ClothoidFPrimePos ->
+    0 < L1 -> 0 < L2 ->
+    Rabs (clothoid_kappa k0 k1 * L1) <= PI ->
+    Rabs (clothoid_kappa k0 k1 * L2) <= PI ->
+    clothoid_f k0 k1 d L1 = 0 ->
+    clothoid_f k0 k1 d L2 = 0 ->
+    L1 = L2.
 Proof.
   exact clothoid_L_unique_on_branch.
+Qed.
+
+Lemma sidecar_clothoid_residual_half_branch :
+  forall (k0 k1 d L1 L2 : R),
+    0 < L1 -> 0 < L2 ->
+    Rabs (clothoid_kappa k0 k1 * L1) <= 1 / 2 ->
+    Rabs (clothoid_kappa k0 k1 * L2) <= 1 / 2 ->
+    clothoid_f k0 k1 d L1 = 0 ->
+    clothoid_f k0 k1 d L2 = 0 ->
+    L1 = L2.
+Proof.
+  exact clothoid_L_unique_half_branch.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -572,8 +580,8 @@ Theorem ticket_0007_clothoid_parks_qed_or_qex :
    sidecar_clothoid_kind <> SCE_CampaignI /\
    sidecar_clothoid_kind <> SCE_FresnelNoding /\
    sidecar_clothoid_kind <> SCE_LoopNoder /\
-   cook_loop_status = LoopObligation /\
-   cook_loop_status <> LoopDischarged /\
+   cook_loop_status = LoopDischarged /\
+   cook_loop_status <> LoopObligation /\
    first_cook_scope EggChord EggChord /\
    first_cook_scope EggClothoid EggClothoid /\
    first_cook_scope EggNurbs EggNurbs).
@@ -585,23 +593,49 @@ Proof.
   split; [exact sidecar_clothoid_not_campaign_i|].
   split; [exact sidecar_clothoid_not_fresnel_noding|].
   split; [exact sidecar_clothoid_not_loop_noder|].
-  split; [exact cook_loop_is_obligation|].
-  split; [exact cook_loop_not_discharged|].
+  split; [exact cook_loop_is_discharged|].
+  split; [exact cook_loop_not_obligation|].
   split; [exact first_cook_scope_chord_chord|].
   split; [exact clothoid_egg_first_cook_scope|].
   exact nurbs_nurbs_first_cook_scope.
 Qed.
 
 Print Assumptions sidecar_clothoid_class.
+Print Assumptions sidecar_clothoid_only_out_of_scope.
+Print Assumptions locked_clothoid_demote_is_host_crossing.
+Print Assumptions locked_clothoid_same_sheet_as_nodingng.
 Print Assumptions sidecar_clothoid_host_decline.
+Print Assumptions sidecar_clothoid_host_hit_false.
+Print Assumptions sidecar_clothoid_host_empty_false.
 Print Assumptions sidecar_clothoid_try_cook_none.
+Print Assumptions sidecar_clothoid_try_cook_hit_none.
+Print Assumptions sidecar_clothoid_empty_neq_decline.
+Print Assumptions locked_clothoid_chord_proper_cross.
 Print Assumptions sidecar_clothoid_chord_seed.
 Print Assumptions sidecar_clothoid_demote_is_nodingng_crossing.
+Print Assumptions sidecar_clothoid_demote_hit_not_clothoid_I_ok.
 Print Assumptions sidecar_clothoid_residual_is_metric.
+Print Assumptions sidecar_clothoid_residual_half_branch.
 Print Assumptions sidecar_clothoid_mkclothoid_inhabits.
+Print Assumptions clothoid_egg_mkclothoid_or_tag.
+Print Assumptions mkclothoid_class.
+Print Assumptions mkclothoid_neq_mkchord.
+Print Assumptions mkclothoid_pair_is_interpolant.
 Print Assumptions mkclothoid_pair_hit_I_ok.
 Print Assumptions try_cook_hit_mkclothoid_some.
 Print Assumptions sidecar_clothoid_hit_arm_inhabits.
+Print Assumptions sidecar_clothoid_first_cook_expand_inhabits.
+Print Assumptions sidecar_clothoid_is_first_cook.
+Print Assumptions sidecar_clothoid_first_cook_includes_clothoid.
+Print Assumptions sidecar_clothoid_is_egg_packaging.
+Print Assumptions sidecar_clothoid_not_host_cook.
+Print Assumptions sidecar_clothoid_not_nodingng.
+Print Assumptions sidecar_clothoid_not_fresnel_noding.
+Print Assumptions sidecar_clothoid_not_campaign_i.
+Print Assumptions sidecar_clothoid_not_loop_noder.
+Print Assumptions sidecar_clothoid_letter_is_first_cook_expanded.
+Print Assumptions sidecar_clothoid_letter_is_landed.
+Print Assumptions sidecar_clothoid_campaign_not_discharged.
 Print Assumptions sidecar_clothoid_egg_inhabits.
 Print Assumptions ticket_0007_clothoid_egg_qed_or_qex.
 Print Assumptions ticket_0007_clothoid_not_first_cook_qed_or_qex.

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nettopologysuite.proofs:cad:survey.schema.json",
+  "title": "CAD entity survey",
+  "description": "DXF, DGN, and font surveys. note is one sentence and cites a reference section. DXF entries carry group codes; other formats omit them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["entities", "headers"],
+  "properties": {
+    "entities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/entity"}
+    },
+    "headers": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/header"}
+    },
+    "dwg": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["note"],
+      "properties": {
+        "note": {"type": "string", "minLength": 1, "maxLength": 240}
+      }
+    }
+  },
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity", "convention", "versions", "traps", "note"],
+      "anyOf": [
+        {"required": ["kind"]},
+        {"required": ["declineId"]}
+      ],
+      "properties": {
+        "entity": {"type": "string", "minLength": 1},
+        "groupCodes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 0}
+        },
+        "convention": {"type": "string", "minLength": 1, "maxLength": 240},
+        "versions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "traps": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "kind": {"type": "string", "minLength": 1},
+        "declineId": {"type": "string", "minLength": 1},
+        "declineIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "note": {"type": "string", "minLength": 1, "maxLength": 240}
+      }
+    },
+    "header": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "note"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^(\\$[A-Z][A-Z0-9]*|[A-Za-z][A-Za-z0-9]*)$"},
+        "note": {"type": "string", "minLength": 1, "maxLength": 240},
+        "traps": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

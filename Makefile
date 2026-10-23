@@ -36,7 +36,7 @@ SHELL := /bin/bash
 ROCQ := $(shell command -v rocq 2>/dev/null || command -v coqc 2>/dev/null || echo "")
 
 # Phony targets only — this file never produces real build artefacts.
-.PHONY: help status host full check ci-guards ci-pr ci-full theories-changed oracle oracle-ffi clean-env env-info hunt-probes
+.PHONY: help status host full check claim-elab ci-guards ci-pr ci-full theories-changed oracle oracle-ffi clean-env env-info hunt-probes cad-dxf
 
 # Base ref for `make theories-changed` (override: make theories-changed BASE=main).
 BASE ?= origin/main
@@ -85,6 +85,10 @@ help: status
 	@echo "                     Requires Flocq 4.2.2. Usually done inside the"
 	@echo "                     pinned container (see Dockerfile and"
 	@echo "                     docs/development-environment.md)."
+	@echo ""
+	@echo "  make cad-dxf       Run the DXF carrier extractor tests (tools/cad)."
+	@echo "                     Needs the dev pins in tools/cad/requirements.txt."
+	@echo "                     CI: cad-carrier (path-filtered; not a Rocq job)."
 	@echo ""
 	@echo "  make check         Run the three main CI guardrails locally:"
 	@echo "                       scripts/check_admitted.sh"
@@ -188,6 +192,12 @@ full:
 
 check: ci-guards
 
+# claim-elab — the build-dependent half of check_claim_statements.py: probes
+# the built .vo files (exact elaborated type, Print Assumptions, elaborated
+# statement pin).  Needs `make full` first.  CI runs it in the rocq-flocq job.
+claim-elab:
+	python3 scripts/check_claim_statements.py --elaborate
+
 # ci-guards — the complete set of build-INDEPENDENT corpus guardrails.
 # These are pure grep/perl/python (no .vo, no `rocq`), so they run in
 # seconds and give fast fail-feedback decoupled from the proof build.
@@ -203,13 +213,27 @@ ci-guards:
 	bash scripts/validate-claims.sh
 	bash scripts/check_oracle_handrolled.sh
 	bash scripts/check_md_prose_ratchet.sh
+	python3 scripts/check_cite_or_cut.py
 	python3 oracle/rocqref/check_jts_nts_equiv.py
 	python3 scripts/check_module_split.py
 	python3 scripts/check_constructor_gate.py
+	python3 scripts/check_name_shape.py
+	python3 scripts/check_claim_statements.py
 	python3 scripts/check_adr_status.py
+	python3 scripts/check_sqlmm_named_fields.py
 	python3 tests/GeosOracleBugHunt/hunt.py --selfcheck
 	@echo ""
 	@echo "All guardrails passed (or see output above)."
+
+# CAD carrier extractor. Dev/test pins only. CI is the path-filtered
+# cad-carrier job, separate from the Rocq jobs.
+cad-dxf:
+	python3 -m pytest tools/cad -q
+	out=$$(mktemp -d); \
+	python3 tools/cad/export_fixture_json.py "$$out"; \
+	python3 -m check_jsonschema --schemafile tools/cad/carrier.schema.json "$$out"/*.json; \
+	python3 -m check_jsonschema --schemafile tools/cad/carrier.schema.json tools/cad/fixtures/truetype_e.json; \
+	python3 -m check_jsonschema --schemafile tools/cad/tolerance.schema.json tools/cad/tolerance.json
 
 # ci-pr — the fast local PR pre-flight: guardrails + the Stdlib-only
 # `theories/` build (the same lane as CI's macOS `rocq` job).  Mirrors

@@ -38,10 +38,8 @@
    WITNESS topic: overlay · claimId: 0007-iota-arm
    witness: 0007-iota-arm
    board: ADR-0007
-   4-axiom (atan2 / Classical_Prop.classic via SidecarCircIotaGate /
-     SidecarCircInterior* / SidecarCircMixed / CircularCookSpanSplit).
-   Category C audit-exception: same atan2 lineage as Parks ι / ι-gate;
-   no extra axioms. Host lane stays 3-axiom.
+   3-axiom (IVT atan2 via SidecarCircIotaGate / SidecarCircInterior* /
+     SidecarCircMixed / CircularCookSpanSplit).
    No Admitted / Axiom / Parameter.
 
    Author: NetTopologySuite.Proofs contributors
@@ -121,11 +119,11 @@ Proof.
 Qed.
 
 Lemma iota_arm_not_bag_noder :
-  cook_loop_status = LoopObligation
-  /\ cook_loop_status <> LoopDischarged.
+  cook_loop_status = LoopDischarged
+  /\ cook_loop_status <> LoopObligation.
 Proof.
-  split; [exact cook_loop_is_obligation|].
-  exact cook_loop_not_discharged.
+  split; [exact cook_loop_is_discharged|].
+  exact cook_loop_not_obligation.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -412,8 +410,8 @@ Theorem ticket_0007_iota_arm_qed_or_qex :
    /\ circular_gamma_status = CircGammaDischarged
    /\ first_cook_scope EggChord EggChord
    /\ first_cook_scope EggCircularArc EggCircularArc
-   /\ cook_loop_status = LoopObligation
-   /\ cook_loop_status <> LoopDischarged
+   /\ cook_loop_status = LoopDischarged
+   /\ cook_loop_status <> LoopObligation
    /\ SidecarCircInterior.iota_interior_cook_status
       = SidecarCircInterior.IotaInteriorCookParked
    /\ locked_cs <> CircularCookSpanFilter.span_decline_arc).
@@ -465,3 +463,10 @@ Print Assumptions honest_next_ctor_is_I_ok_interior_not_host.
 Print Assumptions cells_1_3_reuse_existing_cooks.
 Print Assumptions cells_5_6_already_empty_decline.
 Print Assumptions ticket_0007_iota_arm_qed_or_qex.
+Print Assumptions iota_arm_first_cook_stays_chord_chord.
+Print Assumptions iota_arm_circular_is_first_cook.
+Print Assumptions iota_arm_not_first_cook_mixed.
+Print Assumptions iota_arm_hit_requires_joint_params.
+Print Assumptions iota_arm_joint_not_interior.
+Print Assumptions iota_arm_interior_hit_false.
+Print Assumptions locked_iota_circ_valid.
