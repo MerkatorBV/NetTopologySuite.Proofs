@@ -121,6 +121,7 @@ theories/MetricGreen.v
 theories/MetricCircleSmoke.v
 theories/SheetHenClothoidCore.v
 theories/ClothoidTangent.v
+theories/FresnelSeries.v
 theories/SheetHenClothoidBounds.v
 theories/SheetHenClothoidFrames.v
 theories/SheetHenClothoidEgg.v
@@ -377,6 +378,13 @@ theories/ClothoidChordRho.v
 theories/ClothoidFresnelInc.v
 theories/ClothoidLinearize.v
 theories/ClothoidLinearizeContract.v
+# derivable_pt_lim rules in lambda shape (moved from ClothoidShearLaw) and the
+# planar vector mean-value inequality (deriv_nonneg_incr, no classic).
+theories/DerivAlgebra.v
+theories/VecMVI.v
+# Heading-interpolating N-arc spline of a clothoid window within
+# (b-a)^3/(8 A^2 N^2); end not interpolated. claimId 0007-clothoid-arc-spline.
+theories/ClothoidArcSpline.v
 # W1 curve-ring winding (signed visual-angle sum). claimId 0007-curve-ring-wind.
 # Headline wind_integer. Not the ray-crossing count in WindingNumber.v.
 # Does not flip RNG_JordanUncond.
@@ -488,3 +496,15 @@ theories/CurvePolygonLoopValid.v
 # claimId none new. 3-axiom. No Admitted.
 theories/ClothoidTraversal.v
 theories/ClothoidPlacement.v
+# lane snyder (#970)
+# Snyder 1987 spherical Mercator, exp form of (7-2), atan3 inverse.
+# claimId snyder-merc-sphere. 3-axiom. No Admitted.
+theories/SnyderMercatorSphere.v
+# lane ln3 (#972)
+# 3-axiom corpus logarithm: IVT inverse of exp, built like AtanIvt.atan3.
+# claimId ln3-ivt. 3-axiom. No Admitted.
+theories/LnIvt.v
+# lane D
+# Winding fixtures only (five sample rings). No local-constancy or convex-class
+# headline. 3-axiom. No Admitted.
+theories/CurveRingWindFixtures.v
