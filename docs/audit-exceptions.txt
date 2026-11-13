@@ -9,8 +9,21 @@
 #   - A file leaves this list only when every PA block is within
 #     `docs/axiom-allowlist.txt` (verified, not hoped).
 #   - Adding a file requires a comment above it (Category C reason + plan).
+#   - Every block of files (lines between blank lines) carries its own
+#     `# class: <name>` line; a tag does not reach past a blank line.  The
+#     Observatory's exception budget reads these tags;
+#     scripts/exception_budget.py --check (in ci-guards) fails on a block
+#     without a tag, an unknown class, or a malformed `class` line.
+#     The class names WHY THE AXIOM IS NEEDED, not the status of the claim:
+#     a QEX module whose axiom comes from Flocq is `implementation`.
+#       implementation  axiom inherited from the implementation model
+#                       (Flocq's binary64 format: Flocq C1)
+#       library         axiom inherited from the Stdlib real-analysis
+#                       library (Ratan, RiemannInt)
+#       debt            axiom avoidable; to be removed
+#       qex             axiom kept because the axiom-free claim is false
 #
-# LIVE: 102 files (99 theories-flocq/ + 2 theories/ + 1 hunt probe).
+# LIVE: 128 files (122 theories-flocq/ + 2 theories/ + 4 hunt probes).
 # Chip 2 peeled NurbsKnotSpans.v + ArcArcQuartic.v (atan/atan2 instances
 # moved into already-excepted siblings).  Remaining R-side files carry
 # classic via atan2/Ratan or RiemannInt.  Flocq C1 (`classic` via
@@ -22,6 +35,7 @@
 # HotPixel_b64_refs.v, InCircle_b64_exact_refs.v, ClothoidFresnel.v,
 # PassesThrough_b64_grid_exact.v (umbrella, no PA).
 
+# class: implementation
 # Flocq C1 — binary-op / clothoid / intersect foundation
 theories-flocq/Orient_b64_exact.v
 theories-flocq/ClothoidDegenerate_b64.v
@@ -34,6 +48,10 @@ theories-flocq/B64_Horner.v
 theories-flocq/B64_SinPoly.v
 theories-flocq/B64_Sin.v
 theories-flocq/B64_SinRel.v
+theories-flocq/B64_SegGRel.v
+theories-flocq/B64_SegGDiv.v
+theories-flocq/B64_SegGPolicy.v
+theories-flocq/B64_SegGWire.v
 theories-flocq/B64_CosPoly.v
 theories-flocq/B64_Cos.v
 theories-flocq/B64_ArcPoint.v
@@ -51,6 +69,10 @@ theories-flocq/Intersect_b64_exact_bridge.v
 theories-flocq/Intersect_b64_exact_tight.v
 theories-flocq/B64_lib.v
 theories-flocq/Orient_b64_R.v
+# Flocq C1 (classic via b64 round/plus in the evaluator).  Landed with
+# #1011 without a line here; the flocq audit failed on it.  Plan: leaves
+# with the rest of Flocq C1.
+theories-flocq/Orient_b64_R2.v
 theories-flocq/Validate_binary64_bridge.v
 # Flocq C1 — IEEE↔R product face (B2R / round / binary_normalize).
 # Packages existing bridges; does not remint. Stays C1 while Flocq's
@@ -61,6 +83,7 @@ theories-flocq/HotPixel_b64.v
 theories-flocq/B64_Pff_bridge.v
 theories-flocq/Orient_b64_sound.v
 
+# class: implementation
 # Flocq C1 — Shewchuk / expansion / Stage D
 theories-flocq/B64_TwoSum_sterbenz.v
 theories-flocq/B64_residue_granularity.v
@@ -110,7 +133,41 @@ theories-flocq/B64_CarryCleanRung4.v
 # the ladder rounds in Flocq.
 theories-flocq/B64_CarryCleanLadder.v
 theories-flocq/B64_CarryCleanRung5.v
+# one-bit overlap of the raw output (fes_overlap_within_1_le6).  The aligned
+# rung-4/5 siblings round like the rungs, and the rounding-free step
+# `overlap_within_1_of_aligned_shape` uses `double_exact` (b64_mult), so every
+# headline inherits Classical_Prop.classic via Flocq C1.  Plan: none while
+# Flocq's binary model is in use (category-c-policy).  Keep listed while the
+# rungs round in Flocq.
+theories-flocq/B64_CarryCleanOneBit.v
+# one-bit overlap at total 7 (fes_overlap_within_1_n7): the block-state steps
+# of B64_CarryCleanOneBit run to step 7, rounding like the rungs, so every
+# headline inherits Classical_Prop.classic via Flocq C1.  Plan: none while
+# Flocq's binary model is in use (category-c-policy).
+theories-flocq/B64_CarryCleanSeven.v
+# carry_clean target at every length (promoted probes, ticket #1015).
+# TailModel: FLX model only, no binary64; classic comes from Flocq Core
+# itself (round_N_pt, ulp, Plus_error.plus_error all carry it).  TailBound,
+# Cascade, Target: b64_TwoSum / b64_plus on top of the same.  Every headline
+# inherits Classical_Prop.classic via Flocq C1.  Plan: none while Flocq's
+# rounding model is in use (category-c-policy).
+theories-flocq/B64_CarryCleanTailModel.v
+theories-flocq/B64_CarryCleanTailBound.v
+theories-flocq/B64_CarryCleanCascade.v
+theories-flocq/B64_CarryCleanTarget.v
+# Stage D rebuilt on carry_clean (no refuted headline).  CarryCleanSign:
+# the target's block reduction is descending and sums exactly
+# (fast_expansion_sum_correct, fes_shape_all).  Orient_b64_expansion_cc:
+# Dekker pairs are Priest chains (round / ulp / mag) and the coordinate
+# overflow margin.  Orient_b64_stage_d_cc: the decoders.  Every headline
+# inherits Classical_Prop.classic via Flocq C1.  B64_NonoverlapSign.v (the
+# real-valued sign core) is NOT listed: it is within the allowlist.  Plan:
+# none while Flocq's rounding model is in use (category-c-policy).
+theories-flocq/B64_CarryCleanSign.v
+theories-flocq/Orient_b64_expansion_cc.v
+theories-flocq/Orient_b64_stage_d_cc.v
 
+# class: implementation
 # Predicate-ordering module (MerkatorBV #21 Priest). Twelve of seventeen
 # results are LEM-free (Priest link + arithmetic separations). The remaining five
 # route through strict_succ_b64 → b64_format_B2R / b64_ulp_FLT_0 and inherit
@@ -144,6 +201,7 @@ theories-flocq/OrientHybridPackage.v
 theories-flocq/Orient_geos968_onsegment_pins.v
 theories-flocq/OrientStratifiedAPF.v
 
+# class: implementation
 # Flocq C1 — snap / Hobby / passes-through
 theories-flocq/SnapRoundingScale_b64.v
 theories-flocq/SnapRounding_b64.v
@@ -153,6 +211,13 @@ theories-flocq/HobbyCounterexample_b64.v
 # Off _CoqProject.full; flocq smoke prefixes ROCQ compile so this line
 # is load-bearing for audit_axioms.sh.
 docs/h1-vacuity/HobbyHlemma43Check.v
+# carry_clean cascade probes (off _CoqProject.full, flocq smoke): Flocq C1
+# (classic via b64_plus / round in b64_TwoSum and the FLX round, imported
+# from the B64_CarryClean* rungs, which are listed above).  CarryCleanPure.v
+# stays inside the allowlist and is not listed.  Plan: leave with Flocq C1.
+docs/h1-vacuity/PendingTwinWitness.v
+docs/h1-vacuity/LookaheadQEX.v
+docs/h1-vacuity/LatticeRouteQEX.v
 theories-flocq/NodingSeparation_b64.v
 theories-flocq/PassesThroughHalfopen_b64.v
 theories-flocq/PassesThrough_b64_compute_unsound.v
@@ -162,6 +227,16 @@ theories-flocq/PassesThroughHalfopen_b64_compute_unsound.v
 theories-flocq/PassesThroughHalfopen_b64_compute_incomplete.v
 theories-flocq/PassesThrough_b64_compute_asymmetric.v
 theories-flocq/PassesThrough_b64_spec_symmetric.v
+# Flocq C1 (classic via b64 round/plus).  The c2 counterexample, the
+# conservative predicate, the executable predicate and their replays
+# landed with #1011 without lines here; the flocq audit failed on them.
+# Plan: leave with the rest of Flocq C1.
+theories-flocq/PassesThrough_b64_c2_counterexample.v
+theories-flocq/PassesThrough_b64_c2_qex_record.v
+theories-flocq/PassesThrough_b64_conservative.v
+theories-flocq/PassesThrough_b64_conservative_replay.v
+theories-flocq/PassesThrough_b64_executable.v
+theories-flocq/PassesThrough_b64_executable_replay.v
 # grid_gap_kernel: slice-13 ulp lemmas are C1 (b64_round in the
 # statement).  Slice-12 rational-gap lemmas are trio-only.
 theories-flocq/PassesThrough_b64_grid_gap_kernel.v
@@ -171,6 +246,7 @@ theories-flocq/PassesThrough_b64_grid_complete.v
 theories-flocq/PassesThrough_b64_grid_separation.v
 theories-flocq/SpectrePassesThroughWitness.v
 
+# class: implementation
 # Flocq C1 — overlay / ring-extract (classic via Hobby snap_round)
 theories-flocq/OverlayBridge.v
 theories-flocq/OverlayBridgeUnconditional.v
@@ -179,12 +255,20 @@ theories-flocq/RingCurvatureModels.v
 theories-flocq/ExtractFacesBridge.v
 theories-flocq/OverlayCorrectness.v
 
+# class: library
 # R-side C1 — still off the allowlist after the S1b atan3 restatement.
 # Atan2.v is 3-axiom (IVT). The circular-cook cone, InArc, and
 # ArcChordSubdivision are 3-axiom and left this list. The Ratan bridge
 # stays: atan3_eq_atan / atan2_eq_ratan pull classic via Ratan.atan.
 theories/Atan2RatanBridge.v
 
+# class: library
 # R-side C1 — RiemannInt (#564 Fresnel inhabitant; pack stays 3-axiom).
 # Culprit: RInt_cont_le (continuity_implies_RiemannInt).
 theories/ClothoidFresnelInhab.v
+
+# class: implementation
+# Flocq C1 -- binary64 Horner / de Casteljau evaluation (#1009)
+theories-flocq/B64_HornerGamma.v
+theories-flocq/B64_DeCasteljau.v
+theories-flocq/B64_DeCasteljauEval.v

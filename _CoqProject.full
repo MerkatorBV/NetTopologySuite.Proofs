@@ -2704,6 +2704,10 @@ theories/ArcChordSubdivision.v
 # (max_sagitta_nonneg, arcs_of_nil/_cons/_segment_chord/_segment_arc,
 # forward corollary).  No Admitteds; no classical-prop pulls.
 theories/ArcOverlay.v
+# Directed-approximation probe (docs/directed-approximation-2026-11.md).
+theories/DirectedApprox.v
+theories/ArcOverlayDirected.v
+theories/ArcSBiarcWitness.v
 
 # IVT gap closure: chord_crosses_arc_circle_implies_circle_intersection.
 # Defines chord_point (parametric chord at t in [0,1]) and
@@ -3913,11 +3917,27 @@ theories-flocq/B64_AbsErr.v
 # S1: binary64 Horner kernel (evaluation error vs the same coefficients exact)
 # and its degree-15 reduced-sine instance (<= 2^-52).  claimId s1-b64-horner.
 theories-flocq/B64_Horner.v
+# S1 closed forms on the Horner kernel and the Bezier lane: gamma_{2n} Horner
+# bound (claimId s1-b64-horner-gamma); RNE de Casteljau forward error bound,
+# gamma_n(kappa) form, s = fl(1-t) corollary (s1-b64-decasteljau); dcR is the
+# Bernstein sum and the Horner-vs-de-Casteljau bound comparison on (1-2t)^n
+# (s1-b64-bezier-stability).  Docs: docs/b64-curve-eval-error-bounds-2026-11.md.
+theories-flocq/B64_HornerGamma.v
+theories-flocq/B64_DeCasteljau.v
+theories-flocq/B64_BezierStability.v
+# S1 guarded extractable de Casteljau entry point (dc_eval) and its soundness
+# (dc_eval_certified, claimId s1-b64-decasteljau-eval); extracted as the
+# B64_DECASTELJAU oracle mode.
+theories-flocq/B64_DeCasteljauEval.v
 theories-flocq/B64_SinPoly.v
 # S2: binary64 sine, |x| <= 10, error <= 2^-49 (Sterbenz mod-pi reduction +
 # degree-21 Horner).  claimId s2-b64-sin.
 theories-flocq/B64_Sin.v
 theories-flocq/B64_SinRel.v
+theories-flocq/B64_SegGRel.v
+theories-flocq/B64_SegGDiv.v
+theories-flocq/B64_SegGPolicy.v
+theories-flocq/B64_SegGWire.v
 theories-flocq/B64_CosPoly.v
 theories-flocq/B64_Cos.v
 theories-flocq/B64_ArcPoint.v
@@ -3944,6 +3964,7 @@ theories-flocq/ClothoidResidual_b64_exact.v
 # See docs/clothoid-open-questions-triage.md section 13.
 theories-flocq/ClothoidHalley_b64.v
 theories-flocq/Orient_b64_exact_full.v
+theories-flocq/Orient_b64_R2.v
 # Phase 1 first slice: binary64 segment-pair intersection predicate built
 # on top of Stage A filter.  Five-valued result (None / Point / Collinear /
 # Nan / Uncertain).  Ships the predicate, structural lemmas (decidability,
@@ -4265,6 +4286,12 @@ theories-flocq/PassesThrough_b64_compute.v
 # the exact-real spec (compute=true, spec=false on an oracle-confirmed sub-ulp
 # tangency witness).  Promotes docs/oracle-soundness-finding.md to a Qed.
 theories-flocq/PassesThrough_b64_compute_unsound.v
+theories-flocq/PassesThrough_b64_c2_counterexample.v
+theories-flocq/PassesThrough_b64_conservative.v
+theories-flocq/PassesThrough_b64_conservative_replay.v
+theories-flocq/PassesThrough_b64_c2_qex_record.v
+theories-flocq/PassesThrough_b64_executable.v
+theories-flocq/PassesThrough_b64_executable_replay.v
 # Issue #66 guard-discharge audit (round 2, item 1): machine-checked witness
 # that snap-rounding to the integer grid can CREATE a horizontal dart from a
 # non-horizontal input pair (0 and 1/2 both round-to-nearest-even to 0). So
@@ -4322,6 +4349,7 @@ theories-flocq/PassesThrough_b64_spec_symmetric.v
 theories-flocq/PassesThrough_b64_grid_core.v
 theories-flocq/PassesThrough_b64_grid_bounds.v
 theories-flocq/PassesThrough_b64_grid_complete.v
+theories-flocq/DirectedApprox_b64.v
 theories-flocq/PassesThrough_b64_grid_gap_kernel.v
 theories-flocq/PassesThrough_b64_grid_separation.v
 theories-flocq/PassesThrough_b64_grid_exact.v
@@ -4508,8 +4536,9 @@ theories-flocq/B64_Priest_FES_counterexample.v
 # exact.  QEX: cancel-only fails on Priest input; carry_clean fails when one
 # input is only nonoverlapping.  Core slice QED: carry_clean on block-shaped
 # input is deletion + exact doubling (carry_clean_priest_core); fewer FLOPS
-# than Compress (comparisons not counted).  OPEN: the two-part FP bridge
-# (fes_priest_carry_pattern, fes_priest_reduction_nonoverlap), the target.
+# than Compress (comparisons not counted).  The two-part FP bridge
+# (fes_priest_carry_pattern, fes_priest_reduction_nonoverlap) and the target
+# are proved in B64_CarryCleanTarget.v (below).
 theories-flocq/B64_CarryClean.v
 # carry_clean bridge, rung 2: three components in total (two TwoSums).  Both
 # bridge parts and the target are proved there (fes_carry_bridge_rung2,
@@ -4547,3 +4576,37 @@ theories-flocq/B64_CarryCleanLadder.v
 # ladder; a tie at step 5 is carried through step 6.  Seven or more stay OPEN
 # (this supersedes the rung-4 entry's "six or more" line above).
 theories-flocq/B64_CarryCleanRung5.v
+# one-bit overlap of the raw Fast-Expansion-Sum output, totals <= 6: the
+# rung decompositions plus two alignment facts (twin/anti components are
+# +-2^c; the element before an anti pair is a multiple of it).
+theories-flocq/B64_CarryCleanOneBit.v
+# one-bit overlap at total 7, the first two-tie total: the block-layered
+# state of B64_CarryCleanOneBit run to step 7; also the carry pattern,
+# reduction and carry_clean target at 7.
+theories-flocq/B64_CarryCleanSeven.v
+# carry_clean target at every length (#1015, promoted from the #1012/#1014
+# probes): the cascade tail bound in the FLX model and its binary64
+# realization (one probe file, split by the module split gate), the N/T/P
+# cascade invariant on the actual run, and zero-input elimination plus
+# pattern uniqueness, which discharge both bridge Definitions of
+# B64_CarryCleanCore.  carry_clean_priest_target_proved supersedes the <= 7
+# rungs above as the general statement; they stay as evidence.
+theories-flocq/B64_CarryCleanTailModel.v
+theories-flocq/B64_CarryCleanTailBound.v
+theories-flocq/B64_CarryCleanCascade.v
+theories-flocq/B64_CarryCleanTarget.v
+# Stage D rebuilt on carry_clean, with no dependence on the refuted
+# fast_expansion_sum_strong_nonoverlap_headline.  NonoverlapSign: the sign of
+# a nonoverlapping chain in descending magnitude order is the sign of its
+# leading component (real core; QEX: without the order it fails, [-4; 1; 8]).
+# CarryCleanSign: carry_clean (fast_expansion_sum e f) on Priest input is
+# descending, nonoverlapping and exact, so its sign is that of e + f.
+# Orient_b64_expansion_cc: Dekker pairs are Priest chains; the carry_clean
+# overflow margin follows from |coord| <= 2^507; the carry_clean orient2d
+# expansion has the sign of cross_R_BP.  Orient_b64_stage_d_cc: the Stage D
+# decoders on carry_clean and their soundness (supersede the conditional
+# Orient_b64_stage_d theorems).
+theories-flocq/B64_NonoverlapSign.v
+theories-flocq/B64_CarryCleanSign.v
+theories-flocq/Orient_b64_expansion_cc.v
+theories-flocq/Orient_b64_stage_d_cc.v
