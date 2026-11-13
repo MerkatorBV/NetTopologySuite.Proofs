@@ -36,6 +36,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0   # the dashboard freshness step reads history
 
       - name: Run all corpus guardrails (make ci-guards)
         # Covers, in one fast pass (see the per-script headers for detail):
@@ -44,11 +46,18 @@ jobs:
         #   check_deferred_registry_sync doc <-> Admitted-registry drift
         #   validate-claims              verified-claims.md references resolve
         #   check_oracle_handrolled      hand-rolled float-kernel ratchet
-        #   check_md_prose_ratchet       net-non-positive .md prose vs base
+        #   check_md_prose_ratchet       net ≤ 0 .md prose; claim-row and route-status whitelist
+        #   check_cite_or_cut            #846: gated QED/QEX restatement cites its claimId
         #   hunt.py --selfcheck          RELATE_MATRIX token allowlist (no oracle)
         # The `rocq` job below no longer repeats these — this job is
         # the single source of the guardrail verdict on every PR and push.
         run: make ci-guards
+
+      - name: Dashboard freshness (warn only)
+        # Warns when the commit shown in the committed dashboard is behind HEAD
+        # for the dashboard's input paths (parsed from pages.yml).  Needs the
+        # full history, hence fetch-depth: 0 on the checkout above.
+        run: python3 scripts/gen_dashboard.py --check-freshness
 
   rocq:
     name: Build with Rocq ${{ matrix.rocq-version }}
@@ -428,6 +437,18 @@ jobs:
             nts-proofs-flocq:ci \
             bash -lc 'bash scripts/hunt_probe_smoke.sh' \
             | tee /tmp/hunt_probe_smoke.log
+          sudo chown -R "$(id -u):$(id -g)" .
+
+      - name: Stage D carry_clean chain is headline-free
+        # The refuted fast_expansion_sum_strong_nonoverlap_headline is a
+        # Definition taken as a hypothesis, so Print Assumptions cannot see
+        # it.  Recompile the carry_clean Stage D chain in a scratch copy with
+        # the headline and every theorem that takes it deleted.
+        run: |
+          chmod -R a+rwX .
+          docker run --rm -v "$PWD:/workspace" -w /workspace \
+            nts-proofs-flocq:ci \
+            bash -lc 'bash scripts/check_stage_d_headline_free.sh'
           sudo chown -R "$(id -u):$(id -g)" .
 
       - name: Update per-file Print Assumptions chunks

@@ -36,11 +36,15 @@ Local Open Scope R_scope.
    `carry_clean_priest_core` states exactly that, plus exactness of the sum.
    No property of `fast_expansion_sum` or of rounding enters.
 
-   The bridge from Priest's floating-point conditions is the OPEN part, in
-   two Definitions: (a) the pattern (`fes_priest_carry_pattern`) and (b)
+   The bridge from Priest's floating-point conditions is in two
+   Definitions: (a) the pattern (`fes_priest_carry_pattern`) and (b)
    nonoverlap of the reduction (`fes_priest_reduction_nonoverlap`).
    `carry_clean_priest_target_of_bridge` proves that they imply
-   `carry_clean_priest_target` -- one way only; nothing here proves them.
+   `carry_clean_priest_target` -- one way only; nothing in THIS file proves
+   them.  Both are proved for all inputs in B64_CarryCleanTarget.v
+   (fes_priest_carry_pattern_proved, fes_priest_reduction_nonoverlap_proved,
+   hence carry_clean_priest_target_proved), which is downstream of this
+   file, so they stay Definitions here.
    ========================================================================== *)
 
 Inductive cblock : Type :=
@@ -317,8 +321,8 @@ Proof.
 Qed.
 
 (* --------------------------------------------------------------------------
-   The open bridge, in two parts, stated as Definitions so that nothing reads
-   as proved.  (a) is a pattern on the raw output; (b) is where the
+   The bridge, in two parts, stated as Definitions (proved downstream in
+   B64_CarryCleanTarget.v).  (a) is a pattern on the raw output; (b) is where the
    round-to-even content sits.  The proved implication runs ONE way:
    bridge -> target.  The bridge is strictly stronger than the target --
    strict keys exclude carry cascades (a 2x followed by a twin (x, x) carries

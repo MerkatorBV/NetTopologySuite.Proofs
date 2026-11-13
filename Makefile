@@ -218,12 +218,14 @@ ci-guards:
 	python3 scripts/check_module_split.py
 	python3 scripts/check_constructor_gate.py
 	python3 scripts/check_name_shape.py
+	python3 scripts/exception_budget.py --check
 	python3 scripts/check_claim_statements.py
 	python3 scripts/check_adr_status.py
 	python3 scripts/check_sqlmm_named_fields.py
 	python3 tests/GeosOracleBugHunt/hunt.py --selfcheck
 	python3 tests/B64SinConformance/gen_constants.py --check
 	python3 scripts/b64gen/check.py
+	python3 scripts/check_consumer_tolerances.py
 	@echo ""
 	@echo "All guardrails passed (or see output above)."
 
